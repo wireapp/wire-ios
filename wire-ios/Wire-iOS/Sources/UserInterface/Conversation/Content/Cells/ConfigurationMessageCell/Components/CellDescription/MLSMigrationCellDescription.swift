@@ -27,7 +27,7 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     private static let linkAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.mediumSemiboldFont,
-        .link: URL.wr_mlsLearnMore
+        .link: WireURLs.shared.mlsInfo
     ]
 
     let configuration: View.Configuration
@@ -50,8 +50,8 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
         let content = Self.makeAttributedString(messageType: messageType)
 
-        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
-        accessibilityLabel = content?.string
+        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
+        self.accessibilityLabel = content?.string
     }
 
     // MARK: Attributed Strings
@@ -71,7 +71,9 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         case .mlsMigrationPotentialGap:
             return makePotentialGapAttributedString()
         default:
-            assertionFailure("MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!")
+            assertionFailure(
+                "MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!"
+            )
             return nil
         }
     }

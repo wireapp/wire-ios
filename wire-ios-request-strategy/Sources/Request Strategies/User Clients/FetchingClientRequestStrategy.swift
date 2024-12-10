@@ -25,19 +25,23 @@ import WireUtilities
 
 public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID"
 
-@objc public extension ZMUser {
+@objc
+public extension ZMUser {
 
     func fetchUserClients() {
-        NotificationInContext(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
-                              context: self.managedObjectContext!.notificationContext,
-                              object: self.objectID).post()
+        NotificationInContext(
+            name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
+            context: managedObjectContext!.notificationContext,
+            object: objectID
+        ).post()
     }
 }
 
 @objc
 public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 
-    fileprivate static let needsToUpdateUserClientsNotificationName = Notification.Name("ZMNeedsToUpdateUserClientsNotification")
+    fileprivate static let needsToUpdateUserClientsNotificationName = Notification
+        .Name("ZMNeedsToUpdateUserClientsNotification")
 
     fileprivate var userClientsObserverToken: Any?
     fileprivate var userClientsByUserID: IdentifierObjectSync<UserClientByUserIDTranscoder>
@@ -50,30 +54,50 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 
     private let entitySync: EntityActionSync
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
 
         self.userClientByUserIDTranscoder = UserClientByUserIDTranscoder(managedObjectContext: managedObjectContext)
-        self.userClientByUserClientIDTranscoder = UserClientByUserClientIDTranscoder(managedObjectContext: managedObjectContext)
-        self.userClientByQualifiedUserIDTranscoder = UserClientByQualifiedUserIDTranscoder(managedObjectContext: managedObjectContext)
+        self
+            .userClientByUserClientIDTranscoder =
+            UserClientByUserClientIDTranscoder(managedObjectContext: managedObjectContext)
+        self
+            .userClientByQualifiedUserIDTranscoder =
+            UserClientByQualifiedUserIDTranscoder(managedObjectContext: managedObjectContext)
 
-        self.userClientsByUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserIDTranscoder)
-        self.userClientsByUserClientID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserClientIDTranscoder)
-        self.userClientsByQualifiedUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByQualifiedUserIDTranscoder)
+        self.userClientsByUserID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userClientByUserIDTranscoder
+        )
+        self.userClientsByUserClientID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userClientByUserClientIDTranscoder
+        )
+        self.userClientsByQualifiedUserID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userClientByQualifiedUserIDTranscoder
+        )
 
-        entitySync = EntityActionSync(actionHandlers: [
+        self.entitySync = EntityActionSync(actionHandlers: [
             FetchUserClientsActionHandler(context: managedObjectContext)
         ])
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        self.configuration = [.allowsRequestsWhileOnline,
-                              .allowsRequestsDuringQuickSync,
-                              .allowsRequestsWhileWaitingForWebsocket,
-                              .allowsRequestsWhileInBackground]
-        self.userClientByQualifiedUserIDTranscoder.contextChangedTracker = self
-        self.userClientsObserverToken = NotificationInContext.addObserver(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
-                                                                          context: self.managedObjectContext.notificationContext,
-                                                                          object: nil) { [weak self] note in
+        self.configuration = [
+            .allowsRequestsWhileOnline,
+            .allowsRequestsDuringQuickSync,
+            .allowsRequestsWhileWaitingForWebsocket,
+            .allowsRequestsWhileInBackground
+        ]
+        userClientByQualifiedUserIDTranscoder.contextChangedTracker = self
+        self.userClientsObserverToken = NotificationInContext.addObserver(
+            name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
+            context: self.managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
             guard let self, let objectID = note.object as? NSManagedObjectID else { return }
             self.managedObjectContext.performGroupedBlock {
                 guard
@@ -98,7 +122,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                         self.userClientsByUserID.sync(identifiers: userIdSet)
                     }
 
-                case .v2, .v3, .v4, .v5, .v6:
+                case .v2, .v3, .v4, .v5, .v6, .v7:
                     let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
                     if let domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
@@ -133,21 +157,21 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self]
+        [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend()!)
+        UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend()!)
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let clientsNeedingToBeUpdated = objects.compactMap({ $0 as? UserClient })
+        let clientsNeedingToBeUpdated = objects.compactMap { $0 as? UserClient }
 
         fetch(userClients: clientsNeedingToBeUpdated)
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let clientsNeedingToBeUpdated = object.compactMap({ $0 as? UserClient }).filter(\.needsToBeUpdatedFromBackend)
+        let clientsNeedingToBeUpdated = object.compactMap { $0 as? UserClient }.filter(\.needsToBeUpdatedFromBackend)
 
         fetch(userClients: clientsNeedingToBeUpdated)
     }
@@ -169,7 +193,8 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
                     // Fallback.
                     result.1.append(userClientID)
                 }
-            case .v2, .v3, .v4, .v5, .v6:
+
+            case .v2, .v3, .v4, .v5, .v6, .v7:
                 if let qualifiedID = qualifiedIDWithFallback(from: userClient) {
                     result.0.append(qualifiedID)
                 }
@@ -228,7 +253,7 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     var fetchLimit: Int {
-        return 1
+        1
     }
 
     public func request(for identifiers: Set<UserClientID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -238,14 +263,22 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UserClientID>, completionHandler: @escaping () -> Void) {
+    public func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<UserClientID>,
+        completionHandler: @escaping () -> Void
+    ) {
         guard
             let identifier = identifiers.first,
-            let client = UserClient.fetchUserClient(withRemoteId: identifier.clientId,
-                                                    forUser: ZMUser.fetchOrCreate(with: identifier.userId,
-                                                                                 domain: nil,
-                                                                                 in: managedObjectContext),
-                                                    createIfNeeded: true)
+            let client = UserClient.fetchUserClient(
+                withRemoteId: identifier.clientId,
+                forUser: ZMUser.fetchOrCreate(
+                    with: identifier.userId,
+                    domain: nil,
+                    in: managedObjectContext
+                ),
+                createIfNeeded: true
+            )
         else {
             Logging.network.warn("Can't process response, aborting.")
             return completionHandler()
@@ -287,7 +320,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     }
 
     var fetchLimit: Int {
-        return 100
+        100
     }
 
     struct RequestPayload: Codable, Equatable {
@@ -311,7 +344,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v1:
             return v1Request(for: identifiers)
 
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2, .v3, .v4, .v5, .v6, .v7:
             return v2Request(for: identifiers, apiVersion: apiVersion)
         }
     }
@@ -360,14 +393,18 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
 
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+    public func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<QualifiedID>,
+        completionHandler: @escaping () -> Void
+    ) {
         guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
         switch apiVersion {
         case .v0:
             completionHandler()
             return
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
             WaitingGroupTask(context: managedObjectContext) { [self] in
                 await commonResponseHandling(response: response, for: identifiers)
                 completionHandler()
@@ -379,7 +416,8 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         guard
             let rawData = response.rawData,
             let payload = ResponsePayload(rawData, decoder: decoder),
-            let selfClient = await managedObjectContext.perform({ ZMUser.selfUser(in: self.managedObjectContext).selfClient() })
+            let selfClient = await managedObjectContext
+            .perform({ ZMUser.selfUser(in: self.managedObjectContext).selfClient() })
         else {
             Logging.network.warn("Can't process response, aborting.")
             await managedObjectContext.perform {
@@ -398,7 +436,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
                     with: userID,
                     domain: domain,
                     in: self.managedObjectContext
-                )}
+                ) }
 
                 await processor.createOrUpdateClients(
                     from: clientPayloads,
@@ -445,7 +483,7 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     var fetchLimit: Int {
-        return 1
+        1
     }
 
     public func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -455,7 +493,11 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+    public func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<UUID>,
+        completionHandler: @escaping () -> Void
+    ) {
         guard
             let rawData = response.rawData,
             let payload = Payload.UserClients(rawData, decoder: decoder),

@@ -19,21 +19,22 @@
 import Foundation
 import WireDataModel
 
-extension ZMUser {
+public extension ZMUser {
 
-    @objc public var loginCredentials: LoginCredentials {
-        return LoginCredentials(emailAddress: self.emailAddress,
-                                phoneNumber: self.phoneNumber,
-                                hasPassword: self.emailAddress != nil,
-                                usesCompanyLogin: self.usesCompanyLogin)
+    @objc var loginCredentials: LoginCredentials {
+        LoginCredentials(
+            emailAddress: emailAddress,
+            hasPassword: emailAddress != nil,
+            usesCompanyLogin: usesCompanyLogin
+        )
     }
 
 }
 
-extension LoginCredentials {
+public extension LoginCredentials {
 
     /// This will be used to set user info on the NSError
-    public var dictionaryRepresentation: [String: Any] {
+    var dictionaryRepresentation: [String: Any] {
         var userInfo: [String: Any] = [:]
         userInfo[ZMUserLoginCredentialsKey] = self
         userInfo[ZMUserHasPasswordKey] = hasPassword
@@ -41,10 +42,6 @@ extension LoginCredentials {
 
         if let emailAddress, !emailAddress.isEmpty {
             userInfo[ZMEmailCredentialKey] = emailAddress
-        }
-
-        if let phoneNumber, !phoneNumber.isEmpty {
-            userInfo[ZMPhoneCredentialKey] = phoneNumber
         }
 
         return userInfo

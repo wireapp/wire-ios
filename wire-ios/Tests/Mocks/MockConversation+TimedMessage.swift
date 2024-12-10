@@ -16,22 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
+import WireDesign
+
 @testable import Wire
-import WireCommonComponents
 
 extension MockConversation {
 
     var destructionEnabled: Bool {
-        return false
+        false
     }
 
     var timeoutImage: UIImage? {
-        return StyleKitIcon.timeoutWeek.makeImage(size: 64, color: .accent())
+        StyleKitIcon.timeoutWeek.makeImage(size: 64, color: .accent())
     }
 
-	@objc
-	func localParticipantsContain(user: UserType) -> Bool {
-		return true
-	}
+    @objc
+    func localParticipantsContain(user: UserType) -> Bool {
+        true
+    }
 }

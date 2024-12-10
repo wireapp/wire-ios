@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 class ScalableViewTests: XCTestCase {
     var size = XCTestCase.DeviceSizeIPhone5

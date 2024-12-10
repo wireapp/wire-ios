@@ -48,7 +48,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func note(for callState: CallState) -> ZMLocalNotification? {
-        return ZMLocalNotification(callState: callState, conversation: conversation, caller: sender, moc: syncMOC)
+        ZMLocalNotification(callState: callState, conversation: conversation, caller: sender, moc: syncMOC)
     }
 
     func testIncomingAudioCall() {
@@ -196,7 +196,12 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             caller.name = "SelfUser"
 
             // when
-            guard let note = ZMLocalNotification(callState: state, conversation: conversation, caller: caller, moc: syncMOC) else { return XCTFail("Did not create notification") }
+            guard let note = ZMLocalNotification(
+                callState: state,
+                conversation: conversation,
+                caller: caller,
+                moc: syncMOC
+            ) else { return XCTFail("Did not create notification") }
 
             // then
             XCTAssertEqual(note.title, "Callie")
@@ -207,7 +212,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // given
             let team = Team.insertNewObject(in: self.syncMOC)

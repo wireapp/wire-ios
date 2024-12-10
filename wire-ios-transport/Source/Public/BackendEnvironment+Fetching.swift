@@ -18,13 +18,13 @@
 
 import Foundation
 
-extension BackendEnvironment {
-    public enum FetchError: String, Error {
+public extension BackendEnvironment {
+    enum FetchError: String, Error {
         case requestFailed
         case invalidResponse
     }
 
-    public static func fetchEnvironment(url: URL, onCompletion: @escaping (Result<BackendEnvironment, Error>) -> Void) {
+    static func fetchEnvironment(url: URL, onCompletion: @escaping (Result<BackendEnvironment, Error>) -> Void) {
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error {
                 Logging.backendEnvironment.error("Error fetching configuration from \(url): \(error)")

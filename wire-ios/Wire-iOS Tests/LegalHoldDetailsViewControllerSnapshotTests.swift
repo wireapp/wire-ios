@@ -16,22 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
+
 final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: LegalHoldDetailsViewController!
-    var selfUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var sut: LegalHoldDetailsViewController!
+    private var selfUser: MockUserType!
+    private var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
-        super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
@@ -41,22 +49,26 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         SelfUser.provider = nil
         userSession = nil
-        super.tearDown()
+        mockMainCoordinator = nil
     }
 
     // MARK: - Helper method
 
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
 
-        let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
+        {
+            self.sut = LegalHoldDetailsViewController(
+                conversation: conversation,
+                userSession: self.userSession,
+                mainCoordinator: self.mockMainCoordinator,
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            )
             return self.sut.wrapInNavigationController()
         }
-
-        return createSut
     }
 
     // MARK: - Snapshot Tests
@@ -71,7 +83,25 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
         let sut = setUpLegalHoldDetailsViewController(conversation: conversation)
 
         // THEN
-        verifyInAllColorSchemes(createSut: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut(),
+                named: "LightTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut(),
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testOtherUserUnderLegalHold() {
@@ -82,12 +112,37 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
         conversation.sortedActiveParticipantsUserTypes = [otherUser]
 
         let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
+            self.sut = LegalHoldDetailsViewController(
+                conversation: conversation,
+                userSession: self.userSession,
+                mainCoordinator: self.mockMainCoordinator,
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            )
             return self.sut.wrapInNavigationController()
         }
 
+        let sut = createSut()
+
         // THEN
-        verifyInAllColorSchemes(createSut: createSut)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
     }
 
 }

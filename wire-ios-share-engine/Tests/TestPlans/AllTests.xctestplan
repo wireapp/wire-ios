@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "37260901-6711-4495-BF17-09C709CE3A4F",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireShareEngine.xcodeproj",
+        "identifier" : "5470D3F11D76E1B000FDE440",
+        "name" : "WireShareEngineTests"
+      }
+    }
+  ],
+  "version" : 1
+}

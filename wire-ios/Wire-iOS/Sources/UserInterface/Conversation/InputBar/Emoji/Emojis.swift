@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
@@ -31,7 +32,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
     private let emojiRepository: EmojiRepositoryInterface
 
     var sectionTypes: [EmojiSectionType] {
-        return sections.map(\.id)
+        sections.map(\.id)
     }
 
     // MARK: - Life cycle
@@ -40,7 +41,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         provider: @escaping CellProvider,
         emojiRepository: EmojiRepositoryInterface = EmojiRepository()
     ) {
-        cellProvider = provider
+        self.cellProvider = provider
         self.emojiRepository = emojiRepository
 
         let smileysAndEmotion = emojiRepository.emojis(for: .smileysAndEmotion)
@@ -53,7 +54,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         let symbols = emojiRepository.emojis(for: .symbols)
         let flags = emojiRepository.emojis(for: .flags)
 
-        initialSections = [
+        self.initialSections = [
             Section(id: .people, items: smileysAndEmotion + peopleAndBody),
             Section(id: .nature, items: animalsAndNature),
             Section(id: .food, items: foodAndDrink),
@@ -64,12 +65,12 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
             Section(id: .flags, items: flags)
         ]
 
-        recentlyUsed = RecentlyUsedEmojiSection(
+        self.recentlyUsed = RecentlyUsedEmojiSection(
             capacity: 15,
             items: emojiRepository.fetchRecentlyUsedEmojis()
         )
 
-        sections = initialSections
+        self.sections = initialSections
 
         super.init()
         insertRecentlyUsedSectionIfNeeded()
@@ -77,16 +78,16 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
     // MARK: - Helpers
 
-    subscript (index: Int) -> Section {
-        return sections[index]
+    subscript(index: Int) -> Section {
+        sections[index]
     }
 
-    subscript (indexPath: IndexPath) -> Emoji {
-        return sections[indexPath.section].items[indexPath.item]
+    subscript(indexPath: IndexPath) -> Emoji {
+        sections[indexPath.section].items[indexPath.item]
     }
 
     func sectionIndex(for id: EmojiSectionType) -> Int? {
-        return sections.firstIndex {
+        sections.firstIndex {
             $0.id == id
         }
     }
@@ -94,21 +95,21 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
     // MARK: - Data source
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections.count
+        sections.count
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return sections[section].items.count
+        sections[section].items.count
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        return cellProvider(self[indexPath], indexPath)
+        cellProvider(self[indexPath], indexPath)
     }
 
     // MARK: - Filter
@@ -221,29 +222,29 @@ enum EmojiSectionType: Int, CaseIterable {
 
     var icon: StyleKitIcon {
         switch self {
-        case .recent: return .clock
-        case .people: return .emoji
-        case .nature: return .flower
-        case .food: return .cake
-        case .travel: return .car
-        case .activities: return .ball
-        case .objects: return .crown
-        case .symbols: return .asterisk
-        case .flags: return .flag
+        case .recent: .clock
+        case .people: .emoji
+        case .nature: .flower
+        case .food: .cake
+        case .travel: .car
+        case .activities: .ball
+        case .objects: .crown
+        case .symbols: .asterisk
+        case .flags: .flag
         }
     }
 
     var imageAsset: ImageResource {
         switch self {
-        case .recent: return .recents
-        case .people: return .smileysPeople
-        case .nature: return .animalsNature
-        case .food: return .foodDrink
-        case .travel: return .travelPlaces
-        case .activities: return .activity
-        case .objects: return .objects
-        case .symbols: return .symbols
-        case .flags: return .flags
+        case .recent: .recents
+        case .people: .smileysPeople
+        case .nature: .animalsNature
+        case .food: .foodDrink
+        case .travel: .travelPlaces
+        case .activities: .activity
+        case .objects: .objects
+        case .symbols: .symbols
+        case .flags: .flags
         }
     }
 }

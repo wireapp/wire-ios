@@ -20,7 +20,7 @@ import Foundation
 
 /// Available cipher suites in the MLS protocol.
 
-public enum MLSCipherSuite: Int, Codable {
+public enum MLSCipherSuite: Int, Codable, Sendable {
 
     case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
 

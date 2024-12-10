@@ -18,11 +18,13 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 extension PermissionDeniedViewController {
 
     class func addressBookAccessDeniedViewController() -> PermissionDeniedViewController {
         // MARK: - Properties
+
         typealias RegistrationAddressBookDenied = L10n.Localizable.Registration.AddressBookAccessDenied
         let vc = PermissionDeniedViewController()
         let title = RegistrationAddressBookDenied.Hero.title

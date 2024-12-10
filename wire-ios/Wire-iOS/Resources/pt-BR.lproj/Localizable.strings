@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,11 +37,10 @@
 "general.on" = "Ligado";
 "general.loading" = "Carregando…";
 "general.paste" = "Colar";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
-
-"general.guest-room-name" = "Grupo de convidados";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Você)";
@@ -51,7 +50,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Procurar por nome ou nome de usuário";
 "peoplepicker.header.top_people" = "Contatos frequentes";
-"peoplepicker.button.create_conversation" = "Criar grupo";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Adicionar Participantes";
 "peoplepicker.header.conversations" = "Grupos";
 "peoplepicker.header.team_conversations" = "Grupos de %@";
@@ -61,8 +60,8 @@
 "peoplepicker.header.directory" = "Conectar";
 "peoplepicker.header.federation" = "Conecte-se com outro domínio";
 
-"peoplepicker.group.title.singular" = "Adicionar Participantes";
-"peoplepicker.group.title.plural" = "Adicionar Participantes (%d)";
+"peoplepicker.group.title.singular" = "Select Participants";
+"peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Pular";
 "peoplepicker.group.done" = "Pronto";
 "peoplepicker.group.create" = "Criar";
@@ -102,8 +101,6 @@
 "peoplepicker.invite_more_people" = "Convidar mais pessoas";
 "peoplepicker.invite_team_members" = "Convide pessoas para entrar na equipe";
 "peoplepicker.quick-action.open-conversation" = "Abrir";
-"peoplepicker.quick-action.create-conversation" = "Criar grupo";
-"peoplepicker.quick-action.create-guest-room" = "Criar grupo de convidados";
 "peoplepicker.quick-action.admin-services" = "Gerenciar serviços";
 
 "peoplepicker.federation.domain_unvailable" = "O domínio federado não está disponível no momento. [Saiba mais](%@)";
@@ -127,6 +124,23 @@
 "conversation_list.empty.all_archived.message" = "Tudo foi arquivado";
 "conversation_list.empty.no_contacts.message" = "Iniciar uma conversa ou \ncrie um grupo.";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Search conversations";
+"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
+"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.foldersPlaceholder" = "Search %@";
+
+
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favoritos";
+"conversation_list.filter.groups.title" = "Grupos";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter.folders.title" = "Folders";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Remover";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Participe";
@@ -135,17 +149,21 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Ative agora.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Tem novas mensagens.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contatos";
-"conversation_list.bottom_bar.conversations.title" = "Conversas";
-"conversation_list.bottom_bar.folders.title" = "Pastas";
-"conversation_list.bottom_bar.archived.title" = "Arquivar";
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Welcome";
+"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
+"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
 
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Nos ajude a melhorar o Wire";
-"conversation_list.data_usage_permission_alert.message" = "Concordo que o Wire pode criar e usar relatórios anônimos de uso e erro para aprimorar o aplicativo Wire. Eu posso revogar esse consentimento a qualquer momento.";
-"conversation_list.data_usage_permission_alert.disagree" = "Não";
-"conversation_list.data_usage_permission_alert.agree" = "Eu Concordo";
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "nos Contatos";
@@ -312,11 +330,10 @@
 "conversation.input_bar.message_too_long.message" = "Você pode enviar mensagens até %d caracteres.";
 
 "conversation.create.group_name.title" = "Criar grupo";
-"conversation.create.group_name.placeholder" = "Nome do grupo";
+"conversation.create.group_name.label" = "Group name";
 "conversation.create.guidance.empty" = "Pelo menos 1 caractere";
 "conversation.create.guidance.toolong" = "Muitos caracteres";
-"conversation.create.options.title" = "Opções de conversa";
-"conversation.create.options.subtitle" = "Convidados: %@, Serviços: %@, Confirmação de leitura: %@";
+"conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "Permitir convidados";
 "conversation.create.guests.subtitle" = "Abra esta conversa para pessoas de fora da sua equipe.";
 "conversation.create.services.title" = "Permitir serviços";
@@ -400,6 +417,9 @@
 "location.unauthorized_alert.message" = "Para enviar a sua localização, habilite os Serviços de Localização e permita que o Wire acesse sua localização.";
 "location.unauthorized_alert.cancel" = "Cancelar";
 "location.unauthorized_alert.settings" = "Configurações";
+
+"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
 
 // Twitter
 "twitter_status.on_twitter" = "%@ no Twitter";
@@ -515,6 +535,7 @@
 "content.system.message_delivered_timestamp" = "Entregue";
 "content.system.message_read_timestamp" = "Visto";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -624,7 +645,6 @@
 
 "content.message.like" = "Curtir";
 "content.message.unlike" = "Descurtir";
-"content.message.forward" = "Compartilhar";
 "content.message.go_to_conversation" = "Exibir";
 "content.message.forward.to" = "Procurar…";
 "content.message.open" = "Abrir";
@@ -1013,6 +1033,20 @@
 "group_details.conversation_admins_header.title" = "Administradores do grupo";
 "group_details.conversation_members_header.title" = "Membros do grupo";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Create password secured link";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**";
+"secured_guest_link_with_password.generate_password_button.title" = "Generate password";
+"secured_guest_link_with_password.textfield.header" = "Definir senha";
+"secured_guest_link_with_password.textfield.footer" = "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"secured_guest_link_with_password.textfield.placeholder" = "Enter password";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Confirm password";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Confirm your password";
+"secured_guest_link_with_password.createLinkButton.title" = "Criar Link";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Password copied";
+"secured_guest_link_with_password.alertController.message" = "The password was copied to your device clipboard.";
 "group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
 "group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
@@ -1027,8 +1061,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Share Profile";
+"qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
+"qrcode.share_profile_link.button.title" = "Share Profile Link";
+"qrcode.share_qrcode.button.title" = "Share QR Code";
+
+// Options menu contents
 "self.settings" = "Ajustes";
 "self.profile" = "Perfil";
 "self.account" = "Conta";
@@ -1046,14 +1086,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Termos de uso";
 "about.privacy.title" = "Política de privacidade";
-"about.license.title" = "Informações de Licença";
 "about.website.title" = "Site do Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Detalhes";
-"about.license.open_project_button" = "Ver Página do Projeto";
-"about.license.license_header" = "Agradecimentos";
 
 // Self new devices
 "self.new_device_alert.title" = "Sua conta foi usada em:";
@@ -1148,18 +1182,19 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Relatórios de Uso e Erro";
 
-// Crash
-"self.settings.privacy_crash.title" = "Enviar dados de falha anônimos";
-"self.settings.privacy_crash_menu.description.title" = "Enviar relatórios de falha anônimos e dados básicos, como número de versão e sistema operacional para ajudar o Wire a identificar e resolver problemas no aplicativo.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Enviar dados de uso anônimos";
 "self.settings.privacy_analytics_menu.description.title" = "Os dados de uso permitem que o Wire entenda como o aplicativo está sendo usado e como ele pode ser melhorado. Os dados são anônimos e não incluem o conteúdo de suas comunicações (como mensagens, arquivos ou chamadas).";
 
-"self.settings.receiveNews_and_offers.title" = "Receba nosso Newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Receba novidades e atualizações de produtos do Wire por e-mail.";
+"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
+"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
 
-
+"self.settings.privacy_analytics.alert.title" = "Consent to share user data";
+"self.settings.privacy_analytics.alert.message" = "Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Wire Group. It includes, for example, when you use a feature, your app version, device type, or your operating system. This data will be deleted at the latest after 365 days. Find further details in our Privacy Policy. You can revoke your consent at any time.";
+"self.settings.privacy_analytics.alert.button.agree" = "Agree";
+"self.settings.privacy_analytics.alert.button.decline" = "Rejeitar";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "Política de privacidade";
 
 // Change Username
 
@@ -1296,16 +1331,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Se você tiver problemas com notificações, o Suporte do Wire pode solicitar que você redefinir esse token.";
 "self.settings.advanced.reset_push_token_alert.title" = "Token de notificações foi redefinido";
 "self.settings.advanced.reset_push_token_alert.message" = "As notificações serão restauradas em poucos segundos.";
-"self.settings.advanced.version_technical_details.title" = "Detalhes técnicos da Versão";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Permissões de Uso de Dados";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "Relatório Técnico";
-"self.settings.technical_report.send_report" = "Enviar relatório para o Wire";
+"self.settings.technical_report_section.title" = "Relatório de depuração";
+"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "Relatório de depuração Wire";
 "self.settings.technical_report.include_log" = "Incluir o log detalhado";
+"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Registros detalhados podem conter dados pessoais";
 "self.settings.technical_report.no_mail_alert" = "Nenhum cliente de e-mail detectado. Toque em \"OK\" e envie os registros manualmente para: ";
 
@@ -1420,6 +1456,12 @@
 
 "guest_room.link.button.title" = "Criar Link";
 
+"guest_room.secure_link.header.title" = "Link is password secured";
+"guest_room.secure_link.header.subtitle" = "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.";
+
+"guest_room.create.link_with_password.action" = "Create password secured link";
+"guest_room.create.link_without_password.action" = "Create link without password";
+
 "guest_room.actions.copy_link" = "Copiar link";
 "guest_room.actions.copied_link" = "Link Copiado!";
 "guest_room.actions.share_link" = "Compartilhar Link";
@@ -1429,6 +1471,13 @@
 
 "guest_room.expiration.hours_left" = "%@h saiu";
 "guest_room.expiration.less_than_minutes_left" = "Menos de %@m restantes";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Enter Password";
+"join.group.conversation.alert.message" = "This conversation is password protected";
+"join.group.conversation.alert.textfield.placeholder" = "Enter conversation password";
+"join.group.conversation.alert.joinAction.title" = "Join conversation";
+"join.group.conversation.alert.learnMoreAction.title" = "Saiba mais sobre links de convidados";
 
 // Services Options
 
@@ -1788,7 +1837,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "não há mais gifs";
-"giphy.error.no_result" = "nenhum gif encontrado";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "enviar";
 "giphy.cancel" = "cancelar";
@@ -1893,6 +1942,8 @@
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "O link da conversa é inválido.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Saiba mais sobre links de convidados";
 
+"url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
+
 // Deep Link
 "url_action.invalid_user.title" = "O Wire não pode encontrar esta pessoa.";
 "url_action.invalid_user.message" = "Talvez você não tenha permissão com essa conta, ou ela não existe mais.";
@@ -1905,13 +1956,6 @@
 
 "url_action.invalid_link.title" = "Link inválido.";
 "url_action.invalid_link.message" = "O link que você abriu não é válido.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Deseja receber notícias e atualizações de produtos do Wire por email?";
-"news_offers.consent.message" = "Você pode cancelar a qualquer momento.";
-"news_offers.consent.button.privacy_policy.title" = "Política de privacidade";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

@@ -29,13 +29,13 @@ enum CallGridHintKind {
     var message: String {
         switch self {
         case .fullscreen:
-            return HintString.fullscreen
+            HintString.fullscreen
         case .zoom:
-            return HintString.zoom
+            HintString.zoom
         case .goBackOrZoom:
-            return HintString.goBackOrZoom
+            HintString.goBackOrZoom
         case .goBack:
-            return HintString.goBack
+            HintString.goBack
         }
     }
 }

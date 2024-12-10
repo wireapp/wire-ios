@@ -23,11 +23,11 @@ final class RegistrationStrategy: NSObject {
     weak var userInfoParser: UserInfoParser?
     var registrationSync: ZMSingleRequestSync!
 
-    init(groupQueue: ZMSGroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
-        registrationStatus = status
+    init(groupQueue: GroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
+        self.registrationStatus = status
         self.userInfoParser = userInfoParser
         super.init()
-        registrationSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
+        self.registrationSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
     }
 }
 
@@ -35,11 +35,22 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
     func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch registrationStatus.phase {
         case let .createUser(user):
-            return ZMTransportRequest(path: "/register", method: .post, payload: user.payload, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/register",
+                method: .post,
+                payload: user.payload,
+                apiVersion: apiVersion.rawValue
+            )
         case let .createTeam(team):
-            return ZMTransportRequest(path: "/register", method: .post, payload: team.payload, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/register",
+                method: .post,
+                payload: team.payload,
+                apiVersion: apiVersion.rawValue
+            )
         default:
-            fatal("Generating request for invalid phase: \(registrationStatus.phase)")
+            let phaseString = registrationStatus.phase.map { "\($0)" } ?? "<nil>"
+            fatal("Generating request for invalid phase: \(phaseString)")
         }
     }
 
@@ -53,11 +64,9 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
             let error = NSError.blacklistedEmail(with: response) ??
                 NSError.invalidActivationCode(with: response) ??
                 NSError.emailAddressInUse(with: response) ??
-                NSError.phoneNumberIsAlreadyRegisteredError(with: response) ??
                 NSError.invalidEmail(with: response) ??
-                NSError.invalidPhoneNumber(withReponse: response) ??
                 NSError.unauthorizedEmailError(with: response) ??
-                NSError(code: .unknownError, userInfo: [:])
+                NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             registrationStatus.handleError(error)
         }
     }

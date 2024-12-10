@@ -16,27 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class ActiveCallRouterTests: ZMSnapshotTestCase {
 
-    var sut: ActiveCallRouter!
+    var mockTopOverlayPresenter: MockTopOverlayPresenting!
+    var sut: ActiveCallRouter<MockTopOverlayPresenting>!
     var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+
+        mockTopOverlayPresenter = .init()
         userSession = UserSessionMock()
         sut = ActiveCallRouter(
-            rootviewController: RootViewController(),
-            userSession: userSession
+            mainWindow: .init(),
+            userSession: userSession,
+            topOverlayPresenter: mockTopOverlayPresenter
         )
     }
 
     override func tearDown() {
         userSession = nil
         sut = nil
+        mockTopOverlayPresenter = nil
+
         super.tearDown()
     }
 
@@ -68,7 +74,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         // then
         XCTAssertNotNil(sut.scheduledPostCallAction)
         XCTAssertFalse(executed)
-        sut.scheduledPostCallAction?({ })
+        sut.scheduledPostCallAction?({})
         XCTAssertTrue(executed)
     }
 
@@ -109,5 +115,4 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
 
         return mockConversation
     }
-
 }

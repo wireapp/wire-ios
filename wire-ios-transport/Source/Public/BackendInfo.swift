@@ -26,22 +26,28 @@ public enum BackendInfo {
         case preferredAPIVersion = "PreferredAPIVersion"
         case domain = "Domain"
         case isFederationEnabled = "IsFederationEnabled"
+        case isMLSEnabled
 
     }
+
+    /// The `UserDefaults` used to store backend configuration info.
+    ///
+    /// - Note: By default this is `UserDefaults.standard`. However, this property is currently overwritten by the main
+    /// app on startup.
 
     public static var storage = UserDefaults.standard
 
     /// The currently selected API Version.
 
     public static var apiVersion: APIVersion? {
-        get { return apiVersion(for: Key.selectedAPIVersion) }
+        get { apiVersion(for: Key.selectedAPIVersion) }
         set { storage.set(newValue?.rawValue, forKey: Key.selectedAPIVersion.rawValue) }
     }
 
     /// The preferred API Version.
 
     public static var preferredAPIVersion: APIVersion? {
-        get { return apiVersion(for: Key.preferredAPIVersion) }
+        get { apiVersion(for: Key.preferredAPIVersion) }
         set { storage.set(newValue?.rawValue, forKey: Key.preferredAPIVersion.rawValue) }
     }
 
@@ -61,6 +67,11 @@ public enum BackendInfo {
         set { storage.set(newValue, forKey: Key.isFederationEnabled.rawValue) }
     }
 
+    public static var isMLSEnabled: Bool {
+        get { storage.bool(forKey: Key.isMLSEnabled.rawValue) }
+        set { storage.set(newValue, forKey: Key.isMLSEnabled.rawValue) }
+    }
+
     private static func apiVersion(for key: Key) -> APIVersion? {
         // Fetching an integer will default to 0 if no value exists for the key,
         // so explicitly check there is a value.
@@ -68,5 +79,4 @@ public enum BackendInfo {
         let storedValue = storage.integer(forKey: key.rawValue)
         return APIVersion(rawValue: Int32(storedValue))
     }
-
 }

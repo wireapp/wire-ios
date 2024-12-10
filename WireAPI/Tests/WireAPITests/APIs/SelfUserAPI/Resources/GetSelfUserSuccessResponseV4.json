@@ -1,0 +1,39 @@
+{
+  "accent_id": 2147483647,
+  "assets": [
+    {
+      "key": "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
+      "size": "preview",
+      "type": "image"
+    }
+  ],
+  "deleted": true,
+  "email": "string",
+  "expires_at": "2021-05-12T10:52:02.671Z",
+  "handle": "string",
+  "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+  "locale": "string",
+  "managed_by": "wire",
+  "name": "string",
+  "phone": "string",
+  "picture": [
+    "string"
+  ],
+  "qualified_id": {
+    "domain": "example.com",
+    "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+  },
+  "service": {
+    "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+    "provider": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+  },
+  "sso_id": {
+    "scim_external_id": "string",
+    "subject": "string",
+    "tenant": "string"
+  },
+  "supported_protocols": [
+    "mls"
+  ],
+  "team": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+}

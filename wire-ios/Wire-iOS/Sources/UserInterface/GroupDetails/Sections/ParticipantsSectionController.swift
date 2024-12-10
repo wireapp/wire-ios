@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 enum ParticipantsRowType {
@@ -27,22 +28,23 @@ enum ParticipantsRowType {
     var cellType: UICollectionViewCell.Type {
         switch self {
         case .user:
-            return UserCell.self
+            UserCell.self
         case .showAll:
-            return ShowAllParticipantsCell.self
+            ShowAllParticipantsCell.self
         }
     }
 }
 
 enum ConversationRole {
-    case admin, member
+    case admin
+    case member
 
     var name: String {
         switch self {
         case .admin:
-            return "Admins"
+            "Admins"
         case .member:
-            return "Members"
+            "Members"
         }
     }
 }
@@ -61,13 +63,15 @@ private struct ParticipantsSectionViewModel {
 
         switch (conversationRole, showSectionCount) {
         case (.member, true):
-            return GroupDetails.ConversationMembersHeader.title.localizedUppercase + " (%d)".localized(args: participants.count)
+            return GroupDetails.ConversationMembersHeader.title.localizedUppercase + " (%d)"
+                .localized(args: participants.count)
 
         case (.member, false):
             return GroupDetails.ConversationMembersHeader.title.localizedUppercase
 
         case (.admin, true):
-            return GroupDetails.ConversationAdminsHeader.title.localizedUppercase + " (%d)".localized(args: participants.count)
+            return GroupDetails.ConversationAdminsHeader.title.localizedUppercase + " (%d)"
+                .localized(args: participants.count)
 
         case (.admin, false):
             return GroupDetails.ConversationAdminsHeader.title.localizedUppercase
@@ -77,18 +81,18 @@ private struct ParticipantsSectionViewModel {
     var footerTitle: String {
         switch conversationRole {
         case .admin:
-            return L10n.Localizable.Participants.Section.Admins.footer
+            L10n.Localizable.Participants.Section.Admins.footer
         case .member:
-            return L10n.Localizable.Participants.Section.Members.footer
+            L10n.Localizable.Participants.Section.Members.footer
         }
     }
 
     var footerVisible: Bool {
-        return participants.isEmpty
+        participants.isEmpty
     }
 
     var accessibilityTitle: String {
-        return conversationRole.name
+        conversationRole.name
     }
 
     /// init method
@@ -100,7 +104,8 @@ private struct ParticipantsSectionViewModel {
     ///   - totalParticipantsCount: the number of all participants in the conversation
     ///   - clipSection: enable/disable the display of the “ShowAll” button
     ///   - maxParticipants: max number of participants we can display
-    ///   - maxDisplayedParticipants: max number of participants we can display, if there are more than maxParticipants participants
+    ///   - maxDisplayedParticipants: max number of participants we can display, if there are more than maxParticipants
+    /// participants
     ///   - showSectionCount: current view model - a search result or not
     init(
         users: [UserType],
@@ -113,26 +118,32 @@ private struct ParticipantsSectionViewModel {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        participants = users.sortedAscendingPrependingNil(by: \.name)
+        self.participants = users.sortedAscendingPrependingNil(by: \.name)
         self.userStatuses = userStatuses
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
         self.userSession = userSession
-        rows = clipSection
-        ? ParticipantsSectionViewModel.computeRows(
-            participants,
-            totalParticipantsCount: totalParticipantsCount,
-            maxParticipants: maxParticipants,
-            maxDisplayedParticipants: maxDisplayedParticipants
-        )
-        : participants.map { participant in
-            .user(participant)
-        }
+        self.rows = clipSection
+            ? ParticipantsSectionViewModel.computeRows(
+                participants,
+                totalParticipantsCount: totalParticipantsCount,
+                maxParticipants: maxParticipants,
+                maxDisplayedParticipants: maxDisplayedParticipants
+            )
+            : participants.map { participant in
+                .user(participant)
+            }
     }
 
-    static func computeRows(_ participants: [UserType], totalParticipantsCount: Int, maxParticipants: Int, maxDisplayedParticipants: Int) -> [ParticipantsRowType] {
+    static func computeRows(
+        _ participants: [UserType],
+        totalParticipantsCount: Int,
+        maxParticipants: Int,
+        maxDisplayedParticipants: Int
+    ) -> [ParticipantsRowType] {
         guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.user) }
-        return participants[0..<maxDisplayedParticipants].map(ParticipantsRowType.user) + [.showAll(totalParticipantsCount)]
+        return participants[0 ..< maxDisplayedParticipants]
+            .map(ParticipantsRowType.user) + [.showAll(totalParticipantsCount)]
     }
 }
 
@@ -171,10 +182,12 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             SectionFooter.register(collectionView: collectionView)
         }
     }
+
     private weak var delegate: GroupDetailsSectionControllerDelegate?
     private var viewModel: ParticipantsSectionViewModel
     private let conversation: GroupDetailsConversationType
     private var token: NSObjectProtocol?
+    private lazy var sizingFooter = SectionFooter()
 
     init(
         participants: [UserType],
@@ -189,7 +202,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        viewModel = .init(
+        self.viewModel = .init(
             users: participants,
             userStatuses: userStatuses,
             conversationRole: conversationRole,
@@ -204,29 +217,35 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         self.delegate = delegate
         super.init()
 
-        token = userSession.addUserObserver(self)
+        self.token = userSession.addUserObserver(self)
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
-        collectionView?.register(ShowAllParticipantsCell.self, forCellWithReuseIdentifier: ShowAllParticipantsCell.reuseIdentifier)
+        collectionView?.register(
+            ShowAllParticipantsCell.self,
+            forCellWithReuseIdentifier: ShowAllParticipantsCell.reuseIdentifier
+        )
         self.collectionView = collectionView
     }
 
     override var sectionTitle: String? {
-        return viewModel.sectionTitle
+        viewModel.sectionTitle
     }
 
     override var sectionAccessibilityIdentifier: String {
-        return viewModel.sectionAccesibilityIdentifier
+        viewModel.sectionAccesibilityIdentifier
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.rows.count
+        viewModel.rows.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let configuration = viewModel.rows[indexPath.row]
         let showSeparator = (viewModel.rows.count - 1) != indexPath.row
 
@@ -247,9 +266,16 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         }
 
         switch configuration {
-        case .user(let user):
+        case let .user(user):
             guard let cell = cell as? UserCell else { return unexpectedCellHandler() }
-            let isE2EICertified = if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] { userStatus.isE2EICertified } else { false }
+
+            let isE2EICertified =
+                if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] {
+                    userStatus.isE2EICertified
+                } else {
+                    false
+                }
+
             cell.configure(
                 user: user,
                 isE2EICertified: isE2EICertified,
@@ -257,7 +283,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
                 showSeparator: showSeparator
             )
 
-        case .showAll(let totalParticipantsCount):
+        case let .showAll(totalParticipantsCount):
             guard let cell = cell as? ShowAllParticipantsCell else { return unexpectedCellHandler() }
             cell.configure(
                 totalParticipantsCount: totalParticipantsCount,
@@ -277,17 +303,12 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
 
-        guard
-            viewModel.footerVisible,
-            let footer = collectionView.dequeueFooter(for: IndexPath(item: 0, section: section)) as? SectionFooter
-        else {
-            return .zero
-        }
+        guard viewModel.footerVisible else { return .zero }
 
-        footer.titleLabel.text = viewModel.footerTitle
-        footer.size(fittingWidth: collectionView.bounds.width)
+        sizingFooter.titleLabel.text = viewModel.footerTitle
+        sizingFooter.size(fittingWidth: collectionView.bounds.width)
 
-        return footer.bounds.size
+        return sizingFooter.bounds.size
     }
 
     override func collectionView(
@@ -308,7 +329,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch viewModel.rows[indexPath.row] {
-        case .user(let user):
+        case let .user(user):
             delegate?.presentDetails(for: user)
         case .showAll:
             delegate?.presentFullParticipantsList(for: viewModel.participants, in: conversation)
@@ -317,10 +338,10 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         switch viewModel.rows[indexPath.row] {
-        case .user(let bareUser):
-            return !bareUser.isSelfUser
+        case let .user(bareUser):
+            !bareUser.isSelfUser
         default:
-            return true
+            true
         }
     }
 
@@ -338,9 +359,11 @@ extension ParticipantsSectionController: UserObserving {
 private extension UICollectionView {
 
     func dequeueFooter(for indexPath: IndexPath) -> UICollectionReusableView {
-        dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
-                                         withReuseIdentifier: "SectionFooter",
-                                         for: indexPath)
+        dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "SectionFooter",
+            for: indexPath
+        )
     }
 
 }

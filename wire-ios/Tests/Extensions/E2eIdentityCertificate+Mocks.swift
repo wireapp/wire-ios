@@ -24,7 +24,8 @@ extension E2eIdentityCertificate {
 
     // MARK: Constants
 
-    private static let mockMLSFingerPrint: String = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl".uppercased()
+    private static let mockMLSFingerPrint: String = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
+        .uppercased()
 
     private static let mockClientId = "sdfsdfsdfs"
 

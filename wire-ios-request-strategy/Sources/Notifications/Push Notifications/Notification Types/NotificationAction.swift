@@ -30,9 +30,7 @@ struct NotificationActionTextInputMode {
 
 }
 
-/**
- * An object that describes a notification that can be performed by the user for a notification.
- */
+/// An object that describes a notification that can be performed by the user for a notification.
 
 protocol NotificationAction {
 
@@ -58,7 +56,7 @@ protocol NotificationAction {
 
 extension NotificationAction where Self: RawRepresentable, Self.RawValue == String {
     var identifier: String {
-        return rawValue
+        rawValue
     }
 }
 
@@ -66,8 +64,8 @@ extension NotificationAction {
 
     /// The representation of the action that can be used with `UserNotifications` API.
     var userAction: UNNotificationAction {
-        if let textInputMode = self.textInputMode {
-            return UNTextInputNotificationAction(
+        if let textInputMode {
+            UNTextInputNotificationAction(
                 identifier: identifier,
                 title: titleFormat.pushActionString,
                 options: options,
@@ -75,10 +73,11 @@ extension NotificationAction {
                 textInputPlaceholder: textInputMode.placeholderFormat.pushActionString
             )
         } else {
-            return UNNotificationAction(
+            UNNotificationAction(
                 identifier: identifier,
                 title: titleFormat.pushActionString,
-                options: options)
+                options: options
+            )
         }
     }
 
@@ -113,41 +112,41 @@ public enum ConversationNotificationAction: String, NotificationAction {
 
     var titleFormat: String {
         switch self {
-        case .open: return "message.open"
-        case .reply: return "message.reply"
-        case .mute: return "conversation.mute"
-        case .like: return "message.like"
-        case .connect: return "connection.accept"
+        case .open: "message.open"
+        case .reply: "message.reply"
+        case .mute: "conversation.mute"
+        case .like: "message.like"
+        case .connect: "connection.accept"
         }
     }
 
     var isDestructive: Bool {
-        return false
+        false
     }
 
     var opensApplication: Bool {
         switch self {
         case .open:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     var requiresAuthentication: Bool {
-        return false
+        false
     }
 
     var textInputMode: NotificationActionTextInputMode? {
         switch self {
         case .reply:
-            return NotificationActionTextInputMode(
+            NotificationActionTextInputMode(
                 buttonTitleFormat: "message.reply.button.title",
                 placeholderFormat: "message.reply.placeholder"
             )
 
         default:
-            return nil
+            nil
         }
     }
 }
@@ -160,45 +159,45 @@ public enum CallNotificationAction: String, NotificationAction {
 
     var titleFormat: String {
         switch self {
-        case .ignore: return "call.ignore"
-        case .accept: return "call.accept"
-        case .callBack: return "call.callback"
-        case .message: return "call.message"
+        case .ignore: "call.ignore"
+        case .accept: "call.accept"
+        case .callBack: "call.callback"
+        case .message: "call.message"
         }
     }
 
     var isDestructive: Bool {
         switch self {
         case .ignore:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     var opensApplication: Bool {
         switch self {
         case .accept, .callBack:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     var requiresAuthentication: Bool {
-        return false
+        false
     }
 
     var textInputMode: NotificationActionTextInputMode? {
         switch self {
         case .message:
-            return NotificationActionTextInputMode(
+            NotificationActionTextInputMode(
                 buttonTitleFormat: "message.reply.button.title",
                 placeholderFormat: "message.reply.placeholder"
             )
 
         default:
-            return nil
+            nil
         }
     }
 }

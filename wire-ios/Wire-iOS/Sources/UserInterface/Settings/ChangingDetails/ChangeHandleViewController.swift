@@ -18,9 +18,11 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
+import WireSettingsUI
 import WireSyncEngine
 
-fileprivate extension UIView {
+private extension UIView {
 
     func wiggle() {
         let animation = CAKeyframeAnimation()
@@ -122,13 +124,18 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
 
     // MARK: - UITextField
 
-    @objc func editingChanged(textField: UITextField) {
+    @objc
+    func editingChanged(textField: UITextField) {
         let lowercase = textField.text?.lowercased() ?? ""
         textField.text = lowercase
         delegate?.tableViewCellDidChangeText(cell: self, text: lowercase)
     }
 
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         guard let delegate else { return false }
         let current = (textField.text ?? "") as NSString
         let replacement = current.replacingCharacters(in: range, with: string)
@@ -141,13 +148,12 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
 }
 
-struct HandleValidation {
-    static var allowedCharacters: CharacterSet = {
-        return CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.").union(.decimalDigits)
-    }()
+enum HandleValidation {
+    static var allowedCharacters: CharacterSet = .init(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.")
+        .union(.decimalDigits)
 
     static var allowedLength: CountableClosedRange<Int> {
-        return 2...256
+        2 ... 256
     }
 }
 
@@ -158,11 +164,16 @@ struct HandleValidation {
 struct HandleChangeState {
 
     enum ValidationError: Error {
-        case tooShort, tooLong, invalidCharacter, sameAsPrevious
+        case tooShort
+        case tooLong
+        case invalidCharacter
+        case sameAsPrevious
     }
 
     enum HandleAvailability {
-        case unknown, available, taken
+        case unknown
+        case available
+        case taken
     }
 
     let currentHandle: String?
@@ -170,7 +181,7 @@ struct HandleChangeState {
     var availability: HandleAvailability
 
     var displayHandle: String? {
-        return newHandle ?? currentHandle
+        newHandle ?? currentHandle
     }
 
     init(currentHandle: String?, newHandle: String?, availability: HandleAvailability) {
@@ -192,7 +203,7 @@ struct HandleChangeState {
     /// This function does not update the `HandleChangeState` itself.
     func validate(_ handle: String) throws {
         let subset = CharacterSet(charactersIn: handle).isSubset(of: HandleValidation.allowedCharacters)
-        guard subset && handle.isEqualToUnicodeName else { throw ValidationError.invalidCharacter }
+        guard subset, handle.isEqualToUnicodeName else { throw ValidationError.invalidCharacter }
         guard handle.count >= HandleValidation.allowedLength.lowerBound else { throw ValidationError.tooShort }
         guard handle.count <= HandleValidation.allowedLength.upperBound else { throw ValidationError.tooLong }
         guard handle != currentHandle else { throw ValidationError.sameAsPrevious }
@@ -211,22 +222,48 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     var popOnSuccess = true
     private var federationEnabled: Bool
 
-    convenience init() {
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
+    convenience init(
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         let user = SelfUser.provider?.providedSelfUser
-        self.init(state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown))
+        self.init(
+            state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown),
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
-    convenience init(suggestedHandle handle: String) {
-        self.init(state: .init(currentHandle: nil, newHandle: handle, availability: .unknown))
+    convenience init(
+        suggestedHandle handle: String,
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
+        self.init(
+            state: .init(currentHandle: nil, newHandle: handle, availability: .unknown),
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
+        )
         setupViews()
         checkAvailability(of: handle)
     }
 
     /// Used to inject a specific `HandleChangeState` in tests. See `ChangeHandleViewControllerTests`.
-    init(state: HandleChangeState, federationEnabled: Bool = BackendInfo.isFederationEnabled) {
+    init(
+        state: HandleChangeState,
+        useTypeIntrinsicSizeTableView: Bool,
+        federationEnabled: Bool = BackendInfo.isFederationEnabled,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.state = state
         self.federationEnabled = federationEnabled
-        super.init(style: .grouped)
+        super.init(
+            style: .grouped,
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
+        )
 
         setupViews()
     }
@@ -238,6 +275,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        setupNavigationBar()
         updateUI()
         observerToken = userProfile?.add(observer: self)
     }
@@ -248,7 +286,6 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     private func setupViews() {
-        navigationItem.setupNavigationBarTitle(title: HandleChange.title.capitalized)
         view.backgroundColor = .clear
         ChangeHandleTableViewCell.register(in: tableView)
         tableView.allowsSelection = false
@@ -257,19 +294,26 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         tableView.separatorColor = SemanticColors.View.backgroundSeparatorCell
         footerLabel.numberOfLines = 0
         updateUI()
-
-        let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: HandleChange.save.capitalized,
-                                                                                  systemImage: false,
-                                                                                  target: self,
-                                                                                  action: #selector(saveButtonTapped))
-        saveButtonItem.tintColor = .accent()
-        navigationItem.rightBarButtonItem = saveButtonItem
     }
 
-    @objc func saveButtonTapped(sender: UIBarButtonItem) {
+    func setupNavigationBar() {
+        setupNavigationBarTitle(HandleChange.title)
+        let saveButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+            title: HandleChange.save,
+            action: UIAction { [weak self] _ in
+                self?.saveButtonTapped()
+            }
+        )
+
+        saveButtonItem.tintColor = .accent()
+        navigationItem.rightBarButtonItem = saveButtonItem
+
+    }
+
+    func saveButtonTapped() {
         guard let handleToSet = state.newHandle else { return }
         userProfile?.requestSettingHandle(handle: handleToSet)
-        isLoadingViewVisible = true
+        activityIndicator.start()
     }
 
     fileprivate var attributedFooterTitle: NSAttributedString? {
@@ -298,15 +342,18 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     // MARK: - UITableView
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 1 : 0
+        section == 0 ? 1 : 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ChangeHandleTableViewCell.zm_reuseIdentifier, for: indexPath) as! ChangeHandleTableViewCell
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: ChangeHandleTableViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! ChangeHandleTableViewCell
         cell.delegate = self
         cell.handleTextField.text = state.displayHandle
         cell.handleTextField.becomeFirstResponder()
@@ -322,7 +369,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 56
+        56
     }
 }
 
@@ -355,7 +402,8 @@ extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
         updateUI()
     }
 
-    @objc fileprivate func checkAvailability(of handle: String) {
+    @objc
+    fileprivate func checkAvailability(of handle: String) {
         userProfile?.requestCheckHandleAvailability(handle: handle)
     }
 
@@ -377,7 +425,7 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
     }
 
     func didSetHandle() {
-        isLoadingViewVisible = false
+        activityIndicator.stop()
         state.availability = .taken
         guard popOnSuccess else { return }
         _ = navigationController?.popViewController(animated: true)
@@ -385,13 +433,13 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
 
     func didFailToSetHandle() {
         presentFailureAlert()
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     func didFailToSetHandleBecauseExisting() {
         state.availability = .taken
         updateUI()
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     private func presentFailureAlert() {
@@ -409,7 +457,7 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
 extension String {
 
     var isEqualToUnicodeName: Bool {
-        return applyingTransform(.toUnicodeName, reverse: false) == self
+        applyingTransform(.toUnicodeName, reverse: false) == self
     }
 
 }

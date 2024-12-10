@@ -19,18 +19,8 @@
 import Foundation
 
 // sourcery: AutoMockable
-@objc public protocol UserProfile {
-
-    /// Requests phone number verification. Once this is called,
-    /// the user is expected to receive a PIN code on her phone
-    /// and call `requestPhoneNumberChange` with that PIN
-    func requestPhoneVerificationCode(phoneNumber: String)
-
-    /// Requests phone number change, with a PIN received earlier
-    func requestPhoneNumberChange(credentials: UserPhoneCredentials)
-
-    /// Requests phone number removal. Must still have an email set.
-    func requestPhoneNumberRemoval()
+@objc
+public protocol UserProfile {
 
     /// Requests email change
     /// The email will need to be verified externally
@@ -60,7 +50,8 @@ import Foundation
 
     /// Add an observer for callbacks about the user profile.
     /// Returns a token which should retained as long as the observer should be active.
-    @objc(addObserver:) func add(observer: UserProfileUpdateObserver) -> Any
+    @objc(addObserver:)
+    func add(observer: UserProfileUpdateObserver) -> Any
 
     /// Last handle to have been suggested
     @objc var lastSuggestedHandle: String? { get }

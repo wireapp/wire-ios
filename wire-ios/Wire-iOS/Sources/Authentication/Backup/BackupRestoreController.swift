@@ -19,17 +19,20 @@
 import Foundation
 import UniformTypeIdentifiers
 import WireDataModel
+import WireLogging
+import WireReusableUIComponents
 import WireSyncEngine
 
 protocol BackupRestoreControllerDelegate: AnyObject {
-    func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
+
+    func backupResoreControllerDidFinishRestoring(
+        _ controller: BackupRestoreController,
+        didSucceed: Bool
+    )
+
 }
 
-/**
- * An object that coordinates restoring a backup.
- */
-
-private let zmLog = ZMSLog(tag: "Backup")
+/// An object that coordinates restoring a backup.
 
 final class BackupRestoreController: NSObject {
 
@@ -39,15 +42,21 @@ final class BackupRestoreController: NSObject {
 
     static let WireBackupUTIs = ["com.wire.backup-ios-underscore", "com.wire.backup-ios-hyphen"]
 
-    let target: SpinnerCapableViewController
     weak var delegate: BackupRestoreControllerDelegate?
-    var temporaryFilesService: TemporaryFileServiceInterface
+
+    private let target: UIViewController
+    private let activityIndicator: BlockingActivityIndicator
+    private var temporaryFilesService: TemporaryFileServiceInterface
 
     // MARK: - Initialization
 
-    init(target: SpinnerCapableViewController, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
+    init(
+        target: UIViewController,
+        temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
+    ) {
         self.target = target
         self.temporaryFilesService = temporaryFilesService
+        self.activityIndicator = .init(view: target.view)
         super.init()
     }
 
@@ -72,14 +81,10 @@ final class BackupRestoreController: NSObject {
     }
 
     private func showFilePicker() {
-        let picker: UIDocumentPickerViewController
-        if #available(iOS 14.0, *) {
-            picker = UIDocumentPickerViewController(
-                forOpeningContentTypes: BackupRestoreController.WireBackupUTIs.compactMap { UTType($0) },
-                asCopy: true)
-        } else {
-            picker = UIDocumentPickerViewController(documentTypes: BackupRestoreController.WireBackupUTIs, in: .import)
-        }
+        let picker = UIDocumentPickerViewController(
+            forOpeningContentTypes: BackupRestoreController.WireBackupUTIs.compactMap { UTType($0) },
+            asCopy: true
+        )
 
         picker.delegate = self
         target.present(picker, animated: true)
@@ -98,41 +103,40 @@ final class BackupRestoreController: NSObject {
         using password: String,
         from url: URL
     ) {
-        guard let sessionManager = SessionManager.shared,
-              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup") else {
+        guard
+            let sessionManager = SessionManager.shared,
+            let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup")
+        else {
             return
         }
-        target.isLoadingViewVisible = true
+
+        Task { @MainActor in activityIndicator.start() }
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                zmLog.safePublic("SessionManager.self is `nil` in performRestore", level: .error)
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
                 return
             }
+
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
-                self.target.isLoadingViewVisible = false
+                Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                self.showWrongPasswordAlert { _ in
+                showWrongPasswordAlert { _ in
                     self.restore(with: url)
                 }
 
-            case .failure(let error):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
+            case let .failure(error):
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
-                BackupEvent.importFailed.track()
-                self.showRestoreError(error)
-                self.target.isLoadingViewVisible = false
+                showRestoreError(error)
+                Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
 
             case .success:
-                BackupEvent.importSucceeded.track()
-                self.temporaryFilesService.removeTemporaryData()
-                self.delegate?.backupResoreControllerDidFinishRestoring(self)
+                temporaryFilesService.removeTemporaryData()
+                delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: true)
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             }
         }
@@ -156,8 +160,8 @@ final class BackupRestoreController: NSObject {
     private func showRestoreError(_ error: Error) {
         let controller = restoreBackupFailed(
             error: error,
-            onTryAgain: { [unowned self] in self.showFilePicker() },
-            onCancel: { [unowned self] in self.delegate?.backupResoreControllerDidFinishRestoring(self) }
+            onTryAgain: { [unowned self] in showFilePicker() },
+            onCancel: { [unowned self] in delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: false) }
         )
 
         target.present(controller, animated: true)
@@ -170,8 +174,7 @@ extension BackupRestoreController: UIDocumentPickerDelegate {
         didPickDocumentAt url: URL
     ) {
         WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
-        zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
 
-        self.restore(with: url)
+        restore(with: url)
     }
 }

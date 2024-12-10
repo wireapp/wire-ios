@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 #
 # Wire
-# Copyright (C) 2023 Wire Swiss GmbH
+# Copyright (C) 2024 Wire Swiss GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@ set -Eeuo pipefail
 #
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-DIRECTORY="$REPO_ROOT/SourceryPlugin"
-SOURCERY="$DIRECTORY/.build/artifacts/sourceryplugin/sourcery/sourcery/bin/sourcery"
+SOURCERY="$REPO_ROOT/WirePlugins/.build/artifacts/wireplugins/sourcery/sourcery/bin/sourcery"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping Sourcery in CI environment"
@@ -29,7 +28,7 @@ if [ ! -z "${CI-}" ]; then
 fi
 
 if [[ ! -f "$SOURCERY" ]]; then
-    xcrun --sdk macosx swift package --package-path "$DIRECTORY" resolve
+    echo "❌ Executable is missing, please run the setup script!"
 fi
 
 "$SOURCERY" "$@"

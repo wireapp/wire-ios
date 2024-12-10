@@ -55,12 +55,14 @@ enum SettingKey: String, CaseIterable {
     case sendButtonDisabled = "SendButtonDisabled"
 
     // MARK: Features disable keys
+
     case disableCallKit = "UserDefaultDisableCallKit"
     case muteIncomingCallsWhileInACall = "MuteIncomingCallsWhileInACall"
     case enableBatchCollections = "UserDefaultEnableBatchCollections"
     case callingProtocolStrategy = "CallingProtocolStrategy"
 
     // MARK: Link opening options
+
     case twitterOpeningRawValue = "TwitterOpeningRawValue"
     case mapsOpeningRawValue = "MapsOpeningRawValue"
     case browserOpeningRawValue = "BrowserOpeningRawValue"
@@ -71,9 +73,10 @@ enum SettingKey: String, CaseIterable {
 /// Model object for locally stored (not in SE or AVS) user app settings
 class Settings {
     // MARK: - subscript
+
     subscript<T>(index: SettingKey) -> T? {
         get {
-            return defaults.value(forKey: index.rawValue) as? T
+            defaults.value(forKey: index.rawValue) as? T
         }
         set {
             defaults.set(newValue, forKey: index.rawValue)
@@ -132,14 +135,14 @@ class Settings {
     }
 
     var defaults: UserDefaults {
-        return .standard
+        .standard
     }
 
     // These settings are not actually persisted, just kept in memory
     // Max audio recording duration in seconds
     var maxRecordingDurationDebug: TimeInterval = 0.0
 
-    static var shared: Settings = Settings()
+    static var shared: Settings = .init()
 
     init() {
         ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled
@@ -147,14 +150,17 @@ class Settings {
 
         startLogging()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground(_:)),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
     }
 
     // Persist all the settings
     private func synchronize() {
         storeCurrentIntensityLevelAsLastUsed()
-
-        defaults.synchronize()
     }
 
     @objc
@@ -164,7 +170,7 @@ class Settings {
 
     static var disableLinkPreviews: Bool {
         get {
-            return !SecurityFlags.generateLinkPreviews.isEnabled
+            !SecurityFlags.generateLinkPreviews.isEnabled
                 ? true
                 : ExtensionSettings.shared.disableLinkPreviews
         }
@@ -172,13 +178,16 @@ class Settings {
             ExtensionSettings.shared.disableLinkPreviews = newValue
         }
     }
+
     static var isClipboardEnabled: Bool {
-        return SecurityFlags.clipboard.isEnabled
+        SecurityFlags.clipboard.isEnabled
     }
 
     // MARK: - MediaManager
+
     func restoreLastUsedAVSSettings() {
-        if let savedIntensity = defaults.object(forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue) as? NSNumber,
+        if let savedIntensity = defaults
+            .object(forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue) as? NSNumber,
             let intensityLevel = AVSIntensityLevel(rawValue: UInt(savedIntensity.intValue)) {
             AVSMediaManager.sharedInstance().intensityLevel = intensityLevel
         } else {
@@ -188,7 +197,7 @@ class Settings {
 
     func storeCurrentIntensityLevelAsLastUsed() {
         let level = AVSMediaManager.sharedInstance().intensityLevel.rawValue
-        if level >= AVSIntensityLevel.none.rawValue && level <= AVSIntensityLevel.full.rawValue {
+        if level >= AVSIntensityLevel.none.rawValue, level <= AVSIntensityLevel.full.rawValue {
             defaults.setValue(NSNumber(value: level), forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue)
         }
     }
@@ -197,11 +206,11 @@ class Settings {
 
     private func startLogging() {
         #if !targetEnvironment(simulator)
-        loadEnabledLogs()
+            loadEnabledLogs()
         #endif
 
         #if !DISABLE_LOGGING
-        ZMSLog.startRecording(isInternal: Bundle.developerModeEnabled)
+            ZMSLog.startRecording(isInternal: Bundle.developerModeEnabled)
         #endif
     }
 }

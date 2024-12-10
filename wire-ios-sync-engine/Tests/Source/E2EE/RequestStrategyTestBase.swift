@@ -22,7 +22,8 @@ extension ZMContextChangeTrackerSource {
     func notifyChangeTrackers(_ client: UserClient) {
         let clientSet: Set<NSManagedObject> = [client]
         contextChangeTrackers.forEach {
-            $0.objectsDidChange(clientSet)}
+            $0.objectsDidChange(clientSet)
+        }
     }
 }
 
@@ -33,16 +34,21 @@ class RequestStrategyTestBase: MessagingTest {
         var mockUserIdentifier: String!
         var mockClientIdentifier: String!
 
-        self.mockTransportSession.performRemoteChanges { session in
+        mockTransportSession.performRemoteChanges { session in
             let mockUser = session.insertUser(withName: "foo")
-            let mockClient = session.registerClient(for: mockUser, label: mockUser.name!, type: "permanent", deviceClass: "phone")
+            let mockClient = session.registerClient(
+                for: mockUser,
+                label: mockUser.name!,
+                type: "permanent",
+                deviceClass: "phone"
+            )
             mockClientIdentifier = mockClient.identifier
             mockUserIdentifier = mockUser.identifier
         }
 
-        let client = UserClient.insertNewObject(in: self.syncMOC)
+        let client = UserClient.insertNewObject(in: syncMOC)
         client.remoteIdentifier = mockClientIdentifier
-        let user = ZMUser.insertNewObject(in: self.syncMOC)
+        let user = ZMUser.insertNewObject(in: syncMOC)
         user.remoteIdentifier = UUID(uuidString: mockUserIdentifier)
         client.user = user
 

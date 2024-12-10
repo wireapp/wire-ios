@@ -19,10 +19,9 @@
 import Foundation
 import WireDataModel
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: move to DM
-// swiftlint:enable todo_requires_jira_link
-fileprivate extension ZMConversation {
+private extension ZMConversation {
     var otherNonServiceParticipants: [UserType] {
         let users = Array(localParticipants)
         return users.filter { !$0.isServiceUser }
@@ -30,7 +29,7 @@ fileprivate extension ZMConversation {
 }
 
 struct ServiceAddedEvent: Event {
-    struct Keys {
+    enum Keys {
         static let serviceID = "service_id"
         static let conversationSize = "conversation_size"
         static let servicesSize = "services_size"
@@ -47,18 +46,18 @@ struct ServiceAddedEvent: Event {
     private let context: Context
 
     init(service: ServiceUser, conversation: ZMConversation, context: Context) {
-        serviceIdentifier = service.serviceIdentifier ?? ""
-        conversationSize = conversation.otherNonServiceParticipants.count // Without service users
-        servicesSize = conversation.localParticipants.count - conversationSize
+        self.serviceIdentifier = service.serviceIdentifier ?? ""
+        self.conversationSize = conversation.otherNonServiceParticipants.count // Without service users
+        self.servicesSize = conversation.localParticipants.count - conversationSize
         self.context = context
     }
 
     var name: String {
-        return "integration.added_service"
+        "integration.added_service"
     }
 
     var attributes: [AnyHashable: Any]? {
-        return [
+        [
             Keys.serviceID: serviceIdentifier,
             Keys.conversationSize: conversationSize,
             Keys.servicesSize: servicesSize,
@@ -68,27 +67,28 @@ struct ServiceAddedEvent: Event {
 }
 
 struct ServiceRemovedEvent: Event {
-    struct Keys {
+    enum Keys {
         static let serviceID = "service_id"
     }
 
     private let serviceIdentifier: String
 
     init(service: ServiceUser) {
-        serviceIdentifier = service.serviceIdentifier ?? ""
+        self.serviceIdentifier = service.serviceIdentifier ?? ""
     }
 
     var name: String {
-        return "integration.removed_service"
+        "integration.removed_service"
     }
 
     var attributes: [AnyHashable: Any]? {
-        return [Keys.serviceID: serviceIdentifier]
+        [Keys.serviceID: serviceIdentifier]
     }
 }
 
 extension Analytics {
-    @objc func tagDidRemoveService(_ serviceUser: ServiceUser) {
+    @objc
+    func tagDidRemoveService(_ serviceUser: ServiceUser) {
         tag(ServiceRemovedEvent(service: serviceUser))
     }
 }

@@ -29,9 +29,7 @@ public protocol PrekeyPayloadProcessorInterface {
 
 public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
 
-    public init() {
-
-    }
+    public init() {}
 
     /// Establish new sessions using the prekeys retreived for each client.
     ///
@@ -71,19 +69,17 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
     ) async {
         for (userID, prekeyByClientID) in payload {
             for (clientID, prekey) in prekeyByClientID {
-                // swiftlint:disable todo_requires_jira_link
-                // TODO: [jacob] refactor so that we can fetch all clients inside a single perform block
-                // swiftlint:enable todo_requires_jira_link
+                // TODO: [WPB-9090] refactor so that we can fetch all clients inside a single perform block
                 guard let missingClient = await context.perform({
                     if let userID = UUID(uuidString: userID),
                        let user = ZMUser.fetch(with: userID, domain: domain, in: context) {
-                        return UserClient.fetchUserClient(
+                        UserClient.fetchUserClient(
                             withRemoteId: clientID,
                             forUser: user,
                             createIfNeeded: true
                         )
                     } else {
-                        return nil
+                        nil
                     }
                 }) else {
                     continue
@@ -126,7 +122,7 @@ private extension UserClient {
             clearMessagesMissingRecipient()
             selfClient.removeMissingClient(self)
         }
-   }
+    }
 
     func markClientAsInvalidAfterFailingToRetrievePrekey(selfClient: UserClient) {
         failedToEstablishSession = true
@@ -149,8 +145,8 @@ private extension UserClient {
 extension Payload.ClientListByQualifiedUserID {
 
     func fetchUsers(in context: NSManagedObjectContext) -> [ZMUser] {
-        return flatMap { domain, userClientsByUserID in
-            return userClientsByUserID.compactMap { userID, _ -> ZMUser? in
+        flatMap { domain, userClientsByUserID in
+            userClientsByUserID.compactMap { userID, _ -> ZMUser? in
                 guard
                     let userID = UUID(uuidString: userID),
                     let user = ZMUser.fetch(with: userID, domain: domain, in: context)
@@ -165,7 +161,7 @@ extension Payload.ClientListByQualifiedUserID {
 
     func fetchClients(in context: NSManagedObjectContext) -> [ZMUser: [UserClient]] {
         let userClientsByUserTuples = flatMap { domain, userClientsByUserID in
-            return userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
+            userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
                 guard
                     let userID = UUID(uuidString: userID),
                     let user = ZMUser.fetch(with: userID, domain: domain, in: context)
@@ -173,10 +169,10 @@ extension Payload.ClientListByQualifiedUserID {
                     return nil
                 }
 
-                let userClients = user.clients.filter({
+                let userClients = user.clients.filter {
                     guard let clientID = $0.remoteIdentifier else { return false }
                     return userClientIDs.contains(clientID)
-                })
+                }
 
                 return [user: Array(userClients)]
             }
@@ -187,7 +183,7 @@ extension Payload.ClientListByQualifiedUserID {
 
     func fetchOrCreateClients(in context: NSManagedObjectContext) -> [ZMUser: [UserClient]] {
         let userClientsByUserTuples = flatMap { domain, userClientsByUserID in
-            return userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
+            userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
                 guard
                     let userID = UUID(uuidString: userID)
                 else {
@@ -197,9 +193,11 @@ extension Payload.ClientListByQualifiedUserID {
                 let user = ZMUser.fetchOrCreate(with: userID, domain: domain, in: context)
                 let userClients = userClientIDs.compactMap { clientID -> UserClient? in
                     guard
-                        let userClient = UserClient.fetchUserClient(withRemoteId: clientID,
-                                                                    forUser: user,
-                                                                    createIfNeeded: true)
+                        let userClient = UserClient.fetchUserClient(
+                            withRemoteId: clientID,
+                            forUser: user,
+                            createIfNeeded: true
+                        )
                     else {
                         return nil
                     }

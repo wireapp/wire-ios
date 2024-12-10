@@ -36,17 +36,16 @@ final class TabBar: UIView {
     private let selectionLineView = UIView()
     private let lineView = UIView()
     private(set) var tabs: [Tab] = []
-    private lazy var lineLeadingConstraint: NSLayoutConstraint = selectionLineView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: tabInset)
+    private lazy var lineLeadingConstraint: NSLayoutConstraint = selectionLineView.leadingAnchor.constraint(
+        equalTo: leadingAnchor,
+        constant: tabInset
+    )
     private var didUpdateInitialBarPosition = false
 
     private(set) var selectedIndex: Int {
         didSet {
             updateButtonSelection()
         }
-    }
-
-    private var selectedTab: Tab {
-        return self.tabs[selectedIndex]
     }
 
     private var titleObservers: [NSKeyValueObservation] = []
@@ -141,7 +140,11 @@ final class TabBar: UIView {
             lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
             selectionLineView.heightAnchor.constraint(equalToConstant: 1),
             selectionLineView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
-            selectionLineView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: oneOverItemsCount, constant: -widthInset),
+            selectionLineView.widthAnchor.constraint(
+                equalTo: widthAnchor,
+                multiplier: oneOverItemsCount,
+                constant: -widthInset
+            ),
 
             stackView.leftAnchor.constraint(equalTo: leftAnchor, constant: tabInset),
             stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -tabInset),
@@ -174,19 +177,20 @@ final class TabBar: UIView {
 
     // MARK: - Actions
 
-    @objc func itemSelected(_ sender: AnyObject) {
+    @objc
+    func itemSelected(_ sender: AnyObject) {
         guard
             let tab = sender as? Tab,
-            let selectedIndex = self.tabs.firstIndex(of: tab)
+            let selectedIndex = tabs.firstIndex(of: tab)
         else {
             return
         }
 
-        self.delegate?.tabBar(self, didSelectItemAt: selectedIndex)
+        delegate?.tabBar(self, didSelectItemAt: selectedIndex)
         setSelectedIndex(selectedIndex, animated: animatesTransition)
     }
 
-    func setSelectedIndex( _ index: Int, animated: Bool) {
+    func setSelectedIndex(_ index: Int, animated: Bool) {
         let changes = { [weak self] in
             self?.selectedIndex = index
             self?.layoutIfNeeded()

@@ -16,23 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 extension XCTestCase {
     func doubleTap(fullscreenImageViewController: FullscreenImageViewController) {
-        let mockTapGestureRecognizer = MockTapGestureRecognizer(location: CGPoint(x: fullscreenImageViewController.view.bounds.size.width / 2, y: fullscreenImageViewController.view.bounds.size.height / 2), state: .ended)
+        let mockTapGestureRecognizer = MockTapGestureRecognizer(
+            location: CGPoint(
+                x: fullscreenImageViewController.view.bounds.size.width / 2,
+                y: fullscreenImageViewController.view.bounds.size.height / 2
+            ),
+            state: .ended
+        )
 
         fullscreenImageViewController.handleDoubleTap(mockTapGestureRecognizer)
         fullscreenImageViewController.view.layoutIfNeeded()
     }
 
-    func createFullscreenImageViewControllerForTest(imageFileName: String, userSession: UserSessionMock) -> FullscreenImageViewController {
-        let image = self.image(inTestBundleNamed: imageFileName)
+    @MainActor
+    func createFullscreenImageViewControllerForTest(
+        imageFileName: String,
+        userSession: UserSessionMock
+    ) -> FullscreenImageViewController {
+        let image = image(inTestBundleNamed: imageFileName)
 
         let message = MockMessageFactory.imageMessage(with: image)
 
-        let sut = FullscreenImageViewController(message: message, userSession: userSession)
+        let sut = FullscreenImageViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: .init(mainCoordinator: MockMainCoordinator()),
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         sut.setBoundsSizeAsIPhone4_7Inch()
         sut.viewDidLoad()
 

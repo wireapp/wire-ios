@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import struct WireSystem.WireLogger
+import WireLogging
 
 /// A placeholder container for AVSVideo to start the rendering only if the view is instantiated and setup.
 final class AVSVideoContainerView: UIView {
@@ -34,7 +34,7 @@ final class AVSVideoContainerView: UIView {
             return
         }
 
-        self.videoView = view
+        videoView = view
         view.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(view)

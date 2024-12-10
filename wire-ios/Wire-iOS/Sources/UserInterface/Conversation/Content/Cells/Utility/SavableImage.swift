@@ -31,15 +31,19 @@ protocol PhotoLibraryProtocol {
 extension PHPhotoLibrary: PhotoLibraryProtocol {}
 
 protocol AssetChangeRequestProtocol: AnyObject {
-    @discardableResult static func creationRequestForAsset(from image: UIImage) -> Self
-    @discardableResult static func creationRequestForAssetFromImage(atFileURL fileURL: URL) -> Self?
+    @discardableResult
+    static func creationRequestForAsset(from image: UIImage) -> Self
+    @discardableResult
+    static func creationRequestForAssetFromImage(atFileURL fileURL: URL) -> Self?
 }
 
 protocol AssetCreationRequestProtocol: AnyObject {
     static func forAsset() -> Self
-    func addResource(with type: PHAssetResourceType,
-                     data: Data,
-                     options: PHAssetResourceCreationOptions?)
+    func addResource(
+        with type: PHAssetResourceType,
+        data: Data,
+        options: PHAssetResourceCreationOptions?
+    )
 }
 
 extension PHAssetChangeRequest: AssetChangeRequestProtocol {}
@@ -68,7 +72,7 @@ final class SavableImage: NSObject {
 
     init(data: Data, isGIF: Bool) {
         self.isGIF = isGIF
-        imageData = data
+        self.imageData = data
         super.init()
     }
 
@@ -87,7 +91,7 @@ final class SavableImage: NSObject {
     // SavableImage instances get created when image cells etc are being created and
     // we don't want to write data to disk when we didn't start a save operation, yet.
     private func createSource() -> Source {
-        return isGIF ? .gif(SavableImage.storeGIF(imageData)) : .image(imageData)
+        isGIF ? .gif(SavableImage.storeGIF(imageData)) : .image(imageData)
     }
 
     func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {
@@ -96,7 +100,7 @@ final class SavableImage: NSObject {
         let source = createSource()
 
         let cleanup: (Bool) -> Void = { [source] success in
-            if case .gif(let url) = source {
+            if case let .gif(url) = source {
                 try? FileManager.default.removeItem(at: url)
             }
 
@@ -121,10 +125,14 @@ final class SavableImage: NSObject {
     // Has to be called from inside a `photoLibrary.perform` block
     private func saveImage(using source: Source) {
         switch source {
-        case .gif(let url):
+        case let .gif(url):
             _ = assetChangeRequestType.creationRequestForAssetFromImage(atFileURL: url)
-        case .image(let data):
-            assetCreationRequestType.forAsset().addResource(with: .photo, data: data, options: PHAssetResourceCreationOptions())
+        case let .image(data):
+            assetCreationRequestType.forAsset().addResource(
+                with: .photo,
+                data: data,
+                options: PHAssetResourceCreationOptions()
+            )
         }
     }
 
@@ -141,7 +149,10 @@ final class SavableImage: NSObject {
             style: .cancel
         ))
 
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let rootViewController = appDelegate.mainWindow?.rootViewController {
+            rootViewController.present(alert, animated: true)
+        }
     }
 
 }

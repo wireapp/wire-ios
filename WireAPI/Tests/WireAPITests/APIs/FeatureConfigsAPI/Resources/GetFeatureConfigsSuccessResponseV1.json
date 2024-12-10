@@ -1,0 +1,99 @@
+{
+  "appLock": {
+    "config": {
+      "enforceAppLock": true,
+      "inactivityTimeoutSecs": 2147483647
+    },
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "classifiedDomains": {
+    "config": {
+      "domains": [
+        "example.com"
+      ]
+    },
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "conferenceCalling": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "conversationGuestLinks": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "digitalSignatures": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "exposeInvitationURLsToTeamAdmin": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "fileSharing": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "legalhold": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "mls": {
+    "config": {
+      "allowedCipherSuites": [
+        1, 2, 3
+      ],
+      "defaultCipherSuite": 2,
+      "defaultProtocol": "proteus",
+      "protocolToggleUsers": [
+        "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+      ]
+    },
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "searchVisibility": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "searchVisibilityInbound": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "selfDeletingMessages": {
+    "config": {
+      "enforcedTimeoutSeconds": 2147483647
+    },
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "sndFactorPasswordChallenge": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "sso": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  },
+  "validateSAMLemails": {
+    "lockStatus": "locked",
+    "status": "enabled",
+    "ttl": "unlimited"
+  }
+}

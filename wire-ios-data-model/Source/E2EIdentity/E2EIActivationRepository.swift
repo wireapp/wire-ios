@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireFoundation
 
 /// The repository is responsible for storing the e2ei activation date.
-/// The e2ei activation date begins from the moment the client receives the notification that the feature flag is enabled for the team.
+/// The e2ei activation date begins from the moment the client receives the notification that the feature flag is
+/// enabled for the team.
 public protocol E2EIActivationDateRepositoryProtocol {
 
     var e2eiActivatedAt: Date? { get }
@@ -46,7 +47,7 @@ public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRep
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )
@@ -57,7 +58,7 @@ public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRep
     // MARK: - Public
 
     public var e2eiActivatedAt: Date? {
-        return storage.date(forKey: .e2eiActivatedAt)
+        storage.date(forKey: .e2eiActivatedAt)
     }
 
     public func storeE2EIActivationDate(_ date: Date) {

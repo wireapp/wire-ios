@@ -24,7 +24,10 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
 
     func landingViewControllerDidChooseLogin() {
         if let fastloginCredentials = AutomationHelper.sharedHelper.automationEmailCredentials {
-            let loginRequest = AuthenticationLoginRequest.email(address: fastloginCredentials.email, password: fastloginCredentials.password)
+            let loginRequest = AuthenticationLoginRequest.email(
+                address: fastloginCredentials.email,
+                password: fastloginCredentials.password
+            )
             let proxyCredentials = BackendEnvironment.shared.proxyCredentialsInput
 
             executeActions([.showLoadingView, .startLoginFlow(loginRequest, proxyCredentials)])
@@ -66,24 +69,26 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
 
     private func showProxyAlert(title: String, message: String) {
         // not supported, show alert
-        let alert = AuthenticationCoordinatorAlert(title: title,
-                                                   message: message,
-                                                   actions: [.ok])
+        let alert = AuthenticationCoordinatorAlert(
+            title: title,
+            message: message,
+            actions: [.ok]
+        )
         executeActions([.presentAlert(alert)])
     }
 
     private var shouldShowProxyWarning: Bool {
-       BackendEnvironment.shared.proxy != nil
+        BackendEnvironment.shared.proxy != nil
     }
 }
 
 extension EnvironmentTypeProvider {
     var customUrl: URL? {
         switch value {
-        case .custom(let url):
-            return url
+        case let .custom(url):
+            url
         default:
-            return nil
+            nil
         }
     }
 }
@@ -91,7 +96,7 @@ extension EnvironmentTypeProvider {
 extension BackendEnvironment {
 
     var proxyCredentials: ProxyCredentials? {
-        return proxy.flatMap { proxy in
+        proxy.flatMap { proxy in
             ProxyCredentials.retrieve(for: proxy)
         }
     }

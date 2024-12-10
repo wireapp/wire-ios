@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTesting
+import XCTest
+
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class OneOnOneMigratorTests: XCTestCase {
 
@@ -70,7 +72,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success(mlsGroupID),
+            result: .success((mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -83,7 +85,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         // Then
-        XCTAssert(mockMLSService.establishGroupForWith_Invocations.isEmpty)
+        XCTAssert(mockMLSService.establishGroupForWithRemovalKeys_Invocations.isEmpty)
         XCTAssert(mockMLSService.joinGroupWith_Invocations.isEmpty)
 
         await syncContext.perform {
@@ -97,6 +99,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
+        let removalKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
         let ciphersuite = MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
 
         let (connection, proteusConversation, mlsConversation) = await createConversations(
@@ -108,13 +111,13 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success(mlsGroupID),
+            result: .success((mlsGroupID, removalKeys)),
             context: syncContext.notificationContext
         )
 
         mockMLSService.conversationExistsGroupID_MockValue = false
-        mockMLSService.establishGroupForWith_MockMethod = { _, _ in
-            return ciphersuite
+        mockMLSService.establishGroupForWithRemovalKeys_MockMethod = { _, _, _ in
+            ciphersuite
         }
 
         // When
@@ -129,10 +132,11 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         // Then
-        XCTAssertEqual(mockMLSService.establishGroupForWith_Invocations.count, 1)
-        let createGroupInvocation = try XCTUnwrap(mockMLSService.establishGroupForWith_Invocations.first)
+        XCTAssertEqual(mockMLSService.establishGroupForWithRemovalKeys_Invocations.count, 1)
+        let createGroupInvocation = try XCTUnwrap(mockMLSService.establishGroupForWithRemovalKeys_Invocations.first)
         XCTAssertEqual(createGroupInvocation.groupID, mlsGroupID)
         XCTAssertEqual(createGroupInvocation.users, [MLSUser(userID)])
+        XCTAssertEqual(createGroupInvocation.removalKeys, removalKeys)
 
         await syncContext.perform {
             XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
@@ -158,7 +162,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success(mlsGroupID),
+            result: .success((mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
@@ -201,18 +205,18 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success(mlsGroupID),
+            result: .success((mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
         mockMLSService.conversationExistsGroupID_MockValue = false
-        mockMLSService.establishGroupForWith_MockMethod = { _, _ in
-            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        mockMLSService.establishGroupForWithRemovalKeys_MockMethod = { _, _, _ in
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         }
 
         // required to add be able to add images
         let cacheLocation = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            FileManager.default.randomCacheURL
         )
 
         await syncContext.perform {
@@ -309,7 +313,10 @@ final class OneOnOneMigratorTests: XCTestCase {
         return (connection, conversation)
     }
 
-    private func createMLSConversation(with identifier: MLSGroupID, in context: NSManagedObjectContext) -> ZMConversation {
+    private func createMLSConversation(
+        with identifier: MLSGroupID,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
         let mlsConversation = ZMConversation.insertNewObject(in: context)
         mlsConversation.remoteIdentifier = .create()
         mlsConversation.domain = "local@domain.com"

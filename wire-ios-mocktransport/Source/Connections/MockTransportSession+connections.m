@@ -23,7 +23,7 @@
 #import "MockTransportSession.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 #import "MockConnection.h"
-#import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 @implementation MockTransportSession (ConnectionsHelper)
 
@@ -118,7 +118,7 @@
     
     NSFetchRequest *request = [MockConnection sortedFetchRequest];
     
-    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
     
     if(start != nil) {
         NSUInteger index = [connections indexOfObjectPassingTest:^BOOL(MockConnection *obj, NSUInteger idx, BOOL *stop) {

@@ -18,19 +18,18 @@
 
 import UIKit
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: remove public after MockUser is convert to Swift
-// swiftlint:enable todo_requires_jira_link
 final class ImageCache<T: AnyObject> {
     var cache: NSCache<NSString, T> = NSCache()
     var processingQueue = DispatchQueue(label: "ImageCacheQueue", qos: .background, attributes: [.concurrent])
-    var dispatchGroup: DispatchGroup = DispatchGroup()
+    var dispatchGroup: DispatchGroup = .init()
 }
 
 extension UIImage {
     static var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 }
 
-final class MediaAssetCache {
+enum MediaAssetCache {
     static var defaultImageCache = ImageCache<AnyObject>()
 }

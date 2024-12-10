@@ -29,21 +29,23 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
         let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
-        let conversation = ZMConversation.insertGroupConversation(moc: uiMOC,
-                                                                  participants: [user1, user2, user3],
-                                                                  name: nil,
-                                                                  team: nil,
-                                                                  allowGuests: true,
-                                                                  readReceipts: false,
-                                                                  participantsRole: nil)
+        let conversation = ZMConversation.insertGroupConversation(
+            moc: uiMOC,
+            participants: [user1, user2, user3],
+            name: nil,
+            team: nil,
+            allowGuests: true,
+            readReceipts: false,
+            participantsRole: nil
+        )
 
         // then
         let conversations = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
-        XCTAssertEqual(conversations.count, 1)
-        let fetchedConversation = conversations[0] as? ZMConversation
-        XCTAssertEqual(fetchedConversation?.conversationType, .group)
-        XCTAssertEqual(conversation?.objectID, fetchedConversation?.objectID)
+        XCTAssertEqual(conversations.items.count, 1)
+        let fetchedConversation = conversations.items[0]
+        XCTAssertEqual(fetchedConversation.conversationType, .group)
+        XCTAssertEqual(conversation?.objectID, fetchedConversation.objectID)
 
         let expectedParticipants = Set<AnyHashable>([user1, user2, user3, selfUser])
         XCTAssertEqual(expectedParticipants, conversation?.localParticipants)
@@ -58,7 +60,15 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
         let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
-        let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [user1, user2, user3], name: nil, team: nil, allowGuests: true, readReceipts: false, participantsRole: nil)
+        let conversation = ZMConversation.insertGroupConversation(
+            moc: uiMOC,
+            participants: [user1, user2, user3],
+            name: nil,
+            team: nil,
+            allowGuests: true,
+            readReceipts: false,
+            participantsRole: nil
+        )
 
         try! uiMOC.save()
 

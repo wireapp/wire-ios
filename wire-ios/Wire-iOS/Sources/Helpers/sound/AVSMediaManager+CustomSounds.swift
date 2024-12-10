@@ -32,15 +32,15 @@ enum MediaManagerSound: String {
     case ringingFromThemSound = "ringing_from_them"
     case ringingFromThemInCallSound = "ringing_from_them_incall"
     case callDropped = "call_drop"
-    case alert = "alert"
-    case camera = "camera"
+    case alert
+    case camera
     case someoneLeavesVoiceChannelSound = "talk_later"
 }
 
 private let zmLog = ZMSLog(tag: "AVSMediaManager CustomSounds")
 
 extension AVSMediaManager {
-    static private var MediaManagerSoundConfig: [AnyHashable: Any]?
+    private static var MediaManagerSoundConfig: [AnyHashable: Any]?
 
     func play(sound: MediaManagerSound) {
         playSound(sound.rawValue)
@@ -77,21 +77,19 @@ extension AVSMediaManager {
         }
 
         // Unregister all previous custom sounds
-        let sounds: [MediaManagerSound] = [.firstMessageReceivedSound,
-                                           .messageReceivedSound,
-                                           .ringingFromThemInCallSound,
-                                           .ringingFromThemSound,
-                                           .outgoingKnockSound,
-                                           .incomingKnockSound]
+        let sounds: [MediaManagerSound] = [
+            .firstMessageReceivedSound,
+            .messageReceivedSound,
+            .ringingFromThemInCallSound,
+            .ringingFromThemSound,
+            .outgoingKnockSound,
+            .incomingKnockSound
+        ]
         sounds.forEach {
             mediaManager.unregisterMedia(byName: $0.rawValue)
         }
 
         mediaManager.registerMedia(fromConfiguration: AVSMediaManager.MediaManagerSoundConfig, inDirectory: audioDir)
-    }
-
-    func configureWithActualSoundsFromSettings() {
-        self.configureDefaultSounds()
     }
 
     func unregisterCallRingingSounds() {
@@ -108,22 +106,37 @@ extension AVSMediaManager {
     }
 
     func observeSoundConfigurationChanges() {
-        NotificationCenter.default.addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: NSNotification.Name(rawValue: SettingsPropertyName.messageSoundName.changeNotificationName), object: .none)
-        NotificationCenter.default.addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: NSNotification.Name(rawValue: SettingsPropertyName.callSoundName.changeNotificationName), object: .none)
-        NotificationCenter.default.addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: NSNotification.Name(rawValue: SettingsPropertyName.pingSoundName.changeNotificationName), object: .none)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
+            name: NSNotification.Name(rawValue: SettingsPropertyName.messageSoundName.changeNotificationName),
+            object: .none
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
+            name: NSNotification.Name(rawValue: SettingsPropertyName.callSoundName.changeNotificationName),
+            object: .none
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
+            name: NSNotification.Name(rawValue: SettingsPropertyName.pingSoundName.changeNotificationName),
+            object: .none
+        )
     }
 
     private func configureCustomSounds() {
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: nil, selfUser: nil)
+        let settingsPropertyFactory = SettingsPropertyFactory(userSession: nil, selfUser: nil, trackingManager: nil)
 
         let messageSoundProperty = settingsPropertyFactory.property(.messageSoundName)
-        self.updateCustomSoundForProperty(messageSoundProperty)
+        updateCustomSoundForProperty(messageSoundProperty)
 
         let callSoundProperty = settingsPropertyFactory.property(.callSoundName)
-        self.updateCustomSoundForProperty(callSoundProperty)
+        updateCustomSoundForProperty(callSoundProperty)
 
         let pingSoundProperty = settingsPropertyFactory.property(.pingSoundName)
-        self.updateCustomSoundForProperty(pingSoundProperty)
+        updateCustomSoundForProperty(pingSoundProperty)
     }
 
     func updateCustomSoundForProperty(_ property: SettingsProperty) {
@@ -141,16 +154,16 @@ extension AVSMediaManager {
 
         switch propertyName {
         case SettingsPropertyName.messageSoundName.rawValue:
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.firstMessageReceivedSound.rawValue)
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.messageReceivedSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.firstMessageReceivedSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.messageReceivedSound.rawValue)
 
         case SettingsPropertyName.callSoundName.rawValue:
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemInCallSound.rawValue)
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemInCallSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemSound.rawValue)
 
         case SettingsPropertyName.pingSoundName.rawValue:
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.outgoingKnockSound.rawValue)
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.incomingKnockSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.outgoingKnockSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.incomingKnockSound.rawValue)
 
         default:
             fatalError("\(propertyName) is not a sound property")
@@ -158,8 +171,10 @@ extension AVSMediaManager {
     }
 
     // MARK: - Notifications
-    @objc func didUpdateSound(_ notification: NSNotification?) {
-        self.configureSounds()
+
+    @objc
+    func didUpdateSound(_ notification: NSNotification?) {
+        configureSounds()
 
         if notification?.name.rawValue == SettingsPropertyName.callSoundName.changeNotificationName {
             SessionManager.shared?.updateCallKitConfiguration()

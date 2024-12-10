@@ -19,6 +19,7 @@
 import Foundation
 import LocalAuthentication
 import Security
+import WireLogging
 
 public protocol KeychainItem {
     associatedtype Value
@@ -64,7 +65,7 @@ public enum Keychain {
         return valueCasted
     }
 
-    public static func deleteItem<T: KeychainItem>(_ item: T) throws {
+    public static func deleteItem(_ item: some KeychainItem) throws {
         WireLogger.keychain.info("deleting item (\(item))")
 
         let status = SecItemDelete(item.queryForGettingValue as CFDictionary)

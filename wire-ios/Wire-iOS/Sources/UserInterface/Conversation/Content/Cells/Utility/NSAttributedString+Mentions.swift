@@ -37,7 +37,7 @@ struct TextMarker<A> {
 extension TextMarker {
 
     func range(in string: String) -> Range<Int>? {
-        return Range((string as NSString).range(of: token))
+        Range((string as NSString).range(of: token))
     }
 
 }
@@ -46,22 +46,22 @@ extension Mention {
     static let mentionScheme = "wire-mention"
 
     var link: URL {
-        return URL(string: "\(Mention.mentionScheme)://location/\(range.location)")!
+        URL(string: "\(Mention.mentionScheme)://location/\(range.location)")!
     }
 
     var location: Int {
-        return range.location
+        range.location
     }
 }
 
 extension URL {
 
     var isMention: Bool {
-        return scheme == Mention.mentionScheme
+        scheme == Mention.mentionScheme
     }
 
     var mentionLocation: Int {
-        guard self.isMention, let indexString = pathComponents.last, let index = Int(indexString) else {
+        guard isMention, let indexString = pathComponents.last, let index = Int(indexString) else {
             return NSNotFound
         }
 
@@ -72,7 +72,12 @@ extension URL {
 
 extension NSMutableAttributedString {
 
-    static private func mention(for user: UserType, name: String, link: URL, suggestedAttributes: [NSAttributedString.Key: Any] = [:]) -> NSAttributedString {
+    private static func mention(
+        for user: UserType,
+        name: String,
+        link: URL,
+        suggestedAttributes: [NSAttributedString.Key: Any] = [:]
+    ) -> NSAttributedString {
         let color: UIColor
         let backgroundColor: UIColor
 
@@ -89,10 +94,12 @@ extension NSMutableAttributedString {
         let mentionFont = suggestedFont.isBold ? suggestedFont : suggestedFont.withWeight(.semibold)
         let paragraphStyle = suggestedAttributes[.paragraphStyle] ?? NSParagraphStyle.default
 
-        var atAttributes: [NSAttributedString.Key: Any] = [.font: atFont,
-                                                           .foregroundColor: color,
-                                                           .backgroundColor: backgroundColor,
-                                                           .paragraphStyle: paragraphStyle]
+        var atAttributes: [NSAttributedString.Key: Any] = [
+            .font: atFont,
+            .foregroundColor: color,
+            .backgroundColor: backgroundColor,
+            .paragraphStyle: paragraphStyle
+        ]
 
         if !user.isSelfUser {
             atAttributes[NSAttributedString.Key.link] = link as NSObject
@@ -100,10 +107,12 @@ extension NSMutableAttributedString {
 
         let atString = "@" && atAttributes
 
-        var mentionAttributes: [NSAttributedString.Key: Any] = [.font: mentionFont,
-                                                                .foregroundColor: color,
-                                                                .backgroundColor: backgroundColor,
-                                                                .paragraphStyle: paragraphStyle]
+        var mentionAttributes: [NSAttributedString.Key: Any] = [
+            .font: mentionFont,
+            .foregroundColor: color,
+            .backgroundColor: backgroundColor,
+            .paragraphStyle: paragraphStyle
+        ]
 
         if !user.isSelfUser {
             mentionAttributes[NSAttributedString.Key.link] = link as NSObject
@@ -114,8 +123,10 @@ extension NSMutableAttributedString {
         return atString + mentionText
     }
 
-    func highlight(mentions: [TextMarker<(Mention)>],
-                   paragraphStyle: NSParagraphStyle? = NSAttributedString.paragraphStyle) {
+    func highlight(
+        mentions: [TextMarker<Mention>],
+        paragraphStyle: NSParagraphStyle? = NSAttributedString.paragraphStyle
+    ) {
 
         mentions.forEach { textObject in
             let mentionRange = mutableString.range(of: textObject.token)
@@ -127,10 +138,12 @@ extension NSMutableAttributedString {
 
             var attributes = self.attributes(at: mentionRange.location, effectiveRange: nil)
             attributes[.paragraphStyle] = paragraphStyle
-            let replacementString = NSMutableAttributedString.mention(for: textObject.value.user,
-                                                                      name: textObject.replacementText,
-                                                                      link: textObject.value.link,
-                                                                      suggestedAttributes: attributes)
+            let replacementString = NSMutableAttributedString.mention(
+                for: textObject.value.user,
+                name: textObject.replacementText,
+                link: textObject.value.link,
+                suggestedAttributes: attributes
+            )
 
             self.replaceCharacters(in: mentionRange, with: replacementString)
         }

@@ -17,15 +17,11 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
+import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 final class AssetDownloadRequestFactoryTests: XCTestCase {
-
-    override func tearDown() {
-        BackendInfo.domain = nil
-        super.tearDown()
-    }
 
     // MARK: - API V0
 

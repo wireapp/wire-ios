@@ -33,9 +33,9 @@ final class ExplicitChangeDetector: ChangeDetector {
     // MARK: - Life cycle
 
     init(classIdentifiers: [ClassIdentifier], managedObjectContext: NSManagedObjectContext) {
-        context = managedObjectContext
-        snapshotCenter = SnapshotCenter(managedObjectContext: context)
-        dependencyKeyStore = DependencyKeyStore(classIdentifiers: classIdentifiers)
+        self.context = managedObjectContext
+        self.snapshotCenter = SnapshotCenter(managedObjectContext: context)
+        self.dependencyKeyStore = DependencyKeyStore(classIdentifiers: classIdentifiers)
     }
 
     // MARK: - Methods
@@ -62,7 +62,8 @@ final class ExplicitChangeDetector: ChangeDetector {
     func detectChanges(for objects: ModifiedObjects) {
         snapshotCenter.createSnapshots(for: objects.inserted)
 
-        merge(changes:
+        merge(
+            changes:
             observableChanges(for: objects.updatedAndRefreshed),
             observableChangesCausedByInsertionOrDeletion(for: objects.inserted),
             observableChangesCausedByInsertionOrDeletion(for: objects.deleted)
@@ -75,7 +76,7 @@ final class ExplicitChangeDetector: ChangeDetector {
     ///
     /// - Parameters:
     ///     - objects: A set of modified objects.
-    ///     
+    ///
     /// - Returns:
     ///     A mapping of all objects and their changed keys.
 
@@ -106,7 +107,8 @@ final class ExplicitChangeDetector: ChangeDetector {
 
     /// Identify which objects and their observable keys have changed as a result of changes to the given object.
     ///
-    /// E.g if `user.fullName` and `conversation.name` both depend on `user.firstName`, then a change to `user.firstName`
+    /// E.g if `user.fullName` and `conversation.name` both depend on `user.firstName`, then a change to
+    /// `user.firstName`
     /// causes means `user.fullName` and `conversation.name` must be considered changed too. The result of this method
     /// would then be `[user: firstName, user: fullName, conversation: name]`.
     ///
@@ -131,7 +133,10 @@ final class ExplicitChangeDetector: ChangeDetector {
         }
 
         if let sideEffectSource = object as? SideEffectSource {
-            let affectedKeysOfOtherObjects = sideEffectSource.affectedObjectsAndKeys(keyStore: dependencyKeyStore, knownKeys: changedKeys)
+            let affectedKeysOfOtherObjects = sideEffectSource.affectedObjectsAndKeys(
+                keyStore: dependencyKeyStore,
+                knownKeys: changedKeys
+            )
             result = result.merged(with: affectedKeysOfOtherObjects)
         }
 
@@ -149,7 +154,8 @@ final class ExplicitChangeDetector: ChangeDetector {
     /// - Returns:
     ///     All objects and their observable keys that have changed.
 
-    private func observableChangesCausedByInsertionOrDeletion(for objects: Set<ZMManagedObject>) -> ObservableChangesByObject {
+    private func observableChangesCausedByInsertionOrDeletion(for objects: Set<ZMManagedObject>)
+        -> ObservableChangesByObject {
         objects
             .lazy
             .compactMap { $0 as? SideEffectSource }
@@ -170,14 +176,14 @@ final class ExplicitChangeDetector: ChangeDetector {
     }
 
     private func combine(lhs: ObservableChangesByObject, rhs: ObservableChangesByObject) -> ObservableChangesByObject {
-        return lhs.merged(with: rhs)
+        lhs.merged(with: rhs)
     }
 
 }
 
 // MARK: - Helper extensions
 
-fileprivate extension ExplicitChangeDetector {
+private extension ExplicitChangeDetector {
 
     struct UpdatedObject {
 
@@ -185,7 +191,7 @@ fileprivate extension ExplicitChangeDetector {
         let changedKeys: Set<String>
 
         var hasChanges: Bool {
-            return !changedKeys.isEmpty
+            !changedKeys.isEmpty
         }
 
     }
@@ -203,7 +209,7 @@ private extension Sequence where Element: SetAlgebra {
 private extension LazySequence {
 
     func collect() -> [Self.Element] {
-        return Array(self)
+        Array(self)
     }
 
 }
@@ -211,7 +217,7 @@ private extension LazySequence {
 private extension NSManagedObject {
 
     var changedKeys: Set<String> {
-        return Set(changedValues().keys)
+        Set(changedValues().keys)
     }
 
 }

@@ -18,6 +18,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSString (Normalization)
 
 - (instancetype)normalizedString;
@@ -28,3 +30,5 @@
 - (BOOL)zmHasOnlyWhitespaceCharacters;
 
 @end
+
+NS_ASSUME_NONNULL_END

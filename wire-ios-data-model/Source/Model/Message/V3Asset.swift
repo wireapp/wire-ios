@@ -24,7 +24,8 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 /// This protocol is used to hide the implementation of the different
 /// asset types (v2 image & file vs. v3 file) from ZMAssetClientMessage.
 /// It only includes methods in which these two versions differentiate.
-@objc public protocol AssetProxyType {
+@objc
+public protocol AssetProxyType {
 
     var hasDownloadedFile: Bool { get }
     var hasDownloadedPreview: Bool { get }
@@ -42,7 +43,8 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
 }
 
-@objcMembers public class V3Asset: NSObject, ZMImageMessageData {
+@objcMembers
+public class V3Asset: NSObject, ZMImageMessageData {
     @objc(fetchImageDataWithQueue:completionHandler:)
     public func fetchImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
         let cache = moc.zm_fileAssetCache
@@ -79,16 +81,14 @@ private let zmLog = ZMSLog(tag: "AssetV3")
                 return
             }
 
-            if
-                let mediumKey,
-                let key,
-                let digest,
-                let data = cache.decryptData(
-                    key: mediumKey,
-                    encryptionKey: key,
-                    sha256Digest: digest
-                )
-            {
+            if let mediumKey,
+               let key,
+               let digest,
+               let data = cache.decryptData(
+                   key: mediumKey,
+                   encryptionKey: key,
+                   sha256Digest: digest
+               ) {
                 completionHandler(data)
             } else if let fallbackKey {
                 completionHandler(cache.assetData(fallbackKey))
@@ -99,20 +99,20 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var isDownloaded: Bool {
-        return hasDownloadedFile
+        hasDownloadedFile
     }
 
     fileprivate let assetClientMessage: ZMAssetClientMessage
     fileprivate let moc: NSManagedObjectContext
 
     fileprivate var isImage: Bool {
-        return assetClientMessage.underlyingMessage?.v3_isImage ?? false
+        assetClientMessage.underlyingMessage?.v3_isImage ?? false
     }
 
     public init?(with message: ZMAssetClientMessage) {
         guard message.version == 3 else { return nil }
-        assetClientMessage = message
-        moc = message.managedObjectContext!
+        self.assetClientMessage = message
+        self.moc = message.managedObjectContext!
     }
 
     public var imageMessageData: ZMImageMessageData? {
@@ -129,14 +129,12 @@ private let zmLog = ZMSLog(tag: "AssetV3")
             return nil
         }
 
-        if
-            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
-            let data = cache.decryptedMediumImageData(
-                for: assetClientMessage,
-                encryptionKey: asset.otrKey,
-                sha256Digest: asset.sha256
-            )
-        {
+        if let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
+           let data = cache.decryptedMediumImageData(
+               for: assetClientMessage,
+               encryptionKey: asset.otrKey,
+               sha256Digest: asset.sha256
+           ) {
             return data
         } else if let data = cache.mediumImageData(for: assetClientMessage) {
             return data
@@ -148,11 +146,11 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var imageDataIdentifier: String? {
-        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
     }
 
     public var imagePreviewDataIdentifier: String? {
-        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
     }
 
     public var isAnimatedGIF: Bool {
@@ -190,9 +188,9 @@ extension V3Asset: AssetProxyType {
 
     public var hasDownloadedFile: Bool {
         if isImage {
-            return moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)
+            moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)
         } else {
-            return moc.zm_fileAssetCache.hasFileData(for: assetClientMessage)
+            moc.zm_fileAssetCache.hasFileData(for: assetClientMessage)
         }
     }
 
@@ -216,18 +214,21 @@ extension V3Asset: AssetProxyType {
 
     public func requestFileDownload() {
         guard !assetClientMessage.objectID.isTemporaryID else { return }
-        NotificationInContext(name: ZMAssetClientMessage.assetDownloadNotificationName,
-                              context: self.moc.notificationContext,
-                              object: assetClientMessage.objectID).post()
+        NotificationInContext(
+            name: ZMAssetClientMessage.assetDownloadNotificationName,
+            context: moc.notificationContext,
+            object: assetClientMessage.objectID
+        ).post()
     }
 
     public func requestPreviewDownload() {
         if assetClientMessage.underlyingMessage?.assetData?.hasPreview == true {
             guard !assetClientMessage.objectID.isTemporaryID else { return }
-            NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName,
-                                  context: self.moc.notificationContext,
-                                  object: assetClientMessage.objectID
-                                ).post()
+            NotificationInContext(
+                name: ZMAssetClientMessage.imageDownloadNotificationName,
+                context: moc.notificationContext,
+                object: assetClientMessage.objectID
+            ).post()
         } else {
             return zmLog.info("Called \(#function) on a v3 asset that doesn't represent an image or has a preview")
         }

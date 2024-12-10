@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class BrowserOpeningOptionTests: XCTestCase {
 
@@ -29,7 +29,7 @@ final class BrowserOpeningOptionTests: XCTestCase {
     func testThatDefaultBrowserIsSafari() {
         // GIVEN & WHEN
         Settings.shared.reset()
-        let preference: BrowserOpeningOption = BrowserOpeningOption.storedPreference
+        let preference = BrowserOpeningOption.storedPreference
 
         // THEN
         XCTAssertEqual(preference, BrowserOpeningOption.safari)

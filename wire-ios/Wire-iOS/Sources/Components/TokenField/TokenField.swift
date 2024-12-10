@@ -29,7 +29,7 @@ final class TokenField: UIView {
     weak var delegate: TokenFieldDelegate?
 
     let textView = SearchTextView(style: .default)
-    let accessoryButton: IconButton = IconButton()
+    let accessoryButton: IconButton = .init()
 
     var hasAccessoryButton = false {
         didSet {
@@ -68,14 +68,16 @@ final class TokenField: UIView {
             updateTokenAttachments()
         }
     }
-    var tokenSelectedTitleColor: UIColor = UIColor(red: 0.103, green: 0.382, blue: 0.691, alpha: 1) {
+
+    var tokenSelectedTitleColor: UIColor = .init(red: 0.103, green: 0.382, blue: 0.691, alpha: 1) {
         didSet {
             guard oldValue != tokenSelectedTitleColor else { return }
 
             updateTokenAttachments()
         }
     }
-    var tokenBackgroundColor: UIColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
+
+    var tokenBackgroundColor: UIColor = .init(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
             guard oldValue != tokenBackgroundColor else { return }
 
@@ -83,7 +85,7 @@ final class TokenField: UIView {
         }
     }
 
-    var tokenSelectedBackgroundColor: UIColor = UIColor.white {
+    var tokenSelectedBackgroundColor: UIColor = .white {
         didSet {
             guard oldValue != tokenSelectedBackgroundColor else { return }
 
@@ -91,7 +93,7 @@ final class TokenField: UIView {
         }
     }
 
-    var tokenBorderColor: UIColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
+    var tokenBorderColor: UIColor = .init(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
             guard oldValue != tokenBorderColor else { return }
 
@@ -99,7 +101,7 @@ final class TokenField: UIView {
         }
     }
 
-    var tokenSelectedBorderColor: UIColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
+    var tokenSelectedBorderColor: UIColor = .init(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
             guard oldValue != tokenSelectedBorderColor else { return }
 
@@ -119,7 +121,8 @@ final class TokenField: UIView {
             updateTokenAttachments()
         }
     }
-    /* horisontal distance between tokens, and btw "To:" and first token */
+
+    // horisontal distance between tokens, and btw "To:" and first token
     var tokenTitleVerticalAdjustment: CGFloat = 1 {
         didSet {
             guard oldValue != tokenTitleVerticalAdjustment else { return }
@@ -144,22 +147,25 @@ final class TokenField: UIView {
     private var accessoryButtonTopMargin: NSLayoutConstraint!
     private var accessoryButtonRightMargin: NSLayoutConstraint!
 
-    private var toLabel: UILabel = UILabel()
+    private var toLabel: UILabel = .init()
     private var toLabelLeftMargin: NSLayoutConstraint!
     private var toLabelTopMargin: NSLayoutConstraint!
 
     private(set) var tokens = [Token<NSObjectProtocol>]()
     private var textAttributes: [NSAttributedString.Key: Any] {
-        return [.font: font,
-                .foregroundColor: textView.textColor ?? .clear]
+        [
+            .font: font,
+            .foregroundColor: textView.textColor ?? .clear
+        ]
     }
 
     // Collapse
 
-    /* in not collapsed state; in collapsed state - 1 line; default to NSUIntegerMax */
+    // in not collapsed state; in collapsed state - 1 line; default to NSUIntegerMax
     var isCollapsed = false
 
     // MARK: - Init
+
     init() {
         super.init(frame: .zero)
         setup()
@@ -171,6 +177,7 @@ final class TokenField: UIView {
     }
 
     // MARK: - Setup
+
     private func setup() {
         setupSubviews()
         setupConstraints()
@@ -192,16 +199,56 @@ final class TokenField: UIView {
             "bRight": accessoryButtonRight
         ]
 
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[textView]|", options: [], metrics: nil, views: views))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[textView]|", options: [], metrics: nil, views: views))
-        accessoryButtonRightMargin = NSLayoutConstraint.constraints(withVisualFormat: "H:[button]-(bRight)-|", options: [], metrics: metrics, views: views)[0]
-        accessoryButtonTopMargin = NSLayoutConstraint.constraints(withVisualFormat: "V:|-(bTop)-[button]", options: [], metrics: metrics, views: views)[0]
+        addConstraints(NSLayoutConstraint.constraints(
+            withVisualFormat: "H:|[textView]|",
+            options: [],
+            metrics: nil,
+            views: views
+        ))
+        addConstraints(NSLayoutConstraint.constraints(
+            withVisualFormat: "V:|[textView]|",
+            options: [],
+            metrics: nil,
+            views: views
+        ))
+        accessoryButtonRightMargin = NSLayoutConstraint.constraints(
+            withVisualFormat: "H:[button]-(bRight)-|",
+            options: [],
+            metrics: metrics,
+            views: views
+        )[0]
+        accessoryButtonTopMargin = NSLayoutConstraint.constraints(
+            withVisualFormat: "V:|-(bTop)-[button]",
+            options: [],
+            metrics: metrics,
+            views: views
+        )[0]
         addConstraints([accessoryButtonRightMargin, accessoryButtonTopMargin])
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[button(bSize)]", options: [], metrics: metrics, views: views))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[button(bSize)]", options: [], metrics: metrics, views: views))
+        addConstraints(NSLayoutConstraint.constraints(
+            withVisualFormat: "H:[button(bSize)]",
+            options: [],
+            metrics: metrics,
+            views: views
+        ))
+        addConstraints(NSLayoutConstraint.constraints(
+            withVisualFormat: "V:[button(bSize)]",
+            options: [],
+            metrics: metrics,
+            views: views
+        ))
 
-        toLabelLeftMargin = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(left)-[toLabel]", options: [], metrics: metrics, views: views)[0]
-        toLabelTopMargin = NSLayoutConstraint.constraints(withVisualFormat: "V:|-(top)-[toLabel]", options: [], metrics: metrics, views: views)[0]
+        toLabelLeftMargin = NSLayoutConstraint.constraints(
+            withVisualFormat: "H:|-(left)-[toLabel]",
+            options: [],
+            metrics: metrics,
+            views: views
+        )[0]
+        toLabelTopMargin = NSLayoutConstraint.constraints(
+            withVisualFormat: "V:|-(top)-[toLabel]",
+            options: [],
+            metrics: metrics,
+            views: views
+        )[0]
         textView.addConstraints([toLabelLeftMargin, toLabelTopMargin])
 
         updateTextAttributes()
@@ -223,10 +270,14 @@ final class TokenField: UIView {
 
     override var intrinsicContentSize: CGSize {
         let height = textView.contentSize.height
-        let maxHeight = fontLineHeight * CGFloat(numberOfLines) + lineSpacing * CGFloat(numberOfLines - 1) + textView.textContainerInset.top + textView.textContainerInset.bottom
+        let maxHeight = fontLineHeight * CGFloat(numberOfLines) + lineSpacing * CGFloat(numberOfLines - 1) + textView
+            .textContainerInset.top + textView.textContainerInset.bottom
         let minHeight = fontLineHeight + textView.textContainerInset.top + textView.textContainerInset.bottom
 
-        return CGSize(width: UIView.noIntrinsicMetric, height: isCollapsed ? minHeight : max(min(height, maxHeight), minHeight))
+        return CGSize(
+            width: UIView.noIntrinsicMetric,
+            height: isCollapsed ? minHeight : max(min(height, maxHeight), minHeight)
+        )
     }
 
     override func layoutSubviews() {
@@ -246,15 +297,15 @@ final class TokenField: UIView {
     }
 
     override var isFirstResponder: Bool {
-        return textView.isFirstResponder
+        textView.isFirstResponder
     }
 
     override var canBecomeFirstResponder: Bool {
-        return textView.canBecomeFirstResponder
+        textView.canBecomeFirstResponder
     }
 
     override var canResignFirstResponder: Bool {
-        return textView.canResignFirstResponder
+        textView.canResignFirstResponder
     }
 
     override func becomeFirstResponder() -> Bool {
@@ -269,8 +320,10 @@ final class TokenField: UIView {
 
     // MARK: - Interface
 
-    func addToken(forTitle title: String,
-                  representedObject object: NSObjectProtocol) {
+    func addToken(
+        forTitle title: String,
+        representedObject object: NSObjectProtocol
+    ) {
         let token = Token(title: title, representedObject: object)
         addToken(token)
     }
@@ -310,7 +363,8 @@ final class TokenField: UIView {
     func updateMaxTitleWidth(for token: Token<NSObjectProtocol>) {
         var tokenMaxSizeWidth = textView.textContainer.size.width
         if tokens.isEmpty {
-            tokenMaxSizeWidth -= toLabel.frame.size.width + (hasAccessoryButton ? accessoryButton.frame.size.width : 0) + tokenOffset
+            tokenMaxSizeWidth -= toLabel.frame.size
+                .width + (hasAccessoryButton ? accessoryButton.frame.size.width : 0) + tokenOffset
         } else if tokens.count == 1 {
             tokenMaxSizeWidth -= hasAccessoryButton ? accessoryButton.frame.size.width : 0
         }
@@ -320,18 +374,21 @@ final class TokenField: UIView {
 
     // searches by isEqual:
     func token(forRepresentedObject object: NSObjectProtocol) -> Token<NSObjectProtocol>? {
-        return tokens.first(where: { $0.representedObject == HashBox(value: object) })
+        tokens.first(where: { $0.representedObject == HashBox(value: object) })
     }
 
     private func scrollToBottomOfInputField() {
         if textView.contentSize.height > textView.bounds.size.height {
-            textView.setContentOffset(CGPoint(x: 0, y: textView.contentSize.height - textView.bounds.size.height), animated: true)
+            textView.setContentOffset(
+                CGPoint(x: 0, y: textView.contentSize.height - textView.bounds.size.height),
+                animated: true
+            )
         } else {
             textView.contentOffset = .zero
         }
     }
 
-    var numberOfLines: Int = Int.max {
+    var numberOfLines: Int = .max {
         didSet {
             if oldValue != numberOfLines {
                 invalidateIntrinsicContentSize()
@@ -351,7 +408,7 @@ final class TokenField: UIView {
             self.layoutIfNeeded()
         }
 
-        let compeltionBlock: ((Bool) -> Void)? = {[weak self] _ in
+        let compeltionBlock: ((Bool) -> Void)? = { [weak self] _ in
 
             guard let self else { return }
 
@@ -382,16 +439,17 @@ final class TokenField: UIView {
     }
 
     // MARK: - Layout
+
     var fontLineHeight: CGFloat {
-        return font.lineHeight
+        font.lineHeight
     }
 
     private var accessoryButtonTop: CGFloat {
-        return textView.textContainerInset.top + (fontLineHeight - accessoryButtonSize) / 2 - textView.contentOffset.y
+        textView.textContainerInset.top + (fontLineHeight - accessoryButtonSize) / 2 - textView.contentOffset.y
     }
 
     private var accessoryButtonRight: CGFloat {
-        return textView.textContainerInset.right
+        textView.textContainerInset.right
     }
 
     private func updateLayout() {
@@ -407,6 +465,7 @@ final class TokenField: UIView {
     }
 
     // MARK: - Utility
+
     var collapsedString: NSAttributedString? {
         let collapsedText = " ...".localized
 
@@ -418,13 +477,14 @@ final class TokenField: UIView {
         guard let text = textView.text else { return }
 
         guard let attachmentCharacter = UnicodeScalar.textAttachmentCharacter,
-            let firstCharacterIndex = text.unicodeScalars.firstIndex(where: { $0 != attachmentCharacter && !CharacterSet.whitespaces.contains($0) }) else {
-                return
+              let firstCharacterIndex = text.unicodeScalars
+              .firstIndex(where: { $0 != attachmentCharacter && !CharacterSet.whitespaces.contains($0) }) else {
+            return
         }
 
         filterText = ""
 
-        let rangeToDelete = firstCharacterIndex..<text.endIndex
+        let rangeToDelete = firstCharacterIndex ..< text.endIndex
         let nsRange = textView.text.nsRange(from: rangeToDelete)
 
         textView.textStorage.beginEditing()
@@ -440,7 +500,10 @@ final class TokenField: UIView {
     private func updateTextAttributes() {
         textView.typingAttributes = textAttributes
         textView.textStorage.beginEditing()
-        textView.textStorage.addAttributes(textAttributes, range: NSRange(location: 0, length: textView.textStorage.length))
+        textView.textStorage.addAttributes(
+            textAttributes,
+            range: NSRange(location: 0, length: textView.textStorage.length)
+        )
         textView.textStorage.endEditing()
 
         if let toLabelText {
@@ -465,7 +528,10 @@ final class TokenField: UIView {
         }
 
         if toLabelText?.isEmpty == false {
-            var transformedRect = toLabel.frame.offsetBy(dx: -textView.textContainerInset.left, dy: -textView.textContainerInset.top)
+            var transformedRect = toLabel.frame.offsetBy(
+                dx: -textView.textContainerInset.left,
+                dy: -textView.textContainerInset.top
+            )
             transformedRect.size.width += tokenOffset
             let path = UIBezierPath(rect: transformedRect)
             exclusionPaths.append(path)
@@ -477,11 +543,17 @@ final class TokenField: UIView {
             // 1. Calcutale frame with same center as accessoryButton has, but with size of intrinsicContentSize
             var transformedRect = accessoryButton.frame
             let contentSize = CGSize(width: accessoryButtonSize, height: accessoryButtonSize)
-            transformedRect = transformedRect.insetBy(dx: 0.5 * (transformedRect.size.width - contentSize.width), dy: 0.5 * (transformedRect.size.height - contentSize.height))
+            transformedRect = transformedRect.insetBy(
+                dx: 0.5 * (transformedRect.size.width - contentSize.width),
+                dy: 0.5 * (transformedRect.size.height - contentSize.height)
+            )
 
             // 2. Convert frame to textView coordinate system
             transformedRect = textView.convert(transformedRect, from: self)
-            let transform = CGAffineTransform(translationX: -textView.textContainerInset.left, y: -textView.textContainerInset.top)
+            let transform = CGAffineTransform(
+                translationX: -textView.textContainerInset.left,
+                y: -textView.textContainerInset.top
+            )
             transformedRect = transformedRect.applying(transform)
 
             let path = UIBezierPath(rect: transformedRect)
@@ -492,6 +564,7 @@ final class TokenField: UIView {
     }
 
     // MARK: - UIScrollViewDelegate
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == textView {
             updateExcludePath()
@@ -574,12 +647,12 @@ final class TokenField: UIView {
         textView.attributedText.enumerateAttachment { textAttachment, _, _ in
 
             if let token = (textAttachment as? TokenTextAttachment)?.token,
-                !updatedCurrentTokens.contains(token) {
+               !updatedCurrentTokens.contains(token) {
                 updatedCurrentTokens.insert(token)
             }
 
             if let token = (textAttachment as? TokenSeparatorAttachment)?.token,
-                !updatedCurrentSeparatorTokens.contains(token) {
+               !updatedCurrentSeparatorTokens.contains(token) {
                 updatedCurrentSeparatorTokens.insert(token)
             }
         }
@@ -612,7 +685,7 @@ final class TokenField: UIView {
 
         textView.attributedText.enumerateAttachment { textAttachment, range, _ in
             if let token = (textAttachment as? TokenContainer)?.token,
-                tokensToRemove.contains(token) {
+               tokensToRemove.contains(token) {
                 rangesToRemove.append(range)
             }
         }
@@ -637,7 +710,7 @@ final class TokenField: UIView {
     }
 
     private func rangeIncludesRange(_ range: NSRange, _ includedRange: NSRange) -> Bool {
-        return range == range.union(includedRange)
+        range == range.union(includedRange)
     }
 
     private func notifyIfFilterTextChanged() {
@@ -649,7 +722,10 @@ final class TokenField: UIView {
         }
 
         let oldFilterText = filterText
-        self.filterText = ((textView.text as NSString).substring(from: indexOfFilterText)).replacingOccurrences(of: "\u{FFFC}", with: "")
+        filterText = ((textView.text as NSString).substring(from: indexOfFilterText)).replacingOccurrences(
+            of: "\u{FFFC}",
+            with: ""
+        )
         if oldFilterText != filterText {
             delegate?.tokenField(self, changedFilterTextTo: filterText)
         }
@@ -660,15 +736,17 @@ final class TokenField: UIView {
 // MARK: - TokenizedTextViewDelegate
 
 extension TokenField: TokenizedTextViewDelegate {
-    func tokenizedTextView(_ textView: TokenizedTextView,
-                           didTapTextRange range: NSRange,
-                           fraction: CGFloat) {
+    func tokenizedTextView(
+        _ textView: TokenizedTextView,
+        didTapTextRange range: NSRange,
+        fraction: CGFloat
+    ) {
         if isCollapsed {
             setCollapsed(false, animated: true)
             return
         }
 
-        if fraction >= 1 && range.location == self.textView.textStorage.length - 1 {
+        if fraction >= 1, range.location == self.textView.textStorage.length - 1 {
             return
         }
 
@@ -692,8 +770,13 @@ extension TokenField: TokenizedTextViewDelegate {
 // MARK: - UITextViewDelegate
 
 extension TokenField: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldInteractWith textAttachment: NSTextAttachment, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        return !(textAttachment is TokenSeparatorAttachment)
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith textAttachment: NSTextAttachment,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
+        !(textAttachment is TokenSeparatorAttachment)
     }
 
     func textViewDidChange(_ textView: UITextView) {
@@ -719,7 +802,10 @@ extension TokenField: UITextViewDelegate {
                     modifiedSelectionRange = (hasModifiedSelection ? modifiedSelectionRange : range).union(range)
                     hasModifiedSelection = true
                 }
-                zmLog.info("    person attachement: \(tokenAttachment.token.title) at range: \(range) selected: \(tokenAttachment.isSelected)")
+                zmLog
+                    .info(
+                        "    person attachement: \(tokenAttachment.token.title) at range: \(range) selected: \(tokenAttachment.isSelected)"
+                    )
             }
         }
 
@@ -728,9 +814,11 @@ extension TokenField: UITextViewDelegate {
         }
     }
 
-    func textView(_ textView: UITextView,
-                  shouldChangeTextIn range: NSRange,
-                  replacementText text: String) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldChangeTextIn range: NSRange,
+        replacementText text: String
+    ) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
             userDidConfirmInput = true
@@ -759,7 +847,8 @@ extension TokenField: UITextViewDelegate {
         }
 
         // Inserting text between tokens does not make sense for this control.
-        // If there are any tokens after the insertion point, move the cursor to the end instead, but only for insertions
+        // If there are any tokens after the insertion point, move the cursor to the end instead, but only for
+        // insertions
         // If the range length is >0, we are trying to replace something instead, and that’s a bit more complex,
         // so don’t do any magic in that case
 
@@ -775,8 +864,8 @@ extension TokenField: UITextViewDelegate {
     }
 }
 
-extension Unicode.Scalar {
-    fileprivate static var textAttachmentCharacter: Self? {
+private extension Unicode.Scalar {
+    static var textAttachmentCharacter: Self? {
         .init(NSTextAttachment.character)
     }
 }

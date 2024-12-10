@@ -53,7 +53,12 @@ final class AnimatedPenView: UIView {
         pen.layer.speed = 0
         pen.layer.timeOffset = 2
 
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -101,11 +106,8 @@ final class AnimatedPenView: UIView {
         pen.layer.add(moveX, forKey: WritingAnimationKey)
     }
 
-    func stopWritingAnimation() {
-        pen.layer.removeAnimation(forKey: WritingAnimationKey)
-    }
-
-    @objc func applicationDidBecomeActive(_ notification: Notification) {
+    @objc
+    func applicationDidBecomeActive(_ notification: Notification) {
         startWritingAnimation()
     }
 
@@ -120,6 +122,7 @@ final class TypingIndicatorView: UIView {
 
         return label
     }()
+
     let animatedPen = AnimatedPenView()
     let container: UIView = {
         let view = UIView()
@@ -127,6 +130,7 @@ final class TypingIndicatorView: UIView {
 
         return view
     }()
+
     let expandingLine: UIView = {
         let view = UIView()
         view.backgroundColor = SemanticColors.View.backgroundConversationView
@@ -203,7 +207,7 @@ final class TypingIndicatorView: UIView {
     }
 
     func updateNameLabel() {
-        nameLabel.text = typingUsers.compactMap { $0.name }.joined(separator: ", ")
+        nameLabel.text = typingUsers.compactMap(\.name).joined(separator: ", ")
     }
 
     func setHidden(_ hidden: Bool, animated: Bool, completion: Completion? = nil) {
@@ -234,21 +238,24 @@ final class TypingIndicatorView: UIView {
                 }
             } else {
                 animatedPen.isAnimating = false
-                self.layoutSubviews()
+                layoutSubviews()
                 UIView.animate(easing: .easeInOutQuad, duration: 0.35, animations: expandLine)
-                UIView.animate(easing: .easeInQuad,
-                               duration: 0.15,
-                               delayTime: 0.15,
-                               animations: showContainer, completion: { _ in
-                                self.animatedPen.isAnimating = true
-                                completion?()
-                               })
+                UIView.animate(
+                    easing: .easeInQuad,
+                    duration: 0.15,
+                    delayTime: 0.15,
+                    animations: showContainer,
+                    completion: { _ in
+                        self.animatedPen.isAnimating = true
+                        completion?()
+                    }
+                )
             }
 
         } else {
             if hidden {
                 collapseLine()
-                self.container.alpha = 0
+                container.alpha = 0
             } else {
                 expandLine()
                 showContainer()

@@ -22,9 +22,8 @@ extension ZMUserSession {
 
     /// Whether the user completed the registration on this device
 
-    @objc
-    public var registeredOnThisDevice: Bool {
-        return managedObjectContext.registeredOnThisDevice
+    @objc public var registeredOnThisDevice: Bool {
+        managedObjectContext.registeredOnThisDevice
     }
 
     @objc(setEmailCredentials:)
@@ -43,7 +42,7 @@ extension ZMUserSession {
     ///
     /// NOTE: This property should only be called on the main queue.
 
-    public var isLoggedIn: Bool { // TODO jacob we don't want this to be public
+    public var isLoggedIn: Bool {
         let needsToRegisterClient = ZMClientRegistrationStatus.needsToRegisterClient(in: managedObjectContext)
         let needsToRegisterMLSClient = ZMClientRegistrationStatus.needsToRegisterMLSClient(in: managedObjectContext)
         let waitingToRegisterMLSClient = needsToRegisterMLSClient && !hasCompletedInitialSync
@@ -54,7 +53,7 @@ extension ZMUserSession {
     /// `True` if the session has a valid authentication cookie
 
     var isAuthenticated: Bool {
-        return transportSession.cookieStorage.isAuthenticated
+        transportSession.cookieStorage.hasAuthenticationCookie
     }
 
     /// This will delete user data stored by WireSyncEngine in the keychain.
@@ -68,11 +67,7 @@ extension ZMUserSession {
     /// - parameter deleteCookie: If set to true the cookies associated with the session will be deleted
     /// - parameter completion: called after the user session has been closed
 
-    @objc(closeAndDeleteCookie:completion:)
     func close(deleteCookie: Bool, completion: @escaping () -> Void) {
-        UserDefaults.standard.synchronize()
-        UserDefaults.shared()?.synchronize()
-
         // Clear all notifications associated with the account from the notification center
         syncManagedObjectContext.performGroupedBlock {
             self.localNotificationDispatcher?.cancelAllNotifications()
@@ -97,14 +92,18 @@ extension ZMUserSession {
             return
         }
 
-        let payload: [String: Any]
-        if let password = credentials.password, !password.isEmpty {
-            payload = ["password": password]
+        let payload: [String: Any] = if let password = credentials.password, !password.isEmpty {
+            ["password": password]
         } else {
-            payload = [:]
+            [:]
         }
 
-        let request = ZMTransportRequest(path: "/clients/\(selfClientIdentifier)", method: .delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/clients/\(selfClientIdentifier)",
+            method: .delete,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
 
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
             guard let self else { return }
@@ -122,23 +121,22 @@ extension ZMUserSession {
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
 
-        var errorCode: ZMUserSessionErrorCode
-        switch response.result {
+        var errorCode: UserSessionErrorCode = switch response.result {
         case .permanentError:
-                switch response.payload?.asDictionary()?["label"] as? String {
-                case "client-not-found":
-                    errorCode = .clientDeletedRemotely
-                case "invalid-credentials",
-                     "missing-auth",
-                     "bad-request": // in case the password not matching password format requirement
-                    errorCode = .invalidCredentials
-                default:
-                    errorCode = .unknownError
-                }
+            switch response.payload?.asDictionary()?["label"] as? String {
+            case "client-not-found":
+                .clientDeletedRemotely
+            case "invalid-credentials",
+                 "missing-auth",
+                 "bad-request": // in case the password not matching password format requirement
+                .invalidCredentials
+            default:
+                .unknownError
+            }
         case .temporaryError, .tryAgainLater, .expired:
-            errorCode = .networkError
+            .networkError
         default:
-            errorCode = .unknownError
+            .unknownError
         }
 
         var userInfo: [String: Any]?
@@ -146,7 +144,7 @@ extension ZMUserSession {
             userInfo = [NSUnderlyingErrorKey: transportSessionError]
         }
 
-        return NSError(code: errorCode, userInfo: userInfo)
+        return NSError(userSessionErrorCode: errorCode, userInfo: userInfo)
     }
 
 }

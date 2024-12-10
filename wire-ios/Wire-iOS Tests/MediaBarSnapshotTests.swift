@@ -16,25 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class MediaBarSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: MediaBar!
+    private var sut: MediaBar!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = .init()
         setupMediaBar()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -55,6 +60,6 @@ final class MediaBarSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

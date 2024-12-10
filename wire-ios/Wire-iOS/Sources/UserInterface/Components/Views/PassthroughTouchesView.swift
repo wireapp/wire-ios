@@ -18,11 +18,12 @@
 
 import UIKit
 
-/// A derative of UIView whose main body is completely invisible to touches so they are passed through to whatever is below, yet its subviews and subsubviews in designated classes still process the touches.
+/// A derative of UIView whose main body is completely invisible to touches so they are passed through to whatever is
+/// below, yet its subviews and subsubviews in designated classes still process the touches.
 final class PassthroughTouchesView: UIView {
     override var isOpaque: Bool {
         get {
-            return false
+            false
         }
 
         set {
@@ -51,7 +52,10 @@ final class PassthroughTouchesView: UIView {
 
             for subSubview in subview.subviews {
                 let translatedSubSubPoint = convert(point, to: subSubview)
-                if subview.point(inside: translatedPoint, with: event) && subSubview.point(inside: translatedSubSubPoint, with: event) {
+                if subview.point(inside: translatedPoint, with: event), subSubview.point(
+                    inside: translatedSubSubPoint,
+                    with: event
+                ) {
                     return true
                 }
             }

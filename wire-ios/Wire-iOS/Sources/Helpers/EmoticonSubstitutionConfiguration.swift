@@ -24,16 +24,14 @@ final class EmoticonSubstitutionConfiguration {
 
     // Sorting keys is important. Longer keys should be resolved first,
     // In order to make 'O:-)' to be resolved as '😇', not a 'O😊'.
-    lazy var shortcuts: [String] = {
-        return substitutionRules.keys.sorted(by: {
-            $0.count >= $1.count
-        })
-    }()
+    lazy var shortcuts: [String] = substitutionRules.keys.sorted(by: {
+        $0.count >= $1.count
+    })
 
     // key is substitution string like ':)', value is smile string 😊
     let substitutionRules: [String: String]
 
-    class var sharedInstance: EmoticonSubstitutionConfiguration {
+    static var sharedInstance: EmoticonSubstitutionConfiguration {
         guard let filePath = Bundle.main.path(forResource: "emoticons.min", ofType: "json") else {
             fatal("emoticons.min does not exist!")
         }
@@ -52,7 +50,7 @@ final class EmoticonSubstitutionConfiguration {
             fatal("\(error)")
         }
 
-        substitutionRules = jsonResult?.mapValues { value -> String in
+        self.substitutionRules = jsonResult?.mapValues { value -> String in
             if let hexInt = Int(value, radix: 16),
                let scalar = UnicodeScalar(hexInt) {
                 return String(Character(scalar))

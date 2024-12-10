@@ -102,12 +102,16 @@ final class CallingActionsView: UIView {
     init() {
         super.init(frame: .zero)
 
-        videoButtonDisabledTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(performButtonAction))
+        self.videoButtonDisabledTapRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(performButtonAction)
+        )
         setupViews()
         createConstraints()
     }
 
-    @available(*, unavailable) required init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -195,15 +199,16 @@ final class CallingActionsView: UIView {
             largeHangUpButton.centerXAnchor.constraint(equalTo: microphoneButton.centerXAnchor).withPriority(.required),
             largePickUpButton.centerXAnchor.constraint(equalTo: speakerButton.centerXAnchor).withPriority(.required),
 
-            largeHangUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34),
-            largePickUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34)
+            largeHangUpButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -34),
+            largePickUpButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -34)
         ]
 
         largeButtonsLandscapeConstraints = [
             largeHangUpButton.centerYAnchor.constraint(equalTo: microphoneButton.centerYAnchor).withPriority(.required),
-            largePickUpButton.centerYAnchor.constraint(equalTo: largeHangUpButton.centerYAnchor).withPriority(.required),
-            largeHangUpButton.leadingAnchor.constraint(equalTo: safeLeadingAnchor, constant: 20.0),
-            largePickUpButton.trailingAnchor.constraint(equalTo: safeTrailingAnchor, constant: -20.0)
+            largePickUpButton.centerYAnchor.constraint(equalTo: largeHangUpButton.centerYAnchor)
+                .withPriority(.required),
+            largeHangUpButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20.0),
+            largePickUpButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20.0)
         ]
         let isPortrait = UIDevice.current.twoDimensionOrientation.isPortrait
         NSLayoutConstraint.activate(
@@ -241,32 +246,29 @@ final class CallingActionsView: UIView {
     }
 
     private func canToggleMuteButton(_ input: CallActionsViewInputType) -> Bool {
-        return !input.permissions.isAudioDisabledForever
+        !input.permissions.isAudioDisabledForever
     }
 
     private func canToggleSpeakerButton(_ input: CallActionsViewInputType) -> Bool {
-        return input.mediaState.canSpeakerBeToggled
+        input.mediaState.canSpeakerBeToggled
     }
 
     // MARK: - Action Output
 
-    func updateVideoGridPresentationMode(with mode: VideoGridPresentationMode) {
-        delegate?.callingActionsViewPerformAction(.updateVideoGridPresentationMode(mode))
-    }
-
-    @objc private func performButtonAction(_ sender: IconLabelButton) {
+    @objc
+    private func performButtonAction(_ sender: IconLabelButton) {
         delegate?.callingActionsViewPerformAction(action(for: sender))
     }
 
     private func action(for button: IconLabelButton) -> CallAction {
         switch button {
-        case microphoneButton: return .toggleMuteState
-        case cameraButton: return .toggleVideoState
-        case videoButtonDisabledTapRecognizer: return .alertVideoUnavailable
-        case speakerButton: return .toggleSpeakerState
-        case flipCameraButton: return .flipCamera
-        case endCallButton, largeHangUpButton: return .terminateCall
-        case largePickUpButton: return .acceptCall
+        case microphoneButton: .toggleMuteState
+        case cameraButton: .toggleVideoState
+        case videoButtonDisabledTapRecognizer: .alertVideoUnavailable
+        case speakerButton: .toggleSpeakerState
+        case flipCameraButton: .flipCamera
+        case endCallButton, largeHangUpButton: .terminateCall
+        case largePickUpButton: .acceptCall
         default: fatalError("Unexpected Button: \(button)")
         }
     }
@@ -276,11 +278,15 @@ final class CallingActionsView: UIView {
     private func updateAccessibilityElements(with input: CallActionsViewInputType) {
         typealias Calling = L10n.Accessibility.Calling
 
-        microphoneButton.accessibilityLabel = input.isMuted ? Calling.MicrophoneOnButton.description : Calling.MicrophoneOffButton.description
-        speakerButton.accessibilityLabel = input.mediaState.isSpeakerEnabled ? Calling.SpeakerOffButton.description : Calling.SpeakerOnButton.description
+        microphoneButton.accessibilityLabel = input.isMuted ? Calling.MicrophoneOnButton.description : Calling
+            .MicrophoneOffButton.description
+        speakerButton.accessibilityLabel = input.mediaState.isSpeakerEnabled ? Calling.SpeakerOffButton
+            .description : Calling.SpeakerOnButton.description
         endCallButton.accessibilityLabel = Calling.HangUpButton.description
-        cameraButton.accessibilityLabel = input.mediaState.isSendingVideo ? Calling.VideoOffButton.description : Calling.VideoOnButton.description
-        flipCameraButton.accessibilityLabel = input.cameraType == .front ? Calling.FlipCameraBackButton.description : Calling.FlipCameraFrontButton.description
+        cameraButton.accessibilityLabel = input.mediaState.isSendingVideo ? Calling.VideoOffButton.description : Calling
+            .VideoOnButton.description
+        flipCameraButton.accessibilityLabel = input.cameraType == .front ? Calling.FlipCameraBackButton
+            .description : Calling.FlipCameraFrontButton.description
         largePickUpButton.accessibilityLabel = Calling.AcceptButton.description
         largeHangUpButton.accessibilityLabel = Calling.HangUpButton.description
     }
@@ -290,11 +296,12 @@ final class CallingActionsView: UIView {
 
         guard let bottomSheetScrollingDelegate else { return }
         handleView.accessibilityHint = bottomSheetScrollingDelegate.isBottomSheetExpanded
-                                     ? Calling.SwipeDownParticipants.hint
-                                     : Calling.SwipeUpParticipants.hint
+            ? Calling.SwipeDownParticipants.hint
+            : Calling.SwipeUpParticipants.hint
     }
 
-    @objc private func handleViewAccessibilityAction() {
+    @objc
+    private func handleViewAccessibilityAction() {
         bottomSheetScrollingDelegate?.toggleBottomSheetVisibility()
         updateHandleViewAccessibilityLabel()
     }
@@ -315,9 +322,12 @@ final class CallingActionsView: UIView {
 
 extension CallingActionsView: UILargeContentViewerInteractionDelegate {
 
-    func largeContentViewerInteraction(_: UILargeContentViewerInteraction, itemAt: CGPoint) -> UILargeContentViewerItem? {
-        let itemWidth = self.frame.width / CGFloat(establishedCallButtons.count)
-        let position: Int = Int(itemAt.x / itemWidth)
+    func largeContentViewerInteraction(
+        _: UILargeContentViewerInteraction,
+        itemAt: CGPoint
+    ) -> UILargeContentViewerItem? {
+        let itemWidth = frame.width / CGFloat(establishedCallButtons.count)
+        let position = Int(itemAt.x / itemWidth)
         largeContentTitle = establishedCallButtons[position].subtitleTransformLabel.text
         largeContentImage = establishedCallButtons[position].iconButton.imageView?.image
 

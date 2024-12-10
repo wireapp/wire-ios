@@ -23,7 +23,10 @@ import WireSyncEngine
 
 /// Observes events from the message toolbox.
 protocol MessageToolboxViewDelegate: AnyObject {
-    func messageToolboxDidRequestOpeningDetails(_ messageToolboxView: MessageToolboxView, preferredDisplayMode: MessageDetailsDisplayMode)
+    func messageToolboxDidRequestOpeningDetails(
+        _ messageToolboxView: MessageToolboxView,
+        preferredDisplayMode: MessageDetailsDisplayMode
+    )
     func messageToolboxViewDidSelectResend(_ messageToolboxView: MessageToolboxView)
     func messageToolboxViewDidSelectDelete(_ sender: UIView?)
 }
@@ -42,9 +45,7 @@ private extension UILabel {
     }
 }
 
-/**
- * A view that displays information about a message.
- */
+/// A view that displays information about a message.
 
 final class MessageToolboxView: UIView {
 
@@ -58,8 +59,6 @@ final class MessageToolboxView: UIView {
 
     /// The timer for ephemeral messages.
     private var timestampTimer: Timer?
-
-    typealias MessageActionsColor = SemanticColors.Label
 
     private let contentStack: UIStackView = {
         let stack = UIStackView()
@@ -109,10 +108,8 @@ final class MessageToolboxView: UIView {
     fileprivate var tapGestureRecogniser: UITapGestureRecognizer!
 
     fileprivate let separatorView = UIView()
-    fileprivate var likeButtonWidth: NSLayoutConstraint!
     fileprivate var heightConstraint: NSLayoutConstraint!
-    fileprivate var previousLayoutBounds: CGRect = CGRect.zero
-    fileprivate var forceShowTimestamp: Bool = false
+    fileprivate var previousLayoutBounds: CGRect = .zero
 
     // MARK: - Initialization
 
@@ -124,7 +121,7 @@ final class MessageToolboxView: UIView {
         setupViews()
         createConstraints()
 
-        tapGestureRecogniser = UITapGestureRecognizer(
+        self.tapGestureRecogniser = UITapGestureRecognizer(
             target: self,
             action: #selector(MessageToolboxView.onTapContent(_:))
         )
@@ -172,12 +169,18 @@ final class MessageToolboxView: UIView {
 
             // statusTextView align vertically center
             contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            contentStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
+            contentStack.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
             contentStack.topAnchor.constraint(equalTo: topAnchor),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
 
             messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            messageFailureView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
             messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
@@ -187,13 +190,13 @@ final class MessageToolboxView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard let message = self.dataSource?.message else { return }
-        guard !self.bounds.equalTo(self.previousLayoutBounds) else {
+        guard let message = dataSource?.message else { return }
+        guard !bounds.equalTo(previousLayoutBounds) else {
             return
         }
 
-        self.previousLayoutBounds = self.bounds
-        self.configureForMessage(message)
+        previousLayoutBounds = bounds
+        configureForMessage(message)
     }
 
     override func willMove(toWindow newWindow: UIWindow?) {
@@ -204,15 +207,10 @@ final class MessageToolboxView: UIView {
         }
     }
 
-    func prepareForReuse() {
-        dataSource = nil
-        stopCountdownTimer()
-    }
-
     // MARK: - Configuration
 
     private var contentWidth: CGFloat {
-        return bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
+        bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
     }
 
     func configureForMessage(
@@ -234,7 +232,7 @@ final class MessageToolboxView: UIView {
     }
 
     private func reloadContent(animated: Bool) {
-        guard let dataSource = self.dataSource else { return }
+        guard let dataSource else { return }
 
         // Do not reload the content if it didn't change.
         guard dataSource.shouldUpdateContent(
@@ -245,40 +243,39 @@ final class MessageToolboxView: UIView {
 
         switch dataSource.content {
 
-        case .callList(let callListString):
-            self.detailsLabel.attributedText = callListString
-            self.detailsLabel.isHidden = false
-            self.detailsLabel.numberOfLines = 0
-            self.hideAndCleanStatusLabel()
-            self.timestampSeparatorLabel.isHidden = true
-            self.statusSeparatorLabel.isHidden = true
-            self.countdownLabel.isHidden = true
-            self.messageFailureView.isHidden = true
+        case let .callList(callListString):
+            detailsLabel.attributedText = callListString
+            detailsLabel.isHidden = false
+            detailsLabel.numberOfLines = 0
+            hideAndCleanStatusLabel()
+            timestampSeparatorLabel.isHidden = true
+            statusSeparatorLabel.isHidden = true
+            countdownLabel.isHidden = true
+            messageFailureView.isHidden = true
 
-        case .sendFailure(let detailsString):
-            self.hideAndCleanStatusLabel()
-            self.statusSeparatorLabel.isHidden = true
-            self.countdownLabel.isHidden = true
-            self.timestampSeparatorLabel.isHidden = false
-            self.messageFailureView.isHidden = false
-            self.messageFailureView.setTitle(detailsString.string)
+        case let .sendFailure(detailsString):
+            hideAndCleanStatusLabel()
+            statusSeparatorLabel.isHidden = true
+            countdownLabel.isHidden = true
+            timestampSeparatorLabel.isHidden = false
+            messageFailureView.isHidden = false
+            messageFailureView.setTitle(detailsString.string)
 
-        case .details(let timestamp, let status, let countdown):
-            self.detailsLabel.attributedText = timestamp
-            self.detailsLabel.isHidden = timestamp == nil
-            self.detailsLabel.numberOfLines = 1
-            self.statusLabel.attributedText = status
+        case let .details(timestamp, status, countdown):
+            detailsLabel.attributedText = timestamp
+            detailsLabel.isHidden = timestamp == nil
+            detailsLabel.numberOfLines = 1
+            statusLabel.attributedText = status
             // override accessibilityLabel if the attributed string has customized accessibilityLabel
             if let accessibilityLabel = status?.accessibilityLabel {
-                self.statusLabel.accessibilityLabel = accessibilityLabel
+                statusLabel.accessibilityLabel = accessibilityLabel
             }
-            self.statusLabel.isHidden = status == nil
-            self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
-            self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
-            self.countdownLabel.attributedText = countdown
-            self.countdownLabel.isHidden = countdown == nil
-            self.messageFailureView.isHidden = true
-
+            statusLabel.isHidden = status == nil
+            timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
+            statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
+            countdownLabel.attributedText = countdown
+            countdownLabel.isHidden = countdown == nil
+            messageFailureView.isHidden = true
         }
 
         layoutIfNeeded()
@@ -290,7 +287,7 @@ final class MessageToolboxView: UIView {
     func startCountdownTimer() {
         stopCountdownTimer()
 
-        guard let message = self.dataSource?.message else { return }
+        guard let message = dataSource?.message else { return }
         guard message.isEphemeral, !message.hasBeenDeleted, !message.isObfuscated else { return }
 
         timestampTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
@@ -330,7 +327,7 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
     }
 
     func preferredDetailsDisplayMode() -> MessageDetailsDisplayMode? {
-        guard let dataSource = self.dataSource else { return nil }
+        guard let dataSource else { return nil }
 
         switch dataSource.content {
         case .sendFailure:
@@ -348,7 +345,7 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        return gestureRecognizer.isEqual(self.tapGestureRecogniser)
+        gestureRecognizer.isEqual(tapGestureRecogniser)
     }
 
 }

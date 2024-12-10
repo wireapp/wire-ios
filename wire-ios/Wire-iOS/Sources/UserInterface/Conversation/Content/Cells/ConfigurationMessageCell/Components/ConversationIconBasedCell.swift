@@ -42,11 +42,11 @@ class ConversationIconBasedCell: UIView {
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return textLabel
+        textLabel
     }
 
     var selectionRect: CGRect {
-        return textLabel.bounds
+        textLabel.bounds
     }
 
     var attributedText: NSAttributedString? {
@@ -63,7 +63,7 @@ class ConversationIconBasedCell: UIView {
     }
 
     private var trailingTextMargin: CGFloat {
-        return -conversationHorizontalMargins.right * 2
+        -conversationHorizontalMargins.right * 2
     }
 
     override init(frame: CGRect) {
@@ -72,6 +72,7 @@ class ConversationIconBasedCell: UIView {
         configureConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
@@ -108,9 +109,16 @@ class ConversationIconBasedCell: UIView {
         bottomContentView.translatesAutoresizingMaskIntoConstraints = false
         lineView.translatesAutoresizingMaskIntoConstraints = false
 
-        topContentViewTrailingConstraint = topContentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: trailingTextMargin)
-        containerWidthConstraint = imageContainer.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left)
-        textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: trailingTextMargin)
+        topContentViewTrailingConstraint = topContentView.trailingAnchor.constraint(
+            lessThanOrEqualTo: trailingAnchor,
+            constant: trailingTextMargin
+        )
+        containerWidthConstraint = imageContainer.widthAnchor
+            .constraint(equalToConstant: conversationHorizontalMargins.left)
+        textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
+            lessThanOrEqualTo: trailingAnchor,
+            constant: trailingTextMargin
+        )
         textLabelTopConstraint = textLabel.topAnchor.constraint(equalTo: topContentView.bottomAnchor)
 
         // We want the content view to at least be below the image container
@@ -166,7 +174,12 @@ class ConversationIconBasedCell: UIView {
 }
 
 extension ConversationIconBasedCell: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith url: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         // Fixes Swift 5.0 release build child class overridden method not called bug
 
         UIApplication.shared.open(url)

@@ -17,8 +17,8 @@
 //
 import WireSyncEngine
 
-final class MockConversationFactory {
-    class func mockConversation() -> MockConversation? {
-        return (MockLoader.mockObjects(of: MockConversation.self, fromFile: "conversations-01.json")?[0] as? MockConversation)
+enum MockConversationFactory {
+    static func mockConversation() -> MockConversation? {
+        (MockLoader.mockObjects(of: MockConversation.self, fromFile: "conversations-01.json")?[0] as? MockConversation)
     }
 }

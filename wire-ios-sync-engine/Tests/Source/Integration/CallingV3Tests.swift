@@ -30,11 +30,17 @@ final class CallStateTestObserver: WireCallCenterCallStateObserver {
         token = WireCallCenterV3.addCallStateObserver(observer: self, for: conversation, context: context)
     }
 
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: ZMUser, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: ZMUser,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         changes.append(callState)
     }
 
-    func checkLastNotificationHasCallState(_ callState: CallState, line: UInt = #line, file: StaticString = #file) {
+    func checkLastNotificationHasCallState(_ callState: CallState, line: UInt = #line, file: StaticString = #filePath) {
         guard let lastCallState = changes.last else {
             return XCTFail("Did not receive a notification", file: file, line: line)
         }
@@ -81,25 +87,34 @@ final class CallingV3Tests: IntegrationTest {
     }
 
     func selfJoinCall(isStart: Bool) {
-        _ = self.conversationUnderTest.voiceChannel?.join(video: false)
+        _ = conversationUnderTest.voiceChannel?.join(video: false)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func selfLeaveCall() {
-        let convIdRef = self.conversationIdRef
-        let userIdRef = self.selfUser.identifier.cString(using: .utf8)
-        self.conversationUnderTest.voiceChannel?.leave()
-        WireSyncEngine.closedCallHandler(reason: WCALL_REASON_STILL_ONGOING,
-                                         conversationId: convIdRef,
-                                         messageTime: 0,
-                                         userId: userIdRef,
-                                         contextRef: self.wireCallCenterRef)
+        let convIdRef = conversationIdRef
+        let userIdRef = selfUser.identifier.cString(using: .utf8)
+        conversationUnderTest.voiceChannel?.leave()
+        WireSyncEngine.closedCallHandler(
+            reason: WCALL_REASON_STILL_ONGOING,
+            conversationId: convIdRef,
+            messageTime: 0,
+            userId: userIdRef,
+            contextRef: wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func otherStartCall(user: ZMUser, isVideoCall: Bool = false, shouldRing: Bool = true) {
         let userIdRef = user.remoteIdentifier!.transportString().cString(using: .utf8)
-        WireSyncEngine.incomingCallHandler(conversationId: conversationIdRef, messageTime: UInt32(ceil(Date().timeIntervalSince1970)), userId: userIdRef, isVideoCall: isVideoCall ? 1 : 0, shouldRing: shouldRing ? 1 : 0, contextRef: wireCallCenterRef)
+        WireSyncEngine.incomingCallHandler(
+            conversationId: conversationIdRef,
+            messageTime: UInt32(ceil(Date().timeIntervalSince1970)),
+            userId: userIdRef,
+            isVideoCall: isVideoCall ? 1 : 0,
+            shouldRing: shouldRing ? 1 : 0,
+            contextRef: wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
@@ -113,22 +128,30 @@ final class CallingV3Tests: IntegrationTest {
     }
 
     private var wireCallCenterRef: UnsafeMutableRawPointer? {
-        return Unmanaged<WireCallCenterV3>.passUnretained(userSession!.managedObjectContext.zm_callCenter!).toOpaque()
+        Unmanaged<WireCallCenterV3>.passUnretained(userSession!.managedObjectContext.zm_callCenter!).toOpaque()
     }
 
     private var conversationIdRef: [CChar]? {
-        return conversationUnderTest.remoteIdentifier!.transportString().cString(using: .utf8)
+        conversationUnderTest.remoteIdentifier!.transportString().cString(using: .utf8)
     }
 
     func establishedFlow(user: ZMUser) {
         let userIdRef = user.remoteIdentifier!.transportString().cString(using: .utf8)
-        WireSyncEngine.establishedCallHandler(conversationId: conversationIdRef, userId: userIdRef, contextRef: wireCallCenterRef)
+        WireSyncEngine.establishedCallHandler(
+            conversationId: conversationIdRef,
+            userId: userIdRef,
+            contextRef: wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func participantsChanged(members: [(user: ZMUser, establishedFlow: Bool)]) {
-        let mappedMembers = members.map { AVSCallMember(userId: $0.user.remoteIdentifier!, audioEstablished: $0.establishedFlow) }
-        (userSession!.managedObjectContext.zm_callCenter as! WireCallCenterV3IntegrationMock).mockAVSWrapper.mockMembers = mappedMembers
+        let mappedMembers = members.map { AVSCallMember(
+            userId: $0.user.remoteIdentifier!,
+            audioEstablished: $0.establishedFlow
+        ) }
+        (userSession!.managedObjectContext.zm_callCenter as! WireCallCenterV3IntegrationMock).mockAVSWrapper
+            .mockMembers = mappedMembers
 
         WireSyncEngine.groupMemberHandler(conversationIdRef: conversationIdRef, contextRef: wireCallCenterRef)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -136,7 +159,13 @@ final class CallingV3Tests: IntegrationTest {
 
     func closeCall(user: ZMUser, reason: CallClosedReason) {
         let userIdRef = user.remoteIdentifier!.transportString().cString(using: .utf8)
-        WireSyncEngine.closedCallHandler(reason: reason.wcall_reason, conversationId: conversationIdRef, messageTime: 0, userId: userIdRef, contextRef: wireCallCenterRef)
+        WireSyncEngine.closedCallHandler(
+            reason: reason.wcall_reason,
+            conversationId: conversationIdRef,
+            messageTime: 0,
+            userId: userIdRef,
+            contextRef: wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
@@ -144,21 +173,27 @@ final class CallingV3Tests: IntegrationTest {
         otherStartCall(user: user)
 
         let userIdRef = user.remoteIdentifier!.transportString().cString(using: .utf8)
-        WireSyncEngine.missedCallHandler(conversationId: conversationIdRef, messageTime: UInt32(Date().timeIntervalSince1970), userId: userIdRef, isVideoCall: 0, contextRef: wireCallCenterRef)
+        WireSyncEngine.missedCallHandler(
+            conversationId: conversationIdRef,
+            messageTime: UInt32(Date().timeIntervalSince1970),
+            userId: userIdRef,
+            isVideoCall: 0,
+            contextRef: wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     var useGroupConversation: Bool = false
     var mockConversationUnderTest: MockConversation {
-        return useGroupConversation ? groupConversation : selfToUser2Conversation
+        useGroupConversation ? groupConversation : selfToUser2Conversation
     }
 
     var conversationUnderTest: ZMConversation {
-        return conversation(for: mockConversationUnderTest)!
+        conversation(for: mockConversationUnderTest)!
     }
 
     var localSelfUser: ZMUser {
-        return user(for: selfUser)!
+        user(for: selfUser)!
     }
 
     func testJoiningAndLeavingAnEmptyVoiceChannel_OneOnOne() {
@@ -175,7 +210,7 @@ final class CallingV3Tests: IntegrationTest {
 
         // when
         selfLeaveCall()
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 3)
@@ -196,8 +231,10 @@ final class CallingV3Tests: IntegrationTest {
         stateObserver.checkLastNotificationHasCallState(.outgoing(degraded: false))
 
         // when
-        participantsChanged(members: [(user: conversationUnderTest.localParticipants.firstObject as! ZMUser, establishedFlow: false),
-                                      (user: conversationUnderTest.localParticipants.lastObject as! ZMUser, establishedFlow: false)])
+        participantsChanged(members: [
+            (user: conversationUnderTest.localParticipants.firstObject as! ZMUser, establishedFlow: false),
+            (user: conversationUnderTest.localParticipants.lastObject as! ZMUser, establishedFlow: false)
+        ])
         stateObserver.changes = []
 
         // when
@@ -208,7 +245,7 @@ final class CallingV3Tests: IntegrationTest {
         stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: false, degraded: false))
 
         // and when
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         XCTAssertEqual(stateObserver.changes.count, 2)
         stateObserver.checkLastNotificationHasCallState(.terminating(reason: .canceled))
@@ -236,7 +273,7 @@ final class CallingV3Tests: IntegrationTest {
         stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: false, degraded: false))
 
         // and when
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         XCTAssertEqual(stateObserver.changes.count, 2)
         stateObserver.checkLastNotificationHasCallState(.terminating(reason: .canceled))
@@ -280,7 +317,7 @@ final class CallingV3Tests: IntegrationTest {
         //
         // when
         selfLeaveCall()
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 5)
@@ -329,7 +366,7 @@ final class CallingV3Tests: IntegrationTest {
         //
         // when
         selfLeaveCall()
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         // then
         stateObserver.checkLastNotificationHasCallState(.terminating(reason: .canceled))
@@ -536,8 +573,10 @@ final class CallingV3Tests: IntegrationTest {
         establishedFlow(user: localSelfUser)
 
         // second user joins
-        participantsChanged(members: [(user: localUser1, establishedFlow: false),
-                                      (user: localUser2, establishedFlow: false)])
+        participantsChanged(members: [
+            (user: localUser1, establishedFlow: false),
+            (user: localUser2, establishedFlow: false)
+        ])
 
         // then
         XCTAssertEqual(convObserver!.notifications.count, 1)
@@ -614,7 +653,10 @@ final class CallingV3Tests: IntegrationTest {
         otherStartCall(user: user)
 
         // then
-        XCTAssertEqual(conversationUnderTest.voiceChannel?.state, .incoming(video: false, shouldRing: true, degraded: false))
+        XCTAssertEqual(
+            conversationUnderTest.voiceChannel?.state,
+            .incoming(video: false, shouldRing: true, degraded: false)
+        )
     }
 
     func testThatCallIsTerminatedIfConversationSecurityDegrades() {
@@ -628,7 +670,7 @@ final class CallingV3Tests: IntegrationTest {
         establishSession(with: user2)
         let selfClient = ZMUser.selfUser(inUserSession: userSession!).selfClient()!
         userSession?.perform {
-            remoteUser.clients.forEach({ selfClient.trustClient($0) })
+            remoteUser.clients.forEach { selfClient.trustClient($0) }
         }
         XCTAssertEqual(conversationUnderTest.securityLevel, .secure)
 
@@ -655,6 +697,7 @@ final class CallingV3Tests: IntegrationTest {
 }
 
 // MARK: - SystemMessages
+
 extension CallingV3Tests {
 
     func fetchAllClients() {
@@ -698,7 +741,7 @@ extension CallingV3Tests {
         XCTAssertTrue(login())
         fetchAllClients()
 
-        self.userSession?.perform {
+        userSession?.perform {
             self.conversationUnderTest.isArchived = true
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -735,8 +778,8 @@ extension CallingV3Tests {
         // we receive a performed call systemMessage
         XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount + 1)
         guard let systemMessage = conversationUnderTest.recentMessages.last as? ZMSystemMessage
-            else {
-                return XCTFail("Did not insert a system message")
+        else {
+            return XCTFail("Did not insert a system message")
         }
 
         XCTAssertNotNil(systemMessage.systemMessageData)
@@ -749,7 +792,7 @@ extension CallingV3Tests {
         fetchAllClients()
         let user = conversationUnderTest.connectedUser!
 
-        self.userSession?.perform {
+        userSession?.perform {
             self.conversationUnderTest.isArchived = true
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

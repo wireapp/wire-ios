@@ -20,7 +20,10 @@ import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
 
-class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBackendMLSPublicKeysAction, FetchBackendMLSPublicKeysActionHandler> {
+class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<
+    FetchBackendMLSPublicKeysAction,
+    FetchBackendMLSPublicKeysActionHandler
+> {
 
     override func setUp() {
         super.setUp()
@@ -32,14 +35,15 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
         action = nil
         super.tearDown()
     }
+
     // MARK: - Request generation
 
     func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-               expectedPath: "/v5/mls/public-keys",
-               expectedMethod: .get,
-               apiVersion: .v5
+            expectedPath: "/v5/mls/public-keys",
+            expectedMethod: .get,
+            apiVersion: .v5
         )
     }
 
@@ -55,7 +59,7 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
 
     // MARK: - Response handling
 
-    private typealias ResponsePayload = FetchBackendMLSPublicKeysActionHandler.ResponsePayload
+    private typealias ResponsePayload = Payload.ExternalSenderKeys
 
     func test_itHandlesSuccess() {
         // Given

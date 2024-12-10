@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
@@ -26,18 +26,18 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public override func setUp() {
         super.setUp()
-        self.mocs = self.createStorageStackAndWaitForCompletion()
+        mocs = createStorageStackAndWaitForCompletion()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
     }
 
     public override func tearDown() {
-        self.mocs = nil
+        mocs = nil
         super.tearDown()
     }
 
     public func testThatItFindsNoDuplicates_None() {
         // WHEN
-        let duplicates: [UUID: [ZMUser]] = self.mocs.viewContext.findDuplicated(by: #keyPath(ZMUser.name))
+        let duplicates: [UUID: [ZMUser]] = mocs.viewContext.findDuplicated(by: #keyPath(ZMUser.name))
 
         // THEN
         XCTAssertEqual(duplicates.keys.count, 0)
@@ -45,13 +45,13 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItFindsNoDuplicates_One() {
         // GIVEN
-        let user = ZMUser.insertNewObject(in: self.mocs.viewContext)
+        let user = ZMUser.insertNewObject(in: mocs.viewContext)
         user.name = "foo"
 
-        self.mocs.viewContext.saveOrRollback()
+        mocs.viewContext.saveOrRollback()
 
         // WHEN
-        let duplicates: [String: [ZMUser]] = self.mocs.viewContext.findDuplicated(by: #keyPath(ZMUser.name))
+        let duplicates: [String: [ZMUser]] = mocs.viewContext.findDuplicated(by: #keyPath(ZMUser.name))
 
         // THEN
         XCTAssertEqual(duplicates.keys.count, 0)
@@ -61,15 +61,15 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         // GIVEN
         let name = "foo"
 
-        for _ in 1...10 {
-            let user = ZMUser.insertNewObject(in: self.mocs.viewContext)
+        for _ in 1 ... 10 {
+            let user = ZMUser.insertNewObject(in: mocs.viewContext)
             user.name = name
         }
 
-        self.mocs.viewContext.saveOrRollback()
+        mocs.viewContext.saveOrRollback()
 
         // WHEN
-        let duplicates: [String: [ZMUser]] = self.mocs.viewContext.findDuplicated(by: #keyPath(ZMUser.name))
+        let duplicates: [String: [ZMUser]] = mocs.viewContext.findDuplicated(by: #keyPath(ZMUser.name))
 
         // THEN
         XCTAssertEqual(duplicates.keys.count, 1)
@@ -78,9 +78,9 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItGroupsByPropertyValue_One() {
         // GIVEN
-        let client = UserClient.insertNewObject(in: self.mocs.viewContext)
+        let client = UserClient.insertNewObject(in: mocs.viewContext)
         client.remoteIdentifier = UUID().transportString()
-        client.user = ZMUser.insert(in: self.mocs.viewContext, name: "User")
+        client.user = ZMUser.insert(in: mocs.viewContext, name: "User")
 
         // WHEN
         let grouped: [ZMUser: [UserClient]] = [client].group(by: ZMUserClientUserKey)
@@ -94,8 +94,8 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItGroupsByPropertyValue_Many() {
         // GIVEN
-        let range = 1...10
-        let user = ZMUser.insert(in: self.mocs.viewContext, name: "User")
+        let range = 1 ... 10
+        let user = ZMUser.insert(in: mocs.viewContext, name: "User")
         let clients: [UserClient] = range.map { _ in
             let client = UserClient.insertNewObject(in: self.mocs.viewContext)
             client.remoteIdentifier = UUID().transportString()
@@ -116,7 +116,7 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItGroupsByPropertyValue_ManyDistinct() {
         // GIVEN
-        let range = 1...10
+        let range = 1 ... 10
         let clients: [UserClient] = range.map {
             let client = UserClient.insertNewObject(in: self.mocs.viewContext)
             client.remoteIdentifier = UUID().transportString()
@@ -136,7 +136,7 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItIgnoresNil() {
         // GIVEN
-        let range = 1...10
+        let range = 1 ... 10
         let clients: [UserClient] = range.map { _ in
             let client = UserClient.insertNewObject(in: self.mocs.viewContext)
             client.remoteIdentifier = UUID().transportString()

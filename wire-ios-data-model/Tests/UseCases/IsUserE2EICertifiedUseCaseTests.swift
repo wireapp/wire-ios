@@ -44,7 +44,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         setupOneOnOneConversations(in: context)
         setupClientIDs(in: context)
         let mockCoreCrypto = MockCoreCryptoProtocol()
-        mockCoreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap { $0.data }
+        mockCoreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
@@ -76,17 +76,18 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testExpiredCertificateForSelfUserResultsInFalse() async throws {
         // Given
-        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] conversationID, userIDs in
-            XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
-            // eventually a userID will have the suffix "@example.com", but it's low prio on the Core Crypto team
-            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"])
-            return [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .expired)
+        mockSafeCoreCrypto.coreCrypto
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] conversationID, userIDs in
+                XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
+                // eventually a userID will have the suffix "@example.com", but it's low prio on the Core Crypto team
+                XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"])
+                return [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![0].rawValue, status: .valid),
+                        .with(clientID: clientIDs![1].rawValue, status: .expired)
+                    ]
                 ]
-            ]
-        }
+            }
 
         // When
         let isCertified = try await sut.invoke(
@@ -246,7 +247,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        mockSafeCoreCrypto.coreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap { $0.data }
+        mockSafeCoreCrypto.coreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
             [
                 userIDs[0]: [
@@ -292,7 +293,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        mockSafeCoreCrypto.coreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap { $0.data }
+        mockSafeCoreCrypto.coreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
             [
                 userIDs[0]: [
@@ -371,9 +372,9 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     }
 }
 
-extension WireIdentity {
+private extension WireIdentity {
 
-    fileprivate static func with(clientID: String, status: DeviceStatus) -> Self {
+    static func with(clientID: String, status: DeviceStatus) -> Self {
         .init(
             clientId: clientID,
             status: status,

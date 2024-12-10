@@ -25,7 +25,8 @@ import WireCoreCrypto
 // sourcery: AutoMockable
 public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
-    func addClientsToConversation(conversationId: Data, keyPackages: [Data]) async throws -> WireCoreCrypto.MemberAddedMessages
+    func addClientsToConversation(conversationId: Data, keyPackages: [Data]) async throws -> WireCoreCrypto
+        .MemberAddedMessages
 
     func clearPendingCommit(conversationId: Data) async throws
 
@@ -33,21 +34,37 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func clearPendingProposal(conversationId: Data, proposalRef: Data) async throws
 
-    func clientKeypackages(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType, amountRequested: UInt32) async throws -> [Data]
+    func clientKeypackages(
+        ciphersuite: WireCoreCrypto.Ciphersuite,
+        credentialType: WireCoreCrypto.MlsCredentialType,
+        amountRequested: UInt32
+    ) async throws -> [Data]
 
-    func clientPublicKey(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> Data
+    func clientPublicKey(
+        ciphersuite: WireCoreCrypto.Ciphersuite,
+        credentialType: WireCoreCrypto.MlsCredentialType
+    ) async throws -> Data
 
-    func clientValidKeypackagesCount(ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> UInt64
+    func clientValidKeypackagesCount(
+        ciphersuite: WireCoreCrypto.Ciphersuite,
+        credentialType: WireCoreCrypto.MlsCredentialType
+    ) async throws -> UInt64
 
     func commitAccepted(conversationId: Data) async throws -> [WireCoreCrypto.BufferedDecryptedMessage]?
 
     func commitPendingProposals(conversationId: Data) async throws -> WireCoreCrypto.CommitBundle?
 
+    func conversationCiphersuite(conversationId: Data) async throws -> WireCoreCrypto.Ciphersuite
+
     func conversationEpoch(conversationId: Data) async throws -> UInt64
 
     func conversationExists(conversationId: Data) async -> Bool
 
-    func createConversation(conversationId: Data, creatorCredentialType: WireCoreCrypto.MlsCredentialType, config: WireCoreCrypto.ConversationConfiguration) async throws
+    func createConversation(
+        conversationId: Data,
+        creatorCredentialType: WireCoreCrypto.MlsCredentialType,
+        config: WireCoreCrypto.ConversationConfiguration
+    ) async throws
 
     func decryptMessage(conversationId: Data, payload: Data) async throws -> WireCoreCrypto.DecryptedMessage
 
@@ -65,13 +82,36 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func e2eiIsPkiEnvSetup() async -> Bool
 
-    func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws -> [String]?
+    func e2eiMlsInitOnly(
+        enrollment: WireCoreCrypto.E2eiEnrollment,
+        certificateChain: String,
+        nbKeyPackage: UInt32?
+    ) async throws -> [String]?
 
-    func e2eiNewActivationEnrollment(displayName: String, handle: String, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
+    func e2eiNewActivationEnrollment(
+        displayName: String,
+        handle: String,
+        team: String?,
+        expirySec: UInt32,
+        ciphersuite: WireCoreCrypto.Ciphersuite
+    ) async throws -> WireCoreCrypto.E2eiEnrollment
 
-    func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
+    func e2eiNewEnrollment(
+        clientId: String,
+        displayName: String,
+        handle: String,
+        team: String?,
+        expirySec: UInt32,
+        ciphersuite: WireCoreCrypto.Ciphersuite
+    ) async throws -> WireCoreCrypto.E2eiEnrollment
 
-    func e2eiNewRotateEnrollment(displayName: String?, handle: String?, team: String?, expirySec: UInt32, ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> WireCoreCrypto.E2eiEnrollment
+    func e2eiNewRotateEnrollment(
+        displayName: String?,
+        handle: String?,
+        team: String?,
+        expirySec: UInt32,
+        ciphersuite: WireCoreCrypto.Ciphersuite
+    ) async throws -> WireCoreCrypto.E2eiEnrollment
 
     func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws
 
@@ -79,7 +119,11 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func e2eiRegisterIntermediateCa(certPem: String) async throws -> [String]?
 
-    func e2eiRotateAll(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, newKeyPackagesCount: UInt32) async throws -> WireCoreCrypto.RotateBundle
+    func e2eiRotateAll(
+        enrollment: WireCoreCrypto.E2eiEnrollment,
+        certificateChain: String,
+        newKeyPackagesCount: UInt32
+    ) async throws -> WireCoreCrypto.RotateBundle
 
     func encryptMessage(conversationId: Data, message: Data) async throws -> Data
 
@@ -87,35 +131,60 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func getClientIds(conversationId: Data) async throws -> [WireCoreCrypto.ClientId]
 
-    func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> WireCoreCrypto.E2eiConversationState
+    func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCrypto.MlsCredentialType) async throws
+        -> WireCoreCrypto.E2eiConversationState
 
-    func getDeviceIdentities(conversationId: Data, deviceIds: [WireCoreCrypto.ClientId]) async throws -> [WireCoreCrypto.WireIdentity]
+    func getDeviceIdentities(conversationId: Data, deviceIds: [WireCoreCrypto.ClientId]) async throws
+        -> [WireCoreCrypto.WireIdentity]
 
     func getExternalSender(conversationId: Data) async throws -> Data
 
-    func getUserIdentities(conversationId: Data, userIds: [String]) async throws -> [String: [WireCoreCrypto.WireIdentity]]
+    func getUserIdentities(conversationId: Data, userIds: [String]) async throws
+        -> [String: [WireCoreCrypto.WireIdentity]]
 
-    func joinByExternalCommit(groupInfo: Data, customConfiguration: WireCoreCrypto.CustomConfiguration, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> WireCoreCrypto.ConversationInitBundle
+    func joinByExternalCommit(
+        groupInfo: Data,
+        customConfiguration: WireCoreCrypto.CustomConfiguration,
+        credentialType: WireCoreCrypto.MlsCredentialType
+    ) async throws -> WireCoreCrypto.ConversationInitBundle
 
     func markConversationAsChildOf(childId: Data, parentId: Data) async throws
 
-    func mergePendingGroupFromExternalCommit(conversationId: Data) async throws -> [WireCoreCrypto.BufferedDecryptedMessage]?
+    func mergePendingGroupFromExternalCommit(conversationId: Data) async throws
+        -> [WireCoreCrypto.BufferedDecryptedMessage]?
 
     func mlsGenerateKeypairs(ciphersuites: WireCoreCrypto.Ciphersuites) async throws -> [WireCoreCrypto.ClientId]
 
-    func mlsInit(clientId: WireCoreCrypto.ClientId, ciphersuites: WireCoreCrypto.Ciphersuites, nbKeyPackage: UInt32?) async throws
+    func mlsInit(
+        clientId: WireCoreCrypto.ClientId,
+        ciphersuites: WireCoreCrypto.Ciphersuites,
+        nbKeyPackage: UInt32?
+    ) async throws
 
-    func mlsInitWithClientId(clientId: WireCoreCrypto.ClientId, tmpClientIds: [WireCoreCrypto.ClientId], ciphersuites: WireCoreCrypto.Ciphersuites) async throws
+    func mlsInitWithClientId(
+        clientId: WireCoreCrypto.ClientId,
+        tmpClientIds: [WireCoreCrypto.ClientId],
+        ciphersuites: WireCoreCrypto.Ciphersuites
+    ) async throws
 
     func newAddProposal(conversationId: Data, keypackage: Data) async throws -> WireCoreCrypto.ProposalBundle
 
-    func newExternalAddProposal(conversationId: Data, epoch: UInt64, ciphersuite: WireCoreCrypto.Ciphersuite, credentialType: WireCoreCrypto.MlsCredentialType) async throws -> Data
+    func newExternalAddProposal(
+        conversationId: Data,
+        epoch: UInt64,
+        ciphersuite: WireCoreCrypto.Ciphersuite,
+        credentialType: WireCoreCrypto.MlsCredentialType
+    ) async throws -> Data
 
-    func newRemoveProposal(conversationId: Data, clientId: WireCoreCrypto.ClientId) async throws -> WireCoreCrypto.ProposalBundle
+    func newRemoveProposal(conversationId: Data, clientId: WireCoreCrypto.ClientId) async throws -> WireCoreCrypto
+        .ProposalBundle
 
     func newUpdateProposal(conversationId: Data) async throws -> WireCoreCrypto.ProposalBundle
 
-    func processWelcomeMessage(welcomeMessage: Data, customConfiguration: WireCoreCrypto.CustomConfiguration) async throws -> WireCoreCrypto.WelcomeBundle
+    func processWelcomeMessage(
+        welcomeMessage: Data,
+        customConfiguration: WireCoreCrypto.CustomConfiguration
+    ) async throws -> WireCoreCrypto.WelcomeBundle
 
     func proteusCryptoboxMigrate(path: String) async throws
 
@@ -157,13 +226,14 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func randomBytes(len: UInt32) async throws -> Data
 
-    func removeClientsFromConversation(conversationId: Data, clients: [WireCoreCrypto.ClientId]) async throws -> WireCoreCrypto.CommitBundle
+    func removeClientsFromConversation(conversationId: Data, clients: [WireCoreCrypto.ClientId]) async throws
+        -> WireCoreCrypto.CommitBundle
 
     func reseedRng(seed: Data) async throws
 
     func restoreFromDisk() async throws
 
-    func setCallbacks(callbacks: WireCoreCrypto.CoreCryptoCallbacks) async throws
+    func setCallbacks(callbacks: any WireCoreCrypto.CoreCryptoCallbacks) async throws
 
     func unload() async throws
 

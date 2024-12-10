@@ -22,7 +22,7 @@ import WireDataModel
 import WireDesign
 
 /// Displays the preview of a location message.
-final class LocationPreviewController: TintColorCorrectedViewController {
+final class LocationPreviewController: UIViewController {
 
     let message: ZMConversationMessage
     private var actionController: ConversationMessageActionController!
@@ -41,7 +41,12 @@ final class LocationPreviewController: TintColorCorrectedViewController {
     init(message: ZMConversationMessage, actionResponder: MessageActionResponder) {
         self.message = message
         super.init(nibName: nil, bundle: nil)
-        actionController = ConversationMessageActionController(responder: actionResponder, message: message, context: .content, view: view)
+        self.actionController = ConversationMessageActionController(
+            responder: actionResponder,
+            message: message,
+            context: .content,
+            view: view
+        )
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
 
@@ -125,7 +130,11 @@ final class LocationPreviewController: TintColorCorrectedViewController {
             let span = MKCoordinateSpan(zoomLevel: Int(locationData.zoomLevel), viewSize: Float(view.frame.size.height))
             region = MKCoordinateRegion(center: locationData.coordinate, span: span)
         } else {
-            region = MKCoordinateRegion(center: locationData.coordinate, latitudinalMeters: 250, longitudinalMeters: 250)
+            region = MKCoordinateRegion(
+                center: locationData.coordinate,
+                latitudinalMeters: 250,
+                longitudinalMeters: 250
+            )
         }
 
         mapView.setRegion(region, animated: false)
@@ -133,9 +142,14 @@ final class LocationPreviewController: TintColorCorrectedViewController {
 
     // MARK: - Preview
 
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     override var previewActionItems: [UIPreviewActionItem] {
-        return actionController.previewActionItems
+        actionController.previewActionItems
     }
 
 }

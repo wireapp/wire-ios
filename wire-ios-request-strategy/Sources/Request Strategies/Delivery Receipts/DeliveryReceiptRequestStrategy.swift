@@ -17,13 +17,16 @@
 //
 
 import Foundation
+import WireLogging
 
 extension ZMUpdateEvent {
 
     private static let deliveryConfirmationDayThreshold = 7
 
-    func needsDeliveryConfirmation(_ currentDate: Date = Date(),
-                                   managedObjectContext: NSManagedObjectContext) -> Bool {
+    func needsDeliveryConfirmation(
+        _ currentDate: Date = Date(),
+        managedObjectContext: NSManagedObjectContext
+    ) -> Bool {
 
         guard
             let message = GenericMessage(from: self),
@@ -51,8 +54,10 @@ public final class DeliveryReceiptRequestStrategy: NSObject {
 
     // MARK: - Init
 
-    public init(managedObjectContext: NSManagedObjectContext,
-                messageSender: MessageSenderInterface) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        messageSender: MessageSenderInterface
+    ) {
 
         self.managedObjectContext = managedObjectContext
         self.messageSender = messageSender
@@ -74,16 +79,24 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
     }
 
     func sendDeliveryReceipt(_ deliveryReceipt: DeliveryReceipt) {
-        guard let confirmation = Confirmation.init(messageIds: deliveryReceipt.messageIDs,
-                                                   type: .delivered) else { return }
+        guard let confirmation = Confirmation(
+            messageIds: deliveryReceipt.messageIDs,
+            type: .delivered
+        ) else { return }
         let senderUserSet: Set<ZMUser> = [deliveryReceipt.sender]
 
         WaitingGroupTask(context: managedObjectContext) { [self] in
-            try? await messageSender.sendMessage(message: GenericMessageEntity(message: GenericMessage(content: confirmation),
-                                                                               context: managedObjectContext,
-                                                                               conversation: deliveryReceipt.conversation,
-                                                                               targetRecipients: .users(senderUserSet),
-                                                                               completionHandler: nil))
+            do {
+                try await messageSender.sendMessage(message: GenericMessageEntity(
+                    message: GenericMessage(content: confirmation),
+                    context: managedObjectContext,
+                    conversation: deliveryReceipt.conversation,
+                    targetRecipients: .users(senderUserSet),
+                    completionHandler: nil
+                ))
+            } catch {
+                WireLogger.messaging.error("send delivery receipt: \(error.localizedDescription)")
+            }
         }
     }
 
@@ -93,30 +106,36 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         var deliveryReceipts: [DeliveryReceipt] = []
 
         eventsByConversation.forEach { (conversationID: UUID, events: [ZMUpdateEvent]) in
-            guard let conversation = ZMConversation.fetch(with: conversationID,
-                                                          in: managedObjectContext) else { return }
+            guard let conversation = ZMConversation.fetch(
+                with: conversationID,
+                in: managedObjectContext
+            ) else { return }
 
             let eventsBySender = events
-                .filter({ $0.needsDeliveryConfirmation(managedObjectContext: managedObjectContext) })
+                .filter { $0.needsDeliveryConfirmation(managedObjectContext: managedObjectContext) }
                 .partition(by: \.senderUUID)
 
             eventsBySender.forEach { (senderID: UUID, events: [ZMUpdateEvent]) in
 
                 let eventsByDomain = events.partition(by: \.senderDomain)
-                let eventsWithoutDomain = events.filter({ $0.senderDomain == nil })
+                let eventsWithoutDomain = events.filter { $0.senderDomain == nil }
 
                 eventsByDomain.forEach { (domain: String, events: [ZMUpdateEvent]) in
-                    deliveryReceipts.append(deliveryReceipt(for: senderID,
-                                                            domain: domain,
-                                                            conversation: conversation,
-                                                            events: events))
+                    deliveryReceipts.append(deliveryReceipt(
+                        for: senderID,
+                        domain: domain,
+                        conversation: conversation,
+                        events: events
+                    ))
                 }
 
                 if !eventsWithoutDomain.isEmpty {
-                    deliveryReceipts.append(deliveryReceipt(for: senderID,
-                                                            domain: nil,
-                                                            conversation: conversation,
-                                                            events: events))
+                    deliveryReceipts.append(deliveryReceipt(
+                        for: senderID,
+                        domain: nil,
+                        conversation: conversation,
+                        events: events
+                    ))
                 }
             }
         }
@@ -124,16 +143,22 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         return deliveryReceipts
     }
 
-    private func deliveryReceipt(for senderID: UUID,
-                                 domain: String?,
-                                 conversation: ZMConversation,
-                                 events: [ZMUpdateEvent]) -> DeliveryReceipt {
-        let sender = ZMUser.fetchOrCreate(with: senderID,
-                                          domain: domain,
-                                          in: managedObjectContext)
-        return DeliveryReceipt(sender: sender,
-                               conversation: conversation,
-                               messageIDs: events.compactMap(\.messageNonce))
+    private func deliveryReceipt(
+        for senderID: UUID,
+        domain: String?,
+        conversation: ZMConversation,
+        events: [ZMUpdateEvent]
+    ) -> DeliveryReceipt {
+        let sender = ZMUser.fetchOrCreate(
+            with: senderID,
+            domain: domain,
+            in: managedObjectContext
+        )
+        return DeliveryReceipt(
+            sender: sender,
+            conversation: conversation,
+            messageIDs: events.compactMap(\.messageNonce)
+        )
     }
 
 }
@@ -143,9 +168,9 @@ private extension GenericMessage {
     var needsDeliveryConfirmation: Bool {
         switch content {
         case .text, .image, .asset, .knock, .external, .location, .ephemeral, .composite:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 

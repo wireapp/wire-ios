@@ -35,23 +35,22 @@ final class PasscodeSetupViewController: UIViewController {
         var infoLabelString: String {
             switch self {
             case .createPasscode:
-                return L10n.Localizable.CreatePasscode.infoLabel
+                L10n.Localizable.CreatePasscode.infoLabel
 
             case .forcedForTeam:
-                return L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.CreatePasscode.infoLabelForcedApplock
+                L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.CreatePasscode
+                    .infoLabelForcedApplock
             }
         }
     }
 
     weak var passcodeSetupViewControllerDelegate: PasscodeSetupViewControllerDelegate?
 
-    private lazy var presenter: PasscodeSetupPresenter = {
-        return PasscodeSetupPresenter(userInterface: self)
-    }()
+    private lazy var presenter: PasscodeSetupPresenter = .init(userInterface: self)
 
-    private let stackView: UIStackView = UIStackView.verticalStackView()
+    private let stackView: UIStackView = .verticalStackView()
 
-    private let contentView: UIView = UIView()
+    private let contentView: UIView = .init()
 
     private lazy var createButton: LegacyButton = {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
@@ -66,7 +65,11 @@ final class PasscodeSetupViewController: UIViewController {
     }()
 
     lazy var passcodeTextField: ValidatedTextField = {
-        let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(.applockPasscode, isNew: true), delegate: self, setNewColors: true)
+        let textField = ValidatedTextField.createPasscodeTextField(
+            kind: .passcode(.applockPasscode, isNew: true),
+            delegate: self,
+            setNewColors: true
+        )
         textField.placeholder = L10n.Localizable.CreatePasscode.Textfield.placeholder
         textField.delegate = self
 
@@ -92,21 +95,26 @@ final class PasscodeSetupViewController: UIViewController {
     private let useCompactLayout: Bool
 
     private lazy var infoLabel: UILabel = {
-        let style = DownStyle.infoLabelStyle(compact: useCompactLayout)
-        let label = UILabel()
-        label.configMultipleLineLabel()
-        label.attributedText = .markdown(from: context.infoLabelString, style: style)
+        let label = DynamicFontLabel(
+            fontSpec: .normalRegularFont,
+            color: ColorTheme.Backgrounds.onSurfaceVariant
+        )
         label.textAlignment = .center
+        label.configMultipleLineLabel()
         return label
     }()
 
-    private let validationLabels: [PasscodeError: UILabel] = {
-        PasscodeError
-            .allCases
-            .reduce(into: [:]) { partialResult, errorReason in
-                partialResult[errorReason] = UILabel()
-            }
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
+        return scrollView
     }()
+
+    private let validationLabels: [PasscodeError: UILabel] = PasscodeError
+        .allCases
+        .reduce(into: [:]) { partialResult, errorReason in
+            partialResult[errorReason] = UILabel()
+        }
 
     private var callback: ResultHandler?
     private let context: Context
@@ -118,29 +126,43 @@ final class PasscodeSetupViewController: UIViewController {
 
     /// init with parameters
     /// - Parameters:
-    ///   - useCompactLayout: Set this to true for reduce font size and spacing for iPhone 4 inch screen. Set to nil to follow current window's height
-    ///   - context: context  for this screen. Depending on the context, there are a different title and info message.
+    ///   - useCompactLayout: Set this to true for reduced font size and spacing for iPhone 4 inch screen. Set to nil to
+    /// follow current window's height
+    ///   - context: context for this screen. Depending on the context, there is a different title and info message.
     ///   - callback: callback for storing passcode result.
-    required init(useCompactLayout: Bool? = nil,
-                  context: Context,
-                  callback: ResultHandler?) {
+    required init(
+        useCompactLayout: Bool? = nil,
+        context: Context,
+        callback: ResultHandler?
+    ) {
         self.callback = callback
         self.context = context
 
-        self.useCompactLayout = useCompactLayout ??
-        (AppDelegate.shared.window!.frame.height <= CGFloat.iPhone4Inch.height)
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        let windowHeight = appDelegate?.mainWindow?.frame.height ?? UIScreen.main.bounds.height
+        self.useCompactLayout = useCompactLayout ?? (windowHeight <= CGFloat.iPhone4Inch.height)
 
         super.init(nibName: nil, bundle: nil)
 
         setupViews()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        passcodeTextField.becomeFirstResponder()
+    }
+
+    // MARK: - setup views
+
     private func setupViews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        view.addSubview(contentView)
+        setupScrollView()
+        scrollView.addSubview(contentView)
 
         stackView.distribution = .fill
+        infoLabel.text = context.infoLabelString
 
         contentView.addSubview(stackView)
 
@@ -172,29 +194,44 @@ final class PasscodeSetupViewController: UIViewController {
         createConstraints()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    private func setupScrollView() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
 
-        passcodeTextField.becomeFirstResponder()
+        let frameLayoutGuide = scrollView.frameLayoutGuide
+
+        NSLayoutConstraint.activate([
+            frameLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            frameLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            frameLayoutGuide.topAnchor.constraint(equalTo: view.topAnchor),
+            frameLayoutGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
     private func createConstraints() {
 
         [contentView, stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        let widthConstraint = contentView.createContentWidthConstraint()
+        let heightConstraint = contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor)
+        let contentLayoutGuide = scrollView.contentLayoutGuide
 
         let contentPadding: CGFloat = 24
 
         NSLayoutConstraint.activate([
             // content view
-            widthConstraint,
+            heightConstraint,
             contentView.widthAnchor.constraint(lessThanOrEqualToConstant: 375),
-            contentView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            contentView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
-            contentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            contentView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: contentPadding),
-            contentView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -contentPadding),
+            contentView.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor),
+            contentView.leadingAnchor.constraint(
+                greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor,
+                constant: contentPadding
+            ),
+            contentView.trailingAnchor.constraint(
+                lessThanOrEqualTo: contentLayoutGuide.trailingAnchor,
+                constant: -contentPadding
+            ),
+            contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
 
             // stack view
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -233,14 +270,20 @@ final class PasscodeSetupViewController: UIViewController {
 
     // MARK: - keyboard avoiding
 
-    static func createKeyboardAvoidingFullScreenView(context: Context,
-                                                     delegate: PasscodeSetupViewControllerDelegate? = nil) -> KeyboardAvoidingAuthenticationCoordinatedViewController {
-        let passcodeSetupViewController = PasscodeSetupViewController(context: context,
-                                                                      callback: nil)
+    static func createKeyboardAvoidingFullScreenView(
+        context: Context,
+        delegate: PasscodeSetupViewControllerDelegate? = nil
+    )
+        -> KeyboardAvoidingAuthenticationCoordinatedViewController {
+        let passcodeSetupViewController = PasscodeSetupViewController(
+            context: context,
+            callback: nil
+        )
 
         passcodeSetupViewController.passcodeSetupViewControllerDelegate = delegate
 
-        let keyboardAvoidingViewController = KeyboardAvoidingAuthenticationCoordinatedViewController(viewController: passcodeSetupViewController)
+        let keyboardAvoidingViewController =
+            KeyboardAvoidingAuthenticationCoordinatedViewController(viewController: passcodeSetupViewController)
 
         keyboardAvoidingViewController.modalPresentationStyle = .fullScreen
 
@@ -249,22 +292,10 @@ final class PasscodeSetupViewController: UIViewController {
 
     // MARK: - close button
 
-    lazy var closeItem: UIBarButtonItem = {
-        let closeItem = UIBarButtonItem.createCloseItem()
-        closeItem.accessibilityIdentifier = "closeButton"
-
-        closeItem.target = self
-        closeItem.action = #selector(PasscodeSetupViewController.closeTapped)
-
-        return closeItem
-    }()
-
-    @objc
-    private func closeTapped() {
-        dismiss(animated: true)
-
-        appLockSetupViewControllerDismissed()
-    }
+    lazy var closeItem: UIBarButtonItem = .closeButton(action: UIAction { [weak self] _ in
+        self?.presentingViewController?.dismiss(animated: true)
+        self?.appLockSetupViewControllerDismissed()
+    }, accessibilityLabel: L10n.Localizable.General.close)
 
     private func appLockSetupViewControllerDismissed() {
         callback?(false)
@@ -308,13 +339,14 @@ extension PasscodeSetupViewController: TextFieldValidationDelegate {
 
 extension PasscodeSetupViewController: PasscodeSetupUserInterface {
     func setValidationLabelsState(errorReason: PasscodeError, passed: Bool) {
-        validationLabels[errorReason]?.attributedText = passed ? errorReason.descriptionWithPassedIcon : errorReason.descriptionWithInvalidIcon
+        validationLabels[errorReason]?.attributedText = passed ? errorReason.descriptionWithPassedIcon : errorReason
+            .descriptionWithInvalidIcon
         validationLabels[errorReason]?.isEnabled = passed
     }
 
     var createButtonEnabled: Bool {
         get {
-            return createButton.isEnabled
+            createButton.isEnabled
         }
 
         set {
@@ -324,6 +356,7 @@ extension PasscodeSetupViewController: PasscodeSetupUserInterface {
 }
 
 // MARK: - UIAdaptivePresentationControllerDelegate
+
 extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate {
 
     func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
@@ -333,27 +366,9 @@ extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate 
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         // more space for iPhone 4-inch to prevent keyboard hides the create passcode button
         if view.frame.size.height <= CGFloat.iPhone4Inch.height {
-            return .fullScreen
+            .fullScreen
         } else {
-            return .automatic
+            .automatic
         }
     }
-}
-
-private extension DownStyle {
-
-    static func infoLabelStyle(compact: Bool) -> DownStyle {
-        let style = DownStyle()
-        style.baseFont = compact ? FontSpec.smallRegularFont.font! : FontSpec.normalRegularFont.font!
-        style.baseFontColor = SemanticColors.Label.textDefault
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.minimumLineHeight = compact ? 14 : 20
-        paragraphStyle.maximumLineHeight = compact ? 14 : 20
-        paragraphStyle.paragraphSpacing = compact ? 14 : 20
-        style.baseParagraphStyle = paragraphStyle
-
-        return style
-    }
-
 }

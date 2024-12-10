@@ -19,10 +19,10 @@
 import Foundation
 
 @objcMembers
- public class MD5DigestHelper: NSObject {
+public class MD5DigestHelper: NSObject {
 
-     static func md5Digest(for data: Data) -> Data {
-         return data.zmMD5Digest()
-     }
+    static func md5Digest(for data: Data) -> Data {
+        data.zmMD5Digest()
+    }
 
- }
+}

@@ -17,22 +17,20 @@
 //
 
 import UIKit
+import WireLogging
 import WireSystem
 
-/**
- * An object that tracks performance issues in the application for debugging purposes.
- */
+/// An object that tracks performance issues in the application for debugging purposes.
 
 final class PerformanceDebugger {
 
     /// The shared debugger.
     static let shared = PerformanceDebugger()
 
-    private let log = ZMSLog(tag: "Performance")
     private var displayLink: CADisplayLink!
 
     init() {
-        displayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLink))
+        self.displayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLink))
     }
 
     deinit {
@@ -46,7 +44,12 @@ final class PerformanceDebugger {
         }
 
         displayLink.add(to: .main, forMode: .default)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleMemoryWarning), name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleMemoryWarning),
+            name: UIApplication.didReceiveMemoryWarningNotification,
+            object: nil
+        )
     }
 
     @objc
@@ -54,14 +57,12 @@ final class PerformanceDebugger {
         let elapsedTime = displayLink.duration * 100
 
         if elapsedTime > 16.7 {
-            log.warn("Frame dropped after \(elapsedTime)s")
             WireLogger.performance.warn("Frame dropped after \(elapsedTime)s")
         }
     }
 
     @objc
     private func handleMemoryWarning() {
-        log.warn("Application did receive memory warning.")
         WireLogger.performance.warn("Application did receive memory warning.")
     }
 

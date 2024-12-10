@@ -22,14 +22,13 @@ struct DeveloperToolsView: View {
 
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: DeveloperToolsViewModel
+    @StateObject var viewModel: DeveloperToolsViewModel
 
     // MARK: - Views
 
     var body: some View {
         List(viewModel.sections, rowContent: sectionView(for:))
-            .navigationTitle("Developer tools")
+            .navigationTitle(Text(verbatim: "Developer tools"))
             .navigationBarItems(trailing: dismissButton)
             .alert(isPresented: $viewModel.isPresentingAlert) {
                 Alert(
@@ -73,14 +72,13 @@ struct DeveloperToolsView: View {
 
         case let .destination(destinationItem):
             NavigationLink(destinationItem.title, destination: destinationItem.makeView)
-
         }
     }
 
     private var dismissButton: some View {
         Button(
             action: { viewModel.handleEvent(.dismissButtonTapped) },
-            label: { Text("Close") }
+            label: { Text(verbatim: "Close") }
         )
     }
 
@@ -116,5 +114,4 @@ struct DeveloperToolsView_Previews: PreviewProvider {
             DeveloperToolsView(viewModel: DeveloperToolsViewModel())
         }
     }
-
 }

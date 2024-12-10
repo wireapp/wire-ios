@@ -21,44 +21,47 @@ import WireSyncEngine
 
 extension ConversationInputBarViewController {
     @objc
-    func locationButtonPressed(_ sender: IconButton?) {
+    func locationButtonPressed(_ sender: IconButton) {
         let checker = PrivacyWarningChecker(conversation: conversation) {
             self.showLocationSelection(from: sender)
         }
         checker.performAction()
     }
 
-    private func showLocationSelection(from sender: IconButton?) {
-        guard let parentViewController = self.parent else { return }
+    private func showLocationSelection(from sender: IconButton) {
+        guard let parentViewController = parent else { return }
 
         let locationSelectionViewController = LocationSelectionViewController()
-        locationSelectionViewController.modalPresentationStyle = .popover
-
-        if let popover = locationSelectionViewController.popoverPresentationController,
-           let imageView = sender?.imageView {
-
-            popover.config(from: self,
-                           pointToView: imageView,
-                           sourceView: parentViewController.view)
-        }
-
         locationSelectionViewController.title = conversation.displayName
         locationSelectionViewController.delegate = self
-        parentViewController.present(locationSelectionViewController, animated: true)
+
+        let navigationController = UINavigationController(rootViewController: locationSelectionViewController)
+        navigationController.modalPresentationStyle = .popover
+
+        if let popover = navigationController.popoverPresentationController {
+            popover.sourceView = sender.superview!
+            popover.sourceRect = sender.frame.insetBy(dx: -4, dy: -4)
+        }
+
+        parentViewController.present(navigationController, animated: true)
     }
 }
 
 extension ConversationInputBarViewController: LocationSelectionViewControllerDelegate {
 
-    func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData) {
+    func locationSelectionViewController(
+        _ viewController: LocationSelectionViewController,
+        didSelectLocationWithData locationData: LocationData
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         userSession.enqueue {
             do {
-                try conversation.appendLocation(with: locationData)
-                Analytics.shared.tagMediaActionCompleted(.location, inConversation: conversation)
+                let useCase = self.userSession.makeAppendLocationMessageUseCase()
+                try useCase.invoke(withLocationData: locationData, in: conversation)
             } catch {
-                Logging.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to append location message. Reason: \(error.localizedDescription)")
             }
         }
 

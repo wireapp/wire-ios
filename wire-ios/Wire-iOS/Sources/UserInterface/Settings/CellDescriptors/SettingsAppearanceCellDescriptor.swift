@@ -18,37 +18,44 @@
 
 import MobileCoreServices
 import UIKit
+import WireSettingsUI
 import WireSyncEngine
 
-class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
+class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, SettingsCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsAppearanceCell.self
 
     private var text: String
     private let presentationStyle: PresentationStyle
 
     weak var viewController: UIViewController?
-    let presentationAction: () -> (UIViewController?)
+    let presentationAction: (_ sender: UIView) -> UIViewController?
 
     var identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
 
+    let settingsCoordinator: AnySettingsCoordinator
+
     var visible: Bool {
-        return true
+        true
     }
 
     var title: String {
-        return text
+        text
     }
 
-    init(text: String,
-         previewGenerator: PreviewGeneratorType? = .none,
-         presentationStyle: PresentationStyle,
-         presentationAction: @escaping () -> (UIViewController?)) {
+    init(
+        text: String,
+        previewGenerator: PreviewGeneratorType? = .none,
+        presentationStyle: PresentationStyle,
+        presentationAction: @escaping (_ sender: UIView) -> UIViewController?,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.text = text
         self.previewGenerator = previewGenerator
         self.presentationStyle = presentationStyle
         self.presentationAction = presentationAction
+        self.settingsCoordinator = settingsCoordinator
     }
 
     // MARK: - Configuration
@@ -57,10 +64,10 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
         if let tableCell = cell as? SettingsAppearanceCell {
             tableCell.configure(with: .appearance(title: text))
 
-            if let previewGenerator = self.previewGenerator {
+            if let previewGenerator {
                 tableCell.type = previewGenerator(self)
             }
-            switch self.presentationStyle {
+            switch presentationStyle {
             case .modal, .alert:
                 tableCell.isAccessoryIconHidden = false
                 tableCell.hideDisclosureIndicator()
@@ -73,15 +80,14 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
 
     // MARK: - SettingsCellDescriptorType
 
-    func select(_ value: SettingsPropertyValue?) {
-        guard let controllerToShow = self.generateViewController() else {
-            return
-        }
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
+        guard let controllerToShow = generateViewController(sender: sender)  else { return }
 
-        switch self.presentationStyle {
+        switch presentationStyle {
         case .alert:
-            if let viewController {
-                controllerToShow.configPopover(pointToView: viewController.view)
+            if let popoverPresentationController = controllerToShow.popoverPresentationController {
+                popoverPresentationController.sourceView = sender.superview
+                popoverPresentationController.sourceRect = sender.frame
             }
             viewController?.present(controllerToShow, animated: true)
         case .navigation:
@@ -91,7 +97,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
         }
     }
 
-    func generateViewController() -> UIViewController? {
-        return self.presentationAction()
+    private func generateViewController(sender: UIView) -> UIViewController? {
+        presentationAction(sender)
     }
 }

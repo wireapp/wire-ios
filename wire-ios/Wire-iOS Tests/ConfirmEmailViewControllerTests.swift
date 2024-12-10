@@ -16,29 +16,52 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireSettingsUI
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class ConfirmEmailViewControllerTests: XCTestCase {
 
-    var sut: ConfirmEmailViewController!
-    var userSession: UserSessionMock!
+    // MARK: Properties
 
-    override func setUp() {
-        super.setUp()
+    private var sut: ConfirmEmailViewController!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
+    private var settingsCoordinator: AnySettingsCoordinator!
+
+    // MARK: setUp
+
+    @MainActor
+    override func setUp() async throws {
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
-        sut = ConfirmEmailViewController(newEmail: "bill@wire.com", delegate: nil, userSession: userSession)
+        settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
+        sut = ConfirmEmailViewController(
+            newEmail: "bill@wire.com",
+            delegate: nil,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true,
+            settingsCoordinator: settingsCoordinator
+        )
         sut.overrideUserInterfaceStyle = .dark
     }
 
+    // MARK: tearDown
+
     override func tearDown() {
+        settingsCoordinator = nil
+        snapshotHelper = nil
         userSession = nil
         sut = nil
-        super.tearDown()
     }
 
-    func testConfirmationSentToEmail() {
-        verify(matching: sut.view)
+    // MARK: Snapshot Tests
+
+    func testConfirmationSentToEmail_Dark() {
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.view)
     }
 }

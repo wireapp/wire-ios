@@ -19,9 +19,7 @@
 import Foundation
 import WireTransport
 
-/**
- * Handles showing custom backend information
- */
+/// Handles showing custom backend information
 final class AuthenticationShowCustomBackendInfoHandler: AuthenticationEventHandler {
     enum Intent {
         case showCustomBackendInfo

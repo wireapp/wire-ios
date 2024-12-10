@@ -18,10 +18,11 @@
 
 import Foundation
 import WireDataModelSupport
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import WireTesting
 import XCTest
+
+@testable import WireSyncEngine
 
 final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     var sut: GetUserClientFingerprintUseCase!
@@ -142,7 +143,7 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
         }
 
         // THEN
-        XCTAssertEqual(String(data: result, encoding: .utf8), fingerprint)
+        XCTAssertEqual(String(decoding: result, as: UTF8.self), fingerprint)
     }
 
     func test_itLoadsLocalFingerprint_ProteusViaCoreCryptoFlagDisabled() async {
@@ -159,18 +160,22 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     // MARK: - Helpers
 
     private func createSut(proteusEnabled: Bool) -> GetUserClientFingerprintUseCase {
-        mockProteusProvider = MockProteusProvider(mockProteusService: mockProteusService,
-                                                  useProteusService: proteusEnabled)
+        mockProteusProvider = MockProteusProvider(
+            mockProteusService: mockProteusService,
+            useProteusService: proteusEnabled
+        )
         mockProteusProvider.mockProteusService.localFingerprint_MockMethod = {
-            return self.fingerprint
+            self.fingerprint
         }
         mockProteusProvider.mockProteusService.remoteFingerprintForSession_MockMethod = { _ in
-            return self.fingerprint
+            self.fingerprint
         }
 
-        return GetUserClientFingerprintUseCase(proteusProvider: mockProteusProvider,
-                                               sessionEstablisher: mockSessionEstablisher,
-                                               managedObjectContext: syncMOC)
+        return GetUserClientFingerprintUseCase(
+            proteusProvider: mockProteusProvider,
+            sessionEstablisher: mockSessionEstablisher,
+            managedObjectContext: syncMOC
+        )
     }
 
 }

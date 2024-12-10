@@ -142,12 +142,12 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
     ) async throws -> NSManagedObjectID {
         try await withCheckedThrowingContinuation { continuation in
             context.perform {
-                self.service.createTeamOneOnOneProteusConversation(user: user) {
+                service.createTeamOneOnOneProteusConversation(user: user) {
                     switch $0 {
-                    case .success(let conversation):
+                    case let .success(conversation):
                         continuation.resume(returning: conversation.objectID)
 
-                    case .failure(let error):
+                    case let .failure(error):
                         continuation.resume(throwing: error)
                     }
                 }

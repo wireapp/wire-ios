@@ -31,44 +31,50 @@ public enum MessageDestructionTimerError: Error {
         case (403, "invalid-op"?): self = .invalidOperation
         case (403, "access-denied"): self = .accessDenied
         case (404, "no-conversation"): self = .noConversation
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }
 }
 
 extension ZMTransportResponse {
+    /// Convenience method to pass events from REST api calls response to processors, not storing the event
+    /// - Note: this will need to be cleared out when moving calls to WireAPI
     var updateEvent: ZMUpdateEvent? {
         guard let payload else {
             return nil
         }
-        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
+        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())
     }
 }
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Changes the conversation message destruction timeout
-    public func setMessageDestructionTimeout(
+    func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
         in userSession: ZMUserSession,
         _ completion: @escaping (Result<Void, Error>) -> Void
     ) {
         // TODO: [WPB-5730] move this method to a useCase
 
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = BackendInfo.apiVersion,
+              let managedObjectContext else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
-        let request = MessageDestructionTimeoutRequestFactory.set(timeout: Int(timeout.rawValue), for: self, apiVersion: apiVersion)
-        request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
+        let request = MessageDestructionTimeoutRequestFactory.set(
+            timeout: Int(timeout.rawValue),
+            for: self,
+            apiVersion: apiVersion
+        )
+        request.add(ZMCompletionHandler(on: managedObjectContext) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
-                // Process `conversation.message-timer-update` event
-                // swiftlint:disable todo_requires_jira_link
-                // FIXME: [jacob] replace with ConversationEventProcessor
-                // swiftlint:enable todo_requires_jira_link
-                userSession.processConversationEvents([event])
-                completion(.success(()))
+                userSession.processConversationEvents([event]) {
+                    managedObjectContext.perform {
+                        completion(.success(()))
+                    }
+                }
             } else {
                 let error = WirelessLinkError(response: response) ?? .unknown
                 log.debug("Error updating message destruction timeout \(error): \(response)")
@@ -81,20 +87,26 @@ extension ZMConversation {
 
 }
 
-private struct MessageDestructionTimeoutRequestFactory {
+private enum MessageDestructionTimeoutRequestFactory {
 
     static func set(timeout: Int, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
-        guard let identifier = conversation.remoteIdentifier?.transportString() else { fatal("conversation inserted on backend") }
+        guard let identifier = conversation.remoteIdentifier?.transportString()
+        else { fatal("conversation inserted on backend") }
 
         let payload: [AnyHashable: Any?]
         if timeout == 0 {
             payload = ["message_timer": nil]
         } else {
             // Backend expects the timer to be in miliseconds, we store it in seconds.
-            let timeoutInMS: Int64 = Int64(timeout) * 1000
+            let timeoutInMS = Int64(timeout) * 1000
             payload = ["message_timer": timeoutInMS]
         }
-        return .init(path: "/conversations/\(identifier)/message-timer", method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return .init(
+            path: "/conversations/\(identifier)/message-timer",
+            method: .put,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
 }

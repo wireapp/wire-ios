@@ -16,23 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
 
+@testable import Wire
+
 final class BackupPasswordViewControllerTests: XCTestCase {
+
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
 
     func testDefaultState() {
         // GIVEN
         let sut = makeViewController()
 
         // WHEN & THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testThatItCallsTheCallback() {
         // GIVEN
         let validPassword = "Password123!"
-        let expectation = self.expectation(description: "Callback called")
+        let expectation = expectation(description: "Callback called")
         let sut = makeViewController()
         sut.onCompletion = { password in
             XCTAssertEqual(password, validPassword)
@@ -69,8 +83,16 @@ final class BackupPasswordViewControllerTests: XCTestCase {
         }
 
         // WHEN
-        XCTAssertFalse(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "              "))
-        XCTAssertFalse(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "\n"))
+        XCTAssertFalse(sut.textField(
+            UITextField(),
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "              "
+        ))
+        XCTAssertFalse(sut.textField(
+            UITextField(),
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "\n"
+        ))
     }
 
     // MARK: - Helpers

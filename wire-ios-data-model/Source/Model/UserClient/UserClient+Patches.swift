@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
 
 extension UserClient {
@@ -94,10 +95,8 @@ extension UserClient {
         if let existingKeyStore = context.zm_cryptKeyStore {
             WireLogger.proteus.info("migrating all session ids to v3: using existing keystore")
             return existingKeyStore
-        } else if
-            let accountDirectory = context.accountDirectoryURL,
-            let applicationContainer = context.applicationContainerURL
-        {
+        } else if let accountDirectory = context.accountDirectoryURL,
+                  let applicationContainer = context.applicationContainerURL {
             WireLogger.proteus.info("migrating all session ids to v3: creating temp keystore")
 
             return UserClientKeysStore(

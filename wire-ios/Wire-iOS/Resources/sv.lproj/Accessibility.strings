@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,11 +72,11 @@
 "conversationSearch.emptyResult.description" = "Inga resultat";
 "conversationSearch.noItems.description" = "Inga objekt i samlingen";
 "conversationSearch.imageMessage.description" = "Bild";
-"conversationSearch.videoMessage.description" = "Video message";
+"conversationSearch.videoMessage.description" = "Videomeddelande";
 "conversationSearch.audioMessage.description" = "Ljudmeddelande";
 "conversationSearch.linkMessage.description" = "Länk";
 "conversationSearch.sentBy.description" = "Sent by %@";
-"conversationSearch.fileName.description" = "File name";
+"conversationSearch.fileName.description" = "Filnamn";
 "conversationSearch.fileSize.description" = "Storlek";
 "conversationSearch.fileType.description" = "Type";
 
@@ -152,19 +152,17 @@
 
 "settings.deviceCount.hint" = "%@ devices in use";
 "settings.closeButton.description" = "Close settings";
-"settings.backButton.description" = "Go back to Settings";
+"settings.backButton.description" = "Gå tillbaka till Inställningar";
 
-"accountSettings.backButton.description" = "Go back to Account";
+"accountSettings.backButton.description" = "Gå tillbaka till Konto";
 
 "optionsSettings.backButton.description" = "Go back to Options";
 
 "advancedSettings.backButton.description" = "Go back to Advanced";
 
-"supportSettings.backButton.description" = "Go back to Support";
+"supportSettings.backButton.description" = "Gå tillbaka till Support";
 
-"aboutSettings.backButton.description" = "Go back to About";
-"licenseInformationSettings.backButton.description" = "Go back to License information";
-"licenseDetailsSettings.backButton.description" = "Go back to License details";
+"aboutSettings.backButton.description" = "Gå tillbaka till Om";
 
 "developerOptionsSettings.backButton.description" = "Go back to Developer options";
 
@@ -183,6 +181,11 @@
 
 "profile.backButton.description" = "Go back to conversation details";
 "profile.closeButton.description" = "Close profile";
+"profile.shareProfileButton.description" = "Dela din profil med QR-kod eller länk";
+
+"shareProfile.closeButton.description" = "Close share profile view";
+"shareProfile.backButton.description" = "Gå tillbaka till din profil";
+"shareProfile.qrCode.description" = "QR-kod";
 
 "accountPage.availabilityStatus.description" = "Status";
 "accountPage.availabilityStatus.hint" = "Dubbeltryck för att ändra status";
@@ -200,7 +203,7 @@
 "contactsList.memberIcon.description" = "Medlem";
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "Double tap to open profile";
-"contactsList.closeButton.description" = "Close contact list";
+"contactsList.cancelButton.description" = "Stäng kontaktlista";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 
@@ -223,6 +226,23 @@
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
 "conversationsList.connectionRequest.hint" = "Double tap to open profile";
 
+"conversationList.startConversationButton.description" = "Skapa grupp eller sök efter personer";
+"conversationsList.filterButton.description" = "Filtrera konversationer";
+
+"conversationsList.filter_menu_options.allConversations.description" = "Visa alla konversationer";
+"conversationsList.filter_menu_options.favorites.description" = "Visa alla favoritkonversationer";
+"conversationsList.filter_menu_options.groups.description" = "Visa alla gruppkonversationer";
+"conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
+"conversationsList.filter_menu_options.folders.description" = "Mappar";
+
+"conversationsList.filter_menu_options.allConversations.selected.description" = "All conversations, selected";
+"conversationsList.filter_menu_options.favorites.selected.description" = "Favorites, selected";
+"conversationsList.filter_menu_options.groups.selected.description" = "Groups, selected";
+"conversationsList.filter_menu_options.oneOnOne.selected.description" = "One-to-one conversations, selected";
+"conversationsList.filter_menu_options.folders.selected.description" = "Folder, selected";
+
+"conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
+
 "conversationAnnouncement.text.description" = "Text message received from %@";
 "conversationAnnouncement.picture.description" = "Picture received from %@";
 "conversationAnnouncement.audio.description" = "Audio message received from %@";
@@ -233,9 +253,9 @@
 "conversationAnnouncement.deletedMessage.description" = "%@ raderade ett meddelande";
 "conversationAnnouncement.editedMessage.description" = "%@ redigerade ett meddelande";
 
-"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "all your devices are verified (Proteus)";
+"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "alla dina enheter är verifierade (Proteus)";
 "groupDetails.conversation.participants.allYourDevicesHaveValidCertificates" = "all your devices have a valid end-to-end identity certificate";
-"groupDetails.conversation.participants.allDevicesProteusVerified" = "all devices are verified (Proteus)";
+"groupDetails.conversation.participants.allDevicesProteusVerified" = "alla enheter är verifierade (Proteus)";
 "groupDetails.conversation.participants.allDevicesHaveValidCertificates" = "all devices have a valid end-to-end identity certificate";
 
 "calling.flipCameraBackButton.description" = "Flip to back camera";
@@ -261,14 +281,6 @@
 "calling.headerBar.description" = "Minimize calling view";
 "calling.status.connecting" = "Connecting";
 
-"tabBar.contacts.description" = "Kontakter";
-"tabBar.contacts.hint" = "Double tap to search for people and open contact list";
-"tabBar.conversations.description" = "List of recent conversations";
-"tabBar.conversations.hint" = "Double tap to open list of recent conversations";
-"tabBar.folders.description" = "List of conversations organized in folders";
-"tabBar.folders.hint" = "Double tap to open list of conversations organized in folders";
-"tabBar.archived.description" = "Arkiv";
-"tabBar.archived.hint" = "Double tap to open list of archived conversations";
 "tabBar.item.value" = "Selected";
 
 "landing.loginEnterpriseButton.description" = "Logga in med SSO";
@@ -283,3 +295,28 @@
 // MARK: - Reactions
 "reactionPicker.dismissButton.description" = "Dismiss emoji keyboard";
 "reactionPicker.searchFieldPlaceholder.description" = "Sök efter emoji";
+
+// MARK: - Create Secure Guest Link with Password
+
+"createSecureGuestLink.closeButton.description" = "Close Secure guest link";
+
+"createSecureGuestLink.GeneratePasswordButton.description" = "Generera lösenord";
+"createSecureGuestLink.GeneratePasswordButton.hint" = "Tap to generate a random password";
+
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Guest link password";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "Enter a new password for the secure guest link";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "Password validation error. Please make sure the password meets the requirements.";
+
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "Confirm Guest Link Password";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "Re-enter the password for verification";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Password validation error. Please make sure the password matches the one above";
+
+"createSecureGuestLink.CreateLinkButton.description" = "Skapa gästlänk";
+"createSecureGuestLink.CreateLinkButton.hint" = "Tryck för att skapa en säker gästlänk";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Enter text to search for GIFs";
+"searchGifs.norResultsLabel.description" = "No Gifs found";
+"searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
+"searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";

@@ -19,10 +19,12 @@
 import WireDataModel
 import WireDataModelSupport
 import WireMockTransport
-@testable import WireSyncEngine
 import WireTesting
+import WireTransportSupport
 import WireUtilities
 import XCTest
+
+@testable import WireSyncEngine
 
 @objcMembers
 public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
@@ -85,7 +87,11 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
                 mockKeyStore: spyKeyStore
             )
             self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
-            self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: self.userIdentifier, useCache: true)
+            self.cookieStorage = ZMPersistentCookieStorage(
+                forServerName: "myServer",
+                userIdentifier: self.userIdentifier,
+                useCache: true
+            )
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
                 context: self.syncMOC,
@@ -110,18 +116,19 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
     override func tearDown() {
         try? FileManager.default.removeItem(at: spyKeyStore.cryptoboxDirectory)
 
-        self.clientRegistrationStatus = nil
-        self.mockClientRegistrationStatusDelegate = nil
-        self.clientUpdateStatus = nil
-        self.spyKeyStore = nil
-        self.sut.tearDown()
-        self.sut = nil
-        self.postLoginAuthenticationObserverToken = nil
+        clientRegistrationStatus = nil
+        mockClientRegistrationStatusDelegate = nil
+        clientUpdateStatus = nil
+        spyKeyStore = nil
+        sut.tearDown()
+        sut = nil
+        postLoginAuthenticationObserverToken = nil
         super.tearDown()
     }
 }
 
 // MARK: Inserting
+
 extension UserClientRequestStrategyTests {
 
     func createSelfClient(_ context: NSManagedObjectContext) -> UserClient {
@@ -174,7 +181,8 @@ extension UserClientRequestStrategyTests {
                 cookieLabel: "mycookie",
                 prekeys: self.clientRegistrationStatus.prekeys!,
                 lastRestortPrekey: self.clientRegistrationStatus.lastResortPrekey!,
-                apiVersion: .v0).transportRequest!
+                apiVersion: .v0
+            ).transportRequest!
 
             AssertOptionalNotNil(request, "Should return request if there is inserted UserClient object") { request in
                 XCTAssertNotNil(request.payload, "Request should contain payload")
@@ -214,7 +222,12 @@ extension UserClientRequestStrategyTests {
 
             let remoteIdentifier = "superRandomIdentifer"
             let payload = ["id": remoteIdentifier]
-            let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             let request = self.sut.request(forInserting: client, forKeys: Set(), apiVersion: .v0)
 
             // when
@@ -232,8 +245,8 @@ extension UserClientRequestStrategyTests {
 
     func testThatItStoresTheLastGeneratedPreKeyIDWhenUpdatingAnInsertedObject() {
 
-        var client: UserClient! = nil
-        var maxID_before: UInt16! = nil
+        var client: UserClient!
+        var maxID_before: UInt16!
         let expectedMaxID: UInt16 = 1
 
         syncMOC.performGroupedBlock {
@@ -248,7 +261,12 @@ extension UserClientRequestStrategyTests {
 
             self.sut.notifyChangeTrackers(client)
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-            let response = ZMTransportResponse(payload: ["id": "fakeRemoteID"] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: ["id": "fakeRemoteID"] as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)
@@ -264,7 +282,7 @@ extension UserClientRequestStrategyTests {
 
     func testThatItStoresTheSignalingKeysWhenUpdatingAnInsertedObject() {
 
-        var client: UserClient! = nil
+        var client: UserClient!
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
@@ -277,7 +295,12 @@ extension UserClientRequestStrategyTests {
 
             self.sut.notifyChangeTrackers(client)
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-            let response = ZMTransportResponse(payload: ["id": "fakeRemoteID"] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: ["id": "fakeRemoteID"] as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)
@@ -303,7 +326,12 @@ extension UserClientRequestStrategyTests {
             self.sut.notifyChangeTrackers(client)
 
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-            let response = ZMTransportResponse(payload: ["id": "fakeRemoteID"] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: ["id": "fakeRemoteID"] as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)
@@ -311,7 +339,7 @@ extension UserClientRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallRegisterSelfUserClient)
+        XCTAssertTrue(mockClientRegistrationStatusDelegate.didCallRegisterSelfUserClient)
     }
 
     func testThatItProcessFailedInsertResponseWithAuthenticationError_NoEmail() {
@@ -326,8 +354,17 @@ extension UserClientRequestStrategyTests {
             self.sut.notifyChangeTrackers(client)
 
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-            let responsePayload = ["code": 403, "message": "Re-authentication via password required", "label": "missing-auth"] as [String: Any]
-            let response = ZMTransportResponse(payload: responsePayload as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let responsePayload = [
+                "code": 403,
+                "message": "Re-authentication via password required",
+                "label": "missing-auth"
+            ] as [String: Any]
+            let response = ZMTransportResponse(
+                payload: responsePayload as ZMTransportData,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)
@@ -335,11 +372,13 @@ extension UserClientRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
-        let expectedError = NSError(domain: NSError.ZMUserSessionErrorDomain,
-                                    code: Int(ZMUserSessionErrorCode.invalidCredentials.rawValue),
-                                    userInfo: nil)
-        XCTAssertEqual(self.mockClientRegistrationStatusDelegate.currentError as NSError?, expectedError)
+        XCTAssertTrue(mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
+        let expectedError = NSError(
+            domain: NSError.userSessionErrorDomain,
+            code: UserSessionErrorCode.invalidCredentials.rawValue,
+            userInfo: nil
+        )
+        XCTAssertEqual(mockClientRegistrationStatusDelegate.currentError as NSError?, expectedError)
     }
 
     func testThatItProcessFailedInsertResponseWithAuthenticationError_HasEmail() {
@@ -359,8 +398,17 @@ extension UserClientRequestStrategyTests {
             self.sut.notifyChangeTrackers(client)
 
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-            let responsePayload = ["code": 403, "message": "Re-authentication via password required", "label": "missing-auth"] as [String: Any]
-            let response = ZMTransportResponse(payload: responsePayload as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let responsePayload = [
+                "code": 403,
+                "message": "Re-authentication via password required",
+                "label": "missing-auth"
+            ] as [String: Any]
+            let response = ZMTransportResponse(
+                payload: responsePayload as ZMTransportData,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)
@@ -369,12 +417,20 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedAndWait {
             // then
-            let expectedError = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue), userInfo: [
-                ZMEmailCredentialKey: emailAddress,
-                ZMUserHasPasswordKey: true,
-                ZMUserUsesCompanyLoginCredentialKey: false,
-                ZMUserLoginCredentialsKey: LoginCredentials(emailAddress: emailAddress, phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
-            ])
+            let expectedError = NSError(
+                domain: NSError.userSessionErrorDomain,
+                code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue,
+                userInfo: [
+                    ZMEmailCredentialKey: emailAddress,
+                    ZMUserHasPasswordKey: true,
+                    ZMUserUsesCompanyLoginCredentialKey: false,
+                    ZMUserLoginCredentialsKey: LoginCredentials(
+                        emailAddress: emailAddress,
+                        hasPassword: true,
+                        usesCompanyLogin: false
+                    )
+                ]
+            )
 
             XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
             XCTAssertEqual(self.mockClientRegistrationStatusDelegate.currentError as NSError?, expectedError)
@@ -387,7 +443,7 @@ extension UserClientRequestStrategyTests {
             // given
             self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
             self.clientRegistrationStatus.lastResortPrekey = (ushort.max, "last-resort-prekey")
-            self.cookieStorage.authenticationCookieData = Data()
+            self.cookieStorage.authenticationCookieData = HTTPCookie.validCookieData()
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             let client = self.createSelfClient(self.syncMOC)
@@ -399,10 +455,23 @@ extension UserClientRequestStrategyTests {
                 XCTFail()
                 return
             }
-            let responsePayload = ["code": 403, "message": "Too many clients", "label": "too-many-clients"] as [String: Any]
-            let response = ZMTransportResponse(payload: responsePayload as ZMTransportData?, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let responsePayload = [
+                "code": 403,
+                "message": "Too many clients",
+                "label": "too-many-clients"
+            ] as [String: Any]
+            let response = ZMTransportResponse(
+                payload: responsePayload as ZMTransportData?,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
-            _ = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue), userInfo: nil)
+            _ = NSError(
+                domain: NSError.userSessionErrorDomain,
+                code: UserSessionErrorCode.canNotRegisterMoreClients.rawValue,
+                userInfo: nil
+            )
 
             // when
             self.clientRegistrationStatus.mockPhase = nil
@@ -419,6 +488,7 @@ extension UserClientRequestStrategyTests {
 }
 
 // MARK: Updating
+
 extension UserClientRequestStrategyTests {
 
     func testThatPrekeysAreGeneratedBeforeRefillingPrekeys() {
@@ -428,6 +498,7 @@ extension UserClientRequestStrategyTests {
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             client.remoteIdentifier = UUID.create().transportString()
             client.numberOfKeysRemaining = Int32(self.sut.minNumberOfRemainingKeys - 1)
+            client.preKeysRangeMax = 5
             client.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
             self.sut.managedObjectContext!.saveOrRollback()
             self.sut.notifyChangeTrackers(client)
@@ -440,6 +511,7 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedAndWait {
             // then
             XCTAssertNotNil(self.clientUpdateStatus.prekeys)
+            XCTAssertEqual(self.clientUpdateStatus.prekeys?.first?.id, 6)
         }
     }
 
@@ -538,9 +610,19 @@ extension UserClientRequestStrategyTests {
             let expectedNumberOfKeys = client.numberOfKeysRemaining + Int32(self.sut.prekeyGenerator.keyCount)
 
             // when
-            let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             let userClientNumberOfKeysRemainingKeySet: Set<String> = [ZMUserClientNumberOfKeysRemainingKey]
-            _ = self.sut.updateUpdatedObject(client, requestUserInfo: nil, response: response, keysToParse: userClientNumberOfKeysRemainingKeySet)
+            _ = self.sut.updateUpdatedObject(
+                client,
+                requestUserInfo: nil,
+                response: response,
+                keysToParse: userClientNumberOfKeysRemainingKeySet
+            )
 
             // then
             XCTAssertEqual(client.numberOfKeysRemaining, expectedNumberOfKeys)
@@ -553,7 +635,7 @@ extension UserClientRequestStrategyTests {
             // given
             selfClient = UserClient.insertNewObject(in: self.sut.managedObjectContext!)
             selfClient.remoteIdentifier = UUID.create().transportString()
-            selfClient.mlsPublicKeys = UserClient.MLSPublicKeys.init(ed25519: "key")
+            selfClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "key")
             self.sut.managedObjectContext!.saveOrRollback()
             self.clientRegistrationStatus.mockPhase = .registeringMLSClient
             self.sut.notifyChangeTrackers(selfClient)
@@ -572,6 +654,7 @@ extension UserClientRequestStrategyTests {
 }
 
 // MARK: Fetching Clients
+
 extension UserClientRequestStrategyTests {
 
     func  payloadForClients() -> ZMTransportData {
@@ -598,7 +681,12 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedAndWait {
             // given
             self.clientUpdateStatus.mockPhase = .fetchingClients
-            let nextResponse = ZMTransportResponse(payload: self.payloadForClients() as ZMTransportData?, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let nextResponse = ZMTransportResponse(
+                payload: self.payloadForClients() as ZMTransportData?,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             _ = self.sut.nextRequest(for: .v0)
@@ -624,7 +712,12 @@ extension UserClientRequestStrategyTests {
             // given
             selfClient = self.createSelfClient()
             selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let nextResponse = ZMTransportResponse(payload: self.payloadForClients() as ZMTransportData?, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let nextResponse = ZMTransportResponse(
+                payload: self.payloadForClients() as ZMTransportData?,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             newClient = UserClient.insertNewObject(in: self.syncMOC)
             newClient.user = selfUser
             newClient.remoteIdentifier = "deleteme"
@@ -646,6 +739,7 @@ extension UserClientRequestStrategyTests {
 }
 
 // MARK: Deleting
+
 extension UserClientRequestStrategyTests {
 
     func testThatItCreatesARequestToDeleteAClient_UpdateStatus() {
@@ -677,7 +771,7 @@ extension UserClientRequestStrategyTests {
                     "email": self.clientUpdateStatus.mockCredentials.email!,
                     "password": self.clientUpdateStatus.mockCredentials.password!
                 ])
-                XCTAssertEqual($0.method, ZMTransportRequestMethod.delete)
+                XCTAssertEqual($0.method, .delete)
             }
         }
     }
@@ -687,40 +781,52 @@ extension UserClientRequestStrategyTests {
         // given
         var client: UserClient!
 
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = "\(client.objectID)"
             client.user = ZMUser.selfUser(in: self.syncMOC)
             self.syncMOC.saveOrRollback()
 
-            let response = ZMTransportResponse(payload: [:] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: [:] as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             let userClientMarkedToDeleteKeySet: Set<String> = [ZMUserClientMarkedToDeleteKey]
-            _ = self.sut.updateUpdatedObject(client, requestUserInfo: nil, response: response, keysToParse: userClientMarkedToDeleteKeySet)
+            _ = self.sut.updateUpdatedObject(
+                client,
+                requestUserInfo: nil,
+                response: response,
+                keysToParse: userClientMarkedToDeleteKeySet
+            )
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(client.isZombieObject)
         }
     }
 }
 
 // MARK: - Updating from push events
+
 extension UserClientRequestStrategyTests {
 
     func testThatItCreatesARequestForClientsThatNeedToUploadSignalingKeys() {
 
-        var existingClient: UserClient! = nil
+        var existingClient: UserClient!
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.mockPhase = .registered
 
             existingClient = self.createSelfClient()
             let existingClientSet: Set<NSManagedObject> = [existingClient]
-            let userClientNeedsToUpdateSignalingKeysKeySet: Set<AnyHashable> = [ZMUserClientNeedsToUpdateSignalingKeysKey]
+            let userClientNeedsToUpdateSignalingKeysKeySet: Set<AnyHashable> =
+                [ZMUserClientNeedsToUpdateSignalingKeysKey]
 
             XCTAssertNil(existingClient.apsVerificationKey)
             XCTAssertNil(existingClient.apsDecryptionKey)
@@ -737,7 +843,12 @@ extension UserClientRequestStrategyTests {
             XCTAssertNotNil(request)
 
             // and when
-            let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -759,7 +870,8 @@ extension UserClientRequestStrategyTests {
 
             let existingClient = self.createSelfClient()
             let existingClientSet: Set<NSManagedObject> = [existingClient]
-            let userClientNeedsToUpdateSignalingKeysKeySet: Set<AnyHashable> = [ZMUserClientNeedsToUpdateSignalingKeysKey]
+            let userClientNeedsToUpdateSignalingKeysKeySet: Set<AnyHashable> =
+                [ZMUserClientNeedsToUpdateSignalingKeysKey]
             XCTAssertNil(existingClient.apsVerificationKey)
             XCTAssertNil(existingClient.apsDecryptionKey)
 
@@ -772,7 +884,12 @@ extension UserClientRequestStrategyTests {
             // when
             let request = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
-            let badResponse = ZMTransportResponse(payload: ["label": "bad-request"] as ZMTransportData, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let badResponse = ZMTransportResponse(
+                payload: ["label": "bad-request"] as ZMTransportData,
+                httpStatus: 400,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             request?.complete(with: badResponse)
         }
@@ -782,7 +899,12 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedBlock {
             let secondRequest = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(secondRequest)
-            let success = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let success = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             secondRequest?.complete(with: success)
         }
@@ -798,7 +920,7 @@ extension UserClientRequestStrategyTests {
 
     func testThatItCreatesARequestForClientsThatNeedToUpdateCapabilities() {
 
-        var existingClient: UserClient! = nil
+        var existingClient: UserClient!
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.mockPhase = .registered
@@ -819,7 +941,12 @@ extension UserClientRequestStrategyTests {
             XCTAssertNotNil(request)
 
             // and when
-            let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -851,7 +978,12 @@ extension UserClientRequestStrategyTests {
             // when
             let request = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
-            let badResponse = ZMTransportResponse(payload: ["label": "bad-request"] as ZMTransportData, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let badResponse = ZMTransportResponse(
+                payload: ["label": "bad-request"] as ZMTransportData,
+                httpStatus: 400,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             request?.complete(with: badResponse)
         }
@@ -861,7 +993,12 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedBlock {
             let secondRequest = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(secondRequest)
-            let success = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let success = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             secondRequest?.complete(with: success)
         }
@@ -876,7 +1013,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func test_ItCreatesARequest_ForClientsThatNeedToUpdateMLSPublicKeys() {
-        var existingClient: UserClient! = nil
+        var existingClient: UserClient!
 
         syncMOC.performGroupedBlock {
             // Given
@@ -923,6 +1060,6 @@ extension UserClientRequestStrategyTests {
 extension UserClientRequestStrategy {
 
     func notifyChangeTrackers(_ object: ZMManagedObject) {
-        self.contextChangeTrackers.forEach { $0.objectsDidChange(Set([object])) }
+        contextChangeTrackers.forEach { $0.objectsDidChange(Set([object])) }
     }
 }

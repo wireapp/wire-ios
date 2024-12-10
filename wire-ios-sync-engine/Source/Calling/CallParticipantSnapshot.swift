@@ -53,7 +53,7 @@ final class CallParticipantsSnapshot {
 
             userVerifiedMap[zmuser] = userIsVerified
 
-            if userWasVerified && !userIsVerified {
+            if userWasVerified, !userIsVerified {
                 guard let selfUser else { return }
                 let degradedUser = selfUser.isTrusted ? zmuser : selfUser
                 callCenter.callDidDegrade(conversationId: conversationId, degradedUser: degradedUser)
@@ -65,15 +65,6 @@ final class CallParticipantsSnapshot {
     private var selfUser: ZMUser? {
         guard let moc = callCenter.uiMOC else { return nil }
         return ZMUser.selfUser(in: moc)
-    }
-
-    /// Worst network quality of all the participants.
-
-    var networkQuality: NetworkQuality {
-        return members.array
-            .map(\.networkQuality)
-            .sorted { $0.rawValue < $1.rawValue }
-            .last ?? .normal
     }
 
     // MARK: - Life Cycle
@@ -90,26 +81,12 @@ final class CallParticipantsSnapshot {
         members = type(of: self).removeDuplicateMembers(participants)
     }
 
-    func callParticipantNetworkQualityChanged(client: AVSClient, networkQuality: NetworkQuality) {
-        guard let localMember = findMember(with: client) else { return }
-
-        let updatedMember = AVSCallMember(client: client,
-                                          audioState: localMember.audioState,
-                                          videoState: localMember.videoState,
-                                          microphoneState: localMember.microphoneState,
-                                          networkQuality: networkQuality)
-
-        members = OrderedSetState(array: members.array.map({ member in
-            member == localMember ? updatedMember : member
-        }))
-    }
-
     // MARK: - Helpers
 
     /// Returns the member matching the given userId and clientId.
 
     private func findMember(with client: AVSClient) -> AVSCallMember? {
-        return members.array.first { $0.client == client }
+        members.array.first { $0.client == client }
     }
 
     /// Notifies observers of a potential change in the participants set.

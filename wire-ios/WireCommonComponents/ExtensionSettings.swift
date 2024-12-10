@@ -21,19 +21,16 @@ import WireUtilities
 
 private enum ExtensionSettingsKey: String, CaseIterable {
 
-    case disableCrashSharing
     case disableAnalyticsSharing
     case disableLinkPreviews
 
     private var defaultValue: Any? {
         switch self {
-        // Always disable analytics by default.
-        case .disableCrashSharing:
-            return true
         case .disableAnalyticsSharing:
-            return false
+            // No default value because the user needs to decide.
+            nil
         case .disableLinkPreviews:
-            return false
+            false
         }
     }
 
@@ -64,19 +61,11 @@ public final class ExtensionSettings: NSObject {
         ExtensionSettingsKey.allCases.forEach {
             defaults.removeObject(forKey: $0.rawValue)
         }
-
-        // As we purposely crash afterwards we manually call synchronize.
-        defaults.synchronize()
     }
 
-    public var disableAnalyticsSharing: Bool {
-        get { defaults.bool(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
+    public var disableAnalyticsSharing: Bool? {
+        get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
-    }
-
-    public var disableCrashSharing: Bool {
-        get { defaults.bool(forKey: ExtensionSettingsKey.disableCrashSharing.rawValue) }
-        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableCrashSharing.rawValue) }
     }
 
     public var disableLinkPreviews: Bool {

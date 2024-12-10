@@ -17,10 +17,10 @@
 //
 import UIKit
 
-extension UIColor {
+public extension UIColor {
 
-    fileprivate func mix(value0: CGFloat, value1: CGFloat, progress: CGFloat) -> CGFloat {
-        return value0 * (1 - progress) + value1 * progress
+    private func mix(value0: CGFloat, value1: CGFloat, progress: CGFloat) -> CGFloat {
+        value0 * (1 - progress) + value1 * progress
     }
 
     /// Pass in amount of 0 for self, 1 is the other color
@@ -30,7 +30,7 @@ extension UIColor {
     ///   - progress: amount of other color
     /// - Returns: the mixed color
     @objc
-    public func mix(_ color: UIColor, amount progress: CGFloat) -> UIColor {
+    func mix(_ color: UIColor, amount progress: CGFloat) -> UIColor {
 
         let component0 = components
         let component1 = color.components
@@ -43,7 +43,7 @@ extension UIColor {
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
 
-    public func removeAlphaByBlending(with color: UIColor) -> UIColor {
+    func removeAlphaByBlending(with color: UIColor) -> UIColor {
         let component0 = components
         let component1 = color.components
         let alpha0 = component0.alpha

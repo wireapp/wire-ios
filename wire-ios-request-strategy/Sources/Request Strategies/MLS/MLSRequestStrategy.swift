@@ -19,6 +19,9 @@
 import Foundation
 import WireDataModel
 
+/// A class responsible for setting up action handlers for MLS requests
+/// and for notifying them when a request is allowed.
+
 public final class MLSRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
@@ -31,13 +34,12 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        entitySync = EntityActionSync(actionHandlers: [
+        self.entitySync = EntityActionSync(actionHandlers: [
             SendMLSMessageActionHandler(context: managedObjectContext),
             SendCommitBundleActionHandler(context: managedObjectContext),
             CountSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             UploadSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             ClaimMLSKeyPackageActionHandler(context: managedObjectContext),
-            FetchBackendMLSPublicKeysActionHandler(context: managedObjectContext),
             FetchMLSSubconversationGroupInfoActionHandler(context: managedObjectContext),
             FetchMLSConversationGroupInfoActionHandler(context: managedObjectContext),
             FetchSubgroupActionHandler(context: managedObjectContext),
@@ -64,7 +66,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
     // MARK: - Requests
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return entitySync.nextRequest(for: apiVersion)
+        entitySync.nextRequest(for: apiVersion)
     }
 
 }

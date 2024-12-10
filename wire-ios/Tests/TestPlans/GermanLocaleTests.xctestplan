@@ -12,15 +12,15 @@
     "commandLineArgumentEntries" : [
       {
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      },
+      {
+        "argument" : "-NSShowNonLocalizedStrings YES",
+        "enabled" : false
       }
     ],
     "environmentVariableEntries" : [
       {
         "key" : "SNAPSHOT_REFERENCE_DIR",
-        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages\/de"
-      },
-      {
-        "key" : "FB_REFERENCE_IMAGE_DIR",
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages\/de"
       },
       {

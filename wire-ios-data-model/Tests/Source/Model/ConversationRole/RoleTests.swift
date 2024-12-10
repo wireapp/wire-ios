@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class RoleTests: ZMBaseManagedObjectTest {
 
@@ -65,9 +65,11 @@ final class RoleTests: ZMBaseManagedObjectTest {
 
     func testThatActionsAreCreatedFromPayload() {
         // given & when
-        let sut = Role.createOrUpdate(with: payload,
-                                      teamOrConversation: .conversation(mockConversation),
-                                      context: uiMOC)!
+        let sut = Role.createOrUpdate(
+            with: payload,
+            teamOrConversation: .conversation(mockConversation),
+            context: uiMOC
+        )!
 
         // then
         XCTAssertEqual(sut.actions.count, 9)
@@ -79,14 +81,18 @@ final class RoleTests: ZMBaseManagedObjectTest {
 
     func testThatCreateOrUpdate_FetchesAnExistingRole() {
         // given
-        let role = Role.createOrUpdate(with: payload,
-                                       teamOrConversation: .conversation(mockConversation),
-                                       context: uiMOC)
+        let role = Role.createOrUpdate(
+            with: payload,
+            teamOrConversation: .conversation(mockConversation),
+            context: uiMOC
+        )
 
         // when
-        let fetchedRole = Role.createOrUpdate(with: payload,
-                                              teamOrConversation: .conversation(mockConversation),
-                                              context: uiMOC)
+        let fetchedRole = Role.createOrUpdate(
+            with: payload,
+            teamOrConversation: .conversation(mockConversation),
+            context: uiMOC
+        )
 
         // then
         XCTAssertEqual(role, fetchedRole)

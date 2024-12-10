@@ -17,62 +17,62 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireDataModelSupport
+@testable import WireDataModel
 
 final class ConversationParticipantsTests: ZMConversationTestsBase {
 
-	func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
-		// GIVEN
-		let sut = createConversation(in: uiMOC)
+    func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
+        // GIVEN
+        let sut = createConversation(in: uiMOC)
 
-		let user1 = createUser()
-		user1.name = "Zeta"
+        let user1 = createUser()
+        user1.name = "Zeta"
 
-		let user2 = createUser()
-		user2.name = "Alpha"
+        let user2 = createUser()
+        user2.name = "Alpha"
 
-		let user3 = createUser()
-		user3.name = "Beta"
-		user3.providerIdentifier = "dummy ID"
-		user3.serviceIdentifier = "dummy ID"
+        let user3 = createUser()
+        user3.name = "Beta"
+        user3.providerIdentifier = "dummy ID"
+        user3.serviceIdentifier = "dummy ID"
 
-		sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2, user3]), role: nil)
+        sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2, user3]), role: nil)
 
-		// WHEN & THEN
-		XCTAssertEqual(sut.sortedOtherParticipants as! [ZMUser], [user2, user1])
-	}
+        // WHEN & THEN
+        XCTAssertEqual(sut.sortedOtherParticipants as! [ZMUser], [user2, user1])
+    }
 
-	func testThatSortedServiceUsersReutrnsUsersSortedByName() {
-		// GIVEN
-		let sut = createConversation(in: uiMOC)
+    func testThatSortedServiceUsersReutrnsUsersSortedByName() {
+        // GIVEN
+        let sut = createConversation(in: uiMOC)
 
-		let user1 = createUser()
-		user1.name = "Zeta"
-		user1.providerIdentifier = "dummy ID"
-		user1.serviceIdentifier = "dummy ID"
+        let user1 = createUser()
+        user1.name = "Zeta"
+        user1.providerIdentifier = "dummy ID"
+        user1.serviceIdentifier = "dummy ID"
 
-		let user2 = createUser()
-		user2.name = "Alpha"
-		user2.providerIdentifier = "dummy ID"
-		user2.serviceIdentifier = "dummy ID"
+        let user2 = createUser()
+        user2.name = "Alpha"
+        user2.providerIdentifier = "dummy ID"
+        user2.serviceIdentifier = "dummy ID"
 
-		let user3 = createUser()
-		user3.name = "Beta"
+        let user3 = createUser()
+        user3.name = "Beta"
 
-		sut.addParticipantsAndUpdateConversationState(users: Set([user2, user1, user3]), role: nil)
+        sut.addParticipantsAndUpdateConversationState(users: Set([user2, user1, user3]), role: nil)
 
-		// WHEN & THEN
-		XCTAssertEqual(sut.sortedServiceUsers as! [ZMUser], [user2, user1])
-	}
+        // WHEN & THEN
+        XCTAssertEqual(sut.sortedServiceUsers as! [ZMUser], [user2, user1])
+    }
 
-	func testThatLocalParticipantsExcludesUsersMarkedForDeletion() {
+    func testThatLocalParticipantsExcludesUsersMarkedForDeletion() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         let user1 = createUser()
         let user2 = createUser()
         sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2]), role: nil)
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // WHEN
         sut.removeParticipantsAndUpdateConversationState(users: Set([user2]), initiatingUser: selfUser)
@@ -92,7 +92,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         sut.removeParticipantsAndUpdateConversationState(users: Set([user2]), initiatingUser: selfUser)
 
         // THEN
-        XCTAssertEqual(sut.localParticipantRoles.map { $0.user }, [user1])
+        XCTAssertEqual(sut.localParticipantRoles.map(\.user), [user1])
     }
 
     func testThatRemoveThenAddParticipants() {
@@ -100,7 +100,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         let sut = createConversation(in: uiMOC)
         let user1 = createUser()
         let user2 = createUser()
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2]), role: nil)
 
@@ -112,7 +112,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         sut.addParticipantAndUpdateConversationState(user: user2, role: nil)
 
         // THEN
-        XCTAssertEqual(Set(sut.participantRoles.map { $0.user }), Set([user1, user2]))
+        XCTAssertEqual(Set(sut.participantRoles.map(\.user)), Set([user1, user2]))
         XCTAssertEqual(sut.localParticipants, Set([user1, user2]))
     }
 
@@ -130,7 +130,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         uiMOC.processPendingChanges()
 
         // THEN
-        XCTAssertEqual(Set(sut.participantRoles.map { $0.user }), Set([user1]))
+        XCTAssertEqual(Set(sut.participantRoles.map(\.user)), Set([user1]))
         XCTAssertEqual(sut.localParticipants, Set([user1]))
 
         XCTAssert(user2.participantRoles.isEmpty, "\(user2.participantRoles)")
@@ -138,8 +138,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItAddsMissingParticipantInGroup() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
 
         // when
@@ -153,8 +153,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItDoesntAddParticipantsAddedSystemMessageIfUserIsNotMissing() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
 
@@ -168,10 +168,10 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItDoesntCreateAConnectionIfSelfUserIsMissing() {
         // given
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
         conversation.conversationType = .oneOnOne
         user.connection = connection
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
@@ -236,10 +236,10 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItAddsParticipants() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        let user1 = self.createUser()
-        let user2 = self.createUser()
+        let user1 = createUser()
+        let user2 = createUser()
 
         // when
         conversation.addParticipantAndUpdateConversationState(user: user1, role: nil)
@@ -252,11 +252,11 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItDoesNotUnarchiveTheConversationWhenTheSelfUserIsAddedIfMuted() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         conversation.isArchived = true
         conversation.mutedStatus = MutedMessageOptionValue.all.rawValue
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
 
         // when
@@ -269,11 +269,11 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItUnarchivesTheConversationWhenTheSelfUserIsAdded() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         conversation.isArchived = true
         conversation.remoteIdentifier = UUID.create()
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
 
         // when
@@ -285,10 +285,10 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItCanRemoveTheSelfUser() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        let user1 = self.createUser()
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let user1 = createUser()
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
 
         conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, user1]), role: nil)
@@ -305,12 +305,12 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItDoesNothingForUnknownParticipants() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        let user1 = self.createUser()
-        let user2 = self.createUser()
-        let user3 = self.createUser()
-        let unknownUser = self.createUser()
+        let user1 = createUser()
+        let user2 = createUser()
+        let user3 = createUser()
+        let unknownUser = createUser()
         conversation.addParticipantsAndUpdateConversationState(users: Set([user1, user2, user3]), role: nil)
 
         // when
@@ -323,18 +323,18 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatActiveParticipantsContainsSelf() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
-        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: self.uiMOC), role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC), role: nil)
 
         // then
         XCTAssertTrue(conversation.localParticipants.contains(selfUser))
 
         // when
-        conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: self.uiMOC))
+        conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
 
         // then
         XCTAssertFalse(conversation.localParticipants.contains(selfUser))
@@ -342,12 +342,12 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatLocalParticipantsExcludingSelfDoesNotContainSelf() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertFalse(conversation.localParticipantsExcludingSelf.contains(selfUser))
@@ -356,13 +356,13 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     func testThatAddingSelfToExistingConversationMarksItAsNeedingToUpdate() {
 
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create() // this makes it "exists"
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
@@ -371,13 +371,13 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     func testThatAddingSelfToNonExistingConversationDoesNotNeedUpdate() {
 
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = nil // this makes it as local only
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
@@ -388,16 +388,16 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     func testThatItSortsParticipantsByFullName() {
 
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         let uuid = UUID.create()
         conversation.remoteIdentifier = uuid
 
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        let user1 = self.createUser()
-        let user2 = self.createUser()
-        let user3 = self.createUser()
-        let user4 = self.createUser()
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let user1 = createUser()
+        let user2 = createUser()
+        let user3 = createUser()
+        let user4 = createUser()
 
         selfUser.name = "Super User"
         user1.name = "Hans im Glueck"
@@ -407,7 +407,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // when
         conversation.addParticipantsAndUpdateConversationState(users: Set([user1, user2, user3, user4]), role: nil)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         let expected = [user2, user1, user4, user3]
@@ -419,10 +419,10 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatTheConnectedUserIsNilForGroupConversation() {
         // when
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        conversation.addParticipantAndUpdateConversationState(user: ZMUser.insertNewObject(in: self.uiMOC), role: nil)
-        conversation.addParticipantAndUpdateConversationState(user: ZMUser.insertNewObject(in: self.uiMOC), role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: ZMUser.insertNewObject(in: uiMOC), role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: ZMUser.insertNewObject(in: uiMOC), role: nil)
 
         // then
         XCTAssertNil(conversation.connectedUser)
@@ -430,7 +430,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatTheConnectedUserIsNilForSelfconversation() {
         // when
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .self
 
         // then
@@ -439,10 +439,10 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatWeHaveAConnectedUserForOneOnOneConversation() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .oneOnOne
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        let connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
         connection.to = user
 
         // when
@@ -454,10 +454,10 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatWeHaveAConnectedUserForConnectionConversation() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .connection
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        let connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
         connection.to = user
 
         // when
@@ -471,10 +471,15 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatWeGetAConversationRolesIfItIsAPartOfATeam() {
         // given
-        let team = self.createTeam(in: self.uiMOC)
-        let user1 = self.createTeamMember(in: self.uiMOC, for: team)
-        let user2 = self.createTeamMember(in: self.uiMOC, for: team)
-        let conversation = ZMConversation.insertGroupConversation(moc: self.uiMOC, participants: [user1, user2], name: self.name, team: team)
+        let team = createTeam(in: uiMOC)
+        let user1 = createTeamMember(in: uiMOC, for: team)
+        let user2 = createTeamMember(in: uiMOC, for: team)
+        let conversation = ZMConversation.insertGroupConversation(
+            moc: uiMOC,
+            participants: [user1, user2],
+            name: name,
+            team: team
+        )
 
         // when
         let adminRole = Role.create(managedObjectContext: uiMOC, name: "wire_admin", team: team)
@@ -490,7 +495,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatWeGetAConversationRolesIfItIsNotAPartOfATeam() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
 
         // when
@@ -506,13 +511,13 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     func testThatItAddsParticipantsWithTheGivenRoleForAllParticipants() {
 
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         let role1 = Role.create(managedObjectContext: uiMOC, name: "role1", conversation: conversation)
         conversation.nonTeamRoles.insert(role1)
-        let user1 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
         user1.name = "user1"
-        let user2 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
         user2.name = "user2"
 
         // when
@@ -520,27 +525,27 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role }, [role1, role1])
+        XCTAssertEqual(conversation.participantRoles.compactMap(\.role), [role1, role1])
     }
 
     func testThatItAddsParticipantsWithTheGivenRole() {
 
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         let role1 = Role.create(managedObjectContext: uiMOC, name: "role1", conversation: conversation)
         conversation.nonTeamRoles.insert(role1)
         let role2 = Role.create(managedObjectContext: uiMOC, name: "role2", conversation: conversation)
         conversation.nonTeamRoles.insert(role2)
-        let user1 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
         user1.name = "user1"
-        let user2 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
         user2.name = "user2"
 
         // when
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
-                (user1, role1),
-                (user2, role2)
+            (user1, role1),
+            (user2, role2)
         ])
 
         // then
@@ -551,15 +556,15 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
     func testThatItDoesNotAddDeletedParticipants() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         let role1 = Role.create(managedObjectContext: uiMOC, name: "role1", conversation: conversation)
         conversation.nonTeamRoles.insert(role1)
         let role2 = Role.create(managedObjectContext: uiMOC, name: "role2", conversation: conversation)
         conversation.nonTeamRoles.insert(role2)
-        let user1 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
         user1.name = "user1"
-        let user2 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
         user2.name = "user2"
         user2.isAccountDeleted = true
 
@@ -577,15 +582,15 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     func testThatItUpdateParticipantWithTheGivenRole() {
 
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         let role1 = Role.create(managedObjectContext: uiMOC, name: "role1", conversation: conversation)
         conversation.nonTeamRoles.insert(role1)
         let role2 = Role.create(managedObjectContext: uiMOC, name: "role2", conversation: conversation)
         conversation.nonTeamRoles.insert(role2)
-        let user1 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
         user1.name = "user1"
-        let user2 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
         user2.name = "user2"
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
             (user1, role1),

@@ -16,15 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class ConnectRequestsCellSnapshotTests: XCTestCase {
 
-    var sut: ConnectRequestsCell!
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ConnectRequestsCell!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .amber
         sut = ConnectRequestsCell(frame: CGRect(x: 0, y: 0, width: 375, height: 56))
         let titleString = L10n.Localizable.List.ConnectRequest.peopleWaiting(1)
@@ -32,15 +40,22 @@ final class ConnectRequestsCellSnapshotTests: XCTestCase {
         let otherUser = MockUserType.createDefaultOtherUser()
         sut.itemView.configure(with: title, subtitle: nil, users: [otherUser])
         sut.backgroundColor = .black
-        sut.overrideUserInterfaceStyle = .dark
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
 
+    // MARK: - Snapshot Test
+
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 }

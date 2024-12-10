@@ -16,32 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class LaunchImageViewControllerSnapshotTests: XCTestCase {
 
     var sut: LaunchImageViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = LaunchImageViewController()
         sut.loadViewIfNeeded()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForShowingSpinner() {
         sut.showLoadingScreen()
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

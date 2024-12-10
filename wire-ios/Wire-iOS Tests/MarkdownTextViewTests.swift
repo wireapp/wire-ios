@@ -55,13 +55,13 @@ final class MarkdownTextViewTests: XCTestCase {
 
     func button(for markdown: Markdown) -> IconButton? {
         switch markdown {
-        case .h1, .h2, .h3: return bar.headerButton
-        case .bold:         return bar.boldButton
-        case .italic:       return bar.italicButton
-        case .code:         return bar.codeButton
-        case .oList:        return bar.numberListButton
-        case .uList:        return bar.bulletListButton
-        default:            return nil
+        case .h1, .h2, .h3: bar.headerButton
+        case .bold:         bar.boldButton
+        case .italic:       bar.italicButton
+        case .code:         bar.codeButton
+        case .oList:        bar.numberListButton
+        case .uList:        bar.bulletListButton
+        default:            nil
         }
     }
 
@@ -221,8 +221,12 @@ final class MarkdownTextViewTests: XCTestCase {
         sut.updateTextColor(base: .red)
 
         // THEN: the color of the text changes in the attributes
-        var attributedRange: NSRange = NSRange(location: 0, length: 0)
-        let attributedColor = sut.attributedText.attribute(.foregroundColor, at: 0, effectiveRange: &attributedRange) as? UIColor
+        var attributedRange = NSRange(location: 0, length: 0)
+        let attributedColor = sut.attributedText.attribute(
+            .foregroundColor,
+            at: 0,
+            effectiveRange: &attributedRange
+        ) as? UIColor
         XCTAssertEqual(attributedColor, .red)
         XCTAssertEqual(attributedRange, NSRange(location: 0, length: 6))
 
@@ -484,7 +488,7 @@ final class MarkdownTextViewTests: XCTestCase {
     // MARK: - Selections
 
     var wholeTextRange: UITextRange {
-        return sut.textRange(from: sut.beginningOfDocument, to: sut.endOfDocument)!
+        sut.textRange(from: sut.beginningOfDocument, to: sut.endOfDocument)!
     }
 
     func testThatSelectingMarkdownOnRangeContainingSingleMarkdownUpdatesAttributes() {
@@ -793,6 +797,6 @@ final class MarkdownTextViewTests: XCTestCase {
 
 private extension String {
     var length: Int {
-        return (self as NSString).length
+        (self as NSString).length
     }
 }

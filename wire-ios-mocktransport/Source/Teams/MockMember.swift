@@ -41,19 +41,34 @@ public struct MockPermissions: OptionSet {
     public static let setMemberPermissions     = MockPermissions(rawValue: 0x1000)
 
     // MARK: - Common Combined Values
-    public static let member: MockPermissions = [.createConversation, .deleteConversation, .addConversationMember, .removeConversationMember, .getTeamConversations, .getMemberPermissions]
-    public static let admin: MockPermissions  = [.member, .addTeamMember, .removeTeamMember, .setTeamData, .setMemberPermissions]
-    public static let owner: MockPermissions  = [.admin, .getBilling, .setBilling, .deleteTeam]
+
+    public static let member: MockPermissions = [
+        .createConversation,
+        .deleteConversation,
+        .addConversationMember,
+        .removeConversationMember,
+        .getTeamConversations,
+        .getMemberPermissions
+    ]
+    public static let admin: MockPermissions = [
+        .member,
+        .addTeamMember,
+        .removeTeamMember,
+        .setTeamData,
+        .setMemberPermissions
+    ]
+    public static let owner: MockPermissions = [.admin, .getBilling, .setBilling, .deleteTeam]
 }
 
-@objc public final class MockMember: NSManagedObject, EntityNamedProtocol {
+@objc
+public final class MockMember: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var team: MockTeam
     @NSManaged public var user: MockUser
 
     @NSManaged private var permissionsRawValue: Int64
 
     public var permissions: MockPermissions {
-        get { return MockPermissions(rawValue: permissionsRawValue) }
+        get { MockPermissions(rawValue: permissionsRawValue) }
         set { permissionsRawValue = newValue.rawValue }
     }
 

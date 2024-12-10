@@ -19,14 +19,14 @@
 import Foundation
 
 @objcMembers
-public final class DispatchGroupQueue: NSObject, ZMSGroupQueue {
+public final class DispatchGroupQueue: NSObject, GroupQueue {
 
     let queue: DispatchQueue
     let dispatchGroupContext: DispatchGroupContext
 
     public init(queue: DispatchQueue) {
         self.queue = queue
-        dispatchGroupContext = DispatchGroupContext(groups: [])
+        self.dispatchGroupContext = DispatchGroupContext(groups: [])
     }
 
     public var dispatchGroup: ZMSDispatchGroup? {

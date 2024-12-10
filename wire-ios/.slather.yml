@@ -1,5 +1,0 @@
-coverage_service: cobertura_xml
-xcodeproj: ./Wire-iOS.xcodeproj
-scheme: Wire-iOS
-output_directory: ./test-reports
-build_directory: ./DerivedData

@@ -22,13 +22,14 @@ import WireDesign
 protocol IncomingRequestFooterViewDelegate: AnyObject {
 
     /// Called when the user accepts or denies a connection request.
-    func footerView(_ footerView: IncomingRequestFooterView, didRespondToRequestWithAction action: IncomingConnectionAction)
+    func footerView(
+        _ footerView: IncomingRequestFooterView,
+        didRespondToRequestWithAction action: IncomingConnectionAction
+    )
 
 }
 
-/**
- * A view that lets the user accept a connection request.
- */
+/// A view that lets the user accept a connection request.
 
 class IncomingRequestFooterView: UIView {
 
@@ -61,12 +62,18 @@ class IncomingRequestFooterView: UIView {
         titleLabel.numberOfLines = 0
 
         acceptButton.accessibilityIdentifier = "accept"
-        acceptButton.setTitle(L10n.Localizable.Inbox.ConnectionRequest.connectButtonTitle.localizedUppercase, for: .normal)
+        acceptButton.setTitle(
+            L10n.Localizable.Inbox.ConnectionRequest.connectButtonTitle.localizedUppercase,
+            for: .normal
+        )
         acceptButton.addTarget(self, action: #selector(acceptButtonTapped), for: .touchUpInside)
         acceptButton.layer.cornerRadius = 16
 
         ignoreButton.accessibilityIdentifier = "ignore"
-        ignoreButton.setTitle(L10n.Localizable.Inbox.ConnectionRequest.ignoreButtonTitle.localizedUppercase, for: .normal)
+        ignoreButton.setTitle(
+            L10n.Localizable.Inbox.ConnectionRequest.ignoreButtonTitle.localizedUppercase,
+            for: .normal
+        )
         ignoreButton.addTarget(self, action: #selector(ignoreButtonTapped), for: .touchUpInside)
         ignoreButton.layer.cornerRadius = 16
 
@@ -110,7 +117,8 @@ class IncomingRequestFooterView: UIView {
 
     // MARK: - Events
 
-    @objc private func acceptButtonTapped() {
+    @objc
+    private func acceptButtonTapped() {
         delegate?.footerView(self, didRespondToRequestWithAction: .accept)
     }
 

@@ -59,18 +59,18 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
         ]
 
         #if !targetEnvironment(simulator)
-        if let laContext = context?.laContext {
-            query[kSecUseAuthenticationContext] = laContext
-            query[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
-        }
+            if let laContext = context?.laContext {
+                query[kSecUseAuthenticationContext] = laContext
+                query[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
+            }
         #endif
 
         return query
     }
 
-    func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery(value: some Any) -> [CFString: Any] {
         // Private keys are stored in the Secure Enclave.
-        return [:]
+        [:]
     }
 
     // MARK: - Static Access

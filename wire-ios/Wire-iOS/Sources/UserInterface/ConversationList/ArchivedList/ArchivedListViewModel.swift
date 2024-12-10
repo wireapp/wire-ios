@@ -21,8 +21,11 @@ import WireDataModel
 import WireSyncEngine
 
 protocol ArchivedListViewModelDelegate: AnyObject {
-    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, applyChangesClosure: @escaping () -> Void)
-    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateConversationWithChange change: ConversationChangeInfo)
+    func archivedListViewModel(
+        _ model: ArchivedListViewModel,
+        didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo,
+        applyChangesClosure: @escaping () -> Void
+    )
 }
 
 final class ArchivedListViewModel: NSObject {
@@ -41,29 +44,37 @@ final class ArchivedListViewModel: NSObject {
         super.init()
 
         let list = userSession.archivedConversationsInUserSession()
-        archivedConversationListObserverToken = userSession.addConversationListObserver(self, for: list)
-        archivedConversations = list.asArray() as! [ZMConversation]
+        self.archivedConversationListObserverToken = userSession.addConversationListObserver(self, for: list)
+        self.archivedConversations = list.items
     }
 
     var count: Int {
-        return archivedConversations.count
+        archivedConversations.count
     }
 
-    subscript(key: Int) -> ZMConversation? {
-        return archivedConversations[key]
+    subscript(key: Int) -> ZMConversation {
+        archivedConversations[key]
     }
 
+    func unarchiveConversation(at row: Int) {
+        let conversation = self[row]
+        userSession.enqueue {
+            conversation.isArchived = false
+        }
+    }
 }
 
 extension ArchivedListViewModel: ZMConversationListObserver {
+
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         guard changeInfo.conversationList == userSession.archivedConversationsInUserSession() else { return }
         delegate?.archivedListViewModel(self, didUpdateArchivedConversationsWithChange: changeInfo) { [weak self] in
-            self?.archivedConversations = self?.userSession.archivedConversationsInUserSession().asArray() as! [ZMConversation]
+            guard let self else { return }
+            archivedConversations = userSession.archivedConversationsInUserSession().items
         }
     }
 
-    func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo) {
-        delegate?.archivedListViewModel(self, didUpdateConversationWithChange: changeInfo)
+    func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo) {
+        // no-op
     }
 }

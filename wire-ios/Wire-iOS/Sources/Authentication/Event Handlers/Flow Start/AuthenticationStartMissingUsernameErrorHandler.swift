@@ -18,15 +18,16 @@
 
 import Foundation
 
-/**
- * Handles client registration errors related to the lack of a username
- */
+/// Handles client registration errors related to the lack of a username
 
 final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle errors on start
@@ -40,7 +41,7 @@ final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventH
         }
 
         // Verify the state
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

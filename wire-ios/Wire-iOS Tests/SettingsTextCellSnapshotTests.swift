@@ -16,30 +16,49 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireSettingsUI
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
 
-    var sut: SettingsTextCell!
-    var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
+    private var settingsCoordinator: AnySettingsCoordinator!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: SettingsTextCell!
+    private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
+
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
+    }
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = .init()
         sut = SettingsTextCell()
 
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart")
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: SessionManager.shared?.activeUserSession, selfUser: selfUser)
+        let settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: SessionManager.shared?.activeUserSession,
+            selfUser: selfUser,
+            trackingManager: nil
+        )
 
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: UserRight.self
+            userRightInterfaceType: UserRight.self,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+        settingsCoordinator = nil
+
         super.tearDown()
     }
 
@@ -53,7 +72,7 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
 
         XCTAssert(sut.textInput.isEnabled)
 
-        verify(matching: mockTableView)
+        snapshotHelper.verify(matching: mockTableView)
     }
 
     func testThatTextFieldIsDisabledWhenEnabledFlagIsFalse() {

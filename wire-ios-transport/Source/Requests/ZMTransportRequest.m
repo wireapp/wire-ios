@@ -491,7 +491,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 {
     ZMTaskIdentifier *taskIdentifier = [ZMTaskIdentifier identifierWithIdentifier:identifier sessionIdentifier:sessionIdentifier];
     NSString *label = [NSString stringWithFormat:@"Task created handler of REQ %@ %@ -> %@ ", self.methodAsString, self.path, taskIdentifier];
-    ZMSDispatchGroup *handlerGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest task creation handler"];
+    ZMSDispatchGroup *handlerGroup = [[ZMSDispatchGroup alloc] initWithLabel:@"ZMTransportRequest task creation handler"];
 
     // TODO Alexis: do not execute if creationActivity is nil
 
@@ -535,7 +535,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     response.startOfUploadTimestamp = self.startOfUploadTimestamp;
 
     ZMSDispatchGroup *group = response.dispatchGroup;
-    ZMSDispatchGroup *group2 = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest"];
+    ZMSDispatchGroup *group2 = [[ZMSDispatchGroup alloc] initWithLabel:@"ZMTransportRequest"];
     [group2 enter];
     for(ZMCompletionHandler *handler in self.completionHandlers) {
         id<ZMSGroupQueue> queue = handler.groupQueue;
@@ -721,7 +721,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     if (self.shouldUseOnlyBackgroundSession) {
         return;
     }
-    NSString *activityName = [NSString stringWithFormat:@"Network request: %@ %@", self.methodAsString, self.path];
+    NSString *activityName = [NSString stringWithFormat:@"Network request: %@", self.safeForLoggingDescription];
     self.activity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:activityName];
 }
 

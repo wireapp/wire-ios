@@ -33,6 +33,7 @@ protocol ConnectedUserProvider {
 }
 
 // MARK: - ZMConversation extension from sync engine
+
 protocol TypingStatusProvider {
     var typingUsers: [UserType] { get }
     func setIsTyping(_ isTyping: Bool)
@@ -61,10 +62,10 @@ protocol InputBarConversation {
     var isReadOnly: Bool { get }
 
     var participants: [UserType] { get }
-    var domain: String? {get}
+    var domain: String? { get }
 }
 
-typealias InputBarConversationType = InputBarConversation & TypingStatusProvider & ConversationLike
+typealias InputBarConversationType = ConversationLike & InputBarConversation & TypingStatusProvider
 
 extension ZMConversation: InputBarConversation {
 
@@ -113,7 +114,7 @@ protocol GroupDetailsConversation {
 
 }
 
-typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation
+typealias GroupDetailsConversationType = Conversation & GroupDetailsConversation
 
 extension ZMConversation: ConversationStatusProvider {}
 
@@ -124,7 +125,7 @@ extension ZMConversation: CanManageAccessProvider {}
 extension ZMConversation: GroupDetailsConversation {
 
     var syncedMessageDestructionTimeout: TimeInterval {
-        return messageDestructionTimeoutValue(for: .groupConversation).rawValue
+        messageDestructionTimeoutValue(for: .groupConversation).rawValue
     }
 
     var isE2EIEnabled: Bool {
@@ -140,9 +141,9 @@ extension GroupDetailsConversation {
     var isVerified: Bool {
         switch messageProtocol {
         case .proteus, .mixed:
-            return securityLevel == .secure
+            securityLevel == .secure
         case .mls:
-            return isE2EIEnabled && mlsVerificationStatus == .verified
+            isE2EIEnabled && mlsVerificationStatus == .verified
         }
     }
 

@@ -19,7 +19,7 @@
 import Foundation
 
 private enum PushChannelKeys: String {
-    case data = "data"
+    case data
     case identifier = "id"
     case notificationType = "type"
 }
@@ -58,7 +58,8 @@ public extension ZMOperationLoop {
 
         switch notificationType {
         case .plain, .notice:
-            if let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable: Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
+            if let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
+               let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
                 return UUID(uuidString: rawUUID)
             }
         case .cipher:
@@ -87,7 +88,8 @@ public extension ZMOperationLoop {
             return nil
         }
 
-        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
+        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
+           let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
             return UUID(uuidString: rawUUID)
         }
 

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class RolesMigrationTests: DiskDatabaseTest {
 
@@ -64,7 +64,7 @@ class RolesMigrationTests: DiskDatabaseTest {
         oneToOneConvo.needsToDownloadRoles = false
         oneToOneConvo.needsToBeUpdatedFromBackend = false
 
-        let selfConvo = ZMConversation.selfConversation(in: self.moc)
+        let selfConvo = ZMConversation.selfConversation(in: moc)
         selfConvo.conversationType = .self
         selfConvo.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
         selfConvo.userDefinedName = "Self"
@@ -78,7 +78,7 @@ class RolesMigrationTests: DiskDatabaseTest {
         connectionConvo.needsToDownloadRoles = false
         connectionConvo.needsToBeUpdatedFromBackend = false
 
-        self.moc.saveOrRollback()
+        moc.saveOrRollback()
 
         // When
         WireDataModel.ZMConversation.forceToFetchConversationRoles(in: moc)
@@ -113,7 +113,7 @@ class RolesMigrationTests: DiskDatabaseTest {
         let groupConvo = createConversation()
         let orderedSet = NSOrderedSet(array: [user1, user2])
         groupConvo.setValue(orderedSet, forKey: oldKey)
-        self.moc.saveOrRollback()
+        moc.saveOrRollback()
 
         // When
         WireDataModel.ZMConversation.migrateUsersToParticipants(in: moc)

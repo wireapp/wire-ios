@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable {
 
@@ -37,7 +38,7 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
 
     var titleBolded: Bool {
         get {
-            return titleLabel.font == FontSpec.normalSemiboldFont.font
+            titleLabel.font == FontSpec.normalSemiboldFont.font
         }
 
         set {
@@ -46,22 +47,22 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
     }
 
     var icon: UIImage? {
-        get { return leftIconView.image }
+        get { leftIconView.image }
         set { updateIcon(newValue) }
     }
 
     var iconColor: UIColor? {
-        get { return leftIconView.tintColor }
+        get { leftIconView.tintColor }
         set { leftIconView.tintColor = newValue }
     }
 
     var title: String? {
-        get { return titleLabel.text }
+        get { titleLabel.text }
         set { updateTitle(newValue) }
     }
 
     var status: String? {
-        get { return statusLabel.text }
+        get { statusLabel.text }
         set { updateStatus(newValue) }
     }
 
@@ -72,7 +73,7 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
     }
 
     var disabled: Bool = false {
-        didSet { }
+        didSet {}
     }
 
     override var accessibilityLabel: String? {

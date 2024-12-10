@@ -29,7 +29,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
     }
 
     func mockResponse(status: Int, payload: ZMTransportData? = nil) -> ZMTransportResponse {
-        return ZMTransportResponse(
+        ZMTransportResponse(
             payload: payload,
             httpStatus: status,
             transportSessionError: nil,
@@ -78,7 +78,10 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let payloadString = JSONPayload.valuesHTTPStatus200
 
             // When
-            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            sut.handleResponse(
+                self.mockResponse(status: 200, payload: payloadString as ZMTransportData),
+                action: action
+            )
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
@@ -117,6 +120,8 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(e2ei.status, .enabled)
             XCTAssertEqual(e2ei.config.acmeDiscoveryUrl, "https://example.com")
             XCTAssertEqual(e2ei.config.verificationExpiration, 70)
+            XCTAssertEqual(e2ei.config.crlProxy, "https://example.com")
+            XCTAssertEqual(e2ei.config.useProxyOnMobile, true)
 
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .enabled)
@@ -157,7 +162,10 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let payloadString = JSONPayload.empty
 
             // When
-            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            sut.handleResponse(
+                self.mockResponse(status: 200, payload: payloadString as ZMTransportData),
+                action: action
+            )
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
@@ -329,6 +337,52 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+    func test_ItDecodesMLSFeatureConfig_V3() throws {
+        // There was a bug where we couldn't decode the mls feature config for v3 because
+        // 'supportedProtocols' was missing.
+        syncMOC.performAndWait {
+            // Given
+            let sut = GetFeatureConfigsActionHandler(context: self.syncMOC)
+            var action = GetFeatureConfigsAction()
+
+            // Expectation
+            let gotResult = self.customExpectation(description: "gotResult")
+
+            action.onResult { result in
+                switch result {
+                case .success:
+                    break
+
+                default:
+                    XCTFail("Expected 'success'")
+                }
+
+                gotResult.fulfill()
+            }
+
+            let payloadString = JSONPayload.mlsConfigV3
+
+            // When
+            sut.handleResponse(
+                self.mockResponse(status: 200, payload: payloadString as ZMTransportData),
+                action: action
+            )
+            XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+
+            // Then
+            let featureRepository = FeatureRepository(context: self.syncMOC)
+
+            let mls = featureRepository.fetchMLS()
+            XCTAssertEqual(mls.status, .enabled)
+            XCTAssertEqual(mls.config.protocolToggleUsers, [UUID(uuidString: "881b1824-a6e1-4a60-8cc3-14feabf6dec0")!])
+            XCTAssertEqual(mls.config.defaultProtocol, .proteus)
+            XCTAssertEqual(mls.config.allowedCipherSuites, [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519])
+            XCTAssertEqual(mls.config.supportedProtocols, [.proteus])
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
 }
 
 // MARK: - JSONPayload
@@ -337,67 +391,84 @@ private enum JSONPayload {
     static let empty = "{}"
 
     static let valuesHTTPStatus200 =
-"""
-{
-    "conversationGuestLinks": {
-        "status": "enabled"
-    },
-    "mls": {
-        "status": "enabled",
-        "config": {
-            "supportedProtocols": [],
-            "defaultCipherSuite": 1,
-            "protocolToggleUsers": [],
-            "allowedCipherSuites": [
-                1
-            ],
-            "defaultProtocol": "mls"
+        """
+        {
+            "conversationGuestLinks": {
+                "status": "enabled"
+            },
+            "mls": {
+                "status": "enabled",
+                "config": {
+                    "supportedProtocols": [],
+                    "defaultCipherSuite": 1,
+                    "protocolToggleUsers": [],
+                    "allowedCipherSuites": [
+                        1
+                    ],
+                    "defaultProtocol": "mls"
+                }
+            },
+            "appLock": {
+                "config": {
+                    "enforceAppLock": true,
+                    "inactivityTimeoutSecs": 11
+                },
+                "status": "enabled"
+            },
+            "mlsMigration": {
+                "status": "enabled",
+                "config": {
+                    "startTime": "2024-02-19T11:59:27.542Z",
+                    "finaliseRegardlessAfter": "2024-02-19T11:59:28.542Z"
+                }
+            },
+            "mlsE2EId": {
+                "status": "enabled",
+                "config": {
+                    "acmeDiscoveryUrl": "https://example.com",
+                    "verificationExpiration": 70,
+                    "crlProxy": "https://example.com",
+                    "useProxyOnMobile": true
+                }
+            },
+            "conferenceCalling": {
+                "status": "enabled"
+            },
+            "fileSharing": {
+                "status": "enabled"
+            },
+            "digitalSignatures": {
+                "status": "enabled"
+            },
+            "classifiedDomains": {
+                "config": {
+                    "domains": [
+                        "foo"
+                    ]
+                },
+                "status": "enabled"
+            },
+            "selfDeletingMessages": {
+                "status": "enabled",
+                "config": {
+                    "enforcedTimeoutSeconds": 22
+                }
+            }
         }
-    },
-    "appLock": {
-        "config": {
-            "enforceAppLock": true,
-            "inactivityTimeoutSecs": 11
-        },
-        "status": "enabled"
-    },
-    "mlsMigration": {
-        "status": "enabled",
-        "config": {
-            "startTime": "2024-02-19T11:59:27.542Z",
-            "finaliseRegardlessAfter": "2024-02-19T11:59:28.542Z"
+        """
+
+    static let mlsConfigV3 =
+        """
+        {
+            "mls": {
+                "status": "enabled",
+                "config": {
+                    "defaultCipherSuite": 1,
+                    "protocolToggleUsers": ["881b1824-a6e1-4a60-8cc3-14feabf6dec0"],
+                    "allowedCipherSuites": [1],
+                    "defaultProtocol": "proteus"
+                }
+            }
         }
-    },
-    "mlsE2EId": {
-        "status": "enabled",
-        "config": {
-            "acmeDiscoveryUrl": "https://example.com",
-            "verificationExpiration": 70
-        }
-    },
-    "conferenceCalling": {
-        "status": "enabled"
-    },
-    "fileSharing": {
-        "status": "enabled"
-    },
-    "digitalSignatures": {
-        "status": "enabled"
-    },
-    "classifiedDomains": {
-        "config": {
-            "domains": [
-                "foo"
-            ]
-        },
-        "status": "enabled"
-    },
-    "selfDeletingMessages": {
-        "status": "enabled",
-        "config": {
-            "enforcedTimeoutSeconds": 22
-        }
-    }
-}
-"""
+        """
 }

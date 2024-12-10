@@ -19,32 +19,33 @@
 import Foundation
 import WireLinkPreview
 
-extension ZMClientMessage {
+public extension ZMClientMessage {
 
-    public static let linkPreviewImageDownloadNotification = NSNotification.Name(rawValue: "ZMClientMessageLinkPreviewImageDownloadNotificationName")
+    static let linkPreviewImageDownloadNotification = NSNotification
+        .Name(rawValue: "ZMClientMessageLinkPreviewImageDownloadNotificationName")
 
-    public var linkPreviewState: ZMLinkPreviewState {
+    var linkPreviewState: ZMLinkPreviewState {
         get {
             let key = #keyPath(ZMClientMessage.linkPreviewState)
-            self.willAccessValue(forKey: key)
-            let raw = (self.primitiveValue(forKey: key) as? NSNumber) ?? 0
-            self.didAccessValue(forKey: key)
+            willAccessValue(forKey: key)
+            let raw = (primitiveValue(forKey: key) as? NSNumber) ?? 0
+            didAccessValue(forKey: key)
             return ZMLinkPreviewState(rawValue: raw.int16Value)!
         }
         set {
             let key = #keyPath(ZMClientMessage.linkPreviewState)
-            self.willChangeValue(forKey: key)
-            self.setPrimitiveValue(newValue.rawValue, forKey: key)
-            self.didChangeValue(forKey: key)
+            willChangeValue(forKey: key)
+            setPrimitiveValue(newValue.rawValue, forKey: key)
+            didChangeValue(forKey: key)
 
             if newValue != .done {
-                self.setLocallyModifiedKeys(Set([key]))
+                setLocallyModifiedKeys(Set([key]))
             }
         }
     }
 
-    public var linkPreview: LinkMetadata? {
-        guard let linkPreview = self.firstZMLinkPreview else { return nil }
+    var linkPreview: LinkMetadata? {
+        guard let linkPreview = firstZMLinkPreview else { return nil }
         if case .tweet? = linkPreview.metaData {
             return TwitterStatusMetadata(protocolBuffer: linkPreview)
         } else {
@@ -55,31 +56,35 @@ extension ZMClientMessage {
     }
 
     /// Returns the first link attachment that we need to embed in the UI.
-    public var mainLinkAttachment: LinkAttachment? {
-        return linkAttachments?.first
+    var mainLinkAttachment: LinkAttachment? {
+        linkAttachments?.first
     }
 
-    var firstZMLinkPreview: LinkPreview? {
-        return self.underlyingMessage?.linkPreviews.first
+    internal var firstZMLinkPreview: LinkPreview? {
+        underlyingMessage?.linkPreviews.first
     }
 
-    static func keyPathsForValuesAffectingLinkPreview() -> Set<String> {
-        return Set([#keyPath(ZMClientMessage.dataSet), #keyPath(ZMClientMessage.dataSet) + ".data"])
+    internal static func keyPathsForValuesAffectingLinkPreview() -> Set<String> {
+        Set([#keyPath(ZMClientMessage.dataSet), #keyPath(ZMClientMessage.dataSet) + ".data"])
     }
 
-    public func requestLinkPreviewImageDownload() {
-        guard !self.objectID.isTemporaryID,
+    func requestLinkPreviewImageDownload() {
+        guard !objectID.isTemporaryID,
               self.linkPreview != nil,
-              let moc = self.managedObjectContext,
-              let linkPreview = self.firstZMLinkPreview else { return }
+              let moc = managedObjectContext,
+              let linkPreview = firstZMLinkPreview else { return }
 
         guard linkPreview.image.uploaded.hasAssetID, !hasDownloadedImage() else { return }
 
-        NotificationInContext(name: ZMClientMessage.linkPreviewImageDownloadNotification, context: moc.notificationContext, object: self.objectID).post()
+        NotificationInContext(
+            name: ZMClientMessage.linkPreviewImageDownloadNotification,
+            context: moc.notificationContext,
+            object: objectID
+        ).post()
     }
 
-    public func fetchLinkPreviewImageData(
-        with queue: DispatchQueue,
+    func fetchLinkPreviewImageData(
+        queue: DispatchQueue,
         completionHandler: @escaping (_ imageData: Data?) -> Void
     ) {
         let cache = managedObjectContext?.zm_fileAssetCache
@@ -107,16 +112,14 @@ extension ZMClientMessage {
                 return
             }
 
-            if
-                let mediumKey,
-                let encryptionKey,
-                let digest,
-                let data = cache.decryptData(
-                    key: mediumKey,
-                    encryptionKey: encryptionKey,
-                    sha256Digest: digest
-                )
-            {
+            if let mediumKey,
+               let encryptionKey,
+               let digest,
+               let data = cache.decryptData(
+                   key: mediumKey,
+                   encryptionKey: encryptionKey,
+                   sha256Digest: digest
+               ) {
                 completionHandler(data)
             } else if let fallbackKey {
                 completionHandler(cache.assetData(fallbackKey))
@@ -126,9 +129,10 @@ extension ZMClientMessage {
         }
     }
 
-    @nonobjc func applyLinkPreviewUpdate(_ updatedMessage: GenericMessage, from updateEvent: ZMUpdateEvent) {
+    @nonobjc
+    internal func applyLinkPreviewUpdate(_ updatedMessage: GenericMessage, from updateEvent: ZMUpdateEvent) {
         guard
-            let nonce = self.nonce,
+            let nonce,
             let senderUUID = updateEvent.senderUUID,
             let originalText = underlyingMessage?.textData,
             let updatedText = updatedMessage.textData,
@@ -139,7 +143,11 @@ extension ZMClientMessage {
         }
 
         let timeout = deletionTimeout > 0 ? deletionTimeout : nil
-        let message = GenericMessage(content: originalText.updateLinkPreview(from: updatedText), nonce: nonce, expiresAfterTimeInterval: timeout)
+        let message = GenericMessage(
+            content: originalText.updateLinkPreview(from: updatedText),
+            nonce: nonce,
+            expiresAfterTimeInterval: timeout
+        )
 
         do {
             try setUnderlyingMessage(message)
@@ -151,26 +159,31 @@ extension ZMClientMessage {
 
 extension ZMClientMessage: ZMImageOwner {
 
-    // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
-    @objc public func requiredImageFormats() -> NSOrderedSet {
-        if let genericMessage = self.underlyingMessage, genericMessage.linkPreviews.count > 0 {
+    // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data
+    // is preprocessed
+    @objc
+    public func requiredImageFormats() -> NSOrderedSet {
+        if let genericMessage = underlyingMessage, !genericMessage.linkPreviews.isEmpty {
             return NSOrderedSet(array: [ZMImageFormat.medium.rawValue])
         }
         return NSOrderedSet()
     }
 
-    @objc public func originalImageData() -> Data? {
-        return managedObjectContext?.zm_fileAssetCache.originalImageData(for: self)
+    @objc
+    public func originalImageData() -> Data? {
+        managedObjectContext?.zm_fileAssetCache.originalImageData(for: self)
     }
 
-    @objc public func originalImageSize() -> CGSize {
-        guard let originalImageData = self.originalImageData() else { return CGSize.zero }
+    @objc
+    public func originalImageSize() -> CGSize {
+        guard let originalImageData = originalImageData() else { return CGSize.zero }
         return ZMImagePreprocessor.sizeOfPrerotatedImage(with: originalImageData)
     }
 
-    @objc public func processingDidFinish() {
-        self.linkPreviewState = .processed
-        guard let moc = self.managedObjectContext else { return }
+    @objc
+    public func processingDidFinish() {
+        linkPreviewState = .processed
+        guard let moc = managedObjectContext else { return }
         moc.zm_fileAssetCache.deleteOriginalImageData(for: self)
         moc.enqueueDelayedSave()
     }
@@ -184,22 +197,23 @@ extension ZMClientMessage: ZMImageOwner {
     }
 
     public var linkPreviewHasImage: Bool {
-        guard let linkPreview = self.firstZMLinkPreview else { return false }
+        guard let linkPreview = firstZMLinkPreview else { return false }
         return linkPreview.hasImage
     }
 
     @objc public var linkPreviewImageCacheKey: String? {
-        return self.nonce?.uuidString
+        nonce?.uuidString
     }
 
-    @objc public func setImageData(
+    @objc
+    public func setImageData(
         _ imageData: Data,
         for format: ZMImageFormat,
         properties: ZMIImageProperties?
     ) {
         guard
-            let moc = self.managedObjectContext,
-            var linkPreview = self.firstZMLinkPreview,
+            let moc = managedObjectContext,
+            var linkPreview = firstZMLinkPreview,
             format == .medium
         else {
             return
@@ -232,7 +246,7 @@ extension ZMClientMessage: ZMImageOwner {
             original: original
         )
 
-        if let genericMessage = self.underlyingMessage, let textMessageData {
+        if let genericMessage = underlyingMessage, let textMessageData {
             let text = Text.with {
                 $0.content = textMessageData.messageText ?? ""
                 $0.mentions = textMessageData.mentions.compactMap { WireProtos.Mention.createMention($0) }
@@ -252,7 +266,7 @@ extension ZMClientMessage: ZMImageOwner {
             case .text:
                 messageUpdate = text
 
-            case .ephemeral(let data):
+            case let .ephemeral(data):
                 switch data.content {
                 case .text?:
                     messageUpdate = Ephemeral(
@@ -282,7 +296,8 @@ extension ZMClientMessage: ZMImageOwner {
                 let genericMessage = GenericMessage(content: messageUpdate, nonce: nonce)
                 try setUnderlyingMessage(genericMessage)
             } catch {
-                Logging.messageProcessing.warn("Failed to link preview image data. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to link preview image data. Reason: \(error.localizedDescription)")
                 return
             }
         }

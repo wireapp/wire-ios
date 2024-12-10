@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSettingsUI
 import WireSyncEngine
 
 // MARK: - ConfirmEmailDelegate
@@ -32,25 +33,25 @@ protocol ConfirmEmailDelegate: AnyObject {
 extension UITableView {
     var autolayoutTableHeaderView: UIView? {
         get {
-            return self.tableHeaderView
+            tableHeaderView
         }
 
         set {
             if let newHeader = newValue {
                 newHeader.translatesAutoresizingMaskIntoConstraints = false
 
-                self.tableHeaderView = newHeader
+                tableHeaderView = newHeader
 
                 NSLayoutConstraint.activate([
-                    newHeader.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-                    newHeader.widthAnchor.constraint(equalTo: self.widthAnchor),
-                    newHeader.topAnchor.constraint(equalTo: self.topAnchor)
+                    newHeader.centerXAnchor.constraint(equalTo: centerXAnchor),
+                    newHeader.widthAnchor.constraint(equalTo: widthAnchor),
+                    newHeader.topAnchor.constraint(equalTo: topAnchor)
                 ])
 
-                self.tableHeaderView?.layoutIfNeeded()
-                self.tableHeaderView = newHeader
+                tableHeaderView?.layoutIfNeeded()
+                tableHeaderView = newHeader
             } else {
-                self.tableHeaderView = nil
+                tableHeaderView = nil
             }
         }
     }
@@ -62,7 +63,6 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     // MARK: - Properties
 
-    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
     weak var delegate: ConfirmEmailDelegate?
     typealias SettingsAccountSectionEmailLocalizable = L10n.Localizable.Self.Settings.AccountSection.Email.Change
     let newEmail: String
@@ -71,11 +71,21 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     // MARK: - Init
 
-    init(newEmail: String, delegate: ConfirmEmailDelegate?, userSession: UserSession) {
+    init(
+        newEmail: String,
+        delegate: ConfirmEmailDelegate?,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.newEmail = newEmail
         self.delegate = delegate
         self.userSession = userSession
-        super.init(style: .grouped)
+        super.init(
+            style: .grouped,
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
+        )
         setupViews()
     }
 
@@ -122,15 +132,18 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     // MARK: - Setup tableView
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: SettingsButtonCell.zm_reuseIdentifier, for: indexPath) as! SettingsButtonCell
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: SettingsButtonCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! SettingsButtonCell
         let text = SettingsAccountSectionEmailLocalizable.Verify.resend(newEmail)
         cell.titleText = text
         return cell

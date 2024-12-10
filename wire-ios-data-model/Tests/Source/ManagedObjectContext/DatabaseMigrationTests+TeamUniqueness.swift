@@ -17,10 +17,9 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
-@available(iOS 15.0, *)
 final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
 
     private let bundle = Bundle(for: ZMManagedObject.self)
@@ -65,10 +64,7 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
                     teams = try fetchTeams(with: teamId, in: context)
                     XCTAssertEqual(teams.count, 1)
 
-                    XCTAssertTrue(context.readAndResetSlowSyncFlag())
-                    // the flag has been consumed
-                    XCTAssertFalse(context.readAndResetSlowSyncFlag())
-
+                    XCTAssertTrue(context.readMigrationNeedsSlowSyncFlag())
                 }
             },
             for: self
@@ -82,7 +78,11 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
         in context: NSManagedObjectContext
     ) throws -> [Team] {
         let fetchRequest = NSFetchRequest<Team>(entityName: Team.entityName())
-        fetchRequest.predicate = NSPredicate(format: "%K == %@", Team.remoteIdentifierDataKey(), identifier.uuidData as CVarArg)
+        fetchRequest.predicate = NSPredicate(
+            format: "%K == %@",
+            Team.remoteIdentifierDataKey(),
+            identifier.uuidData as CVarArg
+        )
         return try context.fetch(fetchRequest)
     }
 

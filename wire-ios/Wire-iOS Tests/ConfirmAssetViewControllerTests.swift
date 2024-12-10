@@ -17,43 +17,72 @@
 //
 
 import FLAnimatedImage
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
+
 final class ConfirmAssetViewControllerTests: XCTestCase {
 
-    var sut: ConfirmAssetViewController!
+    // MARK: - Properties
+
+    private var sut: ConfirmAssetViewController!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
+        snapshotHelper = nil
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testThatItRendersTheAssetViewControllerWithLandscapeImage() {
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg")))
+        )
 
         accentColor = .green
         sut.previewTitle = "Matterhorn"
 
-        verifyAllIPhoneSizes(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithPortraitImage() {
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg"))))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg")))
+        )
 
         accentColor = .red
         sut.previewTitle = "Burger & Beer"
 
-        verifyAllIPhoneSizes(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithSmallImage() {
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_small.jpg").imageScaled(with: 0.5)!)))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(
+                    mediaAsset: image(inTestBundleNamed: "unsplash_small.jpg")
+                        .imageScaled(with: 0.5)!
+                ))
+        )
 
         accentColor = .red
         sut.previewTitle = "Sea Food"
 
-        verifyAllIPhoneSizes(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - GIF, Unit Tests
@@ -61,7 +90,8 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     func testThatItShowsEditOptionsForSignalFrameGIF() {
         // GIVEN & WHEN
         sut = ConfirmAssetViewController(
-            context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif")))
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif")))
         )
 
         // THEN
@@ -71,7 +101,10 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     func testThatItHidesEditOptionsForAnimatedGIF() {
         // GIVEN & WHEN
         let data = dataInTestBundleNamed("animated.gif")
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data))))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data)))
+        )
 
         // THEN
         XCTAssertFalse(sut.showEditingOptions)

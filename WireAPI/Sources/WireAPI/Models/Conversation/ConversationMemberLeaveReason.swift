@@ -20,7 +20,7 @@ import Foundation
 
 /// The reason why a member was removed from a conversation.
 
-public enum ConversationMemberLeaveReason: String, Codable {
+public enum ConversationMemberLeaveReason: String, Codable, Sendable {
 
     /// The user has been removed from the team and therefore removed
     /// from all conversations.
@@ -29,10 +29,10 @@ public enum ConversationMemberLeaveReason: String, Codable {
 
     /// The user left the conversation by themselves.
 
-    case left
+    case userLeft
 
     /// The user was removed from the conversation by an admin.
 
-    case removed
+    case userRemoved
 
 }

@@ -28,11 +28,11 @@ final class DirectorySectionController: SearchSectionController {
     weak var collectionView: UICollectionView?
 
     override var isHidden: Bool {
-        return self.suggestions.isEmpty
+        suggestions.isEmpty
     }
 
     override var sectionTitle: String {
-        return L10n.Localizable.Peoplepicker.Header.directory
+        L10n.Localizable.Peoplepicker.Header.directory
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -40,18 +40,24 @@ final class DirectorySectionController: SearchSectionController {
 
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.zm_reuseIdentifier)
         guard let userSession = ZMUserSession.shared() else { return }
-        self.token = UserChangeInfo.add(searchUserObserver: self, in: userSession)
+        token = UserChangeInfo.add(searchUserObserver: self, in: userSession)
 
         self.collectionView = collectionView
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return suggestions.count
+        suggestions.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let user = suggestions[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: UserCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! UserCell
         if let selfUser = ZMUser.selfUser() {
             cell.configure(
                 user: user,
@@ -73,7 +79,8 @@ final class DirectorySectionController: SearchSectionController {
         return cell
     }
 
-    @objc func connect(_ sender: AnyObject) {
+    @objc
+    func connect(_ sender: AnyObject) {
         guard let button = sender as? UIButton else { return }
 
         let indexPath = IndexPath(row: button.tag, section: 0)

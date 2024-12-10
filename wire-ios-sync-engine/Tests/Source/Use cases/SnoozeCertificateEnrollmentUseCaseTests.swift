@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import WireTesting
+
 @testable import WireDataModelSupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-import WireTesting
 
 final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
@@ -66,7 +67,8 @@ final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
     // MARK: Helpers
 
-    private func makeUseCase(recurringActionService: any RecurringActionServiceInterface) -> SnoozeCertificateEnrollmentUseCase {
+    private func makeUseCase(recurringActionService: any RecurringActionServiceInterface)
+        -> SnoozeCertificateEnrollmentUseCase {
         SnoozeCertificateEnrollmentUseCase(
             featureRepository: mockFeatureRepository,
             featureRepositoryContext: context,

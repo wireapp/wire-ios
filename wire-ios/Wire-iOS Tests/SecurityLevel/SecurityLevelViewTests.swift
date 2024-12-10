@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDesign
+import WireTestingPackage
 import WireUtilities
 import XCTest
 
@@ -28,11 +28,13 @@ final class SecurityLevelViewTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: SecurityLevelView!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = SecurityLevelView()
         sut.backgroundColor = SemanticColors.View.backgroundDefaultWhite
         sut.translatesAutoresizingMaskIntoConstraints = true
@@ -42,6 +44,7 @@ final class SecurityLevelViewTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -50,16 +53,74 @@ final class SecurityLevelViewTests: XCTestCase {
 
     func testThatItRendersWithNotClassified() {
         sut.configure(with: .notClassified)
-        verifyInAllColorSchemes(matching: sut)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItRendersWithClassified() {
         sut.configure(with: .classified)
-        verifyInAllColorSchemes(matching: sut)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItDoesNotRenderWithNone() {
         sut.configure(with: .none)
-        verifyInAllColorSchemes(matching: sut)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
     }
+
 }

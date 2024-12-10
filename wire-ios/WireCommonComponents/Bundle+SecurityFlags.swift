@@ -27,6 +27,7 @@ public enum SecurityFlags {
     case backup
     case maxNumberAccounts
     case fileSharing
+    case locationSharing
     case forceCallKitDisabled
     case clipboard
 
@@ -41,27 +42,29 @@ public enum SecurityFlags {
     var bundleKey: String {
         switch self {
         case .maxNumberAccounts:
-            return "MaxNumberAccounts"
+            "MaxNumberAccounts"
         case .generateLinkPreviews:
-            return "GenerateLinkPreviewEnabled"
+            "GenerateLinkPreviewEnabled"
         case .forceConstantBitRateCalls:
-            return "ForceCBREnabled"
+            "ForceCBREnabled"
         case .customBackend:
-            return "CustomBackendEnabled"
+            "CustomBackendEnabled"
         case .cameraRoll:
-            return "CameraRollEnabled"
+            "CameraRollEnabled"
         case .backup:
-            return "BackupEnabled"
+            "BackupEnabled"
         case .forceEncryptionAtRest:
-            return "ForceEncryptionAtRestEnabled"
+            "ForceEncryptionAtRestEnabled"
         case .fileSharing:
-            return "FileSharingEnabled"
+            "FileSharingEnabled"
+        case .locationSharing:
+            "LocationSharingEnabled"
         case .forceCallKitDisabled:
-            return "ForceCallKitDisabled"
+            "ForceCallKitDisabled"
         case .minTLSVersion:
-            return "MinTLSVersion"
+            "MinTLSVersion"
         case .clipboard:
-            return "ClipboardEnabled"
+            "ClipboardEnabled"
         }
     }
 
@@ -71,11 +74,11 @@ public enum SecurityFlags {
     }
 
     public var stringValue: String? {
-        return Bundle.appMainBundle.infoForKey(bundleKey)
+        Bundle.appMainBundle.infoForKey(bundleKey)
     }
 
     public var isEnabled: Bool {
-        return stringValue == "1"
+        stringValue == "1"
     }
 
 }

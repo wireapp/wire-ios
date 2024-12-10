@@ -17,7 +17,15 @@
 //
 
 import Foundation
+import WireDataModel
 
+/// Data Structure containing contextual information currently displayed view
+struct DeveloperToolsContext {
+    var currentUserClient: UserClient?
+    var currentConversation: ZMConversation?
+}
+
+/// Provides debug actions for a specific context
 protocol DeveloperToolsContextItemsProvider {
     init?(context: DeveloperToolsContext)
     func getActionItems() -> [DeveloperToolsViewModel.Item]

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MessageDependencyResolverInterface {
@@ -39,15 +40,15 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
     public func waitForDependenciesToResolve(for message: any SendableMessage) async throws {
 
         func dependenciesAreResolved() async throws -> Bool {
-            let isSecurityLevelDegraded = await self.context.perform {
+            let isSecurityLevelDegraded = await context.perform {
                 message.conversation?.isDegraded == true
             }
 
-            let shouldIgnoreTheSecurityLevelCheck = await self.context.perform {
+            let shouldIgnoreTheSecurityLevelCheck = await context.perform {
                 message.shouldIgnoreTheSecurityLevelCheck
             }
 
-            let legalHoldPendingApproval = await self.context.perform {
+            let legalHoldPendingApproval = await context.perform {
                 message.conversation?.legalHoldStatus == .pendingApproval
             }
 
@@ -55,19 +56,21 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 throw MessageDependencyResolverError.legalHoldPendingApproval
             }
 
-            if isSecurityLevelDegraded && !shouldIgnoreTheSecurityLevelCheck {
+            if isSecurityLevelDegraded, !shouldIgnoreTheSecurityLevelCheck {
                 throw MessageDependencyResolverError.securityLevelDegraded
             }
 
-            let hasDependencies = await self.context.perform {
+            let hasDependencies = await context.perform {
                 message.dependentObjectNeedingUpdateBeforeProcessing != nil
             }
 
+            let logAttributes = await MessageLogAttributesBuilder(context: context).logAttributes(message)
+
             if !hasDependencies {
-                WireLogger.messaging.debug("Message dependency resolved")
+                WireLogger.messaging.debug("Message dependency resolved", attributes: logAttributes)
                 return true
             } else {
-                WireLogger.messaging.debug("Message has dependency, waiting")
+                WireLogger.messaging.debug("Message has dependency, waiting", attributes: logAttributes)
                 return false
             }
         }

@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import protocol WireSyncEngine.SelfUserProvider
 
 /// Retains a shared self user provider object.
-final class SelfUser {
+enum SelfUser {
 
     /// The underlying provider of the self user.
     static var provider: SelfUserProvider?

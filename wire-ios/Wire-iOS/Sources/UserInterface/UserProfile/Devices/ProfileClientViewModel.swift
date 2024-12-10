@@ -22,7 +22,7 @@ import WireSyncEngine
 final class ProfileClientViewModel {
     let userClient: UserClient
     private let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
-    private (set) var fingerprintData: Data?
+    private(set) var fingerprintData: Data?
 
     var fingerprintDataClosure: ((Data?) -> Void)?
 

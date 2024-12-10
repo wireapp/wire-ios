@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
+import WireFoundation
+import WireTransport
 import XCTest
+
+@testable import WireRequestStrategy
 
 final class UserProfilePayloadProcessorTests: MessagingTestBase {
 
@@ -31,11 +34,11 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
             self.otherUser.remoteIdentifier = nil
             self.otherUser.domain = nil
         }
+        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
         sut = nil
-        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
@@ -274,67 +277,6 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testUpdateUserProfile_UpdatesPhone() throws {
-        syncMOC.performGroupedAndWait {
-            // given
-            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
-            let phone = "+123456789"
-            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, phone: phone)
-
-            // when
-            self.sut.updateUserProfile(
-                from: userProfile,
-                for: self.otherUser,
-                authoritative: true
-            )
-
-            // then
-            XCTAssertEqual(self.otherUser.phoneNumber, phone)
-        }
-    }
-
-    func testUpdateUserProfile_PhoneCanBeDeleted_ByNonAuthoritativeUpdate() throws {
-        syncMOC.performGroupedAndWait {
-            // given
-            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
-            let updatedKeysSet: Set<Payload.UserProfile.CodingKeys> = [.phone]
-            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: updatedKeysSet)
-            self.otherUser.phoneNumber = "+123456789"
-
-            // when
-            self.sut.updateUserProfile(
-                from: userProfile,
-                for: self.otherUser,
-                authoritative: false
-            )
-
-            // then
-            XCTAssertNil(self.otherUser.phoneNumber)
-        }
-    }
-
-    func testUpdateUserProfile_PhoneIsNotUpdated_WhenUserIsDeleted() throws {
-        syncMOC.performGroupedAndWait {
-            // given
-            let oldPhone = "+123456789"
-            let newPhone = "+987654321"
-            self.otherUser.phoneNumber = oldPhone
-            self.otherUser.markAccountAsDeleted(at: Date())
-            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
-            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, phone: newPhone)
-
-            // when
-            self.sut.updateUserProfile(
-                from: userProfile,
-                for: self.otherUser,
-                authoritative: true
-            )
-
-            // then
-            XCTAssertEqual(self.otherUser.phoneNumber, oldPhone)
-        }
-    }
-
     func testUpdateUserProfile_UpdatesEmail() throws {
         syncMOC.performGroupedAndWait {
             // given
@@ -421,8 +363,10 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     func testUpdateUserProfile_AssetsIsNotUpdated_WhenAssetsHaveLocalChanges() throws {
         syncMOC.performGroupedAndWait {
             // given
-            let assetsModifiedKeys = [ZMUser.previewProfileAssetIdentifierKey,
-                                      ZMUser.completeProfileAssetIdentifierKey]
+            let assetsModifiedKeys = [
+                ZMUser.previewProfileAssetIdentifierKey,
+                ZMUser.completeProfileAssetIdentifierKey
+            ]
             let oldPreviewAssetKey = "a"
             let oldCompleteAssetKey = "b"
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

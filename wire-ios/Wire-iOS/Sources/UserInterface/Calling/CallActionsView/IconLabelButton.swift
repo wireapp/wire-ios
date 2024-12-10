@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol IconLabelButtonInput {
     func icon(forState state: UIControl.State) -> StyleKitIcon
@@ -128,9 +129,8 @@ class IconLabelButton: ButtonWithLargerHitArea {
         }
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: - [AGIS] Clean this up
-    // swiftlint:enable todo_requires_jira_link
     // The content of this method needs to be deleted and replaced with
     // what's in CallingActionButton
     func apply(_ configuration: CallActionAppearance) {
@@ -149,7 +149,10 @@ class IconLabelButton: ButtonWithLargerHitArea {
         iconButton.setIconColor(configuration.iconColorSelected.withAlphaComponent(0.4), for: .disabledAndSelected)
         iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .disabledAndSelected)
 
-        iconButton.setBackgroundImageColor(configuration.backgroundColorSelectedAndHighlighted, for: .selectedAndHighlighted)
+        iconButton.setBackgroundImageColor(
+            configuration.backgroundColorSelectedAndHighlighted,
+            for: .selectedAndHighlighted
+        )
 
         blurView.isHidden = !configuration.showBlur
     }
@@ -157,7 +160,8 @@ class IconLabelButton: ButtonWithLargerHitArea {
 }
 
 // MARK: - Helper
- extension UIControl.State {
+
+extension UIControl.State {
     static let disabledAndSelected: UIControl.State = [.disabled, .selected]
     static let selectedAndHighlighted: UIControl.State = [.highlighted, .selected]
 }

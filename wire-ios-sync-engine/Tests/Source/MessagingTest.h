@@ -75,7 +75,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MessagingTest (UserTesting)
 
 - (void)setEmailAddress:(NSString *)emailAddress onUser:(ZMUser *)user;
-- (void)setPhoneNumber:(NSString *)phoneNumber onUser:(ZMUser *)user;
 
 @end
 

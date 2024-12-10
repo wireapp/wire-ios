@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 extension ConversationLike where Self: SwiftConversationLike {
@@ -43,25 +44,28 @@ extension ConversationLike where Self: SwiftConversationLike {
 }
 
 protocol AddParticipantsConversationCreationDelegate: AnyObject {
-    func addParticipantsViewController(_ addParticipantsViewController: AddParticipantsViewController, didPerform action: AddParticipantsViewController.CreateAction)
+    func addParticipantsViewController(
+        _ addParticipantsViewController: AddParticipantsViewController,
+        didPerform action: AddParticipantsViewController.CreateAction
+    )
 }
 
 extension AddParticipantsViewController.Context {
     var includeGuests: Bool {
         switch self {
-        case .add(let conversation):
-            return conversation.canAddGuest
-        case .create(let creationValues):
-            return creationValues.allowGuests
+        case let .add(conversation):
+            conversation.canAddGuest
+        case let .create(creationValues):
+            creationValues.allowGuests
         }
     }
 
     var selectionLimit: Int {
         switch self {
-        case .add(let conversation):
-            return conversation.freeParticipantSlots
+        case let .add(conversation):
+            conversation.freeParticipantSlots
         case .create:
-            return ZMConversation.maxParticipantsExcludingSelf
+            ZMConversation.maxParticipantsExcludingSelf
         }
     }
 
@@ -70,7 +74,7 @@ extension AddParticipantsViewController.Context {
         let max = ZMConversation.maxParticipants
         let message: String
         switch self {
-        case .add(let conversation):
+        case let .add(conversation):
             let freeSpace = conversation.freeParticipantSlots
             message = AddParticipantsAlert.Message.existingConversation(max, freeSpace)
         case .create:
@@ -91,7 +95,7 @@ extension AddParticipantsViewController.Context {
     }
 }
 
-final class AddParticipantsViewController: UIViewController, SpinnerCapable {
+final class AddParticipantsViewController: UIViewController {
 
     enum CreateAction {
         case updatedUsers(UserSet)
@@ -108,26 +112,28 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     private let searchResultsViewController: SearchResultsViewController
     private let searchGroupSelector: SearchGroupSelector
     private let searchHeaderViewController: SearchHeaderViewController
-    let userSelection: UserSelection = UserSelection()
+    let userSelection: UserSelection = .init()
     private let collectionView: UICollectionView
     private let collectionViewLayout: UICollectionViewFlowLayout
     private let confirmButtonHeight: CGFloat = 56.0
     private let confirmButton: IconButton
     private let emptyResultView: EmptySearchResultsView
-    private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,
-                                                                                                      constant: -bottomMargin)
+    private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(
+        equalTo: view.bottomAnchor,
+        constant: -bottomMargin
+    )
     private let backButtonDescriptor = BackButtonDescription()
     private let bottomMargin: CGFloat = 24
 
     weak var conversationCreationDelegate: AddParticipantsConversationCreationDelegate?
+
+    private var activityIndicator: BlockingActivityIndicator!
 
     private var viewModel: AddParticipantsViewModel {
         didSet {
             updateValues()
         }
     }
-
-    var dismissSpinner: SpinnerCompletion?
 
     deinit {
         userSelection.remove(observer: self)
@@ -148,13 +154,25 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         )
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        activityIndicator = .init(view: view)
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        updateTitle()
+    }
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     init(
@@ -164,21 +182,21 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     ) {
         self.userSession = userSession
 
-        viewModel = AddParticipantsViewModel(with: context)
+        self.viewModel = AddParticipantsViewModel(with: context)
 
-        collectionViewLayout = UICollectionViewFlowLayout()
+        self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionViewLayout.minimumInteritemSpacing = 12
         collectionViewLayout.minimumLineSpacing = 0
 
-        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
+        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         collectionView.backgroundColor = UIColor.clear
         collectionView.allowsMultipleSelection = true
         collectionView.keyboardDismissMode = .onDrag
         collectionView.bounces = true
         collectionView.alwaysBounceVertical = true
 
-        confirmButton = IconButton(fontSpec: .normalSemiboldFont)
+        self.confirmButton = IconButton(fontSpec: .normalSemiboldFont)
         confirmButton.applyStyle(.addParticipantsDisabledButtonStyle)
         confirmButton.setBackgroundImageColor(SemanticColors.Button.backgroundPrimaryDisabled, for: .disabled)
         confirmButton.contentHorizontalAlignment = .center
@@ -186,19 +204,23 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         confirmButton.layer.cornerRadius = 16
         confirmButton.layer.masksToBounds = true
 
-        searchHeaderViewController = SearchHeaderViewController(userSelection: userSelection)
+        self.searchHeaderViewController = SearchHeaderViewController(userSelection: userSelection)
 
-        searchGroupSelector = SearchGroupSelector()
+        self.searchGroupSelector = SearchGroupSelector()
 
-        searchResultsViewController = SearchResultsViewController(userSelection: userSelection,
-                                                                  userSession: userSession,
-                                                                  isAddingParticipants: true,
-                                                                  shouldIncludeGuests: viewModel.context.includeGuests,
-                                                                  isFederationEnabled: isFederationEnabled)
+        self.searchResultsViewController = SearchResultsViewController(
+            userSelection: userSelection,
+            userSession: userSession,
+            isAddingParticipants: true,
+            shouldIncludeGuests: viewModel.context.includeGuests,
+            isFederationEnabled: isFederationEnabled
+        )
 
         let user = SelfUser.provider?.providedSelfUser
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: user?.canManageTeam == true,
-                                                 isFederationEnabled: isFederationEnabled)
+        self.emptyResultView = EmptySearchResultsView(
+            isSelfUserAdmin: user?.canManageTeam == true,
+            isFederationEnabled: isFederationEnabled
+        )
         super.init(nibName: nil, bundle: nil)
 
         emptyResultView.delegate = self
@@ -209,7 +231,11 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
         updateValues()
 
-        confirmButton.addTarget(self, action: #selector(searchHeaderViewControllerDidConfirmAction(_:)), for: .touchUpInside)
+        confirmButton.addTarget(
+            self,
+            action: #selector(searchHeaderViewControllerDidConfirmAction(_:)),
+            for: .touchUpInside
+        )
 
         searchResultsViewController.filterConversation = viewModel.filterConversation
         searchResultsViewController.mode = .list
@@ -225,22 +251,24 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
             // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
             // not going to be added to the new conversation with the bot.
             if group == .services {
-                self.searchHeaderViewController.clearInput()
-                self.confirmButton.isHidden = true
+                searchHeaderViewController.clearInput()
+                confirmButton.isHidden = true
             } else {
-                self.confirmButton.isHidden = false
+                confirmButton.isHidden = false
             }
 
-            self.searchResultsViewController.searchGroup = group
-            self.performSearch()
+            searchResultsViewController.searchGroup = group
+            performSearch()
         }
 
         viewModel.selectedUsers.forEach(userSelection.add)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameWillChange(notification:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange(notification:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
         if viewModel.botCanBeAdded {
             view.addSubview(searchGroupSelector)
         }
@@ -273,8 +301,8 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         guard let searchHeaderView = searchHeaderViewController.view,
               let searchResultsView = searchResultsViewController.view,
               let margin = (searchResultsView as? SearchResultsView)?.accessoryViewMargin else {
-                  return
-              }
+            return
+        }
 
         [
             searchHeaderView,
@@ -322,20 +350,19 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
             confirmButton.isHidden = true
         }
         updateTitle()
-        navigationItem.rightBarButtonItem = viewModel.rightNavigationItem(target: self, action: #selector(rightNavigationItemTapped))
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.AddParticipantsConversationSettings.CloseButton.description
+        navigationItem.rightBarButtonItem = viewModel.rightNavigationItem(action: rightNavigationItemTapped())
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.AddParticipantsConversationSettings
+            .CloseButton.description
     }
 
     private func updateSelectionValues() {
         // Update view model after selection changed
-        if case .create(let values) = viewModel.context {
-            let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
+        if case let .create(values) = viewModel.context {
             let updated = ConversationCreationValues(
                 name: values.name,
                 participants: userSelection.users,
                 allowGuests: true,
-                allowServices: true,
-                encryptionProtocol: mlsFeature.config.defaultProtocol,
+                encryptionProtocol: userSession.defaultProtocol,
                 selfUser: userSession.selfUser
             )
             viewModel = AddParticipantsViewModel(with: .create(updated))
@@ -347,7 +374,10 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         updateTitle()
 
         // Notify delegate
-        conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .updatedUsers(userSelection.users))
+        conversationCreationDelegate?.addParticipantsViewController(
+            self,
+            didPerform: .updatedUsers(userSelection.users)
+        )
     }
 
     private func updateConfirmButtonState(state: Bool) {
@@ -356,31 +386,36 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     }
 
     private func updateTitle() {
-        title = {
-            switch viewModel.context {
-            case .create(let values): return viewModel.title(with: values.participants)
-            case .add: return viewModel.title(with: userSelection.users)
-            }
-        }()
+        title = switch viewModel.context {
+        case let .create(values): viewModel.title(with: values.participants)
+        case .add: viewModel.title(with: userSelection.users)
+        }
 
         guard let title else { return }
-        navigationItem.setupNavigationBarTitle(title: title.capitalized)
 
+        setupNavigationBarTitle(title.capitalized)
     }
 
-    @objc private func rightNavigationItemTapped(_ sender: Any!) {
-        switch viewModel.context {
-        case .add: navigationController?.dismiss(animated: true, completion: nil)
-        case .create: conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
+    private func rightNavigationItemTapped() -> UIAction {
+        UIAction { [weak self] _ in
+            guard let self else { return }
+
+            switch viewModel.context {
+            case .add:
+                navigationController?.dismiss(animated: true, completion: nil)
+            case .create:
+                conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
+            }
         }
     }
 
     func setLoadingView(isVisible: Bool) {
-        isLoadingViewVisible = isVisible
+        activityIndicator.setIsActive(isVisible)
         navigationItem.rightBarButtonItem?.isEnabled = !isVisible
     }
 
-    @objc func keyboardFrameWillChange(notification: Notification) {
+    @objc
+    func keyboardFrameWillChange(notification: Notification) {
         // Don't adjust the frame when being presented in a popover.
         if let arrowDirection = popoverPresentationController?.arrowDirection, arrowDirection == .unknown {
             return
@@ -389,14 +424,18 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         let firstResponder = UIResponder.currentFirst
         let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
 
-        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: { [weak self] keyboardFrameInView in
-            guard let self else { return }
+        UIView.animate(
+            withKeyboardNotification: notification,
+            in: view,
+            animations: { [weak self] keyboardFrameInView in
+                guard let self else { return }
 
-            let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
+                let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
 
-            bottomConstraint.constant = -(keyboardHeight + bottomMargin)
-            view.layoutIfNeeded()
-        })
+                bottomConstraint.constant = -(keyboardHeight + bottomMargin)
+                view.layoutIfNeeded()
+            }
+        )
     }
 
     private func performSearch() {
@@ -419,7 +458,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     }
 
     private func addSelectedParticipants(to conversation: GroupDetailsConversationType) {
-        let selectedUsers = self.userSelection.users
+        let selectedUsers = userSelection.users
 
         (conversation as? ZMConversation)?.addOrShowError(participants: Array(selectedUsers))
     }
@@ -443,17 +482,21 @@ extension AddParticipantsViewController: UserSelectionObserver {
 
 extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
 
-    @objc func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
-        if case .add(let conversation) = viewModel.context {
-            self.dismiss(animated: true) {
+    @objc
+    func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
+        if case let .add(conversation) = viewModel.context {
+            dismiss(animated: true) {
                 self.addSelectedParticipants(to: conversation)
             }
 
         }
     }
 
-    func searchHeaderViewController(_ searchHeaderViewController: SearchHeaderViewController, updatedSearchQuery query: String) {
-        self.performSearch()
+    func searchHeaderViewController(
+        _ searchHeaderViewController: SearchHeaderViewController,
+        updatedSearchQuery query: String
+    ) {
+        performSearch()
     }
 
 }
@@ -461,33 +504,48 @@ extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
 extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate {
 
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.overFullScreen
+        UIModalPresentationStyle.overFullScreen
     }
 
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.overFullScreen
+    func adaptivePresentationStyle(
+        for controller: UIPresentationController,
+        traitCollection: UITraitCollection
+    ) -> UIModalPresentationStyle {
+        UIModalPresentationStyle.overFullScreen
     }
 
 }
 
 extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnUser user: UserType, indexPath: IndexPath, section: SearchResultsViewControllerSection) {
+
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnUser user: UserType,
+        indexPath: IndexPath,
+        section: SearchResultsViewControllerSection
+    ) {
         // no-op
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didDoubleTapOnUser user: UserType, indexPath: IndexPath) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didDoubleTapOnUser user: UserType,
+        indexPath: IndexPath
+    ) {
         // no-op
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnConversation conversation: ZMConversation) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnConversation conversation: ZMConversation
+    ) {
         // no-op
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, wantsToPerformAction action: SearchResultsViewControllerAction) {
-        // no-op
-    }
-
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnSeviceUser user: ServiceUser) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnSeviceUser user: ServiceUser
+    ) {
 
         guard case let .add(conversation) = viewModel.context else { return }
 
@@ -499,16 +557,15 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
             guard let self, let result else { return }
             switch result {
             case .success:
-                self.dismiss(animated: true)
-            case .failure(let error):
-                guard let controller = self.navigationController?.topViewController else { return }
+                dismiss(animated: true)
+            case let .failure(error):
+                guard let controller = navigationController?.topViewController else { return }
                 error.displayAddBotError(in: controller)
             }
         }
 
         navigationController?.pushViewController(detail, animated: true)
     }
-
 }
 
 extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
@@ -517,7 +574,7 @@ extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
-            URL.wr_searchSupport.open()
+            WireURLs.shared.searchSupport.open()
         }
     }
 }

@@ -21,32 +21,62 @@ import WireDesign
 
 final class TwoLineTitleView: UIView {
 
-    let titleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .headerSemiboldFont,
-                                     color: SemanticColors.Label.textDefault)
+    // MARK: - Views
+
+    // Fixed font sizes are used since this is a navigation bar titleView.
+    // Instead of scaling with Dynamic Type, it uses UILargeContentViewer
+    // for accessibility, consistent with iOS navigation bar behavior.
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.textColor = SemanticColors.Label.textDefault
         return label
     }()
 
-    let subtitleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                     color: SemanticColors.Label.textDefault)
+    let subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.textColor = SemanticColors.Label.textDefault
         return label
     }()
+
+    // MARK: - Properties
+
+    private var originalTitle: NSAttributedString
+    private var originalSubtitle: NSAttributedString?
+
+    // MARK: - Life cycle
 
     init(first: NSAttributedString, second: NSAttributedString?) {
-        super.init(frame: CGRect.zero)
-        isAccessibilityElement = true
+        self.originalTitle = first
+        self.originalSubtitle = second
 
+        super.init(frame: CGRect.zero)
+
+        setupView()
+        setupAccessibility()
+        setupLargeContentViewer()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Setup
+
+    private func setupView() {
         titleLabel.textAlignment = .center
         subtitleLabel.textAlignment = .center
 
-        titleLabel.attributedText = first
-        subtitleLabel.attributedText = second
+        titleLabel.attributedText = originalTitle
+        subtitleLabel.attributedText = originalSubtitle
 
         addSubview(titleLabel)
         addSubview(subtitleLabel)
 
         [self, titleLabel, subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -58,8 +88,29 @@ final class TwoLineTitleView: UIView {
         ])
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    // MARK: - Accessibility
+
+    private func setupAccessibility() {
+        isAccessibilityElement = true
+        accessibilityTraits = .header
+
+        let accessibilityText = [
+            originalTitle.string,
+            originalSubtitle?.string
+        ].compactMap { $0 }.joined(separator: ", ")
+
+        accessibilityLabel = accessibilityText
     }
+
+    private func setupLargeContentViewer() {
+        showsLargeContentViewer = true
+        scalesLargeContentImage = true
+
+        if let subtitle = originalSubtitle?.string {
+            largeContentTitle = originalTitle.string + "\n" + subtitle
+        } else {
+            largeContentTitle = originalTitle.string
+        }
+    }
+
 }

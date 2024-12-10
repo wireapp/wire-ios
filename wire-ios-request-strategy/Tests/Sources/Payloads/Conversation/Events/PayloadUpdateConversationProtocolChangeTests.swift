@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class PayloadUpdateConversationProtocolChangeTests: XCTestCase {
 
@@ -57,8 +57,8 @@ final class PayloadUpdateConversationProtocolChangeTests: XCTestCase {
     }
 }
 
-private let jsonData = """
+private let jsonData = Data("""
 {
     "protocol": "mockProtocol"
 }
-""".data(using: .utf8)!
+""".utf8)

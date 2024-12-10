@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 private let zmLog = ZMSLog(tag: "Services")
 
@@ -32,16 +33,18 @@ public struct ServiceUserData: Equatable {
 
 extension ServiceUser {
     var serviceUserData: ServiceUserData? {
-        guard let providerIdentifier = self.providerIdentifier,
-              let serviceIdentifier = self.serviceIdentifier,
+        guard let providerIdentifier,
+              let serviceIdentifier,
               let provider = UUID(uuidString: providerIdentifier),
               let service = UUID(uuidString: serviceIdentifier)
         else {
             return nil
         }
 
-        return ServiceUserData(provider: provider,
-                               service: service)
+        return ServiceUserData(
+            provider: provider,
+            service: service
+        )
     }
 }
 
@@ -103,28 +106,37 @@ public final class ServiceDetails: NSObject {
     }
 }
 
-public extension ServiceUserData {
-    fileprivate func requestToAddService(to conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
+private extension ServiceUserData {
+    func requestToAddService(to conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let remoteIdentifier = conversation.remoteIdentifier
         else {
             fatal("conversation is not synced with the backend")
         }
 
-        let path = "/conversations/\(remoteIdentifier.transportString())/bots"
+        let path = apiVersion >= .v7
+            ? "/bot/conversations/\(remoteIdentifier.transportString())"
+            : "/conversations/\(remoteIdentifier.transportString())/bots"
 
-        let payload: NSDictionary = ["provider": self.provider.transportString(),
-                                     "service": self.service.transportString(),
-                                     "locale": NSLocale.formattedLocaleIdentifier()!]
+        let payload: NSDictionary = [
+            "provider": provider.transportString(),
+            "service": service.transportString(),
+            "locale": NSLocale.formattedLocaleIdentifier()!
+        ]
 
-        return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
-    fileprivate func requestToFetchProvider(apiVersion: APIVersion) -> ZMTransportRequest {
+    func requestToFetchProvider(apiVersion: APIVersion) -> ZMTransportRequest {
         let path = "/providers/\(provider.transportString())/"
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    fileprivate func requestToFetchDetails(apiVersion: APIVersion) -> ZMTransportRequest {
+    func requestToFetchDetails(apiVersion: APIVersion) -> ZMTransportRequest {
         let path = "/providers/\(provider.transportString())/services/\(service.transportString())"
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
@@ -133,7 +145,7 @@ public extension ServiceUserData {
 public extension ServiceUser {
 
     func fetchProvider(in userSession: ZMUserSession, completion: @escaping (ServiceProvider?) -> Void) {
-        guard let serviceUserData = self.serviceUserData else {
+        guard let serviceUserData else {
             fatal("Not a service user")
         }
 
@@ -148,10 +160,10 @@ public extension ServiceUser {
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
                   let provider = ServiceProvider(payload: responseDictionary) else {
-                      zmLog.error("Wrong response for fetching a provider: \(response)")
-                      completion(nil)
-                      return
-                  }
+                zmLog.error("Wrong response for fetching a provider: \(response)")
+                completion(nil)
+                return
+            }
 
             completion(provider)
         }))
@@ -160,7 +172,7 @@ public extension ServiceUser {
     }
 
     func fetchDetails(in userSession: ZMUserSession, completion: @escaping (ServiceDetails?) -> Void) {
-        guard let serviceUserData = self.serviceUserData else {
+        guard let serviceUserData else {
             fatal("Not a service user")
         }
 
@@ -175,10 +187,10 @@ public extension ServiceUser {
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
                   let serviceDetails = ServiceDetails(payload: responseDictionary) else {
-                      zmLog.error("Wrong response for fetching a service: \(response)")
-                      completion(nil)
-                      return
-                  }
+                zmLog.error("Wrong response for fetching a service: \(response)")
+                completion(nil)
+                return
+            }
 
             completion(serviceDetails)
         }))
@@ -186,17 +198,22 @@ public extension ServiceUser {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
+    func createConversation(
+        in userSession: ZMUserSession,
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
+    ) {
 
-        createConversation(transportSession: userSession.transportSession,
-                           eventProcessor: userSession.updateEventProcessor!,
-                           contextProvider: userSession,
-                           completionHandler: completionHandler)
+        createConversation(
+            transportSession: userSession.transportSession,
+            eventProcessor: userSession.conversationEventProcessor,
+            contextProvider: userSession,
+            completionHandler: completionHandler
+        )
     }
 
     internal func createConversation(
         transportSession: TransportSessionType,
-        eventProcessor: UpdateEventProcessor,
+        eventProcessor: ConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
@@ -221,7 +238,7 @@ public extension ServiceUser {
             messageProtocol: .proteus
         ) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 conversation.add(
                     serviceUser: serviceUserData,
                     transportSession: transportSession,
@@ -233,12 +250,12 @@ public extension ServiceUser {
                         context.saveOrRollback()
                         completionHandler(.success(conversation))
 
-                    case .failure(let error):
+                    case let .failure(error):
                         completionHandler(.failure(error))
                     }
                 }
 
-            case .failure(let error):
+            case let .failure(error):
                 completionHandler(.failure(error))
             }
         }
@@ -279,7 +296,11 @@ extension AddBotError {
 
 public extension ZMConversation {
 
-    func add(serviceUser: ServiceUser, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+    func add(
+        serviceUser: ServiceUser,
+        in userSession: ZMUserSession,
+        completionHandler: @escaping (Result<Void, Error>) -> Void
+    ) {
         guard let serviceUserData = serviceUser.serviceUserData else {
             fatal("Not a service user")
         }
@@ -287,19 +308,27 @@ public extension ZMConversation {
         add(serviceUser: serviceUserData, in: userSession, completionHandler: completionHandler)
     }
 
-    func add(serviceUser serviceUserData: ServiceUserData, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
-        add(serviceUser: serviceUserData,
+    func add(
+        serviceUser serviceUserData: ServiceUserData,
+        in userSession: ZMUserSession,
+        completionHandler: @escaping (Result<Void, Error>) -> Void
+    ) {
+        add(
+            serviceUser: serviceUserData,
             transportSession: userSession.transportSession,
-            eventProcessor: userSession.updateEventProcessor!,
+            eventProcessor: userSession.conversationEventProcessor,
             contextProvider: userSession.coreDataStack,
-            completionHandler: completionHandler)
+            completionHandler: completionHandler
+        )
     }
 
-    internal func add(serviceUser serviceUserData: ServiceUserData,
-                      transportSession: TransportSessionType,
-                      eventProcessor: UpdateEventProcessor,
-                      contextProvider: ContextProvider,
-                      completionHandler: @escaping (Result<Void, Error>) -> Void) {
+    internal func add(
+        serviceUser serviceUserData: ServiceUserData,
+        transportSession: TransportSessionType,
+        eventProcessor: ConversationEventProcessorProtocol,
+        contextProvider: ContextProvider,
+        completionHandler: @escaping (Result<Void, Error>) -> Void
+    ) {
 
         guard transportSession.reachability.mayBeReachable else {
             completionHandler(.failure(AddBotError.offline))
@@ -317,13 +346,13 @@ public extension ZMConversation {
             guard response.httpStatus == 201,
                   let responseDictionary = response.payload?.asDictionary(),
                   let userAddEventPayload = responseDictionary["event"] as? ZMTransportData,
-                  let event = ZMUpdateEvent(fromEventStreamPayload: userAddEventPayload, uuid: nil) else {
-                      completionHandler(.failure(AddBotError(response: response)))
-                      return
-                  }
+                  let event = ZMUpdateEvent(fromEventStreamPayload: userAddEventPayload, uuid: UUID()) else {
+                completionHandler(.failure(AddBotError(response: response)))
+                return
+            }
 
             WaitingGroupTask(context: contextProvider.viewContext) {
-                try? await eventProcessor.processEvents([event])
+                await eventProcessor.processConversationEvents([event])
                 await contextProvider.viewContext.perform {
                     completionHandler(.success(()))
                 }

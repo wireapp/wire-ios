@@ -34,7 +34,7 @@ struct ConversationMemberJoinEventDecoder {
         )
 
         let timestamp = try container.decode(
-            Date.self,
+            UTCTimeMillis.self,
             forKey: .timestamp
         )
 
@@ -46,7 +46,7 @@ struct ConversationMemberJoinEventDecoder {
         return ConversationMemberJoinEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: timestamp,
+            timestamp: timestamp.date,
             members: payload.users
         )
     }

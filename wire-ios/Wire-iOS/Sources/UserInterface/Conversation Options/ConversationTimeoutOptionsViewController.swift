@@ -19,16 +19,16 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 private enum Item {
     case supportedValue(MessageDestructionTimeoutValue)
     case unsupportedValue(MessageDestructionTimeoutValue)
-    case customValue
 }
 
-extension ZMConversation {
-    fileprivate var timeoutItems: [Item] {
+private extension ZMConversation {
+    var timeoutItems: [Item] {
         var newItems = MessageDestructionTimeoutValue.all.map(Item.supportedValue)
 
         let groupTimeout = messageDestructionTimeoutValue(for: .groupConversation)
@@ -36,29 +36,20 @@ extension ZMConversation {
             newItems.append(.unsupportedValue(groupTimeout))
         }
 
-        if Bundle.developerModeEnabled {
-            newItems.append(.customValue)
-        }
-
         return newItems
     }
 }
 
-final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+final class ConversationTimeoutOptionsViewController: UIViewController {
 
     private let conversation: ZMConversation
     private var items: [Item] = []
     private let userSession: ZMUserSession
     private var observerToken: Any! = nil
 
-    weak var dismisser: ViewControllerDismisser?
-
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
-    private lazy var collectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
-    }()
+    private lazy var collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: collectionViewLayout)
 
     // MARK: - Initialization
 
@@ -66,8 +57,8 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
         self.conversation = conversation
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
-        self.updateItems()
-        observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
+        updateItems()
+        self.observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
     @available(*, unavailable)
@@ -79,16 +70,20 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.GroupDetails.TimeoutOptionsCell.title.capitalized)
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.SelfDeletingMessagesConversationSettings.CloseButton.description
-
         configureSubviews()
         configureConstraints()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.TimeoutOptionsCell.title.capitalized)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.SelfDeletingMessagesConversationSettings.CloseButton.description)
+    }
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private func configureSubviews() {
@@ -101,7 +96,11 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
         collectionViewLayout.minimumLineSpacing = 0
 
         CheckmarkCell.register(in: collectionView)
-        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
+        collectionView.register(
+            SectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader"
+        )
 
     }
 
@@ -120,19 +119,29 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
 extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
+        items.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
-        return view
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader",
+            for: indexPath
+        )
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
 
         let item = items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
@@ -144,13 +153,10 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         }
 
         switch item {
-        case .supportedValue(let value):
+        case let .supportedValue(value):
             configure(cell, for: value, disabled: false)
-        case .unsupportedValue(let value):
+        case let .unsupportedValue(value):
             configure(cell, for: value, disabled: true)
-        case .customValue:
-            cell.title = "Custom"
-            cell.showCheckmark = false
         }
 
         cell.showSeparator = indexPath.row < (items.count - 1)
@@ -159,24 +165,25 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     }
 
     private func updateItems() {
-        self.items = conversation.timeoutItems
+        items = conversation.timeoutItems
     }
 
     private func updateTimeout(_ timeout: MessageDestructionTimeoutValue) {
-        let item = CancelableItem(delay: 0.4) { [weak self] in
-            self?.isLoadingViewVisible = true
+        let activityIndicator = BlockingActivityIndicator(view: view)
+        let item = CancelableItem(delay: 0.4) {
+            activityIndicator.start()
         }
 
-        self.conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
+        conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
             guard let self else {
                 return
             }
 
             item.cancel()
-            self.isLoadingViewVisible = false
+            activityIndicator.stop()
 
-            if case .failure(let error) = result {
-                self.handle(error: error)
+            if case let .failure(error) = result {
+                handle(error: error)
             }
         }
     }
@@ -184,23 +191,6 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     private func handle(error: Error) {
         let controller = UIAlertController.checkYourConnection()
         present(controller, animated: true)
-    }
-
-    private func requestCustomValue() {
-        UIAlertController.requestCustomTimeInterval(over: self) { [weak self] result in
-
-            guard let self else {
-                return
-            }
-
-            switch result {
-            case .success(let value):
-                self.updateTimeout(MessageDestructionTimeoutValue(rawValue: value))
-            default:
-                break
-            }
-
-        }
     }
 
     // MARK: Saving Changes
@@ -216,26 +206,32 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         let selectedItem = items[indexPath.row]
 
         switch selectedItem {
-        case .supportedValue(let value):
+        case let .supportedValue(value):
             guard canSelectItem(with: value) else {
                 break
             }
             updateTimeout(value)
-        case .customValue:
-            requestCustomValue()
-        default:
+        case .unsupportedValue:
             break
         }
     }
 
     // MARK: Layout
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 32)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 32)
     }
 
 }

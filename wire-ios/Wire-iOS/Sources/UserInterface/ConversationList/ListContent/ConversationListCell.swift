@@ -26,7 +26,7 @@ typealias MatcherConversation = Conversation & ConversationStatusProvider & Typi
 typealias ConversationListCellConversation = MatcherConversation & StableRandomParticipantsProvider
 
 final class ConversationListCell: SwipeMenuCollectionCell,
-                                  SectionListCellType {
+    SectionListCellType {
     static let IgnoreOverscrollTimeInterval: TimeInterval = 0.005
     static let OverscrollRatio: CGFloat = 2.5
 
@@ -46,20 +46,20 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         }
     }
 
-    let itemView: ConversationListItemView = ConversationListItemView()
+    let itemView: ConversationListItemView = .init()
 
     weak var delegate: ConversationListCellDelegate?
 
-    private var titleBottomMarginConstraint: NSLayoutConstraint?
     private var typingObserverToken: Any?
 
     // MARK: - SectionListCellType
+
     var sectionName: String?
     var obfuscatedSectionName: String?
     var cellIdentifier: String?
 
     private var hasCreatedInitialConstraints = false
-    let menuDotsView: AnimatedListMenuView = AnimatedListMenuView()
+    let menuDotsView: AnimatedListMenuView = .init()
     private var overscrollStartDate: Date?
     private var conversationObserverToken: Any?
 
@@ -96,7 +96,6 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         setNeedsUpdateConstraints()
 
         AVSMediaManagerClientChangeNotification.add(self)
-        backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
         addBorder(for: .bottom)
     }
 
@@ -119,7 +118,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     override var accessibilityValue: String? {
         get {
-            return delegate?.indexPath(for: self)?.description
+            delegate?.indexPath(for: self)?.description
         }
 
         set {
@@ -129,7 +128,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     override var accessibilityIdentifier: String? {
         get {
-            return identifier
+            identifier
         }
 
         set {
@@ -181,6 +180,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     }
 
     // MARK: - DrawerOverrides
+
     override func drawerScrollingStarts() {
         overscrollStartDate = nil
     }
@@ -191,7 +191,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         // After X % of reveal we consider animation should be finished
         let progress = visualDrawerOffset / SwipeMenuCollectionCell.MaxVisualDrawerOffsetRevealDistance
         menuDotsView.setProgress(progress, animated: true)
-        if progress >= 1 && overscrollStartDate == nil {
+        if progress >= 1, overscrollStartDate == nil {
             overscrollStartDate = Date()
         }
 
@@ -203,12 +203,16 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     }
 
     func size(inCollectionViewSize collectionViewSize: CGSize) -> CGSize {
-        if !ConversationListCell.cachedSize.equalTo(CGSize.zero) && ConversationListCell.cachedSize.width == collectionViewSize.width {
+        if !ConversationListCell.cachedSize.equalTo(CGSize.zero),
+           ConversationListCell.cachedSize.width == collectionViewSize.width {
             return ConversationListCell.cachedSize
         }
 
         let fullHeightString = "Ü"
-        itemView.configure(with: NSAttributedString(string: fullHeightString), subtitle: NSAttributedString(string: fullHeightString, attributes: ZMConversation.statusRegularStyle()))
+        itemView.configure(
+            with: NSAttributedString(string: fullHeightString),
+            subtitle: NSAttributedString(string: fullHeightString, attributes: ZMConversation.statusRegularStyle())
+        )
 
         let fittingSize = CGSize(width: collectionViewSize.width, height: 0)
 
@@ -220,7 +224,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         return cellSize
     }
 
-    class func invalidateCachedCellSize() {
+    static func invalidateCachedCellSize() {
         cachedSize = CGSize.zero
     }
 
@@ -228,29 +232,33 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     private func onRightAccessorySelected(_ sender: UIButton?) {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            let activeMediaPlayer = appDelegate.mediaPlaybackManager?.activeMediaPlayer
 
-        if activeMediaPlayer != nil &&
-            activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
-            toggleMediaPlayer()
-        } else if conversation.canJoinCall {
-            delegate?.conversationListCellJoinCallButtonTapped(self)
+            if activeMediaPlayer != nil, activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
+                toggleMediaPlayer()
+            } else if conversation.canJoinCall {
+                delegate?.conversationListCellJoinCallButtonTapped(self)
+            }
         }
     }
 
     func toggleMediaPlayer() {
-        let mediaPlaybackManager = AppDelegate.shared.mediaPlaybackManager
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            let mediaPlaybackManager = appDelegate.mediaPlaybackManager
 
-        if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {
-            mediaPlaybackManager?.pause()
-        } else {
-            mediaPlaybackManager?.play()
+            if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {
+                mediaPlaybackManager?.pause()
+            } else {
+                mediaPlaybackManager?.play()
+            }
+
+            updateAppearance()
         }
-
-        updateAppearance()
     }
 
     // MARK: - ConversationChangeInfo
+
     func setupConversationObserver(conversation: ZMConversation) {
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }
@@ -271,10 +279,10 @@ extension ConversationListCell: AVSMediaManagerClientObserver {
         guard !ProcessInfo.processInfo.isRunningTests else { return }
 
         // AUDIO-548 AVMediaManager notifications arrive on a background thread.
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             if notification?.microphoneMuteChanged != nil {
                 self.updateAppearance()
             }
-        })
+        }
     }
 }

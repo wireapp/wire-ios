@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireCryptobox
 import XCTest
+@testable import WireCryptobox
 
 class ChaCha20AEADEncryptionTests: XCTestCase {
 
@@ -29,14 +29,14 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     private func generateRandomCiphertext(length: UInt) -> Data {
         // Large enough to include authentication bytes in the ciphertext.
-        return Data.secureRandomData(length: length + UInt(crypto_aead_aes256gcm_ABYTES))
+        Data.secureRandomData(length: length + UInt(crypto_aead_aes256gcm_ABYTES))
     }
 
     // MARK: - Positive Tests
 
     func testThatItEncryptsAndDecryptsMessage() throws {
         // Given
-        let message = "Hello, world".data(using: .utf8)!
+        let message = Data("Hello, world".utf8)
         let key = Data.zmRandomSHA256Key()
 
         // When
@@ -106,7 +106,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     func testThatItFailsToDecryptWithDifferentKey() throws {
         // Given
-        let message = "Hello, world".data(using: .utf8)!
+        let message = Data("Hello, world".utf8)
         let key1 = Data.zmRandomSHA256Key()
         let key2 = Data.zmRandomSHA256Key()
 
@@ -125,7 +125,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     func testThatItFailsToDecryptWithDifferentNonce() throws {
         // Given
-        let message = "Hello, world".data(using: .utf8)!
+        let message = Data("Hello, world".utf8)
         let key = Data.zmRandomSHA256Key()
         let randomNonce = Sut.generateRandomNonceBytes().data
 
@@ -144,7 +144,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     func testThatItFailsToDecryptWithDifferentContext() throws {
         // Given
-        let message = "Hello, world".data(using: .utf8)!
+        let message = Data("Hello, world".utf8)
         let key = Data.zmRandomSHA256Key()
         let randomNonce = Sut.generateRandomNonceBytes().data
 

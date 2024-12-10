@@ -16,42 +16,90 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 class AppLockChangeWarningViewControllerTests: XCTestCase {
 
     // MARK: - Properties
-    var userSession: UserSessionMock!
+
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         userSession = nil
         super.tearDown()
     }
 
     func testWarningThatAppLockIsActive() {
-        verifyInAllColorSchemes(createSut: {
+        let createSut: () -> UIViewController = {
             AppLockChangeWarningViewController(
                 isAppLockActive: true,
-                userSession: userSession
+                userSession: self.userSession
             )
-        })
+        }
 
+        let sut = createSut()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testWarningThatAppLockIsNotActive() {
-        verifyInAllColorSchemes(createSut: {
+        let createSut: () -> UIViewController = {
             AppLockChangeWarningViewController(
                 isAppLockActive: false,
-                userSession: userSession
+                userSession: self.userSession
             )
-        })
+        }
+
+        let sut = createSut()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
     }
 
 }

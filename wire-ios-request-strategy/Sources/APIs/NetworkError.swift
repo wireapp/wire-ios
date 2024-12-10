@@ -28,14 +28,14 @@ public enum NetworkError: Error, Equatable {
     case invalidRequestError(Payload.ResponseFailure, ZMTransportResponse)
 
     public static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
-        return switch (lhs, rhs) {
+        switch (lhs, rhs) {
         case (.errorEncodingRequest, .errorEncodingRequest):
             true
         case (.errorDecodingResponse(_), .errorDecodingResponse(_)):
             true
-        case (.missingClients(let lhsStatus, _), .missingClients(let rhsStatus, _)):
+        case let (.missingClients(lhsStatus, _), .missingClients(rhsStatus, _)):
             lhsStatus == rhsStatus
-        case (.invalidRequestError(let lhsFailure, _), .invalidRequestError(let rhsFailure, _)):
+        case let (.invalidRequestError(lhsFailure, _), .invalidRequestError(rhsFailure, _)):
             lhsFailure == rhsFailure
         default:
             false
@@ -43,18 +43,18 @@ public enum NetworkError: Error, Equatable {
     }
 
     var response: ZMTransportResponse? {
-        return switch self {
+        switch self {
         case .errorEncodingRequest:
             nil
         case .endpointNotAvailable:
             nil
         case .errorDecodingURLResponse:
             nil
-        case .errorDecodingResponse(let response):
+        case let .errorDecodingResponse(response):
             response
-        case .missingClients(_, let response):
+        case let .missingClients(_, response):
             response
-        case .invalidRequestError(_, let response):
+        case let .invalidRequestError(_, response):
             response
         }
     }

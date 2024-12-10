@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public enum E2EIdentityCertificateUpdateStatus {
 
@@ -70,7 +71,10 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
             return .noAction
         }
 
-        let certificate = try await getE2eIdentityCertificates.invoke(mlsGroupId: selfMLSConversationGroupID, clientIds: [mlsClientID]).first
+        let certificate = try await getE2eIdentityCertificates.invoke(
+            mlsGroupId: selfMLSConversationGroupID,
+            clientIds: [mlsClientID]
+        ).first
         guard let certificate else {
             WireLogger.e2ei.warn("Failed to get the certificate for the self-MLS-conversation.")
             return .noAction
@@ -81,7 +85,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         }
 
         let renewalNudgingDate = certificate.renewalNudgingDate(with: gracePeriod)
-        if renewalNudgingDate > comparedDate.now && renewalNudgingDate < certificate.expiryDate {
+        if renewalNudgingDate > comparedDate.now, renewalNudgingDate < certificate.expiryDate {
             return .noAction
         }
 

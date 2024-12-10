@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 private let zmLog = ZMSLog(tag: "GenericMessage")
 
@@ -29,8 +30,9 @@ extension GenericMessage {
     /// When sending the an external message the encrypted original message should be attached to the payload
     /// in the  blob field of the protocol buffer.
     /// - Parameter message: the message that should be encrypted to sent it as attached payload in an external message
-    /// - Returns: the encrypted original message, the encryption key and checksum warpped in a  ZMExternalEncryptedDataWithKeys
-    static func encryptedDataWithKeys(from message: GenericMessage) -> ZMExternalEncryptedDataWithKeys? {
+    /// - Returns: the encrypted original message, the encryption key and checksum warpped in a
+    /// ZMExternalEncryptedDataWithKeys
+    public static func encryptedDataWithKeys(from message: GenericMessage) -> ZMExternalEncryptedDataWithKeys? {
         guard
             let aesKey = NSData.randomEncryptionKey(),
             let messageData = try? message.serializedData()
@@ -61,7 +63,10 @@ extension GenericMessage {
         let externalSha256 = externalData?.zmSHA256Digest()
 
         guard externalSha256 == external.sha256 else {
-            zmLog.error("Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256), updateEvent: \(updateEvent)")
+            zmLog
+                .error(
+                    "Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256), updateEvent: \(updateEvent)"
+                )
             return nil
         }
 

@@ -54,7 +54,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     }
 
     func createSearchUser() -> ZMSearchUser {
-        return ZMSearchUser(
+        ZMSearchUser(
             contextProvider: coreDataStack,
             name: "Foo",
             handle: "foo",
@@ -65,18 +65,18 @@ final class SearchUserImageStrategyTests: MessagingTest {
     }
 
     func userIDs(from searchUsers: Set<ZMSearchUser>) -> Set<UUID> {
-        return Set(searchUsers.compactMap { $0.remoteIdentifier })
+        Set(searchUsers.compactMap(\.remoteIdentifier))
     }
 
     func userData(previewAssetKey: String?, completeAssetKey: String? = nil, for userID: UUID) -> [String: Any] {
-        return [
+        [
             "id": userID.transportString(),
             "assets": assetPayload(previewAssetKey: previewAssetKey, completeAssetKey: completeAssetKey)
         ]
     }
 
     func assetPayload(previewAssetKey: String?, completeAssetKey: String? = nil) -> [[String: Any]] {
-        return [
+        [
             [
                 "size": "preview",
                 "type": "image",
@@ -101,7 +101,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
 
     func setupSearchDirectory(userCount: Int) -> Set<ZMSearchUser> {
         var users = Set<ZMSearchUser>()
-        for _ in 0..<userCount {
+        for _ in 0 ..< userCount {
             let user = createSearchUser()
             users.insert(user)
         }
@@ -124,7 +124,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatNextRequestCreatesARequestForAllUserIDsWeHaveRequested() {
         // given
         let searchSet = setupSearchDirectory(userCount: 3)
-        searchSet.forEach({ $0.requestPreviewProfileImage() })
+        searchSet.forEach { $0.requestPreviewProfileImage() }
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -142,7 +142,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatNextRequestDoesNotCreateARequestClientNotReady() {
         // given
         let searchSet = setupSearchDirectory(userCount: 3)
-        searchSet.forEach({ $0.requestPreviewProfileImage() })
+        searchSet.forEach { $0.requestPreviewProfileImage() }
         mockApplicationStatus.mockSynchronizationState = .unauthenticated
 
         // when
@@ -155,12 +155,12 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatNextRequestCreatesARequestForAllUserIDsForAllUserIDsWeHaveRequestedThatWeAreNotAlreadyRequesting() {
         // given
         let searchSet1 = setupSearchDirectory(userCount: 2)
-        searchSet1.forEach({ $0.requestPreviewProfileImage() })
+        searchSet1.forEach { $0.requestPreviewProfileImage() }
         guard sut.nextRequest(for: .v0) != nil else { return XCTFail() } // start first request
 
         // when
         let searchSet2 = setupSearchDirectory(userCount: 1)
-        searchSet2.forEach({ $0.requestPreviewProfileImage() })
+        searchSet2.forEach { $0.requestPreviewProfileImage() }
         guard let request2 = sut.nextRequest(for: .v0) else { return XCTFail() }
 
         // then
@@ -177,17 +177,30 @@ final class SearchUserImageStrategyTests: MessagingTest {
         let searchUsers = Array(setupSearchDirectory(userCount: 2))
         let searchUser1 = searchUsers.first!
         let searchUser2 = searchUsers.last!
-        searchUsers.forEach({ $0.requestPreviewProfileImage() })
+        searchUsers.forEach { $0.requestPreviewProfileImage() }
 
         let previewAssetKey1 = "previewAssetKey1", completeAssetKey1 = "completeAssetKey1"
         let previewAssetKey2 = "previewAssetKey2", completeAssetKey2 = "completeAssetKey2"
 
         let payload = [
-            userData(previewAssetKey: previewAssetKey1, completeAssetKey: completeAssetKey1, for: searchUser1.remoteIdentifier!),
-            userData(previewAssetKey: previewAssetKey2, completeAssetKey: completeAssetKey2, for: searchUser2.remoteIdentifier!)
+            userData(
+                previewAssetKey: previewAssetKey1,
+                completeAssetKey: completeAssetKey1,
+                for: searchUser1.remoteIdentifier!
+            ),
+            userData(
+                previewAssetKey: previewAssetKey2,
+                completeAssetKey: completeAssetKey2,
+                for: searchUser2.remoteIdentifier!
+            )
         ]
 
-        let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: payload as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // When
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -205,8 +218,13 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatAFailingUserProfileRequestWithAPermanentErrorClearsThemFromTheDownloadQueue() {
         // given
         let searchUsers = setupSearchDirectory(userCount: 2)
-        searchUsers.forEach({ $0.requestPreviewProfileImage() })
-        let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        searchUsers.forEach { $0.requestPreviewProfileImage() }
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -220,8 +238,13 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatFailingAUserProfileRequestWithATemporaryErrorAllowsThemToBeDownloadedAgain() {
         // given
         let searchUsers = setupSearchDirectory(userCount: 2)
-        searchUsers.forEach({ $0.requestPreviewProfileImage() })
-        let response = ZMTransportResponse(payload: nil, httpStatus: 500, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        searchUsers.forEach { $0.requestPreviewProfileImage() }
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 500,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         guard let request1 = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -237,13 +260,18 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatCompletingAUserProfileRequestDoesNotAllowForThemToBeDownloadedAgain() {
         // given
         let searchUsers = Array(setupSearchDirectory(userCount: 2))
-        searchUsers.forEach({ $0.requestPreviewProfileImage() })
+        searchUsers.forEach { $0.requestPreviewProfileImage() }
 
         let payload = [
             userData(previewAssetKey: UUID().transportString(), for: searchUsers.first!.remoteIdentifier!),
             userData(previewAssetKey: UUID().transportString(), for: searchUsers.last!.remoteIdentifier!)
         ]
-        let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: payload as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         guard let request1 = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -274,14 +302,13 @@ final class SearchUserImageStrategyTests: MessagingTest {
         XCTAssertEqual(request.method, .get)
         XCTAssertTrue(request.needsAuthentication)
 
-        let expectedPath: String
-        switch apiVersion {
+        let expectedPath = switch apiVersion {
         case .v0:
-            expectedPath = "/assets/v3/\(assetID)"
+            "/assets/v3/\(assetID)"
         case .v1:
-            expectedPath = "/v1/assets/v4/\(domain)/\(assetID)"
-        case .v2, .v3, .v4, .v5, .v6:
-            expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetID)"
+            "/v1/assets/v4/\(domain)/\(assetID)"
+        case .v2, .v3, .v4, .v5, .v6, .v7:
+            "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetID)"
         }
 
         XCTAssertEqual(request.path, expectedPath)
@@ -350,7 +377,13 @@ final class SearchUserImageStrategyTests: MessagingTest {
         searchUser1.update(from: userData(previewAssetKey: assetID1, for: searchUser1.remoteIdentifier!))
         searchUser1.requestPreviewProfileImage()
 
-        let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            imageData: imageData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            headers: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -371,7 +404,13 @@ final class SearchUserImageStrategyTests: MessagingTest {
         searchUser1.update(from: userData(previewAssetKey: assetID1, for: searchUser1.remoteIdentifier!))
         searchUser1.requestPreviewProfileImage()
 
-        let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            imageData: imageData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            headers: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -390,7 +429,12 @@ final class SearchUserImageStrategyTests: MessagingTest {
         let assetID1 = UUID().transportString()
         searchUser1.update(from: userData(previewAssetKey: assetID1, for: searchUser1.remoteIdentifier!))
         searchUser1.requestPreviewProfileImage()
-        let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -410,7 +454,12 @@ final class SearchUserImageStrategyTests: MessagingTest {
         searchUser1.update(from: userData(previewAssetKey: assetID1, for: searchUser1.remoteIdentifier!))
         searchUser1.requestPreviewProfileImage()
 
-        let response = ZMTransportResponse(payload: nil, httpStatus: 500, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 500,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         guard let request1 = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -432,8 +481,15 @@ final class SearchUserImageStrategyTests: MessagingTest {
         searchUser1.update(from: userData(previewAssetKey: assetID1, for: searchUser1.remoteIdentifier!))
         searchUser1.requestPreviewProfileImage()
 
-        let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
-        uiMOC.searchUserObserverCenter.addSearchUser(searchUser1) // This is called when the searchDirectory returns the searchUsers
+        let response = ZMTransportResponse(
+            imageData: imageData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            headers: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
+        uiMOC.searchUserObserverCenter
+            .addSearchUser(searchUser1) // This is called when the searchDirectory returns the searchUsers
         let userObserver = UserObserver(user: searchUser1, managedObjectContext: uiMOC)!
 
         // when
@@ -453,11 +509,22 @@ final class SearchUserImageStrategyTests: MessagingTest {
         let searchUser1 = setupSearchDirectory(userCount: 1).first!
         let previewAssetKey = "previewKey123"
         let completeAssetKey = "previewKey123"
-        searchUser1.update(from: userData(previewAssetKey: previewAssetKey, completeAssetKey: completeAssetKey, for: searchUser1.remoteIdentifier!))
+        searchUser1.update(from: userData(
+            previewAssetKey: previewAssetKey,
+            completeAssetKey: completeAssetKey,
+            for: searchUser1.remoteIdentifier!
+        ))
         searchUser1.requestCompleteProfileImage()
 
-        let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
-        uiMOC.searchUserObserverCenter.addSearchUser(searchUser1) // This is called when the searchDirectory returns the searchUsers
+        let response = ZMTransportResponse(
+            imageData: imageData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            headers: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
+        uiMOC.searchUserObserverCenter
+            .addSearchUser(searchUser1) // This is called when the searchDirectory returns the searchUsers
         let userObserver = UserObserver(user: searchUser1, managedObjectContext: uiMOC)!
 
         // when

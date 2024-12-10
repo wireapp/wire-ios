@@ -151,7 +151,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationButtonMessageCell
 
-    var topMargin: Float = Float.ConversationButtonMessageCell.verticalInset
+    var topMargin: Float = .ConversationButtonMessageCell.verticalInset
 
     var isFullWidth: Bool = false
 
@@ -173,17 +173,27 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var accessibilityLabel: String?
 
-    init(text: String?,
-         state: ButtonMessageState,
-         hasError: Bool,
-         buttonAction: @escaping Completion) {
-        configuration = View.Configuration(text: text, state: state, buttonAction: buttonAction, hasError: hasError)
+    init(
+        text: String?,
+        state: ButtonMessageState,
+        hasError: Bool,
+        buttonAction: @escaping Completion
+    ) {
+        self.configuration = View.Configuration(
+            text: text,
+            state: state,
+            buttonAction: buttonAction,
+            hasError: hasError
+        )
     }
 }
 
 extension ConversationButtonMessageCell.Configuration: Hashable {
-    static func == (lhs: ConversationButtonMessageCell.Configuration, rhs: ConversationButtonMessageCell.Configuration) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+    static func == (
+        lhs: ConversationButtonMessageCell.Configuration,
+        rhs: ConversationButtonMessageCell.Configuration
+    ) -> Bool {
+        lhs.hashValue == rhs.hashValue
     }
 
     func hash(into hasher: inout Hasher) {

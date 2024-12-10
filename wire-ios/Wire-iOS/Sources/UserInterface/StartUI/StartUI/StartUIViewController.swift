@@ -19,46 +19,65 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigationUI
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
-final class StartUIViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+final class StartUIViewController: UIViewController {
+
+    // MARK: - Properties
 
     static let InitiallyShowsKeyboardConversationThreshold = 10
 
     weak var delegate: StartUIDelegate?
 
-    let searchHeaderViewController: SearchHeaderViewController = SearchHeaderViewController(userSelection: UserSelection())
+    let searchController = UISearchController(searchResultsController: nil)
 
-    let groupSelector: SearchGroupSelector = SearchGroupSelector()
+    let groupSelector = SearchGroupSelector()
 
     let searchResultsViewController: SearchResultsViewController
 
-    var addressBookUploadLogicHandled = false
-
     var addressBookHelperType: AddressBookHelperProtocol.Type
-
-    var addressBookHelper: AddressBookHelperProtocol {
-        return addressBookHelperType.sharedHelper
-    }
 
     let userSession: UserSession
 
+    let mainCoordinator: AnyMainCoordinator
+    let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
+
     let isFederationEnabled: Bool
 
-    let quickActionsBar: StartUIInviteActionBar = StartUIInviteActionBar()
+    let quickActionsBar = StartUIInviteActionBar()
 
-    let profilePresenter: ProfilePresenter = ProfilePresenter()
+    let profilePresenter: ProfilePresenter
     private var emptyResultView: EmptySearchResultsView!
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private(set) var activityIndicator: BlockingActivityIndicator!
 
     let backgroundColor = SemanticColors.View.backgroundDefault
+
+    var searchResults: SearchResultsViewController {
+        searchResultsViewController
+    }
+
+    var showsGroupSelector: Bool {
+        SearchGroup.all.count > 1 &&
+            userSession.selfUser.canSeeServices &&
+            userSession.defaultProtocol != .mls
+    }
+
+    // MARK: - Init
+
+    private var navigationBarTitle: String? {
+        if let title = userSession.selfUser.membership?.team?.name {
+            return title
+        } else if let title = userSession.selfUser.name {
+            return title
+        }
+
+        return nil
+    }
 
     /// init method for injecting mock addressBookHelper
     ///
@@ -66,83 +85,79 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     init(
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
-        userSession: UserSession
+        userSession: UserSession,
+        mainCoordinator: AnyMainCoordinator,
+        createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
-        self.searchResultsViewController = SearchResultsViewController(userSelection: UserSelection(),
-                                                                       userSession: userSession,
-                                                                       isAddingParticipants: false,
-                                                                       shouldIncludeGuests: true,
-                                                                       isFederationEnabled: isFederationEnabled)
+        self.searchResultsViewController = SearchResultsViewController(
+            userSelection: UserSelection(),
+            userSession: userSession,
+            isAddingParticipants: false,
+            shouldIncludeGuests: true,
+            isFederationEnabled: isFederationEnabled
+        )
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
+        self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
+        self.profilePresenter = .init(
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
+        )
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
         setupViews()
     }
 
-    var searchHeader: SearchHeaderViewController {
-        return self.searchHeaderViewController
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
     }
 
-    var searchResults: SearchResultsViewController {
-        return self.searchResultsViewController
+    // MARK: - Life cycle methods
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+        activityIndicator = .init(view: view)
     }
 
-    // MARK: - Overloaded methods
-    override func loadView() {
-        view = StartUIView(frame: CGRect.zero)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let title = navigationBarTitle {
+            setupNavigationBarTitle(title)
+        }
+
+        setupNavigationBarButtonItems()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        navigationController?.navigationBar.barTintColor = backgroundColor
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
-
+    override func accessibilityPerformEscape() -> Bool {
+        _ = searchController.searchBar.resignFirstResponder()
+        navigationController?.dismiss(animated: true)
+        return true
     }
 
-    private func configGroupSelector() {
-        groupSelector.translatesAutoresizingMaskIntoConstraints = false
-        groupSelector.backgroundColor = backgroundColor
-    }
+    // MARK: - Setup and configure views
 
     func setupViews() {
         configGroupSelector()
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: userSession.selfUser.canManageTeam,
-                                                 isFederationEnabled: isFederationEnabled)
+        emptyResultView = EmptySearchResultsView(
+            isSelfUserAdmin: userSession.selfUser.canManageTeam,
+            isFederationEnabled: isFederationEnabled
+        )
 
         emptyResultView.delegate = self
 
         searchResultsViewController.mode = .list
-        searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
-        if let title = userSession.selfUser.membership?.team?.name {
-            navigationItem.setupNavigationBarTitle(title: title)
-        } else if let title = userSession.selfUser.name {
-            navigationItem.setupNavigationBarTitle(title: title)
-        }
-
-        searchHeader.delegate = self
-        searchHeader.allowsMultipleSelection = false
-        searchHeader.view.backgroundColor = backgroundColor
-
-        addToSelf(searchHeader)
-
-        groupSelector.onGroupSelected = { [weak self] group in
-            if .services == group {
-                // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
-                // not going to be added to the new conversation with the bot.
-                self?.searchHeader.clearInput()
-            }
-
-            self?.searchResults.searchGroup = group
-            self?.performSearch()
-        }
+        setupSearchController()
 
         if showsGroupSelector {
             view.addSubview(groupSelector)
@@ -155,43 +170,51 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
         quickActionsBar.inviteButton.addTarget(self, action: #selector(inviteMoreButtonTapped(_:)), for: .touchUpInside)
 
-        view.backgroundColor = UIColor.clear
-
         createConstraints()
         updateActionBar()
         searchResults.searchContactList()
 
-        let closeButton = UIBarButtonItem(icon: .cross, style: UIBarButtonItem.Style.plain, target: self, action: #selector(onDismissPressed))
-
-        closeButton.accessibilityLabel = L10n.Accessibility.ContactsList.CloseButton.description
-        closeButton.accessibilityIdentifier = "close"
-
-        navigationItem.rightBarButtonItem = closeButton
         view.accessibilityViewIsModal = true
     }
 
-    private func createConstraints() {
-        [searchHeaderViewController.view, groupSelector, searchResultsViewController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
+        searchController.searchBar.accessibilityIdentifier = "textViewSearch"
+        navigationItem.searchController = searchController
+        navigationItem.preferredSearchBarPlacement = .stacked
+        navigationItem.hidesSearchBarWhenScrolling = false
+    }
 
-        NSLayoutConstraint.activate([
-            searchHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchHeaderViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchHeaderViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
-        ])
+    private func configGroupSelector() {
+        groupSelector.translatesAutoresizingMaskIntoConstraints = false
+        groupSelector.backgroundColor = backgroundColor
+        groupSelector.onGroupSelected = { [weak self] group in
+            if group == .services {
+                self?.searchController.searchBar.text = ""
+            }
+            self?.searchResults.searchGroup = group
+            self?.performSearch()
+        }
+    }
+
+    // MARK: - Setup constraints
+
+    private func createConstraints() {
+        [groupSelector, searchResultsViewController.view]
+            .forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
         if showsGroupSelector {
             NSLayoutConstraint.activate([
-                groupSelector.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
-                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor)
-            ])
-
-            NSLayoutConstraint.activate([
+                groupSelector.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+                groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor)
             ])
         } else {
             NSLayoutConstraint.activate([
-            searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
+                searchResultsViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
             ])
         }
 
@@ -202,47 +225,22 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         ])
     }
 
-    var showsGroupSelector: Bool {
-        return SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
-    }
-
     func showKeyboardIfNeeded() {
-        let conversationCount = userSession.conversationList().count
+        let conversationCount = userSession.conversationList().items.count
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
-            _ = searchHeader.tokenField.becomeFirstResponder()
+            searchController.searchBar.becomeFirstResponder()
         }
-
-    }
-
-    func updateActionBar() {
-        if !searchHeader.query.isEmpty || userSession.selfUser.hasTeam {
-            searchResults.searchResultsView.accessoryView = nil
-        } else {
-            searchResults.searchResultsView.accessoryView = quickActionsBar
-        }
-
-        view.setNeedsLayout()
-    }
-
-    @objc
-    private func onDismissPressed() {
-        _ = searchHeader.tokenField.resignFirstResponder()
-        navigationController?.dismiss(animated: true)
-    }
-
-    override func accessibilityPerformEscape() -> Bool {
-        onDismissPressed()
-        return true
     }
 
     // MARK: - Instance methods
+
     @objc
     func performSearch() {
-        let searchString = searchHeader.query
+        let searchString = searchController.searchBar.text ?? ""
         zmLog.info("Search for \(searchString)")
 
         if groupSelector.group == .people {
-            if searchString.count == 0 {
+            if searchString.isEmpty {
                 searchResults.mode = .list
                 searchResults.searchContactList()
             } else {
@@ -252,8 +250,10 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         } else {
             searchResults.searchForServices(withQuery: searchString)
         }
-        emptyResultView.updateStatus(searchingForServices: groupSelector.group == .services,
-                                     hasFilter: !searchString.isEmpty)
+        emptyResultView.updateStatus(
+            searchingForServices: groupSelector.group == .services,
+            hasFilter: !searchString.isEmpty
+        )
     }
 
     // MARK: - Action bar
@@ -263,20 +263,41 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         if needsAddressBookPermission {
             presentShareContactsViewController()
         } else {
-            navigationController?.pushViewController(ContactsViewController(), animated: true)
+            navigationController?.pushViewController(
+                ContactsViewController(isFederationUsageAllowed: userSession.isFederationUsageAllowed),
+                animated: true)
         }
+    }
+
+    func updateActionBar() {
+        if !(searchController.searchBar.text?.isEmpty ?? true) || userSession.selfUser.hasTeam {
+            searchResults.searchResultsView.accessoryView = nil
+        } else {
+            searchResults.searchResultsView.accessoryView = quickActionsBar
+        }
+
+        view.setNeedsLayout()
     }
 
 }
 
-extension StartUIViewController: SearchHeaderViewControllerDelegate {
-    func searchHeaderViewController(_ searchHeaderViewController: SearchHeaderViewController, updatedSearchQuery query: String) {
-        searchResults.cancelPreviousSearch()
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(performSearch), object: nil)
+// MARK: - UISearchResultsUpdating, UISearchBarDelegate
+
+extension StartUIViewController: UISearchResultsUpdating, UISearchBarDelegate {
+
+    func updateSearchResults(for searchController: UISearchController) {
+
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(performSearch),
+            object: nil
+        )
+
         perform(#selector(performSearch), with: nil, afterDelay: 0.2)
     }
 
-    func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
-        searchHeaderViewController.resetQuery()
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        performSearch()
     }
 }

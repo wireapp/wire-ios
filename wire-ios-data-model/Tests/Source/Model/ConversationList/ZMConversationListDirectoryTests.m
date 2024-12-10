@@ -232,7 +232,7 @@
                                             self.favoritedConversation,
                                             self.serviceConversation]];
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], expected);
+    XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);
 }
 
 - (void)testThatItReturnsUnarchivedConversations;
@@ -249,7 +249,7 @@
                                             self.serviceConversation]];
     
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], expected);
+    XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);
 }
 
 - (void)testThatItReturnsArchivedConversations;
@@ -259,7 +259,7 @@
     NSSet *expected = [NSSet setWithArray:@[self.archivedGroupConversation, self.archivedOneToOneConversation]];
     
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], expected);
+    XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);
 }
 
 - (void)testThatItReturnsPendingConversations;
@@ -269,7 +269,7 @@
     NSSet *expected = [NSSet setWithArray:@[self.incomingPendingConnectionConversation]];
     
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], expected);
+    XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);
 }
 
 - (void)testThatItKeepsReturningTheSameObject
@@ -289,7 +289,7 @@
     NSSet *expected = [NSSet setWithArray:@[self.clearedConversation]];
     
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], expected);
+    XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);
 }
 
 - (void)testThatItNotReturnsClearedConversationsIn_ConversationsIncludingArchived
@@ -300,27 +300,33 @@
     
     // then
     // cleared conversations should not be included in conversationsIncludingArchived
-    XCTAssertFalse([[NSSet setWithArray:list] intersectsSet:expected]);
+    XCTAssertFalse([[NSSet setWithArray:list.items] intersectsSet:expected]);
 }
 
 - (void)testThatItsReturnsGroupConversations
 {
     // when
     ZMConversationList *list = self.uiMOC.conversationListDirectory.groupConversations;
-    NSSet *expected = [NSSet setWithArray:@[self.groupConversation, self.favoritedConversation]];
-    
+    NSSet *expected = [NSSet setWithArray:@[self.groupConversation,
+                                            self.favoritedConversation,
+                                            self.groupConversationInFolder]];
+
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], expected);
+    XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);
 }
 
 - (void)testThatItsReturnsOneToOneConversations
 {
     // when
     ZMConversationList *list = self.uiMOC.conversationListDirectory.oneToOneConversations;
-    NSSet *expected = [NSSet setWithArray:@[self.oneToOneConversation, self.oneToOneConversationInTeam, self.outgoingPendingConnectionConversation, self.serviceConversation]];
+    NSSet *expected = [NSSet setWithArray:@[self.oneToOneConversation,
+                                            self.oneToOneConversationInTeam,
+                                            self.outgoingPendingConnectionConversation,
+                                            self.serviceConversation,
+                                            self.oneToOneConversationInFolder]];
 
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], expected);
+    XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);
 }
 
 - (void)testThatItReturnsFavoritedConveration
@@ -330,7 +336,7 @@
     NSSet *expected = [NSSet setWithArray:@[self.favoritedConversation]];
 
     // then
-    XCTAssertEqualObjects([NSSet setWithArray:list], expected);
+    XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);
 }
 
 @end

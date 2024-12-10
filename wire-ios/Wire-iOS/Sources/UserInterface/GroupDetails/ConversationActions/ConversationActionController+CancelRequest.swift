@@ -20,12 +20,13 @@ import UIKit
 import WireDataModel
 
 enum CancelConnectionRequestResult {
-    case cancelRequest, cancel
+    case cancelRequest
+    case cancel
 
     var title: String {
         switch self {
-        case .cancel: return L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonCancel
-        case .cancelRequest: return L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonYes
+        case .cancel: L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonCancel
+        case .cancelRequest: L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonYes
         }
     }
 
@@ -35,18 +36,21 @@ enum CancelConnectionRequestResult {
     }
 
     func action(_ handler: @escaping (CancelConnectionRequestResult) -> Void) -> UIAlertAction {
-        return .init(title: title, style: style) { _ in handler(self) }
+        .init(title: title, style: style) { _ in handler(self) }
     }
 
     static func message(for user: UserType) -> String {
-        return L10n.Localizable.Profile.CancelConnectionRequestDialog.message(user.name ?? "")
+        L10n.Localizable.Profile.CancelConnectionRequestDialog.message(user.name ?? "")
     }
 
     static var all: [CancelConnectionRequestResult] {
-        return [.cancelRequest, .cancel]
+        [.cancelRequest, .cancel]
     }
 
-    static func controller(for user: UserType, handler: @escaping (CancelConnectionRequestResult) -> Void) -> UIAlertController {
+    static func controller(
+        for user: UserType,
+        handler: @escaping (CancelConnectionRequestResult) -> Void
+    ) -> UIAlertController {
         let title = L10n.Localizable.Profile.CancelConnectionRequestDialog.title
         let controller = UIAlertController(title: title, message: message(for: user), preferredStyle: .alert)
         all.map { $0.action(handler) }.forEach(controller.addAction)
@@ -56,7 +60,7 @@ enum CancelConnectionRequestResult {
 
 extension UIAlertController {
     static func cancelConnectionRequest(for user: UserType, completion: @escaping (Bool) -> Void) -> UIAlertController {
-        return CancelConnectionRequestResult.controller(for: user) { result in
+        CancelConnectionRequestResult.controller(for: user) { result in
             completion(result == .cancel)
         }
     }
@@ -64,7 +68,10 @@ extension UIAlertController {
 
 extension ConversationActionController {
 
-    func requestCancelConnectionRequestResult(for user: UserType, handler: @escaping (CancelConnectionRequestResult) -> Void) {
+    func requestCancelConnectionRequestResult(
+        for user: UserType,
+        handler: @escaping (CancelConnectionRequestResult) -> Void
+    ) {
         let controller = CancelConnectionRequestResult.controller(for: user, handler: handler)
         present(controller)
     }

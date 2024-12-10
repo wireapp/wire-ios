@@ -18,15 +18,20 @@
 
 import WireUtilities
 
-@objc (ZMLocationData) @objcMembers
+@objc(ZMLocationData) @objcMembers
 public final class LocationData: NSObject {
 
     public let latitude, longitude: Float
     public let name: String?
     public let zoomLevel: Int32
 
-    public class func locationData(withLatitude latitude: Float, longitude: Float, name: String?, zoomLevel: Int32) -> LocationData {
-        return LocationData(latitude: latitude, longitude: longitude, name: name, zoomLevel: zoomLevel)
+    public static func locationData(
+        withLatitude latitude: Float,
+        longitude: Float,
+        name: String?,
+        zoomLevel: Int32
+    ) -> LocationData {
+        LocationData(latitude: latitude, longitude: longitude, name: name, zoomLevel: zoomLevel)
     }
 
     init(latitude: Float, longitude: Float, name: String?, zoomLevel: Int32) {

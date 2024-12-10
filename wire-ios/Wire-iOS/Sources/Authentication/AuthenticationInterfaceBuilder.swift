@@ -19,15 +19,11 @@
 import UIKit
 import WireDataModel
 
-/**
- * A type of view controller that can be managed by an authentication coordinator.
- */
+/// A type of view controller that can be managed by an authentication coordinator.
 
-typealias AuthenticationStepViewController = UIViewController & AuthenticationCoordinatedViewController
+typealias AuthenticationStepViewController = AuthenticationCoordinatedViewController & UIViewController
 
-/**
- * An object that builds view controllers for authentication steps.
- */
+/// An object that builds view controllers for authentication steps.
 
 final class AuthenticationInterfaceBuilder {
 
@@ -42,10 +38,8 @@ final class AuthenticationInterfaceBuilder {
 
     // MARK: - Initialization
 
-    /**
-     * Creates an interface builder with the specified set of features.
-     * - parameter featureProvider: The object to use when checking for features
-     */
+    /// Creates an interface builder with the specified set of features.
+    /// - parameter featureProvider: The object to use when checking for features
 
     init(
         featureProvider: AuthenticationFeatureProvider,
@@ -57,16 +51,14 @@ final class AuthenticationInterfaceBuilder {
 
     // MARK: - Interface Building
 
-    /**
-     * Returns the view controller that displays the interface of the authentication step.
-     *
-     * - note: When new steps are added to the `AuthenticationFlowStep` enum, you need to
-     * add a case to handle them here, otherwise the method will return `nil`.
-     *
-     * - parameter step: The step to create an interface for.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Returns the view controller that displays the interface of the authentication step.
+    ///
+    /// - note: When new steps are added to the `AuthenticationFlowStep` enum, you need to
+    /// add a case to handle them here, otherwise the method will return `nil`.
+    ///
+    /// - parameter step: The step to create an interface for.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
     func makeViewController(for step: AuthenticationFlowStep) -> AuthenticationStepViewController? {
         switch step {
@@ -75,20 +67,19 @@ final class AuthenticationInterfaceBuilder {
             landingViewController.configure(with: featureProvider)
             return landingViewController
 
-        case .reauthenticate(let credentials, _, let isSignedOut):
+        case let .reauthenticate(credentials, _, isSignedOut):
             let viewController: AuthenticationStepController
 
-            if credentials?.usesCompanyLogin == true && credentials?.hasPassword == false {
+            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
                 // Is the user has SSO enabled, show the screen to log in with SSO
                 let companyLoginStep = ReauthenticateWithCompanyLoginStepDescription()
                 viewController = makeViewController(for: companyLoginStep)
 
             } else {
-                let prefill: AuthenticationPrefilledCredentials?
-                if let credentials, credentials.emailAddress != nil {
-                    prefill = AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
+                let prefill: AuthenticationPrefilledCredentials? = if let credentials, credentials.emailAddress != nil {
+                    AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
                 } else {
-                    prefill = nil
+                    nil
                 }
 
                 viewController = makeCredentialsViewController(for: .reauthentication(prefill))
@@ -102,7 +93,7 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .provideCredentials(let prefill):
+        case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
         case .createCredentials:
@@ -118,14 +109,14 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .deleteClient(let clients, let credentials):
-            return RemoveClientStepViewController(clients: clients, credentials: credentials)
+        case let .deleteClient(clients):
+            return RemoveClientStepViewController(clients: clients)
 
-        case .noHistory(_, let context):
+        case let .noHistory(_, context):
             let backupStep = BackupRestoreStepDescription(context: context)
             return makeViewController(for: backupStep)
 
-        case .enterEmailVerificationCode(let email, _, _):
+        case let .enterEmailVerificationCode(email, _, _):
             let verifyEmailStep = VerifyEmailStepDescription(email: email, canChangeEmail: false)
             return makeViewController(for: verifyEmailStep)
 
@@ -141,14 +132,13 @@ final class AuthenticationInterfaceBuilder {
 
         case .addUsername:
             let addUsernameStep = AddUsernameStepDescription()
-            let viewController = makeViewController(for: addUsernameStep)
-            return viewController
+            return makeViewController(for: addUsernameStep)
 
-        case .enterActivationCode(let unverifiedEmail, _):
+        case let .enterActivationCode(unverifiedEmail, _):
             let step = VerifyEmailStepDescription(email: unverifiedEmail)
             return makeViewController(for: step)
 
-        case .pendingEmailLinkVerification(let emailCredentials):
+        case let .pendingEmailLinkVerification(emailCredentials):
             let verifyEmailStep = EmailLinkVerificationStepDescription(emailAddress: emailCredentials.email!)
 
             let viewController = makeViewController(for: verifyEmailStep)
@@ -159,10 +149,10 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .incrementalUserCreation(let user, let registrationStep):
+        case let .incrementalUserCreation(user, registrationStep):
             return makeRegistrationStepViewController(for: registrationStep, user: user)
 
-        case .switchBackend(let url):
+        case let .switchBackend(url):
             let viewController = PreBackendSwitchViewController()
             viewController.backendURL = url
             return viewController
@@ -171,29 +161,31 @@ final class AuthenticationInterfaceBuilder {
             let viewController = EnrollE2EIdentityStepDescription()
             return makeViewController(for: viewController)
 
-        case .enrollE2EIdentitySuccess(let certificateDetails):
+        case let .enrollE2EIdentitySuccess(certificateDetails):
             let viewController = SuccessfulCertificateEnrollmentViewController()
             viewController.certificateDetails = certificateDetails
             viewController.onOkTapped = { viewController in
                 viewController.authenticationCoordinator?.executeAction(.completeE2EIEnrollment)
             }
             return viewController
+
         default:
             return nil
         }
     }
 
-    /**
-     * Returns the view controller that displays the interface for the given intermediate
-     * registration step.
-     *
-     * - parameter step: The step to create an interface for.
-     * - parameter user: The unregistered user that is being created.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Returns the view controller that displays the interface for the given intermediate
+    /// registration step.
+    ///
+    /// - parameter step: The step to create an interface for.
+    /// - parameter user: The unregistered user that is being created.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
-    private func makeRegistrationStepViewController(for step: IntermediateRegistrationStep, user: UnregisteredUser) -> AuthenticationStepViewController? {
+    private func makeRegistrationStepViewController(
+        for step: IntermediateRegistrationStep,
+        user: UnregisteredUser
+    ) -> AuthenticationStepViewController? {
         switch step {
         case .setName:
             let nameStep = SetFullNameStepDescription()
@@ -206,13 +198,11 @@ final class AuthenticationInterfaceBuilder {
         }
     }
 
-    /**
-     * Creates a view controller for a step view description.
-     *
-     * - parameter description: The step to create an interface for.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Creates a view controller for a step view description.
+    ///
+    /// - parameter description: The step to create an interface for.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
     private func makeViewController(for description: AuthenticationStepDescription) -> AuthenticationStepController {
         let controller = AuthenticationStepController(description: description)
@@ -230,13 +220,14 @@ final class AuthenticationInterfaceBuilder {
         return controller
     }
 
-    /**
-     * Creates and configures an authentication credentials view controller for the specified flow type.
-     * - parameter flowType: The type of flow to use in the view controller.
-     * - returns: A credentials input view controller configured with the feature provider.
-     */
+    /// Creates and configures an authentication credentials view controller for the specified flow type.
+    /// - parameter flowType: The type of flow to use in the view controller.
+    /// - returns: A credentials input view controller configured with the feature provider.
 
-    private func makeCredentialsViewController(for flowType: AuthenticationCredentialsViewController.FlowType) -> AuthenticationCredentialsViewController {
+    private func makeCredentialsViewController(
+        for flowType: AuthenticationCredentialsViewController
+            .FlowType
+    ) -> AuthenticationCredentialsViewController {
         .init(flowType: flowType, backendEnvironmentProvider: backendEnvironmentProvider)
     }
 }

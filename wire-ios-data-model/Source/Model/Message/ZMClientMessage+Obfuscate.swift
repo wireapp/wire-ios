@@ -20,7 +20,7 @@ import Foundation
 
 extension ZMClientMessage {
 
-    override open func obfuscate() {
+    open override func obfuscate() {
         super.obfuscate()
 
         guard

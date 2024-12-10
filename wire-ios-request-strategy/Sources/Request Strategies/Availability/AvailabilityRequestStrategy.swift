@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
@@ -32,11 +33,11 @@ public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource
 
         super.init()
 
-        self.modifiedKeysSync.transcoder = self
+        modifiedKeysSync.transcoder = self
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedKeysSync]
+        [modifiedKeysSync]
     }
 }
 
@@ -47,11 +48,23 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
         guard object.isSelfUser else { return completion() }
 
         let message = GenericMessage(content: WireProtos.Availability(object.availability))
-        let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(in: context, maxCount: maximumBroadcastRecipients)
-        let proteusMessage = GenericMessageEntity(message: message, context: context, targetRecipients: .users(recipients), completionHandler: nil)
+        let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(
+            in: context,
+            maxCount: maximumBroadcastRecipients
+        )
+        let proteusMessage = GenericMessageEntity(
+            message: message,
+            context: context,
+            targetRecipients: .users(recipients),
+            completionHandler: nil
+        )
 
         WaitingGroupTask(context: context) { [self] in
-            try? await messageSender.broadcastMessage(message: proteusMessage)
+            do {
+                try await messageSender.broadcastMessage(message: proteusMessage)
+            } catch {
+                WireLogger.userClient.error("Failed to update user Status with broadcast message: \(error)")
+            }
             await context.perform { [self] in
                 completion()
                 // saving since the `modifiedKeys` of the self user are reset in the completion block
@@ -72,8 +85,11 @@ extension AvailabilityRequestStrategy: ZMEventConsumer {
                 continue
             }
 
-            let user = ZMUser.fetch(with: senderUUID, in: context)
-            user?.updateAvailability(from: message)
+            guard let user = ZMUser.fetch(with: senderUUID, in: context) else {
+                assertionFailure("User not found to updateAvailability")
+                continue
+            }
+            user.updateAvailability(from: message)
         }
     }
 

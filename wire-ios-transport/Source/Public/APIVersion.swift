@@ -16,20 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Represents the backend API versions implemented by the client.
 
 @objc
 public enum APIVersion: Int32 {
 
-    case v0 = 0
-    case v1 = 1
-    case v2 = 2
-    case v3 = 3
-    case v4 = 4
-    case v5 = 5
-    case v6 = 6
+    case v0
+    case v1
+    case v2
+    case v3
+    case v4
+    case v5
+    case v6
+    case v7
 
 }
 
@@ -42,7 +41,13 @@ extension APIVersion: CaseIterable {}
 extension APIVersion: Comparable {
 
     public static func < (lhs: Self, rhs: Self) -> Bool {
-        return lhs.rawValue < rhs.rawValue
+        lhs.rawValue < rhs.rawValue
     }
 
+}
+
+public extension APIVersion {
+    var useQualifiedIds: Bool {
+        self != .v0
+    }
 }

@@ -20,7 +20,7 @@ import Foundation
 
 /// User profile for a user
 
-public struct User: Equatable {
+public struct User: Equatable, Sendable {
 
     /// The unique id of the user
 
@@ -58,7 +58,7 @@ public struct User: Equatable {
     ///
     /// Only set of guest (ephemeral) users
 
-    public let expiresAt: String?
+    public let expiresAt: Date?
 
     /// Service information associated with this user
 
@@ -66,7 +66,7 @@ public struct User: Equatable {
 
     /// Messaging protocols which this user supports
 
-    public let supportedProtocols: Set<SupportedProtocol>?
+    public let supportedProtocols: Set<MessageProtocol>?
 
     /// The user's legalhold status
 

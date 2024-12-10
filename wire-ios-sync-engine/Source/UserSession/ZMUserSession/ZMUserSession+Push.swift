@@ -18,71 +18,74 @@
 
 import Foundation
 import UserNotifications
+import WireLogging
 import WireRequestStrategy
 import WireTransport
 
 struct PushTokenMetadata {
     let isSandbox: Bool
 
-    /*!
-     @brief There are 4 different application identifiers which map to each of the bundle id's used
-     @discussion
-     com.wearezeta.zclient.ios-development (dev) - <b>com.wire.dev.ent</b>
-     
-     com.wearezeta.zclient.ios-internal (internal) - <b>com.wire.int.ent</b>
-     
-     com.wearezeta.zclient-alpha - <b>com.wire.ent</b>
-     
-     com.wearezeta.zclient.ios (app store) - <b>com.wire</b>
-     
-     @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
-     */
+    /// @brief There are 4 different application identifiers which map to each of the bundle id's used
+    /// @discussion
+    /// com.wearezeta.zclient.ios-development (dev) - <b>com.wire.dev.ent</b>
+    ///
+    /// com.wearezeta.zclient.ios-internal (internal) - <b>com.wire.int.ent</b>
+    ///
+    /// com.wearezeta.zclient-alpha - <b>com.wire.ent</b>
+    ///
+    /// com.wearezeta.zclient.ios (app store) - <b>com.wire</b>
+    ///
+    /// @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
+
     let appIdentifier: String
 
-    /*!
-     @brief There are 4 transport types which depend on the token type and the environment
-     @discussion <b>APNS</b> -> ZMAPNSTypeNormal (deprecated)
-     
-     <b>APNS_VOIP</b> -> ZMAPNSTypeVoIP
-     
-     <b>APNS_SANDBOX</b> -> ZMAPNSTypeNormal + Sandbox environment (deprecated)
-     
-     <b>APNS_VOIP_SANDBOX</b> -> ZMAPNSTypeVoIP + Sandbox environment
-     
-     The non-VoIP types are deprecated at the moment.
-     
-     @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
-     */
+    /// @brief There are 4 transport types which depend on the token type and the environment
+    /// @discussion <b>APNS</b> -> ZMAPNSTypeNormal (deprecated)
+    ///
+    /// <b>APNS_VOIP</b> -> ZMAPNSTypeVoIP
+    ///
+    /// <b>APNS_SANDBOX</b> -> ZMAPNSTypeNormal + Sandbox environment (deprecated)
+    ///
+    /// <b>APNS_VOIP_SANDBOX</b> -> ZMAPNSTypeVoIP + Sandbox environment
+    ///
+    /// The non-VoIP types are deprecated at the moment.
+    ///
+    /// @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
 
     var tokenType: PushToken.TokenType
 
     var transportType: String {
-        return isSandbox ? (tokenType.transportType + "_SANDBOX") : tokenType.transportType
+        isSandbox ? (tokenType.transportType + "_SANDBOX") : tokenType.transportType
     }
 
     static func current(for tokenType: PushToken.TokenType) -> PushTokenMetadata {
         let appId = Bundle.main.bundleIdentifier ?? ""
-        let buildType = BuildType.init(bundleID: appId)
+        let buildType = BuildType(bundleID: appId)
 
         let isSandbox = ZMMobileProvisionParser().apsEnvironment == .sandbox
         let appIdentifier = buildType.certificateName
 
-        let metadata = PushTokenMetadata(isSandbox: isSandbox, appIdentifier: appIdentifier, tokenType: tokenType)
-        return metadata
+        return PushTokenMetadata(isSandbox: isSandbox, appIdentifier: appIdentifier, tokenType: tokenType)
     }
 }
 
 // MARK: - Register current push token
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
-    @objc public static let registerCurrentPushTokenNotificationName = Notification.Name(rawValue: "ZMUserSessionResetPushTokensNotification")
+    @objc static let registerCurrentPushTokenNotificationName = Notification
+        .Name(rawValue: "ZMUserSessionResetPushTokensNotification")
 
-    public func registerForRegisteringPushTokenNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(ZMUserSession.registerCurrentPushToken), name: ZMUserSession.registerCurrentPushTokenNotificationName, object: nil)
+    func registerForRegisteringPushTokenNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(ZMUserSession.registerCurrentPushToken),
+            name: ZMUserSession.registerCurrentPushTokenNotificationName,
+            object: nil
+        )
     }
 
-    func registerCurrentPushToken() {
+    internal func registerCurrentPushToken() {
         managedObjectContext.performGroupedBlock {
             self.sessionManager?.configurePushToken(session: self)
         }
@@ -92,26 +95,29 @@ extension ZMUserSession {
 
 // MARK: - Register, delete and update push token
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
     /// Generates the local push token if needed, then syncs it with the backend.
 
-    public func validatePushToken() {
+    func validatePushToken() {
         sessionManager?.configurePushToken(session: self)
     }
 
 }
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
-    public func receivedPushNotification(with payload: [AnyHashable: Any], completion: @escaping () -> Void) {
+    func receivedPushNotification(with payload: [AnyHashable: Any], completion: @escaping () -> Void) {
         WireLogger.notifications.debug("Received push notification with payload: \(payload)")
 
         syncManagedObjectContext.performGroupedBlock {
             let notAuthenticated = !self.isAuthenticated
 
             if notAuthenticated {
-                WireLogger.notifications.info("Not displaying notification because app is not authenticated", attributes: .safePublic)
+                WireLogger.notifications.info(
+                    "Not displaying notification because app is not authenticated",
+                    attributes: .safePublic
+                )
                 completion()
                 return
             }
@@ -124,74 +130,80 @@ extension ZMUserSession {
 
 // MARK: - UNUserNotificationCenterDelegate
 
-/*
- * Note: Although ZMUserSession conforms to UNUserNotificationCenterDelegate,
- * it should not actually be assigned as the delegate of UNUserNotificationCenter.
- * Instead, the delegate should be the SessionManager, whose repsonsibility it is
- * to forward the method calls to the appropriate user session.
- */
+// Note: Although ZMUserSession conforms to UNUserNotificationCenterDelegate,
+// it should not actually be assigned as the delegate of UNUserNotificationCenter.
+// Instead, the delegate should be the SessionManager, whose repsonsibility it is
+// to forward the method calls to the appropriate user session.
 extension ZMUserSession: UNUserNotificationCenterDelegate {
 
     // Called by the SessionManager when a notification is received while the app
     // is in the foreground.
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                       willPresent notification: UNNotification,
-                                       withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    public func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
+            -> Void
+    ) {
         Logging.push.safePublic("Notification center wants to present in-app notification: \(notification)")
         let categoryIdentifier = notification.request.content.categoryIdentifier
 
-        handleInAppNotification(with: notification.userInfo,
-                                categoryIdentifier: categoryIdentifier,
-                                completionHandler: completionHandler)
+        handleInAppNotification(
+            with: notification.userInfo,
+            categoryIdentifier: categoryIdentifier,
+            completionHandler: completionHandler
+        )
     }
 
     // Called by the SessionManager when the user engages a notification action.
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                       didReceive response: UNNotificationResponse,
-                                       withCompletionHandler completionHandler: @escaping () -> Void) {
+    public func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         Logging.push.safePublic("Did receive notification response: \(response)")
         let userText = (response as? UNTextInputNotificationResponse)?.userText
         let note = response.notification
 
-        handleNotificationResponse(actionIdentifier: response.actionIdentifier,
-                                   categoryIdentifier: note.request.content.categoryIdentifier,
-                                   userInfo: note.userInfo,
-                                   userText: userText,
-                                   completionHandler: completionHandler)
+        handleNotificationResponse(
+            actionIdentifier: response.actionIdentifier,
+            categoryIdentifier: note.request.content.categoryIdentifier,
+            userInfo: note.userInfo,
+            userText: userText,
+            completionHandler: completionHandler
+        )
     }
 
     // MARK: Abstractions
 
-    /* The logic for handling notifications/actions is factored out of the
-     * delegate methods because we cannot create `UNNotification` and
-     * `UNNotificationResponse` objects in unit tests.
-     */
+    // The logic for handling notifications/actions is factored out of the
+    // delegate methods because we cannot create `UNNotification` and
+    // `UNNotificationResponse` objects in unit tests.
 
-    func handleInAppNotification(with userInfo: NotificationUserInfo,
-                                 categoryIdentifier: String,
-                                 completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        if categoryIdentifier == PushNotificationCategory.incomingCall.rawValue {
-            self.handleTrackingOnCallNotification(with: userInfo)
-        }
-
+    func handleInAppNotification(
+        with userInfo: NotificationUserInfo,
+        categoryIdentifier: String,
+        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         // foreground notification responder exists on the UI context, so we
         // need to switch to that context
-        self.managedObjectContext.perform {
+        managedObjectContext.perform {
             let responder = self.sessionManager?.foregroundNotificationResponder
-            let shouldPresent = responder?.shouldPresentNotification(with: userInfo)
+            let shouldPresent = responder?.shouldPresentNotification(with: userInfo) ?? true
 
             var options = UNNotificationPresentationOptions()
-            if shouldPresent ?? true { options = [.list, .banner, .sound] }
+            if shouldPresent { options = [.list, .banner, .sound] }
 
             completionHandler(options)
         }
     }
 
-    func handleNotificationResponse(actionIdentifier: String,
-                                    categoryIdentifier: String,
-                                    userInfo: NotificationUserInfo,
-                                    userText: String? = nil,
-                                    completionHandler: @escaping () -> Void) {
+    func handleNotificationResponse(
+        actionIdentifier: String,
+        categoryIdentifier: String,
+        userInfo: NotificationUserInfo,
+        userText: String? = nil,
+        completionHandler: @escaping () -> Void
+    ) {
         WireLogger.notifications.info("handling notification response with action id (\(actionIdentifier))")
 
         switch actionIdentifier {
@@ -218,25 +230,27 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
 }
 
 extension UNNotificationContent {
-    override open var description: String {
-        return "<\(type(of: self)); threadIdentifier: \(self.threadIdentifier); content: redacted>"
+    open override var description: String {
+        "<\(type(of: self)); threadIdentifier: \(threadIdentifier); content: redacted>"
     }
 }
 
-extension PushToken {
-    public init(deviceToken: Data, pushTokenType: TokenType) {
+public extension PushToken {
+    init(deviceToken: Data, pushTokenType: TokenType) {
         let metadata = PushTokenMetadata.current(for: pushTokenType)
-        self.init(deviceToken: deviceToken,
-                  appIdentifier: metadata.appIdentifier,
-                  transportType: metadata.transportType,
-                  tokenType: pushTokenType)
+        self.init(
+            deviceToken: deviceToken,
+            appIdentifier: metadata.appIdentifier,
+            transportType: metadata.transportType,
+            tokenType: pushTokenType
+        )
     }
 
-    public static func createVOIPToken(from deviceToken: Data) -> PushToken {
-        return PushToken(deviceToken: deviceToken, pushTokenType: .voip)
+    static func createVOIPToken(from deviceToken: Data) -> PushToken {
+        PushToken(deviceToken: deviceToken, pushTokenType: .voip)
     }
 
-    public static func createAPNSToken(from deviceToken: Data) -> PushToken {
-        return PushToken(deviceToken: deviceToken, pushTokenType: .standard)
+    static func createAPNSToken(from deviceToken: Data) -> PushToken {
+        PushToken(deviceToken: deviceToken, pushTokenType: .standard)
     }
 }

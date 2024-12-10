@@ -45,22 +45,23 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     private var searchResults: [UserType] = [] {
         didSet {
-            if searchResults.count > 0 {
+            if !searchResults.isEmpty {
                 collectionViewSelectedIndex = searchResults.count - 1
             } else {
                 collectionViewSelectedIndex = .none
             }
         }
     }
-    private var query: String = ""
-    private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
+
+    private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor
+        .constraint(equalToConstant: 0)
     private let rowHeight: CGFloat = 56.0
     private var isKeyboardCollapsedFirstCalled = true
 
     private var _collectionViewSelectedIndex: Int? = .none
     private var collectionViewSelectedIndex: Int? {
         get {
-            return _collectionViewSelectedIndex
+            _collectionViewSelectedIndex
         }
         set {
             if let newValue {
@@ -90,12 +91,22 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         setupCollectionView()
         setupConstraints()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillChangeFrame(_:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillChangeFrame(_:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
 
         setupKeyboardObserver()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if collectionView.frame.size != view.bounds.size {
+            collectionView.frame = view.bounds
+            resizeTable()
+        }
     }
 
     private func setupKeyboardObserver() {
@@ -133,14 +144,15 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     private func setupConstraints() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-          collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-          collectionViewHeight
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionViewHeight
         ])
     }
 
-    @objc func reloadTable(with results: [UserType]) {
+    @objc
+    func reloadTable(with results: [UserType]) {
         searchResults = results
         resizeTable()
 
@@ -149,7 +161,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
         scrollToLastItem()
 
-        if results.count > 0 {
+        if !results.isEmpty {
             show()
         } else {
             dismiss()
@@ -158,9 +170,17 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
     private func resizeTable() {
         let viewHeight = view.bounds.size.height
-        let minValue = min(viewHeight, CGFloat(searchResults.count) * rowHeight)
+        let contentHeight = CGFloat(searchResults.count) * rowHeight
+        let minValue = min(viewHeight, contentHeight)
         collectionViewHeight.constant = minValue
-        collectionView.isScrollEnabled = (minValue == viewHeight)
+        collectionView.isScrollEnabled = (contentHeight > viewHeight)
+
+        if searchResults.count == 1 {
+            let bottomInset = viewHeight - rowHeight
+            collectionView.contentInset = UIEdgeInsets(top: bottomInset, left: 0, bottom: 0, right: 0)
+        } else {
+            collectionView.contentInset = .zero
+        }
     }
 
     private func scrollToLastItem() {
@@ -175,8 +195,10 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         view.isHidden = false
     }
 
-    @objc dynamic func keyboardWillChangeFrame(_ notification: Notification) {
-        guard let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+    @objc
+    dynamic func keyboardWillChangeFrame(_ notification: Notification) {
+        guard let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+        else { return }
         resizeTable()
         UIView.animate(withDuration: duration) {
             self.view.layoutIfNeeded()
@@ -207,9 +229,7 @@ extension UserSearchResultsViewController: UserList {
             return .none
         }
 
-        let bestSuggestion = searchResults[collectionViewSelectedIndex]
-
-        return bestSuggestion
+        return searchResults[collectionViewSelectedIndex]
     }
 
     func selectNextUser() {
@@ -233,12 +253,16 @@ extension UserSearchResultsViewController: UserList {
 
         guard let collectionViewSelectedIndex else { return }
 
-        collectionView.scrollToItem(at: IndexPath(item: collectionViewSelectedIndex, section: 0), at: .centeredVertically, animated: true)
+        collectionView.scrollToItem(
+            at: IndexPath(item: collectionViewSelectedIndex, section: 0),
+            at: .centeredVertically,
+            animated: true
+        )
     }
 
     var users: [UserType] {
         get {
-            return searchResults.reversed()
+            searchResults.reversed()
         }
 
         set {
@@ -250,25 +274,35 @@ extension UserSearchResultsViewController: UserList {
 extension UserSearchResultsViewController: UICollectionViewDelegate {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return searchResults.count
+        searchResults.count
     }
 }
 
 extension UserSearchResultsViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: rowHeight)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: rowHeight)
     }
 }
 
 extension UserSearchResultsViewController: UICollectionViewDataSource {
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let user = searchResults[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: UserCell.reuseIdentifier,
+            for: indexPath
+        ) as! UserCell
         if let selfUser = ZMUser.selfUser() {
             cell.configure(
                 user: user,

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,13 +13,15 @@
 		069712972497C1BF00C32169 /* NotificationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712952497C1BC00C32169 /* NotificationSession.swift */; };
 		069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */; };
 		0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */; };
-		59B170E62BCE70E200575995 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B170E52BCE70E200575995 /* WireDataModelSupport.framework */; };
+		591B6E262C8B097B009F8A7B /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */; };
+		591B6E2C2C8B0983009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B170E52BCE70E200575995 /* WireDataModelSupport.framework */; };
+		591B6E2F2C8B0988009F8A7B /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; };
+		59537D8D2CFF9FB300920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8C2CFF9FB300920B59 /* WireLogging */; };
 		630A582D29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */; };
 		EE0BA28A29D59B1D004E93B5 /* NotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */; };
 		EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */; };
 		EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */; };
 		EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */; };
-		EE668BC62954BA4C00D939E7 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */; };
 		EE761669299E60C9005DB75F /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		EE9AEC982BD159C700F7853F /* WireNotificationEngine.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC972BD159C700F7853F /* WireNotificationEngine.docc */; };
 		EEC80B4329B6053200099727 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B4229B6053200099727 /* AppDelegate.swift */; };
@@ -27,8 +29,6 @@
 		EEC80B4729B6053200099727 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B4629B6053200099727 /* ViewController.swift */; };
 		EEC80B4A29B6053200099727 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEC80B4829B6053200099727 /* Main.storyboard */; };
 		EEC80B4C29B6053500099727 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEC80B4B29B6053500099727 /* Assets.xcassets */; };
-		EEC80B5729B6054A00099727 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; };
-		EEC80B5829B6054A00099727 /* WireMockTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,20 +47,6 @@
 			remoteInfo = WireNotificationEngineTestHost;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		EEC80B5929B6054A00099727 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EEC80B5829B6054A00099727 /* WireMockTransport.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06394AA12497B24600380494 /* OperationLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationLoop.swift; sourceTree = "<group>"; };
@@ -82,7 +68,6 @@
 		06BD1D362487B01C002F82A6 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		06BD1D382487B01C002F82A6 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		06BD1D392487B01C002F82A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
-		06BD1D3A2487B01C002F82A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3B2487B01C002F82A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		59B170E52BCE70E200575995 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNotificationSessionTests.swift; sourceTree = "<group>"; };
@@ -104,12 +89,27 @@
 		EEC80B5629B6054A00099727 /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264212CF721B40005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestPlans/AllTests.xctestplan,
+			);
+			target = 067ECB392487A93D00701956 /* WireNotificationEngine */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D2641F2CF721A00005317F /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264212CF721B40005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		067ECB372487A93D00701956 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE668BC62954BA4C00D939E7 /* WireRequestStrategy.framework in Frameworks */,
+				591B6E262C8B097B009F8A7B /* WireRequestStrategy.framework in Frameworks */,
+				59537D8D2CFF9FB300920B59 /* WireLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,7 +118,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE761669299E60C9005DB75F /* WireNotificationEngine.framework in Frameworks */,
-				59B170E62BCE70E200575995 /* WireDataModelSupport.framework in Frameworks */,
+				591B6E2C2C8B0983009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,7 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEC80B5729B6054A00099727 /* WireMockTransport.framework in Frameworks */,
+				591B6E2F2C8B0988009F8A7B /* WireMockTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,8 +138,8 @@
 			children = (
 				59B170E52BCE70E200575995 /* WireDataModelSupport.framework */,
 				EEC80B5629B6054A00099727 /* WireMockTransport.framework */,
-				EE67F6FB296F09A0001D7C88 /* WireTesting.framework */,
 				EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */,
+				EE67F6FB296F09A0001D7C88 /* WireTesting.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -150,6 +150,7 @@
 				EE9AEC972BD159C700F7853F /* WireNotificationEngine.docc */,
 				06BD1D2D2487B01C002F82A6 /* Resources */,
 				06604296247FE76A00A5F161 /* Sources */,
+				59D2641F2CF721A00005317F /* Tests */,
 				067ECB3B2487A93D00701956 /* WireNotificationEngine */,
 				EE761670299E614B005DB75F /* WireNotificationEngineTests */,
 				EEC80B4129B6053200099727 /* WireNotificationEngineTestHost */,
@@ -242,7 +243,6 @@
 				06BD1D392487B01C002F82A6 /* project-debug.xcconfig */,
 				06BD1D362487B01C002F82A6 /* project.xcconfig */,
 				06BD1D382487B01C002F82A6 /* tests.xcconfig */,
-				06BD1D3A2487B01C002F82A6 /* warnings-debug.xcconfig */,
 				06BD1D352487B01C002F82A6 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -291,12 +291,14 @@
 				067ECB352487A93D00701956 /* Headers */,
 				067ECB362487A93D00701956 /* Sources */,
 				067ECB372487A93D00701956 /* Frameworks */,
-				AD4812A52AB98EEB00ED208C /* Run Swiftlint */,
 				067ECB382487A93D00701956 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				59D2641F2CF721A00005317F /* Tests */,
 			);
 			name = WireNotificationEngine;
 			productName = WireNotificationEngine;
@@ -329,7 +331,6 @@
 				EEC80B3C29B6053200099727 /* Sources */,
 				EEC80B3D29B6053200099727 /* Frameworks */,
 				EEC80B3E29B6053200099727 /* Resources */,
-				EEC80B5929B6054A00099727 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -409,29 +410,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		AD4812A52AB98EEB00ED208C /* Run Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run Swiftlint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		067ECB362487A93D00701956 /* Sources */ = {
@@ -833,6 +811,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		59537D8C2CFF9FB300920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0660428C247FE76A00A5F161 /* Project object */;
 }

@@ -23,6 +23,7 @@ import WireDesign
 class TitleView: UIView, DynamicTypeCapable {
 
     // MARK: - Properties
+
     var titleColor: UIColor?
     var titleFont: FontSpec?
     var tapHandler: ((UIButton) -> Void)?
@@ -32,22 +33,24 @@ class TitleView: UIView, DynamicTypeCapable {
     private let subtitleLabel = UILabel()
 
     // MARK: - Initialization
+
     init(color: UIColor? = nil, fontSpec: FontSpec? = nil) {
         super.init(frame: CGRect.zero)
         isAccessibilityElement = true
         accessibilityIdentifier = "Name"
 
         if let color, let font = fontSpec {
-            titleColor = color
-            titleFont = font
+            self.titleColor = color
+            self.titleFont = font
         }
 
         createViews()
+        createConstraints()
     }
 
     // MARK: - Private methods
+
     private func createConstraints() {
-        [titleButton, stackView, subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         stackView.fitIn(view: self)
     }
@@ -61,6 +64,7 @@ class TitleView: UIView, DynamicTypeCapable {
     }
 
     // MARK: - Methods
+
     @objc
     func titleButtonTapped(_ sender: UIButton) {
         tapHandler?(sender)
@@ -94,9 +98,9 @@ class TitleView: UIView, DynamicTypeCapable {
         subtitleLabel.text = subtitle
         subtitleLabel.font = .smallLightFont
 
-        createConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -114,7 +118,8 @@ extension NSTextAttachment {
         let attachment = NSTextAttachment()
         attachment.image = StyleKitIcon.downArrow.makeImage(
             size: size,
-            color: SemanticColors.Icon.foregroundPlainDownArrow).withRenderingMode(.alwaysTemplate)
+            color: SemanticColors.Icon.foregroundPlainDownArrow
+        ).withRenderingMode(.alwaysTemplate)
         return attachment
     }
 }

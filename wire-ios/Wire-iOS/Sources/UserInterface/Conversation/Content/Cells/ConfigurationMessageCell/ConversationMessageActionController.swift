@@ -23,7 +23,8 @@ import WireDataModel
 final class ConversationMessageActionController {
 
     enum Context: Int {
-        case content, collection
+        case content
+        case collection
     }
 
     let message: ZMConversationMessage
@@ -31,10 +32,12 @@ final class ConversationMessageActionController {
     weak var responder: MessageActionResponder?
     weak var view: UIView!
 
-    init(responder: MessageActionResponder?,
-         message: ZMConversationMessage,
-         context: Context,
-         view: UIView) {
+    init(
+        responder: MessageActionResponder?,
+        message: ZMConversationMessage,
+        context: Context,
+        view: UIView
+    ) {
         self.responder = responder
         self.message = message
         self.context = context
@@ -44,34 +47,38 @@ final class ConversationMessageActionController {
     // MARK: - List of Actions
 
     private var allPerformableMessageAction: [MessageAction] {
-        return MessageAction.allCases
+        MessageAction.allCases
             .filter(canPerformAction)
     }
 
     func allMessageMenuElements() -> [UIAction] {
-        weak var responder = self.responder
-        weak var message = self.message
-        unowned let targetView: UIView = self.view
+        weak var responder = responder
+        weak var message = message
+        unowned let targetView: UIView = view
 
         return allPerformableMessageAction.compactMap { messageAction in
             guard let title = messageAction.title else { return nil }
 
             let handler: UIActionHandler = { _ in
-                responder?.perform(action: messageAction,
-                                   for: message,
-                                   view: targetView)
+                responder?.perform(
+                    action: messageAction,
+                    for: message!,
+                    view: targetView
+                )
             }
 
-            return UIAction(title: title,
-                            image: messageAction.systemIcon(),
-                            handler: handler)
+            return UIAction(
+                title: title,
+                image: messageAction.systemIcon(),
+                handler: handler
+            )
         }
     }
 
     // MARK: - UI menu
 
     static var allMessageActions: [UIMenuItem] {
-        return MessageAction.allCases.compactMap {
+        MessageAction.allCases.compactMap {
             guard let selector = $0.selector,
                   let title = $0.title else { return nil }
             return UIMenuItem(title: title, action: selector)
@@ -81,40 +88,38 @@ final class ConversationMessageActionController {
     func canPerformAction(action: MessageAction) -> Bool {
         switch action {
         case .copy:
-            return message.canBeCopied
+            message.canBeCopied
         case .digitallySign:
-            return message.canBeDigitallySigned
+            message.canBeDigitallySigned
         case .reply:
-            return message.canBeQuoted
+            message.canBeQuoted
         case .openDetails:
-            return message.areMessageDetailsAvailable
+            message.areMessageDetailsAvailable
         case .edit:
-            return message.canBeEdited
+            message.canBeEdited
         case .delete:
-            return message.canBeDeleted
+            message.canBeDeleted
         case .save:
-            return message.canBeSaved
+            message.canBeSaved
         case .cancel:
-            return message.canCancelDownload
+            message.canCancelDownload
         case .download:
-            return message.canBeDownloaded
-        case .forward:
-            return message.canBeForwarded
+            message.canBeDownloaded
         case .resend:
-            return message.canBeResent
+            message.canBeResent
         case .showInConversation:
-            return context == .collection
+            context == .collection
         case .sketchDraw,
              .sketchEmoji:
-            return message.isImage
+            message.isImage
         case .react:
-            return message.canAddReaction
+            message.canAddReaction
         case .visitLink:
-            return message.canVisitLink
+            message.canVisitLink
         case .present,
              .openQuote,
              .resetSession:
-            return false
+            false
         }
     }
 
@@ -127,21 +132,28 @@ final class ConversationMessageActionController {
     }
 
     func makeAccessibilityActions() -> [UIAccessibilityCustomAction] {
-        return ConversationMessageActionController.allMessageActions
+        ConversationMessageActionController.allMessageActions
             .filter { self.canPerformAction($0.action) }
             .map { menuItem in
                 UIAccessibilityCustomAction(name: menuItem.title, target: self, selector: menuItem.action)
-        }
+            }
     }
 
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     var previewActionItems: [UIPreviewAction] {
-        return allPerformableMessageAction.compactMap { messageAction in
+        allPerformableMessageAction.compactMap { messageAction in
             guard let title = messageAction.title else { return nil }
 
-            return UIPreviewAction(title: title,
-                                   style: .default) { [weak self] _, _ in
-                                    self?.perform(action: messageAction)
+            return UIPreviewAction(
+                title: title,
+                style: .default
+            ) { [weak self] _, _ in
+                self?.perform(action: messageAction)
             }
         }
     }
@@ -177,70 +189,81 @@ final class ConversationMessageActionController {
     }
 
     var doubleTapAction: MessageAction? {
-        return message.canAddReaction ? .react("❤️") : nil
+        message.canAddReaction ? .react("❤️") : nil
     }
 
     // MARK: - Handler
 
     func perform(action: MessageAction) {
-        responder?.perform(action: action,
-                           for: message,
-                           view: view)
+        responder?.perform(
+            action: action,
+            for: message,
+            view: view
+        )
     }
 
-    @objc func digitallySignMessage() {
+    @objc
+    func digitallySignMessage() {
         perform(action: .digitallySign)
     }
 
-    @objc func copyMessage() {
+    @objc
+    func copyMessage() {
         perform(action: .copy)
     }
 
-    @objc func editMessage() {
+    @objc
+    func editMessage() {
         perform(action: .edit)
     }
 
-    @objc func quoteMessage() {
+    @objc
+    func quoteMessage() {
         perform(action: .reply)
     }
 
-    @objc func openMessageDetails() {
+    @objc
+    func openMessageDetails() {
         perform(action: .openDetails)
     }
 
-    @objc func cancelDownloadingMessage() {
+    @objc
+    func cancelDownloadingMessage() {
         perform(action: .cancel)
     }
 
-    @objc func downloadMessage() {
+    @objc
+    func downloadMessage() {
         perform(action: .download)
     }
 
-    @objc func saveMessage() {
+    @objc
+    func saveMessage() {
         perform(action: .save)
     }
 
-    @objc func forwardMessage() {
-        perform(action: .forward)
-    }
-
-    @objc func deleteMessage() {
+    @objc
+    func deleteMessage() {
         perform(action: .delete)
     }
 
-    @objc func resendMessage() {
+    @objc
+    func resendMessage() {
         perform(action: .resend)
     }
 
-    @objc func revealMessage() {
+    @objc
+    func revealMessage() {
         perform(action: .showInConversation)
     }
 
-    @objc func addReaction(reaction: Emoji.ID) {
+    @objc
+    func addReaction(reaction: Emoji.ID) {
         perform(action: .react(reaction))
     }
 
-    @objc func visitLink() {
+    @objc
+    func visitLink() {
         perform(action: .visitLink)
     }
 }

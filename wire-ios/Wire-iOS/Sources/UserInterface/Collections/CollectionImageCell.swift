@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -48,7 +49,7 @@ final class CollectionImageCell: CollectionCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.loadView()
+        loadView()
     }
 
     var isHeightCalculated: Bool = false
@@ -74,7 +75,7 @@ final class CollectionImageCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .photo
+        .photo
     }
 
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
@@ -86,7 +87,7 @@ final class CollectionImageCell: CollectionCell {
     }
 
     private func updateViews() {
-        guard let message = self.message else { return }
+        guard let message else { return }
 
         if message.canBeShared {
             imageView.contentMode = .scaleAspectFill

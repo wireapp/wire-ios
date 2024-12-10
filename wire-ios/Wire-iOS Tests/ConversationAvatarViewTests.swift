@@ -16,22 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class ConversationAvatarViewTests: XCTestCase {
 
-    var sut: ConversationAvatarView!
+    // MARK: - Properties
+
+    private var sut: ConversationAvatarView!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = ConversationAvatarView()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItRendersNoUserImages() {
         // GIVEN
@@ -41,7 +55,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersSomeAndThenNoUserImages() {
@@ -61,7 +75,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersSingleUserImage() {
@@ -76,7 +90,9 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: otherUserConversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withPerceptualPrecision(0.98)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersPendingConnection() {
@@ -93,7 +109,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .connect(users: [otherUser]))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersASingleServiceUser() {
@@ -114,7 +130,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: otherUserConversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersTwoUserImages() {
@@ -129,13 +145,16 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withPerceptualPrecision(0.98)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersManyUsers() {
         // GIVEN
         let conversation = MockStableRandomParticipantsConversation()
-        conversation.stableRandomParticipants = MockUserType.usernames.map { MockUserType.createConnectedUser(name: $0) }
+        conversation.stableRandomParticipants = MockUserType.usernames
+            .map { MockUserType.createConnectedUser(name: $0) }
 
         (conversation.stableRandomParticipants[0] as! MockUserType).zmAccentColor = .red
         (conversation.stableRandomParticipants[1] as! MockUserType).zmAccentColor = .amber
@@ -146,11 +165,15 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withPerceptualPrecision(0.98)
+            .verify(matching: sut.prepareForSnapshots())
     }
 }
 
-fileprivate extension UIView {
+// MARK: - Helper method
+
+private extension UIView {
 
     func prepareForSnapshots() -> UIView {
         let container = UIView()

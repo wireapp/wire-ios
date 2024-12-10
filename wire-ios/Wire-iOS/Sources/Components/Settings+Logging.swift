@@ -64,7 +64,6 @@ extension Settings {
             "URL",
             "EmoticonSubstitutionConfiguration",
             "URL Helper",
-            "Performance",
             "message-processing",
             "backend-environment",
             "Analytics",
@@ -146,19 +145,16 @@ extension Settings {
             "UserImageCache",
             "FileLocation",
             "local-storage",
-            "safeFileContext",
             "UpdateEvents",
             "Push channel",
-            "SafeTypes",
-            "background-activity"
+            "SafeTypes"
         ]
 
         // NOTE: WPB-5754: force enable logs for now
-        /*
-         if let savedTags = UserDefaults.shared().object(forKey: enabledLogsKey) as? [String] {
-            tagsToEnable = Set(savedTags)
-        }
-         */
+        // if let savedTags = UserDefaults.shared().object(forKey: enabledLogsKey) as? [String] {
+        //    tagsToEnable = Set(savedTags)
+        // }
+        //
 
         enableLogs(tagsToEnable)
     }

@@ -21,17 +21,26 @@ import Foundation
 // sourcery: AutoMockable
 public protocol MessageAPI {
 
-    func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
+    func broadcastProteusMessage(message encryptedMessage: Data) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
-    func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
+    func sendProteusMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
-    func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse)
+    func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse)
 
 }
 
 extension Payload.ClientListByUserID {
     func toClientListByQualifiedUserID(domain: String) -> Payload.ClientListByQualifiedUserID {
-        return [domain: self]
+        [domain: self]
     }
 }
 
@@ -43,7 +52,8 @@ extension Payload.MessageSendingStatusV0 {
             redundant: redundant.toClientListByQualifiedUserID(domain: domain),
             deleted: deleted.toClientListByQualifiedUserID(domain: domain),
             failedToSend: [:],
-            failedToConfirm: [:])
+            failedToConfirm: [:]
+        )
     }
 }
 
@@ -53,28 +63,21 @@ class MessageAPIV0: MessageAPI {
         .v0
     }
 
-    internal let httpClient: HttpClient
+    let httpClient: HttpClient
     private let protobufContentType = "application/x-protobuf"
 
     init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }
 
-    func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    func broadcastProteusMessage(message encryptedMessage: Data) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/otr/messages"
-
-        // FIXME: [WPB-5499] move encryption out of the API - [jacob]
-        guard let encryptedPayload = await
-            message.encryptForTransport()
-        else {
-            WireLogger.messaging.error("failed to encrypt message for transport")
-            throw NetworkError.errorEncodingRequest
-        }
 
         let request = ZMTransportRequest(
             path: path,
             method: .post,
-            binaryData: encryptedPayload.data,
+            binaryData: encryptedMessage,
             type: protobufContentType,
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
@@ -96,30 +99,23 @@ class MessageAPIV0: MessageAPI {
     }
 
     func sendProteusMessage(
-        message: any ProteusMessage,
-        conversationID: QualifiedID
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"].joined(separator: "/")
-
-        // FIXME: [WPB-5499] move encryption out of the API - [jacob]
-        guard let encryptedPayload = await message.encryptForTransport()
-        else {
-            WireLogger.messaging.error("failed to encrypt message for transport")
-            throw NetworkError.errorEncodingRequest
-        }
+        let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"]
+            .joined(separator: "/")
 
         let request = ZMTransportRequest(
             path: path,
             method: .post,
-            binaryData: encryptedPayload.data,
+            binaryData: encryptedMessage,
             type: protobufContentType,
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
         )
 
-        if let expirationDate = (await message.context.perform {
-            message.expirationDate
-        }) {
+        if let expirationDate {
             request.expire(at: expirationDate)
         }
 
@@ -138,7 +134,11 @@ class MessageAPIV0: MessageAPI {
         }
     }
 
-    func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+    func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
         throw NetworkError.endpointNotAvailable
     }
 }
@@ -177,18 +177,14 @@ class MessageAPIV1: MessageAPIV0 {
         .v1
     }
 
-    override func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    override func broadcastProteusMessage(message encryptedMessage: Data) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/proteus/messages"
-
-        guard let encryptedPayload = await message.encryptForTransportQualified() else {
-            WireLogger.messaging.error("failed to encrypt message for transport")
-            throw NetworkError.errorEncodingRequest
-        }
 
         let request = ZMTransportRequest(
             path: path,
             method: .post,
-            binaryData: encryptedPayload.data,
+            binaryData: encryptedMessage,
             type: protobufContentType,
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
@@ -197,56 +193,58 @@ class MessageAPIV1: MessageAPIV0 {
         let response = await httpClient.send(request)
 
         if response.httpStatus == 412 {
-            guard
-                let messageSendingStatus = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
-            else {
+            guard let messageSendingStatus = Payload.MessageSendingStatusV1(
+                response,
+                decoder: .defaultDecoder
+            ) else {
                 throw NetworkError.errorDecodingResponse(response)
             }
-            throw NetworkError.missingClients(messageSendingStatus, response)
+
+            throw NetworkError.missingClients(messageSendingStatus.toAPIModel(), response)
+
         } else {
-            let payload: Payload.MessageSendingStatus = try mapResponse(response)
-            return (payload, response)
+            let payload: Payload.MessageSendingStatusV1 = try mapResponse(response)
+            return (payload.toAPIModel(), response)
         }
     }
 
     override func sendProteusMessage(
-        message: any ProteusMessage,
-        conversationID: QualifiedID
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
-
-        guard let encryptedPayload = await message.encryptForTransportQualified() else {
-            WireLogger.messaging.error("failed to encrypt message for transport")
-            throw NetworkError.errorEncodingRequest
-        }
+        let path = "/" +
+            ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"]
+            .joined(separator: "/")
 
         let request = ZMTransportRequest(
             path: path,
             method: .post,
-            binaryData: encryptedPayload.data,
+            binaryData: encryptedMessage,
             type: protobufContentType,
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
         )
 
-        if let expirationDate = (await message.context.perform {
-            message.expirationDate
-        }) {
+        if let expirationDate {
             request.expire(at: expirationDate)
         }
 
         let response = await httpClient.send(request)
 
         if response.httpStatus == 412 {
-            guard
-                let messageSendingStatus = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
-            else {
+            guard let messageSendingStatus = Payload.MessageSendingStatusV1(
+                response,
+                decoder: .defaultDecoder
+            ) else {
                 throw NetworkError.errorDecodingResponse(response)
             }
-            throw NetworkError.missingClients(messageSendingStatus, response)
+
+            throw NetworkError.missingClients(messageSendingStatus.toAPIModel(), response)
+
         } else {
-            let payload: Payload.MessageSendingStatus = try mapResponse(response)
-            return (payload, response)
+            let payload: Payload.MessageSendingStatusV1 = try mapResponse(response)
+            return (payload.toAPIModel(), response)
         }
     }
 }
@@ -267,6 +265,81 @@ class MessageAPIV4: MessageAPIV3 {
     override var apiVersion: APIVersion {
         .v4
     }
+
+    private let protobufContentType = "application/x-protobuf"
+
+    override func broadcastProteusMessage(message encryptedMessage: Data) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        let path = "/broadcast/proteus/messages"
+
+        let request = ZMTransportRequest(
+            path: path,
+            method: .post,
+            binaryData: encryptedMessage,
+            type: protobufContentType,
+            contentDisposition: nil,
+            apiVersion: apiVersion.rawValue
+        )
+
+        let response = await httpClient.send(request)
+
+        if response.httpStatus == 412 {
+            // New V4 payload
+            guard let messageSendingStatus = Payload.MessageSendingStatusV4(
+                response,
+                decoder: .defaultDecoder
+            ) else {
+                throw NetworkError.errorDecodingResponse(response)
+            }
+
+            throw NetworkError.missingClients(messageSendingStatus.toAPIModel(), response)
+
+        } else {
+            let payload: Payload.MessageSendingStatusV4 = try mapResponse(response)
+            return (payload.toAPIModel(), response)
+        }
+    }
+
+    override func sendProteusMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        let path = "/" +
+            ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"]
+            .joined(separator: "/")
+
+        let request = ZMTransportRequest(
+            path: path,
+            method: .post,
+            binaryData: encryptedMessage,
+            type: protobufContentType,
+            contentDisposition: nil,
+            apiVersion: apiVersion.rawValue
+        )
+
+        if let expirationDate {
+            request.expire(at: expirationDate)
+        }
+
+        let response = await httpClient.send(request)
+
+        if response.httpStatus == 412 {
+            // New V4 payload
+            guard let messageSendingStatus = Payload.MessageSendingStatusV4(
+                response,
+                decoder: .defaultDecoder
+            ) else {
+                throw NetworkError.errorDecodingResponse(response)
+            }
+
+            throw NetworkError.missingClients(messageSendingStatus.toAPIModel(), response)
+
+        } else {
+            let payload: Payload.MessageSendingStatusV4 = try mapResponse(response)
+            return (payload.toAPIModel(), response)
+        }
+    }
 }
 
 class MessageAPIV5: MessageAPIV4 {
@@ -274,7 +347,11 @@ class MessageAPIV5: MessageAPIV4 {
         .v5
     }
 
-    override func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+    override func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
 
         let request = ZMTransportRequest(
             path: "/mls/messages",
@@ -300,4 +377,8 @@ class MessageAPIV6: MessageAPIV5 {
     override var apiVersion: APIVersion {
         .v6
     }
+}
+
+final class MessageAPIV7: MessageAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
 }

@@ -193,7 +193,13 @@ final class AccountStoreTests: ZMConversationTestsBase {
         // when
         let name = "Marco", team = "Wire", image = verySmallJPEGData()
         do {
-            let account = Account(userName: name, userIdentifier: uuid, teamName: team, imageData: image, teamImageData: image)
+            let account = Account(
+                userName: name,
+                userIdentifier: uuid,
+                teamName: team,
+                imageData: image,
+                teamImageData: image
+            )
             XCTAssert(store.add(account))
         }
 
@@ -225,32 +231,6 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let account = Account(userName: "Vytis", userIdentifier: uuid)
         XCTAssert(store.add(account))
         XCTAssertNil(store.load(.create()))
-    }
-
-    func testThatItReturnsTrueForAccountsContainedInTheStore() {
-        // given
-        let store = AccountStore(root: url)
-        let uuid = UUID.create()
-
-        // when
-        let account = Account(userName: "Mike", userIdentifier: uuid)
-        XCTAssert(store.add(account))
-
-        // then
-        XCTAssert(store.contains(account))
-    }
-
-    func testThatItReturnsFalseForAccountsNotContainedInTheStore() {
-        // given
-        let store = AccountStore(root: url)
-
-        // when
-        let account1 = Account(userName: "Jacob", userIdentifier: .create())
-        let account2 = Account(userName: "Dasha", userIdentifier: .create())
-        XCTAssert(store.add(account1))
-
-        // then
-        XCTAssertFalse(store.contains(account2))
     }
 
     func testThatASecondAccountAtTheSameLocationShowsTheSameAccounts() {
@@ -297,7 +277,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let store = AccountStore(root: url)
         let accountID = UUID(uuidString: "012B6D4F-590B-4355-AC8A-8A531F9F30EE")!
 
-        let accountJSON = """
+        let accountJSON = Data("""
         {
             "name": "Alexis",
             "identifier": "\(accountID)",
@@ -305,7 +285,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
             "image": "",
             "unreadConversationCount": 1
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
         try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
 
@@ -313,7 +293,15 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let account = store.load(accountID)
 
         // then
-        let expectedAccount = Account(userName: "Alexis", userIdentifier: accountID, teamName: "Wire", imageData: Data(), teamImageData: nil, unreadConversationCount: 1, loginCredentials: nil)
+        let expectedAccount = Account(
+            userName: "Alexis",
+            userIdentifier: accountID,
+            teamName: "Wire",
+            imageData: Data(),
+            teamImageData: nil,
+            unreadConversationCount: 1,
+            loginCredentials: nil
+        )
         XCTAssertEqual(account, expectedAccount)
     }
 
@@ -322,7 +310,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let store = AccountStore(root: url)
         let accountID = UUID(uuidString: "012B6D4F-590B-4355-AC8A-8A531F9F30EE")!
 
-        let accountJSON = """
+        let accountJSON = Data("""
         {
             "name": "Alexis",
             "identifier": "\(accountID)",
@@ -335,7 +323,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
                 "usesCompanyLogin": false
             }
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
         try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
 
@@ -343,8 +331,20 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let account = store.load(accountID)
 
         // then
-        let expectedCredentials = LoginCredentials(emailAddress: "alexis@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
-        let expectedAccount = Account(userName: "Alexis", userIdentifier: accountID, teamName: "Wire", imageData: Data(), teamImageData: nil, unreadConversationCount: 0, loginCredentials: expectedCredentials)
+        let expectedCredentials = LoginCredentials(
+            emailAddress: "alexis@example.com",
+            hasPassword: true,
+            usesCompanyLogin: false
+        )
+        let expectedAccount = Account(
+            userName: "Alexis",
+            userIdentifier: accountID,
+            teamName: "Wire",
+            imageData: Data(),
+            teamImageData: nil,
+            unreadConversationCount: 0,
+            loginCredentials: expectedCredentials
+        )
         XCTAssertEqual(account, expectedAccount)
     }
 

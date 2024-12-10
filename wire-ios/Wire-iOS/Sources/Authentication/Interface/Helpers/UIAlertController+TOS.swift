@@ -18,20 +18,33 @@
 
 import SafariServices
 import UIKit
+import WireCommonComponents
 
 extension UIAlertController {
-    static func requestTOSApproval(over controller: UIViewController, forTeamAccount: Bool, completion: @escaping (_ approved: Bool) -> Void) {
-        let alert = UIAlertController(title: L10n.Localizable.Registration.TermsOfUse.Terms.title,
-                                      message: L10n.Localizable.Registration.TermsOfUse.Terms.message,
-                                      preferredStyle: .alert)
-        let viewAction = UIAlertAction(title: L10n.Localizable.Registration.TermsOfUse.Terms.view, style: .default) { [weak controller] _ in
-            let url = URL.wr_termsOfServicesURL.appendingLocaleParameter
+    static func requestTOSApproval(
+        over controller: UIViewController,
+        forTeamAccount: Bool,
+        completion: @escaping (_ approved: Bool) -> Void
+    ) {
+        let alert = UIAlertController(
+            title: L10n.Localizable.Registration.TermsOfUse.Terms.title,
+            message: L10n.Localizable.Registration.TermsOfUse.Terms.message,
+            preferredStyle: .alert
+        )
+        let viewAction = UIAlertAction(
+            title: L10n.Localizable.Registration.TermsOfUse.Terms.view,
+            style: .default
+        ) { [weak controller] _ in
 
             let webViewController: BrowserViewController
-            webViewController = BrowserViewController(url: url)
+            webViewController = BrowserViewController(url: WireURLs.shared.legal)
             webViewController.completion = { [weak controller] in
                 if let controller {
-                    UIAlertController.requestTOSApproval(over: controller, forTeamAccount: forTeamAccount, completion: completion)
+                    UIAlertController.requestTOSApproval(
+                        over: controller,
+                        forTeamAccount: forTeamAccount,
+                        completion: completion
+                    )
                 }
             }
             controller?.present(webViewController, animated: true)

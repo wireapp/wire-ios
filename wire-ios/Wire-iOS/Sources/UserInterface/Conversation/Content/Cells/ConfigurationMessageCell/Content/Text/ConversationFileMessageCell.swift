@@ -25,7 +25,7 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
     struct Configuration {
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -103,16 +103,12 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
 
     override var tintColor: UIColor! {
         didSet {
-            self.fileTransferView.tintColor = self.tintColor
+            fileTransferView.tintColor = tintColor
         }
     }
 
-    var selectionView: UIView! {
-        return fileTransferView
-    }
-
     var selectionRect: CGRect {
-        return fileTransferView.bounds
+        fileTransferView.bounds
     }
 
 }
@@ -141,8 +137,9 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     weak var actionController: ConversationMessageActionController?
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedFileCell" : "FileCell"
+        configuration.isObfuscated ? "ObfuscatedFileCell" : "FileCell"
     }
+
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage) {

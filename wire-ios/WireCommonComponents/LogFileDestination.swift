@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
 
 public enum LogFileDestination: CaseIterable, FileLoggerDestination {
@@ -32,18 +33,19 @@ public enum LogFileDestination: CaseIterable, FileLoggerDestination {
     public var filename: String {
         switch self {
         case .main:
-            return "oslog_dump.log"
+            "oslog_dump.log"
         case .nse:
-            return "oslog_NSE_dump.log"
+            "oslog_NSE_dump.log"
         case .shareExtension:
-            return "oslog_share_dump.log"
+            "oslog_share_dump.log"
         }
     }
 
     public var log: URL? {
         switch self {
         case .nse, .shareExtension:
-            guard let url = Bundle.appMainBundle.applicationGroupIdentifier.map(FileManager.sharedContainerDirectory(for:)) else {
+            guard let url = Bundle.appMainBundle.applicationGroupIdentifier
+                .map(FileManager.sharedContainerDirectory(for:)) else {
                 return nil
             }
             return url.appendingPathComponent(filename)

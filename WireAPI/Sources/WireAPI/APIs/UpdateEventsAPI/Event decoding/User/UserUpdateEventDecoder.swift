@@ -49,17 +49,17 @@ struct UserUpdateEventDecoder {
         let email: String?
         let isSSOIDDeleted: Bool?
         let assets: [UserAsset]?
-        let supportedProtocols: Set<SupportedProtocol>?
+        let supportedProtocols: Set<MessageProtocol>?
 
         enum CodingKeys: String, CodingKey {
 
             case userID = "id"
             case accentColorID = "accent_id"
-            case name = "name"
-            case handle = "handle"
-            case email = "email"
+            case name
+            case handle
+            case email
             case isSSOIDDeleted = "sso_id_deleted"
-            case assets = "assets"
+            case assets
             case supportedProtocols = "supported_protocols"
 
         }

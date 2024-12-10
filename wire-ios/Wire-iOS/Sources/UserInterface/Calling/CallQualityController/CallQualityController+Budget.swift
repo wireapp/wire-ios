@@ -35,7 +35,7 @@ extension CallQualityController {
 
     /// Returns whether new call quality surveys can be requested, or if the user budget is exceeded.
     func canRequestSurvey(at date: Date, muteInterval: TimeInterval = CallSurveyMuteInterval) -> Bool {
-        guard self.usesCallSurveyBudget else {
+        guard usesCallSurveyBudget else {
             return true
         }
 
@@ -44,7 +44,7 @@ extension CallQualityController {
         let nextPossibleDate = lastSurveyDate.addingTimeInterval(muteInterval)
 
         // Allow the survey if the mute period is finished
-        return (date >= nextPossibleDate)
+        return date >= nextPossibleDate
     }
 
 }

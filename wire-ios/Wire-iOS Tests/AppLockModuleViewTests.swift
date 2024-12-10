@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -25,9 +25,11 @@ final class AppLockModuleViewTests: XCTestCase {
 
     private var sut: AppLockModule.View!
     private var presenter: AppLockModule.MockPresenter!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = .init()
         presenter = .init()
 
@@ -35,6 +37,7 @@ final class AppLockModuleViewTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         presenter = nil
         super.tearDown()
@@ -47,7 +50,7 @@ final class AppLockModuleViewTests: XCTestCase {
         sut.viewDidAppear(false)
 
         // Then
-        XCTAssertEqual(presenter.events, [.viewDidAppear])
+        XCTAssertEqual(presenter.events, [.viewDidFirstAppear])
     }
 
     // @SF.Locking @TSFI.FS-IOS @S0.1
@@ -118,7 +121,7 @@ final class AppLockModuleViewTests: XCTestCase {
             sut.refresh(withModel: .locked(type))
 
             // Then
-            verify(matching: sut)
+            snapshotHelper.verify(matching: sut)
         }
     }
 
@@ -127,7 +130,7 @@ final class AppLockModuleViewTests: XCTestCase {
         sut.refresh(withModel: .authenticating)
 
         // Then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Nib Loading

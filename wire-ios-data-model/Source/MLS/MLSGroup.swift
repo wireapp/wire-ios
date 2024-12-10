@@ -19,19 +19,22 @@
 import CoreData
 import Foundation
 
+/// A managed object representing an MLS group that is primarily being used
+/// to store the last key material update date for a group.
+
 @objcMembers
 public class MLSGroup: ZMManagedObject {
 
     public override static func entityName() -> String {
-        return "MLSGroup"
+        "MLSGroup"
     }
 
     public override class func sortKey() -> String? {
-        return nil
+        nil
     }
 
     public override class func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
     // MARK: - Properties
@@ -58,11 +61,9 @@ public class MLSGroup: ZMManagedObject {
 
     static let idKey = "id"
 
-    @NSManaged
-    private var primitiveId: Data?
+    @NSManaged private var primitiveId: Data?
 
-    @NSManaged
-    public var lastKeyMaterialUpdate: Date?
+    @NSManaged public var lastKeyMaterialUpdate: Date?
 
     // MARK: - Methods
 

@@ -22,17 +22,18 @@ import WireDataModel
 private let zmLog = ZMSLog(tag: "Dependencies")
 
 // MARK: - Dependent objects
+
 extension ZMOTRMessage: OTREntity {
 
     public var context: NSManagedObjectContext {
-        return managedObjectContext!
+        managedObjectContext!
     }
 
     /// Which object this message depends on when sending
     @objc public override var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         guard let conversation else { return nil }
 
-        let dependent = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
+        let dependent = dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
         return dependent ?? super.dependentObjectNeedingUpdateBeforeProcessing
     }
 
@@ -40,8 +41,12 @@ extension ZMOTRMessage: OTREntity {
         // no-op
     }
 
+    public func missesRecipients(_ recipients: Set<WireDataModel.UserClient>) {
+        // no-op
+    }
+
     public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
-        self.mutableSetValue(forKey: ZMMessageFailedToSendRecipientsKey).addObjects(from: recipients)
+        mutableSetValue(forKey: ZMMessageFailedToSendRecipientsKey).addObjects(from: recipients)
     }
 
     public func delivered(with response: ZMTransportResponse) {
@@ -55,19 +60,20 @@ extension ZMOTRMessage: OTREntity {
 }
 
 /// Message that can block following messages
-@objc private protocol BlockingMessage {
+@objc
+private protocol BlockingMessage {
 
     /// If true, no other messages should be sent until this message is sent
     var shouldBlockFurtherMessages: Bool { get }
 }
 
-extension ZMMessage {
+public extension ZMMessage {
 
     /// Which object this message depends on when sending
-    @objc public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
+    @objc var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
 
         // conversation not created yet on the BE?
-        guard let conversation = self.conversation else { return nil }
+        guard let conversation else { return nil }
 
         if conversation.remoteIdentifier == nil {
             zmLog.debug("conversation has no remote identifier")
@@ -95,8 +101,8 @@ extension ZMMessage {
         var selfMessageFound = false
 
         for previousMessage in conversation.lastMessages() {
-            if let currentTimestamp = self.serverTimestamp,
-                let previousTimestamp = previousMessage.serverTimestamp {
+            if let currentTimestamp = serverTimestamp,
+               let previousTimestamp = previousMessage.serverTimestamp {
 
                 // to old?
                 let tooOld = currentTimestamp.timeIntervalSince(previousTimestamp) > MaxDelayToConsiderForBlockingObject
@@ -105,12 +111,12 @@ extension ZMMessage {
                 }
             }
 
-            let sameMessage = previousMessage === self || previousMessage.nonce == self.nonce
+            let sameMessage = previousMessage === self || previousMessage.nonce == nonce
             if sameMessage {
                 selfMessageFound = true
             }
 
-            if selfMessageFound && !sameMessage && previousMessage.shouldBlockFurtherMessages {
+            if selfMessageFound, !sameMessage, previousMessage.shouldBlockFurtherMessages {
                 blockingMessage = previousMessage
                 break
             }
@@ -123,6 +129,6 @@ extension ZMMessage {
 extension ZMMessage: BlockingMessage {
 
     var shouldBlockFurtherMessages: Bool {
-        return self.deliveryState == .pending && !self.isExpired
+        deliveryState == .pending && !isExpired
     }
 }

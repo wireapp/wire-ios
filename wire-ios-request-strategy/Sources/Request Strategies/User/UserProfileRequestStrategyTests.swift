@@ -17,9 +17,10 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
+import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 class UserProfileRequestStrategyTests: MessagingTestBase {
 
@@ -29,7 +30,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -48,7 +49,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             applicationStatus: mockApplicationStatus,
             syncProgress: mockSyncProgress
         )
-
         apiVersion = .v0
     }
 
@@ -56,7 +56,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
-        apiVersion = nil
 
         super.tearDown()
     }
@@ -95,11 +94,13 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             self.apiVersion = .v0
             self.otherUser.domain = "example.com"
             self.otherUser.needsToBeUpdatedFromBackend = true
-            // By reporting the otherUser did change while on v0, sut will case the legacy transcoder to get in a state where it would produce a next request
+            // By reporting the otherUser did change while on v0, sut will case the legacy transcoder to get in a state
+            // where it would produce a next request
             self.sut.objectsDidChange(Set([self.otherUser]))
 
             // when
-            // By switching to v4 and asking for a next request, we get nil because we would only ask the non legacy transcoder for a request, but it's not in a state to do that
+            // By switching to v4 and asking for a next request, we get nil because we would only ask the non legacy
+            // transcoder for a request, but it's not in a state to do that
             self.apiVersion = .v4
             let request = self.sut.nextRequest(for: self.apiVersion)
 
@@ -108,6 +109,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             XCTAssertNil(request)
         }
     }
+
     // MARK: - Slow Sync
 
     func testThatRequestToFetchConnectedUsersIsGenerated_DuringFetchingUsersSyncPhase() {
@@ -306,7 +308,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             self.otherUser.domain = "example.com"
             self.otherUser.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(Set([self.otherUser]))
-            let failedUser: QualifiedID = QualifiedID(uuid: self.otherUser.remoteIdentifier, domain: self.otherUser.domain ?? "")
+            let failedUser = QualifiedID(uuid: self.otherUser.remoteIdentifier, domain: self.otherUser.domain ?? "")
             guard let request = self.sut.nextRequest(for: self.apiVersion) else {
                 return XCTFail("No request generated")
             }
@@ -316,7 +318,8 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
                 return XCTFail("Payload is invalid")
             }
 
-            guard let response = self.successfulResponse(for: payload, failed: [failedUser], apiVersion: self.apiVersion) else {
+            guard let response = self
+                .successfulResponse(for: payload, failed: [failedUser], apiVersion: self.apiVersion) else {
                 return XCTFail("Response is invalid")
             }
             request.complete(with: response)
@@ -443,19 +446,20 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             // given
             let updatedName = "123"
             let event = self.userUpdateEvent(userProfile: Payload.UserProfile(
-                                                id: self.otherUser.remoteIdentifier,
-                                                qualifiedID: nil,
-                                                teamID: nil,
-                                                serviceID: nil,
-                                                SSOID: nil,
-                                                name: updatedName,
-                                                handle: nil,
-                                                phone: nil, email: nil,
-                                                assets: [],
-                                                managedBy: nil, accentColor: nil,
-                                                isDeleted: nil,
-                                                expiresAt: nil,
-                                                legalholdStatus: nil))
+                id: self.otherUser.remoteIdentifier,
+                qualifiedID: nil,
+                teamID: nil,
+                serviceID: nil,
+                SSOID: nil,
+                name: updatedName,
+                handle: nil,
+                phone: nil, email: nil,
+                assets: [],
+                managedBy: nil, accentColor: nil,
+                isDeleted: nil,
+                expiresAt: nil,
+                legalholdStatus: nil
+            ))
 
             // when
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
@@ -505,11 +509,13 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             "time": Date()
         ]
 
-        return ZMUpdateEvent(uuid: UUID(),
-                             payload: payload,
-                             transient: false,
-                             decrypted: true,
-                             source: .webSocket)!
+        return ZMUpdateEvent(
+            uuid: UUID(),
+            payload: payload,
+            transient: false,
+            decrypted: true,
+            source: .webSocket
+        )!
     }
 
     func userUpdateEvent(userProfile: Payload.UserProfile) -> ZMUpdateEvent {
@@ -518,23 +524,29 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             "user": try! JSONSerialization.jsonObject(with: userProfile.payloadData()!, options: [])
         ]
 
-        return ZMUpdateEvent(uuid: UUID(),
-                             payload: payload,
-                             transient: false,
-                             decrypted: true,
-                             source: .webSocket)!
+        return ZMUpdateEvent(
+            uuid: UUID(),
+            payload: payload,
+            transient: false,
+            decrypted: true,
+            source: .webSocket
+        )!
     }
 
-    func successfulResponse(for request: Payload.QualifiedUserIDList, failed: [QualifiedID]? = nil, apiVersion: APIVersion) -> ZMTransportResponse? {
-        let userProfiles = request.qualifiedIDs.map({
-            return userProfile(for: $0.uuid, domain: $0.domain)
-        })
+    func successfulResponse(
+        for request: Payload.QualifiedUserIDList,
+        failed: [QualifiedID]? = nil,
+        apiVersion: APIVersion
+    ) -> ZMTransportResponse? {
+        let userProfiles = request.qualifiedIDs.map {
+            userProfile(for: $0.uuid, domain: $0.domain)
+        }
 
         var payloadData: Data?
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             payloadData = userProfiles.payloadData()
-        case .v4, .v5, .v6:
+        case .v4, .v5, .v6, .v7:
             let userProfiles = Payload.UserProfilesV4(found: userProfiles, failed: failed)
             payloadData = userProfiles.payloadData()
         }
@@ -545,30 +557,32 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             return nil
         }
 
-        let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
-                                           httpStatus: 200,
-                                           transportSessionError: nil,
-                                           apiVersion: apiVersion.rawValue)
-
-        return response
+        return ZMTransportResponse(
+            payload: payloadString as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     func userProfile(for uuid: UUID, domain: String?) -> Payload.UserProfile {
-        return Payload.UserProfile(id: uuid,
-                                   qualifiedID: nil,
-                                   teamID: nil,
-                                   serviceID: nil,
-                                   SSOID: nil,
-                                   name: "John Doe",
-                                   handle: nil,
-                                   phone: nil,
-                                   email: nil,
-                                   assets: [],
-                                   managedBy: nil,
-                                   accentColor: nil,
-                                   isDeleted: nil,
-                                   expiresAt: nil,
-                                   legalholdStatus: nil)
+        Payload.UserProfile(
+            id: uuid,
+            qualifiedID: nil,
+            teamID: nil,
+            serviceID: nil,
+            SSOID: nil,
+            name: "John Doe",
+            handle: nil,
+            phone: nil,
+            email: nil,
+            assets: [],
+            managedBy: nil,
+            accentColor: nil,
+            isDeleted: nil,
+            expiresAt: nil,
+            legalholdStatus: nil
+        )
     }
 
 }

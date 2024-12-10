@@ -27,9 +27,22 @@ protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
 }
 
 protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel, didUpdateState state: ConversationServicesOptionsViewModel.State)
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel, didReceiveError error: Error)
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel, sourceView: UIView?, confirmRemovingServices completion: @escaping (Bool) -> Void) -> UIAlertController?
+
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        didUpdateState state: ConversationServicesOptionsViewModel.State
+    )
+
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        didReceiveError error: Error
+    )
+
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
+        confirmRemovingServices completion: @escaping (Bool) -> Void
+    ) -> UIAlertController?
 }
 
 final class ConversationServicesOptionsViewModel {
@@ -38,23 +51,13 @@ final class ConversationServicesOptionsViewModel {
         var isLoading = false
     }
 
-    private var showLoadingCell = false {
-        didSet {
-            updateRows()
-        }
-    }
-
     var state = State() {
         didSet {
-            delegate?.viewModel(self, didUpdateState: state)
+            delegate?.conversationServicesOptionsViewModel(self, didUpdateState: state)
         }
     }
 
-    weak var delegate: ConversationServicesOptionsViewModelDelegate? {
-        didSet {
-            delegate?.viewModel(self, didUpdateState: state)
-        }
-    }
+    weak var delegate: ConversationServicesOptionsViewModelDelegate?
 
     private let configuration: ConversationServicesOptionsViewModelConfiguration
 
@@ -66,19 +69,24 @@ final class ConversationServicesOptionsViewModel {
             self?.updateRows()
         }
     }
+
     private func updateRows() {
         state.rows = [.allowServicesToggle(
-            get: { [unowned self] in return self.configuration.allowServices },
-            set: { [unowned self] in self.setAllowServices($0, view: $1) }
+            get: { [unowned self] in return configuration.allowServices },
+            set: { [unowned self] in setAllowServices($0, sender: $1) }
         )]
     }
 
     /// set conversation option AllowServices
     /// - Parameters:
     ///   - allowServices: new state AllowServices
-    ///   - view: the source view which triggers setAllowServices action
+    ///   - sender: the source view which triggers setAllowServices action
     /// - Returns: alert controller
-    @discardableResult func setAllowServices(_ allowServices: Bool, view: UIView? = nil) -> UIAlertController? {
+    @discardableResult
+    func setAllowServices(
+        _ allowServices: Bool,
+        sender: UIView
+    ) -> UIAlertController? {
         func _setAllowServices() {
             let item = CancelableItem(delay: 0.4) { [weak self] in
                 self?.state.isLoading = true
@@ -87,13 +95,13 @@ final class ConversationServicesOptionsViewModel {
             configuration.setAllowServices(allowServices) { [weak self] result in
                 guard let self else { return }
                 item.cancel()
-                self.state.isLoading = false
+                state.isLoading = false
 
                 switch result {
                 case .success:
-                    self.updateRows()
-                case .failure(let error):
-                    self.delegate?.viewModel(self, didReceiveError: error)
+                    updateRows()
+                case let .failure(error):
+                    delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
                 }
             }
         }
@@ -102,18 +110,24 @@ final class ConversationServicesOptionsViewModel {
 
         // In case allow services mode should be deactivated & service in conversation, ask the delegate
         // to confirm this action as all services will be removed.
-        if !allowServices && configuration.areServicePresent {
+        if !allowServices, configuration.areServicePresent {
             // Make "remove services" warning only appear if services are present
-            return delegate?.viewModel(self, sourceView: view, confirmRemovingServices: { [weak self] remove in
+            return delegate?.conversationServicesOptionsViewModel(
+                self,
+                fallbackActivityPopoverConfiguration: .sourceView(
+                    sourceView: sender.superview!,
+                    sourceRect: sender.frame.insetBy(dx: -4, dy: -4)
+                )
+            ) { [weak self] remove in
                 guard let self else { return }
-                guard remove else { return self.updateRows() }
+
+                guard remove else { return updateRows() }
                 _setAllowServices()
-            })
+            }
         } else {
             _setAllowServices()
         }
 
         return nil
     }
-
 }

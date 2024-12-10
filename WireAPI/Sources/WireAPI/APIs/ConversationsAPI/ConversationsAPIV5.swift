@@ -21,22 +21,65 @@ import Foundation
 class ConversationsAPIV5: ConversationsAPIV4 {
     override var apiVersion: APIVersion { .v5 }
 
+    var oneToOneConversationsPath: String {
+        "\(pathPrefix)\(basePath)/one2one"
+    }
+
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        let resourcePath = "\(pathPrefix)/conversations/list"
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/list")
 
-        let request = HTTPRequest(
-            path: resourcePath,
-            method: .post,
-            body: body
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
         )
-        let response = try await self.httpClient.executeRequest(request)
 
         // Removed in v5: remove handling of error code 400
         return try ResponseParser()
-            .success(code: 200, type: QualifiedConversationListV5.self) // Change in v5
-            .parse(response)
+            .success(code: .ok, type: QualifiedConversationListV5.self)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    override func getMLSOneToOneConversation(
+        userID: String,
+        in domain: String
+    ) async throws -> Conversation {
+        guard !userID.isEmpty, !domain.isEmpty else {
+            throw ConversationsAPIError.userAndDomainShouldNotBeEmpty
+        }
+
+        let components = URLComponents(string: "\(oneToOneConversationsPath)/\(domain)/\(userID)")
+
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationV5.self)
+            .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
+            .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
+            .parse(code: response.statusCode, data: data)
     }
 }
 
@@ -44,9 +87,9 @@ class ConversationsAPIV5: ConversationsAPIV4 {
 
 private struct QualifiedConversationListV5: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case found = "found"
+        case found
         case notFound = "not_found"
-        case failed = "failed"
+        case failed
     }
 
     let found: [ConversationV5]
@@ -91,10 +134,10 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
     var cipherSuite: MLSCipherSuite? // New field
     var creator: UUID?
     var epoch: UInt?
-    var epochTimestamp: Date? // New field
+    var epochTimestamp: UTCTime? // New field
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: Date?
+    var lastEventTime: UTCTimeMillis?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?
     var messageTimer: TimeInterval?
@@ -115,7 +158,7 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
             mlsGroupID: mlsGroupID,
             cipherSuite: cipherSuite,
             epoch: epoch,
-            epochTimestamp: epochTimestamp,
+            epochTimestamp: epochTimestamp?.date,
             creator: creator,
             members: members.map { $0.toAPIModel() },
             name: name,
@@ -125,7 +168,7 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
             accessRoles: accessRoles,
             legacyAccessRole: nil,
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime
+            lastEventTime: lastEventTime?.date
         )
     }
 }

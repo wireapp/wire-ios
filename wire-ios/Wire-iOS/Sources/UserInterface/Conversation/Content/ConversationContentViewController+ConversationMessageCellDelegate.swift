@@ -22,7 +22,8 @@ import WireDataModel
 extension UIView {
     func targetView(for message: ZMConversationMessage!, dataSource: ConversationTableViewDataSource) -> UIView {
 
-        // If the view is a tableView, search for a visible cell that contains the message and the cell is a SelectableView
+        // If the view is a tableView, search for a visible cell that contains the message and the cell is a
+        // SelectableView
         guard let tableView: UITableView = self as? UITableView else {
             return self
         }
@@ -34,7 +35,7 @@ extension UIView {
         for cell in tableView.visibleCells {
             let indexPath = tableView.indexPath(for: cell)
             if indexPath?.section == section,
-                cell is SelectableView {
+               cell is SelectableView {
                 actionView = cell
                 break
             }
@@ -45,32 +46,39 @@ extension UIView {
 }
 
 extension ConversationContentViewController: ConversationMessageCellDelegate {
-    func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: MessageActionsViewController) {
+
+    func conversationMessageWantsToShowActionsController(
+        _ cell: UIView,
+        actionsController: MessageActionsViewController
+    ) {
         present(actionsController, animated: true)
     }
 
     // MARK: - MessageActionResponder
 
-    func perform(action: MessageAction,
-                 for message: ZMConversationMessage!,
-                 view: UIView) {
+    func perform(
+        action: MessageAction,
+        for message: ZMConversationMessage,
+        view: UIView
+    ) {
+
         let actionView = view.targetView(for: message, dataSource: dataSource)
-
-        // Do not dismiss Modal for forward since share VC is present in a popover
-        let shouldDismissModal = action != .delete && action != .copy &&
-            !(action == .forward && isIPadRegular())
-
-        if messagePresenter.modalTargetController?.presentedViewController != nil &&
-            shouldDismissModal {
+        let shouldDismissModal = action != .delete && action != .copy
+        if messagePresenter.modalTargetController?.presentedViewController != nil,
+           shouldDismissModal {
             messagePresenter.modalTargetController?.dismiss(animated: true) {
-                self.messageAction(actionId: action,
-                                   for: message,
-                                   view: actionView)
+                self.messageAction(
+                    actionId: action,
+                    for: message,
+                    view: actionView
+                )
             }
         } else {
-            messageAction(actionId: action,
-                          for: message,
-                          view: actionView)
+            messageAction(
+                actionId: action,
+                for: message,
+                view: actionView
+            )
         }
     }
 
@@ -78,21 +86,38 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         delegate?.didTap(onUserAvatar: user, view: sourceView, frame: frame)
     }
 
-    func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool {
-        return delegate?.conversationContentViewController(self, shouldBecomeFirstResponderWhenShowMenuFromCell: cell) ?? false
-    }
+    func conversationMessageWantsToOpenMessageDetails(
+        _ cell: UIView,
+        for message: ZMConversationMessage,
+        preferredDisplayMode: MessageDetailsDisplayMode
+    ) {
+        let messageDetailsViewController = MessageDetailsViewController(
+            message: message,
+            preferredDisplayMode: preferredDisplayMode,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
+        )
+        let navigationController = UINavigationController(rootViewController: messageDetailsViewController)
+        navigationController.modalPresentationStyle = .formSheet
 
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {
-        let messageDetailsViewController = MessageDetailsViewController(message: message, preferredDisplayMode: preferredDisplayMode, userSession: userSession)
-        parent?.present(messageDetailsViewController, animated: true)
+        parent?.present(navigationController, animated: true)
     }
 
     func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView) {
         delegate?.conversationContentViewController(self, presentGuestOptionsFrom: sourceView)
     }
 
-    func conversationMessageWantsToOpenParticipantsDetails(_ cell: UIView, selectedUsers: [UserType], sourceView: UIView) {
-        delegate?.conversationContentViewController(self, presentParticipantsDetailsWithSelectedUsers: selectedUsers, from: sourceView)
+    func conversationMessageWantsToOpenParticipantsDetails(
+        _ cell: UIView,
+        selectedUsers: [UserType],
+        sourceView: UIView
+    ) {
+        delegate?.conversationContentViewController(
+            self,
+            presentParticipantsDetailsWithSelectedUsers: selectedUsers,
+            from: sourceView
+        )
     }
 
     func conversationMessageShouldUpdate() {

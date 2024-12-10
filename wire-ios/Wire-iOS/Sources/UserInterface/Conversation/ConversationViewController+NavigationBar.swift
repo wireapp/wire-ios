@@ -22,6 +22,7 @@ import WireDesign
 import WireSyncEngine
 
 // MARK: - Update left navigator bar item when size class changes
+
 extension ConversationViewController {
 
     typealias IconColors = SemanticColors.Icon
@@ -29,50 +30,64 @@ extension ConversationViewController {
     typealias CallActions = L10n.Localizable.Call.Actions
 
     func addCallStateObserver() -> Any? {
-        return conversation.voiceChannel?.addCallStateObserver(self)
+        conversation.voiceChannel?.addCallStateObserver(self)
     }
 
-    var audioCallButton: UIButton {
-        let button = IconButton()
-        button.setIcon(.phone, size: .tiny, for: .normal)
-        button.setIconColor(IconColors.foregroundDefault, for: .normal)
+    private var audioCallButton: UIButton {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(resource: .audioCall), for: .normal)
+        button.tintColor = IconColors.foregroundDefault
 
         button.accessibilityIdentifier = "audioCallBarButton"
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeAudioCall
 
-        button.addTarget(self, action: #selector(ConversationViewController.voiceCallItemTapped(_:)), for: .touchUpInside)
+        let audioCallAction = UIAction { [weak self] _ in
+            self?.voiceCallItemTapped()
+        }
+        button.addAction(audioCallAction, for: .touchUpInside)
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
-        button.setBorderColor(ButtonColors.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
 
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = CallActions.Label.makeAudioCall
+        button.largeContentImage = UIImage(resource: .audioCall)
+
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
         return button
     }
 
-    var videoCallButton: UIButton {
-        let button = IconButton()
-        button.setIcon(.camera, size: .tiny, for: .normal)
-        button.setIconColor(IconColors.foregroundDefault, for: .normal)
+    private var videoCallButton: UIButton {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(resource: .videoCall), for: .normal)
+        button.tintColor = IconColors.foregroundDefault
 
         button.accessibilityIdentifier = "videoCallBarButton"
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeVideoCall
 
-        button.addTarget(self, action: #selector(ConversationViewController.videoCallItemTapped(_:)), for: .touchUpInside)
+        let videoCallAction = UIAction { [weak self] _ in
+            self?.videoCallItemTapped()
+        }
+        button.addAction(videoCallAction, for: .touchUpInside)
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
-        button.setBorderColor(ButtonColors.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
 
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = CallActions.Label.makeVideoCall
+        button.largeContentImage = UIImage(resource: .videoCall)
+
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
         return button
@@ -96,39 +111,69 @@ extension ConversationViewController {
     var joinCallButton: UIBarButtonItem {
         typealias Conversation = L10n.Accessibility.ConversationsList
 
-        let button = IconButton(fontSpec: .smallSemiboldFont)
-        button.adjustsTitleWhenHighlighted = true
-        button.adjustBackgroundImageWhenHighlighted = true
+        let button = UIButton(type: .system)
         button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
+        button.titleLabel?.font = .font(for: .body2)
+        button.setTitleColor(SemanticColors.Label.textWhite, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.adjustsFontForContentSizeCategory = false
+
         button.accessibilityLabel = Conversation.JoinButton.description
         button.accessibilityHint = Conversation.JoinButton.hint
         button.accessibilityTraits.insert(.startsMediaSession)
+
         button.backgroundColor = SemanticColors.Icon.backgroundJoinCall
-        button.addTarget(self, action: #selector(joinCallButtonTapped), for: .touchUpInside)
+
+        let joinAction = UIAction { [weak self] _ in
+            self?.joinCallButtonTapped()
+        }
+
+        button.addAction(joinAction, for: .touchUpInside)
+
         button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 2, right: 8)
-        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 24))
+        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
         button.layer.cornerRadius = button.bounds.height / 2
+
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = Conversation.JoinButton.description
+
         return UIBarButtonItem(customView: button)
     }
 
-    var backButton: UIBarButtonItem {
-        let hasUnreadInOtherConversations = self.conversation.hasUnreadMessagesInOtherConversations
-        let arrowIcon: StyleKitIcon = view.isRightToLeft
-        ? (hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow)
-        : (hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow)
+    func createBackButton(hasUnread: Bool) -> UIBarButtonItem {
+        typealias UnreadMessages = L10n.Localizable.ConversationList.Voiceover.UnreadMessages
 
-        let icon: StyleKitIcon = (self.parent?.wr_splitViewController?.layoutSize == .compact) ? arrowIcon : .hamburger
+        let icon = backButtonIcon(hasUnreadInOtherConversations: hasUnread)
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
-        let button = UIBarButtonItem(icon: icon, target: self, action: action)
+
+        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: action)
         button.accessibilityIdentifier = "ConversationBackButton"
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
+        button.tintColor = hasUnread ? UIColor.accent() : nil
+        button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
 
-        if hasUnreadInOtherConversations {
-            button.tintColor = UIColor.accent()
-            button.accessibilityValue = L10n.Localizable.ConversationList.Voiceover.UnreadMessages.hint
-        }
+        // Enable swipe-to-go-back gesture
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 
         return button
+    }
+
+    private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> UIImage {
+        if view.isRightToLeft {
+            if hasUnreadInOtherConversations {
+                UIImage(resource: .unreadForwardArrow)
+            } else {
+                UIImage(resource: .forwardArrow)
+            }
+        } else {
+            if hasUnreadInOtherConversations {
+                UIImage(resource: .unreadBackArrow)
+            } else {
+                UIImage(resource: .backArrow)
+            }
+        }
     }
 
     var shouldShowCollectionsButton: Bool {
@@ -139,21 +184,21 @@ extension ConversationViewController {
             return false
         }
 
-        switch self.conversation.conversationType {
+        switch conversation.conversationType {
         case .group: return true
         case .oneOnOne:
             if let connection = conversation.oneOnOneUser?.connection,
-               connection.status != .pending && connection.status != .sent {
+               connection.status != .pending, connection.status != .sent {
                 return true
             } else {
-                return nil != conversation.teamRemoteIdentifier
+                return conversation.teamRemoteIdentifier != nil
             }
         default: return false
         }
     }
 
     func rightNavigationItems(forConversation conversation: ZMConversation) -> [UIBarButtonItem] {
-        guard !conversation.isReadOnly, conversation.localParticipants.count != 0 else { return [] }
+        guard !conversation.isReadOnly, !conversation.localParticipants.isEmpty else { return [] }
 
         if conversation.canJoinCall {
             return [joinCallButton]
@@ -168,11 +213,11 @@ extension ConversationViewController {
         }
     }
 
-    func leftNavigationItems(forConversation conversation: ZMConversation) -> [UIBarButtonItem] {
+    func leftNavigationItems(hasUnread: Bool) -> [UIBarButtonItem] {
         var items: [UIBarButtonItem] = []
 
-        if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
-            items.append(backButton)
+        if traitCollection.horizontalSizeClass != .regular {
+            items.append(createBackButton(hasUnread: hasUnread))
         }
 
         if shouldShowCollectionsButton {
@@ -188,12 +233,21 @@ extension ConversationViewController {
 
     /// Update left navigation bar items
     func updateLeftNavigationBarItems() {
-        navigationItem.leftBarButtonItems = leftNavigationItems(forConversation: conversation)
+        updateLeftNavigationBarItemsTask?.cancel()
+        updateLeftNavigationBarItemsTask = Task {
+            if Task.isCancelled { return }
+
+            let hasUnread = self.conversation.hasUnreadMessagesInOtherConversations
+            if Task.isCancelled { return }
+
+            await MainActor.run {
+                navigationItem.leftBarButtonItems = leftNavigationItems(hasUnread: hasUnread)
+            }
+        }
     }
 
-    @objc
-    func voiceCallItemTapped(_ sender: UIBarButtonItem) {
-        endEditing()
+    func voiceCallItemTapped() {
+        view.window?.endEditing(true)
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
         }
@@ -201,35 +255,42 @@ extension ConversationViewController {
         checker.performAction()
     }
 
-    @objc func videoCallItemTapped(_ sender: UIBarButtonItem) {
+    func videoCallItemTapped() {
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
-            endEditing()
+            view.window?.endEditing(true)
             startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
         }
 
         checker.performAction()
     }
 
-    @objc private dynamic func joinCallButtonTapped(_sender: AnyObject!) {
+    private dynamic func joinCallButtonTapped() {
         startCallController.joinCall()
     }
 
-    @objc func dismissCollectionIfNecessary() {
-        if let collectionController = self.collectionController {
+    @objc
+    func dismissCollectionIfNecessary() {
+        if let collectionController {
             collectionController.dismiss(animated: false)
         }
     }
 }
 
+extension ConversationViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        navigationController?.viewControllers.count ?? 0 > 1
+    }
+}
+
 extension ConversationViewController: CollectionsViewControllerDelegate {
-    func collectionsViewController(_ viewController: CollectionsViewController, performAction action: MessageAction, onMessage message: ZMConversationMessage) {
+
+    func collectionsViewController(
+        _ viewController: CollectionsViewController,
+        performAction action: MessageAction,
+        onMessage message: ZMConversationMessage
+    ) {
+
         switch action {
-        case .forward:
-            viewController.dismissIfNeeded(animated: true) {
-                self.contentViewController.scroll(to: message) { cell in
-                    self.contentViewController.showForwardFor(message: message, from: cell)
-                }
-            }
 
         case .showInConversation:
             viewController.dismissIfNeeded(animated: true) {
@@ -253,7 +314,13 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
 
 extension ConversationViewController: WireCallCenterCallStateObserver {
 
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         updateRightNavigationItemsButtons()
     }
 
@@ -263,15 +330,15 @@ extension ZMConversation {
 
     /// Whether there is an incoming or inactive incoming call that can be joined.
     var canJoinCall: Bool {
-        return voiceChannel?.state.canJoinCall ?? false
+        voiceChannel?.state.canJoinCall ?? false
     }
 
     var canStartVideoCall: Bool {
-        return !isCallOngoing
+        !isCallOngoing
     }
 
     var isCallOngoing: Bool {
-        return voiceChannel?.state.isCallOngoing ?? true
+        voiceChannel?.state.isCallOngoing ?? true
     }
 }
 
@@ -279,15 +346,15 @@ extension CallState {
 
     var canJoinCall: Bool {
         switch self {
-        case .incoming: return true
-        default: return false
+        case .incoming: true
+        default: false
         }
     }
 
     var isCallOngoing: Bool {
         switch self {
-        case .none, .incoming: return false
-        default: return true
+        case .none, .incoming: false
+        default: true
         }
     }
 }

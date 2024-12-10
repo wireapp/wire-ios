@@ -26,18 +26,26 @@ class ConversationsAPIV2: ConversationsAPIV1 {
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
 
         // New change for v2
-        let resourcePath = "\(pathPrefix)/conversations/list"
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/list")
 
-        let request = HTTPRequest(
-            path: resourcePath,
-            method: .post,
-            body: body
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
         )
-        let response = try await self.httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: QualifiedConversationListV0.self)
-            .failure(code: 400, error: ConversationsAPIError.invalidBody)
-            .parse(response)
+            .success(code: .ok, type: QualifiedConversationListV0.self)
+            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+            .parse(code: response.statusCode, data: data)
     }
 }

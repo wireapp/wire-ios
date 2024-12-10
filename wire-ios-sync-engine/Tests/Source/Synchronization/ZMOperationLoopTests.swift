@@ -16,21 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireTransport
+import XCTest
 
 extension ZMOperationLoopTests {
 
-    // MARK: - Helpers
+    // MARK: - BackendInfo Helpers
 
     @objc
-    func setCurrentAPIVersion(_ apiVersion: APIVersion) {
-        setCurrentAPIVersion(.some(apiVersion))
-    }
-
-    @objc
-    func clearCurrentAPIVersion() {
-        // we want to remove the apiVersion here
-        setCurrentAPIVersion(nil)
+    func setBackendInfoAPIVersionNil() {
+        BackendInfo.apiVersion = nil
     }
 
     // MARK: - Tests
@@ -38,10 +33,15 @@ extension ZMOperationLoopTests {
     func testThatMOCIsSavedOnSuccessfulRequest() {
         // given
         let request = ZMTransportRequest(path: "/boo", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
-        request.add(ZMCompletionHandler(on: syncMOC,
-                                        block: { [weak self] _ in
-                                            _ = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: self!.syncMOC)
-                                        }))
+        request.add(ZMCompletionHandler(
+            on: syncMOC,
+            block: { [weak self] _ in
+                _ = ZMClientMessage(
+                    nonce: NSUUID.create(),
+                    managedObjectContext: self!.syncMOC
+                )
+            }
+        ))
         mockRequestStrategy.mockRequest = request
 
         RequestAvailableNotification.notifyNewRequestsAvailable(self) // this will enqueue `request`
@@ -51,10 +51,16 @@ extension ZMOperationLoopTests {
         customExpectation(
             forNotification: .NSManagedObjectContextDidSave,
             object: nil,
-            handler: nil)
+            handler: nil
+        )
 
         // when
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
         request.complete(with: response)
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -66,10 +72,15 @@ extension ZMOperationLoopTests {
     func testThatMOCIsSavedOnFailedRequest() {
         // given
         let request = ZMTransportRequest(path: "/boo", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
-        request.add(ZMCompletionHandler(on: syncMOC,
-                                        block: { [weak self] _ in
-                                            _ = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: self!.syncMOC)
-                                        }))
+        request.add(ZMCompletionHandler(
+            on: syncMOC,
+            block: { [weak self] _ in
+                _ = ZMClientMessage(
+                    nonce: NSUUID.create(),
+                    managedObjectContext: self!.syncMOC
+                )
+            }
+        ))
         mockRequestStrategy.mockRequest = request
 
         RequestAvailableNotification.notifyNewRequestsAvailable(self) // this will enqueue `request`
@@ -79,10 +90,16 @@ extension ZMOperationLoopTests {
         customExpectation(
             forNotification: .NSManagedObjectContextDidSave,
             object: nil,
-            handler: nil)
+            handler: nil
+        )
 
         // when
-        request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request.complete(with: ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // then

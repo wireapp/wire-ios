@@ -56,7 +56,8 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     // MARK: - Methods
 
-    public func processPayload(_ payload: ZMTransportData) {
+    func processPayload(_ payload: ZMTransportData) {
+        // here's no uuid is needed since we process it directly it's just convenience to get the payload
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
             Task {
                 await processConversationEvents([event])
@@ -64,13 +65,21 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         }
     }
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+    /// This method is called from EventProcessor directly
+    public func processEvents(_ events: [ZMUpdateEvent]) async {
         await processConversationEvents(events)
     }
 
     public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
         for event in events {
             await processConversationEvent(event)
+        }
+    }
+
+    public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
+        await processConversationEvents(events)
+        _ = await context.perform {
+            self.context.saveOrRollback()
         }
     }
 
@@ -283,7 +292,11 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
 
-    func fetchOrCreateConversation(id: UUID?, qualifiedID: QualifiedID?, in context: NSManagedObjectContext) -> ZMConversation? {
+    func fetchOrCreateConversation(
+        id: UUID?,
+        qualifiedID: QualifiedID?,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
         return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
     }

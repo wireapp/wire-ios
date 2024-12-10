@@ -34,11 +34,11 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
     // MARK: - Methods
 
     var state: AuthenticationState {
-        return isLoggedIn ? .authenticated : .unauthenticated
+        isLoggedIn ? .authenticated : .unauthenticated
     }
 
     private var isLoggedIn: Bool {
-        return transportSession.cookieStorage.authenticationCookieData != nil
+        transportSession.cookieStorage.hasAuthenticationCookie
     }
 
 }

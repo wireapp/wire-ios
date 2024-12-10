@@ -31,7 +31,6 @@ FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 #import <WireUtilities/ZMFunctional.h>
 #import <WireUtilities/ZMTimer.h>
 #import <WireUtilities/NSUserDefaults+SharedUserDefaults.h>
-#import <WireUtilities/NSManagedObjectContext+WireUtilities.h>
 #import <WireUtilities/NSLocale+Internal.h>
 #import <WireUtilities/ZMMobileProvisionParser.h>
 #import <WireUtilities/NSString+Normalization.h>

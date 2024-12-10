@@ -19,21 +19,18 @@
 import Foundation
 
 extension MockConversation {
-    @objc
-    var isSelfAnActiveMember: Bool {
+    @objc var isSelfAnActiveMember: Bool {
         let selfUserPredicate = NSPredicate(format: "isSelfUser == YES")
         return !sortedActiveParticipants.filter { selfUserPredicate.evaluate(with: $0) }.isEmpty
     }
 
-    @objc
-    var localParticipants: Set<AnyHashable> {
-        return Set(sortedActiveParticipants as! [AnyHashable])
+    @objc var localParticipants: Set<AnyHashable> {
+        Set(sortedActiveParticipants as! [AnyHashable])
     }
 
-    @objc
-    var activeParticipants: [AnyHashable] {
+    @objc var activeParticipants: [AnyHashable] {
         get {
-            return sortedActiveParticipants as! [AnyHashable]
+            sortedActiveParticipants as! [AnyHashable]
         }
 
         set {
@@ -41,9 +38,8 @@ extension MockConversation {
         }
     }
 
-    @objc
-    var primitiveMlsGroupID: Data? {
-        return nil
+    @objc var primitiveMlsGroupID: Data? {
+        nil
     }
 
     static func oneOnOneConversation(otherUser: UserType = MockUser.mockUsers().first!) -> MockConversation {
@@ -58,8 +54,10 @@ extension MockConversation {
         return mockConversation
     }
 
-    static func groupConversation(selfUser: UserType = MockUserType.createSelfUser(name: "Alice"),
-                                  otherUser: UserType = SwiftMockLoader.mockUsers().first!) -> MockConversation {
+    static func groupConversation(
+        selfUser: UserType = MockUserType.createSelfUser(name: "Alice"),
+        otherUser: UserType = SwiftMockLoader.mockUsers().first!
+    ) -> MockConversation {
         let mockConversation = MockConversation()
         mockConversation.conversationType = .group
         mockConversation.displayName = otherUser.name
@@ -69,13 +67,9 @@ extension MockConversation {
         return mockConversation
     }
 
-    @objc (willAccessValueForKey:)
-    func willAccessValue(forKey: String) {
+    @objc(willAccessValueForKey:)
+    func willAccessValue(forKey: String) {}
 
-    }
-
-    @objc (didAccessValueForKey:)
-    func didAccessValue(forKey: String) {
-
-    }
+    @objc(didAccessValueForKey:)
+    func didAccessValue(forKey: String) {}
 }

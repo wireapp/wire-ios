@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
 import Ziphy
+@testable import Wire
 
 final class GiphySearchViewControllerTests: XCTestCase {
 
@@ -49,9 +49,13 @@ final class GiphySearchViewControllerTests: XCTestCase {
     func testGiphySearchViewControllerIsNotRetainedAfterTimerIsScheduled() {
         autoreleasepool {
             // GIVEN
-            let searchTerm: String = "apple"
+            let searchTerm = "apple"
 
-            var giphySearchViewController: GiphySearchViewController! = GiphySearchViewController(searchTerm: searchTerm, conversation: (mockConversation as Any) as! ZMConversation, searchResultsController: resultsController)
+            var giphySearchViewController: GiphySearchViewController! = GiphySearchViewController(
+                searchTerm: searchTerm,
+                conversation: (mockConversation as Any) as! ZMConversation,
+                searchResultsController: resultsController
+            )
             sut = giphySearchViewController
 
             // WHEN

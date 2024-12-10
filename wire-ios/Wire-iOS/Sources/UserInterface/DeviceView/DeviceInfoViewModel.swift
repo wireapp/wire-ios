@@ -64,9 +64,7 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     var mlsThumbprint: String? {
-        e2eIdentityCertificate?
-            .mlsThumbprint
-            .splitStringIntoLines(charactersPerLine: 16)
+        userClient.mlsThumbPrint?.splitStringIntoLines(charactersPerLine: 16)
     }
 
     var serialNumber: String? {
@@ -117,8 +115,8 @@ final class DeviceInfoViewModel: ObservableObject {
             }
         }
 
-        e2eIdentityCertificate = userClient.e2eIdentityCertificate
-        isProteusVerificationEnabled = userClient.verified
+        self.e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        self.isProteusVerificationEnabled = userClient.verified
     }
 
     func update(from userClient: UserClientType) {
@@ -128,19 +126,19 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func enrollClient() async {
-        self.isActionInProgress = true
+        isActionInProgress = true
         do {
             let certificateChain = try await actionsHandler.enrollClient()
             showCertificateUpdateSuccess?(certificateChain)
         } catch {
             showEnrollmentCertificateError = true
         }
-        self.isActionInProgress = false
+        isActionInProgress = false
     }
 
     @MainActor
     func removeDevice() async {
-        self.shouldDismiss = await actionsHandler.removeDevice()
+        shouldDismiss = await actionsHandler.removeDevice()
     }
 
     func resetSession() {
@@ -165,7 +163,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func getProteusFingerPrint() async {
-        self.proteusKeyFingerprint = await actionsHandler.getProteusFingerPrint()
+        proteusKeyFingerprint = await actionsHandler.getProteusFingerPrint()
     }
 
     func onAppear() {

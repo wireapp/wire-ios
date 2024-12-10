@@ -27,14 +27,13 @@ enum AuthenticationCoordinatorAction {
     case executeFeedbackAction(AuthenticationErrorFeedbackAction)
     case presentAlert(AuthenticationCoordinatorAlert)
     case presentErrorAlert(AuthenticationCoordinatorErrorAlert)
-    case completeBackupStep
+    case completeBackupStep(didSucceed: Bool?)
     case completeLoginFlow
     case startPostLoginFlow
     case transition(AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
     case requestEmailVerificationCode(email: String, password: String)
     case configureNotifications
     case startIncrementalUserCreation(UnregisteredUser)
-    case setMarketingConsent(Bool)
     case completeUserRegistration
     case openURL(URL)
     case repeatAction
@@ -58,9 +57,9 @@ enum AuthenticationCoordinatorAction {
     var retainsModal: Bool {
         switch self {
         case .openURL:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
@@ -88,8 +87,15 @@ struct AuthenticationCoordinatorAlertAction {
 }
 
 extension AuthenticationCoordinatorAlertAction {
-    static let ok: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.ok, coordinatorActions: [])
-    static let cancel: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.cancel, coordinatorActions: [], style: .cancel)
+    static let ok: AuthenticationCoordinatorAlertAction = .init(
+        title: L10n.Localizable.General.ok,
+        coordinatorActions: []
+    )
+    static let cancel: AuthenticationCoordinatorAlertAction = .init(
+        title: L10n.Localizable.General.cancel,
+        coordinatorActions: [],
+        style: .cancel
+    )
 }
 
 /// A customizable alert to display inside the coordinator's presenter.

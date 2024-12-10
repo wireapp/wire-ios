@@ -123,7 +123,7 @@
 - (void)setAuthenticationCookieData;
 {
     NSURL *URL = [NSURL URLWithString:@"https://www.example.com"];
-    NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
+    NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-9999 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL
                                                               statusCode:200
                                                              HTTPVersion:@""

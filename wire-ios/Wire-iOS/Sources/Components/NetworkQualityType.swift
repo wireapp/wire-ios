@@ -25,6 +25,6 @@ enum NetworkQualityType: Int, Comparable {
     case typeWifi
 
     static func < (lhs: NetworkQualityType, rhs: NetworkQualityType) -> Bool {
-        return lhs.rawValue < rhs.rawValue
+        lhs.rawValue < rhs.rawValue
     }
 }

@@ -36,12 +36,12 @@ final class PasscodeSetupInteractor {
 }
 
 // MARK: - Interface
+
 extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
 
     func storePasscode(passcode: String) throws {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: [John] Inject the app lock controller.
-        // swiftlint:enable todo_requires_jira_link
         guard let appLock = ZMUserSession.shared()?.appLockController else { return }
 
         try appLock.updatePasscode(passcode)
@@ -55,7 +55,7 @@ extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
         }
 
         switch error {
-        case .invalidPassword(let violations):
+        case let .invalidPassword(violations):
             interactorOutput?.passcodeValidated(result: .invalid(violations: violations))
         default:
             break

@@ -18,27 +18,27 @@
 
 import Foundation
 
-public struct Connection: Equatable {
+public struct Connection: Equatable, Codable, Sendable {
 
     /// Remote identifier of the sender
 
-    public let senderId: UUID?
+    public let senderID: UUID?
 
     /// Remote identifier of the receiver
 
-    public let receiverId: UUID?
+    public let receiverID: UUID?
 
     /// Qualified identifier of the receiver
 
-    public let receiverQualifiedId: QualifiedID?
+    public let receiverQualifiedID: QualifiedID?
 
     /// Remote identifier of the conversation
 
-    public let conversationId: UUID?
+    public let conversationID: UUID?
 
     /// Qualified identifier of the conversation
 
-    public let qualifiedConversationId: QualifiedID?
+    public let qualifiedConversationID: QualifiedID?
 
     /// Time when connection was last updated
 
@@ -47,4 +47,23 @@ public struct Connection: Equatable {
     /// current status of connection
 
     public let status: ConnectionStatus
+
+    public init(
+        senderID: UUID?,
+        receiverID: UUID?,
+        receiverQualifiedID: QualifiedID?,
+        conversationID: UUID?,
+        qualifiedConversationID: QualifiedID?,
+        lastUpdate: Date,
+        status: ConnectionStatus
+    ) {
+        self.senderID = senderID
+        self.receiverID = receiverID
+        self.receiverQualifiedID = receiverQualifiedID
+        self.conversationID = conversationID
+        self.qualifiedConversationID = qualifiedConversationID
+        self.lastUpdate = lastUpdate
+        self.status = status
+    }
+
 }

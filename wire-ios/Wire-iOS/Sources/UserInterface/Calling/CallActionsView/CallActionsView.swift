@@ -50,21 +50,25 @@ final class CallActionsView: UIView {
     private let acceptCallButton = IconButton.acceptCall()
 
     private var allButtons: [UIButton] {
-        return [microphoneButton, cameraButton, speakerButton, flipCameraButton, endCallButton, acceptCallButton]
+        [microphoneButton, cameraButton, speakerButton, flipCameraButton, endCallButton, acceptCallButton]
     }
 
     // MARK: - Setup
 
     init() {
         super.init(frame: .zero)
-        videoButtonDisabledTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(performButtonAction))
+        self.videoButtonDisabledTapRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(performButtonAction)
+        )
         setupViews()
         setupAccessibility()
         createConstraints()
         updateToLayoutSize(layoutSize)
     }
 
-    @available(*, unavailable) required init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -80,7 +84,8 @@ final class CallActionsView: UIView {
         verticalStackView.spacing = 37
         addSubview(verticalStackView)
         [microphoneButton, cameraButton, flipCameraButton, speakerButton].forEach(topStackView.addArrangedSubview)
-        [firstBottomRowSpacer, endCallButton, secondBottomRowSpacer, acceptCallButton].forEach(bottomStackView.addArrangedSubview)
+        [firstBottomRowSpacer, endCallButton, secondBottomRowSpacer, acceptCallButton]
+            .forEach(bottomStackView.addArrangedSubview)
         [speakersAllSegmentedView, topStackView].forEach(verticalStackView.addArrangedSubview)
         allButtons.forEach { $0.addTarget(self, action: #selector(performButtonAction), for: .touchUpInside) }
         addSubview(cameraButtonDisabled)
@@ -140,7 +145,7 @@ final class CallActionsView: UIView {
             bottomStackView.topAnchor.constraint(equalTo: topStackView.topAnchor),
             bottomStackView.heightAnchor.constraint(equalTo: endCallButton.heightAnchor),
             bottomStackView.trailingAnchor.constraint(lessThanOrEqualTo: topStackView.leadingAnchor),
-            bottomStackView.leadingAnchor.constraint(equalTo: safeLeadingAnchor, constant: 40),
+            bottomStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 40),
             verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ]
     }
@@ -182,6 +187,7 @@ final class CallActionsView: UIView {
         setNeedsLayout()
         layoutIfNeeded()
     }
+
     // MARK: - State Input
 
     // Single entry point for all state changes.
@@ -209,11 +215,11 @@ final class CallActionsView: UIView {
     }
 
     private func canToggleMuteButton(_ input: CallActionsViewInputType) -> Bool {
-        return !input.permissions.isAudioDisabledForever
+        !input.permissions.isAudioDisabledForever
     }
 
     private func canToggleSpeakerButton(_ input: CallActionsViewInputType) -> Bool {
-        return input.mediaState.canSpeakerBeToggled
+        input.mediaState.canSpeakerBeToggled
     }
 
     // MARK: - Action Output
@@ -222,19 +228,20 @@ final class CallActionsView: UIView {
         delegate?.callActionsView(self, perform: .updateVideoGridPresentationMode(mode))
     }
 
-    @objc private func performButtonAction(_ sender: IconLabelButton) {
+    @objc
+    private func performButtonAction(_ sender: IconLabelButton) {
         delegate?.callActionsView(self, perform: action(for: sender))
     }
 
     private func action(for button: IconLabelButton) -> CallAction {
         switch button {
-        case microphoneButton: return .toggleMuteState
-        case cameraButton: return .toggleVideoState
-        case videoButtonDisabledTapRecognizer: return .alertVideoUnavailable
-        case speakerButton: return .toggleSpeakerState
-        case flipCameraButton: return .flipCamera
-        case endCallButton: return .terminateCall
-        case acceptCallButton: return .acceptCall
+        case microphoneButton: .toggleMuteState
+        case cameraButton: .toggleVideoState
+        case videoButtonDisabledTapRecognizer: .alertVideoUnavailable
+        case speakerButton: .toggleSpeakerState
+        case flipCameraButton: .flipCamera
+        case endCallButton: .terminateCall
+        case acceptCallButton: .acceptCall
         default: fatalError("Unexpected Button: \(button)")
         }
     }
@@ -246,14 +253,18 @@ final class CallActionsView: UIView {
 
         microphoneButton.accessibilityLabel = input.isMuted ? Label.toggleMuteOff : Label.toggleMuteOn
         flipCameraButton.accessibilityLabel = Label.flipCamera
-        speakerButton.accessibilityLabel = input.mediaState.isSpeakerEnabled ? Label.toggleSpeakerOff : Label.toggleSpeakerOn
+        speakerButton.accessibilityLabel = input.mediaState.isSpeakerEnabled ? Label.toggleSpeakerOff : Label
+            .toggleSpeakerOn
         acceptCallButton.accessibilityLabel = Label.acceptCall
         endCallButton.accessibilityLabel = input.callState.canAccept ? Label.rejectCall : Label.terminateCall
         cameraButtonDisabled.accessibilityLabel = Label.toggleVideoOn
         cameraButton.accessibilityLabel = input.mediaState.isSendingVideo ? Label.toggleVideoOff : Label.toggleVideoOn
-        flipCameraButton.accessibilityLabel = input.cameraType == .front ? Label.switchToBackCamera : Label.switchToFrontCamera
+        flipCameraButton.accessibilityLabel = input.cameraType == .front ? Label.switchToBackCamera : Label
+            .switchToFrontCamera
 
-        speakersAllSegmentedView.accessibilityIdentifier = "speakers_and_all_toggle.selected.\(input.videoGridPresentationMode.accessibilityIdentifier)"
+        speakersAllSegmentedView
+            .accessibilityIdentifier =
+            "speakers_and_all_toggle.selected.\(input.videoGridPresentationMode.accessibilityIdentifier)"
     }
 
 }

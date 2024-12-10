@@ -39,34 +39,35 @@ class CollectionCell: UICollectionViewCell {
 
     var message: ZMConversationMessage? = .none {
         didSet {
-            self.messageObserverToken = nil
+            messageObserverToken = nil
             if let userSession = ZMUserSession.shared(), let newMessage = message {
-                self.messageObserverToken = MessageChangeInfo.add(observer: self, for: newMessage, userSession: userSession)
+                messageObserverToken = MessageChangeInfo.add(observer: self, for: newMessage, userSession: userSession)
             }
 
             actionController = message.map {
                 ConversationMessageActionController(responder: self, message: $0, context: .collection, view: self)
             }
 
-            self.updateForMessage(changeInfo: .none)
+            updateForMessage(changeInfo: .none)
         }
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.loadContents()
+        loadContents()
     }
 
     var desiredWidth: CGFloat? = .none
     var desiredHeight: CGFloat? = .none
 
     override var intrinsicContentSize: CGSize {
-        let width = self.desiredWidth ?? UIView.noIntrinsicMetric
-        let height = self.desiredHeight ?? UIView.noIntrinsicMetric
+        let width = desiredWidth ?? UIView.noIntrinsicMetric
+        let height = desiredHeight ?? UIView.noIntrinsicMetric
         return CGSize(width: width, height: height)
     }
 
@@ -76,8 +77,9 @@ class CollectionCell: UICollectionViewCell {
         cachedSize = .none
     }
 
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
-        if let cachedSize = self.cachedSize {
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes)
+        -> UICollectionViewLayoutAttributes {
+        if let cachedSize {
             var newFrame = layoutAttributes.frame
             newFrame.size.width = cachedSize.width
             newFrame.size.height = cachedSize.height
@@ -86,10 +88,10 @@ class CollectionCell: UICollectionViewCell {
             setNeedsLayout()
             layoutIfNeeded()
             var desiredSize = layoutAttributes.size
-            if let desiredWidth = self.desiredWidth {
+            if let desiredWidth {
                 desiredSize.width = desiredWidth
             }
-            if let desiredHeight = self.desiredHeight {
+            if let desiredHeight {
                 desiredSize.height = desiredHeight
             }
 
@@ -98,30 +100,33 @@ class CollectionCell: UICollectionViewCell {
             newFrame.size.width = CGFloat(ceilf(Float(size.width)))
             newFrame.size.height = CGFloat(ceilf(Float(size.height)))
 
-            if let desiredWidth = self.desiredWidth {
+            if let desiredWidth {
                 newFrame.size.width = desiredWidth
             }
-            if let desiredHeight = self.desiredHeight {
+            if let desiredHeight {
                 newFrame.size.height = desiredHeight
             }
 
             layoutAttributes.frame = newFrame
-            self.cachedSize = newFrame.size
+            cachedSize = newFrame.size
         }
 
         return layoutAttributes
     }
 
     func loadContents() {
-        self.contentView.layer.masksToBounds = true
-        self.contentView.layer.cornerRadius = 4
+        contentView.layer.masksToBounds = true
+        contentView.layer.cornerRadius = 4
 
-        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(CollectionCell.onLongPress(_:)))
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(CollectionCell.onLongPress(_:))
+        )
 
-        self.contentView.addGestureRecognizer(longPressGestureRecognizer)
+        contentView.addGestureRecognizer(longPressGestureRecognizer)
 
-        self.contentView.addSubview(secureContentsView)
-        self.contentView.addSubview(obfuscationView)
+        contentView.addSubview(secureContentsView)
+        contentView.addSubview(obfuscationView)
 
         secureContentsView.translatesAutoresizingMaskIntoConstraints = false
         obfuscationView.translatesAutoresizingMaskIntoConstraints = false
@@ -132,13 +137,14 @@ class CollectionCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.cachedSize = .none
-        self.message = .none
+        cachedSize = .none
+        message = .none
     }
 
-    @objc func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer!) {
+    @objc
+    func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer!) {
         if gestureRecognizer.state == .began {
-            self.showMenu()
+            showMenu()
         }
     }
 
@@ -152,12 +158,10 @@ class CollectionCell: UICollectionViewCell {
     }()
 
     var obfuscationIcon: StyleKitIcon {
-        return .exclamationMarkCircle
+        .exclamationMarkCircle
     }
 
-    lazy var obfuscationView = {
-        return ObfuscationView(icon: self.obfuscationIcon)
-    }()
+    lazy var obfuscationView = ObfuscationView(icon: self.obfuscationIcon)
 
     fileprivate func updateMessageVisibility() {
         let isObfuscated = message?.isObfuscated == true || message?.hasBeenDeleted == true
@@ -170,14 +174,14 @@ class CollectionCell: UICollectionViewCell {
 
     func menuConfigurationProperties() -> MenuConfigurationProperties? {
         let properties = MenuConfigurationProperties()
-        properties.targetRect = self.contentView.bounds
-        properties.targetView = self.contentView
+        properties.targetRect = contentView.bounds
+        properties.targetView = contentView
 
         return properties
     }
 
     func showMenu() {
-        guard let menuConfigurationProperties = self.menuConfigurationProperties() else {
+        guard let menuConfigurationProperties = menuConfigurationProperties() else {
             return
         }
 
@@ -191,25 +195,27 @@ class CollectionCell: UICollectionViewCell {
 
         let menuController = UIMenuController.shared
         menuController.menuItems = ConversationMessageActionController.allMessageActions
-        menuController.showMenu(from: menuConfigurationProperties.targetView,
-                                rect: menuConfigurationProperties.targetRect)
+        menuController.showMenu(
+            from: menuConfigurationProperties.targetView,
+            rect: menuConfigurationProperties.targetRect
+        )
     }
 
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return actionController?.canPerformAction(action) == true
+        actionController?.canPerformAction(action) == true
     }
 
     override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        return actionController
+        actionController
     }
 
     // To be implemented in the subclass
     func updateForMessage(changeInfo: MessageChangeInfo?) {
-        self.updateMessageVisibility()
+        updateMessageVisibility()
         // no-op
     }
 
@@ -225,13 +231,14 @@ class CollectionCell: UICollectionViewCell {
 
 extension CollectionCell: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
-        self.updateForMessage(changeInfo: changeInfo)
-        self.messageChangeDelegate?.messageDidChange(self, changeInfo: changeInfo)
+        updateForMessage(changeInfo: changeInfo)
+        messageChangeDelegate?.messageDidChange(self, changeInfo: changeInfo)
     }
 }
 
 extension CollectionCell: MessageActionResponder {
-    func perform(action: MessageAction, for message: ZMConversationMessage!, view: UIView) {
+
+    func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         delegate?.collectionCell(self, performAction: action)
     }
 }

@@ -30,10 +30,14 @@ final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Con
         let bottomText: String
     }
 
-    private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                                   color: LabelColors.textDefault)
-    private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                                      color: LabelColors.textDefault)
+    private let encryptionLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textDefault
+    )
+    private let sensitiveInfoLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textDefault
+    )
 
     func configure(with object: Configuration, animated: Bool) {
         encryptionLabel.text = object.topText
@@ -60,6 +64,7 @@ final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Con
         encryptionLabel.fitIn(view: topContentView)
         sensitiveInfoLabel.fitIn(view: bottomContentView)
         NSLayoutConstraint.activate([
-            imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required)])
+            imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required)
+        ])
     }
 }

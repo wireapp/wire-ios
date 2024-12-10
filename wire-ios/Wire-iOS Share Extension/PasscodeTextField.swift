@@ -17,7 +17,8 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
+import WireReusableUIComponents
 
 protocol PasscodeTextFieldDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)
@@ -60,13 +61,17 @@ final class PasscodeTextField: AccessoryTextField {
 
     // MARK: - Life cycle
 
-    override init(leftInset: CGFloat,
-                  accessoryTrailingInset: CGFloat,
-                  textFieldAttributes: Attributes) {
+    override init(
+        leftInset: CGFloat,
+        accessoryTrailingInset: CGFloat,
+        textFieldAttributes: Attributes
+    ) {
 
-        super.init(leftInset: leftInset,
-                   accessoryTrailingInset: accessoryTrailingInset,
-                   textFieldAttributes: textFieldAttributes)
+        super.init(
+            leftInset: leftInset,
+            accessoryTrailingInset: accessoryTrailingInset,
+            textFieldAttributes: textFieldAttributes
+        )
 
         setupView()
         setupTextFieldProperties()
@@ -109,7 +114,6 @@ extension PasscodeTextField {
     private func updateButtonIcon() {
         revealButton.setIcon(revealButtonIcon, size: .tiny, for: .normal)
     }
-
 }
 
 // MARK: - Helpers
@@ -117,16 +121,20 @@ extension PasscodeTextField {
 extension PasscodeTextField {
 
     static func createPasscodeTextField(delegate: PasscodeTextFieldDelegate?) -> PasscodeTextField {
-        let textFieldAttributes = AccessoryTextField.Attributes(textFont: .normalMediumFont,
-                                                                textColor: UIColor.Team.textColor,
-                                                                placeholderFont: .normalMediumFont,
-                                                                placeholderColor: UIColor.Team.placeholderColor,
-                                                                backgroundColor: UIColor.Team.textfieldColor,
-                                                                cornerRadius: 4)
+        let textFieldAttributes = AccessoryTextField.Attributes(
+            textFont: .normalMediumFont,
+            textColor: UIColor.Team.textColor,
+            placeholderFont: .normalMediumFont,
+            placeholderColor: UIColor.Team.placeholderColor,
+            backgroundColor: UIColor.Team.textfieldColor,
+            cornerRadius: 4
+        )
 
-        let textField = PasscodeTextField(leftInset: 0,
-                                          accessoryTrailingInset: 0,
-                                          textFieldAttributes: textFieldAttributes)
+        let textField = PasscodeTextField(
+            leftInset: 0,
+            accessoryTrailingInset: 0,
+            textFieldAttributes: textFieldAttributes
+        )
 
         textField.revealButtonIcon = StyleKitIcon.AppLock.reveal
         textField.passcodeTextFieldDelegate = delegate

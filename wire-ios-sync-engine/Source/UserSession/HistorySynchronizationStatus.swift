@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public protocol HistorySynchronizationStatus: NSObjectProtocol {
+@objc
+public protocol HistorySynchronizationStatus: NSObjectProtocol {
     /// Should be called when the sync is completed
     func didCompleteSync()
 
@@ -29,7 +30,8 @@ import Foundation
     var shouldDownloadFullHistory: Bool { get }
 }
 
-@objc public final class ForegroundOnlyHistorySynchronizationStatus: NSObject, HistorySynchronizationStatus {
+@objc
+public final class ForegroundOnlyHistorySynchronizationStatus: NSObject, HistorySynchronizationStatus {
     fileprivate var isSyncing = false
     fileprivate var isInBackground = false
     fileprivate let application: ZMApplication
@@ -37,8 +39,10 @@ import Foundation
     /// Managed object context used to execute on the right thread
     fileprivate var moc: NSManagedObjectContext
 
-    public init(managedObjectContext: NSManagedObjectContext,
-                application: ZMApplication) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        application: ZMApplication
+    ) {
         self.moc = managedObjectContext
         self.isSyncing = true
         self.isInBackground = false
@@ -54,30 +58,30 @@ import Foundation
 
     @objc
     public func didBecomeActive(_ note: Notification) {
-        self.moc.performGroupedBlock {
+        moc.performGroupedBlock {
             self.isInBackground = false
         }
     }
 
     @objc
     public func willResignActive(_ note: Notification) {
-        self.moc.performGroupedBlock {
+        moc.performGroupedBlock {
             self.isInBackground = true
         }
     }
 
     /// Should be called when the initial synchronization is done
     public func didCompleteSync() {
-        self.isSyncing = false
+        isSyncing = false
     }
 
     /// Should be called when some synchronization (slow or quick) is started
     public func didStartSync() {
-        self.isSyncing = true
+        isSyncing = true
     }
 
     /// Returns whether history should be downloaded now
     public var shouldDownloadFullHistory: Bool {
-        return !self.isSyncing && !self.isInBackground
+        !isSyncing && !isInBackground
     }
 }

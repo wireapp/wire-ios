@@ -19,7 +19,8 @@
 import CoreData
 import Foundation
 
-@objc public class MockUserClient: NSManagedObject {
+@objc
+public class MockUserClient: NSManagedObject {
 
     /// User that owns the client
     @NSManaged public var user: MockUser?
@@ -65,18 +66,19 @@ import Foundation
 
 }
 
-extension MockUserClient {
+public extension MockUserClient {
 
     /// Identifier for the session in Cryptobox
-    public var sessionIdentifier: EncryptionSessionIdentifier? {
-        guard let identifier = self.identifier, let userIdentifier = self.user?.identifier else {
+    var sessionIdentifier: EncryptionSessionIdentifier? {
+        guard let identifier, let userIdentifier = user?.identifier else {
             return nil
         }
         return EncryptionSessionIdentifier(userId: userIdentifier, clientId: identifier)
     }
 
     /// Returns a fetch request to fetch MockUserClients with the given predicate
-    @objc public static func fetchRequest(predicate: NSPredicate) -> NSFetchRequest<MockUserClient> {
+    @objc
+    static func fetchRequest(predicate: NSPredicate) -> NSFetchRequest<MockUserClient> {
         let request = NSFetchRequest<MockUserClient>(entityName: "UserClient")
         request.predicate = predicate
         return request
@@ -85,39 +87,44 @@ extension MockUserClient {
 
 // MARK: - Legal Hold
 
-extension MockUserClient {
+public extension MockUserClient {
 
-    public var isLegalHoldDevice: Bool {
-        return type == "legalhold" || deviceClass == "legalhold"
+    var isLegalHoldDevice: Bool {
+        type == "legalhold" || deviceClass == "legalhold"
     }
 
 }
 
 // MARK: - JSON de/serialization
-@objc extension MockUserClient {
+
+@objc
+public extension MockUserClient {
 
     /// Creates a new client from JSON payload
-    public static func insertClient(payload: [String: Any], context: NSManagedObjectContext) -> MockUserClient? {
+    static func insertClient(payload: [String: Any], context: NSManagedObjectContext) -> MockUserClient? {
 
         let label = payload["label"] as? String
         let deviceClass = payload["class"] as? String
         let model = payload["model"] as? String
 
         guard let type = payload["type"] as? String, validClientTypes.contains(type),
-            let sigkeysPayload = payload["sigkeys"] as? [String: Any],
-            let lastKeyPayload = payload["lastkey"] as? [String: Any],
-            let prekeysPayload = payload["prekeys"] as? [[String: Any]],
-            let mackey = sigkeysPayload["mackey"] as? String,
-            let enckey = sigkeysPayload["enckey"] as? String,
-            let prekeyNumber = lastKeyPayload["id"] as? Int, prekeyNumber == 0xFFFF
-            else {
+              let sigkeysPayload = payload["sigkeys"] as? [String: Any],
+              let lastKeyPayload = payload["lastkey"] as? [String: Any],
+              let prekeysPayload = payload["prekeys"] as? [[String: Any]],
+              let mackey = sigkeysPayload["mackey"] as? String,
+              let enckey = sigkeysPayload["enckey"] as? String,
+              let prekeyNumber = lastKeyPayload["id"] as? Int, prekeyNumber == 0xFFFF
+        else {
             return nil
         }
 
-        let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
+        let newClient = NSEntityDescription.insertNewObject(
+            forEntityName: "UserClient",
+            into: context
+        ) as! MockUserClient
         newClient.label = label
         newClient.type = type
-        newClient.identifier = String.createLegacyAlphanumerical()
+        newClient.identifier = String.randomClientIdentifier()
         newClient.mackey = mackey
         newClient.enckey = enckey
         newClient.deviceClass = deviceClass
@@ -143,11 +150,20 @@ extension MockUserClient {
 
     /// Insert a new client, automatically generate prekeys and last key
     @objc(insertClientWithLabel:type:deviceClass:user:context:)
-    public static func insertClient(label: String, type: String = "permanent", deviceClass: String = "phone", for user: MockUser, in context: NSManagedObjectContext) -> MockUserClient? {
-        let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
+    static func insertClient(
+        label: String,
+        type: String = "permanent",
+        deviceClass: String = "phone",
+        for user: MockUser,
+        in context: NSManagedObjectContext
+    ) -> MockUserClient? {
+        let newClient = NSEntityDescription.insertNewObject(
+            forEntityName: "UserClient",
+            into: context
+        ) as! MockUserClient
 
         newClient.user = user
-        newClient.identifier = String.createLegacyAlphanumerical()
+        newClient.identifier = String.randomClientIdentifier()
         newClient.label = label
         newClient.type = type
         newClient.deviceClass = deviceClass
@@ -161,12 +177,15 @@ extension MockUserClient {
         }
 
         guard let prekeys = generatedPrekeys, !prekeys.isEmpty,
-            let lastPrekey = generatedLastPrekey
+              let lastPrekey = generatedLastPrekey
         else {
             return nil
         }
 
-        let mockPrekey = MockPreKey.insertNewKeys(withPayload: prekeys.map { $0["prekey"] as! String }, context: context)
+        let mockPrekey = MockPreKey.insertNewKeys(
+            withPayload: prekeys.map { $0["prekey"] as! String },
+            context: context
+        )
         newClient.prekeys = Set(mockPrekey)
 
         let mockLastPrekey = MockPreKey.insertNewKey(withPrekey: lastPrekey, for: newClient, in: context)
@@ -176,58 +195,60 @@ extension MockUserClient {
     }
 
     /// JSON representation
-    public var transportData: ZMTransportData {
+    var transportData: ZMTransportData {
 
         var data = [String: Any]()
-        data["id"] = self.identifier
-        if self.label != nil {
-            data["label"] = self.label
+        data["id"] = identifier
+        if label != nil {
+            data["label"] = label
         }
-        data["type"] = self.type
-        if let time = self.time {
+        data["type"] = type
+        if let time {
             data["time"] = time.transportString()
         }
-        if let model = self.model {
+        if let model {
             data["model"] = model
         }
-        if let device = self.deviceClass {
+        if let device = deviceClass {
             data["class"] = device
         }
-        data["address"] = self.address
+        data["address"] = address
         data["location"] = [
-            "lat": self.locationLatitude,
-            "lon": self.locationLongitude
+            "lat": locationLatitude,
+            "lon": locationLongitude
         ]
         return data as NSDictionary
     }
 }
 
 // MARK: - Encryption and sessions
-@objc extension MockUserClient {
 
-    public static var mockEncryptionSessionDirectory: URL {
-        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("mocktransport-encryptionDirectory")
+@objc
+public extension MockUserClient {
+
+    static var mockEncryptionSessionDirectory: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("mocktransport-encryptionDirectory")
     }
 
-    static func encryptionContext(for user: MockUser?, clientId: String?) -> EncryptionContext {
+    internal static func encryptionContext(for user: MockUser?, clientId: String?) -> EncryptionContext {
         let directory = MockUserClient.mockEncryptionSessionDirectory
             .appendingPathComponent("mockclient_\(user?.identifier ?? "USER")_\(clientId ?? "IDENTIFIER")")
         try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [:])
-        let encryptionContext = EncryptionContext(path: directory)
-        return encryptionContext
+        return EncryptionContext(path: directory)
     }
 
-    fileprivate var encryptionContext: EncryptionContext {
-        return MockUserClient.encryptionContext(for: user, clientId: identifier)
+    private var encryptionContext: EncryptionContext {
+        MockUserClient.encryptionContext(for: user, clientId: identifier)
     }
 
     /// Make sure that there is a session established between this client and the given client
     /// If needed, it will use the last prekey to create a session
     /// - returns: false if it was not possible to establish a session
-    public func establishSession(client: MockUserClient) -> Bool {
+    func establishSession(client: MockUserClient) -> Bool {
         guard let identifier = client.sessionIdentifier else { return false }
         var hasSession = false
-        self.encryptionContext.perform { session in
+        encryptionContext.perform { session in
             if !session.hasSession(for: identifier) {
                 try? session.createClientSession(identifier, base64PreKeyString: client.lastPrekey.value)
                 hasSession = session.hasSession(for: identifier)
@@ -240,7 +261,7 @@ extension MockUserClient {
 
     /// Encrypt data from a client to a client. If there is no session between the two clients, it will create
     /// one using the last prekey
-    public static func encrypted(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
+    static func encrypted(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
         var encryptedData: Data?
         guard from.establishSession(client: to) else { fatalError() }
         from.encryptionContext.perform { session in
@@ -250,11 +271,14 @@ extension MockUserClient {
     }
 
     /// Decrypt a message (possibly establishing a session, if there is no session) from a client to a client
-    public static func decryptMessage(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
+    static func decryptMessage(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
         var decryptedData: Data?
         to.encryptionContext.perform { session in
             if !session.hasSession(for: from.sessionIdentifier!) {
-                decryptedData = try? session.createClientSessionAndReturnPlaintext(for: from.sessionIdentifier!, prekeyMessage: data)
+                decryptedData = try? session.createClientSessionAndReturnPlaintext(
+                    for: from.sessionIdentifier!,
+                    prekeyMessage: data
+                )
             } else {
                 decryptedData = try? session.decrypt(data, from: from.sessionIdentifier!)
             }
@@ -263,10 +287,10 @@ extension MockUserClient {
     }
 
     /// Returns whether there is a encryption session between self and the give client
-    public func hasSession(with client: MockUserClient) -> Bool {
+    func hasSession(with client: MockUserClient) -> Bool {
         guard let identifier = client.sessionIdentifier else { return false }
         var hasSession = false
-        self.encryptionContext.perform { session in
+        encryptionContext.perform { session in
             hasSession = session.hasSession(for: identifier)
         }
         return hasSession

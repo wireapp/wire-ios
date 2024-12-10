@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAccountImageUI
 import XCTest
 
 @testable import Wire
@@ -35,24 +36,26 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
 
     var hasUsernameTakeoverViewController: Bool {
         // no-op
-        return false
+        false
     }
 
     @discardableResult
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) -> Bool {
         isSelectedOnListContentController = true
         return false
     }
 
-    func updateBottomBarSeparatorVisibility(with controller: ConversationListContentController) {
-    }
+    func updateBottomBarSeparatorVisibility(
+        with controller: ConversationListContentController
+    ) {}
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         // no-op
-    }
-
-    func setState(_ state: ConversationListState, animated: Bool, completion: Completion?) {
-        completion?()
     }
 
     func showNoContactLabel(animated: Bool) {
@@ -64,10 +67,6 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     func openChangeHandleViewController(with handle: String) {
-        // no-op
-    }
-
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
         // no-op
     }
 
@@ -87,15 +86,35 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
         // no-op
     }
 
-    func conversationListViewControllerViewModel(_ viewModel: ConversationListViewController.ViewModel, didUpdate selfUserStatus: UserStatus) {
+    func conversationListViewControllerViewModel(
+        _ viewModel: ConversationListViewController.ViewModel,
+        didUpdate selfUserStatus: UserStatus
+    ) {
         // no-op
     }
 
-    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: Wire.ConversationListViewController.ViewModel) {
+    func conversationListViewControllerViewModel(
+        _ viewModel: ConversationListViewController.ViewModel,
+        didUpdate accountImageSource: WireAccountImageUI.AccountImageSource
+    ) {
         // no-op
     }
 
-    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: Wire.ConversationListViewController.ViewModel) {
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(
+        _ viewModel: Wire.ConversationListViewController.ViewModel
+    ) {
         // no-op
+    }
+
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(
+        _ viewModel: Wire.ConversationListViewController.ViewModel
+    ) {
+        // no-op
+    }
+
+    func conversationListViewControllerViewModelDidReloadContent(
+        _ viewModel: ConversationListViewController.ViewModel
+    ) {
+        // no - op
     }
 }

@@ -21,21 +21,22 @@ import DifferenceKit
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireReusableUIComponents
 import WireSyncEngine
 
 protocol CallGridViewControllerDelegate: AnyObject {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction)
 }
 
-final class CallGridViewController: SpinnerCapableViewController {
+final class CallGridViewController: UIViewController {
     // MARK: - Statics
 
     static let isCoveredKey = "isCovered"
 
     static var maxItemsPerPage: Int {
         switch CallingConfiguration.config.streamLimit {
-        case .limit(amount: let amount): return amount
-        case .noLimit: return 8
+        case let .limit(amount: amount): amount
+        case .noLimit: 8
         }
     }
 
@@ -59,8 +60,12 @@ final class CallGridViewController: SpinnerCapableViewController {
     private let networkConditionView = NetworkConditionIndicatorView()
     private let pageIndicator = RoundedPageIndicator()
     private let topStack = UIStackView(axis: .vertical)
-    private let mediaManager: AVSMediaManagerInterface
     private var viewCache = [AVSClient: OrientableView]()
+    private var networkQualityObserverToken: Any?
+    private var networkQuality: NetworkQuality
+
+    private let mediaManager: AVSMediaManagerInterface
+    private let voiceChannel: VoiceChannel
 
     // MARK: - Public Properties
 
@@ -73,18 +78,14 @@ final class CallGridViewController: SpinnerCapableViewController {
             guard !configuration.isEqual(to: oldValue) else { return }
             dismissMaximizedViewIfNeeded(oldPresentationMode: oldValue.presentationMode)
             updateState()
-            if
-                configuration.isGroupCall,
-                configuration.isConnected,
-                !oldValue.isConnected
-            {
+            if configuration.isGroupCall, configuration.isConnected, !oldValue.isConnected {
                 updateHint(for: .connectionEstablished)
             }
         }
     }
 
     var previewOverlay: UIView? {
-        return thumbnailViewController.contentView
+        thumbnailViewController.contentView
     }
 
     /// Update view visibility when this view controller is covered or not
@@ -92,30 +93,35 @@ final class CallGridViewController: SpinnerCapableViewController {
         didSet {
             guard isCovered != oldValue else { return }
             notifyVisibilityChanged()
-            displayIndicatorViewsIfNeeded()
+            displayNetworkConditionViewIfNeeded(for: networkQuality)
             animateNetworkConditionView()
             hintView.setMessageHidden(isCovered)
         }
     }
 
-    var dismissSpinner: SpinnerCompletion?
+    private var activityIndicator: BlockingActivityIndicator!
 
     weak var delegate: CallGridViewControllerDelegate?
 
     // MARK: - Initialization
 
-    init(configuration: CallGridViewControllerInput,
-         mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()) {
+    init(
+        voiceChannel: VoiceChannel,
+        configuration: CallGridViewControllerInput,
+        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()
+    ) {
 
         self.configuration = configuration
         self.mediaManager = mediaManager
+        self.voiceChannel = voiceChannel
+        self.networkQuality = voiceChannel.networkQuality
 
         super.init(nibName: nil, bundle: nil)
 
         setupViews()
         createConstraints()
         updateState()
-        displayIndicatorViewsIfNeeded()
+        setupObservers()
     }
 
     @available(*, unavailable)
@@ -125,7 +131,10 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        activityIndicator = .init(view: view)
         updateHint(for: .viewDidLoad)
+        displayNetworkConditionViewIfNeeded(for: networkQuality)
     }
 
     // MARK: - Setup
@@ -157,35 +166,40 @@ final class CallGridViewController: SpinnerCapableViewController {
         [gridView, thumbnailViewController.view, topStack, hintView, networkConditionView, pageIndicator].forEach {
             $0?.translatesAutoresizingMaskIntoConstraints = false
         }
-            [ thumbnailViewController.view].forEach {
-                $0.fitIn(view: view)
-            }
+        [thumbnailViewController.view].forEach {
+            $0.fitIn(view: view)
+        }
 
-            NSLayoutConstraint.activate([
-                gridView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-                gridView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
-                gridView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-                gridView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor)
-            ])
+        NSLayoutConstraint.activate([
+            gridView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            gridView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            gridView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            gridView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+        ])
 
         let topStackTopDistance = 6.0
         NSLayoutConstraint.activate([
             topStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            topStack.topAnchor.constraint(equalTo: view.safeTopAnchor, constant: topStackTopDistance),
+            topStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topStackTopDistance),
             topStack.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
             topStack.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
             pageIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             pageIndicator.heightAnchor.constraint(equalToConstant: CGFloat.pageIndicatorHeight),
-            pageIndicator.centerXAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -22)
+            pageIndicator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -22)
         ])
 
         pageIndicator.transform = pageIndicator.transform.rotated(by: .pi / 2)
     }
 
-    @objc func didChangePage(sender: UIPageControl) {
+    @objc
+    func didChangePage(sender: UIPageControl) {
         let newCurrentPage = sender.currentPage
         pageIndicator.currentPage = newCurrentPage
         gridView.scrollToPage(page: newCurrentPage, animated: true)
+    }
+
+    private func setupObservers() {
+        networkQualityObserverToken = voiceChannel.addNetworkQualityObserver(self)
     }
 
     // MARK: - Public Interface
@@ -250,7 +264,7 @@ final class CallGridViewController: SpinnerCapableViewController {
             } else if isMaximized(stream: stream) {
                 hintView.show(hint: .goBackOrZoom)
             }
-        case .maximizationChanged(stream: let stream, maximized: let maximized):
+        case let .maximizationChanged(stream: stream, maximized: maximized):
             if maximized {
                 hintView.show(hint: stream.isSharingVideo ? .goBackOrZoom : .goBack)
             } else {
@@ -262,13 +276,11 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     // MARK: - UI Update
 
-    private func displayIndicatorViewsIfNeeded() {
-        networkConditionView.networkQuality = configuration.networkQuality
-        networkConditionView.isHidden = shouldHideNetworkCondition
-    }
+    private func displayNetworkConditionViewIfNeeded(for networkQuality: NetworkQuality) {
+        let shouldHideNetworkCondition = isCovered || networkQuality.isNormal
 
-    private var shouldHideNetworkCondition: Bool {
-        return isCovered || configuration.networkQuality.isNormal
+        networkConditionView.networkQuality = networkQuality
+        networkConditionView.isHidden = shouldHideNetworkCondition
     }
 
     private func notifyVisibilityChanged() {
@@ -295,7 +307,6 @@ final class CallGridViewController: SpinnerCapableViewController {
         updateSelfCallParticipantView()
         updateFloatingView(with: configuration.floatingStream)
         updateGrid(with: streams)
-        displayIndicatorViewsIfNeeded()
         updateGridViewAxis()
         updateHint(for: .configurationChanged)
         requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
@@ -303,17 +314,15 @@ final class CallGridViewController: SpinnerCapableViewController {
     }
 
     private func displaySpinnerIfNeeded() {
-        let subViewStackWithSpinner = self.view.subviews.filter { $0 is LoadingSpinnerView }
         guard
             configuration.presentationMode == .activeSpeakers,
-            configuration.streams.isEmpty,
-            subViewStackWithSpinner.isEmpty
+            configuration.streams.isEmpty
         else {
-            dismissSpinner?()
+            activityIndicator.stop()
             return
         }
 
-        showLoadingView(title: L10n.Localizable.Call.Grid.noActiveSpeakers)
+        activityIndicator.start(text: L10n.Localizable.Call.Grid.noActiveSpeakers)
     }
 
     private func updateSelfCallParticipantView() {
@@ -356,7 +365,10 @@ final class CallGridViewController: SpinnerCapableViewController {
         // We have a stream but don't have a preview view yet.
         if thumbnailViewController.contentView == nil, let previewView = selfCallParticipantView {
             Log.calling.debug("Adding self video to floating preview")
-            thumbnailViewController.setThumbnailContentView(previewView, contentSize: .previewSize(for: traitCollection))
+            thumbnailViewController.setThumbnailContentView(
+                previewView,
+                contentSize: .previewSize(for: traitCollection)
+            )
         }
     }
 
@@ -406,7 +418,7 @@ final class CallGridViewController: SpinnerCapableViewController {
               endIndex > startIndex
         else { return }
 
-        let clients = dataSource[startIndex..<endIndex]
+        let clients = dataSource[startIndex ..< endIndex]
             .filter(\.isSharingVideo)
             .map(\.streamId)
 
@@ -449,7 +461,7 @@ final class CallGridViewController: SpinnerCapableViewController {
     // MARK: - Helpers
 
     private var shouldShowBorderWhenVideoIsStopped: Bool {
-       !gridHasOnlyOneTile && !gridIsOneToOneWithFloatingTile
+        !gridHasOnlyOneTile && !gridIsOneToOneWithFloatingTile
     }
 
     private var gridHasOnlyOneTile: Bool {
@@ -461,7 +473,7 @@ final class CallGridViewController: SpinnerCapableViewController {
     }
 
     private func cachedStreamView(for stream: Stream) -> OrientableView? {
-        return viewCache[stream.streamId]
+        viewCache[stream.streamId]
     }
 
     private func streamView(at location: CGPoint) -> BaseCallParticipantView? {
@@ -474,7 +486,7 @@ final class CallGridViewController: SpinnerCapableViewController {
     private func stream(with streamId: AVSClient) -> Stream? {
         var stream = configuration.streams.first(where: { $0.streamId == streamId })
 
-        if stream == nil && configuration.floatingStream?.streamId == streamId {
+        if stream == nil, configuration.floatingStream?.streamId == streamId {
             stream = configuration.floatingStream
         }
 
@@ -495,15 +507,21 @@ final class CallGridViewController: SpinnerCapableViewController {
 extension CallGridViewController: UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataSource.count
+        dataSource.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GridCell.reuseIdentifier, for: indexPath) as? GridCell else {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: GridCell.reuseIdentifier,
+            for: indexPath
+        ) as? GridCell else {
             return UICollectionViewCell()
         }
 
@@ -538,6 +556,15 @@ extension CallGridViewController: GridViewDelegate {
     func gridView(_ gridView: GridView, didChangePageTo page: Int) {
         pageIndicator.currentPage = page
         requestVideoStreamsIfNeeded(forPage: page)
+    }
+}
+
+// MARK: - NetworkQualityObserver
+
+extension CallGridViewController: NetworkQualityObserver {
+    func callCenterDidChange(networkQuality: NetworkQuality) {
+        self.networkQuality = networkQuality
+        displayNetworkConditionViewIfNeeded(for: networkQuality)
     }
 }
 
@@ -590,6 +617,6 @@ extension Notification.Name {
 
 }
 
-fileprivate extension CGFloat {
+private extension CGFloat {
     static let pageIndicatorHeight: CGFloat = 24
 }

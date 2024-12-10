@@ -17,9 +17,13 @@
 //
 
 import Foundation
+import WireTransport
 @testable import WireRequestStrategy
 
-class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPackageAction, ClaimMLSKeyPackageActionHandler> {
+class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<
+    ClaimMLSKeyPackageAction,
+    ClaimMLSKeyPackageActionHandler
+> {
 
     private typealias Payload = ClaimMLSKeyPackageActionHandler.ResponsePayload
 

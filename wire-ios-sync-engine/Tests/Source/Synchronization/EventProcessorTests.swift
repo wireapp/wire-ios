@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireRequestStrategySupport
 import XCTest
 
 @testable import WireDataModelSupport
@@ -23,7 +24,7 @@ import XCTest
 
 final class EventProcessorTests: MessagingTest {
 
-    struct MockError: Error { }
+    struct MockError: Error {}
 
     var sut: EventProcessor!
     var eventProcessingTracker: EventProcessingTracker!
@@ -52,7 +53,8 @@ final class EventProcessorTests: MessagingTest {
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: mockEventsConsumers,
-            eventAsyncConsumers: mockEventAsyncConsumers
+            eventAsyncConsumers: mockEventAsyncConsumers,
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
@@ -69,15 +71,33 @@ final class EventProcessorTests: MessagingTest {
     // MARK: - Helpers
 
     func createSampleEvents(conversationID: UUID = UUID(), messageNonce: UUID = UUID()) -> [ZMUpdateEvent] {
-        let payload1: [String: Any] = ["type": "conversation.member-join",
-                                       "conversation": conversationID]
-        let payload2: [String: Any] = ["type": "conversation.message-add",
-                                       "data": ["content": "www.wire.com",
-                                                "nonce": messageNonce],
-                                       "conversation": conversationID]
+        let payload1: [String: Any] = [
+            "type": "conversation.member-join",
+            "conversation": conversationID
+        ]
 
-        let event1 = ZMUpdateEvent(fromEventStreamPayload: payload1 as ZMTransportData, uuid: nil)!
-        let event2 = ZMUpdateEvent(fromEventStreamPayload: payload2 as ZMTransportData, uuid: nil)!
+        let payload2: [String: Any] = [
+            "type": "conversation.message-add",
+            "data": [
+                "content": "www.wire.com",
+                "nonce": messageNonce
+            ],
+            "conversation": conversationID
+        ]
+
+        let event1 = ZMUpdateEvent(
+            fromEventStreamPayload: payload1 as ZMTransportData,
+            uuid: UUID()
+        )!
+
+        event1.contentHash = 1234
+
+        let event2 = ZMUpdateEvent(
+            fromEventStreamPayload: payload2 as ZMTransportData,
+            uuid: UUID()
+        )!
+
+        event2.contentHash = 2345
 
         return [event1, event2]
     }
@@ -93,16 +113,16 @@ final class EventProcessorTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        mockEventsConsumers.forEach({ mockEventConsumer in
+        mockEventsConsumers.forEach { mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsWhileInBackgroundCalled)
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
-        })
+        }
 
-        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+        mockEventAsyncConsumers.forEach { mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
-        })
+        }
     }
 
     func testThatEventsAreNotForwardedToAllEventConsumers_WhenBuffered() async {
@@ -114,14 +134,14 @@ final class EventProcessorTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        mockEventsConsumers.forEach({ mockEventConsumer in
+        mockEventsConsumers.forEach { mockEventConsumer in
             XCTAssertFalse(mockEventConsumer.processEventsWhileInBackgroundCalled)
             XCTAssertFalse(mockEventConsumer.processEventsCalled)
-        })
+        }
 
-        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+        mockEventAsyncConsumers.forEach { mockEventConsumer in
             XCTAssertFalse(mockEventConsumer.processEventsCalled)
-        })
+        }
     }
 
     func testThatEventsAreNotForwardedToAllEventConsumers_WhenDatabaseIsLocked() async throws {
@@ -148,10 +168,10 @@ final class EventProcessorTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        mockEventsConsumers.forEach({ mockEventConsumer in
+        mockEventsConsumers.forEach { mockEventConsumer in
             XCTAssertFalse(mockEventConsumer.processEventsWhileInBackgroundCalled)
             XCTAssertFalse(mockEventConsumer.processEventsCalled)
-        })
+        }
     }
 
     func testThatEventsAreForwardedToAllEventConsumers_WhenBufferedEventsAreProcessed() async throws {
@@ -165,16 +185,16 @@ final class EventProcessorTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        mockEventsConsumers.forEach({ mockEventConsumer in
+        mockEventsConsumers.forEach { mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsWhileInBackgroundCalled)
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
-        })
+        }
 
-        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+        mockEventAsyncConsumers.forEach { mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
-        })
+        }
     }
 
     func testThatItCreatesAFetchBatchRequestWithTheNoncesAndRemoteIdentifiers_RequestedByEventsConsumers() async {
@@ -192,6 +212,42 @@ final class EventProcessorTests: MessagingTest {
         let messageNonceSet: NSSet = [messageNonce]
         XCTAssertEqual(batchFetchRequest.remoteIdentifiersToFetch, conversationIdSet)
         XCTAssertEqual(batchFetchRequest.noncesToFetch, messageNonceSet)
+    }
+
+    func testItProcessesEventsOnlyOnce() async throws {
+        // Given
+        let events = createSampleEvents()
+        let eventDecoder = MockEventDecoderProtocol()
+
+        // Simulate trying to process same events multiple times.
+        eventDecoder.processStoredEventsWithCallEventsOnly_MockMethod = { _, _, processBlock in
+            await processBlock(events)
+            await processBlock(events)
+            await processBlock(events)
+        }
+
+        sut = EventProcessor(
+            storeProvider: coreDataStack,
+            eventDecoder: eventDecoder,
+            eventProcessingTracker: eventProcessingTracker,
+            earService: earService,
+            eventConsumers: mockEventsConsumers,
+            eventAsyncConsumers: mockEventAsyncConsumers
+        )
+
+        // When
+        await sut.processStoredUpdateEvents()
+
+        // Then each consumer processed the events once.
+        mockEventsConsumers.forEach { mockEventConsumer in
+            XCTAssertEqual(mockEventConsumer.eventsProcessed.count, events.count)
+            XCTAssertEqual(mockEventConsumer.eventsProcessed, events)
+        }
+
+        mockEventAsyncConsumers.forEach { mockEventConsumer in
+            XCTAssertEqual(mockEventConsumer.eventsProcessed.count, events.count)
+            XCTAssertEqual(mockEventConsumer.eventsProcessed, events)
+        }
     }
 }
 

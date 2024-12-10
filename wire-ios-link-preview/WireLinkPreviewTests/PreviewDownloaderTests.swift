@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class PreviewDownloaderTests: XCTestCase {
 
@@ -70,8 +70,8 @@ class PreviewDownloaderTests: XCTestCase {
     func testThatItAppendsReceivedBytesToContainerForDataTask() {
         // given
         let taskID = 0
-        let firstBytes = "First Part".data(using: String.Encoding.utf8)!
-        let secondBytes = "Second Part".data(using: String.Encoding.utf8)!
+        let firstBytes = Data("First Part".utf8)
+        let secondBytes = Data("Second Part".utf8)
 
         // when
         sut.processReceivedData(firstBytes, forTask: mockDataTask, withIdentifier: taskID)
@@ -98,8 +98,8 @@ class PreviewDownloaderTests: XCTestCase {
             completionExpectation.fulfill()
         }
         let taskID = 0
-        let firstBytes = " First Part\n ".data(using: String.Encoding.utf8)!
-        let secondBytes = " </head> ".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" First Part\n ".utf8)
+        let secondBytes = Data(" </head> ".utf8)
 
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
@@ -126,8 +126,8 @@ class PreviewDownloaderTests: XCTestCase {
             completionExpectation.fulfill()
         }
         let taskID = 0
-        let firstBytes = " First Part\n ".data(using: String.Encoding.utf8)!
-        let secondBytes = " Second Part\n ".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" First Part\n ".utf8)
+        let secondBytes = Data(" Second Part\n ".utf8)
 
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
@@ -153,7 +153,7 @@ class PreviewDownloaderTests: XCTestCase {
         let completionExpectation = expectation(description: "It should call the completion handler")
         let completion: PreviewDownloader.DownloadCompletion = { _ in completionExpectation.fulfill() }
         let taskID = 0
-        let firstBytes = " </head> ".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" </head> ".utf8)
 
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
@@ -170,7 +170,7 @@ class PreviewDownloaderTests: XCTestCase {
         // given
         let completionExpectation = expectation(description: "It should call the completion handler")
         let completion: PreviewDownloader.DownloadCompletion = { _ in completionExpectation.fulfill() }
-        let firstBytes = " <head> ".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" <head> ".utf8)
         let taskID = 0
 
         // when
@@ -188,7 +188,7 @@ class PreviewDownloaderTests: XCTestCase {
 
     func testThatItDoesNotCallTheCompletionAndCleansUpIfItReceivesANilError() {
         // given
-        let firstBytes = " <head> </head>".data(using: String.Encoding.utf8)!
+        let firstBytes = Data(" <head> </head>".utf8)
         let completion: PreviewDownloader.DownloadCompletion = { _ in }
         let taskID = 0
 
@@ -208,7 +208,8 @@ class PreviewDownloaderTests: XCTestCase {
         let error = NSError(domain: NSURLErrorDomain, code: URLError.cancelled.rawValue, userInfo: nil)
 
         // expect
-        let completion: PreviewDownloader.DownloadCompletion = { _ in XCTFail("It should not call the completion handler") }
+        let completion: PreviewDownloader
+            .DownloadCompletion = { _ in XCTFail("It should not call the completion handler") }
 
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
@@ -263,7 +264,8 @@ class PreviewDownloaderTests: XCTestCase {
         assertThatItCallsTheDipositionHandler(.allow, contentType: "text/html")
     }
 
-    func testThatItCallsTheDispositionHandlerWithAllowAndDoesNotCallTheDownloadCompletionForContentTypeHTMLWithCharset() {
+    func testThatItCallsTheDispositionHandlerWithAllowAndDoesNotCallTheDownloadCompletionForContentTypeHTMLWithCharset(
+    ) {
         assertThatItCallsTheDipositionHandler(.allow, contentType: "text/html;charset=utf-8")
     }
 
@@ -271,14 +273,19 @@ class PreviewDownloaderTests: XCTestCase {
         assertThatItCallsTheDipositionHandler(.allow, contentType: "TEXT/HTML")
     }
 
-    func assertThatItCallsTheDipositionHandler(_ expected: URLSession.ResponseDisposition, contentType: String, statusCode: Int = 200, line: UInt = #line) {
+    func assertThatItCallsTheDipositionHandler(
+        _ expected: URLSession.ResponseDisposition,
+        contentType: String,
+        statusCode: Int = 200,
+        line: UInt = #line
+    ) {
         // given
         let downloadExpectation = expectation(description: "It should call the downloader completion handler")
         let sessionExpectation = expectation(description: "It should call the session completion handler")
         let completion: PreviewDownloader.DownloadCompletion = { _ in downloadExpectation.fulfill() }
         let originalRequest = URLRequest(url: URL(string: "www.example.com")!)
         sut.requestOpenGraphData(fromURL: url, completion: completion)
-        sut.processReceivedData("bytes".data(using: .utf8)!, forTask: mockDataTask, withIdentifier: 0)
+        sut.processReceivedData(Data("bytes".utf8), forTask: mockDataTask, withIdentifier: 0)
 
         // when
         let response = HTTPURLResponse(

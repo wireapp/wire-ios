@@ -19,25 +19,22 @@
 import Foundation
 import UserNotifications
 
-/**
- * User info keys for notifications.
- */
+/// User info keys for notifications.
 
 private enum NotificationUserInfoKey: String {
     case requestID = "requestIDString"
     case conversationID = "conversationIDString"
     case messageNonce = "messageNonceString"
+    case eventID = "eventIDString"
     case senderID = "senderIDString"
-    case eventTime = "eventTime"
+    case eventTime
     case selfUserID = "selfUserIDString"
     case conversationName = "conversationNameString"
     case teamName = "teamNameString"
 }
 
-/**
- * A structure that describes the content of the user info payload
- * of user notifications.
- */
+/// A structure that describes the content of the user info payload
+/// of user notifications.
 
 public class NotificationUserInfo: NSObject, NSCoding {
 
@@ -80,32 +77,37 @@ public class NotificationUserInfo: NSObject, NSCoding {
     }
 
     public var requestID: UUID? {
-        get { return uuid(for: .requestID) }
+        get { uuid(for: .requestID) }
         set { self[.requestID] = newValue?.uuidString }
     }
 
     public var conversationID: UUID? {
-        get { return uuid(for: .conversationID)}
+        get { uuid(for: .conversationID) }
         set { self[.conversationID] = newValue?.uuidString }
     }
 
     public var conversationName: String? {
-        get { return self[.conversationName] as? String }
+        get { self[.conversationName] as? String }
         set { self[.conversationName] = newValue }
     }
 
     public var teamName: String? {
-        get { return self[.teamName] as? String }
+        get { self[.teamName] as? String }
         set { self[.teamName] = newValue }
     }
 
     public var messageNonce: UUID? {
-        get { return uuid(for: .messageNonce) }
+        get { uuid(for: .messageNonce) }
         set { self[.messageNonce] = newValue?.uuidString }
     }
 
+    public var eventID: UUID? {
+        get { uuid(for: .eventID) }
+        set { self[.eventID] = newValue?.uuidString }
+    }
+
     public var senderID: UUID? {
-        get { return uuid(for: .senderID) }
+        get { uuid(for: .senderID) }
         set { self[.senderID] = newValue?.uuidString }
     }
 
@@ -118,7 +120,7 @@ public class NotificationUserInfo: NSObject, NSCoding {
     }
 
     public var selfUserID: UUID? {
-        get { return uuid(for: .selfUserID) }
+        get { uuid(for: .selfUserID) }
         set { self[.selfUserID] = newValue?.uuidString }
     }
 }
@@ -129,42 +131,41 @@ extension NotificationUserInfo {
 
     fileprivate subscript(_ key: NotificationUserInfoKey) -> Any? {
         get {
-            return storage[key.rawValue]
+            storage[key.rawValue]
         }
         set {
             storage[key.rawValue] = newValue
         }
     }
 
-    override public func isEqual(_ object: Any?) -> Bool {
+    public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? NotificationUserInfo else { return false }
         return self == other
     }
 
     static func == (lhs: NotificationUserInfo, rhs: NotificationUserInfo) -> Bool {
-        return  lhs.requestID == rhs.requestID &&
-                lhs.conversationID == rhs.conversationID &&
-                lhs.conversationName == rhs.conversationName &&
-                lhs.teamName == rhs.teamName &&
-                lhs.messageNonce == rhs.messageNonce &&
-                lhs.senderID == rhs.senderID &&
-                lhs.eventTime == rhs.eventTime &&
-                lhs.selfUserID == rhs.selfUserID
+        lhs.requestID == rhs.requestID &&
+            lhs.conversationID == rhs.conversationID &&
+            lhs.conversationName == rhs.conversationName &&
+            lhs.teamName == rhs.teamName &&
+            lhs.messageNonce == rhs.messageNonce &&
+            lhs.eventID == rhs.eventID &&
+            lhs.senderID == rhs.senderID &&
+            lhs.eventTime == rhs.eventTime &&
+            lhs.selfUserID == rhs.selfUserID
     }
 }
 
 // MARK: - Lookup
 
-extension NotificationUserInfo {
+public extension NotificationUserInfo {
 
-    /**
-     * Fetches the conversion that matches the description stored in this user info fields.
-     *
-     * - parameter managedObjectContext: The context that should be used to perform the lookup.
-     * - returns: The conversation, if found.
-     */
+    /// Fetches the conversion that matches the description stored in this user info fields.
+    ///
+    /// - parameter managedObjectContext: The context that should be used to perform the lookup.
+    /// - returns: The conversation, if found.
 
-    public func conversation(in managedObjectContext: NSManagedObjectContext) -> ZMConversation? {
+    func conversation(in managedObjectContext: NSManagedObjectContext) -> ZMConversation? {
         guard let remoteID = conversationID else {
             return nil
         }
@@ -172,15 +173,13 @@ extension NotificationUserInfo {
         return ZMConversation.fetch(with: remoteID, domain: nil, in: managedObjectContext)
     }
 
-    /**
-     * Fetches the message that matches the description stored in this user info fields.
-     *
-     * - parameter conversation: The conversation where the message should be searched.
-     * - parameter managedObjectContext: The context that should be used to perform the lookup.
-     * - returns: The message, if found.
-     */
+    /// Fetches the message that matches the description stored in this user info fields.
+    ///
+    /// - parameter conversation: The conversation where the message should be searched.
+    /// - parameter managedObjectContext: The context that should be used to perform the lookup.
+    /// - returns: The message, if found.
 
-    public func message(in conversation: ZMConversation, managedObjectContext: NSManagedObjectContext) -> ZMMessage? {
+    func message(in conversation: ZMConversation, managedObjectContext: NSManagedObjectContext) -> ZMMessage? {
         guard let nonce = messageNonce else {
             return nil
         }
@@ -188,14 +187,12 @@ extension NotificationUserInfo {
         return ZMMessage.fetch(withNonce: nonce, for: conversation, in: managedObjectContext)
     }
 
-    /**
-     * Fetches the sender that matches the description stored in this user info fields.
-     *
-     * - parameter managedObjectContext: The context that should be used to perform the lookup.
-     * - returns: The sender of the event, if found.
-     */
+    /// Fetches the sender that matches the description stored in this user info fields.
+    ///
+    /// - parameter managedObjectContext: The context that should be used to perform the lookup.
+    /// - returns: The sender of the event, if found.
 
-    func sender(in managedObjectContext: NSManagedObjectContext) -> ZMUser? {
+    internal func sender(in managedObjectContext: NSManagedObjectContext) -> ZMUser? {
         guard let senderID else {
             return nil
         }
@@ -211,24 +208,25 @@ extension NotificationUserInfo {
 
     func setupUserInfo(for conversation: ZMConversation, sender: ZMUser) {
         addSelfUserInfo(using: conversation)
-        self.conversationID = conversation.remoteIdentifier
-        self.senderID = sender.remoteIdentifier
+        conversationID = conversation.remoteIdentifier
+        senderID = sender.remoteIdentifier
     }
 
     func setupUserInfo(for conversation: ZMConversation, event: ZMUpdateEvent) {
         addSelfUserInfo(using: conversation)
-        self.conversationID = conversation.remoteIdentifier
-        self.senderID = event.senderUUID
-        self.messageNonce = event.messageNonce
-        self.eventTime = event.timestamp
+        conversationID = conversation.remoteIdentifier
+        senderID = event.senderUUID
+        messageNonce = event.messageNonce
+        eventID = event.uuid
+        eventTime = event.timestamp
     }
 
     func setupUserInfo(for message: ZMMessage) {
         addSelfUserInfo(using: message)
-        self.conversationID = message.conversation?.remoteIdentifier
-        self.senderID = message.sender?.remoteIdentifier
-        self.messageNonce = message.nonce
-        self.eventTime = message.serverTimestamp
+        conversationID = message.conversation?.remoteIdentifier
+        senderID = message.sender?.remoteIdentifier
+        messageNonce = message.nonce
+        eventTime = message.serverTimestamp
     }
 
     /// Adds the description of the self user using the given managed object.
@@ -245,20 +243,20 @@ extension NotificationUserInfo {
 
 // MARK: - Accessors
 
-extension UNNotification {
+public extension UNNotification {
 
     /// The user info describing the notification context.
-    public var userInfo: NotificationUserInfo {
-        return NotificationUserInfo(storage: request.content.userInfo)
+    var userInfo: NotificationUserInfo {
+        NotificationUserInfo(storage: request.content.userInfo)
     }
 
 }
 
-extension UNNotificationResponse {
+public extension UNNotificationResponse {
 
     /// The user info describing the notification context.
-    public var userInfo: NotificationUserInfo {
-        return notification.userInfo
+    var userInfo: NotificationUserInfo {
+        notification.userInfo
     }
 
 }

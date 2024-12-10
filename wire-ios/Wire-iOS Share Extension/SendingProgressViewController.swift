@@ -25,7 +25,8 @@ import WireSystem
 final class SendingProgressViewController: UIViewController {
 
     enum ProgressMode {
-        case preparing, sending
+        case preparing
+        case sending
     }
 
     var cancelHandler: (() -> Void)?
@@ -55,11 +56,11 @@ final class SendingProgressViewController: UIViewController {
         switch mode {
         case .sending:
             circularProgress.deterministic = true
-            self.title = L10n.ShareExtension.SendingProgress.title
+            title = L10n.ShareExtension.SendingProgress.title
         case .preparing:
             circularProgress.deterministic = false
             circularProgress.setProgress(minimumProgress, animated: false)
-            self.title = L10n.ShareExtension.Preparing.title
+            title = L10n.ShareExtension.Preparing.title
         }
     }
 
@@ -69,6 +70,7 @@ final class SendingProgressViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -76,13 +78,22 @@ final class SendingProgressViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationItem.hidesBackButton = true
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(onCancelTapped))
+        navigationItem.hidesBackButton = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .cancel,
+            target: self,
+            action: #selector(onCancelTapped)
+        )
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(SendingProgressViewController.networkStatusDidChange(_:)),
-                                               name: Notification.Name.NetworkStatus,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(
+                SendingProgressViewController
+                    .networkStatusDidChange(_:)
+            ),
+            name: Notification.Name.NetworkStatus,
+            object: nil
+        )
 
         circularShadow.lineWidth = 2
         circularShadow.setProgress(1, animated: false)

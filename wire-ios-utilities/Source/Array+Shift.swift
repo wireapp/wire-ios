@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension Array {
+public extension Array {
 
     /// Shifts the array by the given amount
     /// Negatives shift left, positives shift right
@@ -26,7 +26,7 @@ extension Array {
     /// [1, 2, 3]
     /// shifted by 1 => [3, 1, 2]
     /// shifted by -1 => [2, 3, 1]
-    public func shifted(by amount: Int) -> Array {
+    func shifted(by amount: Int) -> Array {
         // accounts for negative amount:
         // - addition: results in the positive equivalent of amount to shift
         // - modulo: ensures we stay in range
@@ -41,8 +41,8 @@ extension Array {
         }
 
         // split
-        let front = self[i..<endIndex]
-        let back = self[startIndex..<i]
+        let front = self[i ..< endIndex]
+        let back = self[startIndex ..< i]
 
         return Array(front + back)
     }

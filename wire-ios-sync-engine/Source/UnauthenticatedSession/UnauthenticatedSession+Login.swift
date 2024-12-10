@@ -22,28 +22,26 @@ extension UserCredentials {
     var isInvalid: Bool {
         let noEmail = email?.isEmpty ?? true
         let noPassword = password?.isEmpty ?? true
-        let noNumber = phoneNumber?.isEmpty ?? true
-        let noVerificationCode = phoneNumberVerificationCode?.isEmpty ?? true
-        return (noEmail || noPassword) && (noNumber || noVerificationCode)
+        return noEmail || noPassword
     }
 }
 
-extension UnauthenticatedSession {
+public extension UnauthenticatedSession {
 
     @objc(continueAfterBackupImportStep)
-    public func continueAfterBackupImportStep() {
+    func continueAfterBackupImportStep() {
         authenticationStatus.continueAfterBackupImportStep()
     }
 
     /// Attempt to log in with the given credentials
     @objc(loginWithCredentials:)
-    public func login(with credentials: UserCredentials) {
+    func login(with credentials: UserCredentials) {
         let updatedCredentialsInUserSession = delegate?.session(session: self, updatedCredentials: credentials) ?? false
 
         guard !updatedCredentialsInUserSession else { return }
 
         if credentials.isInvalid {
-            let error = NSError(code: .needsCredentials, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .needsCredentials, userInfo: nil)
             authenticationStatus.notifyAuthenticationDidFail(error)
         } else {
             authenticationErrorIfNotReachable {
@@ -53,28 +51,12 @@ extension UnauthenticatedSession {
         }
     }
 
-    /// Requires a phone verification code for login. Returns NO if the phone number was invalid
-    @objc(requestPhoneVerificationCodeForLogin:)
-    @discardableResult public func requestPhoneVerificationCodeForLogin(phoneNumber: String) -> Bool {
-        do {
-            var phoneNumber: String? = phoneNumber
-            _ = try userPropertyValidator.validate(phoneNumber: &phoneNumber)
-        } catch {
-            return false
-        }
-
-        authenticationErrorIfNotReachable {
-            self.authenticationStatus.prepareForRequestingPhoneVerificationCode(forLogin: phoneNumber)
-            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        }
-        return true
-    }
-
-    /// Triggers a request for an email verification code for login. 
+    /// Triggers a request for an email verification code for login.
     ///
     /// Returns: false if the email address was invalid.
     @objc(requestEmailVerificationCodeForLogin:)
-    @discardableResult public func requestEmailVerificationCodeForLogin(email: String) -> Bool {
+    @discardableResult
+    func requestEmailVerificationCodeForLogin(email: String) -> Bool {
         do {
             var email: String? = email
             _ = try userPropertyValidator.validate(emailAddress: &email)

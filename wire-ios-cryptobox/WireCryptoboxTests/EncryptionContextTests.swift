@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireCryptobox
 import XCTest
+@testable import WireCryptobox
 
 class EncryptionContextTests: XCTestCase {
 
@@ -29,8 +29,8 @@ class EncryptionContextTests: XCTestCase {
         let tempDir = createTempFolder()
 
         // have to do work on other queues because the main thread can't be blocked
-        let queue1 = DispatchQueue(label: self.name)
-        let queue2 = DispatchQueue(label: self.name)
+        let queue1 = DispatchQueue(label: name)
+        let queue2 = DispatchQueue(label: name)
 
         // coordinate between the two threads to make sure that they are executed in the right order
         let context2CanEnterSemaphore = DispatchSemaphore(value: 0)
@@ -98,8 +98,8 @@ class EncryptionContextTests: XCTestCase {
         let tempDir = createTempFolder()
 
         let mainContext = EncryptionContext(path: tempDir)
-        let invocation1 = self.expectation(description: "first begin using session")
-        let invocation2 = self.expectation(description: "second begin using session")
+        let invocation1 = expectation(description: "first begin using session")
+        let invocation2 = expectation(description: "second begin using session")
 
         // WHEN
         // enter critical section
@@ -113,7 +113,7 @@ class EncryptionContextTests: XCTestCase {
         }
 
         // THEN
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
 
     }
 
@@ -125,8 +125,8 @@ class EncryptionContextTests: XCTestCase {
         let mainContext = EncryptionContext(path: tempDir)
         var lastStatus: EncryptionSessionsDirectory?
 
-        let invocation1 = self.expectation(description: "first begin using session")
-        let invocation2 = self.expectation(description: "second begin using session")
+        let invocation1 = expectation(description: "first begin using session")
+        let invocation2 = expectation(description: "second begin using session")
 
         // WHEN
 
@@ -142,7 +142,7 @@ class EncryptionContextTests: XCTestCase {
         }
 
         // THEN
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
     }
 
     func testThatItSafelyEncryptDecryptDuringNestedPerform() {
@@ -162,14 +162,14 @@ class EncryptionContextTests: XCTestCase {
             try! context1.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
 
             mainContext.perform { (context2: EncryptionSessionsDirectory) in
-                _ = try! context2.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+                _ = try! context2.encrypt(someTextToEncrypt.data(using: .utf8)!, for: hardcodedClientId)
 
             }
 
-            _ = try! context1.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            _ = try! context1.encrypt(someTextToEncrypt.data(using: .utf8)!, for: hardcodedClientId)
         }
 
-        // THEN 
+        // THEN
         // it didn't crash
     }
 
@@ -181,8 +181,8 @@ class EncryptionContextTests: XCTestCase {
         let mainContext = EncryptionContext(path: tempDir)
         var lastStatus: EncryptionSessionsDirectory?
 
-        let invocation1 = self.expectation(description: "first begin using session")
-        let invocation2 = self.expectation(description: "second begin using session")
+        let invocation1 = expectation(description: "first begin using session")
+        let invocation2 = expectation(description: "second begin using session")
 
         // WHEN
 
@@ -199,12 +199,13 @@ class EncryptionContextTests: XCTestCase {
             XCTAssertFalse(lastStatus === context)
         }
 
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
     }
 
 }
 
 // MARK: - Logging
+
 extension EncryptionContextTests {
 
     func testThatItSetsExtendedLoggingOnSessions() {

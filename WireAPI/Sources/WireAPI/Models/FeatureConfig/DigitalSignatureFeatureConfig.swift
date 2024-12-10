@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *Digital Signature* feature.
 
-public struct DigitalSignatureFeatureConfig: Codable, Equatable {
+public struct DigitalSignatureFeatureConfig: Codable, Equatable, Sendable {
 
     /// The feature's status.
 

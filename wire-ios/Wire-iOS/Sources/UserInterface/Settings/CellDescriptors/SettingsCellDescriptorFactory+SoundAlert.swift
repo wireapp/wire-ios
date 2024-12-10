@@ -22,21 +22,23 @@ import Foundation
 extension SettingsCellDescriptorFactory {
 
     var soundAlertGroup: SettingsCellDescriptorType {
-        return SettingsGroupCellDescriptor(
+        SettingsGroupCellDescriptor(
             items: [alertsSection],
             title: title,
             identifier: .none,
             previewGenerator: alertPreviewGenerator,
-            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
     private var title: String {
-        return L10n.Localizable.Self.Settings.SoundMenu.title
+        L10n.Localizable.Self.Settings.SoundMenu.title
     }
 
     private var soundAlertProperty: SettingsProperty {
-        return settingsPropertyFactory.property(.soundAlerts)
+        settingsPropertyFactory.property(.soundAlerts)
     }
 
     private var alertsSection: SettingsSectionDescriptorType {
@@ -68,7 +70,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var alertPreviewGenerator: PreviewGeneratorType {
-        return {
+        {
             guard
                 let rawValue = self.soundAlertProperty.value().value() as? NSNumber,
                 let intensityLevel = AVSIntensityLevel(rawValue: rawValue.uintValue)
@@ -83,11 +85,6 @@ extension SettingsCellDescriptorFactory {
                 return .text(L10n.Localizable.Self.Settings.SoundMenu.MuteWhileTalking.title)
             case .none:
                 return .text(L10n.Localizable.Self.Settings.SoundMenu.NoSounds.title)
-            @unknown default:
-                // swiftlint:disable todo_requires_jira_link
-                // TODO: change AVSIntensityLevel to NS_CLOSED_ENUM
-                // swiftlint:enable todo_requires_jira_link
-                return .text("")
             }
         } as PreviewGeneratorType
     }

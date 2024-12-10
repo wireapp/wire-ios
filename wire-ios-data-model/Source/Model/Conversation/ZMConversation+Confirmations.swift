@@ -18,9 +18,9 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
-    @NSManaged dynamic public var hasReadReceiptsEnabled: Bool
+    @NSManaged dynamic var hasReadReceiptsEnabled: Bool
 
     /// Confirm unread received messages as read.
     ///
@@ -28,7 +28,7 @@ extension ZMConversation {
     ///     - range: Unread messages received within this date range will be confirmed as read.
 
     @discardableResult
-    func confirmUnreadMessagesAsRead(in range: ClosedRange<Date>) -> [ZMClientMessage] {
+    internal func confirmUnreadMessagesAsRead(in range: ClosedRange<Date>) -> [ZMClientMessage] {
         let unreadMessagesNeedingConfirmation = unreadMessages(in: range).filter(\.needsReadConfirmation)
         var confirmationMessages: [ZMClientMessage] = []
 
@@ -41,7 +41,11 @@ extension ZMConversation {
             }
 
             do {
-                let confirmationMessage = try appendClientMessage(with: GenericMessage(content: confirmation), expires: false, hidden: true)
+                let confirmationMessage = try appendClientMessage(
+                    with: GenericMessage(content: confirmation),
+                    expires: false,
+                    hidden: true
+                )
                 confirmationMessages.append(confirmationMessage)
             } catch {
                 Logging.messageProcessing.warn("Failed to append confirmation. Reason: \(error.localizedDescription)")
@@ -53,7 +57,11 @@ extension ZMConversation {
     }
 
     @discardableResult @objc
-    public func appendMessageReceiptModeChangedMessage(fromUser user: ZMUser, timestamp: Date, enabled: Bool) -> ZMSystemMessage {
+    func appendMessageReceiptModeChangedMessage(
+        fromUser user: ZMUser,
+        timestamp: Date,
+        enabled: Bool
+    ) -> ZMSystemMessage {
         let message = appendSystemMessage(
             type: enabled ? .readReceiptsEnabled : .readReceiptsDisabled,
             sender: user,
@@ -62,7 +70,7 @@ extension ZMConversation {
             timestamp: timestamp
         )
 
-        if isArchived && mutedMessageTypes == .none {
+        if isArchived, mutedMessageTypes == .none {
             isArchived = false
         }
 
@@ -70,16 +78,14 @@ extension ZMConversation {
     }
 
     @discardableResult @objc
-    public func appendMessageReceiptModeIsOnMessage(timestamp: Date) -> ZMSystemMessage {
-        let message = appendSystemMessage(
+    func appendMessageReceiptModeIsOnMessage(timestamp: Date) -> ZMSystemMessage {
+        appendSystemMessage(
             type: .readReceiptsOn,
             sender: creator,
             users: [],
             clients: nil,
             timestamp: timestamp
         )
-
-        return message
     }
 
 }

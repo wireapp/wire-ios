@@ -27,7 +27,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.syncManagedObjectContext)
+        XCTAssertNotNil(sut.syncManagedObjectContext)
         // WHEN & THEN
         coreDataStack.syncContext.performAndWait {
             XCTAssertEqual(self.sut.syncManagedObjectContext, self.sut.syncManagedObjectContext.zm_sync)
@@ -36,14 +36,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatUIContextReturnsSelfForLinkedUIContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.managedObjectContext)
+        XCTAssertNotNil(sut.managedObjectContext)
         // WHEN & THEN
-        XCTAssertEqual(self.sut.managedObjectContext, self.sut.managedObjectContext.zm_userInterface)
+        XCTAssertEqual(sut.managedObjectContext, sut.managedObjectContext.zm_userInterface)
     }
 
     func testThatSyncContextReturnsLinkedUIContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.syncManagedObjectContext)
+        XCTAssertNotNil(sut.syncManagedObjectContext)
         // WHEN & THEN
         coreDataStack.syncContext.performAndWait {
             XCTAssertEqual(self.sut.syncManagedObjectContext.zm_userInterface, self.sut.managedObjectContext)
@@ -52,9 +52,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatUIContextReturnsLinkedSyncContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.managedObjectContext)
+        XCTAssertNotNil(sut.managedObjectContext)
         // WHEN & THEN
-        XCTAssertEqual(self.sut.managedObjectContext.zm_sync, self.sut.syncManagedObjectContext)
+        XCTAssertEqual(sut.managedObjectContext.zm_sync, sut.syncManagedObjectContext)
     }
 
     func testThatLinkedUIContextIsNotStrongReferenced() {
@@ -145,13 +145,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
         // GIVEN
-        var executed: Bool = false
-        var contextSaved: Bool = false
+        var executed = false
+        var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.perform {
@@ -173,9 +174,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.enqueue {
@@ -205,9 +207,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.enqueue {
@@ -245,9 +248,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.enqueueDelayed {
@@ -270,7 +274,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertFalse(contextSaved)
 
         // and WHEN
-        spinMainQueue(withTimeout: 0.2) // the delayed save will wait 0.1 seconds
+        let waitExpectation = XCTestExpectation().inverted()
+        wait(for: [waitExpectation], timeout: 0.5)
 
         // THEN
         XCTAssertTrue(executed)
@@ -303,10 +308,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             results: [.success(())],
             context: syncMOC.notificationContext
         )
-        let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
-            result: .success(()),
-            context: syncMOC.notificationContext
-        )
 
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
@@ -316,7 +317,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // THEN
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
         XCTAssertEqual(mockGetFeatureConfigsActionHandler.performedActions.count, 1)
-        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
@@ -371,46 +371,40 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(sut.networkState, .offline)
 
         // WHEN
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
         sut.didReceiveData()
 
         // THEN
-        withExtendedLifetime(token) {
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-            XCTAssertEqual(stateRecorder.stateChanges.count, 1)
-            XCTAssertEqual(stateRecorder.stateChanges.first, .onlineSynchronizing)
-        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(stateRecorder.stateChanges.count, 1)
+        XCTAssertEqual(stateRecorder.stateChanges.first, .onlineSynchronizing)
     }
 
     func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOnline() {
         // GIVEN
         let stateRecorder = NetworkStateRecorder()
+        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
 
         // WHEN
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didReceiveData()
 
         // THEN
-        withExtendedLifetime(token) {
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-            XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
     }
 
     func testThatItNotifiesObserversWhenTheNetworkStatusBecomesOffline() {
         // GIVEN
         let stateRecorder = NetworkStateRecorder()
+        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
 
         // WHEN
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
         sut.didGoOffline()
 
         // THEN
-        withExtendedLifetime(token) {
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-            XCTAssertEqual(stateRecorder.stateChanges.count, 1)
-            XCTAssertEqual(stateRecorder.stateChanges.first, .offline)
-        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(stateRecorder.stateChanges.count, 1)
+        XCTAssertEqual(stateRecorder.stateChanges.first, .offline)
     }
 
     func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOffline() {
@@ -421,44 +415,49 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
 
         // WHEN
-        let token = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(stateRecorder, userSession: sut)
+        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
         sut.didGoOffline()
 
         // THEN
-        withExtendedLifetime(token) {
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-            XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
     }
 
     func testThatItSetsTheMinimumBackgroundFetchInterval() {
         XCTAssertNotEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalNever)
-        XCTAssertGreaterThanOrEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalMinimum)
-        XCTAssertLessThanOrEqual(application.minimumBackgroundFetchInverval, (TimeInterval) (20 * 60))
+        XCTAssertGreaterThanOrEqual(
+            application.minimumBackgroundFetchInverval,
+            UIApplication.backgroundFetchIntervalMinimum
+        )
+        XCTAssertLessThanOrEqual(application.minimumBackgroundFetchInverval, TimeInterval(20 * 60))
     }
 
     func testThatItMarksTheConversationsAsRead() throws {
         // GIVEN
-        let conversationsRange: CountableClosedRange = 1...10
+        let conversationsRange: CountableClosedRange = 1 ... 10
 
         let conversations: [ZMConversation] = conversationsRange.map { _ in
-            return self.sut.insertConversationWithUnreadMessage()
+            self.sut.insertConversationWithUnreadMessage()
         }
 
-        try self.uiMOC.save()
+        try uiMOC.save()
 
         // WHEN
-        self.sut.markAllConversationsAsRead()
+        sut.markAllConversationsAsRead()
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.uiMOC.refreshAllObjects()
+        uiMOC.refreshAllObjects()
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
     func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
         // GIVEN
+        syncMOC.performAndWait {
+            let mls = Feature.MLS(status: .enabled, config: .init())
+            self.sut.featureRepository.storeMLS(mls)
+        }
         mockMLSService.performPendingJoins_MockMethod = {}
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
@@ -474,7 +473,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         )
 
         // MLS client has been registered
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             let selfUserClient = createSelfClient()
             selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
             selfUserClient.needsToUploadMLSPublicKeys = false
@@ -495,6 +494,22 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
 
         XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
-        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
+    }
+
+    func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {
+        syncMOC.performAndWait {
+            // GIVEN
+            ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
+
+            // WHEN
+            sut.didFinishQuickSync()
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        let supportedProtocols = syncMOC.performAndWait { ZMUser.selfUser(in: self.syncMOC).supportedProtocols }
+
+        XCTAssertTrue(supportedProtocols.contains(.proteus))
     }
 }

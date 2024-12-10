@@ -14,6 +14,10 @@
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       },
       {
+        "argument" : "-NSShowNonLocalizedStrings YES",
+        "enabled" : false
+      },
+      {
         "argument" : "--disable-interactive-keyboard-dismissal",
         "enabled" : false
       },
@@ -84,10 +88,6 @@
         "value" : "$(SOURCE_ROOT)\/SnapshotResults"
       },
       {
-        "key" : "FB_REFERENCE_IMAGE_DIR",
-        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
-      },
-      {
         "key" : "SNAPSHOT_REFERENCE_DIR",
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
       },
@@ -122,7 +122,8 @@
         "AppLockModuleViewTests\/test_ItSendsEvent_WhenApplicationWillEnterForeground()",
         "AppLockModuleViewTests\/test_ItSendsEvent_WhenLockViewRequestReauthentication()",
         "PasswordRuleSetTests\/testPasswordNotMatchingRuleSet()",
-        "PasswordRuleSetTests\/testThatItDetectsDisallowedCharacter()"
+        "PasswordRuleSetTests\/testThatItDetectsDisallowedCharacter()",
+        "URL_WireTests\/test_passwordReset_URLIsCorrect()"
       ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",

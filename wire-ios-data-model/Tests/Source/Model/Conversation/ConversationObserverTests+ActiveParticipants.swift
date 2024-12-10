@@ -19,6 +19,7 @@
 @testable import WireDataModel
 
 // MARK: - Participants
+
 extension ConversationObserverTests {
 
     func testThatItRecalculatesActiveParticipantsWhenIsSelfActiveUserKeyChanges() {
@@ -38,13 +39,24 @@ extension ConversationObserverTests {
 
         // when
 
-        checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                modifier: { conversation, _ in
-                                                    conversation.minus(user: ZMUser.selfUser(in: uiMOC), isFromLocal: true)},
-                                                expectedChangedFields: ["nameChanged",
-                                                                        "participantsChanged",
-                                                                        "activeParticipantsChanged"],
-                                                expectedChangedKeys: ["localParticipantRoles", "displayName", "activeParticipants"]
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.minus(
+                    user: ZMUser.selfUser(in: uiMOC),
+                    isFromLocal: true
+                )
+            },
+            expectedChangedFields: [
+                "nameChanged",
+                "participantsChanged",
+                "activeParticipantsChanged"
+            ],
+            expectedChangedKeys: [
+                "localParticipantRoles",
+                "displayName",
+                "activeParticipants"
+            ]
         )
 
         // then
@@ -69,19 +81,24 @@ extension ConversationObserverTests {
 
         // when
 
-        checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                modifier: { conversation, _ in
-                                                    conversation.internalRemoveParticipants([user2],
-                                                                                            sender: user1)
-                                                          },
-                                                expectedChangedFields: ["nameChanged",
-                                                                        "participantsChanged",
-                                                                        "activeParticipantsChanged"
-                                                                       ],
-                                                expectedChangedKeys: ["localParticipantRoles",
-                                                                      "displayName",
-                                                                      "activeParticipants"
-                                                                     ]
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.internalRemoveParticipants(
+                    [user2],
+                    sender: user1
+                )
+            },
+            expectedChangedFields: [
+                "nameChanged",
+                "participantsChanged",
+                "activeParticipantsChanged"
+            ],
+            expectedChangedKeys: [
+                "localParticipantRoles",
+                "displayName",
+                "activeParticipants"
+            ]
         )
 
         // then

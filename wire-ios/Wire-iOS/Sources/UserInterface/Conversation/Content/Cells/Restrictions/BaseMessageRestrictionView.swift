@@ -48,12 +48,13 @@ class BaseMessageRestrictionView: UIView {
         createConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 56)
+        CGSize(width: UIView.noIntrinsicMetric, height: 56)
     }
 
     // MARK: - Helpers
@@ -67,15 +68,15 @@ class BaseMessageRestrictionView: UIView {
     func setupLabels() {
         topLabel.numberOfLines = 1
         topLabel.lineBreakMode = .byTruncatingMiddle
-        topLabel.accessibilityIdentifier = "\(messageType.rawValue.capitalizingFirstCharacterOnly) + MessageRestrictionTopLabel"
+        topLabel.accessibilityIdentifier = "\(messageType.rawValue) + MessageRestrictionTopLabel"
 
         bottomLabel.numberOfLines = 1
-        bottomLabel.accessibilityIdentifier = "\(messageType.rawValue.capitalizingFirstCharacterOnly) + MessageRestrictionBottomLabel"
+        bottomLabel.accessibilityIdentifier = "\(messageType.rawValue) + MessageRestrictionBottomLabel"
     }
 
     func setupIconView() {
         iconView.contentMode = .center
-        iconView.accessibilityIdentifier = "\(messageType.rawValue.capitalizingFirstCharacterOnly) + MessageRestrictionIcon"
+        iconView.accessibilityIdentifier = "\(messageType.rawValue) + MessageRestrictionIcon"
     }
 
     /// Override this method to provide a different view.
@@ -91,7 +92,8 @@ class BaseMessageRestrictionView: UIView {
         iconView.setTemplateIcon(messageType.icon, size: messageType.iconSize)
 
         let titleString = messageType.title.localizedUppercase && .smallSemiboldFont && SemanticColors.Label.textDefault
-        let subtitleString = messageType.subtitle.localizedUppercase && .smallLightFont && SemanticColors.Label.textCollectionSecondary
+        let subtitleString = messageType.subtitle.localizedUppercase && .smallLightFont && SemanticColors.Label
+            .textCollectionSecondary
         topLabel.attributedText = titleString
         bottomLabel.attributedText = subtitleString
     }
@@ -107,22 +109,22 @@ enum RestrictedMessageType: String {
     var icon: StyleKitIcon {
         switch self {
         case .audio:
-            return .microphone
+            .microphone
         case .video:
-            return .play
+            .play
         case .image:
-            return .photo
+            .photo
         case .file:
-            return .document
+            .document
         }
     }
 
     var iconSize: StyleKitIcon.Size {
         switch self {
         case .audio, .file:
-            return .small
+            .small
         case .video, .image:
-            return .tiny
+            .tiny
         }
     }
 

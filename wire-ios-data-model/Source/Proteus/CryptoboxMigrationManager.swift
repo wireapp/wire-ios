@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
 
 // sourcery: AutoMockable
@@ -68,22 +69,22 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
         accountDirectory: URL,
         coreCrypto: SafeCoreCryptoProtocol
     ) async throws {
-            do {
-                WireLogger.proteus.info("migrating cryptobox data...")
-                let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
-                try await coreCrypto.perform { try await $0.proteusCryptoboxMigrate(path: cryptoboxDirectory.path) }
-                WireLogger.proteus.info("migrating cryptobox data... success")
-            } catch {
-                throw Failure.failedToMigrateData
-            }
+        do {
+            WireLogger.proteus.info("migrating cryptobox data...")
+            let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
+            try await coreCrypto.perform { try await $0.proteusCryptoboxMigrate(path: cryptoboxDirectory.path) }
+            WireLogger.proteus.info("migrating cryptobox data... success")
+        } catch {
+            throw Failure.failedToMigrateData
+        }
 
-            do {
-                WireLogger.proteus.info("removing legacy cryptobox data...")
-                try removeDirectory(in: accountDirectory)
-                WireLogger.proteus.info("removing legacy cryptobox data... success")
-            } catch {
-                throw Failure.failedToDeleteLegacyData
-            }
+        do {
+            WireLogger.proteus.info("removing legacy cryptobox data...")
+            try removeDirectory(in: accountDirectory)
+            WireLogger.proteus.info("removing legacy cryptobox data... success")
+        } catch {
+            throw Failure.failedToDeleteLegacyData
+        }
     }
 
     // MARK: - Helpers
@@ -108,7 +109,7 @@ protocol FileManagerInterface {
 extension FileManager: FileManagerInterface {
 
     func cryptoboxDirectory(in accountDirectory: URL) -> URL {
-        return FileManager.keyStoreURL(
+        FileManager.keyStoreURL(
             accountDirectory: accountDirectory,
             createParentIfNeeded: false
         )

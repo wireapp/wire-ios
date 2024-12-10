@@ -17,9 +17,9 @@
 //
 
 import Foundation
-@testable import WireCryptobox
 import WireSystem
 import XCTest
+@testable import WireCryptobox
 
 class EncryptionSessionsDirectoryTests: XCTestCase {
 
@@ -29,9 +29,9 @@ class EncryptionSessionsDirectoryTests: XCTestCase {
     var statusBob: EncryptionSessionsDirectory!
 
     override func setUp() {
-        self.contextAlice = createEncryptionContext()
-        self.contextBob = createEncryptionContext()
-        self.recreateStatuses()
+        contextAlice = createEncryptionContext()
+        contextBob = createEncryptionContext()
+        recreateStatuses()
     }
 
     override func tearDown() {
@@ -50,21 +50,24 @@ extension EncryptionSessionsDirectoryTests {
     func testThatItCanDecodeAfterInitializingWithAValidKey() throws {
 
         // GIVEN
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
 
         // WHEN
         try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(2))
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
         XCTAssertEqual(decoded, plainText)
     }
 
     func testThatItCanCallCreateSessionWithTheSameKeyMultipleTimes() throws {
 
         // GIVEN
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         let prekey = try! statusBob.generatePrekey(34)
         try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
 
@@ -73,7 +76,10 @@ extension EncryptionSessionsDirectoryTests {
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
         XCTAssertEqual(decoded, plainText)
     }
 
@@ -103,6 +109,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Prekeys
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatFingerprintExtractedFromPrekeyMatchesLocalFingerprint() throws {
@@ -124,7 +131,12 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         var prekeyRetrievedId: UInt16 = 0
         let prekeyData = Data(base64Encoded: prekey, options: [])!
-        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
+        let result = prekeyData
+            .withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(
+                prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                prekeyData.count,
+                &prekeyRetrievedId
+            ) }
         XCTAssertEqual(result, CBOX_SUCCESS)
         XCTAssertEqual(prekeyRetrievedId, prekeyId)
 
@@ -141,7 +153,12 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         var prekeyRetrievedId: UInt16 = 0
         let prekeyData = Data(base64Encoded: prekey, options: [])!
-        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
+        let result = prekeyData
+            .withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(
+                prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                prekeyData.count,
+                &prekeyRetrievedId
+            ) }
         XCTAssertEqual(result, CBOX_SUCCESS)
         XCTAssertEqual(prekeyRetrievedId, prekeyId)
 
@@ -152,7 +169,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         let rangeStart = 3
         let rangeLength = 10
-        let prekeyIds: CountableRange<UInt16> = UInt16(rangeStart)..<UInt16(rangeStart + rangeLength)
+        let prekeyIds: CountableRange<UInt16> = UInt16(rangeStart) ..< UInt16(rangeStart + rangeLength)
 
         // WHEN
         var prekeys: [(id: UInt16, prekey: String)] = []
@@ -160,11 +177,16 @@ extension EncryptionSessionsDirectoryTests {
 
         // THEN
         XCTAssertEqual(prekeyIds.count, rangeLength)
-        for i in 0..<rangeLength {
+        for i in 0 ..< rangeLength {
             let (id, prekey) = prekeys[i]
             let prekeyData = Data(base64Encoded: prekey, options: [])!
             var prekeyRetrievedId: UInt16 = 0
-            let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
+            let result = prekeyData
+                .withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(
+                    prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                    prekeyData.count,
+                    &prekeyRetrievedId
+                ) }
             XCTAssertEqual(result, CBOX_SUCCESS)
             XCTAssertEqual(Int(prekeyRetrievedId), i + rangeStart)
             XCTAssertEqual(prekeyRetrievedId, id)
@@ -173,6 +195,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Local fingerprint
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatItReturnsTheLocalFingerprint() {
@@ -210,11 +233,16 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         // WHEN
         // THEN
-        XCTAssertNil(statusAlice.fingerprint(for: EncryptionSessionIdentifier(domain: "example.com", userId: "aa22", clientId: "8899")))
+        XCTAssertNil(statusAlice.fingerprint(for: EncryptionSessionIdentifier(
+            domain: "example.com",
+            userId: "aa22",
+            clientId: "8899"
+        )))
     }
 }
 
 // MARK: - Deletion
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatItDeletesASession() {
@@ -226,7 +254,7 @@ extension EncryptionSessionsDirectoryTests {
         statusAlice.delete(Person.Bob.identifier)
 
         // THEN
-        let cypherText = try? statusAlice.encrypt("foo".data(using: String.Encoding.utf8)!, for: Person.Bob.identifier)
+        let cypherText = try? statusAlice.encrypt(Data("foo".utf8), for: Person.Bob.identifier)
         XCTAssertNil(cypherText)
     }
 
@@ -243,6 +271,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Session cache management
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatCreatedSessionsAreNotSavedImmediately() {
@@ -256,16 +285,17 @@ extension EncryptionSessionsDirectoryTests {
         let statusAliceCopy = EncryptionSessionsDirectory(
             generatingContext: contextAlice,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
-            extensiveLoggingSessions: Set())
+            extensiveLoggingSessions: Set()
+        )
         statusAliceCopy.debug_disableContextValidityCheck = true
-        let cypher = try? statusAliceCopy.encrypt("foo".data(using: String.Encoding.utf8)!, for: Person.Bob.identifier)
+        let cypher = try? statusAliceCopy.encrypt(Data("foo".utf8), for: Person.Bob.identifier)
         XCTAssertNil(cypher)
     }
 
     func testThatNewlyCreatedSessionsAreSavedWhenReleasingTheStatus() {
 
         // GIVEN
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
 
         // WHEN
@@ -275,10 +305,14 @@ extension EncryptionSessionsDirectoryTests {
         let statusAliceCopy = EncryptionSessionsDirectory(
             generatingContext: contextAlice,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
-            extensiveLoggingSessions: Set())
+            extensiveLoggingSessions: Set()
+        )
         statusAliceCopy.debug_disableContextValidityCheck = true
         let prekeyMessage = try! statusAliceCopy.encrypt(plainText, for: Person.Bob.identifier)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
         XCTAssertEqual(plainText, decoded)
     }
 
@@ -295,20 +329,24 @@ extension EncryptionSessionsDirectoryTests {
         let statusAliceCopy = EncryptionSessionsDirectory(
             generatingContext: contextAlice,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
-            extensiveLoggingSessions: Set())
+            extensiveLoggingSessions: Set()
+        )
         statusAliceCopy.debug_disableContextValidityCheck = true
-        let cypher = try? statusAliceCopy.encrypt("foo".data(using: String.Encoding.utf8)!, for: Person.Bob.identifier)
+        let cypher = try? statusAliceCopy.encrypt(Data("foo".utf8), for: Person.Bob.identifier)
         XCTAssertNil(cypher)
     }
 
     func testThatModifiedSessionsAreNotSavedWhenDiscarding() {
 
         // GIVEN
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
-        self.recreateStatuses() // force save
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
+        recreateStatuses() // force save
 
         // WHEN
         let cypherText = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
@@ -320,7 +358,8 @@ extension EncryptionSessionsDirectoryTests {
         let statusBobCopy = EncryptionSessionsDirectory(
             generatingContext: contextBob,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
-            extensiveLoggingSessions: Set())
+            extensiveLoggingSessions: Set()
+        )
         statusBobCopy.debug_disableContextValidityCheck = true
         let decoded = try! statusBobCopy.decrypt(cypherText, from: Person.Alice.identifier)
         XCTAssertEqual(decoded, plainText)
@@ -355,7 +394,7 @@ extension EncryptionSessionsDirectoryTests {
 
         // GIVEN
         establishSessionBetweenAliceAndBob()
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         let cypherText = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
         _ = try! statusBob.decrypt(cypherText, from: Person.Alice.identifier)
 
@@ -375,7 +414,7 @@ extension EncryptionSessionsDirectoryTests {
 
         // GIVEN
         establishSessionBetweenAliceAndBob()
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         let cypherText = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
         _ = try! statusBob.decrypt(cypherText, from: Person.Alice.identifier)
 
@@ -395,7 +434,7 @@ extension EncryptionSessionsDirectoryTests {
 
         // GIVEN
         establishSessionBetweenAliceAndBob()
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         let cypherText = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
         _ = try! statusBob.decrypt(cypherText, from: Person.Alice.identifier)
 
@@ -414,12 +453,12 @@ extension EncryptionSessionsDirectoryTests {
 
         // GIVEN
         establishSessionBetweenAliceAndBob()
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         let cypherText = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
         _ = try! statusBob.decrypt(cypherText, from: Person.Alice.identifier)
 
         // WHEN
-        self.recreateStatuses() // force save
+        recreateStatuses() // force save
 
         // THEN
         do {
@@ -436,15 +475,18 @@ extension EncryptionSessionsDirectoryTests {
     func testThatItCanDecodeAfterSavingCache() {
 
         // GIVEN
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
 
         // WHEN
-        self.recreateStatuses() // force save
+        recreateStatuses() // force save
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
         XCTAssertEqual(decoded, plainText)
     }
 
@@ -464,6 +506,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Session migration tests
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatItCanMigrateASessionAndReceive() {
@@ -540,21 +583,22 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Extended logging
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatItLogsEncryptionWhenExtendedLoggingIsSet() {
 
         // GIVEN
-        self.recreateAliceStatus(extendedLoggingSession: Set([Person.Bob.identifier]))
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        recreateAliceStatus(extendedLoggingSession: Set([Person.Bob.identifier]))
+        let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
         let logExpectation = expectation(description: "Encrypting")
 
         // EXPECT
         let token = ZMSLog.addEntryHook { level, tag, entry, _ in
-            if level == .public &&
-                tag == "cryptobox" &&
-                entry.text.contains("encrypted to cyphertext: cyphertext") {
+            if level == .public,
+               tag == "cryptobox",
+               entry.text.contains("encrypted to cyphertext: cyphertext") {
                 logExpectation.fulfill()
             }
         }
@@ -574,9 +618,9 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         // set logging for a different identifier
         let wrongIdentifier = EncryptionSessionIdentifier(domain: "example.com", userId: "foo", clientId: "bar")
-        self.recreateAliceStatus(extendedLoggingSession: Set([wrongIdentifier]))
+        recreateAliceStatus(extendedLoggingSession: Set([wrongIdentifier]))
 
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
 
         // EXPECT
@@ -594,23 +638,26 @@ extension EncryptionSessionsDirectoryTests {
     func testThatItLogsDecryptionWhenExtendedLoggingIsSet_prekeyMessage() {
 
         // GIVEN
-        self.recreateBobStatus(extendedLoggingSession: Set([Person.Alice.identifier]))
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        recreateBobStatus(extendedLoggingSession: Set([Person.Alice.identifier]))
+        let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
         let logExpectation = expectation(description: "Encrypting")
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
         // EXPECT
         let token = ZMSLog.addEntryHook { level, tag, entry, _ in
-            if level == .public &&
-                tag == "cryptobox" &&
-                entry.text.contains("decrypting prekey cyphertext:") {
+            if level == .public,
+               tag == "cryptobox",
+               entry.text.contains("decrypting prekey cyphertext:") {
                 logExpectation.fulfill()
             }
         }
 
         // WHEN
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
 
         // THEN
         waitForExpectations(timeout: 0.2)
@@ -623,17 +670,17 @@ extension EncryptionSessionsDirectoryTests {
 
         // GIVEN
 
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         establishSessionBetweenAliceAndBob()
-        self.recreateBobStatus(extendedLoggingSession: Set([Person.Alice.identifier]))
+        recreateBobStatus(extendedLoggingSession: Set([Person.Alice.identifier]))
         let logExpectation = expectation(description: "Encrypting")
         let message = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
         // EXPECT
         let token = ZMSLog.addEntryHook { level, tag, entry, _ in
-            if level == .public &&
-                tag == "cryptobox" &&
-                entry.text.contains("decrypting cyphertext:") {
+            if level == .public,
+               tag == "cryptobox",
+               entry.text.contains("decrypting cyphertext:") {
                 logExpectation.fulfill()
             }
         }
@@ -653,9 +700,9 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         // set logging for a different identifier
         let wrongIdentifier = EncryptionSessionIdentifier(domain: "example.com", userId: "foo", clientId: "bar")
-        self.recreateBobStatus(extendedLoggingSession: Set([wrongIdentifier]))
+        recreateBobStatus(extendedLoggingSession: Set([wrongIdentifier]))
 
-        let plainText = "foo".data(using: String.Encoding.utf8)!
+        let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
 
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
@@ -666,7 +713,10 @@ extension EncryptionSessionsDirectoryTests {
         }
 
         // WHEN
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -686,43 +736,46 @@ extension EncryptionSessionsDirectoryTests {
         only: Person? = nil
     ) {
         if only == nil || only == .Alice {
-            self.recreateAliceStatus()
+            recreateAliceStatus()
         }
         if only == nil || only == .Bob {
-            self.recreateBobStatus()
+            recreateBobStatus()
         }
     }
 
     func recreateAliceStatus(
         extendedLoggingSession: Set<EncryptionSessionIdentifier> = Set()
     ) {
-        self.statusAlice = EncryptionSessionsDirectory(
+        statusAlice = EncryptionSessionsDirectory(
             generatingContext: contextAlice,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
             extensiveLoggingSessions: extendedLoggingSession
         )
-        self.statusAlice.debug_disableContextValidityCheck = true
+        statusAlice.debug_disableContextValidityCheck = true
     }
 
     func recreateBobStatus(
         extendedLoggingSession: Set<EncryptionSessionIdentifier> = Set()
     ) {
-        self.statusBob = EncryptionSessionsDirectory(
+        statusBob = EncryptionSessionsDirectory(
             generatingContext: contextBob,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
             extensiveLoggingSessions: extendedLoggingSession
         )
-        self.statusBob.debug_disableContextValidityCheck = true
+        statusBob.debug_disableContextValidityCheck = true
     }
 
     /// Sends a prekey message from Alice to Bob, decrypts it on Bob's side, and save both
     func establishSessionBetweenAliceAndBob() {
-        self.establishSessionFromAliceToBob()
-        let prekeyMessage = try! statusAlice.encrypt("foo".data(using: String.Encoding.utf8)!, for: Person.Bob.identifier)
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        establishSessionFromAliceToBob()
+        let prekeyMessage = try! statusAlice.encrypt(Data("foo".utf8), for: Person.Bob.identifier)
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
 
         /// This will force commit
-        self.recreateStatuses()
+        recreateStatuses()
     }
 
     /// Creates a client session from Alice to Bob
@@ -738,18 +791,18 @@ extension EncryptionSessionsDirectoryTests {
         var identifier: EncryptionSessionIdentifier {
             switch self {
             case .Alice:
-                return EncryptionSessionIdentifier(domain: "example.com", userId: "234ab2e4", clientId: "c45-a11c30")
+                EncryptionSessionIdentifier(domain: "example.com", userId: "234ab2e4", clientId: "c45-a11c30")
             case .Bob:
-                return EncryptionSessionIdentifier(fromLegacyV1Identifier: bobIdentifierOverride ?? "a34affe3366-b0b0b0b")
+                EncryptionSessionIdentifier(fromLegacyV1Identifier: bobIdentifierOverride ?? "a34affe3366-b0b0b0b")
             }
         }
 
         var other: Person {
             switch self {
             case .Alice:
-                return .Bob
+                .Bob
             case .Bob:
-                return .Alice
+                .Alice
             }
         }
     }
@@ -770,7 +823,8 @@ extension EncryptionSessionsDirectoryTests {
     /// Checks if a message can be encrypted and successfully decrypted
     /// by the other person
     /// - note: it does commit the session cache
-    @discardableResult func checkThatAMessageCanBeSent(_ from: Person, saveReceiverCache: Bool = true) -> Bool {
+    @discardableResult
+    func checkThatAMessageCanBeSent(_ from: Person, saveReceiverCache: Bool = true) -> Bool {
         let senderId = from.identifier
         let receiverId = from.other.identifier
 
@@ -784,7 +838,7 @@ extension EncryptionSessionsDirectoryTests {
             }
         }
 
-        let plainText = "निर्वाण".data(using: String.Encoding.utf8)!
+        let plainText = Data("निर्वाण".utf8)
         do {
             let cypherText = try status1?.encrypt(plainText, for: receiverId)
             let decoded = try status2?.decrypt(cypherText!, from: senderId)

@@ -16,56 +16,80 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
-    var sut: FullscreenImageViewController!
-    var userSession: UserSessionMock!
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: FullscreenImageViewController!
+    private var userSession: UserSessionMock!
+
+    // MARK: - setup
 
     override func setUp() {
-        super.setUp()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         userSession = nil
-        super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
+    @MainActor
     func testThatVeryLargeImageIsLoadedToImageView() {
         sut = createFullscreenImageViewControllerForTest(imageFileName: "20000x20000.gif", userSession: userSession)
 
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
+    @MainActor
     func testThatSmallImageIsCenteredInTheScreen() {
-        sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
+        sut = createFullscreenImageViewControllerForTest(
+            imageFileName: "unsplash_matterhorn_small_size.jpg",
+            userSession: userSession
+        )
 
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
+    @MainActor
     func testThatSmallImageIsScaledToFitTheScreenAfterDoubleTapped() {
         // GIVEN
-        sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
+        sut = createFullscreenImageViewControllerForTest(
+            imageFileName: "unsplash_matterhorn_small_size.jpg",
+            userSession: userSession
+        )
 
         // WHEN
         doubleTap(fullscreenImageViewController: sut)
 
         // THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
+    @MainActor
     func testThatImageIsDarkenWhenSelectedByMenu() {
-        sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
+        sut = createFullscreenImageViewControllerForTest(
+            imageFileName: "unsplash_matterhorn_small_size.jpg",
+            userSession: userSession
+        )
 
         sut.setSelectedByMenu(true, animated: false)
         // test for tap again does not add one more layer
         sut.setSelectedByMenu(false, animated: false)
         sut.setSelectedByMenu(true, animated: false)
 
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 }

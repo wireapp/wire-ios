@@ -24,7 +24,7 @@ private let redactedValue = "<redacted>"
 
 // MARK: - Text
 
-fileprivate extension Text {
+private extension Text {
     func sanitize() -> Text {
         var text = self
         text.content = redactedValue
@@ -35,24 +35,26 @@ fileprivate extension Text {
 
 // MARK: - LinkPreview
 
-fileprivate extension LinkPreview {
+private extension LinkPreview {
     func sanitize() -> LinkPreview {
-        return LinkPreview(withOriginalURL: redactedValue,
-                           permanentURL: redactedValue,
-                           offset: urlOffset,
-                           title: redactedValue,
-                           summary: redactedValue,
-                           imageAsset: image,
-                           article: article.sanitize(),
-                           tweet: nil)
+        LinkPreview(
+            withOriginalURL: redactedValue,
+            permanentURL: redactedValue,
+            offset: urlOffset,
+            title: redactedValue,
+            summary: redactedValue,
+            imageAsset: image,
+            article: article.sanitize(),
+            tweet: nil
+        )
     }
 }
 
 // MARK: - Article
 
-fileprivate extension Article {
+private extension Article {
     func sanitize() -> Article {
-        return Article.with {
+        Article.with {
             $0.title = redactedValue
             $0.permanentURL = redactedValue
             $0.summary = redactedValue
@@ -77,6 +79,8 @@ extension GenericMessage: CustomStringConvertible {
         default:
             break
         }
+        message.messageID = messageID.redactedAndTruncated()
+        message.reaction.emoji = reaction.emoji.redacted
         return message.debugDescription
     }
 
@@ -85,10 +89,16 @@ extension GenericMessage: CustomStringConvertible {
 extension GenericMessage: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        let contentDescription = content?.safeForLoggingDescription ?? "unknown"
-        return "[\(contentDescription) \(messageID.readableHash)]"
+        "[\(safeTypeForLoggingDescription) \(safeIdForLoggingDescription)]"
     }
 
+    public var safeIdForLoggingDescription: String {
+        UUID(uuidString: messageID)?.safeForLoggingDescription ?? "<nil>"
+    }
+
+    public var safeTypeForLoggingDescription: String {
+        content?.safeForLoggingDescription ?? "unknown"
+    }
 }
 
 extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
@@ -96,67 +106,70 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         switch self {
         case .text:
-            return "text"
+            "text"
 
         case .image:
-            return "image"
+            "image"
 
         case .knock:
-            return "knock"
+            "knock"
 
         case .lastRead:
-            return "lastRead"
+            "lastRead"
 
         case .cleared:
-            return "cleared"
+            "cleared"
 
         case .external:
-            return "external"
+            "external"
 
         case .clientAction:
-            return "clientAction"
+            "clientAction"
 
         case .calling:
-            return "calling"
+            "calling"
+
+        case .inCallEmoji:
+            "inCallEmoji"
 
         case .asset:
-            return "asset"
+            "asset"
 
         case .hidden:
-            return "hidden"
+            "hidden"
 
         case .location:
-            return "location"
+            "location"
 
         case .deleted:
-            return "deleted"
+            "deleted"
 
         case .edited:
-            return "edited"
+            "edited"
 
         case .confirmation:
-            return "confirmation"
+            "confirmation"
 
         case .reaction:
-            return "reaction"
+            "reaction"
 
         case .ephemeral:
-            return "ephemeral"
+            "ephemeral"
 
         case .availability:
-            return "availability"
+            "availability"
 
         case .composite:
-            return "composite"
+            "composite"
 
         case .buttonAction:
-            return "buttonAction"
+            "buttonAction"
 
         case .buttonActionConfirmation:
-            return "buttonActionConfirmation"
+            "buttonActionConfirmation"
 
         case .dataTransfer:
-            return "dataTransfer"
+            "dataTransfer"
         }
     }
 

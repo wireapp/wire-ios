@@ -36,23 +36,33 @@ extension PKPushRegistry: PushRegistry {}
 
 // MARK: - UNUserNotificationCenterDelegate
 
-@objc extension SessionManager: UNUserNotificationCenterDelegate {
+@objc
+extension SessionManager: UNUserNotificationCenterDelegate {
 
     // Called by the OS when the app receieves a notification while in the
     // foreground.
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                       willPresent notification: UNNotification,
-                                       withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    public func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
+            -> Void
+    ) {
         // route to user session
         handleNotification(with: notification.userInfo) { userSession in
-            userSession.userNotificationCenter(center, willPresent: notification, withCompletionHandler: completionHandler)
+            userSession.userNotificationCenter(
+                center,
+                willPresent: notification,
+                withCompletionHandler: completionHandler
+            )
         }
     }
 
     // Called when the user engages a notification action.
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                       didReceive response: UNNotificationResponse,
-                                       withCompletionHandler completionHandler: @escaping () -> Void) {
+    public func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         // Resume background task creation.
         BackgroundActivityFactory.shared.resume()
         // route to user session
@@ -64,7 +74,8 @@ extension PKPushRegistry: PushRegistry {}
     // MARK: Helpers
 
     public func configureUserNotifications() {
-        guard (application as? NotificationSettingsRegistrable)?.shouldRegisterUserNotificationSettings ?? true else { return }
+        guard (application as? NotificationSettingsRegistrable)?.shouldRegisterUserNotificationSettings ?? true
+        else { return }
         notificationCenter.setNotificationCategories(PushNotificationCategory.allCategories)
         notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, _ in })
         notificationCenter.delegate = self
@@ -74,9 +85,9 @@ extension PKPushRegistry: PushRegistry {}
         guard
             let selfID = userInfo.selfUserID,
             let account = accountManager.account(with: selfID)
-            else { return }
+        else { return }
 
-        self.withSession(for: account, perform: block)
+        withSession(for: account, perform: block)
     }
 
     fileprivate func activateAccount(for session: ZMUserSession, completion: @escaping () -> Void) {
@@ -85,8 +96,8 @@ extension PKPushRegistry: PushRegistry {}
             return
         }
 
-        var foundSession: Bool = false
-        self.backgroundUserSessions.forEach { accountId, backgroundSession in
+        var foundSession = false
+        backgroundUserSessions.forEach { accountId, backgroundSession in
             if session == backgroundSession, let account = self.accountManager.account(with: accountId) {
 
                 self.select(account, completion: { _ in
@@ -103,9 +114,9 @@ extension PKPushRegistry: PushRegistry {}
     }
 }
 
-extension SessionManager {
+public extension SessionManager {
 
-    public func showConversation(
+    func showConversation(
         _ conversation: ZMConversation,
         at message: ZMConversationMessage? = nil,
         in session: ZMUserSession
@@ -119,26 +130,21 @@ extension SessionManager {
         }
     }
 
-    public func showConversationList(in session: ZMUserSession) {
+    func showConversationList(in session: ZMUserSession) {
         activateAccount(for: session) {
             self.presentationDelegate?.showConversationList()
         }
     }
 
-    public func showUserProfile(user: UserType) {
-        self.presentationDelegate?.showUserProfile(user: user)
+    func showUserProfile(user: UserType) {
+        presentationDelegate?.showUserProfile(user: user)
     }
-
-    public func showConnectionRequest(userId: UUID) {
-        self.presentationDelegate?.showConnectionRequest(userId: userId)
-    }
-
 }
 
 extension SessionManager {
 
     var shouldProcessLegacyPushes: Bool {
-        return requiredPushTokenType == .voip
+        requiredPushTokenType == .voip
     }
 
 }

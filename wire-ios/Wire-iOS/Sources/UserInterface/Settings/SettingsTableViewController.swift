@@ -18,23 +18,20 @@
 
 import UIKit
 import WireDesign
+import WireSettingsUI
 import WireSyncEngine
 
-class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+class SettingsBaseTableViewController: UIViewController {
 
+    let useTypeIntrinsicSizeTableView: Bool
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()
     let footerSeparator = OverflowSeparatorView()
     private let footerContainer = UIView()
 
-    var footer: UIView? {
-        didSet {
-            updateFooter(footer)
-        }
-    }
+    let settingsCoordinator: AnySettingsCoordinator
 
-    final fileprivate class IntrinsicSizeTableView: UITableView {
+    fileprivate final class IntrinsicSizeTableView: UITableView {
         override var contentSize: CGSize {
             didSet {
                 invalidateIntrinsicContentSize()
@@ -47,12 +44,22 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
         }
     }
 
-    init(style: UITableView.Style) {
-        tableView = IntrinsicSizeTableView(frame: .zero, style: style)
+    init(
+        style: UITableView.Style,
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
+        self.useTypeIntrinsicSizeTableView = useTypeIntrinsicSizeTableView
+        self.settingsCoordinator = settingsCoordinator
+        self.tableView = if useTypeIntrinsicSizeTableView {
+            IntrinsicSizeTableView(frame: .zero, style: style)
+        } else {
+            UITableView(frame: .zero, style: style)
+        }
         super.init(nibName: nil, bundle: nil)
-        self.edgesForExtendedLayout = UIRectEdge()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
@@ -62,16 +69,15 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
     }
 
     override func viewDidLoad() {
-        self.createTableView()
-        self.view.addSubview(self.topSeparator)
-        self.createConstraints()
-        self.view.backgroundColor = UIColor.clear
         super.viewDidLoad()
+        createTableView()
+        view.addSubview(topSeparator)
+        createConstraints()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
 
     private func createTableView() {
@@ -98,45 +104,31 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
         footerContainerHeightConstraint.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
-          tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-          tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
 
-          topSeparator.leftAnchor.constraint(equalTo: tableView.leftAnchor),
-          topSeparator.rightAnchor.constraint(equalTo: tableView.rightAnchor),
-          topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor),
+            topSeparator.leftAnchor.constraint(equalTo: tableView.leftAnchor),
+            topSeparator.rightAnchor.constraint(equalTo: tableView.rightAnchor),
+            topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor),
 
-          footerContainer.topAnchor.constraint(equalTo: tableView.bottomAnchor),
-          footerContainer.leftAnchor.constraint(equalTo: tableView.leftAnchor),
-          footerContainer.rightAnchor.constraint(equalTo: tableView.rightAnchor),
-          footerContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          footerContainerHeightConstraint,
+            footerContainer.topAnchor.constraint(equalTo: tableView.bottomAnchor),
+            footerContainer.leftAnchor.constraint(equalTo: tableView.leftAnchor),
+            footerContainer.rightAnchor.constraint(equalTo: tableView.rightAnchor),
+            footerContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            footerContainerHeightConstraint,
 
-          footerSeparator.leftAnchor.constraint(equalTo: footerContainer.leftAnchor),
-          footerSeparator.rightAnchor.constraint(equalTo: footerContainer.rightAnchor),
-          footerSeparator.topAnchor.constraint(equalTo: footerContainer.topAnchor)
-        ])
-    }
-
-    private func updateFooter(_ newFooter: UIView?) {
-        footer?.removeFromSuperview()
-        footerSeparator.isHidden = newFooter == nil
-        guard let newFooter else { return }
-        footerContainer.addSubview(newFooter)
-        [footerContainer, newFooter].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-        NSLayoutConstraint.activate([
-            newFooter.topAnchor.constraint(equalTo: footerContainer.topAnchor),
-            newFooter.bottomAnchor.constraint(equalTo: footerContainer.bottomAnchor),
-            newFooter.leftAnchor.constraint(equalTo: footerContainer.leftAnchor),
-            newFooter.rightAnchor.constraint(equalTo: footerContainer.rightAnchor)
+            footerSeparator.leftAnchor.constraint(equalTo: footerContainer.leftAnchor),
+            footerSeparator.rightAnchor.constraint(equalTo: footerContainer.rightAnchor),
+            footerSeparator.topAnchor.constraint(equalTo: footerContainer.topAnchor)
         ])
     }
 }
 
 extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataSource {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.topSeparator.scrollViewDidScroll(scrollView: scrollView)
-        self.footerSeparator.scrollViewDidScroll(scrollView: scrollView)
+        topSeparator.scrollViewDidScroll(scrollView: scrollView)
+        footerSeparator.scrollViewDidScroll(scrollView: scrollView)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -151,8 +143,7 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
         fatalError("Subclasses need to implement this method")
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
-
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {}
 }
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
@@ -161,23 +152,44 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
 
-    required init(group: SettingsInternalGroupCellDescriptorType) {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(group.title)
+        configureNavigationBarAppearance()
+    }
+
+    required init(
+        group: SettingsInternalGroupCellDescriptorType,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.group = group
         self.sections = group.visibleItems
-        super.init(style: group.style == .plain ? .plain : .grouped)
-        setupNavigationTitle()
+        super.init(
+            style: group.style == .plain ? .plain : .grouped,
+            useTypeIntrinsicSizeTableView: true,
+            settingsCoordinator: settingsCoordinator
+        )
 
-        self.group.items.flatMap { return $0.cellDescriptors }.forEach {
+        self.group.items.flatMap(\.cellDescriptors).forEach {
             if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
                 groupDescriptor.viewController = self
             }
         }
 
         if let userSession = ZMUserSession.shared() {
-            self.selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
+            self.selfUserObserver = UserChangeInfo.add(
+                observer: self,
+                for: userSession.providedSelfUser,
+                in: userSession
+            )
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -191,9 +203,24 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupTableView()
-        setupNavigationBar()
+
+        setupNavigationBarAccessibility()
+    }
+
+    func configureNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = ColorTheme.Backgrounds.surface
+
+        let backIndicator = UIImage(resource: view.isRightToLeft ? .forwardArrow : .backArrow)
+        appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
+        navigationItem.backButtonDisplayMode = .minimal
+
+        // Configure appearance for different states
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
     }
 
     private func setupTableView() {
@@ -215,15 +242,9 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
     }
 
-    private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        setupAccessibility()
-    }
-
-    private func setupAccessibility() {
+    private func setupNavigationBarAccessibility() {
         typealias Accessibility = L10n.Accessibility.Settings
 
-        navigationItem.rightBarButtonItem?.accessibilityLabel = Accessibility.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 
@@ -235,7 +256,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     // MARK: - UITableViewDelegate & UITableViewDelegate
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+        sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -247,7 +268,10 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
         let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
 
-        if let cell = tableView.dequeueReusableCell(withIdentifier: type(of: cellDescriptor).cellType.reuseIdentifier, for: indexPath) as? SettingsTableCellProtocol {
+        if let cell = tableView.dequeueReusableCell(
+            withIdentifier: type(of: cellDescriptor).cellType.reuseIdentifier,
+            for: indexPath
+        ) as? SettingsTableCellProtocol {
             cell.descriptor = cellDescriptor
             cellDescriptor.featureCell(cell)
             return cell
@@ -262,7 +286,11 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         return cellDescriptor.copiableText != nil
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
         let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
         let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
 
@@ -271,19 +299,27 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-            let copy = UIAction(title: L10n.Localizable.Content.Message.copy, image: UIImage(systemName: "doc.on.doc")) { _ in
-            let pasteboard = UIPasteboard.general
-            pasteboard.string = copiableText
-          }
-          return UIMenu(children: [copy])
+            let copy = UIAction(
+                title: L10n.Localizable.Content.Message.copy,
+                image: UIImage(systemName: "doc.on.doc")
+            ) { _ in
+                let pasteboard = UIPasteboard.general
+                pasteboard.string = copiableText
+            }
+            return UIMenu(children: [copy])
         }
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
-        let property = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
+        let cell = tableView.cellForRow(at: indexPath)!
+        let sectionDescriptor = sections[indexPath.section]
+        let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
 
-        property.select(SettingsPropertyValue.none)
+        if let content = property.settingsTopLevelMenuItem {
+            settingsCoordinator.showSettingsContent(content)
+        } else {
+            property.select(SettingsPropertyValue.none, sender: cell)
+        }
         tableView.deselectRow(at: indexPath, animated: false)
     }
 
@@ -309,10 +345,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
     }
 
-    private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: group.title.capitalized)
-    }
-
 }
 
 extension SettingsTableViewController {
@@ -331,10 +363,12 @@ extension SettingsTableViewController: UserObserving {
         }
 
         if note.imageMediumDataChanged, let userSession = ZMUserSession.shared() {
-            note.user.fetchProfileImage(session: userSession,
-                                        imageCache: UIImage.defaultUserImageCache,
-                                        sizeLimit: nil,
-                                        isDesaturated: false) { [weak self] _, _ in
+            note.user.fetchProfileImage(
+                session: userSession,
+                imageCache: UIImage.defaultUserImageCache,
+                sizeLimit: nil,
+                isDesaturated: false
+            ) { [weak self] _, _ in
                 self?.refreshData()
             }
         }

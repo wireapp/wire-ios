@@ -17,6 +17,7 @@
 //
 
 import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -26,13 +27,19 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     var sut: ContactsViewController!
+    var snapshotHelper: SnapshotHelper!
+    let imageConfig = ViewImageConfig.iPhone14(.portrait)
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
+            .withUserInterfaceStyle(imageConfig.traits.userInterfaceStyle)
+            .withPreferredContentSizeCategory(imageConfig.traits.preferredContentSizeCategory)
+
         XCTestCase.accentColor = .blue
-        sut = ContactsViewController()
+        sut = ContactsViewController(isFederationUsageAllowed: true)
         sut.searchHeaderViewController.overrideUserInterfaceStyle = .dark
         sut.overrideUserInterfaceStyle = .dark
         sut.view.backgroundColor = .black
@@ -41,6 +48,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -56,7 +64,12 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
         // Then
         wrapInNavigationController()
-        verify(matching: sut)
+        // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
+        snapshotHelper.verify(
+            matching: sut,
+            size: imageConfig.size,
+            safeArea: imageConfig.safeArea
+        )
     }
 
     func testForNoSearchResult() {
@@ -68,7 +81,13 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
         // Then
         wrapInNavigationController()
-        verify(matching: sut)
+        // workaround for snapshot
+        // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
+        snapshotHelper.verify(
+            matching: sut,
+            size: imageConfig.size,
+            safeArea: imageConfig.safeArea
+        )
     }
 
     func testForContactsWithoutSections() {
@@ -80,7 +99,13 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
         // Then
         wrapInNavigationController()
-        verify(matching: sut)
+        // workaround for snapshot
+        // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
+        snapshotHelper.verify(
+            matching: sut,
+            size: imageConfig.size,
+            safeArea: imageConfig.safeArea
+        )
     }
 
     func testForContactsAndIndexSectionBarAreShown() {
@@ -93,7 +118,13 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
         // Then
         wrapInNavigationController()
-        verify(matching: sut)
+        // workaround for snapshot
+        // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
+        snapshotHelper.verify(
+            matching: sut,
+            size: imageConfig.size,
+            safeArea: imageConfig.safeArea
+        )
     }
 
     // MARK: - Helper Methods
@@ -103,7 +134,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
     }
 
     private func wrapInNavigationController() {
-        let navigationController = UIViewController().wrapInNavigationController(navigationControllerClass: NavigationController.self)
+        let navigationController = UIViewController().wrapInNavigationController()
         navigationController.pushViewController(sut, animated: false)
         sut.tableView.reloadData()
     }

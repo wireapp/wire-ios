@@ -18,34 +18,84 @@
 
 import Foundation
 
-struct CoreDataMigrationActionFactory {
+enum CoreDataMigrationActionFactory {
 
-    static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+    static func createPreMigrationAction(for destinationVersion: some CoreDataMigrationVersion)
+        -> CoreDataMigrationAction? {
+
+        if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
+            return createPreMigrationAction(for: version)
+        }
+
+        if let version = destinationVersion as? CoreDataEventsMigrationVersion {
+            return createPreMigrationAction(for: version)
+        }
+
+        fatalError("unsupported coredata migration version")
+    }
+
+    static func createPostMigrationAction(for destinationVersion: some CoreDataMigrationVersion)
+        -> CoreDataMigrationAction? {
+
+        if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
+            return createPostMigrationAction(for: version)
+        }
+
+        if let version = destinationVersion as? CoreDataEventsMigrationVersion {
+            return createPostMigrationAction(for: version)
+        }
+
+        fatalError("unsupported coredata migration version")
+    }
+
+    // MARK: - CoreDataMessagingMigrationVersion
+
+    static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion)
+        -> CoreDataMigrationAction? {
         switch destinationVersion {
-        case .version2_111:
-            return RemoveDuplicatePreAction()
+        case .v111:
+            RemoveDuplicatePreAction()
 
-        case .version2_107:
-            return CleanupModels2_107PreAction()
+        case .v107:
+            CleanupModels107PreAction()
 
         default:
-            return nil
+            nil
         }
     }
 
-    static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+    static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion)
+        -> CoreDataMigrationAction? {
         switch destinationVersion {
-        case .version2_116:
-            return IsPendingInitialFetchMigrationAction()
+        case .v120:
+            ForceSyncResourcesPostAction()
 
-        case .version2_114:
-            return OneOnOneConversationMigrationAction()
+        case .v119:
+            FixDuplicateOneOnOneConversationsAction()
 
-        case .version2_111:
-            return PrefillPrimaryKeyAction()
+        case .v116:
+            IsPendingInitialFetchMigrationAction()
+
+        case .v114:
+            OneOnOneConversationMigrationAction()
+
+        case .v111:
+            PrefillPrimaryKeyAction()
 
         default:
-            return nil
+            nil
         }
+    }
+
+    // MARK: - CoreDataEventsMigrationVersion
+
+    static func createPreMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion)
+        -> CoreDataMigrationAction? {
+        nil
+    }
+
+    static func createPostMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion)
+        -> CoreDataMigrationAction? {
+        nil
     }
 }

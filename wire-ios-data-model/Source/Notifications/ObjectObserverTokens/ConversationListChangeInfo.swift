@@ -21,55 +21,63 @@ import WireSystem
 
 private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 
-extension ZMConversationList {
+extension ConversationList {
 
     func toOrderedSetState() -> OrderedSetState<ZMConversation> {
-        return OrderedSetState(array: self.map { $0 as! ZMConversation })
+        OrderedSetState(array: items)
     }
-
 }
 
-@objcMembers public final class ConversationListChangeInfo: NSObject, SetChangeInfoOwner {
+@objcMembers
+public final class ConversationListChangeInfo: NSObject, SetChangeInfoOwner {
     public typealias ChangeInfoContent = ZMConversation
     public var setChangeInfo: SetChangeInfo<ZMConversation>
 
-    public var conversationList: ZMConversationList { return setChangeInfo.observedObject as! ZMConversationList }
+    public var conversationList: ConversationList { setChangeInfo.observedObject as! ConversationList }
 
     init(setChangeInfo: SetChangeInfo<ZMConversation>) {
         self.setChangeInfo = setChangeInfo
     }
 
-    public var orderedSetState: OrderedSetState<ChangeInfoContent> { return setChangeInfo.orderedSetState }
-    public var insertedIndexes: IndexSet { return setChangeInfo.insertedIndexes }
-    public var deletedIndexes: IndexSet { return setChangeInfo.deletedIndexes }
-    public var deletedObjects: Set<AnyHashable> { return setChangeInfo.deletedObjects }
-    public var updatedIndexes: IndexSet { return setChangeInfo.updatedIndexes }
-    public var movedIndexPairs: [MovedIndex] { return setChangeInfo.movedIndexPairs }
-    public var zm_movedIndexPairs: [ZMMovedIndex] { return setChangeInfo.zm_movedIndexPairs}
+    public var orderedSetState: OrderedSetState<ChangeInfoContent> { setChangeInfo.orderedSetState }
+    public var insertedIndexes: IndexSet { setChangeInfo.insertedIndexes }
+    public var deletedIndexes: IndexSet { setChangeInfo.deletedIndexes }
+    public var deletedObjects: Set<AnyHashable> { setChangeInfo.deletedObjects }
+    public var updatedIndexes: IndexSet { setChangeInfo.updatedIndexes }
+    public var movedIndexPairs: [MovedIndex] { setChangeInfo.movedIndexPairs }
+    public var zm_movedIndexPairs: [ZMMovedIndex] { setChangeInfo.zm_movedIndexPairs }
     public func enumerateMovedIndexes(_ block: @escaping (_ from: Int, _ to: Int) -> Void) {
         setChangeInfo.enumerateMovedIndexes(block)
     }
 }
 
-@objc public protocol ZMConversationListObserver: NSObjectProtocol {
+@objc
+public protocol ZMConversationListObserver: NSObjectProtocol {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo)
-    @objc optional func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo)
+    @objc
+    optional func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo)
 }
 
-@objc public protocol ZMConversationListReloadObserver: NSObjectProtocol {
+@objc
+public protocol ZMConversationListReloadObserver: NSObjectProtocol {
     func conversationListsDidReload()
 }
 
-@objc public protocol ZMConversationListFolderObserver: NSObjectProtocol {
+@objc
+public protocol ZMConversationListFolderObserver: NSObjectProtocol {
     func conversationListsDidChangeFolders()
 }
 
-extension ConversationListChangeInfo {
+public extension ConversationListChangeInfo {
 
     /// Adds a ZMConversationListObserver to the specified list
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forList:managedObjectContext:)
-    public static func addListObserver(_ observer: ZMConversationListObserver, for list: ZMConversationList?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+    static func addListObserver(
+        _ observer: ZMConversationListObserver,
+        for list: ConversationList?,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
 
         if let list {
             zmLog.debug("Registering observer \(observer) for list \(list.identifier)")
@@ -77,8 +85,12 @@ extension ConversationListChangeInfo {
             zmLog.debug("Registering observer \(observer) for all lists")
         }
 
-        return ManagedObjectObserverToken(name: .conversationListDidChange, managedObjectContext: managedObjectContext, object: list) { [weak observer] note in
-            guard let `observer` = observer, let aList = note.object as? ZMConversationList else { return }
+        return ManagedObjectObserverToken(
+            name: .conversationListDidChange,
+            managedObjectContext: managedObjectContext,
+            object: list
+        ) { [weak observer] note in
+            guard let observer, let aList = note.object as? ConversationList else { return }
 
             zmLog.debug("Notifying registered observer \(observer) about changes in list: \(aList.identifier)")
 
@@ -94,16 +106,30 @@ extension ConversationListChangeInfo {
     }
 
     @objc(addConversationListReloadObserver:managedObjectcontext:)
-    public static func addReloadObserver(_ observer: ZMConversationListReloadObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .conversationListsDidReload, managedObjectContext: managedObjectContext, block: { [weak observer] _ in
-            observer?.conversationListsDidReload()
-        })
+    static func addReloadObserver(
+        _ observer: ZMConversationListReloadObserver,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .conversationListsDidReload,
+            managedObjectContext: managedObjectContext,
+            block: { [weak observer] _ in
+                observer?.conversationListsDidReload()
+            }
+        )
     }
 
     @objc(addConversationListFolderObserver:managedObjectcontext:)
-    public static func addFolderObserver(_ observer: ZMConversationListFolderObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .conversationListDidChangeFolders, managedObjectContext: managedObjectContext, block: { [weak observer] _ in
-            observer?.conversationListsDidChangeFolders()
-        })
+    static func addFolderObserver(
+        _ observer: ZMConversationListFolderObserver,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .conversationListDidChangeFolders,
+            managedObjectContext: managedObjectContext,
+            block: { [weak observer] _ in
+                observer?.conversationListsDidChangeFolders()
+            }
+        )
     }
 }

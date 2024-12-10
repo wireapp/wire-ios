@@ -18,43 +18,25 @@
 
 import Foundation
 
-public struct EmailCredentials {
-    public init(email: String, password: String) {
-        self.email = email
-        self.password = password
-    }
-
-    let email: String
-    let password: String
-}
-
 public class UserClientRequestFactory {
 
     public init() {}
 
     func deleteClientRequest(
         clientId: String,
-        credentials: EmailCredentials?,
-        apiVersion: APIVersion) -> ZMTransportRequest {
-            let payload: [AnyHashable: Any]
+        password: String,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest {
+        let payload: [AnyHashable: Any] = [
+            "password": password
+        ]
 
-            if let email = credentials?.email,
-               let password = credentials?.password {
-                payload = [
-                    "email": email,
-                    "password": password
-                ]
-            } else {
-                payload = [:]
-            }
-
-            let request = ZMTransportRequest(
-                path: "/clients/\(clientId)",
-                method: ZMTransportRequestMethod.delete,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue)
-
-            return request
-        }
+        return ZMTransportRequest(
+            path: "/clients/\(clientId)",
+            method: .delete,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
+    }
 
 }

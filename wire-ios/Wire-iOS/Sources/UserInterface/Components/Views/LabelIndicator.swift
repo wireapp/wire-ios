@@ -21,34 +21,34 @@ import WireCommonComponents
 import WireDesign
 
 enum LabelIndicatorContext {
-    case guest,
-         groupRole,
-         external,
-         federated
+    case guest
+    case groupRole
+    case external
+    case federated
 
     var icon: StyleKitIcon {
         switch self {
         case .guest:
-            return .guest
+            .guest
         case .groupRole:
-            return .groupAdmin
+            .groupAdmin
         case .external:
-            return .externalPartner
+            .externalPartner
         case .federated:
-            return .federated
+            .federated
         }
     }
 
     var title: String {
         switch self {
         case .guest:
-            return L10n.Localizable.Profile.Details.guest
+            L10n.Localizable.Profile.Details.guest
         case .groupRole:
-            return L10n.Localizable.Profile.Details.groupAdmin
+            L10n.Localizable.Profile.Details.groupAdmin
         case .external:
-            return L10n.Localizable.Profile.Details.partner
+            L10n.Localizable.Profile.Details.partner
         case .federated:
-            return L10n.Localizable.Profile.Details.federated
+            L10n.Localizable.Profile.Details.federated
         }
 
     }
@@ -57,8 +57,10 @@ enum LabelIndicatorContext {
 final class LabelIndicator: UIView {
 
     private let indicatorIcon = UIImageView()
-    private let titleLabel = DynamicFontLabel(fontSpec: .mediumSemiboldInputText,
-                                              color: SemanticColors.Label.textDefault)
+    private let titleLabel = DynamicFontLabel(
+        style: .h5,
+        color: SemanticColors.Label.textDefault
+    )
     private let containerView = UIView()
     private let context: LabelIndicatorContext
 
@@ -75,17 +77,15 @@ final class LabelIndicator: UIView {
     }
 
     private func setupViews() {
-        var accessibilityString: String
-
-        switch context {
+        var accessibilityString = switch context {
         case .guest:
-            accessibilityString = "guest"
+            "guest"
         case .groupRole:
-            accessibilityString = "group_role"
+            "group_role"
         case .external:
-            accessibilityString = "team_role"
+            "team_role"
         case .federated:
-            accessibilityString = "federated"
+            "federated"
         }
 
         titleLabel.accessibilityIdentifier = "label." + accessibilityString
@@ -114,9 +114,9 @@ final class LabelIndicator: UIView {
             topAnchor.constraint(equalTo: containerView.topAnchor),
 
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: safeLeadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: safeTrailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: safeBottomAnchor),
+            containerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
 
             // indicatorIcon
             indicatorIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),

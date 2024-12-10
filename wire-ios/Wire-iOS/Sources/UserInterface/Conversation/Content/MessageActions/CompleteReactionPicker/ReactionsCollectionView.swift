@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireFoundation
 
 final class ReactionsCollectionView: UICollectionView {
 
@@ -43,24 +44,38 @@ final class ReactionsCollectionView: UICollectionView {
 private extension ReactionsCollectionView {
 
     func setupLayout() {
+        let currentDevice = DeviceWrapper(device: .current)
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = UIDevice.current.type == .iPad ? 7 : 7
-        layout.minimumInteritemSpacing = UIDevice.current.type == .iPad ? 12 : 7
-        let itemSize = UIDevice.current.type == .iPad ? 51 : 41
+        layout.minimumLineSpacing = currentDevice.userInterfaceIdiom == .pad ? 7 : 7
+        layout.minimumInteritemSpacing = currentDevice.userInterfaceIdiom == .pad ? 12 : 7
+        let itemSize = currentDevice.userInterfaceIdiom == .pad ? 51 : 41
         layout.itemSize = CGSize(width: itemSize, height: itemSize)
     }
 
     func configureObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleKeyboardPresentation),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleKeyboardPresentation),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
 
-    @objc func handleKeyboardPresentation(notification: Notification) {
+    @objc
+    func handleKeyboardPresentation(notification: Notification) {
         let keyboardHeight = UIView.keyboardFrame(in: self, forKeyboardNotification: notification).height
 
-        contentInset = UIEdgeInsets(top: 10.0,
-                                    left: 30.0,
-                                    bottom: 10.0 + keyboardHeight,
-                                    right: 30.0)
+        contentInset = UIEdgeInsets(
+            top: 10.0,
+            left: 30.0,
+            bottom: 10.0 + keyboardHeight,
+            right: 30.0
+        )
     }
 }

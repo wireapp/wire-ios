@@ -20,13 +20,14 @@ import Foundation
 import WireDataModel
 
 enum LeaveResult: AlertResultConfiguration {
-    case leave(delete: Bool), cancel
+    case leave(delete: Bool)
+    case cancel
 
     var title: String {
         switch self {
-        case .cancel: return L10n.Localizable.General.cancel
-        case .leave(delete: true): return L10n.Localizable.Meta.leaveConversationButtonLeaveAndDelete
-        case .leave(delete: false): return L10n.Localizable.Meta.leaveConversationButtonLeave
+        case .cancel: L10n.Localizable.General.cancel
+        case .leave(delete: true): L10n.Localizable.Meta.leaveConversationButtonLeaveAndDelete
+        case .leave(delete: false): L10n.Localizable.Meta.leaveConversationButtonLeave
         }
     }
 
@@ -36,22 +37,22 @@ enum LeaveResult: AlertResultConfiguration {
     }
 
     func action(_ handler: @escaping (LeaveResult) -> Void) -> UIAlertAction {
-        return .init(title: title, style: style) { _ in handler(self) }
+        .init(title: title, style: style) { _ in handler(self) }
     }
 
     static var title: String {
-        return L10n.Localizable.Meta.leaveConversationDialogMessage
+        L10n.Localizable.Meta.leaveConversationDialogMessage
     }
 
     static var all: [LeaveResult] {
-        return [.leave(delete: true), .leave(delete: false), .cancel]
+        [.leave(delete: true), .leave(delete: false), .cancel]
     }
 }
 
 extension ConversationActionController {
 
     func handleLeaveResult(_ result: LeaveResult, for conversation: ZMConversation) {
-        guard  case .leave(delete: let delete) = result else { return }
+        guard  case let .leave(delete: delete) = result else { return }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return

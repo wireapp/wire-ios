@@ -21,19 +21,20 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
-/**
- * @abstract Generates the cell that displays toggle control
- */
+/// @abstract Generates the cell that displays toggle control
 
 final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptorType {
+
     static let cellType: SettingsTableCellProtocol.Type = SettingsToggleCell.self
+
     let inverse: Bool
     var title: String {
-        return settingsProperty.propertyName.settingsPropertyLabelText
+        settingsProperty.propertyName.settingsPropertyLabelText
     }
+
     let identifier: String?
     var visible: Bool = true
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
     var settingsProperty: SettingsProperty
 
     init(settingsProperty: SettingsProperty, inverse: Bool = false, identifier: String? = .none) {
@@ -43,29 +44,29 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
+        cell.titleText = title
         if let toggleCell = cell as? SettingsToggleCell {
             var boolValue = false
-            if let value = self.settingsProperty.value().value() as? NSNumber {
+            if let value = settingsProperty.value().value() as? NSNumber {
                 boolValue = value.boolValue
             } else {
                 boolValue = false
             }
 
-            if self.inverse {
+            if inverse {
                 boolValue = !boolValue
             }
 
             toggleCell.switchView.isOn = boolValue
             toggleCell.switchView.accessibilityLabel = identifier
-            toggleCell.switchView.isEnabled = self.settingsProperty.enabled
+            toggleCell.switchView.isEnabled = settingsProperty.enabled
         }
     }
 
-    func select(_ value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         var valueToSet = false
 
-        if let value = value?.value() {
+        if let value = value.value() {
             switch value {
             case let numberValue as NSNumber:
                 valueToSet = numberValue.boolValue
@@ -78,12 +79,19 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
             }
         }
 
-        if self.inverse {
+        if inverse {
             valueToSet = !valueToSet
         }
 
         do {
-            try self.settingsProperty << SettingsPropertyValue(valueToSet)
+            try settingsProperty.set(newValue: SettingsPropertyValue(valueToSet)) { result in
+                if case .failure = result {
+                    // Workaround: the toggle needs to be undone because of an async result in the logic code.
+                    if let toggleCell = sender as? UISwitch {
+                        toggleCell.isOn.toggle()
+                    }
+                }
+            }
         } catch {
             zmLog.error("Cannot set property: \(error)")
         }

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class RichAssetFileTypeTests: XCTestCase {
 
@@ -60,7 +60,12 @@ class RichAssetFileTypeTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func assertFileType(_ mimeType: String, _ expectedType: RichAssetFileType?, file: StaticString = #file, line: UInt = #line) {
+    private func assertFileType(
+        _ mimeType: String,
+        _ expectedType: RichAssetFileType?,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         XCTAssertEqual(RichAssetFileType(mimeType: mimeType), expectedType, file: file, line: line)
     }
 

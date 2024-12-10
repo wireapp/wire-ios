@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
 
@@ -41,18 +42,19 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)
         let title = Self.makeAttributedString(sender)
-        configuration = View.Configuration(icon: icon,
-                                           attributedText: title,
-                                           showLine: true)
-        accessibilityLabel = title.string
+        self.configuration = View.Configuration(
+            icon: icon,
+            attributedText: title,
+            showLine: true
+        )
+        self.accessibilityLabel = title.string
     }
 
     static func makeAttributedString(_ sender: UserType) -> NSAttributedString {
-        let string: String
-        if sender.isSelfUser {
-            string = L10n.Localizable.Content.System.SessionReset.`self`
+        let string: String = if sender.isSelfUser {
+            L10n.Localizable.Content.System.SessionReset.`self`
         } else {
-            string = L10n.Localizable.Content.System.SessionReset.other(sender.name ?? "")
+            L10n.Localizable.Content.System.SessionReset.other(sender.name ?? "")
         }
 
         return NSMutableAttributedString.markdown(from: string, style: .systemMessage)

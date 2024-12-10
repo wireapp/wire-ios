@@ -28,9 +28,7 @@ protocol ProfileFooterViewDelegate: AnyObject {
 
 }
 
-/**
- * The footer of to use in the profile details screen.
- */
+/// The footer of to use in the profile details screen.
 
 final class ProfileFooterView: ConversationDetailFooterView {
 
@@ -51,10 +49,8 @@ final class ProfileFooterView: ConversationDetailFooterView {
         rightButton.accessibilityLabel = L10n.Localizable.Meta.Menu.accessibilityMoreOptionsButton
     }
 
-    /**
-     * Configures the footer to display the specified actions.
-     * - parameter actions: The actions to display in the footer.
-     */
+    /// Configures the footer to display the specified actions.
+    /// - parameter actions: The actions to display in the footer.
 
     func configure(with actions: [ProfileAction]) {
         // Separate the last and first actions
@@ -92,12 +88,12 @@ final class ProfileFooterView: ConversationDetailFooterView {
     // MARK: - Events
 
     override func leftButtonTapped(_ sender: IconButton) {
-        guard let leftAction = self.leftAction else { return }
+        guard let leftAction else { return }
         delegate?.footerView(self, shouldPerformAction: leftAction)
     }
 
     override func rightButtonTapped(_ sender: IconButton) {
-        guard let rightActions = self.rightActions else { return }
+        guard let rightActions else { return }
         delegate?.footerView(self, shouldPresentMenuWithActions: rightActions)
     }
 

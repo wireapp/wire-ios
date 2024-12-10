@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class OneOnOneResolverTests: XCTestCase {
 
@@ -28,11 +28,15 @@ final class OneOnOneResolverTests: XCTestCase {
     private var mockCoreDataStack: CoreDataStack!
     private var mockMigrator: MockActorOneOnOneMigrator!
     private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
+    private var mockRepository: MockFeatureRepositoryInterface!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
     override func setUp() async throws {
         try await super.setUp()
+
+        mockRepository = MockFeatureRepositoryInterface()
+        mockRepository.fetchMLS_MockValue = .init(status: .enabled, config: .init())
 
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
@@ -203,8 +207,7 @@ final class OneOnOneResolverTests: XCTestCase {
         )
 
         let conversation = await syncContext.perform { [self] in
-            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
-            return conversation
+            return makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
         }
 
         do {
@@ -306,7 +309,8 @@ final class OneOnOneResolverTests: XCTestCase {
     private func makeResolver() -> OneOnOneResolver {
         OneOnOneResolver(
             protocolSelector: mockProtocolSelector,
-            migrator: mockMigrator
+            migrator: mockMigrator,
+            isMLSEnabled: mockRepository.fetchMLS_MockValue?.isEnabled ?? false
         )
     }
 

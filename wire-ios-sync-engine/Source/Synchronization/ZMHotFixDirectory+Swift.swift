@@ -18,10 +18,12 @@
 
 import Foundation
 
-@objc extension ZMHotFixDirectory {
+@objc
+public extension ZMHotFixDirectory {
 
-    public static func moveOrUpdateSignalingKeysInContext(_ context: NSManagedObjectContext) {
-        guard let selfClient = ZMUser.selfUser(in: context).selfClient(), selfClient.apsVerificationKey == nil && selfClient.apsDecryptionKey == nil
+    static func moveOrUpdateSignalingKeysInContext(_ context: NSManagedObjectContext) {
+        guard let selfClient = ZMUser.selfUser(in: context).selfClient(), selfClient.apsVerificationKey == nil,
+              selfClient.apsDecryptionKey == nil
         else { return }
 
         if let keys = APSSignalingKeysStore.keysStoredInKeyChain() {
@@ -35,16 +37,20 @@ import Foundation
         context.enqueueDelayedSave()
     }
 
-    public static func updateClientCapabilities(_ context: NSManagedObjectContext) {
+    static func updateClientCapabilities(_ context: NSManagedObjectContext) {
         UserClient.triggerSelfClientCapabilityUpdate(context)
     }
 
-    /// In the model schema version 2.6 we removed the flags `needsToUploadMedium` and `needsToUploadPreview` on `ZMAssetClientMessage`
-    /// and introduced an enum called `ZMAssetUploadedState`. During the migration this value will be set to `.Done` on all `ZMAssetClientMessages`.
-    /// There is an edge case in which the user has such a message in his database which is not yet uploaded and we want to upload it again, thus
-    /// not set the state to `.Done` in this case. We fetch all asset messages without an assetID and set set their uploaded state 
+    /// In the model schema version 2.6 we removed the flags `needsToUploadMedium` and `needsToUploadPreview` on
+    /// `ZMAssetClientMessage`
+    /// and introduced an enum called `ZMAssetUploadedState`. During the migration this value will be set to `.Done` on
+    /// all `ZMAssetClientMessages`.
+    /// There is an edge case in which the user has such a message in his database which is not yet uploaded and we want
+    /// to upload it again, thus
+    /// not set the state to `.Done` in this case. We fetch all asset messages without an assetID and set set their
+    /// uploaded state
     /// to `.UploadingFailed`, in case this message represents an image we also expire it.
-    public static func updateUploadedStateForNotUploadedFileMessages(_ context: NSManagedObjectContext) {
+    static func updateUploadedStateForNotUploadedFileMessages(_ context: NSManagedObjectContext) {
         let selfUser = ZMUser.selfUser(in: context)
         let predicate = NSPredicate(format: "sender == %@ AND assetId_data == NULL", selfUser)
 
@@ -55,14 +61,14 @@ import Foundation
         messages.forEach { message in
             message.updateTransferState(.uploadingFailed, synchronize: false)
             if message.imageMessageData != nil {
-                message.expire()
+                message.expire(withReason: .other)
             }
         }
 
         context.enqueueDelayedSave()
     }
 
-    public static func insertNewConversationSystemMessage(_ context: NSManagedObjectContext) {
+    static func insertNewConversationSystemMessage(_ context: NSManagedObjectContext) {
         let fetchRequest = ZMConversation.sortedFetchRequest()
 
         guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
@@ -77,7 +83,8 @@ import Foundation
 
             let messages = context.fetchOrAssert(request: fetchRequest)
 
-            if let firstSystemMessage = messages.first as? ZMSystemMessage, firstSystemMessage.systemMessageType == .newConversation {
+            if let firstSystemMessage = messages.first as? ZMSystemMessage,
+               firstSystemMessage.systemMessageType == .newConversation {
                 return // Skip if conversation already has a .newConversation system message
             }
 
@@ -85,13 +92,13 @@ import Foundation
         }
     }
 
-    public static func markAllNewConversationSystemMessagesAsRead(_ context: NSManagedObjectContext) {
+    static func markAllNewConversationSystemMessagesAsRead(_ context: NSManagedObjectContext) {
 
         let fetchRequest = ZMConversation.sortedFetchRequest()
 
         guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
 
-        conversations.filter({ $0.conversationType == .group }).forEach { conversation in
+        conversations.filter { $0.conversationType == .group }.forEach { conversation in
 
             let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
             fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMMessageConversationKey, conversation.objectID)
@@ -101,7 +108,8 @@ import Foundation
             let messages = context.fetchOrAssert(request: fetchRequest)
 
             // Mark the first .newConversation system message as read if it's not already read.
-            if let firstSystemMessage = messages.first as? ZMSystemMessage, firstSystemMessage.systemMessageType == .newConversation,
+            if let firstSystemMessage = messages.first as? ZMSystemMessage,
+               firstSystemMessage.systemMessageType == .newConversation,
                let serverTimestamp = firstSystemMessage.serverTimestamp {
 
                 guard let lastReadServerTimeStamp = conversation.lastReadServerTimeStamp else {
@@ -117,11 +125,12 @@ import Foundation
         }
     }
 
-    public static func updateSystemMessages(_ context: NSManagedObjectContext) {
+    static func updateSystemMessages(_ context: NSManagedObjectContext) {
         let fetchRequest = ZMConversation.sortedFetchRequest()
 
         guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
-        let filteredConversations = conversations.filter { $0.conversationType == .oneOnOne || $0.conversationType == .group }
+        let filteredConversations = conversations
+            .filter { $0.conversationType == .oneOnOne || $0.conversationType == .group }
 
         // update "you are using this device" message
         filteredConversations.forEach {
@@ -129,10 +138,19 @@ import Foundation
         }
     }
 
-    public static func purgePINCachesInHostBundle() {
+    static func purgePINCachesInHostBundle() {
         let fileManager = FileManager.default
-        guard let cachesDirectory = try? fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false) else { return }
-        let PINCacheFolders = ["com.pinterest.PINDiskCache.images", "com.pinterest.PINDiskCache.largeUserImages", "com.pinterest.PINDiskCache.smallUserImages"]
+        guard let cachesDirectory = try? fileManager.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        ) else { return }
+        let PINCacheFolders = [
+            "com.pinterest.PINDiskCache.images",
+            "com.pinterest.PINDiskCache.largeUserImages",
+            "com.pinterest.PINDiskCache.smallUserImages"
+        ]
 
         PINCacheFolders.forEach { PINCacheFolder in
             let cacheDirectory = cachesDirectory.appendingPathComponent(PINCacheFolder, isDirectory: true)
@@ -141,7 +159,7 @@ import Foundation
     }
 
     /// Marks all users (excluding self) to be refetched.
-    public static func refetchUsers(_ context: NSManagedObjectContext) {
+    static func refetchUsers(_ context: NSManagedObjectContext) {
         let request = ZMUser.sortedFetchRequest()
 
         let users = context.fetchOrAssert(request: request) as? [ZMUser]
@@ -154,23 +172,28 @@ import Foundation
     }
 
     /// Refreshes the self user.
-    public static func refetchSelfUser(_ context: NSManagedObjectContext) {
+    static func refetchSelfUser(_ context: NSManagedObjectContext) {
         let selfUser = ZMUser.selfUser(in: context)
         selfUser.needsToBeUpdatedFromBackend = true
         context.enqueueDelayedSave()
     }
 
     /// Update invalid accessRoles for existing conversations where the team is nil and accessRoles == [.teamMember]
-    public static func updateConversationsWithInvalidAccessRoles(_ context: NSManagedObjectContext) {
-        let predicate = NSPredicate(format: "team == nil AND accessRoleStringsV2 == %@",
-                                    [ConversationAccessRoleV2.teamMember.rawValue])
+    static func updateConversationsWithInvalidAccessRoles(_ context: NSManagedObjectContext) {
+        let predicate = NSPredicate(
+            format: "team == nil AND accessRoleStringsV2 == %@",
+            [ConversationAccessRoleV2.teamMember.rawValue]
+        )
         let request = ZMConversation.sortedFetchRequest(with: predicate)
 
         let conversations = context.fetchOrAssert(request: request) as? [ZMConversation]
         conversations?.forEach {
-            let action = UpdateAccessRolesAction(conversation: $0,
-                                                 accessMode: ConversationAccessMode.value(forAllowGuests: true),
-                                                 accessRoles: ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated))
+            let action = UpdateAccessRolesAction(
+                conversation: $0,
+                accessMode: ConversationAccessMode.value(forAllowGuests: true),
+                accessRoles: ConversationAccessRoleV2
+                    .fromLegacyAccessRole(.nonActivated)
+            )
             action.send(in: context.notificationContext)
         }
     }
@@ -178,58 +201,62 @@ import Foundation
     /// Marks all connected users (including self) to be refetched.
     /// Unconnected users are refreshed with a call to `refreshData` when information is displayed.
     /// See also the related `ZMUserSession.isPendingHotFixChanges` in `ZMHotFix+PendingChanges.swift`.
-    public static func refetchConnectedUsers(_ context: NSManagedObjectContext) {
+    static func refetchConnectedUsers(_ context: NSManagedObjectContext) {
         let predicate = NSPredicate(format: "connection != nil")
         let request = ZMUser.sortedFetchRequest(with: predicate)
 
         let users = context.fetchOrAssert(request: request) as? [ZMUser]
 
         users?.lazy
-            .filter { $0.isConnected }
+            .filter(\.isConnected)
             .forEach { $0.needsToBeUpdatedFromBackend = true }
 
         ZMUser.selfUser(in: context).needsToBeUpdatedFromBackend = true
         context.enqueueDelayedSave()
     }
 
-    public static func resyncResources(_ context: NSManagedObjectContext) {
+    static func resyncResources(_ context: NSManagedObjectContext) {
         NotificationInContext(name: .resyncResources, context: context.notificationContext).post()
     }
 
     /// Marks all conversations created in a team to be refetched.
     /// This is needed because we have introduced access levels when implementing
     /// wireless guests feature
-    public static func refetchTeamGroupConversations(_ context: NSManagedObjectContext) {
+    static func refetchTeamGroupConversations(_ context: NSManagedObjectContext) {
         // Batch update changes the underlying data in the persistent store and should be much more
-        let predicate = NSPredicate(format: "team != nil AND %K == %d",
-                                    ZMConversationConversationTypeKey,
-                                    ZMConversationType.group.rawValue)
+        let predicate = NSPredicate(
+            format: "team != nil AND %K == %d",
+            ZMConversationConversationTypeKey,
+            ZMConversationType.group.rawValue
+        )
         refetchConversations(matching: predicate, in: context)
     }
 
     /// Marks all group conversations to be refetched.
-    public static func refetchGroupConversations(_ context: NSManagedObjectContext) {
-        let predicate = NSPredicate(format: "%K == %d AND ANY %K.user == %@",
-                                    ZMConversationConversationTypeKey,
-                                    ZMConversationType.group.rawValue,
-                                    ZMConversationParticipantRolesKey,
-                                    ZMUser.selfUser(in: context))
+    static func refetchGroupConversations(_ context: NSManagedObjectContext) {
+        let predicate = NSPredicate(
+            format: "%K == %d AND ANY %K.user == %@",
+            ZMConversationConversationTypeKey,
+            ZMConversationType.group.rawValue,
+            ZMConversationParticipantRolesKey,
+            ZMUser.selfUser(in: context)
+        )
         refetchConversations(matching: predicate, in: context)
     }
 
-    public static func refetchUserProperties(_ context: NSManagedObjectContext) {
+    static func refetchUserProperties(_ context: NSManagedObjectContext) {
         ZMUser.selfUser(in: context).needsPropertiesUpdate = true
         context.enqueueDelayedSave()
     }
 
-    public static func refetchTeamMembers(_ context: NSManagedObjectContext) {
-        ZMUser.selfUser(in: context).team?.members.forEach({ member in
+    static func refetchTeamMembers(_ context: NSManagedObjectContext) {
+        ZMUser.selfUser(in: context).team?.members.forEach { member in
             member.needsToBeUpdatedFromBackend = true
-        })
+        }
     }
 
     /// Marks all conversations to be refetched.
-    public static func refetchAllConversations(_ context: NSManagedObjectContext) {
+    static func refetchAllConversations(_ context: NSManagedObjectContext) {
         refetchConversations(matching: NSPredicate(value: true), in: context)
     }
 
@@ -242,44 +269,49 @@ import Foundation
         context.enqueueDelayedSave()
     }
 
-    public static func refetchLabels(_ context: NSManagedObjectContext) {
+    static func refetchLabels(_ context: NSManagedObjectContext) {
         ZMUser.selfUser(in: context).needsToRefetchLabels = true
     }
 
-    public static func migrateBackendEnvironmentToSharedUserDefaults() {
+    static func migrateBackendEnvironmentToSharedUserDefaults() {
         guard let sharedUserDefaults = UserDefaults.shared() else { return }
 
         BackendEnvironment.migrate(from: .standard, to: sharedUserDefaults)
     }
 
-    public static func removeDeliveryReceiptsForDeletedMessages(_ context: NSManagedObjectContext) {
+    static func removeDeliveryReceiptsForDeletedMessages(_ context: NSManagedObjectContext) {
         guard let predicate = ZMClientMessage.predicateForObjectsThatNeedToBeInsertedUpstream() else {
             return
         }
 
         let requestForInsertedMessages = ZMClientMessage.sortedFetchRequest(with: predicate)
 
-        guard let possibleMatches = context.fetchOrAssert(request: requestForInsertedMessages) as? [ZMClientMessage] else {
+        guard let possibleMatches = context.fetchOrAssert(request: requestForInsertedMessages) as? [ZMClientMessage]
+        else {
             return
         }
 
-        let confirmationReceiptsForDeletedMessages = possibleMatches.filter({ candidate in
+        let confirmationReceiptsForDeletedMessages = possibleMatches.filter { candidate in
             guard
                 let conversation = candidate.conversation,
                 let underlyingMessage = candidate.underlyingMessage,
                 underlyingMessage.hasConfirmation else {
-                    return false
+                return false
             }
 
             let originalMessageUUID = UUID(uuidString: underlyingMessage.confirmation.firstMessageID)
-            let originalConfirmedMessage = ZMMessage.fetch(withNonce: originalMessageUUID, for: conversation, in: context)
+            let originalConfirmedMessage = ZMMessage.fetch(
+                withNonce: originalMessageUUID,
+                for: conversation,
+                in: context
+            )
             guard
                 let message = originalConfirmedMessage,
                 message.hasBeenDeleted || message.sender == nil else {
-                    return false
+                return false
             }
             return true
-        })
+        }
 
         for message in confirmationReceiptsForDeletedMessages {
             context.delete(message)

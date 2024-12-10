@@ -30,18 +30,25 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let profileViewController = ProfileViewController(user: user,
-                                                          viewer: selfUser,
-                                                          conversation: conversation,
-                                                          viewControllerDismisser: self,
-                                                          userSession: userSession)
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: selfUser,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
+        )
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 
         profileViewController.delegate = self
 
-        endEditing()
+        self.view.window?.endEditing(true)
 
-        createAndPresentParticipantsPopoverController(with: frame, from: view, contentViewController: profileViewController.wrapInNavigationController())
+        createAndPresentParticipantsPopoverController(
+            with: frame,
+            from: view,
+            contentViewController: profileViewController.wrapInNavigationController()
+        )
     }
 
     func conversationContentViewController(
@@ -60,15 +67,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 
     func conversationContentViewController(
         _ contentViewController: ConversationContentViewController,
-        didTriggerResending message: ZMConversationMessage
-    ) {
-        userSession.enqueue({
-            message.resend()
-        })
-    }
-
-    func conversationContentViewController(
-        _ contentViewController: ConversationContentViewController,
         didTriggerEditing message: ZMConversationMessage
     ) {
         guard message.textMessageData?.messageText != nil else { return }
@@ -82,26 +80,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
     ) {
         let replyComposingView = contentViewController.createReplyComposingView(for: message)
         inputBarController.reply(to: message, composingView: replyComposingView)
-    }
-
-    func conversationContentViewController(
-        _ controller: ConversationContentViewController,
-        shouldBecomeFirstResponderWhenShowMenuFromCell cell: UIView
-    ) -> Bool {
-        if inputBarController.inputBar.textView.isFirstResponder {
-            inputBarController.inputBar.textView.overrideNextResponder = cell
-
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(menuDidHide(_:)),
-                name: UIMenuController.didHideMenuNotification,
-                object: nil
-            )
-
-            return false
-        }
-
-        return true
     }
 
     func conversationContentViewController(
@@ -127,10 +105,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         })
     }
 
-    func conversationContentViewControllerWants(toDismiss controller: ConversationContentViewController) {
-        openConversationList()
-    }
-
     func conversationContentViewController(
         _ controller: ConversationContentViewController,
         presentGuestOptionsFrom sourceView: UIView
@@ -143,29 +117,12 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let groupDetailsViewController = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
-        let navigationController = groupDetailsViewController.wrapInNavigationController()
+        let navigationController = UINavigationController(rootViewController: groupDetailsViewController)
         groupDetailsViewController.presentGuestOptions(animated: false)
-        presentParticipantsViewController(navigationController, from: sourceView)
-    }
-
-    func conversationContentViewController(
-        _ controller: ConversationContentViewController,
-        presentServicesOptionFrom sourceView: UIView
-    ) {
-        guard conversation.conversationType == .group else {
-            zmLog.error("Illegal Operation: Trying to show services options for non-group conversation")
-            return
-        }
-
-        let groupDetailsViewController = GroupDetailsViewController(
-            conversation: conversation,
-            userSession: userSession,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-        )
-        let navigationController = groupDetailsViewController.wrapInNavigationController()
-        groupDetailsViewController.presentServicesOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
     }
 
@@ -174,12 +131,13 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType],
         from sourceView: UIView
     ) {
-        if let groupDetailsViewController = (participantsController as? UINavigationController)?.topViewController as? GroupDetailsViewController {
-                groupDetailsViewController.presentParticipantsDetails(
-                    with: conversation.sortedOtherParticipants,
-                    selectedUsers: selectedUsers,
-                    animated: false
-                )
+        if let groupDetailsViewController = (participantsController as? UINavigationController)?
+            .topViewController as? GroupDetailsViewController {
+            groupDetailsViewController.presentParticipantsDetails(
+                with: conversation.sortedOtherParticipants,
+                selectedUsers: selectedUsers,
+                animated: false
+            )
         }
 
         if let participantsController {
@@ -197,16 +155,10 @@ extension ConversationViewController {
         ConversationInputBarViewController.endEditingMessage()
         inputBarController.inputBar.textView.resignFirstResponder()
 
-        createAndPresentParticipantsPopoverController(with: sourceView.bounds,
-                                                      from: sourceView,
-                                                      contentViewController: viewController)
-    }
-
-    // MARK: - Application Events & Notifications
-
-    @objc
-    func menuDidHide(_ notification: Notification?) {
-        inputBarController.inputBar.textView.overrideNextResponder = nil
-        NotificationCenter.default.removeObserver(self, name: UIMenuController.didHideMenuNotification, object: nil)
+        createAndPresentParticipantsPopoverController(
+            with: sourceView.bounds,
+            from: sourceView,
+            contentViewController: viewController
+        )
     }
 }

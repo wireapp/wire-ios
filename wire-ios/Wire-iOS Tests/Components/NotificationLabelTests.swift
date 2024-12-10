@@ -16,110 +16,121 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
-class NotificationLabelTests: XCTestCase {
-    var sut: NotificationLabel!
-    let message = "Double Tap on a tile for fullscreen"
+final class NotificationLabelTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: NotificationLabel!
+    private let message = "Double Tap on a tile for fullscreen"
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = NotificationLabel(shouldAnimate: false)
         sut.frame = CGRect(x: 0, y: 0, width: 220, height: 24)
         sut.backgroundColor = .black
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
-    // MARK: - Appearence
+    // MARK: - Snapshot Test
 
     func testMessageAppearence() {
-        // given / when
+        // GIVEN && WHEN
         sut.show(message: message)
 
-        // then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
-    // MARK: - show(message:hideAfter:)
+    // MARK: - Unit Tests
+
+    // show(message:hideAfter:)
 
     func testThat_ItDoesNotCreateTimer_When_NoTimeIntervalIsGiven() {
-        // given / when
+        // GIVEN && WHEN
         sut.show(message: message)
 
-        // then
+        // THEN
         XCTAssertNil(sut.timer)
     }
 
     func testThat_ItCreatesTimer_When_TimeIntervalIsGiven() {
-        // given / when
+        // GIVEN && WHEN
         sut.show(message: message, hideAfter: 5)
 
-        // then
+        // THEN
         XCTAssertNotNil(sut.timer)
         XCTAssert(sut.timer?.isValid == true)
     }
 
-    // MARK: - hideAndStopTimer()
+    // hideAndStopTimer()
 
     func testThat_ItHidesMessageAndStopsTimer() {
-        // given
+        // GIVEN
         sut.show(message: message, hideAfter: 5)
 
-        // when
+        // WHEN
         sut.hideAndStopTimer()
 
-        // then
+        // THEN
         XCTAssertTrue(sut.isHidden)
         XCTAssertEqual(sut.alpha, 0)
         XCTAssert(sut.timer?.isValid == false)
     }
 
-    // MARK: - setMessage(hidden:)
+    // setMessage(hidden:)
 
     func testThat_ItHidesMessage() {
-        // given
+        // GIVEN
         sut.show(message: message)
 
-        // when
+        // WHEN
         sut.setMessageHidden(true)
 
-        // then
+        // THEN
         XCTAssertEqual(sut.alpha, 0)
         XCTAssertTrue(sut.isHidden)
     }
 
     func testThat_ItShowsMessage() {
-        // given
+        // GIVEN
         sut.alpha = 0
         sut.isHidden = true
 
-        // when
+        // WHEN
         sut.setMessageHidden(false)
 
-        // then
+        // THEN
         XCTAssertEqual(sut.alpha, 1)
         XCTAssertFalse(sut.isHidden)
     }
 
     func testThat_ItDoesNotShow_IfTimerIsNotValid() {
-        // given
+        // GIVEN
         sut.show(message: message, hideAfter: 5)
 
         sut.timer?.fire()
         sut.timer?.invalidate()
 
-        // when
+        // WHEN
         sut.setMessageHidden(false)
 
-        // then
+        // THEN
         XCTAssertEqual(sut.alpha, 0)
         XCTAssertTrue(sut.isHidden)
     }

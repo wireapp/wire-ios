@@ -21,7 +21,7 @@ import Foundation
 extension ZMConversation: ObjectInSnapshot {
 
     @objc public static var observableKeys: Set<String> {
-        return [
+        [
             #keyPath(ZMConversation.allMessages),
             #keyPath(ZMConversation.lastModifiedDate),
             #keyPath(ZMConversation.isArchived),
@@ -56,7 +56,7 @@ extension ZMConversation: ObjectInSnapshot {
     }
 
     public var notificationName: Notification.Name {
-        return .ConversationChange
+        .ConversationChange
     }
 
 }
@@ -68,71 +68,77 @@ extension ZMConversation: ObjectInSnapshot {
 ////
 ////////////////////
 
-@objcMembers public final class ConversationChangeInfo: ObjectChangeInfo {
+@objcMembers
+public final class ConversationChangeInfo: ObjectChangeInfo {
 
     public var isDeletedChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.isDeletedRemotely))
+        changedKeysContain(keys: #keyPath(ZMConversation.isDeletedRemotely))
     }
 
     public var languageChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.language))
+        changedKeysContain(keys: #keyPath(ZMConversation.language))
     }
 
     public var messagesChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.allMessages))
+        changedKeysContain(keys: #keyPath(ZMConversation.allMessages))
     }
 
     public var participantsChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.localParticipantRoles),
-                                        #keyPath(ZMConversation.isSelfAnActiveMember),
-                                        #keyPath(ZMConversation.participantRoles)
+        changedKeysContain(
+            keys: #keyPath(ZMConversation.localParticipantRoles),
+            #keyPath(ZMConversation.isSelfAnActiveMember),
+            #keyPath(ZMConversation.participantRoles)
         )
     }
 
     public var activeParticipantsChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.isSelfAnActiveMember),
-                                        #keyPath(ZMConversation.localParticipants))
+        changedKeysContain(
+            keys: #keyPath(ZMConversation.isSelfAnActiveMember),
+            #keyPath(ZMConversation.localParticipants)
+        )
     }
 
     public var nameChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.displayName),
-                                        #keyPath(ZMConversation.userDefinedName)) || activeParticipantsChanged
+        changedKeysContain(
+            keys: #keyPath(ZMConversation.displayName),
+            #keyPath(ZMConversation.userDefinedName)
+        ) || activeParticipantsChanged
     }
 
     public var lastModifiedDateChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.lastModifiedDate))
+        changedKeysContain(keys: #keyPath(ZMConversation.lastModifiedDate))
     }
 
     public var unreadCountChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.estimatedUnreadCount))
+        changedKeysContain(keys: #keyPath(ZMConversation.estimatedUnreadCount))
     }
 
     public var connectionStateChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.relatedConnectionState))
+        changedKeysContain(keys: #keyPath(ZMConversation.relatedConnectionState))
     }
 
     public var isArchivedChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.isArchived))
+        changedKeysContain(keys: #keyPath(ZMConversation.isArchived))
     }
 
     public var mutedMessageTypesChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.mutedStatus))
+        changedKeysContain(keys: #keyPath(ZMConversation.mutedStatus))
     }
 
     public var conversationListIndicatorChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.conversationListIndicator))
+        changedKeysContain(keys: #keyPath(ZMConversation.conversationListIndicator))
     }
 
     public var clearedChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.clearedTimeStamp))
+        changedKeysContain(keys: #keyPath(ZMConversation.clearedTimeStamp))
     }
 
     public var teamChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.team))
+        changedKeysContain(keys: #keyPath(ZMConversation.team))
     }
 
     public var securityLevelChanged: Bool {
-        return changedKeysContain(keys: SecurityLevelKey)
+        changedKeysContain(keys: SecurityLevelKey)
     }
 
     public var mlsVerificationStatusChanged: Bool {
@@ -140,38 +146,38 @@ extension ZMConversation: ObjectInSnapshot {
     }
 
     public var allowGuestsChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.accessModeStrings)) ||
-               changedKeysContain(keys: #keyPath(ZMConversation.accessRoleString)) ||
-               changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
+        changedKeysContain(keys: #keyPath(ZMConversation.accessModeStrings)) ||
+            changedKeysContain(keys: #keyPath(ZMConversation.accessRoleString)) ||
+            changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
     }
 
     public var allowServicesChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
+        changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
     }
 
     public var destructionTimeoutChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.localMessageDestructionTimeout)) ||
-                changedKeysContain(keys: #keyPath(ZMConversation.syncedMessageDestructionTimeout))
+        changedKeysContain(keys: #keyPath(ZMConversation.localMessageDestructionTimeout)) ||
+            changedKeysContain(keys: #keyPath(ZMConversation.syncedMessageDestructionTimeout))
     }
 
     public var hasReadReceiptsEnabledChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.hasReadReceiptsEnabled))
+        changedKeysContain(keys: #keyPath(ZMConversation.hasReadReceiptsEnabled))
     }
 
     public var externalParticipantsStateChanged: Bool {
-        return changedKeysContain(keys: ZMConversation.externalParticipantsStateKey)
+        changedKeysContain(keys: ZMConversation.externalParticipantsStateKey)
     }
 
     public var legalHoldStatusChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.legalHoldStatus))
+        changedKeysContain(keys: #keyPath(ZMConversation.legalHoldStatus))
     }
 
     public var labelsChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.labels))
+        changedKeysContain(keys: #keyPath(ZMConversation.labels))
     }
 
     public var mlsStatusChanged: Bool {
-        return changedKeysContain(keys: ZMConversation.mlsStatusKey)
+        changedKeysContain(keys: ZMConversation.mlsStatusKey)
     }
 
     public var messageProtocolChanged: Bool {
@@ -183,15 +189,15 @@ extension ZMConversation: ObjectInSnapshot {
     }
 
     public var conversation: ZMConversation {
-        return object as! ZMConversation
+        object as! ZMConversation
     }
 
     public override var description: String {
-        return debugDescription
+        debugDescription
     }
 
     public override var debugDescription: String {
-        return [
+        [
             "allMessagesChanged: \(messagesChanged)",
             "participantsChanged: \(participantsChanged)",
             "activeParticipantsChanged: \(activeParticipantsChanged)",
@@ -222,26 +228,29 @@ extension ZMConversation: ObjectInSnapshot {
     }
 
     static func changeInfo(for conversation: ZMConversation, changes: Changes) -> ConversationChangeInfo? {
-        return ConversationChangeInfo(object: conversation, changes: changes)
+        ConversationChangeInfo(object: conversation, changes: changes)
     }
 }
 
-@objc public protocol ZMConversationObserver: NSObjectProtocol {
+@objc
+public protocol ZMConversationObserver: NSObjectProtocol {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo)
 }
 
-extension ConversationChangeInfo {
+public extension ConversationChangeInfo {
 
     /// Adds a ZMConversationObserver to the specified conversation
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forConversation:)
-    public static func add(observer: ZMConversationObserver, for conversation: ZMConversation) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .ConversationChange,
-                                          managedObjectContext: conversation.managedObjectContext!,
-                                          object: conversation) { [weak observer] note in
-            guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? ConversationChangeInfo
-                else { return }
+    static func add(observer: ZMConversationObserver, for conversation: ZMConversation) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .ConversationChange,
+            managedObjectContext: conversation.managedObjectContext!,
+            object: conversation
+        ) { [weak observer] note in
+            guard let observer,
+                  let changeInfo = note.changeInfo as? ConversationChangeInfo
+            else { return }
 
             observer.conversationDidChange(changeInfo)
         }
@@ -249,23 +258,26 @@ extension ConversationChangeInfo {
 }
 
 /// Conversation degraded
-extension ConversationChangeInfo {
+public extension ConversationChangeInfo {
 
-    @objc public var causedByConversationPrivacyChange: Bool {
+    @objc var causedByConversationPrivacyChange: Bool {
         if mlsVerificationStatusChanged {
-            return conversation.mlsVerificationStatus == .degraded && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+            return conversation.mlsVerificationStatus == .degraded && !conversation
+                .messagesThatCausedSecurityLevelDegradation.isEmpty
         } else if securityLevelChanged {
-            return conversation.securityLevel == .secureWithIgnored && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+            return conversation.securityLevel == .secureWithIgnored && !conversation
+                .messagesThatCausedSecurityLevelDegradation.isEmpty
         } else if legalHoldStatusChanged {
-            return conversation.legalHoldStatus == .pendingApproval && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+            return conversation.legalHoldStatus == .pendingApproval && !conversation
+                .messagesThatCausedSecurityLevelDegradation.isEmpty
         }
 
         return false
     }
 
     /// Users that caused the conversation to degrade
-    @objc public var usersThatCausedConversationToDegrade: Set<ZMUser> {
-        let untrustedParticipants = self.conversation.localParticipants.filter { user -> Bool in
+    @objc var usersThatCausedConversationToDegrade: Set<ZMUser> {
+        let untrustedParticipants = conversation.localParticipants.filter { user -> Bool in
             return !user.isTrusted
         }
         return Set(untrustedParticipants)

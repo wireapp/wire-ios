@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class FeatureRepositoryTests: ZMBaseManagedObjectTest {
 
@@ -45,11 +45,11 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
     }
 
     func assertFeatureExists(name: Feature.Name) {
-        XCTAssertNotNil(Feature.fetch(name: name, context: self.syncMOC))
+        XCTAssertNotNil(Feature.fetch(name: name, context: syncMOC))
     }
 
     func assertFeatureDoesNotExist(name: Feature.Name) {
-        XCTAssertNil(Feature.fetch(name: name, context: self.syncMOC))
+        XCTAssertNil(Feature.fetch(name: name, context: syncMOC))
     }
 
     // MARK: - App lock
@@ -325,6 +325,40 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func testThatItStoresConferenceCalling_V6() async {
+        await syncMOC.perform {
+            // Given
+            let sut = FeatureRepository(context: self.syncMOC)
+            let config = Feature.ConferenceCalling.Config(
+                useSFTForOneToOneCalls: true
+            )
+            let conferenceCalling = Feature.ConferenceCalling(status: .disabled, config: config)
+            self.assertFeatureDoesNotExist(name: .conferenceCalling)
+
+            // When
+            sut.storeConferenceCalling(conferenceCalling)
+
+            // Then
+            guard let feature = Feature.fetch(name: .conferenceCalling, context: self.syncMOC) else {
+                XCTFail("feature not found")
+                return
+            }
+
+            guard let configData = feature.config else {
+                XCTFail("expected config data")
+                return
+            }
+
+            guard let featureConfig = configData.decode(as: Feature.ConferenceCalling.Config.self) else {
+                XCTFail("failed to decode config data")
+                return
+            }
+
+            XCTAssertEqual(feature.status, .disabled)
+            XCTAssertEqual(featureConfig, config)
+        }
     }
 
     // MARK: - Conversation guest links
@@ -759,7 +793,10 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             let sut = FeatureRepository(context: self.syncMOC)
             let config = Feature.E2EI.Config(
                 acmeDiscoveryUrl: "http://acme",
-                verificationExpiration: 12345)
+                verificationExpiration: 12_345,
+                crlProxy: "http://example",
+                useProxyOnMobile: true
+            )
 
             Feature.updateOrCreate(havingName: .e2ei, in: self.syncMOC) { feature in
                 feature.status = .disabled
@@ -822,7 +859,8 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
 
             let config = Feature.E2EI.Config(
                 acmeDiscoveryUrl: "http://acme",
-                verificationExpiration: 12345)
+                verificationExpiration: 12_345
+            )
 
             let e2ei = Feature.E2EI(
                 status: .enabled,
@@ -899,7 +937,7 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
 private extension Data {
 
     func decode<T: Decodable>(as type: T.Type) -> T? {
-        return try? JSONDecoder().decode(type, from: self)
+        try? JSONDecoder().decode(type, from: self)
     }
 
 }

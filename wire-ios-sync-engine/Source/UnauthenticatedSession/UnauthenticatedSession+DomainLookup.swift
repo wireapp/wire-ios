@@ -55,14 +55,14 @@ public struct DomainInfo: Codable, Equatable {
     }
 }
 
-extension UnauthenticatedSession {
+public extension UnauthenticatedSession {
 
     /// Lookup a domain and fetch its configuration if it's registered in the Wire cloud.
     ///
     /// - parameter domain: Domain to look up (e.g. example.com)
     /// - parameter completion: The result closure will with the result of the lookup.
 
-    public func lookup(domain: String, completion: @escaping (Result<DomainInfo, Error>) -> Void) {
+    func lookup(domain: String, completion: @escaping (Result<DomainInfo, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(DomainLookupError.noApiVersion))
         }

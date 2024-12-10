@@ -16,19 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireSyncEngineSupport
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
-    var sut: ConversationViewController!
-    var mockConversation: ZMConversation!
-    var serviceUser: ZMUser!
-    var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
+    private var sut: ConversationViewController!
+    private var mockConversation: ZMConversation!
+    private var serviceUser: ZMUser!
+    private var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
+    var snapshotHelper: SnapshotHelper!
     private var imageTransformerMock: MockImageTransformer!
 
     override func setupCoreDataStack() {
@@ -37,51 +39,61 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         uiMOC = coreDataFixture.coreDataStack.viewContext
     }
 
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
-        userSession.contextProvider = coreDataStack
-        userSession.mockConversationList = ZMConversationList(
+        userSession.coreDataStack = coreDataStack
+        userSession.mockConversationList = ConversationList(
             allConversations: [mockConversation!],
-            filteringPredicate: NSPredicate(
-                value: true
-            ),
-            moc: uiMOC,
+            filteringPredicate: NSPredicate(value: true),
+            managedObjectContext: uiMOC,
             description: "all conversations"
         )
 
         serviceUser = coreDataFixture.createServiceUser()
 
         let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
-        let zClientViewController = ZClientViewController(account: mockAccount, userSession: userSession)
 
-        let mockClassificationProvider = MockSecurityClassificationProviding()
-        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
+        let zClientViewController = ZClientViewController(
+            account: mockAccount,
+            userSession: userSession,
+            trackingManager: nil
+        )
 
         sut = ConversationViewController(
             conversation: mockConversation,
             visibleMessage: nil,
-            zClientViewController: zClientViewController,
             userSession: userSession,
-            classificationProvider: mockClassificationProvider,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            mediaPlaybackManager: .init(name: nil, userSession: userSession),
+            classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable()
         )
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         serviceUser = nil
         coreDataFixture = nil
         imageTransformerMock = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }
 
@@ -127,7 +139,7 @@ extension ConversationViewControllerSnapshotTests {
         sut.updateGuestsBarVisibility()
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatGuestsBarControllerIsVisibleIfServicesArePresent() {
@@ -141,7 +153,7 @@ extension ConversationViewControllerSnapshotTests {
         sut.updateGuestsBarVisibility()
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatGuestsBarControllerIsVisibleIfExternalsAndServicesArePresent() {
@@ -160,7 +172,7 @@ extension ConversationViewControllerSnapshotTests {
         sut.updateGuestsBarVisibility()
 
         // then
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
 }

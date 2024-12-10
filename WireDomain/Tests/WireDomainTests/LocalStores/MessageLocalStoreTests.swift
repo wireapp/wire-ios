@@ -1,0 +1,197 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import WireDataModel
+import WireDataModelSupport
+import WireDomainSupport
+import WireTestingPackage
+import XCTest
+@testable import WireDomain
+
+final class MessageLocalStoreTests: XCTestCase {
+
+    private var sut: MessageLocalStore!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var userLocalStore: MockUserLocalStoreProtocol!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
+
+    private var context: NSManagedObjectContext {
+        stack.syncContext
+    }
+
+    override func setUp() async throws {
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+        userLocalStore = MockUserLocalStoreProtocol()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
+        stack = try await coreDataStackHelper.createStack()
+
+        sut = MessageLocalStore(
+            context: context,
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore
+        )
+    }
+
+    override func tearDown() async throws {
+        sut = nil
+        stack = nil
+        conversationLocalStore = nil
+        try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
+        modelHelper = nil
+        userLocalStore = nil
+    }
+
+    // MARK: - Tests
+
+    func testAddMessageToConversation_It_Adds_Correct_Message_To_Conversation() async {
+        // Mock
+
+        let user = await context.perform { [self] in
+            modelHelper.createUser(id: Scaffolding.userID, in: context)
+        }
+
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = user
+        userLocalStore.fetchUserIdDomain_MockValue = user
+        userLocalStore.fetchSelfUser_MockValue = user
+        userLocalStore.fetchOrCreateUsersUserIDs_MockValue = Set([user])
+
+        for messageType in Scaffolding.allMessageTypes {
+            let conversation = await makeConversation(creator: user)
+            conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+
+            // When
+
+            await sut.addSystemMessageToConversation(
+                messageType: messageType,
+                conversationID: UUID(),
+                conversationDomain: Scaffolding.domain1
+            )
+
+            // Then
+
+            await internalTest_assertConversationLastMessages(
+                messageType: messageType,
+                conversation: conversation
+            )
+        }
+    }
+
+    private func internalTest_assertConversationLastMessages(
+        messageType: MessageType,
+        conversation: ZMConversation
+    ) async {
+        let lastMessagesTypes = await context.perform {
+            conversation.allMessages
+                .compactMap { $0 as? ZMSystemMessage }
+                .map(\.systemMessageType)
+                .sorted(by: { $0.rawValue < $1.rawValue })
+        }
+
+        let expectedResults = expectedResults(given: messageType)
+
+        XCTAssertEqual(lastMessagesTypes.count, expectedResults.messagesCount)
+        XCTAssertEqual(lastMessagesTypes, expectedResults.zmMessages)
+    }
+
+    private func makeConversation(creator: ZMUser) async -> ZMConversation {
+        await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(in: context)
+            conversation.creator = creator
+            conversation.hasReadReceiptsEnabled = true
+
+            return conversation
+        }
+    }
+
+    private func expectedResults(
+        given messageType: MessageType
+    ) -> (messagesCount: Int, zmMessages: [ZMSystemMessageType]) {
+        switch messageType {
+        case .federationTermination:
+            (messagesCount: 1, [.domainsStoppedFederating])
+        case .participantsRemovedAnonymously:
+            (messagesCount: 1, [.participantsRemoved])
+        case .mlsMigrationMLSNotSupportedForSelfUser:
+            (messagesCount: 1, [.mlsNotSupportedSelfUser])
+        case .mlsMigrationMLSNotSupportedForOtherUser:
+            (messagesCount: 1, [.mlsNotSupportedOtherUser])
+        case .teamMemberRemoved:
+            (messagesCount: 1, [.teamMemberLeave])
+        case .participantsRemoved:
+            (messagesCount: 1, [.participantsRemoved])
+        case .newConversationCreated:
+            (messagesCount: 2, [.newConversation, .readReceiptsOn])
+        case .mlsMigrationStarted:
+            (messagesCount: 1, [.mlsMigrationStarted])
+        case .mlsMigrationPotentialGap:
+            (messagesCount: 1, [.mlsMigrationPotentialGap])
+        case .mlsMigrationFinalized:
+            (messagesCount: 1, [.mlsMigrationFinalized])
+        case .receiptModeIsOn:
+            (messagesCount: 1, [.readReceiptsOn])
+        case .messageTimerUpdate:
+            (messagesCount: 1, [.messageTimerUpdate])
+        case .participantsAdded:
+            (messagesCount: 1, [.participantsAdded])
+        case .conversationNameChanged:
+            (messagesCount: 1, [.conversationNameChanged])
+        case let .readReceiptsStatus(isEnabled, _, _):
+            (messagesCount: 1, [isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled])
+        }
+    }
+
+    private enum Scaffolding {
+        static let conversationID = UUID.mockID1
+        static let userID = UUID.mockID2
+        static let otherUserID = UUID.mockID3
+        static let domain1 = "domain1.com"
+        static let domain2 = "domain2.com"
+        static let date = Date.now
+
+        static let allMessageTypes: [MessageType] = [
+            .federationTermination(domains: [domain1, domain2], date: date),
+            .mlsMigrationFinalized(sender: (id: userID, domain: domain1), date: date),
+            .mlsMigrationMLSNotSupportedForOtherUser(otherUser: (id: userID, domain: domain1)),
+            .mlsMigrationMLSNotSupportedForSelfUser,
+            .mlsMigrationPotentialGap(sender: (id: userID, domain: domain1), date: date),
+            .mlsMigrationStarted(sender: (id: userID, domain: domain1), date: date),
+            .teamMemberRemoved(member: (id: userID, domain: domain1), date: date),
+            .receiptModeIsOn(date: date),
+            .newConversationCreated(date: date),
+            .participantsRemoved(
+                participants: [(id: userID, domain: domain1)],
+                sender: (id: otherUserID, domain: domain1),
+                date: date
+            ),
+            .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date),
+            .participantsAdded(
+                participants: [(id: userID, domain: domain1)],
+                sender: (id: userID, domain: domain1),
+                date: date
+            ),
+            .conversationNameChanged(newName: "newName", sender: (userID, domain1), date: date),
+            .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date)
+
+        ]
+    }
+
+}

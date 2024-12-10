@@ -29,20 +29,30 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
     private var mockConversation: ZMConversation!
     private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var mockGetUserAccountImageSourceUseCase: MockGetUserAccountImageSourceUseCaseProtocol!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
 
         let account = Account.mockAccount(imageData: Data())
         selfUser = .createSelfUser(name: "Bob")
         userSession = UserSessionMock(mockUser: selfUser)
+
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+
+        mockGetUserAccountImageSourceUseCase = .init()
+        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .init()
+
         sut = ConversationListViewController.ViewModel(
             account: account,
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: mockMainCoordinator,
+            getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
         mockViewController = MockConversationListContainer(viewModel: sut)
         sut.viewController = mockViewController
@@ -55,8 +65,8 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         selfUser = nil
         mockConversation = nil
         userSession = nil
-
-        super.tearDown()
+        mockGetUserAccountImageSourceUseCase = nil
+        mockMainCoordinator = nil
     }
 
     func testThatSelectAConversationCallsSelectOnListContentController() {

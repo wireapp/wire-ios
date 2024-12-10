@@ -39,7 +39,7 @@ extension ZMUserSession {
             return
         }
 
-        let state = self.savedDebugState[keyword] ?? [:]
+        let state = savedDebugState[keyword] ?? [:]
         command.execute(
             arguments: arguments,
             userSession: self,
@@ -61,15 +61,15 @@ extension ZMUserSession {
     }
 
     func restoreDebugCommandsState() {
-        self.debugCommands.values.forEach {
+        debugCommands.values.forEach {
             let state = self.savedDebugState[$0.keyword] ?? [:]
             $0.restoreFromState(userSession: self, state: state)
         }
     }
 
-    fileprivate var debugStateUserDefaultsKey: String? {
+    private var debugStateUserDefaultsKey: String? {
         guard
-            let identifier = (self.providedSelfUser as! ZMUser).remoteIdentifier
+            let identifier = (providedSelfUser as! ZMUser).remoteIdentifier
         else { return nil }
         return "Wire-debugCommandsState-\(identifier)"
     }
@@ -136,9 +136,7 @@ private class DebugCommandMixin: DebugCommand {
         onComplete(.failure(error: "Not implemented"))
     }
 
-    func restoreFromState(userSession: ZMUserSession, state: [String: Any]) {
-        return
-    }
+    func restoreFromState(userSession: ZMUserSession, state: [String: Any]) {}
 }
 
 /// The result of a debug command
@@ -155,9 +153,9 @@ public enum DebugCommandResult {
 
 // MARK: - Command execution
 
-extension EncryptionSessionIdentifier {
+private extension EncryptionSessionIdentifier {
 
-    fileprivate init?(string: String) {
+    init?(string: String) {
         let split = string.split(separator: "_")
         guard split.count == 2 else { return nil }
         let user = String(split[0])
@@ -182,38 +180,39 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         arguments: [String],
         userSession: ZMUserSession,
         state: [String: Any],
-        onComplete: @escaping ((DebugCommandResult) -> Void)) {
+        onComplete: @escaping ((DebugCommandResult) -> Void)
+    ) {
         defer {
             saveEnabledLogs(userSession: userSession)
         }
 
         if arguments.first == "list" {
-            return onComplete(.success(info:
+            return onComplete(.success(
+                info:
                 "Enabled:\n" +
-                self.currentlyEnabledLogs
-                    .map { $0.rawValue }
+                    currentlyEnabledLogs
+                    .map(\.rawValue)
                     .joined(separator: "\n")
-                ))
+            ))
         }
 
         guard arguments.count == 2,
-        arguments[0] == "add" || arguments[0] == "remove"
+              arguments[0] == "add" || arguments[0] == "remove"
         else {
-            return onComplete(.failure(error: "usage: \(self.usage)"))
+            return onComplete(.failure(error: "usage: \(usage)"))
         }
 
         let isAdding = arguments[0] == "add"
         let subject = arguments[1]
 
         userSession.syncManagedObjectContext.perform {
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: [John] use flag here
-            // swiftlint:enable todo_requires_jira_link
             guard let keyStore = userSession.syncManagedObjectContext.zm_cryptKeyStore else {
                 return onComplete(.failure(error: "No encryption context"))
             }
 
-            if !isAdding && subject == "all" {
+            if !isAdding, subject == "all" {
                 keyStore.encryptionContext.disableExtendedLoggingOnAllSessions()
                 self.currentlyEnabledLogs = Set()
                 return onComplete(.success(info: "all removed"))
@@ -237,10 +236,8 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
     private let logsKey = "enabledLogs"
 
     private func saveEnabledLogs(userSession: ZMUserSession) {
-        let idsToSave = self.currentlyEnabledLogs.map {
-            $0.rawValue
-        }
-        self.saveState(userSession: userSession, state: [logsKey: idsToSave])
+        let idsToSave = currentlyEnabledLogs.map(\.rawValue)
+        saveState(userSession: userSession, state: [logsKey: idsToSave])
     }
 
     override func restoreFromState(
@@ -248,7 +245,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         state: [String: Any]
     ) {
         guard let logs = state[logsKey] as? [String] else { return }
-        self.currentlyEnabledLogs = Set(logs.compactMap {
+        currentlyEnabledLogs = Set(logs.compactMap {
             EncryptionSessionIdentifier(string: $0)
         })
         userSession.syncManagedObjectContext.performGroupedBlock {
@@ -274,7 +271,8 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
         arguments: [String],
         userSession: ZMUserSession,
         state: [String: Any],
-        onComplete: @escaping ((DebugCommandResult) -> Void)) {
+        onComplete: @escaping ((DebugCommandResult) -> Void)
+    ) {
         guard
             let client = userSession.selfUserClient,
             let user = userSession.providedSelfUser as? ZMUser
@@ -283,10 +281,11 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
             return
         }
 
-        onComplete(.success(info:
+        onComplete(.success(
+            info:
             "User: \(user.remoteIdentifier.uuidString)\n" +
-            "Client: \(client.remoteIdentifier ?? "-")\n" +
-            "Session: \(client.sessionIdentifier?.rawValue ?? "-")"
+                "Client: \(client.remoteIdentifier ?? "-")\n" +
+                "Session: \(client.sessionIdentifier?.rawValue ?? "-")"
         ))
     }
 }
@@ -302,7 +301,8 @@ private class DebugCommandHelp: DebugCommandMixin {
         arguments: [String],
         userSession: ZMUserSession,
         state: [String: Any],
-        onComplete: @escaping ((DebugCommandResult) -> Void)) {
+        onComplete: @escaping ((DebugCommandResult) -> Void)
+    ) {
         let output = userSession.debugCommands.keys.sorted().joined(separator: "\n")
         onComplete(.success(info: output))
     }
@@ -319,12 +319,14 @@ private class DebugCommandVariables: DebugCommandMixin {
         arguments: [String],
         userSession: ZMUserSession,
         state: [String: Any],
-        onComplete: @escaping ((DebugCommandResult) -> Void)) {
+        onComplete: @escaping ((DebugCommandResult) -> Void)
+    ) {
         var newState = state
         switch arguments.first {
         case "list":
-            return onComplete(.success(info: state.map { v in
-                "\(v.key) => \(v.value)"
+            return onComplete(.success(
+                info: state.map { v in
+                    "\(v.key) => \(v.value)"
                 }.joined(separator: "\n")
             ))
         case "set":
@@ -338,7 +340,7 @@ private class DebugCommandVariables: DebugCommandMixin {
             } else {
                 newState.removeValue(forKey: key)
             }
-            self.saveState(userSession: userSession, state: state)
+            saveState(userSession: userSession, state: state)
             return onComplete(.success(info: nil))
         case "get":
             guard arguments.count == 2 else {

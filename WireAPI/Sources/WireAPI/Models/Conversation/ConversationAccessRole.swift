@@ -20,7 +20,7 @@ import Foundation
 
 /// Which users are allowed to be participants in a conversation.
 
-public enum ConversationAccessRole: String, Codable {
+public enum ConversationAccessRole: String, Codable, Sendable {
 
     /// Members of the owning team.
 

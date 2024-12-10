@@ -20,7 +20,7 @@ import Foundation
 
 /// A container of MLS public keys.
 
-public struct MLSPublicKeys: Equatable, Codable {
+public struct MLSPublicKeys: Equatable, Codable, Sendable {
 
     /// The ed25519 signature key.
 

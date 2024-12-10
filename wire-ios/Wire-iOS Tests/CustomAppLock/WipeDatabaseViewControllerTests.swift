@@ -16,33 +16,56 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
+
 final class WipeDatabaseViewControllerTests: XCTestCase {
 
-    var sut: WipeDatabaseViewController!
+    // MARK: - Properties
+
+    private var sut: WipeDatabaseViewController!
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
+        snapshotHelper = nil
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testForAllScreenSizes() {
         sut = WipeDatabaseViewController()
-        verifyInAllDeviceSizes(matching: sut)
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut)
     }
 
-    func testForDarkTheme() {
+    func testWipeDatabaseViewController() {
         let createSut: () -> UIViewController = {
-            let navigationController = UIViewController().wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+            let navigationController = UIViewController()
+                .wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
             navigationController.pushViewController(WipeDatabaseViewController(), animated: false)
-
             return navigationController
         }
 
-        verifyInDarkScheme(createSut: createSut)
+        let sut = createSut()
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testForConfirmAlert() throws {

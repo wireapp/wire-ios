@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDataModel
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -28,37 +28,51 @@ final class CollectionsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var emptyCollection: AssetCollectionWrapper!
-    var imageMessage: ZMConversationMessage!
-    var videoMessage: ZMConversationMessage!
-    var audioMessage: ZMConversationMessage!
-    var fileMessage: ZMConversationMessage!
-    var linkMessage: ZMConversationMessage!
+    private var snapshotHelper: SnapshotHelper!
 
-    var expiredImageMessage: ZMConversationMessage!
-    var expiredVideoMessage: ZMConversationMessage!
-    var expiredAudioMessage: ZMConversationMessage!
-    var expiredFileMessage: ZMConversationMessage!
-    var expiredLinkMessage: ZMConversationMessage!
+    private var emptyCollection: AssetCollectionWrapper!
+    private var imageMessage: ZMConversationMessage!
+    private var videoMessage: ZMConversationMessage!
+    private var audioMessage: ZMConversationMessage!
+    private var fileMessage: ZMConversationMessage!
+    private var linkMessage: ZMConversationMessage!
 
-    var deletedImageMessage: ZMConversationMessage!
-    var deletedVideoMessage: ZMConversationMessage!
-    var deletedAudioMessage: ZMConversationMessage!
-    var deletedFileMessage: ZMConversationMessage!
-    var deletedLinkMessage: ZMConversationMessage!
+    private var expiredImageMessage: ZMConversationMessage!
+    private var expiredVideoMessage: ZMConversationMessage!
+    private var expiredAudioMessage: ZMConversationMessage!
+    private var expiredFileMessage: ZMConversationMessage!
+    private var expiredLinkMessage: ZMConversationMessage!
 
-    var userSession: UserSessionMock!
+    private var deletedImageMessage: ZMConversationMessage!
+    private var deletedVideoMessage: ZMConversationMessage!
+    private var deletedAudioMessage: ZMConversationMessage!
+    private var deletedFileMessage: ZMConversationMessage!
+    private var deletedLinkMessage: ZMConversationMessage!
+
+    private var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
+
+    // MARK: - setUp
+
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
 
     override func setUp() {
-        super.setUp()
         accentColor = .blue
-
+        snapshotHelper = .init()
         userSession = UserSessionMock()
 
         let conversation = MockGroupDetailsConversation()
         let assetCollection = MockCollection.empty
         let delegate = AssetCollectionMulticastDelegate()
-        emptyCollection = AssetCollectionWrapper(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: [])
+        emptyCollection = AssetCollectionWrapper(
+            conversation: conversation,
+            assetCollection: assetCollection,
+            assetCollectionDelegate: delegate,
+            matchingCategories: []
+        )
 
         imageMessage = MockMessageFactory.imageMessage()
         videoMessage = MockMessageFactory.videoMessage()
@@ -82,6 +96,7 @@ final class CollectionsViewControllerTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         emptyCollection = nil
         imageMessage = nil
         videoMessage = nil
@@ -102,44 +117,56 @@ final class CollectionsViewControllerTests: XCTestCase {
         deletedLinkMessage = nil
 
         userSession = nil
-        super.tearDown()
+        mockMainCoordinator = nil
     }
 
     // MARK: - Snapshot Tests
 
     func testThatNoElementStateIsShownWhenCollectionIsEmpty() {
-        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: true, userSession: userSession)
-        verifyAllIPhoneSizes(matching: controller)
+        let controller = CollectionsViewController(
+            collection: emptyCollection,
+            fetchingDone: true,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testThatLoadingIsShownWhenFetching() {
-        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: false, userSession: userSession)
+        let controller = CollectionsViewController(
+            collection: emptyCollection,
+            fetchingDone: false,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         controller.view.layer.speed = 0 // Disable animations so that the spinner would always be in the same phase
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testFilesSectionWhenNotFull() {
         let assetCollection = MockCollection(fileMessages: [fileMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testFilesSectionWhenFull() {
         let assetCollection = MockCollection(fileMessages: [fileMessage, fileMessage, fileMessage, fileMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testLinksSectionWhenNotFull() {
         let assetCollection = MockCollection(linkMessages: [linkMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testLinksSectionWhenFull() {
         let assetCollection = MockCollection(linkMessages: [linkMessage, linkMessage, linkMessage, linkMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     // MARK: - Expiration
@@ -147,27 +174,28 @@ final class CollectionsViewControllerTests: XCTestCase {
     func testImagesSectionWhenExpired() {
         let assetCollection = MockCollection(messages: [
             MockCollection.onlyImagesCategory: [expiredImageMessage],
-            MockCollection.onlyVideosCategory: [videoMessage, expiredVideoMessage]])
+            MockCollection.onlyVideosCategory: [videoMessage, expiredVideoMessage]
+        ])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testFilesSectionWhenExpired() {
         let assetCollection = MockCollection(fileMessages: [fileMessage, expiredFileMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testAudioSectionWhenExpired() {
         let assetCollection = MockCollection(fileMessages: [audioMessage, expiredAudioMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testLinksSectionWhenExpired() {
         let assetCollection = MockCollection(linkMessages: [expiredLinkMessage, linkMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     // MARK: - Expiration: Deletion
@@ -175,43 +203,54 @@ final class CollectionsViewControllerTests: XCTestCase {
     func testImagesSectionWhenDeleted() {
         let assetCollection = MockCollection(messages: [
             MockCollection.onlyImagesCategory: [deletedImageMessage],
-            MockCollection.onlyVideosCategory: [videoMessage, deletedVideoMessage]])
+            MockCollection.onlyVideosCategory: [videoMessage, deletedVideoMessage]
+        ])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testFilesSectionWhenDeleted() {
         let assetCollection = MockCollection(fileMessages: [fileMessage, deletedFileMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testAudioSectionWhenDeleted() {
         let assetCollection = MockCollection(fileMessages: [audioMessage, deletedAudioMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testLinksSectionWhenDeleted() {
         let assetCollection = MockCollection(linkMessages: [deletedLinkMessage, linkMessage])
         let controller = createController(showingCollection: assetCollection)
-        verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
-
-}
-
-extension CollectionsViewControllerTests {
 
     // MARK: - Helper method
 
-    func createController(showingCollection assetCollection: MockCollection) -> CollectionsViewController {
+    private func createController(showingCollection assetCollection: MockCollection) -> CollectionsViewController {
         let conversation = MockGroupDetailsConversation()
         let delegate = AssetCollectionMulticastDelegate()
-        let collection = AssetCollectionWrapper(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: [])
+        let collection = AssetCollectionWrapper(
+            conversation: conversation,
+            assetCollection: assetCollection,
+            assetCollectionDelegate: delegate,
+            matchingCategories: []
+        )
 
-        let controller = CollectionsViewController(collection: collection, userSession: userSession)
+        let controller = CollectionsViewController(
+            collection: collection,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         _ = controller.view
-        delegate.assetCollectionDidFetch(collection: assetCollection, messages: assetCollection.messages, hasMore: false)
+        delegate.assetCollectionDidFetch(
+            collection: assetCollection,
+            messages: assetCollection.messages,
+            hasMore: false
+        )
         delegate.assetCollectionDidFinishFetching(collection: assetCollection, result: .success)
         return controller
     }

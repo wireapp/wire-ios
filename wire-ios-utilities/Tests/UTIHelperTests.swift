@@ -17,9 +17,8 @@
 //
 
 import CoreServices
-import UniformTypeIdentifiers
-@testable import WireUtilities
 import XCTest
+@testable import WireUtilities
 
 final class UTIHelperTests: XCTestCase {
 
@@ -60,9 +59,11 @@ final class UTIHelperTests: XCTestCase {
 
     func testThatCommonFilesConformsAudioType() {
         // given
-        let suts = ["audio/mp4",
-                    "audio/mpeg",
-                    "audio/x-m4a"]
+        let suts = [
+            "audio/mp4",
+            "audio/mpeg",
+            "audio/x-m4a"
+        ]
 
         suts.forEach { sut in
             // when & then
@@ -72,10 +73,12 @@ final class UTIHelperTests: XCTestCase {
 
     func testThatConformsToImageTypeIdentifiesCommonImageTypes() {
         // given
-        let suts = ["public.jpeg",
-                    "com.compuserve.gif",
-                    "public.png",
-                    "public.svg-image"]
+        let suts = [
+            "public.jpeg",
+            "com.compuserve.gif",
+            "public.png",
+            "public.svg-image"
+        ]
 
         suts.forEach { sut in
             // when & then

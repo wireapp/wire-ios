@@ -27,22 +27,10 @@ final class BrowserViewController: SFSafariViewController {
 
     // MARK: - Tint Color
 
-    private var overrider = TintColorOverrider()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         preferredControlTintColor = SemanticColors.Label.textDefault
         delegate = self
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        overrider.override()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        overrider.restore()
     }
 
     override func dismiss(animated flag: Bool, completion defaultBlock: (() -> Void)? = nil) {

@@ -24,7 +24,10 @@ import Ziphy
 
 protocol GiphyConfirmationViewControllerDelegate: AnyObject {
 
-    func giphyConfirmationViewController(_ giphyConfirmationViewController: GiphyConfirmationViewController, didConfirmImageData imageData: Data)
+    func giphyConfirmationViewController(
+        _ giphyConfirmationViewController: GiphyConfirmationViewController,
+        didConfirmImageData imageData: Data
+    )
 
 }
 
@@ -33,8 +36,16 @@ final class GiphyConfirmationViewController: UIViewController {
     typealias Giphy = L10n.Localizable.Giphy
 
     private let imagePreview = FLAnimatedImageView()
-    private let acceptButton = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .normalSemiboldFont)
-    private let cancelButton = ZMButton(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .normalSemiboldFont)
+    private let acceptButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
+    private let cancelButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
     private let buttonContainer = UIView()
     weak var delegate: GiphyConfirmationViewControllerDelegate?
     private let searchResultController: ZiphySearchResultsController?
@@ -47,9 +58,11 @@ final class GiphyConfirmationViewController: UIViewController {
     ///   - ziph: provide nil for testing only
     ///   - previewImage: image for preview
     ///   - searchResultController: provide nil for testing only
-    init(withZiph ziph: Ziph?,
-         previewImage: FLAnimatedImage?,
-         searchResultController: ZiphySearchResultsController?) {
+    init(
+        withZiph ziph: Ziph?,
+        previewImage: FLAnimatedImage?,
+        searchResultController: ZiphySearchResultsController?
+    ) {
         self.ziph = ziph
         self.searchResultController = searchResultController
 
@@ -59,11 +72,11 @@ final class GiphyConfirmationViewController: UIViewController {
             imagePreview.animatedImage = previewImage
         }
 
-        let closeImage = StyleKitIcon.cross.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultBlack)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: closeImage,
-                                                            style: .plain,
-                                                            target: self,
-                                                            action: #selector(GiphySearchViewController.onDismiss))
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true, completion: nil)
+        }, accessibilityLabel: L10n.Localizable.General.close)
+
+        navigationItem.rightBarButtonItem = closeItem
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
@@ -148,9 +161,9 @@ final class GiphyConfirmationViewController: UIViewController {
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-            imagePreview.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            imagePreview.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            imagePreview.topAnchor.constraint(equalTo: safeTopAnchor),
+            imagePreview.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            imagePreview.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            imagePreview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             imagePreview.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor, constant: -20),
 
             cancelButton.heightAnchor.constraint(equalToConstant: 40),

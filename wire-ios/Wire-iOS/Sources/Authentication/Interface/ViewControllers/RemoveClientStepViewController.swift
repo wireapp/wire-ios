@@ -25,8 +25,8 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     var authenticationCoordinator: AuthenticationCoordinator?
     let clientListController: RemoveClientsViewController
-    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
-       return traitEnvironment.traitCollection.horizontalSizeClass
+    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
+        traitEnvironment.traitCollection.horizontalSizeClass
     }
 
     private var contentViewWidthRegular: NSLayoutConstraint!
@@ -34,19 +34,8 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     // MARK: - Initialization
 
-    init(clients: [UserClient],
-         credentials: UserCredentials?) {
-        let emailCredentials: UserEmailCredentials? = credentials.flatMap {
-            guard let email = $0.email, let password = $0.password else {
-                return nil
-            }
-
-            return UserEmailCredentials(email: email, password: password)
-        }
-
-        clientListController = RemoveClientsViewController(
-            clientsList: clients,
-            credentials: emailCredentials)
+    init(clients: [UserClient]) {
+        self.clientListController = RemoveClientsViewController(clientsList: clients)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -60,10 +49,14 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
         configureSubviews()
         configureConstraints()
         updateBackButton()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
     }
 
     private func configureSubviews() {
@@ -79,7 +72,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
         NSLayoutConstraint.activate([
             clientListController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            clientListController.view.topAnchor.constraint(equalTo: safeTopAnchor),
+            clientListController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             clientListController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
@@ -102,15 +95,18 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
     }
 
-    @objc private func backButtonTapped() {
+    @objc
+    private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
 
     // MARK: - Adaptive UI
 
     func toggleConstraints() {
-        userInterfaceSizeClass(self).toggle(compactConstraints: [contentViewWidthCompact],
-               regularConstraints: [contentViewWidthRegular])
+        userInterfaceSizeClass(self).toggle(
+            compactConstraints: [contentViewWidthCompact],
+            regularConstraints: [contentViewWidthRegular]
+        )
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -138,8 +134,10 @@ extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
     }
 
     func failedToDeleteClients(_ error: Error) {
-        let alert = AuthenticationCoordinatorErrorAlert(error: error as NSError,
-                                                        completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: error as NSError,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
     }
 

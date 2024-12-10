@@ -18,19 +18,20 @@
 
 public extension ZMUser {
     @objc var team: Team? {
-        return membership?.team
+        membership?.team
     }
 
-    @objc static func keyPathsForValuesAffectingTeam() -> Set<String> {
-         return [#keyPath(ZMUser.membership)]
+    @objc
+    static func keyPathsForValuesAffectingTeam() -> Set<String> {
+        [#keyPath(ZMUser.membership)]
     }
 
     @objc var isWirelessUser: Bool {
-        return self.expiresAt != nil
+        expiresAt != nil
     }
 
     @objc var isExpired: Bool {
-        guard let expiresAt = self.expiresAt else {
+        guard let expiresAt else {
             return false
         }
 
@@ -38,7 +39,7 @@ public extension ZMUser {
     }
 
     @objc var expiresAfter: TimeInterval {
-        guard let expiresAt = self.expiresAt else {
+        guard let expiresAt else {
             return 0
         }
 
@@ -49,10 +50,11 @@ public extension ZMUser {
         }
     }
 
-    @objc func createOrDeleteMembershipIfBelongingToTeam() {
+    @objc
+    func createOrDeleteMembershipIfBelongingToTeam() {
         guard
-            let teamIdentifier = self.teamIdentifier,
-            let managedObjectContext = self.managedObjectContext,
+            let teamIdentifier,
+            let managedObjectContext,
             let team = Team.fetch(with: teamIdentifier, in: managedObjectContext)
         else {
             return
@@ -70,7 +72,7 @@ public extension ZMUser {
     }
 
     private func deleteMembership(in context: NSManagedObjectContext) {
-        if let membership = self.membership {
+        if let membership {
             context.delete(membership)
         }
     }

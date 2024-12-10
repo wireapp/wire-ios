@@ -20,7 +20,7 @@ import Foundation
 
 /// Metadata for a conversation.
 
-public struct Conversation: Equatable, Codable {
+public struct Conversation: Equatable, Codable, Sendable {
 
     /// The unqualified conversation id.
 

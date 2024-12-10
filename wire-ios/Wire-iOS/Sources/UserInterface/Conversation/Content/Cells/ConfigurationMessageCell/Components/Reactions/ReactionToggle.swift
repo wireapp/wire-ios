@@ -93,6 +93,7 @@ final class ReactionToggle: UIControl {
         )
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -129,8 +130,8 @@ final class ReactionToggle: UIControl {
         value: String,
         count: UInt
     ) {
-        self.isAccessibilityElement = true
-        self.accessibilityIdentifier = "value: \(value), count: \(count)"
+        isAccessibilityElement = true
+        accessibilityIdentifier = "value: \(value), count: \(count)"
     }
 
 }

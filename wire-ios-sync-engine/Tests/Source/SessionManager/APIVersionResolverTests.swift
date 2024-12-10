@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
+import WireTransport
 import XCTest
 
-class APIVersionResolverTests: ZMTBaseTest {
+@testable import WireSyncEngine
+
+final class APIVersionResolverTests: ZMTBaseTest {
 
     private var transportSession: MockTransportSession!
     private var mockDelegate: MockAPIVersionResolverDelegate!
 
     override func setUp() {
-        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+        BackendInfo.apiVersion = nil
         mockDelegate = .init()
         transportSession = MockTransportSession(dispatchGroup: dispatchGroup)
-        setCurrentAPIVersion(nil)
 
         super.setUp()
     }
@@ -37,8 +37,7 @@ class APIVersionResolverTests: ZMTBaseTest {
     override func tearDown() {
         mockDelegate = nil
         transportSession = nil
-        resetCurrentAPIVersion()
-        BackendInfo.storage = UserDefaults.standard
+
         super.tearDown()
     }
 
@@ -76,7 +75,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
     // MARK: - Endpoint unavailable
 
-    func testThatItDefaultsToVersionZeroIfEndpointIsUnavailable() throws {
+    func testThatItDefaultsToVersionZeroIfEndpointIsUnavailable404() throws {
         // Given the client supports API versioning.
         let sut = createSUT(
             clientProdVersions: Set(APIVersion.allCases),
@@ -98,7 +97,33 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertEqual(BackendInfo.isFederationEnabled, false)
     }
 
-    // MARK: - Highest productino version
+    func testThatItDefaultsToNothingIfFailureOtherThan404() throws {
+        let previousApiVersion = BackendInfo.apiVersion
+        let previousDomain = BackendInfo.domain
+        let previousIsFederationEnabled = BackendInfo.isFederationEnabled
+
+        // Given the client supports API versioning.
+        let sut = createSUT(
+            clientProdVersions: Set(APIVersion.allCases),
+            clientDevVersions: []
+        )
+
+        // Given the backend does not.
+        transportSession.isInternalError = true
+
+        // When version is resolved.
+        let done = customExpectation(description: "done")
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then it should not changed.
+        let resolvedVersion = BackendInfo.apiVersion
+        XCTAssertEqual(resolvedVersion, previousApiVersion)
+        XCTAssertEqual(BackendInfo.domain, previousDomain)
+        XCTAssertEqual(BackendInfo.isFederationEnabled, previousIsFederationEnabled)
+    }
+
+    // MARK: - Highest production version
 
     func testThatItResolvesTheHighestProductionAPIVersion() throws {
         // Given client has prod and dev versions.
@@ -109,8 +134,8 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend also has prod and dev versions.
         mockBackendInfo(
-            productionVersions: 0...1,
-            developmentVersions: 2...2,
+            productionVersions: 0 ... 1,
+            developmentVersions: 2 ... 2,
             domain: "foo.com",
             isFederationEnabled: true
         )
@@ -137,7 +162,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend only has prod versons.
         mockBackendInfo(
-            productionVersions: 0...1,
+            productionVersions: 0 ... 1,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -156,7 +181,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertEqual(BackendInfo.isFederationEnabled, true)
     }
 
-    // MARK: - Peferred version
+    // MARK: - Preferred version
 
     func testThatItResolvesThePreferredAPIVersion() throws {
         // Given client has prod and dev versions in dev mode.
@@ -168,8 +193,8 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend also has prod and dev versions.
         mockBackendInfo(
-            productionVersions: 0...2,
-            developmentVersions: 3...3,
+            productionVersions: 0 ... 2,
+            developmentVersions: 3 ... 3,
             domain: "foo.com",
             isFederationEnabled: true
         )
@@ -199,8 +224,8 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend also has prod and dev versions.
         mockBackendInfo(
-            productionVersions: 0...1,
-            developmentVersions: 2...2,
+            productionVersions: 0 ... 1,
+            developmentVersions: 2 ... 2,
             domain: "foo.com",
             isFederationEnabled: true
         )
@@ -230,7 +255,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend also has prod and dev versions.
         mockBackendInfo(
-            productionVersions: 0...1,
+            productionVersions: 0 ... 1,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -261,7 +286,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         )
 
         mockBackendInfo(
-            productionVersions: 0...3,
+            productionVersions: 0 ... 3,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: false
@@ -280,7 +305,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
     func testThatItReportsBlacklistReasonWhenBackendIsObsolete() throws {
         // Given version one was selected.
-        setCurrentAPIVersion(.v1)
+        BackendInfo.apiVersion = .v1
 
         // Given now we only support version 2.
         let sut = createSUT(
@@ -290,7 +315,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend doesn't support version 2
         mockBackendInfo(
-            productionVersions: 0...1,
+            productionVersions: 0 ... 1,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -310,7 +335,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
     func testThatItReportsBlacklistReasonWhenClientIsObsolete() throws {
         // Given version one was selected.
-        setCurrentAPIVersion(.v1)
+        BackendInfo.apiVersion = .v1
 
         // Given we still only support v1.
         let sut = createSUT(
@@ -320,7 +345,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend no longer supports v1.
         mockBackendInfo(
-            productionVersions: 2...2,
+            productionVersions: 2 ... 2,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -353,7 +378,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Backend now has federation enabled.
         mockBackendInfo(
-            productionVersions: 0...2,
+            productionVersions: 0 ... 2,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -382,7 +407,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Backend now has federation enabled.
         mockBackendInfo(
-            productionVersions: 0...2,
+            productionVersions: 0 ... 2,
             developmentVersions: nil,
             domain: "federated.example.com",
             isFederationEnabled: true

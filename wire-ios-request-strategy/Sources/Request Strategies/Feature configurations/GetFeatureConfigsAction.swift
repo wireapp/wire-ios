@@ -27,6 +27,7 @@ public final class GetFeatureConfigsAction: EntityAction {
 
     public enum Failure: Error {
 
+        case invalidResponse
         case insufficientPermissions
         case userIsNotTeamMember
         case teamNotFound

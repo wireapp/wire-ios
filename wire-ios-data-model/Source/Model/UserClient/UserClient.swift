@@ -19,6 +19,7 @@
 import CoreLocation
 import Foundation
 import WireCryptobox
+import WireLogging
 import WireUtilities
 
 public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"
@@ -84,21 +85,20 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged private var primitivePushToken: Data?
     private var pushToken: PushToken? {
         get {
-            self.willAccessValue(forKey: Keys.PushToken)
-            let token: PushToken?
-            if let data = primitivePushToken {
-                token = try? JSONDecoder().decode(PushToken.self, from: data)
+            willAccessValue(forKey: Keys.PushToken)
+            let token: PushToken? = if let data = primitivePushToken {
+                try? JSONDecoder().decode(PushToken.self, from: data)
             } else {
-                token = nil
+                nil
             }
-            self.didAccessValue(forKey: Keys.PushToken)
+            didAccessValue(forKey: Keys.PushToken)
             return token
         }
         set {
             if newValue != pushToken {
-                self.willChangeValue(forKey: Keys.PushToken)
+                willChangeValue(forKey: Keys.PushToken)
                 primitivePushToken = try? JSONEncoder().encode(newValue)
-                self.didChangeValue(forKey: Keys.PushToken)
+                didChangeValue(forKey: Keys.PushToken)
             }
         }
 
@@ -135,7 +135,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     public var mlsThumbPrint: String?
 
     public var isLegalHoldDevice: Bool {
-        return deviceClass == .legalHold || type == .legalHold
+        deviceClass == .legalHold || type == .legalHold
     }
 
     public var verified: Bool {
@@ -143,15 +143,15 @@ public class UserClient: ZMManagedObject, UserClientType {
             let managedObjectContext,
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
-        return selfClient.remoteIdentifier == self.remoteIdentifier || selfClient.trustedClients.contains(self)
+        return selfClient.remoteIdentifier == remoteIdentifier || selfClient.trustedClients.contains(self)
     }
 
     public override static func entityName() -> String {
-        return "UserClient"
+        "UserClient"
     }
 
     public override func keysTrackedForLocalModifications() -> Set<String> {
-        return [
+        [
             ZMUserClientMarkedToDeleteKey,
             ZMUserClientNumberOfKeysRemainingKey,
             ZMUserClientMissingKey,
@@ -162,11 +162,11 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     public override static func sortKey() -> String {
-        return ZMUserClientLabelKey
+        ZMUserClientLabelKey
     }
 
     public override static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
-        return NSPredicate(format: "%K == NULL", ZMUserClientRemoteIdentifierKey)
+        NSPredicate(format: "%K == NULL", ZMUserClientRemoteIdentifierKey)
     }
 
     public override static func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
@@ -174,19 +174,23 @@ public class UserClient: ZMManagedObject, UserClientType {
         let remoteIdentifierPresentPredicate = NSPredicate(format: "\(ZMUserClientRemoteIdentifierKey) != nil")
         let notDeletedPredicate = NSPredicate(format: "\(ZMUserClientMarkedToDeleteKey) == NO")
 
-        let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
             baseModifiedPredicate!,
             notDeletedPredicate,
             remoteIdentifierPresentPredicate
         ])
-        return modifiedPredicate
     }
 
     /// Insert a new client of the local self user.
 
     @discardableResult
     @objc(insertNewSelfClientInManagedObjectContext:selfUser:model:label:)
-    public static func insertNewSelfClient(in managedObjectContext: NSManagedObjectContext, selfUser: ZMUser, model: String, label: String) -> UserClient {
+    public static func insertNewSelfClient(
+        in managedObjectContext: NSManagedObjectContext,
+        selfUser: ZMUser,
+        model: String,
+        label: String
+    ) -> UserClient {
         WireLogger.userClient.debug("inserting new self client in context \(managedObjectContext)")
 
         let userClient = UserClient.insertNewObject(in: managedObjectContext)
@@ -198,26 +202,38 @@ public class UserClient: ZMManagedObject, UserClientType {
         return userClient
     }
 
-    public static func fetchUserClient(withRemoteId remoteIdentifier: String, forUser user: ZMUser, createIfNeeded: Bool) -> UserClient? {
-        precondition(!createIfNeeded || user.managedObjectContext!.zm_isSyncContext, "clients can only be created on the syncContext")
+    public static func fetchUserClient(
+        withRemoteId remoteIdentifier: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) -> UserClient? {
+        precondition(
+            !createIfNeeded || user.managedObjectContext!.zm_isSyncContext,
+            "clients can only be created on the syncContext"
+        )
 
         guard let context = user.managedObjectContext else {
-            fatal("User \(user.safeForLoggingDescription) is not a member of a managed object context (deleted object).")
+            fatal(
+                "User \(user.safeForLoggingDescription) is not a member of a managed object context (deleted object)."
+            )
         }
 
-        let relationClients = user.clients.filter({ $0.remoteIdentifier == remoteIdentifier })
+        let relationClients = user.clients.filter { $0.remoteIdentifier == remoteIdentifier }
 
         if relationClients.count > 1 {
             WireLogger.userClient.error("Detected duplicate clients: \(relationClients.map(\.remoteIdentifier))")
         }
 
-        requireInternal(relationClients.count <= 1, "Detected duplicate clients: \(relationClients.map({ $0.safeForLoggingDescription }))")
+        requireInternal(
+            relationClients.count <= 1,
+            "Detected duplicate clients: \(relationClients.map(\.safeForLoggingDescription))"
+        )
 
         if let client = relationClients.first {
             return client
         }
 
-        if let client = self.fetchExistingUserClient(with: remoteIdentifier, in: context) {
+        if let client = fetchExistingUserClient(with: remoteIdentifier, in: context) {
             // We already checked the user's client list but didn't find the client.
             // But we did find the client in the database, so the user is out of date
             // and needs to be refreshed.
@@ -247,7 +263,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// If called on a client belonging to the self user this method does nothing.
 
     public func update(with payload: [String: Any]) {
-        self.needsToBeUpdatedFromBackend = false
+        needsToBeUpdatedFromBackend = false
 
         guard user?.isSelfUser == false, let deviceClass = payload["class"] as? String else { return }
 
@@ -270,16 +286,16 @@ public class UserClient: ZMManagedObject, UserClientType {
         assert(managedObjectContext.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
         let conversations = activeConversationsForUserOfClients([self])
-        let user = self.user
+        let user = user
 
-        self.failedToEstablishSession = false
+        failedToEstablishSession = false
 
         // reset the relationship
         self.user = nil
 
         if let previousUser = user {
             // increase securityLevel of affected conversations
-            if isLegalHoldDevice && previousUser.isSelfUser {
+            if isLegalHoldDevice, previousUser.isSelfUser {
                 previousUser.needsToAcknowledgeLegalHoldStatus = true
             }
 
@@ -305,7 +321,8 @@ public class UserClient: ZMManagedObject, UserClientType {
         get async {
             guard
                 let sessionID = await managedObjectContext?.perform({ self.proteusSessionID }),
-                let proteusProvider = await managedObjectContext?.perform({ self.managedObjectContext?.proteusProvider })
+                let proteusProvider = await managedObjectContext?
+                .perform({ self.managedObjectContext?.proteusProvider })
             else {
                 return false
             }
@@ -363,12 +380,15 @@ public class UserClient: ZMManagedObject, UserClientType {
     public func resolveDecryptionFailedSystemMessages() {
         let request = NSBatchUpdateRequest(entityName: ZMSystemMessage.entityName())
 
-        request.predicate = NSPredicate(format: "%K = %d AND %K = %@",
-                                        ZMMessageSystemMessageTypeKey,
-                                        ZMSystemMessageType.decryptionFailed.rawValue,
-                                        ZMMessageSenderClientIDKey,
-                                        remoteIdentifier!)
-        request.propertiesToUpdate = [ZMMessageSystemMessageTypeKey: ZMSystemMessageType.decryptionFailedResolved.rawValue]
+        request.predicate = NSPredicate(
+            format: "%K = %d AND %K = %@",
+            ZMMessageSystemMessageTypeKey,
+            ZMSystemMessageType.decryptionFailed.rawValue,
+            ZMMessageSenderClientIDKey,
+            remoteIdentifier!
+        )
+        request
+            .propertiesToUpdate = [ZMMessageSystemMessageTypeKey: ZMSystemMessageType.decryptionFailedResolved.rawValue]
         request.resultType = .updatedObjectIDsResultType
         managedObjectContext?.executeBatchUpdateRequestOrAssert(request)
     }
@@ -385,9 +405,14 @@ public class UserClient: ZMManagedObject, UserClientType {
 }
 
 // MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
+
 public extension UserClient {
 
-    @objc static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
+    @objc
+    static func fetchExistingUserClient(
+        with remoteIdentifier: String,
+        in context: NSManagedObjectContext
+    ) -> UserClient? {
         let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMUserClientRemoteIdentifierKey, remoteIdentifier)
         fetchRequest.fetchLimit = 1
@@ -402,7 +427,8 @@ public extension UserClient {
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    @objc static func createOrUpdateSelfUserClient(
+    @objc
+    static func createOrUpdateSelfUserClient(
         _ payloadData: [String: AnyObject],
         context: NSManagedObjectContext
     ) -> UserClient? {
@@ -453,20 +479,23 @@ public extension UserClient {
         }
 
         if !client.isSelfClient() {
-            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519,
-                                                 ed448: mlsEd448,
-                                                 p256: mlsP256,
-                                                 p384: mlsP384,
-                                                 p521: mlsP521)
+            client.mlsPublicKeys = MLSPublicKeys(
+                ed25519: mlsEd25519,
+                ed448: mlsEd448,
+                p256: mlsP256,
+                p384: mlsP384,
+                p521: mlsP521
+            )
         }
 
         if let selfClient = selfUser.selfClient() {
-            if client.remoteIdentifier != selfClient.remoteIdentifier && isNewClient {
+            if client.remoteIdentifier != selfClient.remoteIdentifier, isNewClient {
 
-                if let selfClientActivationdate = selfClient.activationDate, client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
-                    // swiftlint:disable todo_requires_jira_link
+                if let selfClientActivationdate = selfClient.activationDate,
+                   client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
+                    // swiftlint:disable:next todo_requires_jira_link
                     // TODO: Check this flag
-                    // swiftlint:enable todo_requires_jira_link
+
                     client.needsToNotifyUser = true
                 }
             }
@@ -484,9 +513,8 @@ public extension UserClient {
         var isNewClient: Bool
 
         WireLogger.userClient.info("trying to fetch client with id (\(id))")
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: could optimize: look into self user relationship before executing a fetch request
-        // swiftlint:enable todo_requires_jira_link
         if let fetchedClient = fetchExistingUserClient(with: id, in: context) {
             WireLogger.userClient.info("fetched existing user client in context \(context)")
             client = fetchedClient
@@ -501,20 +529,23 @@ public extension UserClient {
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    @objc func markForDeletion() {
-        guard let context = self.managedObjectContext else {
+    @objc
+    func markForDeletion() {
+        guard let context = managedObjectContext else {
             zmLog.error("Object already deleted?")
             return
         }
         let selfUser = ZMUser.selfUser(in: context)
-        guard self.user == selfUser else {
-            fatal("The method 'markForDeletion()' can only be called for clients that belong to the selfUser (self user is \(selfUser.safeForLoggingDescription))")
+        guard user == selfUser else {
+            fatal(
+                "The method 'markForDeletion()' can only be called for clients that belong to the selfUser (self user is \(selfUser.safeForLoggingDescription))"
+            )
         }
         guard selfUser.selfClient() != self else {
             fatal("Attempt to delete the self client. This should never happen!")
         }
-        self.markedToDelete = true
-        self.setLocallyModifiedKeys([ZMUserClientMarkedToDeleteKey])
+        markedToDelete = true
+        setLocallyModifiedKeys([ZMUserClientMarkedToDeleteKey])
     }
 }
 
@@ -524,7 +555,7 @@ public extension UserClient {
 
     @objc var failedToEstablishSession: Bool {
         get {
-            return managedObjectContext?.zm_failedToEstablishSessionStore?.contains(self) ?? false
+            managedObjectContext?.zm_failedToEstablishSessionStore?.contains(self) ?? false
         }
         set {
             if newValue {
@@ -538,34 +569,39 @@ public extension UserClient {
 }
 
 // MARK: - SelfClient methods
+
 public extension UserClient {
 
-    @objc func isSelfClient() -> Bool {
+    @objc
+    func isSelfClient() -> Bool {
         guard let managedObjectContext,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
         return self == selfClient
     }
 
-    @objc func missesClient(_ client: UserClient) {
+    @objc
+    func missesClient(_ client: UserClient) {
         missesClients([client])
     }
 
-    @objc func missesClients(_ clients: Set<UserClient>) {
+    @objc
+    func missesClients(_ clients: Set<UserClient>) {
 
-        zmLog.debug("Adding clients(\( clients.count)) to list of missing clients")
+        zmLog.debug("Adding clients(\(clients.count)) to list of missing clients")
 
-        self.mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
+        mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
         if !hasLocalModifications(forKey: ZMUserClientMissingKey) {
             setLocallyModifiedKeys([ZMUserClientMissingKey])
         }
     }
 
     /// Use this method only for the selfClient
-    @objc func removeMissingClient(_ client: UserClient) {
+    @objc
+    func removeMissingClient(_ client: UserClient) {
         zmLog.debug("Removing client from list of missing clients")
 
-        self.mutableSetValue(forKey: ZMUserClientMissingKey).remove(client)
+        mutableSetValue(forKey: ZMUserClientMissingKey).remove(client)
     }
 
     /// Deletes the session between the selfClient and the given userClient
@@ -617,15 +653,17 @@ public extension UserClient {
         usingPreKey preKey: String,
         proteusProviding: ProteusProviding
     ) async -> Bool {
-        return await proteusProviding.performAsync { proteusService in
-            await establishSession(through: proteusService,
-                             sessionId: sessionId,
-                             preKey: preKey
+        await proteusProviding.performAsync { proteusService in
+            await establishSession(
+                through: proteusService,
+                sessionId: sessionId,
+                preKey: preKey
             )
         } withKeyStore: { keystore in
-            establishSession(through: keystore,
-                             sessionId: sessionId,
-                             preKey: preKey
+            establishSession(
+                through: keystore,
+                sessionId: sessionId,
+                preKey: preKey
             )
         }
     }
@@ -636,10 +674,13 @@ public extension UserClient {
         preKey: String
     ) async -> Bool {
         do {
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: check if we should delete session if it exists before creating new one
-            // swiftlint:enable todo_requires_jira_link
-            let proteusSessionId = ProteusSessionID(domain: sessionId.domain, userID: sessionId.userId, clientID: sessionId.clientId)
+            let proteusSessionId = ProteusSessionID(
+                domain: sessionId.domain,
+                userID: sessionId.userId,
+                clientID: sessionId.clientId
+            )
             try await proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
             return true
         } catch {
@@ -683,25 +724,31 @@ public extension UserClient {
     }
 
     /// Use this method only for the selfClient
-    @objc func decrementNumberOfRemainingKeys() {
-        guard isSelfClient() else { fatal("`decrementNumberOfRemainingKeys` should only be called on the self client") }
+    @objc
+    func decrementNumberOfRemainingProteusKeys() {
+        guard isSelfClient() else {
+            fatal("`decrementNumberOfRemainingProteusKeys` should only be called on the self client")
+        }
 
         if numberOfKeysRemaining > 0 {
             numberOfKeysRemaining -= 1
         }
-        if numberOfKeysRemaining < 0 { // this will recover from the fact that the number might already be < 0
-            // from a previous run
+
+        // this will recover from the fact that the number might already be < 0 from a previous run
+        if numberOfKeysRemaining < 0 {
             numberOfKeysRemaining = 0
         }
+
         if numberOfKeysRemaining == 0 {
-            self.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
+            setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
         }
     }
 }
 
 enum SecurityChangeType {
     case clientTrusted // a client was trusted by the user on this device
-    case clientDiscovered // a client was discovered, either by receiving a missing response, a message, or fetching all clients
+    case clientDiscovered // a client was discovered, either by receiving a missing response, a message, or fetching all
+    // clients
     case clientIgnored // a client was ignored by the user on this device
 
     func changeSecurityLevel(_ conversation: ZMConversation, clients: Set<UserClient>, causedBy: ZMOTRMessage?) {
@@ -717,68 +764,79 @@ enum SecurityChangeType {
 }
 
 // MARK: - Trusting
-extension UserClient {
 
-    @objc public func trustClient(_ client: UserClient) {
+public extension UserClient {
+
+    @objc
+    func trustClient(_ client: UserClient) {
         trustClients([client])
     }
 
     /// Will change conversations security level as side effect
-    @objc public func trustClients(_ clients: Set<UserClient>) {
-        guard clients.count > 0 else { return }
-        self.mutableSetValue(forKey: ZMUserClientIgnoredKey).minus(clients)
-        self.mutableSetValue(forKey: ZMUserClientTrustedKey).union(clients)
+    @objc
+    func trustClients(_ clients: Set<UserClient>) {
+        guard !clients.isEmpty else { return }
+        mutableSetValue(forKey: ZMUserClientIgnoredKey).minus(clients)
+        mutableSetValue(forKey: ZMUserClientTrustedKey).union(clients)
 
-        clients.forEach { client in client.needsToNotifyUser = false; }
+        clients.forEach { client in client.needsToNotifyUser = false }
 
         zmLog.debug("Marking client as trusted")
 
-        self.changeSecurityLevel(.clientTrusted, clients: clients, causedBy: nil)
+        changeSecurityLevel(.clientTrusted, clients: clients, causedBy: nil)
     }
 
     /// Ignore a know client
-    @objc public func ignoreClient(_ client: UserClient) {
+    @objc
+    func ignoreClient(_ client: UserClient) {
         ignoreClients([client])
     }
 
     /// Adds to ignored clients, remove from trusted clients, returns the set with the self client excluded
-    fileprivate func addIgnoredClients(_ clients: Set<UserClient>) -> Set<UserClient> {
+    private func addIgnoredClients(_ clients: Set<UserClient>) -> Set<UserClient> {
         let notSelfClients = Set(clients.filter { $0 != self })
 
-        guard notSelfClients.count > 0 else { return notSelfClients }
+        guard !notSelfClients.isEmpty else { return notSelfClients }
 
         zmLog.debug("Marking client as ignored")
 
-        self.mutableSetValue(forKey: ZMUserClientTrustedKey).minus(notSelfClients)
-        self.mutableSetValue(forKey: ZMUserClientIgnoredKey).union(notSelfClients)
+        mutableSetValue(forKey: ZMUserClientTrustedKey).minus(notSelfClients)
+        mutableSetValue(forKey: ZMUserClientIgnoredKey).union(notSelfClients)
 
         return notSelfClients
     }
 
     /// Ignore known clients
-    @objc public func ignoreClients(_ clients: Set<UserClient>) {
-        let notSelfClients = self.addIgnoredClients(clients)
-        guard notSelfClients.count > 0 else { return}
-        self.changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
+    @objc
+    func ignoreClients(_ clients: Set<UserClient>) {
+        let notSelfClients = addIgnoredClients(clients)
+        guard !notSelfClients.isEmpty else { return }
+        changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
     }
 
     /// Adds a new client that was just discovered to the ignored ones
-    @objc public func addNewClientToIgnored(_ client: UserClient) {
+    @objc
+    func addNewClientToIgnored(_ client: UserClient) {
         addNewClientsToIgnored([client])
     }
 
     /// Add new clients that were just discovered to the ignored ones
-    @objc public func addNewClientsToIgnored(_ clients: Set<UserClient>) {
-        _ = self.addIgnoredClients(clients)
+    @objc
+    func addNewClientsToIgnored(_ clients: Set<UserClient>) {
+        _ = addIgnoredClients(clients)
 
     }
 
-    public func updateSecurityLevelAfterDiscovering(_ clients: Set<UserClient>) {
-        changeSecurityLevel(.clientDiscovered, clients: clients, causedBy: clients.compactMap(\.discoveredByMessage).first)
+    func updateSecurityLevelAfterDiscovering(_ clients: Set<UserClient>) {
+        changeSecurityLevel(
+            .clientDiscovered,
+            clients: clients,
+            causedBy: clients.compactMap(\.discoveredByMessage).first
+        )
     }
 
-    func activeConversationsForUserOfClients(_ clients: Set<UserClient>) -> Set<ZMConversation> {
-        return clients.map(\.user).reduce(into: []) {
+    internal func activeConversationsForUserOfClients(_ clients: Set<UserClient>) -> Set<ZMConversation> {
+        clients.map(\.user).reduce(into: []) {
             guard let user = $1 else {
                 return
             }
@@ -795,7 +853,11 @@ extension UserClient {
         }
     }
 
-    func changeSecurityLevel(_ securityChangeType: SecurityChangeType, clients: Set<UserClient>, causedBy: ZMOTRMessage?) {
+    internal func changeSecurityLevel(
+        _ securityChangeType: SecurityChangeType,
+        clients: Set<UserClient>,
+        causedBy: ZMOTRMessage?
+    ) {
         let conversations = activeConversationsForUserOfClients(clients)
         conversations.forEach { conversation in
             if !conversation.isReadOnly {
@@ -803,16 +865,21 @@ extension UserClient {
                     guard let user = client.user else { return false }
                     return conversation.localParticipants.contains(user)
                 }
-                securityChangeType.changeSecurityLevel(conversation, clients: Set(clientsInConversation), causedBy: causedBy)
+                securityChangeType.changeSecurityLevel(
+                    conversation,
+                    clients: Set(clientsInConversation),
+                    causedBy: causedBy
+                )
             }
         }
     }
 }
 
 // MARK: - APSSignaling
-extension UserClient {
 
-    public static func resetSignalingKeysInContext(_ context: NSManagedObjectContext) {
+public extension UserClient {
+
+    static func resetSignalingKeysInContext(_ context: NSManagedObjectContext) {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient()
         else { return }
 
@@ -827,9 +894,10 @@ extension UserClient {
 }
 
 // MARK: - Update SelfClient Capability
-extension UserClient {
 
-    public static func triggerSelfClientCapabilityUpdate(_ context: NSManagedObjectContext) {
+public extension UserClient {
+
+    static func triggerSelfClientCapabilityUpdate(_ context: NSManagedObjectContext) {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient() else { return }
 
         selfClient.needsToUpdateCapabilities = true
@@ -848,28 +916,30 @@ extension UserClient {
 
     public var sessionIdentifier: EncryptionSessionIdentifier? {
         if needsSessionMigration {
-            return sessionIdentifier_V2
+            sessionIdentifier_V2
         } else {
-            return sessionIdentifier_V3
+            sessionIdentifier_V3
         }
     }
 
     /// Previous session identifiers.
 
     private var sessionIdentifier_V1: String? {
-        return self.remoteIdentifier
+        remoteIdentifier
     }
 
     private var sessionIdentifier_V2: EncryptionSessionIdentifier? {
         guard
-            let userIdentifier = self.user?.remoteIdentifier,
-            let clientIdentifier = self.remoteIdentifier
+            let userIdentifier = user?.remoteIdentifier,
+            let clientIdentifier = remoteIdentifier
         else {
             return nil
         }
 
-        return EncryptionSessionIdentifier(userId: userIdentifier.uuidString,
-                                           clientId: clientIdentifier)
+        return EncryptionSessionIdentifier(
+            userId: userIdentifier.uuidString,
+            clientId: clientIdentifier
+        )
     }
 
     private var sessionIdentifier_V3: EncryptionSessionIdentifier? {
@@ -882,9 +952,11 @@ extension UserClient {
             return nil
         }
 
-        return EncryptionSessionIdentifier(domain: domain,
-                                           userId: userIdentifier.uuidString,
-                                           clientId: clientIdentifier)
+        return EncryptionSessionIdentifier(
+            domain: domain,
+            userId: userIdentifier.uuidString,
+            clientId: clientIdentifier
+        )
     }
 
     /// Migrates from old session identifier to new session identifier if needed.
@@ -897,8 +969,10 @@ extension UserClient {
             return
         }
 
-        sessionDirectory.migrateSession(from: sessionIdentifier_V1,
-                                        to: sessionIdentifier)
+        sessionDirectory.migrateSession(
+            from: sessionIdentifier_V1,
+            to: sessionIdentifier
+        )
     }
 
     public func migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
@@ -909,8 +983,10 @@ extension UserClient {
             return
         }
 
-        sessionDirectory.migrateSession(from: sessionIdentifier_V2.rawValue,
-                                        to: sessionIdentifier)
+        sessionDirectory.migrateSession(
+            from: sessionIdentifier_V2.rawValue,
+            to: sessionIdentifier
+        )
     }
 }
 
@@ -920,9 +996,9 @@ extension UserClient {
 
     public var proteusSessionID: ProteusSessionID? {
         if needsSessionMigration {
-            return proteusSessionID_V2
+            proteusSessionID_V2
         } else {
-            return proteusSessionID_V3
+            proteusSessionID_V3
         }
     }
 

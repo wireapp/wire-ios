@@ -32,7 +32,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     override func setUp() {
         super.setUp()
 
-        mockMLSService.repairOutOfSyncConversations_MockMethod = { }
+        mockMLSService.repairOutOfSyncConversations_MockMethod = {}
 
         mockPushSupportedProtocolsActionHandler = .init(
             result: .success(()),
@@ -124,13 +124,14 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     func testThatItNotifiesObserverWhenInitialIsSyncCompleted() {
         // given
-        var didNotify: Bool = false
+        var didNotify = false
 
         let token = NotificationInContext.addObserver(
             name: .initialSync,
-            context: uiMOC.notificationContext) { _ in
-                didNotify = true
-            }
+            context: uiMOC.notificationContext
+        ) { _ in
+            didNotify = true
+        }
 
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -201,7 +202,8 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         startQuickSync()
         finishQuickSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let networkStateRecorder = NetworkStateRecorder(userSession: sut)
+        let networkStateRecorder = NetworkStateRecorder()
+        networkStateRecorder.observe(in: sut.managedObjectContext.notificationContext)
 
         // when
         sut.processEvents()

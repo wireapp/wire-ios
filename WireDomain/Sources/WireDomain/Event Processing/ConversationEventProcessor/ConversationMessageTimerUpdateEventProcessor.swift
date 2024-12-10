@@ -1,0 +1,75 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import WireAPI
+import WireDataModel
+
+/// Process conversation message timer update events.
+
+protocol ConversationMessageTimerUpdateEventProcessorProtocol {
+
+    /// Process a conversation message timer update event.
+    ///
+    /// - Parameter event: A conversation message timer update event.
+
+    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async
+
+}
+
+struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
+
+    let conversationLocalStore: any ConversationLocalStoreProtocol
+    let messageLocalStore: any MessageLocalStoreProtocol
+
+    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async {
+        let userID = event.senderID
+        let conversationID = event.conversationID
+        let timerInMilliseconds = Double(event.newTimer ?? 0)
+        let timestamp = event.timestamp
+
+        let conversation = await conversationLocalStore.fetchOrCreateConversation(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        let timeoutValue = timerInMilliseconds / 1000
+        let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
+        let currentTimeout = await conversationLocalStore.conversationMessageDestructionTimeout(conversation)
+
+        if currentTimeout != timeout {
+
+            let messageType: MessageType = .messageTimerUpdate(
+                sender: (userID.uuid, userID.domain),
+                date: timestamp,
+                timeoutValue: timeoutValue
+            )
+
+            await messageLocalStore.addSystemMessageToConversation(
+                messageType: messageType,
+                conversationID: conversationID.uuid,
+                conversationDomain: conversationID.domain
+            )
+        }
+
+        await conversationLocalStore.storeConversation(
+            timeoutValue: timeoutValue,
+            for: conversation
+        )
+    }
+
+}

@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles the input of the phone number or email to log in.
- */
+/// Handles the input of the phone number or email to log in.
 
 final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandler {
 
@@ -32,8 +30,14 @@ final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandl
             return nil
         }
 
-        if let (emailPassword, proxyCredentials) = context as? (EmailPasswordInput, AuthenticationProxyCredentialsInput?) {
-            let request = AuthenticationLoginRequest.email(address: emailPassword.email, password: emailPassword.password)
+        if let (emailPassword, proxyCredentials) = context as? (
+            EmailPasswordInput,
+            AuthenticationProxyCredentialsInput?
+        ) {
+            let request = AuthenticationLoginRequest.email(
+                address: emailPassword.email,
+                password: emailPassword.password
+            )
 
             return [.startLoginFlow(request, proxyCredentials)]
         } else {
@@ -43,7 +47,12 @@ final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandl
 
 }
 
-struct EmailPasswordInput {
+struct EmailPasswordInput: CustomStringConvertible {
+
     var email: String
     var password: String
+
+    var description: String {
+        String(describing: Self.self)
+    }
 }

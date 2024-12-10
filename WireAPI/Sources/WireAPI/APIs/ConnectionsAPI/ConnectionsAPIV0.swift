@@ -24,9 +24,9 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         static let batchSize = 500
     }
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
@@ -39,8 +39,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 
     func getConnections() async throws -> PayloadPager<Connection> {
-
-        let pager = PayloadPager<Connection> { start in
+        PayloadPager<Connection> { start in
 
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
@@ -54,12 +53,10 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
             let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
-                .success(code: 200, type: PaginatedConnectionListV0.self)
-                .failure(code: 400, error: ConnectionsAPIError.invalidBody)
+                .success(code: .ok, type: PaginatedConnectionListV0.self)
+                .failure(code: .badRequest, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
         }
-
-        return pager
     }
 }
 
@@ -72,7 +69,7 @@ private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
     }
 
     var nextStartReference: String? {
-        return pagingState
+        pagingState
     }
 
     let connections: [ConnectionResponseV0]
@@ -105,17 +102,17 @@ private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
     let qualifiedTo: QualifiedID?
     let conversationID: UUID?
     let qualifiedConversationID: QualifiedID?
-    let lastUpdate: Date
+    let lastUpdate: UTCTimeMillis
     let status: ConnectionStatus
 
     func toAPIModel() -> Connection {
         Connection(
-            senderId: from,
-            receiverId: to,
-            receiverQualifiedId: qualifiedTo,
-            conversationId: conversationID,
-            qualifiedConversationId: qualifiedConversationID,
-            lastUpdate: lastUpdate,
+            senderID: from,
+            receiverID: to,
+            receiverQualifiedID: qualifiedTo,
+            conversationID: conversationID,
+            qualifiedConversationID: qualifiedConversationID,
+            lastUpdate: lastUpdate.date,
             status: status
         )
     }

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireDataModel
 
 final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
@@ -40,14 +41,14 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
         let conversation = insertValidOneOnOneConversation(in: uiMOC)
         conversation.lastModifiedDate = Date()
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertEqual(favoriteList.count, 0)
+        XCTAssertEqual(favoriteList.items.count, 0)
 
         // when
         conversation.isFavorite = true
         XCTAssertTrue(uiMOC.saveOrRollback())
 
         // then
-        XCTAssertEqual(favoriteList.count, 1)
+        XCTAssertEqual(favoriteList.items.count, 1)
     }
 
     func testThatRemovingAConversationFromFavoritesRemovesItFromFavoriteConversationList() {
@@ -57,14 +58,14 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
         conversation.lastModifiedDate = Date()
         conversation.isFavorite = true
         XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertEqual(favoriteList.count, 1)
+        XCTAssertEqual(favoriteList.items.count, 1)
 
         // when
         conversation.isFavorite = false
         XCTAssertTrue(uiMOC.saveOrRollback())
 
         // then
-        XCTAssertEqual(favoriteList.count, 0)
+        XCTAssertEqual(favoriteList.items.count, 0)
     }
 
     func testThatAddingAConversationToFolderMovesItToFolderConversationList() {

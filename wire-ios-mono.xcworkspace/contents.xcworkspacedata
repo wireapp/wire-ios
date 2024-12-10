@@ -38,6 +38,9 @@
       <FileRef
          location = "group:Matchfile">
       </FileRef>
+      <FileRef
+         location = "group:framework.rb">
+      </FileRef>
    </Group>
    <FileRef
       location = "group:wire-avs.json">
@@ -83,6 +86,12 @@
       location = "group:wire-ios-request-strategy/WireRequestStrategy.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:WireDomain/Project/WireDomain Project.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WireDomain">
+   </FileRef>
+   <FileRef
       location = "group:wire-ios-data-model/WireDataModel.xcodeproj">
    </FileRef>
    <FileRef
@@ -119,6 +128,12 @@
       location = "group:WireAPI">
    </FileRef>
    <FileRef
-      location = "group:SourceryPlugin">
+      location = "group:WireFoundation">
+   </FileRef>
+   <FileRef
+      location = "group:WireLogging">
+   </FileRef>
+   <FileRef
+      location = "group:WirePlugins">
    </FileRef>
 </Workspace>

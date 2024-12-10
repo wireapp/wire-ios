@@ -33,7 +33,7 @@ public protocol ClientUpdateObserver: NSObjectProtocol {
     func failedToDeleteClients(_ error: Error)
 }
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
     /// Fetch all selfUser clients to manage them from the settings screen
     /// The current client must be already registered
@@ -41,7 +41,7 @@ extension ZMUserSession {
     /// Calling this method without a registered client will fail.
 
     @objc
-    public func fetchAllClients() {
+    func fetchAllClients() {
         syncManagedObjectContext.performGroupedBlock {
             self.applicationStatusDirectory.clientUpdateStatus.needsToFetchClients(andVerifySelfClient: false)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
@@ -51,7 +51,7 @@ extension ZMUserSession {
     /// Deletes selfUser clients from the backend
 
     @objc(deleteClient:withCredentials:)
-    public func deleteClient(_ client: UserClient, credentials: UserEmailCredentials?) {
+    func deleteClient(_ client: UserClient, credentials: UserEmailCredentials?) {
         client.markForDeletion()
         client.managedObjectContext?.saveOrRollback()
 
@@ -66,20 +66,24 @@ extension ZMUserSession {
     /// - Returns: Token that needs to be stored as long the observer should be active.
 
     @objc(addClientUpdateObserver:)
-    public func addClientUpdateObserver(_ observer: ClientUpdateObserver) -> NSObjectProtocol {
+    func addClientUpdateObserver(_ observer: ClientUpdateObserver) -> NSObjectProtocol {
 
-        return ZMClientUpdateNotification.addObserver(context: managedObjectContext) { [weak self, weak observer] type, clientObjectIDs, error in
+        ZMClientUpdateNotification.addObserver(
+            context: managedObjectContext
+        ) { [weak self, weak observer] type, clientObjectIDs, error in
             self?.managedObjectContext.performGroupedBlock {
                 switch type {
                 case .fetchCompleted:
-                    let clients = clientObjectIDs.compactMap { self?.managedObjectContext.object(with: $0) as? UserClient }
+                    let clients = clientObjectIDs
+                        .compactMap { self?.managedObjectContext.object(with: $0) as? UserClient }
                     observer?.finishedFetching(clients)
                 case .fetchFailed:
                     if let error {
                         observer?.failedToFetchClients(error)
                     }
                 case .deletionCompleted:
-                    let remainingClients = clientObjectIDs.compactMap { self?.managedObjectContext.object(with: $0) as? UserClient }
+                    let remainingClients = clientObjectIDs
+                        .compactMap { self?.managedObjectContext.object(with: $0) as? UserClient }
                     observer?.finishedDeleting(remainingClients)
                 case .deletionFailed:
                     if let error {

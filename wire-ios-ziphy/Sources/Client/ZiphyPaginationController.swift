@@ -21,9 +21,7 @@ import Foundation
 /// A block that repeats a previous request, but moves to the given resource offset.
 typealias ZiphyPaginatedFetchBlock = (_ offset: Int) -> CancelableTask?
 
-/**
- * An object that handles pagination of Giphy requests.
- */
+/// An object that handles pagination of Giphy requests.
 
 final class ZiphyPaginationController {
 
@@ -41,7 +39,7 @@ final class ZiphyPaginationController {
 
     /// Fetches a new page from the current offset.
     func fetchNewPage() -> CancelableTask? {
-        return self.fetchNewPage(self.offset)
+        fetchNewPage(offset)
     }
 
     // MARK: - Updating the Data
@@ -51,23 +49,23 @@ final class ZiphyPaginationController {
             return nil
         }
 
-        return self.fetchBlock?(offset)
+        return fetchBlock?(offset)
     }
 
     func updatePagination(_ result: ZiphyResult<[Ziph]>, filter: ((Ziph) -> Bool)?) {
         switch result {
-        case .success(let insertedZiphs):
+        case let .success(insertedZiphs):
             let newItems = insertedZiphs.filter { filter?($0) ?? true }
             ziphs.append(contentsOf: newItems)
             offset = ziphs.count
-            self.updateBlock?(.success(newItems))
+            updateBlock?(.success(newItems))
 
-        case .failure(let error):
+        case let .failure(error):
             if case .noMorePages = error {
                 isAtEnd = true
             }
 
-            self.updateBlock?(.failure(error))
+            updateBlock?(.failure(error))
         }
     }
 

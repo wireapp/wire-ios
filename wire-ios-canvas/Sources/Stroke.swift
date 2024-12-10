@@ -29,11 +29,11 @@ public struct Brush {
     let color: UIColor
 
     public func change(toColor color: UIColor) -> Brush {
-        return Brush(size: size, color: color)
+        Brush(size: size, color: color)
     }
 
     public func change(toSize size: Float) -> Brush {
-        return Brush(size: size, color: color)
+        Brush(size: size, color: color)
     }
 
 }
@@ -45,7 +45,7 @@ final class Stroke: Renderable {
     private let brush: Brush
 
     var bounds: CGRect {
-        return bounds(from: 0)
+        bounds(from: 0)
     }
 
     public init(at position: CGPoint, brush: Brush) {
@@ -61,15 +61,16 @@ final class Stroke: Renderable {
         return bounds(from: max(points.count - 3, 0)) // Need to update last two segments
     }
 
-    func end() {
-
-    }
+    func end() {}
 
     func draw(context: CGContext) {
         if points.count == 1, let point = points.first {
             context.setFillColor(brush.color.cgColor)
             let origin = CGPoint(x: point.x - CGFloat(brush.size / 2), y: point.y - CGFloat(brush.size / 2))
-            context.addEllipse(in: CGRect(origin: origin, size: CGSize(width: Double(brush.size), height: Double(brush.size))))
+            context.addEllipse(in: CGRect(
+                origin: origin,
+                size: CGSize(width: Double(brush.size), height: Double(brush.size))
+            ))
             context.fillPath()
         } else {
             context.setStrokeColor(brush.color.cgColor)
@@ -103,21 +104,12 @@ final class Stroke: Renderable {
         return CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY).insetBy(dx: outset, dy: outset)
     }
 
-    func interpolateLinearPath(points: [CGPoint]) -> UIBezierPath {
-        let path = UIBezierPath()
-        path.move(to: points.first!)
-
-        for point in points.dropFirst() {
-            path.addLine(to: point)
-        }
-
-        return path
-    }
-
     func smooth(point: CGPoint, factor: CGFloat = 0.35) -> CGPoint {
         let previous = points.last!
-        return CGPoint(x: previous.x * (1 - factor) + point.x * factor,
-                       y: previous.y * (1 - factor) + point.y * factor)
+        return CGPoint(
+            x: previous.x * (1 - factor) + point.x * factor,
+            y: previous.y * (1 - factor) + point.y * factor
+        )
     }
 
     func interpolateBeizerPath(points: [CGPoint]) -> UIBezierPath {
@@ -127,7 +119,7 @@ final class Stroke: Renderable {
 
         let controlPoints = controlsPoints(points: points)
 
-        for i in 1..<points.count {
+        for i in 1 ..< points.count {
             path.addCurve(to: points[i], controlPoint1: controlPoints[i - 1].1, controlPoint2: controlPoints[i].0)
         }
 
@@ -139,7 +131,7 @@ final class Stroke: Renderable {
         let points = [points.first!] + points + [points.last!]
         var controlPoints: [(CGPoint, CGPoint)] = []
 
-        for i in 1..<points.count - 1 {
+        for i in 1 ..< points.count - 1 {
             let p0 = points[i - 1]
             let p1 = points[i]
             let p2 = points[i + 1]

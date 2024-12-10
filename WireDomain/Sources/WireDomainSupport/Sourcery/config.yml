@@ -1,0 +1,9 @@
+sources:
+  - ../../WireDomain
+templates:
+  - ./AutoMockable.stencil
+output:
+  ./generated
+args:
+  autoMockableImports: ["WireAPI", "WireDataModel"]
+  autoMockableTestableImports: ["WireDomain"]

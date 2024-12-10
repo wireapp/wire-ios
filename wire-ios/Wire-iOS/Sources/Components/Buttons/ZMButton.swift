@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class ZMButton: LegacyButton {
 
@@ -108,15 +109,17 @@ class LegacyButton: ButtonWithLargerHitArea {
         clipsToBounds = true
     }
 
-    convenience init(legacyStyle: LegacyButtonStyle,
-                     variant: ColorSchemeVariant = ColorScheme.default.variant,
-                     cornerRadius: CGFloat = 4,
-                     fontSpec: FontSpec = .smallLightFont) {
+    convenience init(
+        legacyStyle: LegacyButtonStyle,
+        variant: ColorSchemeVariant = ColorScheme.default.variant,
+        cornerRadius: CGFloat = 4,
+        fontSpec: FontSpec = .smallLightFont
+    ) {
         self.init(fontSpec: fontSpec)
 
         self.legacyStyle = legacyStyle
         self.variant = variant
-        textTransform = .upper
+        self.textTransform = .upper
         layer.cornerRadius = cornerRadius
         contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
 
@@ -169,7 +172,10 @@ class LegacyButton: ButtonWithLargerHitArea {
     override var intrinsicContentSize: CGSize {
         let s = super.intrinsicContentSize
 
-        return CGSize(width: s.width + titleEdgeInsets.left + titleEdgeInsets.right, height: s.height + titleEdgeInsets.top + titleEdgeInsets.bottom)
+        return CGSize(
+            width: s.width + titleEdgeInsets.left + titleEdgeInsets.right,
+            height: s.height + titleEdgeInsets.top + titleEdgeInsets.bottom
+        )
     }
 
     override var bounds: CGRect {
@@ -179,7 +185,7 @@ class LegacyButton: ButtonWithLargerHitArea {
     }
 
     func borderColor(for state: UIControl.State) -> UIColor? {
-        return borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
+        borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
     private func updateBorderColor() {
@@ -193,6 +199,7 @@ class LegacyButton: ButtonWithLargerHitArea {
     }
 
     // MARK: - Observing state
+
     override var isHighlighted: Bool {
         didSet {
             updateAppearance(with: previousState)

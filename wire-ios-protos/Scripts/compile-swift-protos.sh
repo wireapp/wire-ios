@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# Note: run this script from the wire-ios-protos directory.
+
 # 1) Find Carthage
 BASE_FOLDER=`pwd`
 CARTHAGE="../Carthage"
@@ -17,8 +19,13 @@ protoc "$2" \
     --swift_opt=Visibility=Public
 }
 
+echo "ℹ️ Compililng ${MESSAGES_PROTO_DIR}/messages.proto"
 compile_proto $MESSAGES_PROTO_DIR "messages.proto"
+
+echo "ℹ️ Compililng ${MESSAGES_PROTO_DIR}/otr.proto"
 compile_proto $MESSAGES_PROTO_DIR "otr.proto"
+
+echo "ℹ️ Compililng ${MESSAGES_PROTO_DIR}/mls.proto"
 compile_proto $MESSAGES_PROTO_DIR "mls.proto"
 
 # 3) Insert Wire Header

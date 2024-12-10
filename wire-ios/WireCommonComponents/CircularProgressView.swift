@@ -22,7 +22,7 @@ public class CircularProgressView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.setup()
+        setup()
     }
 
     @available(*, unavailable)
@@ -33,24 +33,29 @@ public class CircularProgressView: UIView {
     private func setup() {
         setupShapeLayer()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(CircularProgressView.applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(CircularProgressView.applicationDidBecomeActive(_:)),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     private func setupShapeLayer() {
-        self.createPath()
-        self.shapeLayer.lineWidth = CGFloat(lineWidth)
-        self.shapeLayer.lineCap = lineCap
-        self.shapeLayer.strokeStart = 0.0
-        self.shapeLayer.strokeEnd = CGFloat(self.progress)
-        self.shapeLayer.fillColor = UIColor.clear.cgColor
-        self.shapeLayer.strokeColor = self.tintColor.cgColor
+        createPath()
+        shapeLayer.lineWidth = CGFloat(lineWidth)
+        shapeLayer.lineCap = lineCap
+        shapeLayer.strokeStart = 0.0
+        shapeLayer.strokeEnd = CGFloat(progress)
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        shapeLayer.strokeColor = tintColor.cgColor
     }
 
-    override public func didMoveToWindow() {
+    public override func didMoveToWindow() {
         updateSpinningAnimation()
     }
 
-    override public var tintColor: UIColor! {
+    public override var tintColor: UIColor! {
         didSet {
             shapeLayer.strokeColor = tintColor.cgColor
         }
@@ -75,18 +80,18 @@ public class CircularProgressView: UIView {
     }
 
     private func createPath() {
-        self.shapeLayer.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.bounds.width / 2).cgPath
+        shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: bounds.width / 2).cgPath
     }
 
-    override public class var layerClass: AnyClass {
-        return CAShapeLayer.self
+    public override class var layerClass: AnyClass {
+        CAShapeLayer.self
     }
 
     var shapeLayer: CAShapeLayer {
-        if let shapeLayer = self.layer as? CAShapeLayer {
+        if let shapeLayer = layer as? CAShapeLayer {
             return shapeLayer
         }
-        fatalError("shapeLayer is missing: \(self.layer)")
+        fatalError("shapeLayer is missing: \(layer)")
     }
 
     private(set) var progress: Float = 0.0
@@ -96,20 +101,20 @@ public class CircularProgressView: UIView {
 
         if animated {
             let stroke = CABasicAnimation(keyPath: "strokeEnd")
-            stroke.fromValue = self.shapeLayer.strokeEnd
+            stroke.fromValue = shapeLayer.strokeEnd
             stroke.toValue = progress
             stroke.duration = 0.35
             stroke.fillMode = .forwards
 
-            self.shapeLayer.add(stroke, forKey: nil)
+            shapeLayer.add(stroke, forKey: nil)
         } else {
             let stroke = CABasicAnimation(keyPath: "strokeEnd")
             stroke.fromValue = CGFloat(progress)
-            self.shapeLayer.add(stroke, forKey: nil)
+            shapeLayer.add(stroke, forKey: nil)
         }
 
         CATransaction.setDisableActions(true)
-        self.shapeLayer.strokeEnd = CGFloat(progress)
+        shapeLayer.strokeEnd = CGFloat(progress)
         CATransaction.setDisableActions(false)
     }
 
@@ -131,7 +136,7 @@ public class CircularProgressView: UIView {
     }
 
     private func startSpinningAnimation() {
-        let rotate = CABasicAnimation.init(keyPath: "transform.rotation.z")
+        let rotate = CABasicAnimation(keyPath: "transform.rotation.z")
         rotate.fillMode = .forwards
         rotate.toValue = 2 * CGFloat.pi
         rotate.repeatCount = .infinity
@@ -139,16 +144,17 @@ public class CircularProgressView: UIView {
         rotate.isCumulative = true
         rotate.timingFunction = CAMediaTimingFunction(name: .linear)
 
-        self.shapeLayer.add(rotate, forKey: SpinningAnimationKey)
+        shapeLayer.add(rotate, forKey: SpinningAnimationKey)
     }
 
     private func stopSpinningAnimation() {
-        self.shapeLayer.removeAnimation(forKey: SpinningAnimationKey)
+        shapeLayer.removeAnimation(forKey: SpinningAnimationKey)
     }
 }
 
 extension CircularProgressView {
-    @objc func applicationDidBecomeActive(_ notification: Notification) {
+    @objc
+    func applicationDidBecomeActive(_ notification: Notification) {
         updateSpinningAnimation()
     }
 }

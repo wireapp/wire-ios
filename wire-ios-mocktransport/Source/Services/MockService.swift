@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public final class MockService: NSManagedObject, EntityNamedProtocol {
+@objcMembers
+public final class MockService: NSManagedObject, EntityNamedProtocol {
 
     @NSManaged public var identifier: String
     @NSManaged public var name: String
@@ -36,7 +37,7 @@ import Foundation
     @NSManaged public var providerEmail: String?
     @NSManaged public var providerDescription: String?
 
-    override public func awakeFromInsert() {
+    public override func awakeFromInsert() {
         if accentID == 0 {
             accentID = 2
         }
@@ -44,16 +45,26 @@ import Foundation
 
     public static var entityName = "Service"
 
-    static public func existingService(with identifier: String, provider: String, managedObjectContext: NSManagedObjectContext) -> MockService? {
+    public static func existingService(
+        with identifier: String,
+        provider: String,
+        managedObjectContext: NSManagedObjectContext
+    ) -> MockService? {
         // Fetch service
-        let predicate = NSPredicate(format: "%K == %@ AND %K == %@", #keyPath(MockService.identifier), identifier, #keyPath(MockService.provider), provider)
+        let predicate = NSPredicate(
+            format: "%K == %@ AND %K == %@",
+            #keyPath(MockService.identifier),
+            identifier,
+            #keyPath(MockService.provider),
+            provider
+        )
         let result: [MockService] = MockService.fetchAll(in: managedObjectContext, withPredicate: predicate)
 
         return result.first
     }
 
     var payloadValues: [String: Any?] {
-        return [
+        [
             "id": identifier,
             "name": name,
             "handle": handle,
@@ -61,15 +72,17 @@ import Foundation
             "provider": provider,
             "summary": summary ?? "",
             "tag": tag ?? "",
-            "assets": (self.assets ?? Set()).map {
-                return ["type": "image",
-                        "size": "preview",
-                        "key": $0.identifier] as [String: String]
+            "assets": (assets ?? Set()).map {
+                [
+                    "type": "image",
+                    "size": "preview",
+                    "key": $0.identifier
+                ] as [String: String]
             }
         ]
     }
 
     var payload: ZMTransportData {
-        return payloadValues as NSDictionary
+        payloadValues as NSDictionary
     }
 }

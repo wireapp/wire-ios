@@ -20,15 +20,15 @@ import Foundation
 import WireUtilities
 
 extension String {
-    fileprivate static let UUIDMatcher: NSRegularExpression = {
-        let regex = try! NSRegularExpression(pattern: "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", options: .caseInsensitive)
-        return regex
-    }()
+    fileprivate static let UUIDMatcher: NSRegularExpression = try! NSRegularExpression(
+        pattern: "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+        options: .caseInsensitive
+    )
 
-    fileprivate static let clientIDMatcher: NSRegularExpression = {
-        let regex = try! NSRegularExpression(pattern: "[a-f0-9]{13,16}", options: .caseInsensitive)
-        return regex
-    }()
+    fileprivate static let clientIDMatcher: NSRegularExpression = try! NSRegularExpression(
+        pattern: "[a-f0-9]{13,16}",
+        options: .caseInsensitive
+    )
 
     fileprivate static let matchers = [UUIDMatcher, clientIDMatcher]
 
@@ -39,7 +39,7 @@ extension String {
         String.matchers
             .flatMap { $0.matches(in: self, options: [], range: range) }
             .sorted { $0.range.lowerBound < $1.range.lowerBound }
-            .map { $0.range }
+            .map(\.range)
             .reduce(into: [NSRange]()) { result, range in
                 guard let last = result.popLast() else {
                     result.append(range)
@@ -67,7 +67,7 @@ extension String {
 extension ZMTransportRequest: SafeForLoggingStringConvertible {
     @objc public var safeForLoggingDescription: String {
         let identifier = "\(Unmanaged.passUnretained(self).toOpaque())".readableHash
-        return "<\(identifier)> \(ZMTransportRequest.string(for: self.method)) \(self.path.removingSensitiveInfo)"
+        return "<\(identifier)> \(ZMTransportRequest.string(for: method)) \(URL(string: path, relativeTo: nil)?.endpointRemoteLogDescription ?? "<nil>")"
     }
 }
 
@@ -75,15 +75,15 @@ extension ZMTransportRequestMethod: CustomStringConvertible {
     public var description: String {
         switch self {
         case .get:
-            return "GET"
+            "GET"
         case .delete:
-            return "DELETE"
+            "DELETE"
         case .put:
-            return "PUT"
+            "PUT"
         case .post:
-            return "POST"
+            "POST"
         case .head:
-            return "HEAD"
+            "HEAD"
         }
     }
 }

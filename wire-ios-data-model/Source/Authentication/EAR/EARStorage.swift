@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireFoundation
 
 struct EARStorage {
 
@@ -36,7 +36,7 @@ struct EARStorage {
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )
@@ -45,7 +45,7 @@ struct EARStorage {
     // MARK: - Methods
 
     func earEnabled() -> Bool {
-        return storage.bool(forKey: .enabledEAR)
+        storage.bool(forKey: .enabledEAR)
     }
 
     func enableEAR(_ enabled: Bool) {

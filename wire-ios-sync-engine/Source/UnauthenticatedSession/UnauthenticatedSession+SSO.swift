@@ -47,7 +47,7 @@ public struct SSOSettings: Codable, Equatable {
     }
 }
 
-extension UnauthenticatedSession {
+public extension UnauthenticatedSession {
 
     /// Fetch the SSO settings for the backend.
     ///
@@ -55,7 +55,7 @@ extension UnauthenticatedSession {
     ///
     /// - parameter completion: The result closure with the sso settings
 
-    public func fetchSSOSettings(completion: @escaping (Result<SSOSettings, Error>) -> Void) {
+    func fetchSSOSettings(completion: @escaping (Result<SSOSettings, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(SSOSettingsError.unknown))
         }

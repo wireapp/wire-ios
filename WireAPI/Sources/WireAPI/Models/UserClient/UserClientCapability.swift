@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Capabilities of a user client.
 
-public enum UserClientCapability: String, Codable {
+public enum UserClientCapability: String, Codable, Sendable {
 
     /// The client consents to being subject legalhold
     /// (directly or indirectly).

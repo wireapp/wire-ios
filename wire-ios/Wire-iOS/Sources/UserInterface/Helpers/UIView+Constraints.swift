@@ -17,95 +17,20 @@
 //
 
 import UIKit
-import WireSystem
-
-struct EdgeInsets {
-    let top, leading, bottom, trailing: CGFloat
-
-    static let zero = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-
-    init(top: CGFloat, leading: CGFloat, bottom: CGFloat, trailing: CGFloat) {
-        self.top = top
-        self.leading = leading
-        self.bottom = bottom
-        self.trailing = trailing
-    }
-
-    init(margin: CGFloat) {
-        self = EdgeInsets(top: margin, leading: margin, bottom: margin, trailing: margin)
-    }
-
-    init(edgeInsets: UIEdgeInsets) {
-        top = edgeInsets.top
-        leading = edgeInsets.leading
-        bottom = edgeInsets.bottom
-        trailing = edgeInsets.trailing
-    }
-}
-
-enum Anchor {
-    case top
-    case bottom
-    case leading
-    case trailing
-}
-
-enum AxisAnchor {
-    case centerX
-    case centerY
-}
-
-enum LengthAnchor {
-    case width
-    case height
-}
-
-struct LengthConstraints {
-    let constraints: [LengthAnchor: NSLayoutConstraint]
-
-    subscript(anchor: LengthAnchor) -> NSLayoutConstraint? {
-        return constraints[anchor]
-    }
-
-    var array: [NSLayoutConstraint] {
-        return constraints.values.map { $0 }
-    }
-}
 
 extension UIView {
 
-    /// fit self in a container view
+    /// Fits `self` within a specified container view with optional insets.
     /// - Parameters:
-    ///   - view: the container view to fit in
-    ///   - inset: inset of self
-    func fitIn(view: UIView, inset: CGFloat) {
-        fitIn(view: view, insets: UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
-    }
-
-    /// fit self in a container view
-    /// notice bottom and right inset no need to set to negative of top/left, e.g. if you want to add inset to self with 2 pt:
-    ///
-    /// self.fitIn(view: container, insets: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
-    ///
-    /// - Parameters:
-    ///   - view: the container view to fit in
-    ///   - insets: a UIEdgeInsets for inset of self.
+    ///   - view: The container view in which to fit `self`.
+    ///   - insets: Insets to apply on each side of `self` relative to the container.
     func fitIn(view: UIView, insets: UIEdgeInsets = .zero) {
         translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate(fitInConstraints(view: view, insets: insets))
-    }
-
-    func fitInConstraints(view: UIView, inset: CGFloat) -> [NSLayoutConstraint] {
-        return fitInConstraints(view: view, insets: UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
-    }
-
-    func fitInConstraints(view: UIView,
-                          insets: UIEdgeInsets = .zero) -> [NSLayoutConstraint] {
-        return [
-            leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.leading),
-            trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -insets.trailing),
+        NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.left),
+            trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -insets.right),
             topAnchor.constraint(equalTo: view.topAnchor, constant: insets.top),
             bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -insets.bottom)
-        ]
+        ])
     }
 }

@@ -107,6 +107,29 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
         XCTAssertEqual(mlsSubgroup, payload.mlsSubgroup)
     }
 
+    func test_itHandlesSuccess_WhenNoCipherSuiteOrEpochTimestamp() {
+        // Given
+        let payload = ResponsePayload(
+            cipherSuite: nil,
+            epoch: 0,
+            epochTimestamp: nil,
+            groupID: Data.secureRandomData(length: 8).base64String(),
+            members: [.init(
+                userID: UUID(),
+                clientID: UUID().transportString(),
+                domain: "domain.com"
+            )],
+            parentQualifiedID: .init(id: UUID(), domain: "domain.com"),
+            subconvID: UUID().transportString()
+        )
+
+        // When
+        let mlsSubgroup = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))
+
+        // Then
+        XCTAssertEqual(mlsSubgroup, payload.mlsSubgroup)
+    }
+
     func test_itHandlesSuccess_MalformedResponse() {
         // Given
         let payload = ResponsePayload(

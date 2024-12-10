@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol StaleMLSKeyDetectorProtocol {
@@ -38,6 +39,9 @@ public protocol StaleMLSKeyDetectorProtocol {
 
 }
 
+/// A class responsible for keeping track of groups that have stale key material.
+/// It relies on Core Data for storage.
+
 public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
 
     // MARK: - Constants
@@ -45,14 +49,14 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
     public static var keyMaterialRefreshIntervalInDays: UInt {
         // To ensure that a group's key material does not exceed its maximum age,
         // refresh pre-emptively so that it doesn't go stale while the user is offline.
-        return keyMaterialMaximumAgeInDays - backendMessageHoldTimeInDays
+        keyMaterialMaximumAgeInDays - backendMessageHoldTimeInDays
     }
 
-    // The maximum age of a group's key material before it's considered stale.
+    /// The maximum age of a group's key material before it's considered stale.
 
     private static let keyMaterialMaximumAgeInDays: UInt = 90
 
-    // The number of days the backend will hold a message.
+    /// The number of days the backend will hold a message.
 
     private static let backendMessageHoldTimeInDays: UInt = 28
 
@@ -77,8 +81,8 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
         context.performAndWait {
             result = Set(
                 MLSGroup.fetchAllObjects(in: context).lazy
-                .filter(isKeyingMaterialStale)
-                .map(\.id)
+                    .filter(isKeyingMaterialStale)
+                    .map(\.id)
             )
         }
 
@@ -102,7 +106,10 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
 
     private func isKeyingMaterialStale(for group: MLSGroup) -> Bool {
         guard let lastUpdateDate = group.lastKeyMaterialUpdate else {
-            WireLogger.mls.info("last key material update date for group (\(String(describing: group.id)) doesn't exist... considering stale")
+            WireLogger.mls
+                .info(
+                    "last key material update date for group (\(String(describing: group.id)) doesn't exist... considering stale"
+                )
             return true
         }
 

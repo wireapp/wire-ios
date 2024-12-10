@@ -25,7 +25,7 @@ final class MockCompositeMessageData: NSObject, CompositeMessageData {
     var items: [CompositeMessageItem] = []
 }
 
-final class MockTextMessageData: NSObject, ZMTextMessageData {
+final class MockTextMessageData: NSObject, TextMessageData {
 
     var messageText: String? = ""
     var backingLinkPreview: LinkMetadata?
@@ -44,16 +44,17 @@ final class MockTextMessageData: NSObject, ZMTextMessageData {
             XCTFail("This property should not be used in tests")
         }
     }
+
     var quoteMessage: ZMConversationMessage?
     var isQuotingSelf: Bool = false
     var hasQuote: Bool = false
 
     var linkPreview: LinkMetadata? {
-        guard let linkPreview = self.backingLinkPreview, !linkPreview.isBlacklisted else { return nil }
+        guard let linkPreview = backingLinkPreview, !linkPreview.isBlacklisted else { return nil }
         return linkPreview
     }
 
-    func fetchLinkPreviewImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
+    func fetchLinkPreviewImageData(queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
         completionHandler(imageData)
     }
 
@@ -79,6 +80,7 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
             XCTFail("This property should not be used in tests")
         }
     }
+
     var userTypes: Set<AnyHashable> = Set()
     var clients: Set<AnyHashable> = Set()
     var addedUsers: Set<ZMUser> {
@@ -91,6 +93,7 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
             XCTFail("This property should not be used in tests")
         }
     }
+
     var addedUserTypes: Set<AnyHashable> = Set()
     var removedUsers: Set<ZMUser> {
         get {
@@ -102,6 +105,7 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
             XCTFail("This property should not be used in tests")
         }
     }
+
     var removedUserTypes: Set<AnyHashable> = Set()
     var text: String? = ""
     var needsUpdatingUsers: Bool = false
@@ -135,8 +139,8 @@ protocol MockFileMessageDataType: ZMFileMessageData {
     var downloadState: AssetDownloadState { get set }
 }
 
-extension MockPassFileMessageData: MockFileMessageDataType { }
-extension MockFileMessageData: MockFileMessageDataType { }
+extension MockPassFileMessageData: MockFileMessageDataType {}
+extension MockFileMessageData: MockFileMessageDataType {}
 
 final class MockPassFileMessageData: NSObject, ZMFileMessageData {
 
@@ -152,43 +156,42 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
             return URL(fileURLWithPath: path)
         }
 
-        set {
-
-        }
+        set {}
     }
+
     var thumbnailAssetID: String? = ""
     var imagePreviewDataIdentifier: String? = "preview-identifier-123"
     var durationMilliseconds: UInt64 = 0
-    var videoDimensions: CGSize = CGSize.zero
+    var videoDimensions: CGSize = .zero
     var normalizedLoudness: [Float]? = []
     var previewData: Data?
 
     var isPass: Bool {
-        return mimeType == "application/vnd.apple.pkpass"
+        mimeType == "application/vnd.apple.pkpass"
     }
 
     var isVideo: Bool {
-        return mimeType == "video/mp4"
+        mimeType == "video/mp4"
     }
 
     var isAudio: Bool {
-        return mimeType == "audio/x-m4a"
+        mimeType == "audio/x-m4a"
     }
 
     var isPDF: Bool {
-        return mimeType == "application/pdf"
+        mimeType == "application/pdf"
     }
 
     var v3_isImage: Bool {
-        return false
+        false
     }
 
     var hasLocalFileData: Bool {
-        return fileURL != nil
+        fileURL != nil
     }
 
     func temporaryURLToDecryptedFile() -> URL? {
-        return fileURL
+        fileURL
     }
 
     func requestFileDownload() {
@@ -208,7 +211,7 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
     }
 
     func signPDFDocument(observer: SignatureObserver) -> Any? {
-        return nil
+        nil
     }
 
     func retrievePDFSignature() {
@@ -226,37 +229,37 @@ final class MockFileMessageData: NSObject, ZMFileMessageData {
     var fileURL: URL? = .none
     var thumbnailAssetID: String? = ""
     var imagePreviewDataIdentifier: String? = "preview-identifier-123"
-    var durationMilliseconds: UInt64 = 233000
-    var videoDimensions: CGSize = CGSize.zero
+    var durationMilliseconds: UInt64 = 233_000
+    var videoDimensions: CGSize = .zero
     var normalizedLoudness: [Float]? = []
     var previewData: Data?
 
     var isPass: Bool {
-        return mimeType == "application/vnd.apple.pkpass"
+        mimeType == "application/vnd.apple.pkpass"
     }
 
     var isVideo: Bool {
-        return mimeType == "video/mp4"
+        mimeType == "video/mp4"
     }
 
     var isAudio: Bool {
-        return mimeType == "audio/x-m4a"
+        mimeType == "audio/x-m4a"
     }
 
     var isPDF: Bool {
-        return mimeType == "application/pdf"
+        mimeType == "application/pdf"
     }
 
     var v3_isImage: Bool {
-        return false
+        false
     }
 
     var hasLocalFileData: Bool {
-        return fileURL != nil
+        fileURL != nil
     }
 
     func temporaryURLToDecryptedFile() -> URL? {
-        return fileURL
+        fileURL
     }
 
     func requestFileDownload() {
@@ -276,7 +279,7 @@ final class MockFileMessageData: NSObject, ZMFileMessageData {
     }
 
     func signPDFDocument(observer: SignatureObserver) -> Any? {
-        return nil
+        nil
     }
 
     func retrievePDFSignature() {
@@ -284,9 +287,7 @@ final class MockFileMessageData: NSObject, ZMFileMessageData {
     }
 }
 
-final class MockKnockMessageData: NSObject, ZMKnockMessageData {
-
-}
+final class MockKnockMessageData: NSObject, ZMKnockMessageData {}
 
 final class MockImageMessageData: NSObject, ZMImageMessageData {
 
@@ -302,9 +303,9 @@ final class MockImageMessageData: NSObject, ZMImageMessageData {
     var isAnimatedGIF: Bool = false
     var imageType: String? = String()
 
-    var imageData: Data? { return mockImageData }
-    var imageDataIdentifier: String? { return mockImageDataIdentifier }
-    var originalSize: CGSize { return mockOriginalSize }
+    var imageData: Data? { mockImageData }
+    var imageDataIdentifier: String? { mockImageDataIdentifier }
+    var originalSize: CGSize { mockOriginalSize }
 
     func fetchImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
         completionHandler(imageData)
@@ -324,11 +325,13 @@ final class MockLocationMessageData: NSObject, LocationMessageData {
 
 class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage, SwiftConversationMessage {
     // MARK: - ConversationCompositeMessage
+
     var compositeMessageData: CompositeMessageData?
 
     typealias UsersByReaction = [String: [UserType]]
 
     // MARK: - ZMConversationMessage
+
     var nonce: UUID? = UUID()
     var isEncrypted: Bool = false
     var isPlainText: Bool = true
@@ -343,6 +346,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
             XCTFail("This property should not be used in tests")
         }
     }
+
     var senderUser: UserType? {
         didSet {
             if senderUser is ZMUser {
@@ -350,6 +354,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
             }
         }
     }
+
     var serverTimestamp: Date? = .none
     var updatedAt: Date? = .none
 
@@ -357,7 +362,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var conversationLike: ConversationLike? = .none
 
     var deliveryState: ZMDeliveryState = .delivered
-    var failedToSendReason: MessageSendFailure? = .unknown
+    var expirationReason: ExpirationReason? = .other
     var failedToSendUsers: [UserType] = []
 
     var imageMessageData: ZMImageMessageData? = .none
@@ -371,46 +376,46 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var isSilenced: Bool = false
     var backingIsRestricted: Bool = false
     var isRestricted: Bool {
-        return backingIsRestricted
+        backingIsRestricted
     }
 
     var isSent: Bool {
         switch deliveryState {
         case .failedToSend, .pending, .invalid:
-            return false
+            false
         default:
-            return true
+            true
         }
     }
 
     var fileMessageData: ZMFileMessageData? {
-        return backingFileMessageData
+        backingFileMessageData
     }
 
     var locationMessageData: LocationMessageData? {
-        return backingLocationMessageData
+        backingLocationMessageData
     }
 
-    var textMessageData: ZMTextMessageData? {
-        return backingTextMessageData
+    var textMessageData: TextMessageData? {
+        backingTextMessageData
     }
 
     var systemMessageData: ZMSystemMessageData? {
-        return backingSystemMessageData
+        backingSystemMessageData
     }
 
     var replies: Set<ZMMessage> = Set()
 
     var usersReaction: [String: [UserType]] {
-        return backingUsersReaction
+        backingUsersReaction
     }
 
     func reactionsSortedByCreationDate() -> [ReactionData] {
-        return backingSortedReactions
+        backingSortedReactions
     }
 
     var reactionData: Set<ReactionData> {
-        return backingReactionData
+        backingReactionData
     }
 
     var backingUsersReaction: UsersByReaction = [:]
@@ -428,7 +433,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var destructionDate: Date?
 
     func startSelfDestructionIfNeeded() -> Bool {
-        return true
+        true
     }
 
     func resend() {
@@ -436,7 +441,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     }
 
     var canBeDeleted: Bool {
-        return systemMessageData == nil
+        systemMessageData == nil
     }
 
     func markAsUnread() {
@@ -449,9 +454,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
 
     var hasBeenDeleted = false
 
-    var systemMessageType: ZMSystemMessageType = ZMSystemMessageType.invalid
+    var systemMessageType: ZMSystemMessageType = .invalid
 
-    required override init() {
-
-    }
+    override required init() {}
 }

@@ -22,7 +22,7 @@ import WireDesign
 class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
 
     let label: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .normalRegularFont, color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(style: .subline1, color: SemanticColors.Label.textDefault)
         label.textAlignment = .right
         return label
     }()

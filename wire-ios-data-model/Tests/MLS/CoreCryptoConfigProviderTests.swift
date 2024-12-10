@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 
@@ -64,7 +64,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
             // mock core crypto key
             let key = Data([1, 2, 3])
             self.mockCoreCryptoKeyProvider.coreCryptoKeyMock = {
-                return key
+                key
             }
 
             // WHEN
@@ -91,7 +91,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
             // mock core crypto key
             let key = Data([1, 2, 3])
             self.mockCoreCryptoKeyProvider.coreCryptoKeyMock = {
-                return key
+                key
             }
 
             // WHEN
@@ -189,7 +189,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     // MARK: - Helpers
 
     private func expectedClientID(_ selfUser: ZMUser) throws -> String {
-        return try XCTUnwrap(MLSClientID(user: selfUser)).rawValue
+        try XCTUnwrap(MLSClientID(user: selfUser)).rawValue
     }
 
     private func expectedPath(_ selfUser: ZMUser) -> String {

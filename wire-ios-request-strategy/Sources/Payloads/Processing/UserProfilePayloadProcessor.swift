@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 protocol UserProfilePayloadProcessing {
@@ -104,10 +105,6 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
             user.name = payload.name
         }
 
-        if (payload.updatedKeys.contains(.phone) || authoritative) && !user.isAccountDeleted {
-            user.phoneNumber = payload.phone?.removingExtremeCombiningCharacters
-        }
-
         if (payload.updatedKeys.contains(.email) || authoritative) && !user.isAccountDeleted {
             user.emailAddress = payload.email?.removingExtremeCombiningCharacters
         }
@@ -181,10 +178,10 @@ private extension Payload.UserProfile.MessageProtocol {
     var dataModelMessageProtocol: MessageProtocol {
         switch self {
         case .proteus:
-            return .proteus
+            .proteus
 
         case .mls:
-            return .mls
+            .mls
         }
     }
 

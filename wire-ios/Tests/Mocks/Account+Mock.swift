@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireDataModel
 import XCTest
+@testable import Wire
 
 extension Account {
     static func mockAccount(imageData: Data) -> Account {
-        return Account(userName: "", userIdentifier: UUID(), teamName: nil, imageData: imageData)
+        Account(userName: "", userIdentifier: UUID(), teamName: nil, imageData: imageData)
     }
 }

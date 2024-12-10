@@ -89,7 +89,10 @@ class NSDataDetectorAttachmentTests: XCTestCase {
 
     func testThatItDetectsWWWSoundCloudSet() {
         let text = "Check out my playlist for the party: https://www.soundcloud.com/example/sets/example"
-        checkAttachments(in: text, expectation: ("https://www.soundcloud.com/example/sets/example", .soundCloudPlaylist))
+        checkAttachments(
+            in: text,
+            expectation: ("https://www.soundcloud.com/example/sets/example", .soundCloudPlaylist)
+        )
     }
 
     func testThatItDetectsMobileSoundCloudSet() {
@@ -109,7 +112,12 @@ class NSDataDetectorAttachmentTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func checkAttachments(in text: String, expectation: (url: String, type: LinkAttachmentType)?, file: StaticString = #file, line: UInt = #line) {
+    private func checkAttachments(
+        in text: String,
+        expectation: (url: String, type: LinkAttachmentType)?,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         let attachments = detector.detectLinkAttachments(in: text, excluding: [])
 
         if let expectation {
@@ -123,7 +131,12 @@ class NSDataDetectorAttachmentTests: XCTestCase {
             XCTAssertEqual(match.1, expectedRange, file: file, line: line)
 
         } else {
-            XCTAssertTrue(attachments.isEmpty, "Found a match even though we didn't expect one.", file: file, line: line)
+            XCTAssertTrue(
+                attachments.isEmpty,
+                "Found a match even though we didn't expect one.",
+                file: file,
+                line: line
+            )
         }
     }
 

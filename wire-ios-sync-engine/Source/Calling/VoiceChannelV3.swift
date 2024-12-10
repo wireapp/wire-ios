@@ -24,7 +24,7 @@ public enum VoiceChannelV3Error: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .switchToVideoNotAllowed:
-            return "Switch to video is not allowed"
+            "Switch to video is not allowed"
         }
     }
 }
@@ -32,15 +32,15 @@ public enum VoiceChannelV3Error: LocalizedError {
 public class VoiceChannelV3: NSObject, VoiceChannel {
 
     public var callCenter: WireCallCenterV3? {
-        return self.conversation?.managedObjectContext?.zm_callCenter
+        conversation?.managedObjectContext?.zm_callCenter
     }
 
     /// The date and time of current call start
     public var callStartDate: Date? {
-        return self.callCenter?.establishedDate
+        callCenter?.establishedDate
     }
 
-    weak public var conversation: ZMConversation?
+    public weak var conversation: ZMConversation?
 
     public required init(conversation: ZMConversation) {
         self.conversation = conversation
@@ -48,10 +48,13 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     }
 
     public var participants: [CallParticipant] {
-        return participants(ofKind: .all, activeSpeakersLimit: nil)
+        participants(ofKind: .all, activeSpeakersLimit: nil)
     }
 
-    public func participants(ofKind kind: CallParticipantsListKind, activeSpeakersLimit limit: Int?) -> [CallParticipant] {
+    public func participants(
+        ofKind kind: CallParticipantsListKind,
+        activeSpeakersLimit limit: Int?
+    ) -> [CallParticipant] {
         guard
             let callCenter,
             let conversationId = conversation?.avsIdentifier
@@ -90,7 +93,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     public var networkQuality: NetworkQuality {
         guard
             let conversationId = conversation?.avsIdentifier,
-            let callCenter = self.callCenter
+            let callCenter
         else { return .normal }
 
         return callCenter.networkQuality(conversationId: conversationId)
@@ -127,7 +130,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
             throw VoiceChannelV3Error.switchToVideoNotAllowed
         }
 
-        self.callCenter?.setVideoCaptureDevice(device, for: conversationId)
+        callCenter?.setVideoCaptureDevice(device, for: conversationId)
     }
 
     public var muted: Bool {
@@ -138,7 +141,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     public var isConferenceCall: Bool {
         guard
             let conversationId = conversation?.avsIdentifier,
-            let callCenter = self.callCenter
+            let callCenter
         else { return false }
 
         return callCenter.isConferenceCall(conversationId: conversationId)
@@ -255,40 +258,64 @@ extension VoiceChannelV3: CallActionsInternal {
 extension VoiceChannelV3: CallObservers {
 
     public func addNetworkQualityObserver(_ observer: NetworkQualityObserver) -> Any {
-        return WireCallCenterV3.addNetworkQualityObserver(observer: observer, for: conversation!, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addNetworkQualityObserver(
+            observer: observer,
+            for: conversation!,
+            context: conversation!.managedObjectContext!
+        )
     }
 
-    /// Add observer of voice channel state. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of voice channel state. Returns a token which needs to be retained as long as the observer should
+    /// be active.
     public func addCallStateObserver(_ observer: WireCallCenterCallStateObserver) -> Any {
-        return WireCallCenterV3.addCallStateObserver(observer: observer, for: conversation!, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addCallStateObserver(
+            observer: observer,
+            for: conversation!,
+            context: conversation!.managedObjectContext!
+        )
     }
 
-    /// Add observer of voice channel participants. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of voice channel participants. Returns a token which needs to be retained as long as the observer
+    /// should be active.
     public func addParticipantObserver(_ observer: WireCallCenterCallParticipantObserver) -> Any {
-        return WireCallCenterV3.addCallParticipantObserver(observer: observer, for: conversation!, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addCallParticipantObserver(
+            observer: observer,
+            for: conversation!,
+            context: conversation!.managedObjectContext!
+        )
     }
 
     /// Add observer of voice gain. Returns a token which needs to be retained as long as the observer should be active.
     public func addVoiceGainObserver(_ observer: VoiceGainObserver) -> Any {
-        return WireCallCenterV3.addVoiceGainObserver(observer: observer, for: conversation!, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addVoiceGainObserver(
+            observer: observer,
+            for: conversation!,
+            context: conversation!.managedObjectContext!
+        )
     }
 
-    /// Add observer of constant bit rate audio. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of constant bit rate audio. Returns a token which needs to be retained as long as the observer
+    /// should be active.
     public func addConstantBitRateObserver(_ observer: ConstantBitRateAudioObserver) -> Any {
-        return WireCallCenterV3.addConstantBitRateObserver(observer: observer, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addConstantBitRateObserver(observer: observer, context: conversation!.managedObjectContext!)
     }
 
-    /// Add observer of the state of all voice channels. Returns a token which needs to be retained as long as the observer should be active.
-    public class func addCallStateObserver(_ observer: WireCallCenterCallStateObserver, userSession: ZMUserSession) -> Any {
-        return WireCallCenterV3.addCallStateObserver(observer: observer, context: userSession.managedObjectContext)
+    /// Add observer of the state of all voice channels. Returns a token which needs to be retained as long as the
+    /// observer should be active.
+    public class func addCallStateObserver(
+        _ observer: WireCallCenterCallStateObserver,
+        userSession: ZMUserSession
+    ) -> Any {
+        WireCallCenterV3.addCallStateObserver(observer: observer, context: userSession.managedObjectContext)
     }
 
-    /// Add observer of the mute state. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of the mute state. Returns a token which needs to be retained as long as the observer should be
+    /// active.
     public func addMuteStateObserver(_ observer: MuteStateObserver) -> Any {
-        return WireCallCenterV3.addMuteStateObserver(observer: observer, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addMuteStateObserver(observer: observer, context: conversation!.managedObjectContext!)
     }
 
     public func addActiveSpeakersObserver(_ observer: ActiveSpeakersObserver) -> Any {
-        return WireCallCenterV3.addActiveSpeakersObserver(observer: observer, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addActiveSpeakersObserver(observer: observer, context: conversation!.managedObjectContext!)
     }
 }

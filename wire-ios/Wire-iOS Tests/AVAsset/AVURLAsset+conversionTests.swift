@@ -17,19 +17,19 @@
 //
 
 import avs
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class AVURLAsset_conversionTests: XCTestCase {
 
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
 
-    override class func tearDown() {
+    override static func tearDown() {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
@@ -37,10 +37,10 @@ final class AVURLAsset_conversionTests: XCTestCase {
     func testThatVideoIsConvertedToUploadFormat() {
         // GIVEN
         let videoURL = urlForResource(inTestBundleNamed: "video.mp4")
-        let originalAsset: AVURLAsset = AVURLAsset(url: videoURL, options: nil)
+        let originalAsset = AVURLAsset(url: videoURL, options: nil)
 
         // WHEN
-        let expectation = self.expectation(description: "Video converted")
+        let expectation = expectation(description: "Video converted")
 
         AVURLAsset.convertVideoToUploadFormat(
             at: videoURL,

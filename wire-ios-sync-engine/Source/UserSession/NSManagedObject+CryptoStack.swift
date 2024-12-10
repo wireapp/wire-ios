@@ -18,11 +18,12 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
     @objc
-    public func tearDownCryptoStack() {
+    func tearDownCryptoStack() {
         proteusProvider.perform(
             withProteusService: { _ in },
             withKeyStore: { keyStore in keyStore.deleteAndCreateNewBox() }
@@ -30,7 +31,11 @@ extension NSManagedObjectContext {
 
         proteusService = nil
         mlsService = nil
-        try? coreCrypto?.tearDown()
+        do {
+            try coreCrypto?.tearDown()
+        } catch {
+            WireLogger.coreCrypto.error("tearing down corecrypto failed with error: \(error)")
+        }
         coreCrypto = nil
     }
 

@@ -28,18 +28,16 @@ enum NavigationDestination {
 
 protocol AuthenticatedRouterProtocol: AnyObject {
     func updateActiveCallPresentationState()
-    func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?)
+    func minimizeCallOverlay(animated: Bool, completion: Completion?)
     func navigate(to destination: NavigationDestination)
 }
 
-final class AuthenticatedRouter: NSObject {
+final class AuthenticatedRouter {
 
     // MARK: - Private Property
 
-    private let builder: AuthenticatedWireFrame
-    private let rootViewController: RootViewController
-    private let activeCallRouter: ActiveCallRouter
-    private weak var _viewController: ZClientViewController?
+    private let zClientControllerBuilder: ZClientControllerBuilder
+    private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -48,37 +46,41 @@ final class AuthenticatedRouter: NSObject {
 
     // MARK: - Public Property
 
-    var viewController: UIViewController {
-        let viewController = _viewController ?? builder.build(router: self)
-        _viewController = viewController
-        return viewController
+    private weak var _zClientViewController: ZClientViewController?
+
+    var zClientViewController: ZClientViewController {
+        let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
+        _zClientViewController = zClientViewController
+        return zClientViewController
     }
 
     // MARK: - Init
 
     init(
-        rootViewController: RootViewController,
+        mainWindow: UIWindow,
         account: Account,
         userSession: UserSession,
+        trackingManager: TrackingManager,
         featureRepositoryProvider: any FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
-        self.rootViewController = rootViewController
-        activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
-
-        builder = AuthenticatedWireFrame(
+        self.activeCallRouter = ActiveCallRouter(
+            mainWindow: mainWindow,
+            userSession: userSession,
+            topOverlayPresenter: .init(mainWindow: mainWindow)
+        )
+        self.zClientControllerBuilder = .init(
             account: account,
-            userSession: userSession
+            userSession: userSession,
+            trackingManager: trackingManager
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
-        super.init()
-
-        featureChangeObserverToken = NotificationCenter.default.addObserver(
+        self.featureChangeObserverToken = NotificationCenter.default.addObserver(
             forName: .featureDidChangeNotification,
             object: nil,
             queue: .main
@@ -86,7 +88,7 @@ final class AuthenticatedRouter: NSObject {
             self?.notifyFeatureChange(notification)
         }
 
-        revokedCertificateObserverToken = NotificationCenter.default.addObserver(
+        self.revokedCertificateObserverToken = NotificationCenter.default.addObserver(
             forName: .presentRevokedCertificateWarningAlert,
             object: nil,
             queue: .main
@@ -109,89 +111,66 @@ final class AuthenticatedRouter: NSObject {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
             let alert = change.hasFurtherActions
-                ? UIAlertController.fromFeatureChangeWithActions(change,
-                                                                 acknowledger: featureRepositoryProvider.featureRepository,
-                                                                 actionsHandler: featureChangeActionsHandler)
-                : UIAlertController.fromFeatureChange(change,
-                                                      acknowledger: featureRepositoryProvider.featureRepository)
-        else {
-            return
-        }
+            ? UIAlertController.fromFeatureChangeWithActions(
+                change,
+                acknowledger: featureRepositoryProvider
+                    .featureRepository,
+                actionsHandler: featureChangeActionsHandler
+            )
+            : UIAlertController.fromFeatureChange(
+                change,
+                acknowledger: featureRepositoryProvider.featureRepository
+            )
+        else { return }
 
-        if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
+        if change == .e2eIEnabled, e2eiActivationDateRepository.e2eiActivatedAt == nil {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
-        _viewController?.presentAlert(alert)
+        _zClientViewController?.present(alert, animated: true)
     }
 
     private func notifyRevokedCertificate() {
-        guard let session = SessionManager.shared else { return }
+        guard let sessionManager = SessionManager.shared else { return }
 
         let alert = UIAlertController.revokedCertificateWarning {
-            session.logoutCurrentSession()
+            sessionManager.logoutCurrentSession()
         }
 
-        _viewController?.presentAlert(alert)
+        _zClientViewController?.present(alert, animated: true)
     }
 }
 
 // MARK: - AuthenticatedRouterProtocol
+
 extension AuthenticatedRouter: AuthenticatedRouterProtocol {
+
     func updateActiveCallPresentationState() {
         activeCallRouter.updateActiveCallPresentationState()
     }
 
-    func minimizeCallOverlay(animated: Bool,
-                             withCompletion completion: Completion?) {
+    func minimizeCallOverlay(animated: Bool, completion: Completion?) {
         activeCallRouter.minimizeCall(animated: animated, completion: completion)
     }
 
     func navigate(to destination: NavigationDestination) {
         switch destination {
-        case .conversation(let converation, let message):
-            _viewController?.showConversation(converation, at: message)
-        case .connectionRequest(let userId):
-            _viewController?.showConnectionRequest(userId: userId)
+        case let .conversation(converation, message):
+            _zClientViewController?.showConversation(converation, at: message)
+        case let .connectionRequest(userId):
+            _zClientViewController?.showConnectionRequest(userId: userId)
         case .conversationList:
-            _viewController?.showConversationList()
-        case .userProfile(let user):
-            _viewController?.showUserProfile(user: user)
+            _zClientViewController?.showConversationList()
+        case let .userProfile(user):
+            Task { @MainActor in
+                await _zClientViewController?.showUserProfile(user: user)
+            }
         }
     }
 }
 
-// MARK: - AuthenticatedWireFrame
-struct AuthenticatedWireFrame {
-    private var account: Account
-    private var userSession: UserSession
-
-    init(
-        account: Account,
-        userSession: UserSession
-    ) {
-        self.account = account
-        self.userSession = userSession
-    }
-
-    func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, userSession: userSession)
-        viewController.router = router
-        return viewController
-    }
-}
-
-private extension UIViewController {
-
-    func presentAlert(_ alert: UIAlertController) {
-        present(alert, animated: true, completion: nil)
-    }
-}
-
 protocol FeatureRepositoryProvider {
-
     var featureRepository: FeatureRepository { get }
-
 }
 
 extension ZMUserSession: FeatureRepositoryProvider {}

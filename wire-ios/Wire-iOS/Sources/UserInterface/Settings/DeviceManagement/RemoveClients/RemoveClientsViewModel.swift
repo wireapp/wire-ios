@@ -22,20 +22,17 @@ import WireSyncEngine
 extension RemoveClientsViewController {
     final class ViewModel: NSObject {
         private let removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
-        private let credentials: UserEmailCredentials?
         private(set) var clients: [UserClient] = []
 
-        init(clientsList: [UserClient],
-             credentials: UserEmailCredentials?) {
-            self.credentials = credentials
+        init(clientsList: [UserClient]) {
             self.removeUserClientUseCase = ZMUserSession.shared()?.removeUserClient
 
             super.init()
-            self.initalizeProperties(clientsList)
+            initalizeProperties(clientsList)
         }
 
         private func initalizeProperties(_ clientsList: [UserClient]) {
-            self.clients = clientsList
+            clients = clientsList
                 .filter { !$0.isSelfClient() }
                 .sorted(by: {
                     guard
@@ -48,25 +45,18 @@ extension RemoveClientsViewController {
                 })
         }
 
-        func removeUserClient(_ userClient: UserClient) async throws {
+        func removeUserClient(_ userClient: UserClient, password: String) async throws {
             let clientId = await userClient.managedObjectContext?.perform {
-                return userClient.remoteIdentifier
+                userClient.remoteIdentifier
             }
             guard let clientId else {
                 throw RemoveUserClientError.clientDoesNotExistLocally
             }
-            try await removeUserClientUseCase?.invoke(clientId: clientId, credentials: credentials?.emailCredentials)
-        }
-    }
-}
 
-private extension UserEmailCredentials {
-    var emailCredentials: EmailCredentials? {
-        guard let email,
-              let password
-        else {
-            return nil
+            try await removeUserClientUseCase?.invoke(
+                clientId: clientId,
+                password: password
+            )
         }
-        return EmailCredentials(email: email, password: password)
     }
 }

@@ -30,7 +30,11 @@ final class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
         didCallDelegate = true
     }
 
-    public func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool) {
+    public func assetCollectionDidFetch(
+        collection: ZMCollection,
+        messages: [CategoryMatch: [ZMConversationMessage]],
+        hasMore: Bool
+    ) {
         // For testing purposes it's easier to work with ZMMessage directly
         var toAppend = [CategoryMatch: [ZMMessage]]()
         for (key, value) in messages {
@@ -78,13 +82,14 @@ final class AssetColletionTests: ModelObjectsTests {
     }
 
     var defaultMatchPair: CategoryMatch {
-        return CategoryMatch(including: .image, excluding: .none)
+        CategoryMatch(including: .image, excluding: .none)
     }
 
-    @discardableResult func insertAssetMessages(count: Int) -> [ZMMessage] {
+    @discardableResult
+    func insertAssetMessages(count: Int) -> [ZMMessage] {
         var offset: TimeInterval = 0
         var messages = [ZMMessage]()
-        (0..<count).forEach { _ in
+        (0 ..< count).forEach { _ in
             let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
             offset += 5
             message.setValue(Date().addingTimeInterval(offset), forKey: "serverTimestamp")
@@ -121,7 +126,8 @@ final class AssetColletionTests: ModelObjectsTests {
 
         // then
         XCTAssertEqual(messages.count, 1)
-        guard let message = messages.first as? ZMMessage, let moc = message.managedObjectContext else {return XCTFail()}
+        guard let message = messages.first as? ZMMessage,
+              let moc = message.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(moc.zm_isUserInterfaceContext)
     }
 
@@ -132,7 +138,7 @@ final class AssetColletionTests: ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
 
         // when
-        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -140,10 +146,10 @@ final class AssetColletionTests: ModelObjectsTests {
         XCTAssertEqual(delegate.messagesByFilter.count, 1)
         XCTAssertTrue(sut.fetchingDone)
 
-        let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
+        let receivedMessageCount = delegate.messagesByFilter.first?[defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 90)
 
-        guard let lastMessage = delegate.messagesByFilter.last?[self.defaultMatchPair]?.last,
+        guard let lastMessage = delegate.messagesByFilter.last?[defaultMatchPair]?.last,
               let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -154,7 +160,7 @@ final class AssetColletionTests: ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
 
         // when
-        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -162,11 +168,11 @@ final class AssetColletionTests: ModelObjectsTests {
         XCTAssertEqual(delegate.messagesByFilter.count, 1)
         XCTAssertTrue(sut.fetchingDone)
 
-        let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
+        let receivedMessageCount = delegate.messagesByFilter.first?[defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 100)
 
-        guard let lastMessage = delegate.messagesByFilter.last?[self.defaultMatchPair]?.last,
-            let context = lastMessage.managedObjectContext else { return XCTFail() }
+        guard let lastMessage = delegate.messagesByFilter.last?[defaultMatchPair]?.last,
+              let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
 
@@ -178,7 +184,7 @@ final class AssetColletionTests: ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
 
         // when
-        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -191,13 +197,13 @@ final class AssetColletionTests: ModelObjectsTests {
         XCTAssertEqual(receivedMessages.count, 1000)
 
         guard let lastMessage = receivedMessages.last,
-            let context = lastMessage.managedObjectContext else { return XCTFail() }
+              let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
 
     func testThatItCallsTheDelegateWhenTheMessageCountIsZero() {
         // when
-        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -212,7 +218,7 @@ final class AssetColletionTests: ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
 
         // when
-        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
         sut.tearDown()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -224,20 +230,28 @@ final class AssetColletionTests: ModelObjectsTests {
 
     func testPerformanceOfMessageFetching() {
         // Before caching:
-        // 1000 messages, 1 category, 500 defaultpaging, average: 0.275, relative standard deviation: 8.967%, values: [0.348496, 0.263188, 0.266409, 0.268903, 0.265612, 0.265829, 0.271573, 0.265206, 0.268697, 0.264837]
-        // 1000 messages, 1 category, 200 defaultpaging, average: 0.304, relative standard deviation: 9.818%, values: [0.390736, 0.285759, 0.293118, 0.290341, 0.293730, 0.281093, 0.292787, 0.305865, 0.306954, 0.302983]
-        // 1000 messages, 2 categories, 500 defaultpaging, average: 0.570, relative standard deviation: 5.990%, values: [0.656057, 0.526296, 0.530267, 0.572129, 0.557102, 0.586183, 0.574734, 0.580168, 0.563595, 0.556718]
-        // 10000 messages, average: 3.495, relative standard deviation: 7.352%, values: [4.259749, 3.372894, 3.389057, 3.404054, 3.363652, 3.400085, 3.416911, 3.417086, 3.442652, 3.488077],
+        // 1000 messages, 1 category, 500 defaultpaging, average: 0.275, relative standard deviation: 8.967%, values:
+        // [0.348496, 0.263188, 0.266409, 0.268903, 0.265612, 0.265829, 0.271573, 0.265206, 0.268697, 0.264837]
+        // 1000 messages, 1 category, 200 defaultpaging, average: 0.304, relative standard deviation: 9.818%, values:
+        // [0.390736, 0.285759, 0.293118, 0.290341, 0.293730, 0.281093, 0.292787, 0.305865, 0.306954, 0.302983]
+        // 1000 messages, 2 categories, 500 defaultpaging, average: 0.570, relative standard deviation: 5.990%, values:
+        // [0.656057, 0.526296, 0.530267, 0.572129, 0.557102, 0.586183, 0.574734, 0.580168, 0.563595, 0.556718]
+        // 10000 messages, average: 3.495, relative standard deviation: 7.352%, values: [4.259749, 3.372894, 3.389057,
+        // 3.404054, 3.363652, 3.400085, 3.416911, 3.417086, 3.442652, 3.488077],
 
         // given
         insertAssetMessages(count: 1000)
         uiMOC.registeredObjects.forEach { uiMOC.refresh($0, mergeChanges: false) }
 
-        self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
+        measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
 
             // when
             self.startMeasuring()
-            self.sut = AssetCollection(conversation: self.conversation, matchingCategories: [self.defaultMatchPair], delegate: self.delegate)
+            self.sut = AssetCollection(
+                conversation: self.conversation,
+                matchingCategories: [self.defaultMatchPair],
+                delegate: self.delegate
+            )
             XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
             self.stopMeasuring()
@@ -257,11 +271,11 @@ final class AssetColletionTests: ModelObjectsTests {
         conversation.allMessages.forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
-        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair], delegate: delegate)
+        sut = AssetCollection(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let receivedMessageCount = delegate.messagesByFilter.first?[self.defaultMatchPair]?.count
+        let receivedMessageCount = delegate.messagesByFilter.first?[defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, 10)
     }
 
@@ -284,7 +298,7 @@ final class AssetColletionTests: ModelObjectsTests {
 
     func testThatItExcludesDefinedCategories_PreCategorized() {
         // given
-        let data = self.data(forResource: "animated", extension: "gif")!
+        let data = data(forResource: "animated", extension: "gif")!
         _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
 
         // when
@@ -304,7 +318,7 @@ final class AssetColletionTests: ModelObjectsTests {
     func testThatItExcludesDefinedCategories_NotPreCategorized() {
         // given
         insertAssetMessages(count: 1)
-        let data = self.data(forResource: "animated", extension: "gif")!
+        let data = data(forResource: "animated", extension: "gif")!
         _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
 
@@ -325,7 +339,7 @@ final class AssetColletionTests: ModelObjectsTests {
         // given
         insertAssetMessages(count: 1)
 
-        let data = self.data(forResource: "animated", extension: "gif")!
+        let data = data(forResource: "animated", extension: "gif")!
         _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
 
@@ -333,7 +347,11 @@ final class AssetColletionTests: ModelObjectsTests {
         let excludingGif = CategoryMatch(including: .image, excluding: .GIF)
         let onlyGif = CategoryMatch(including: .GIF, excluding: .none)
         let allImages = defaultMatchPair
-        sut = AssetCollection(conversation: conversation, matchingCategories: [excludingGif, onlyGif, allImages], delegate: delegate)
+        sut = AssetCollection(
+            conversation: conversation,
+            matchingCategories: [excludingGif, onlyGif, allImages],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -358,7 +376,11 @@ final class AssetColletionTests: ModelObjectsTests {
         // when
         let textMatchPair = CategoryMatch(including: .text, excluding: .none)
 
-        sut = AssetCollection(conversation: conversation, matchingCategories: [self.defaultMatchPair, textMatchPair], delegate: delegate)
+        sut = AssetCollection(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair, textMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -374,7 +396,7 @@ final class AssetColletionTests: ModelObjectsTests {
     func testThatItFetchesPreAndUncategorizedObjectsAndSavesThemAsUIDObjects() {
         // given
         let messages = insertAssetMessages(count: 20)
-        messages[0..<10].forEach { _ = $0.cachedCategory }
+        messages[0 ..< 10].forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
         // when
@@ -392,8 +414,14 @@ final class AssetColletionTests: ModelObjectsTests {
 
     func testThatItDoesNotReturnFailedToUploadAssets_Uncategorized() {
         // given
-        let includedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
-        let excludedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        let includedMessage = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
+        )) as! ZMAssetClientMessage
+        let excludedMessage = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
+        )) as! ZMAssetClientMessage
         excludedMessage.transferState = .uploadingFailed
         excludedMessage.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
         includedMessage.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
@@ -413,8 +441,14 @@ final class AssetColletionTests: ModelObjectsTests {
 
     func testThatItDoesNotReturnFailedToUploadAssets_PreCategorized() {
         // given
-        let includedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
-        let excludedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        let includedMessage = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
+        )) as! ZMAssetClientMessage
+        let excludedMessage = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
+        )) as! ZMAssetClientMessage
         excludedMessage.transferState = .uploadingFailed
         excludedMessage.updateCategoryCache()
         uiMOC.saveOrRollback()

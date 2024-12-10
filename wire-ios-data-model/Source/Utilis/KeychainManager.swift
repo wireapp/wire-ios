@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 protocol KeychainItemProtocol {
 
@@ -30,7 +31,7 @@ public enum KeychainManager {
 
     // MARK: - Keychain access
 
-    static func storeItem<T>(_ item: KeychainItemProtocol, value: T) throws {
+    static func storeItem(_ item: KeychainItemProtocol, value: some Any) throws {
         WireLogger.keychain.info("storing item (\(item.id))")
         let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
 
@@ -148,9 +149,9 @@ public enum KeychainManager {
 
     private static var isRunningOnSimulator: Bool {
         #if targetEnvironment(simulator)
-        return true
+            return true
         #else
-        return false
+            return false
         #endif
     }
 
@@ -169,23 +170,23 @@ public extension KeychainManager {
 
         public var errorDescription: String? {
             switch self {
-            case .failedToStoreItemInKeychain(let status):
-                return "failed to store item in keychain, OSStatus: \(status)"
+            case let .failedToStoreItemInKeychain(status):
+                "failed to store item in keychain, OSStatus: \(status)"
 
-            case .failedToFetchItemFromKeychain(let status):
-                return "failed to fetch item from keychain, OSStatus: \(status)"
+            case let .failedToFetchItemFromKeychain(status):
+                "failed to fetch item from keychain, OSStatus: \(status)"
 
-            case .failedToDeleteItemFromKeychain(let status):
-                return "failed to delete item from keychain, OSStatus: \(status)"
+            case let .failedToDeleteItemFromKeychain(status):
+                "failed to delete item from keychain, OSStatus: \(status)"
 
-            case .failedToGenerateKey(let status):
-                return "failed to generate key, OSStatus: \(status)"
+            case let .failedToGenerateKey(status):
+                "failed to generate key, OSStatus: \(status)"
 
-            case .failedToGeneratePublicPrivateKey(underlyingError: let error):
-                return "failed to generate public private key, underlying error: \(error?.localizedDescription ?? "?")"
+            case let .failedToGeneratePublicPrivateKey(underlyingError: error):
+                "failed to generate public private key, underlying error: \(error?.localizedDescription ?? "?")"
 
             case .failedToCopyPublicKey:
-                return "failed to copy public key"
+                "failed to copy public key"
             }
         }
 

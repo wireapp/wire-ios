@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class ImageDownloaderTests: XCTestCase {
 
@@ -124,12 +124,16 @@ class ImageDownloaderTests: XCTestCase {
         assertThatItReturnsTheImageData(false, withHeaderFields: ["content-type": "text/html"])
     }
 
-    func assertThatItReturnsTheImageData(_ shouldReturn: Bool, withHeaderFields headers: [String: String], line: UInt = #line) {
+    func assertThatItReturnsTheImageData(
+        _ shouldReturn: Bool,
+        withHeaderFields headers: [String: String],
+        line: UInt = #line
+    ) {
         // given
         let completionExpectation = expectation(description: "It should call the completion handler")
         let url = URL(string: "www.example.com")!
 
-        let data = "test data".data(using: .utf8)!
+        let data = Data("test data".utf8)
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headers)
 
         mockSession.dataTaskGenerator = { _, completion in

@@ -28,35 +28,52 @@ final class ProxyCredentialsViewController: UIViewController {
     var textFieldDidUpdateText: (ValidatedTextField) -> Void
     var activeFieldChange: (UITextField?) -> Void
 
-    init(backendURL: URL,
-         textFieldDidUpdateText: @escaping (ValidatedTextField) -> Void,
-         activeFieldChange: @escaping (UITextField?) -> Void) {
+    init(
+        backendURL: URL,
+        textFieldDidUpdateText: @escaping (ValidatedTextField) -> Void,
+        activeFieldChange: @escaping (UITextField?) -> Void
+    ) {
         self.backendURL = backendURL
         self.textFieldDidUpdateText = textFieldDidUpdateText
         self.activeFieldChange = activeFieldChange
         super.init(nibName: nil, bundle: nil)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    lazy var titleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerSemiboldFont, color: SemanticColors.Label.textCellSubtitle)
+    lazy var titleLabel = {
+        let label = DynamicFontLabel(
+            text: Credentials.title,
+            style: .h3,
+            color: SemanticColors.Label.textCellSubtitle
+        )
         label.text = Credentials.title
         return label
     }()
 
-    lazy var captionLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerRegularFont, color: SemanticColors.Label.textCellSubtitle)
+    lazy var captionLabel = {
+        let label = DynamicFontLabel(
+            text: Credentials.title,
+            style: .body1,
+            color: SemanticColors.Label.textCellSubtitle
+        )
         label.numberOfLines = 0
         return label
     }()
 
     lazy var usernameInput: ValidatedTextField = {
-        let textField = ValidatedTextField(kind: .email, leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
+        let textField = ValidatedTextField(
+            kind: .email,
+            leftInset: 8,
+            accessoryTrailingInset: 0,
+            cornerRadius: 0,
+            style: .default
+        )
         textField.showConfirmButton = false
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: .uppercased() when new design is implemented
         textField.placeholder = Credentials.Username.placeholder.capitalized
         textField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
@@ -66,9 +83,17 @@ final class ProxyCredentialsViewController: UIViewController {
     }()
 
     lazy var passwordInput: ValidatedTextField = {
-        let textField = ValidatedTextField(kind: .password(.nonEmpty, isNew: false), leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
+        let textField = ValidatedTextField(
+            kind: .password(.nonEmpty, isNew: false),
+            leftInset: 8,
+            accessoryTrailingInset: 0,
+            cornerRadius: 0,
+            style: .default
+        )
 
-        textField.placeholder = Credentials.Password.placeholder.capitalized // TODO: .uppercased() when new design is implemented
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: .uppercased() when new design is implemented
+        textField.placeholder = Credentials.Password.placeholder.capitalized
         textField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
         textField.delegate = self
         textField.addDoneButtonOnKeyboard()
@@ -76,7 +101,7 @@ final class ProxyCredentialsViewController: UIViewController {
         textField.addRevealButton(delegate: self)
         return textField
     }()
-    // swiftlint:enable todo_requires_jira_link
+
     override func viewDidLoad() {
         super.viewDidLoad()
         captionLabel.text = Credentials.caption(backendURL.absoluteString)
@@ -127,7 +152,8 @@ final class ProxyCredentialsViewController: UIViewController {
         ])
     }
 
-    @objc private func textInputDidChange(sender: ValidatedTextField) {
+    @objc
+    private func textInputDidChange(sender: ValidatedTextField) {
         textFieldDidUpdateText(sender)
     }
 }
@@ -144,11 +170,11 @@ extension ProxyCredentialsViewController: UITextFieldDelegate {
     }
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        self.activeFieldChange(textField)
+        activeFieldChange(textField)
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        self.activeFieldChange(nil)
+        activeFieldChange(nil)
     }
 
 }

@@ -18,7 +18,7 @@
 
 import XCTest
 
-class ZMConversationListDirectoryTests_Labels: ZMBaseManagedObjectTest {
+final class ZMConversationListDirectoryTests_Labels: ZMBaseManagedObjectTest {
 
     func testThatItRefetchesAllFolders() {
         // given
@@ -48,5 +48,4 @@ class ZMConversationListDirectoryTests_Labels: ZMBaseManagedObjectTest {
         // then
         XCTAssertEqual(sut.conversations(by: .folder(folder)), [conversation])
     }
-
 }

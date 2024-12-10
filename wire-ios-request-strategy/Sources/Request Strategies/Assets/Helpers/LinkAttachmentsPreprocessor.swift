@@ -24,25 +24,26 @@ import WireUtilities
 public final class LinkAttachmentDetectorHelper: NSObject {
     fileprivate static var _test_debug_linkAttachmentDetector: LinkAttachmentDetectorType?
 
-    public class func defaultDetector() -> LinkAttachmentDetectorType {
-        return test_debug_linkAttachmentDetector() ?? LinkAttachmentDetector()
+    public static func defaultDetector() -> LinkAttachmentDetectorType {
+        test_debug_linkAttachmentDetector() ?? LinkAttachmentDetector()
     }
 
-    public class func test_debug_linkAttachmentDetector() -> LinkAttachmentDetectorType? {
-        return _test_debug_linkAttachmentDetector
+    public static func test_debug_linkAttachmentDetector() -> LinkAttachmentDetectorType? {
+        _test_debug_linkAttachmentDetector
     }
 
-    public class func setTest_debug_linkAttachmentDetector(_ detectorType: LinkAttachmentDetectorType?) {
+    public static func setTest_debug_linkAttachmentDetector(_ detectorType: LinkAttachmentDetectorType?) {
         _test_debug_linkAttachmentDetector = detectorType
     }
 
-    public class func tearDown() {
+    public static func tearDown() {
         _test_debug_linkAttachmentDetector = nil
     }
 
 }
 
-@objcMembers public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment> {
+@objcMembers
+public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment> {
 
     fileprivate let linkAttachmentDetector: LinkAttachmentDetectorType
 
@@ -63,12 +64,16 @@ public final class LinkAttachmentDetectorHelper: NSObject {
     }
 
     override func processLinks(in message: ZMClientMessage, text: String, excluding excludedRanges: [NSRange]) {
-        linkAttachmentDetector.downloadLinkAttachments(inText: text, excluding: excludedRanges) { [weak self] linkAttachments in
-            self?.managedObjectContext.performGroupedBlock {
-                self?.zmLog.debug("\(linkAttachments.count) attachments for: \(message.nonce?.uuidString ?? "nil")\n\(linkAttachments)")
-                self?.didProcessMessage(message, result: linkAttachments)
+        linkAttachmentDetector
+            .downloadLinkAttachments(inText: text, excluding: excludedRanges) { [weak self] linkAttachments in
+                self?.managedObjectContext.performGroupedBlock {
+                    self?.zmLog
+                        .debug(
+                            "\(linkAttachments.count) attachments for: \(message.nonce?.uuidString ?? "nil")\n\(linkAttachments)"
+                        )
+                    self?.didProcessMessage(message, result: linkAttachments)
+                }
             }
-        }
     }
 
     override func didProcessMessage(_ message: ZMClientMessage, result linkAttachments: [LinkAttachment]) {

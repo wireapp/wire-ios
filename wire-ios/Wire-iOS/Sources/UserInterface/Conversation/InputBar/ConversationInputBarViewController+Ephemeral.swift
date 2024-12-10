@@ -23,7 +23,8 @@ extension ConversationInputBarViewController {
 
     @discardableResult
     func createEphemeralKeyboardViewController() -> EphemeralKeyboardViewController {
-        let ephemeralKeyboardViewController = EphemeralKeyboardViewController(conversation: conversation as? ZMConversation)
+        let ephemeralKeyboardViewController =
+            EphemeralKeyboardViewController(conversation: conversation as? ZMConversation)
         ephemeralKeyboardViewController.delegate = self
 
         self.ephemeralKeyboardViewController = ephemeralKeyboardViewController
@@ -39,7 +40,7 @@ extension ConversationInputBarViewController {
         toggleEphemeralKeyboardVisibility()
     }
 
-    fileprivate func toggleEphemeralKeyboardVisibility() {
+    private func toggleEphemeralKeyboardVisibility() {
         let isEphemeralControllerPresented = ephemeralKeyboardViewController != nil
         let isEphemeralKeyboardPresented = mode == .timeoutConfguration
 
@@ -77,21 +78,18 @@ extension ConversationInputBarViewController {
         createEphemeralKeyboardViewController()
         ephemeralKeyboardViewController?.modalPresentationStyle = .popover
         ephemeralKeyboardViewController?.preferredContentSize = CGSize.IPadPopover.pickerSize
-        let pointToView: UIView = ephemeralIndicatorButton.isHidden ? hourglassButton : ephemeralIndicatorButton
+        let pointToView = ephemeralIndicatorButton.isHidden ? hourglassButton : ephemeralIndicatorButton
 
         if let popover = ephemeralKeyboardViewController?.popoverPresentationController,
-            let presentInView = self.parent?.view,
-            let backgroundColor = ephemeralKeyboardViewController?.view.backgroundColor {
-                popover.config(from: self,
-                           pointToView: pointToView,
-                           sourceView: presentInView)
-
+           let backgroundColor = ephemeralKeyboardViewController?.view.backgroundColor {
+            popover.sourceView = pointToView.superview!
+            popover.sourceRect = pointToView.frame.insetBy(dx: -4, dy: -4)
             popover.backgroundColor = backgroundColor
             popover.permittedArrowDirections = .down
         }
 
         guard let controller = ephemeralKeyboardViewController else { return }
-        self.parent?.present(controller, animated: true)
+        parent?.present(controller, animated: true)
     }
 
     func updateEphemeralIndicatorButtonTitle(_ button: ButtonWithLargerHitArea) {
@@ -115,10 +113,10 @@ private extension MessageDestructionTimeoutValue {
         typealias Conversation = L10n.Accessibility.Conversation
 
         guard
-           self != .none,
-           let timeoutValue = shortDisplayString
+            self != .none,
+            let timeoutValue = shortDisplayString
         else {
-           return nil
+            return nil
         }
         switch self {
         case .tenSeconds:
@@ -167,7 +165,7 @@ extension ConversationInputBarViewController {
 
         if !sendButtonState.ephemeral {
             state = .none
-        } else if self.conversation.hasSyncedMessageDestructionTimeout {
+        } else if conversation.hasSyncedMessageDestructionTimeout {
             state = .conversation
         } else {
             state = .message

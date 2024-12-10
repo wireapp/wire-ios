@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
@@ -37,15 +38,18 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let migrator: OneOnOneMigratorInterface?
+    private let isMLSEnabled: Bool
 
     // MARK: - Initializer
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        migrator: OneOnOneMigratorInterface?
+        migrator: OneOnOneMigratorInterface?,
+        isMLSEnabled: Bool
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
+        self.isMLSEnabled = isMLSEnabled
     }
 
     // MARK: - Resolve
@@ -77,9 +81,9 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
         switch messageProtocol {
-        case .none:
+        case .none where isMLSEnabled:
             return await resolveCommonUserProtocolNone(with: userID, in: context)
-        case .mls:
+        case .mls where isMLSEnabled:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
             return await resolveCommonUserProtocolProteus(with: userID, in: context)
@@ -89,6 +93,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             // Mixed protocol is used by conversations to represent
             // the migration state when migrating from proteus to mls.
             assertionFailure("users should not have mixed protocol")
+            return .noAction
+        default:
+            // if mls not enabled, there is nothing to take action
+            // fixes locked conversations
             return .noAction
         }
     }
@@ -154,7 +162,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             )
             await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
             return .migratedToMLSGroup(identifier: mlsGroupID)
-        } catch MigrateMLSOneOnOneConversationError.failedToEstablishGroup(let error) {
+        } catch let MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error) {
             await setReadOnly(to: true, forOneOnOneWithUser: userID, in: context)
             throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)
         } catch {
@@ -193,7 +201,8 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Helpers
 
-    private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws -> [QualifiedID] {
+    private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws
+        -> [QualifiedID] {
         try await context.perform {
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             request.predicate = ZMUser.predicateForUsersWithOneOnOneConversation()

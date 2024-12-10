@@ -22,15 +22,20 @@ import WireTransport
 
 public extension MockTransportSession {
     private func selfUserPartOfTeam(_ team: MockTeam) -> Bool {
-        return team.contains(user: selfUser)
+        team.contains(user: selfUser)
     }
 
     private func ascendingCreationDate(first: MockTeam, second: MockTeam) -> Bool {
-        return first.createdAt < second.createdAt
+        first.createdAt < second.createdAt
     }
 
     @objc(pushEventsForTeamsWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
-    func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
+    func pushEventsForTeams(
+        inserted: Set<NSManagedObject>,
+        updated: Set<NSManagedObject>,
+        deleted: Set<NSManagedObject>,
+        shouldSendEventsToSelfUser: Bool
+    ) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
 
         let updatedEvents = updated
@@ -52,15 +57,30 @@ public extension MockTransportSession {
         var allEvents = [MockPushEvent]()
         let changedValues = team.changedValues()
         if let teamUpdateEvent = MockTeamEvent.updated(team: team, changedValues: changedValues) {
-            allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false) )
+            allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false))
         }
 
-        let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues(), selfUser: selfUser)
-        let membersPushEvents = membersEvents.compactMap { $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        let membersEvents = MockTeamMemberEvent.createIfNeeded(
+            team: team,
+            changedValues: team.changedValues(),
+            selfUser: selfUser
+        )
+        let membersPushEvents = membersEvents.compactMap { $0 }.map { MockPushEvent(
+            with: $0.payload,
+            uuid: UUID.create(),
+            isTransient: false
+        ) }
         allEvents.append(contentsOf: membersPushEvents)
 
-        let conversationsEvents = MockTeamConversationEvent.createIfNeeded(team: team, changedValues: team.changedValues())
-        let conversationsPushEvents = conversationsEvents.compactMap { $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        let conversationsEvents = MockTeamConversationEvent.createIfNeeded(
+            team: team,
+            changedValues: team.changedValues()
+        )
+        let conversationsPushEvents = conversationsEvents.compactMap { $0 }.map { MockPushEvent(
+            with: $0.payload,
+            uuid: UUID.create(),
+            isTransient: false
+        ) }
         allEvents.append(contentsOf: conversationsPushEvents)
 
         return allEvents
@@ -68,10 +88,11 @@ public extension MockTransportSession {
 }
 
 // MARK: - Conversations
+
 extension MockTransportSession {
 
     func relevant(conversations: Set<NSManagedObject>) -> [MockConversation] {
-        return conversations
+        conversations
             .compactMap { object -> MockConversation? in
                 object as? MockConversation
             }.filter { conversation -> Bool in
@@ -80,13 +101,21 @@ extension MockTransportSession {
     }
 
     @objc(pushEventsForInsertedConversations:updated:shouldSendEventsToSelfUser:)
-    public func pushEventsForConversations(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
+    public func pushEventsForConversations(
+        inserted: Set<NSManagedObject>,
+        updated: Set<NSManagedObject>,
+        shouldSendEventsToSelfUser: Bool
+    ) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
 
         let insertedPayloads: [ZMTransportData] = relevant(conversations: inserted)
             .filter { conversation -> Bool in
                 if let team = conversation.team {
-                    return !team.contains(user: self.selfUser) // Team conversations where you are a member are handled separately
+                    return !team
+                        .contains(
+                            user: self
+                                .selfUser
+                        ) // Team conversations where you are a member are handled separately
                 } else {
                     return true
                 }
@@ -115,12 +144,10 @@ extension MockTransportSession {
                 return payload as ZMTransportData
             }
 
-        let insertedEvents = (insertedPayloads + updatedPayloads)
+        return (insertedPayloads + updatedPayloads)
             .map { payload -> MockPushEvent in
                 MockPushEvent(with: payload, uuid: NSUUID.timeBasedUUID() as UUID, isTransient: false, isSilent: false)
             }
-
-        return insertedEvents
     }
 }
 
@@ -139,21 +166,22 @@ extension MockTransportSession: UnauthenticatedTransportSessionProtocol {
     }
 
     public var environment: BackendEnvironmentProvider {
-        return MockEnvironment()
+        MockEnvironment()
     }
 }
 
 // MARK: - Email activation
+
 public extension MockTransportSession {
     @objc var emailActivationCode: String {
-        return "123456"
+        "123456"
     }
 }
 
 extension MockTransportSession: TransportSessionType {
 
-    public func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse {
-        return await withCheckedContinuation { continuation in
+    public func enqueue(_ request: ZMTransportRequest, queue: GroupQueue) async -> ZMTransportResponse {
+        await withCheckedContinuation { continuation in
             request.add(ZMCompletionHandler(on: queue, block: { response in
                 continuation.resume(returning: response)
             }))
@@ -163,23 +191,21 @@ extension MockTransportSession: TransportSessionType {
     }
 
     public var requestLoopDetectionCallback: ((String) -> Void)? {
-        get { return nil }
-        set { }
+        get { nil }
+        set {}
     }
 
-    public func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {
-
-    }
+    public func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {}
 }
 
 public extension MockTransportSession {
 
     @objc var invalidSinceParameter400: UUID {
-        return UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!
+        UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!
     }
 
     @objc var unknownSinceParameter404: UUID {
-        return UUID(uuidString: "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")!
+        UUID(uuidString: "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")!
     }
 }
 
@@ -192,8 +218,8 @@ public extension NSString {
                 continue
             }
             let prefix = "/v\(version.rawValue)"
-            if self.hasPrefix(prefix) {
-                return self.replacingOccurrences(of: prefix, with: "") as NSString
+            if hasPrefix(prefix) {
+                return replacingOccurrences(of: prefix, with: "") as NSString
             }
         }
         return self

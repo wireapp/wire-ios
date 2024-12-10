@@ -17,8 +17,8 @@
 //
 
 import UIKit
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class MockPhotoPermissionsController: PhotoPermissionsController {
 
@@ -31,19 +31,19 @@ final class MockPhotoPermissionsController: PhotoPermissionsController {
     }
 
     var isCameraAuthorized: Bool {
-        return camera
+        camera
     }
 
     var isPhotoLibraryAuthorized: Bool {
-        return library
+        library
     }
 
     var areCameraOrPhotoLibraryAuthorized: Bool {
-        return camera || library
+        camera || library
     }
 
     var areCameraAndPhotoLibraryAuthorized: Bool {
-        return camera && library
+        camera && library
     }
 
 }

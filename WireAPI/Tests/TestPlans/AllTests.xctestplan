@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "FDB58F5E-9DC3-4935-B919-AA295F684D19",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireAPI",
+        "identifier" : "WireAPITests",
+        "name" : "WireAPITests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireMockTransport
 import XCTest
+@testable import WireMockTransport
 
 class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
@@ -34,20 +34,40 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "foo")
-            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent", deviceClass: "phone")
-            secondSelfClient = session.registerClient(for: selfUser, label: "self2", type: "permanent", deviceClass: "phone")
+            selfClient = session.registerClient(
+                for: selfUser,
+                label: "self user",
+                type: "permanent",
+                deviceClass: "phone"
+            )
+            secondSelfClient = session.registerClient(
+                for: selfUser,
+                label: "self2",
+                type: "permanent",
+                deviceClass: "phone"
+            )
 
             otherUser = session.insertUser(withName: "bar")
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient
-            secondOtherUserClient = session.registerClient(for: otherUser, label: "other2", type: "permanent", deviceClass: "phone")
-            otherUserRedundantClient = session.registerClient(for: otherUser, label: "other redundant", type: "permanent", deviceClass: "phone")
+            secondOtherUserClient = session.registerClient(
+                for: otherUser,
+                label: "other2",
+                type: "permanent",
+                deviceClass: "phone"
+            )
+            otherUserRedundantClient = session.registerClient(
+                for: otherUser,
+                label: "other redundant",
+                type: "permanent",
+                deviceClass: "phone"
+            )
 
             let connection = session.insertConnection(withSelfUser: selfUser, to: otherUser)
             connection.status = "accepted"
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
         let base64Content = messageData.base64EncodedString()
 
         let payload: [String: Any] = [
@@ -60,15 +80,28 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             ]
         ]
 
-        let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient, otherUserRedundantClient], plainText: messageData).serializedData()
+        let protoPayload = try? selfClient.newOtrMessageWithRecipients(
+            for: [otherUserClient, otherUserRedundantClient],
+            plainText: messageData
+        ).serializedData()
 
         sut.performRemoteChanges { _ in
             otherUserRedundantClient.user = nil
         }
 
         // when
-        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .post, apiVersion: .v0)
-        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .post, apiVersion: .v0)
+        let responseJSON = response(
+            forPayload: payload as ZMTransportData,
+            path: "/broadcast/otr/messages",
+            method: .post,
+            apiVersion: .v0
+        )
+        let responsePROTO = response(
+            forProtobufData: protoPayload,
+            path: "/broadcast/otr/messages",
+            method: .post,
+            apiVersion: .v0
+        )
 
         // then
         for response in [responseJSON, responsePROTO] {
@@ -78,8 +111,9 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
-                    "missing": [ selfUser.identifier: [secondSelfClient.identifier!], otherUser.identifier: [secondOtherUserClient.identifier!] ],
-                    "deleted": [ otherUser.identifier: [otherUserRedundantClient.identifier!]]
+                    "missing": [selfUser.identifier: [secondSelfClient.identifier!],
+                                otherUser.identifier: [secondOtherUserClient.identifier!]],
+                    "deleted": [otherUser.identifier: [otherUserRedundantClient.identifier!]]
                 ]
 
                 assertExpectedPayload(expectedPayload, in: response)
@@ -97,16 +131,25 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "Self User")
-            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent", deviceClass: "phone")
+            selfClient = session.registerClient(
+                for: selfUser,
+                label: "self user",
+                type: "permanent",
+                deviceClass: "phone"
+            )
 
             otherUser = session.insertUser(withName: "Team member1")
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient
 
-            session.insertTeam(withName: "Team Foo", isBound: false, users: Set<MockUser>(arrayLiteral: selfUser, otherUser))
+            session.insertTeam(
+                withName: "Team Foo",
+                isBound: false,
+                users: Set<MockUser>(arrayLiteral: selfUser, otherUser)
+            )
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
@@ -116,8 +159,18 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [], plainText: messageData).serializedData()
 
         // when
-        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .post, apiVersion: .v0)
-        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .post, apiVersion: .v0)
+        let responseJSON = response(
+            forPayload: payload as ZMTransportData,
+            path: "/broadcast/otr/messages",
+            method: .post,
+            apiVersion: .v0
+        )
+        let responsePROTO = response(
+            forProtobufData: protoPayload,
+            path: "/broadcast/otr/messages",
+            method: .post,
+            apiVersion: .v0
+        )
 
         // then
         for response in [responseJSON, responsePROTO] {
@@ -127,7 +180,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
-                    "missing": [ otherUser.identifier: [otherUserClient.identifier!] ],
+                    "missing": [otherUser.identifier: [otherUserClient.identifier!]],
                     "deleted": [:]
                 ]
 
@@ -146,28 +199,48 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "Self User")
-            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent", deviceClass: "phone")
+            selfClient = session.registerClient(
+                for: selfUser,
+                label: "self user",
+                type: "permanent",
+                deviceClass: "phone"
+            )
 
             otherUser = session.insertUser(withName: "Team member1")
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient
 
-            session.insertTeam(withName: "Team Foo", isBound: false, users: Set<MockUser>(arrayLiteral: selfUser, otherUser))
+            session.insertTeam(
+                withName: "Team Foo",
+                isBound: false,
+                users: Set<MockUser>(arrayLiteral: selfUser, otherUser)
+            )
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
         let base64Content = messageData.base64EncodedString()
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
-            "recipients": [ otherUser.identifier: [ otherUserClient.identifier!: base64Content] ]
+            "recipients": [otherUser.identifier: [otherUserClient.identifier!: base64Content]]
         ]
 
-        let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
+        let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData)
+            .serializedData()
 
         // when
-        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .post, apiVersion: .v0)
-        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .post, apiVersion: .v0)
+        let responseJSON = response(
+            forPayload: payload as ZMTransportData,
+            path: "/broadcast/otr/messages",
+            method: .post,
+            apiVersion: .v0
+        )
+        let responsePROTO = response(
+            forProtobufData: protoPayload,
+            path: "/broadcast/otr/messages",
+            method: .post,
+            apiVersion: .v0
+        )
 
         // then
         for response in [responseJSON, responsePROTO] {
@@ -196,7 +269,12 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "Self User")
-            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent", deviceClass: "phone")
+            selfClient = session.registerClient(
+                for: selfUser,
+                label: "self user",
+                type: "permanent",
+                deviceClass: "phone"
+            )
 
             otherUser = session.insertUser(withName: "Team member1")
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient
@@ -206,18 +284,29 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let messageData = "secret message".data(using: .utf8)!
+        let messageData = Data("secret message".utf8)
         let base64Content = messageData.base64EncodedString()
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
-            "recipients": [ otherUser.identifier: [ otherUserClient.identifier!: base64Content] ]
+            "recipients": [otherUser.identifier: [otherUserClient.identifier!: base64Content]]
         ]
-        let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
+        let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData)
+            .serializedData()
 
         // when
-        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .post, apiVersion: .v0)
-        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .post, apiVersion: .v0)
+        let responseJSON = response(
+            forPayload: payload as ZMTransportData,
+            path: "/broadcast/otr/messages",
+            method: .post,
+            apiVersion: .v0
+        )
+        let responsePROTO = response(
+            forProtobufData: protoPayload,
+            path: "/broadcast/otr/messages",
+            method: .post,
+            apiVersion: .v0
+        )
 
         // then
         for response in [responseJSON, responsePROTO] {

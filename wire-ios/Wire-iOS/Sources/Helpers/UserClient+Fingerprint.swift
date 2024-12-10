@@ -19,11 +19,14 @@
 import UIKit
 import WireDataModel
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: merge to UserClientType or stay in UI project? It is depends on localized string resource
-// swiftlint:enable todo_requires_jira_link
 protocol UserClientTypeAttributedString {
-    func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool) -> NSAttributedString
+    func attributedRemoteIdentifier(
+        _ attributes: [NSAttributedString.Key: AnyObject],
+        boldAttributes: [NSAttributedString.Key: AnyObject],
+        uppercase: Bool
+    ) -> NSAttributedString
 }
 
 private let UserClientIdentifierMinimumLength = 16
@@ -47,11 +50,18 @@ extension Sequence where Element: UserClientType {
 
 extension UserClientType {
 
-    func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString {
+    func attributedRemoteIdentifier(
+        _ attributes: [NSAttributedString.Key: AnyObject],
+        boldAttributes: [NSAttributedString.Key: AnyObject],
+        uppercase: Bool = false
+    ) -> NSAttributedString {
         let identifierPrefixString = L10n.Localizable.Registration.Devices.id + " "
         let identifierString = NSMutableAttributedString(string: identifierPrefixString, attributes: attributes)
         let identifier = uppercase ? displayIdentifier.localizedUppercase : displayIdentifier
-        let attributedRemoteIdentifier = identifier.fingerprintStringWithSpaces.fingerprintString(attributes: attributes, boldAttributes: boldAttributes)
+        let attributedRemoteIdentifier = identifier.fingerprintStringWithSpaces.fingerprintString(
+            attributes: attributes,
+            boldAttributes: boldAttributes
+        )
 
         identifierString.append(attributedRemoteIdentifier)
 
@@ -62,7 +72,7 @@ extension UserClientType {
     /// We manually add a padding if there was a leading zero
 
     var displayIdentifier: String {
-        guard let remoteIdentifier = self.remoteIdentifier else {
+        guard let remoteIdentifier else {
             return ""
         }
 
@@ -83,13 +93,13 @@ extension DeviceType {
     var localizedDescription: String {
         switch self {
         case .permanent:
-            return DeviceTypeLocale.permanent
+            DeviceTypeLocale.permanent
         case .temporary:
-            return DeviceTypeLocale.temporary
+            DeviceTypeLocale.temporary
         case .legalHold:
-            return DeviceTypeLocale.legalhold
+            DeviceTypeLocale.legalhold
         default:
-            return DeviceTypeLocale.unknown
+            DeviceTypeLocale.unknown
         }
     }
 
@@ -102,15 +112,15 @@ extension DeviceClass {
     var localizedDescription: String {
         switch self {
         case .phone:
-            return DeviceClassLocale.phone
+            DeviceClassLocale.phone
         case .desktop:
-            return DeviceClassLocale.desktop
+            DeviceClassLocale.desktop
         case .tablet:
-            return DeviceClassLocale.tablet
+            DeviceClassLocale.tablet
         case .legalHold:
-            return DeviceClassLocale.legalhold
+            DeviceClassLocale.legalhold
         default:
-            return DeviceClassLocale.unknown
+            DeviceClassLocale.unknown
         }
     }
 

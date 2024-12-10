@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireFoundation
+import WireLogging
 
+// sourcery: AutoMockable
 @objc
 public protocol LastEventIDRepositoryInterface {
 
@@ -46,7 +48,7 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )
@@ -61,6 +63,10 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
     }
 
     public func storeLastEventID(_ id: UUID?) {
+        WireLogger.sync.info(
+            "store last event id",
+            attributes: [.lastEventID: String(describing: id?.safeForLoggingDescription ?? "<nil>")]
+        )
         storage.setUUID(id, forKey: .lastEventID)
     }
 

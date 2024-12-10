@@ -22,4 +22,4 @@ protocol EventData {
     static var eventType: ZMUpdateEventType { get }
 }
 
-typealias CodableEventData = EventData & Codable
+typealias CodableEventData = Codable & EventData

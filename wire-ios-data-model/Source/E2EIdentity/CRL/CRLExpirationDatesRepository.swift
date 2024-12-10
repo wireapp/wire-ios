@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireFoundation
 
 // sourcery: AutoMockable
 public protocol CRLExpirationDatesRepositoryProtocol {
@@ -35,7 +35,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
 
         var rawValue: String {
             switch self {
-            case .expirationDate(let distributionPoint):
+            case let .expirationDate(distributionPoint):
                 "CRL_expirationDate_\(distributionPoint)"
             case .distributionPoints:
                 "CRL_distributionPoints"
@@ -49,7 +49,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
 
     // MARK: - Life cycle
 
-    convenience public init(userID: UUID) {
+    public convenience init(userID: UUID) {
         self.init(storage: .init(userID: userID))
     }
 
@@ -60,7 +60,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
     // MARK: - Interface
 
     public func crlExpirationDateExists(for distributionPoint: URL) -> Bool {
-        return fetchCRLExpirationDate(for: distributionPoint) != nil
+        fetchCRLExpirationDate(for: distributionPoint) != nil
     }
 
     public func storeCRLExpirationDate(_ expirationDate: Date, for distributionPoint: URL) {

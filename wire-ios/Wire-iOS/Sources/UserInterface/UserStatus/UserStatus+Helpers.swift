@@ -30,7 +30,7 @@ extension UserStatus {
 
         if includeAvailability || includeVerificationStatus {
             return AvailabilityStringBuilder.titleForUser(
-                name: name,
+                name: displayName,
                 availability: includeAvailability ? availability : .none,
                 isE2EICertified: includeVerificationStatus && isE2EICertified,
                 isProteusVerified: includeVerificationStatus && isProteusVerified,
@@ -39,8 +39,8 @@ extension UserStatus {
                 color: color
             )
 
-        } else if !name.isEmpty {
-            return .init(string: name, attributes: [.foregroundColor: color])
+        } else if !displayName.isEmpty {
+            return .init(string: displayName, attributes: [.foregroundColor: color])
 
         } else {
             let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable

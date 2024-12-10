@@ -17,6 +17,7 @@
 //
 
 import avs
+import WireAPI
 import WireDataModel
 
 open class AuthenticatedSessionFactory {
@@ -24,7 +25,6 @@ open class AuthenticatedSessionFactory {
     let appVersion: String
     let mediaManager: MediaManagerType
     let flowManager: FlowManagerType
-    var analytics: AnalyticsType?
     let application: ZMApplication
 
     var environment: BackendEnvironmentProvider
@@ -41,13 +41,11 @@ open class AuthenticatedSessionFactory {
         proxyUsername: String?,
         proxyPassword: String?,
         reachability: Reachability,
-        analytics: AnalyticsType? = nil,
         minTLSVersion: String?
     ) {
         self.appVersion = appVersion
         self.mediaManager = mediaManager
         self.flowManager = flowManager
-        self.analytics = analytics
         self.application = application
         self.environment = environment
         self.proxyUsername = proxyUsername
@@ -63,6 +61,25 @@ open class AuthenticatedSessionFactory {
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
+
+        let apiServiceFactory: APIServiceFactory = { [environment, minTLSVersion] clientID, userID in
+            let wireAssembly = WireAPI.Assembly(
+                userID: userID,
+                clientID: clientID,
+                backendURL: environment.backendURL,
+                backendWebSocketURL: environment.backendWSURL,
+                minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
+                cookieEncryptionKey: UserDefaults.cookiesKey()
+            )
+
+            let authenticationManager = wireAssembly.authenticationManager
+            let networkService = wireAssembly.apiNetworkService
+
+            return APIService(
+                networkService: networkService,
+                authenticationManager: authenticationManager
+            )
+        }
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: proxyUsername,
@@ -77,7 +94,7 @@ open class AuthenticatedSessionFactory {
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
-            analytics: analytics,
+            apiServiceFactory: apiServiceFactory,
             appVersion: appVersion,
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
@@ -110,8 +127,8 @@ open class AuthenticatedSessionFactory {
     }
 
     public func updateProxy(username: String?, password: String?) {
-        self.proxyUsername = username
-        self.proxyPassword = password
+        proxyUsername = username
+        proxyPassword = password
     }
 
     // MARK: - Private
@@ -167,8 +184,8 @@ open class UnauthenticatedSessionFactory {
     }
 
     public func updateProxy(username: String?, password: String?) {
-        self.proxyUsername = username
-        self.proxyPassword = password
+        proxyUsername = username
+        proxyPassword = password
     }
 
     // MARK: - Private

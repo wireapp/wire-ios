@@ -20,11 +20,18 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-extension ConversationLike where Self: SwiftConversationLike {
+extension MessageProtocol {
+    var supportsBots: Bool {
+        !isOne(of: .mls, .mixed)
+    }
+}
+
+extension ConversationLike where Self: GroupDetailsConversationType {
     var botCanBeAdded: Bool {
-        return conversationType != .oneOnOne &&
-               teamType != nil &&
-               allowServices
+        conversationType != .oneOnOne &&
+            teamType != nil &&
+            allowServices &&
+            messageProtocol.supportsBots
     }
 }
 
@@ -47,21 +54,22 @@ final class ServiceDetailViewController: UIViewController {
     typealias Completion = (AddBotResult?) -> Void
 
     enum ActionType {
-        case addService(ZMConversation), removeService(ZMConversation), openConversation
+        case addService(ZMConversation)
+        case removeService(ZMConversation)
+        case openConversation
     }
 
     var service: Service {
         didSet {
-            self.detailView.service = service
+            detailView.service = service
         }
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     let completion: Completion?
-    weak var viewControllerDismisser: ViewControllerDismisser?
 
     private let detailView: ServiceDetailView
     private let actionButton: ZMButton
@@ -86,29 +94,25 @@ final class ServiceDetailViewController: UIViewController {
         self.completion = completion
         self.userSession = userSession
 
-        detailView = ServiceDetailView(service: service)
+        self.detailView = ServiceDetailView(service: service)
 
         let selfUser = userSession.selfUser
 
         switch actionType {
         case let .addService(conversation):
-            actionButton = .createAddServiceButton()
+            self.actionButton = .createAddServiceButton()
             actionButton.isHidden = !selfUser.canAddService(to: conversation)
         case let .removeService(conversation):
-            actionButton = .createDestructiveServiceButton()
+            self.actionButton = .createDestructiveServiceButton()
             actionButton.isHidden = !selfUser.canRemoveService(from: conversation)
         case .openConversation:
-            actionButton = .openServiceConversationButton()
+            self.actionButton = .openServiceConversationButton()
             actionButton.isHidden = !selfUser.canCreateService
         }
 
         self.actionType = actionType
 
         super.init(nibName: nil, bundle: nil)
-
-        if let title = self.service.serviceUser.name {
-            navigationItem.setupNavigationBarTitle(title: title.capitalized)
-        }
 
         setupViews()
     }
@@ -121,15 +125,29 @@ final class ServiceDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(icon: .cross,
-                                                                 target: self,
-                                                                 action: #selector(ServiceDetailViewController.dismissButtonTapped(_:)))
-        self.navigationItem.rightBarButtonItem?.accessibilityIdentifier = "close"
-        self.navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceDetails.CloseButton.description
+        if let title = service.serviceUser.name {
+            setupNavigationBarTitle(title)
+        }
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            icon: .cross,
+            target: self,
+            action: #selector(ServiceDetailViewController.dismissButtonTapped(_:))
+        )
+        navigationItem.rightBarButtonItem?.accessibilityIdentifier = "close"
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceDetails.CloseButton
+            .description
     }
 
     private func setupViews() {
-        actionButton.addCallback(for: .touchUpInside, callback: callback(for: actionType, completion: self.completion))
+        actionButton.addCallback(
+            for: .primaryActionTriggered,
+            callback: callback(
+                for: actionType,
+                sender: actionButton,
+                completion: completion
+            )
+        )
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
@@ -141,11 +159,11 @@ final class ServiceDetailViewController: UIViewController {
             return
         }
 
-        self.service.serviceUser.fetchProvider(in: userSession) { [weak self] provider in
+        service.serviceUser.fetchProvider(in: userSession) { [weak self] provider in
             self?.detailView.service.provider = provider
         }
 
-        self.service.serviceUser.fetchDetails(in: userSession) { [weak self] details in
+        service.serviceUser.fetchDetails(in: userSession) { [weak self] details in
             self?.detailView.service.serviceUserDetails = details
         }
     }
@@ -158,8 +176,8 @@ final class ServiceDetailViewController: UIViewController {
             detailView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            actionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(16 + UIScreen.safeArea.bottom)),
-            detailView.topAnchor.constraint(equalTo: safeTopAnchor, constant: 16),
+            actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            detailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             actionButton.topAnchor.constraint(equalTo: detailView.bottomAnchor, constant: 16),
             actionButton.heightAnchor.constraint(equalToConstant: 48)
         ])
@@ -167,49 +185,59 @@ final class ServiceDetailViewController: UIViewController {
 
     @objc
     func backButtonTapped(_ sender: AnyObject!) {
-        self.navigationController?.popViewController(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 
     @objc
     func dismissButtonTapped(_ sender: AnyObject!) {
-        self.navigationController?.dismiss(animated: true, completion: { [weak self] in
+        navigationController?.dismiss(animated: true) { [weak self] in
             self?.completion?(nil)
-        })
+        }
     }
 
-    func callback(for type: ActionType, completion: Completion?) -> Callback<LegacyButton> {
-        return { [weak self] _ in
+    func callback(
+        for type: ActionType,
+        sender: UIView,
+        completion: Completion?
+    ) -> Callback<LegacyButton> {
+        { [weak self] _ in
             guard let `self`, let userSession = userSession as? ZMUserSession else {
                 return
             }
-            let serviceUser = self.service.serviceUser
+            let serviceUser = service.serviceUser
             switch type {
+
             case let .addService(conversation):
                 conversation.add(serviceUser: serviceUser, in: userSession) { result in
 
                     switch result {
                     case .success:
-                        Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
                         completion?(.success(conversation: conversation))
-                    case .failure(let error):
+                    case let .failure(error):
                         completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
                     }
                 }
+
             case let .removeService(conversation):
-                self.presentRemoveDialogue(for: serviceUser, from: conversation, dismisser: self.viewControllerDismisser)
+                presentRemoveDialogue(
+                    for: serviceUser,
+                    from: conversation,
+                    sender: sender
+                )
+
             case .openConversation:
-                if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: userSession.selfUser.membership?.team) {
+                if let existingConversation = ZMConversation.existingConversation(
+                    in: userSession.managedObjectContext,
+                    service: serviceUser,
+                    team: userSession.selfUser.membership?.team
+                ) {
                     completion?(.success(conversation: existingConversation))
                 } else {
                     serviceUser.createConversation(in: userSession, completionHandler: { result in
-                        if case let .success(conversation) = result {
-                            Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
-                        }
-
                         switch result {
-                        case .success(let conversation):
+                        case let .success(conversation):
                             completion?(.success(conversation: conversation))
-                        case .failure(let error):
+                        case let .failure(error):
                             completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
                         }
                     })
@@ -219,7 +247,7 @@ final class ServiceDetailViewController: UIViewController {
     }
 }
 
-fileprivate extension ZMButton {
+private extension ZMButton {
 
     typealias PeoplePickerServices = L10n.Localizable.Peoplepicker.Services
 
@@ -246,6 +274,6 @@ fileprivate extension ZMButton {
 
     convenience init(style: ButtonStyle, title: String) {
         self.init(style: style, cornerRadius: 16, fontSpec: .normalSemiboldFont)
-        self.setTitle(title, for: .normal)
+        setTitle(title, for: .normal)
     }
 }

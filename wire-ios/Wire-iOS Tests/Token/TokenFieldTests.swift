@@ -16,17 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDesign
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class TokenFieldTests: XCTestCase {
-    var sut: TokenField!
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TokenField!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = TokenField()
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
         sut.backgroundColor = .black
@@ -35,6 +40,7 @@ final class TokenFieldTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -46,58 +52,66 @@ final class TokenFieldTests: XCTestCase {
         sut.addToken(forTitle: "Token 4", representedObject: MockUser())
     }
 
+    // MARK: - Unit test
+
     func testThatClearFilterText() {
-        // given
+        // GIVEN
         createTokens()
 
         XCTAssertEqual(sut.textView.text.count, 8)
 
+        // WHEN
         sut.textView.insertText("dummy")
 
+        // WHEN
         XCTAssertEqual(sut.textView.text.count, 13)
-        // when
 
-        // then
+        // WHEN
         sut.clearFilterText()
 
+        // THEN
         // 8 tokens left, and the text is cleared
         XCTAssertEqual(sut.textView.text.count, 8)
     }
 
+    // MARK: - Snapshot Tests
+
     func testThatPlaceHolderIsShownAfterAllTokensAreRemoved() {
-        // given
+        // GIVEN
         createTokens()
 
-        // when
+        // WHEN
         sut.removeAllTokens()
 
-        // then
+        // THEN
         XCTAssert(sut.tokens.isEmpty)
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatTokenCanBeRemoved() {
-        // given
+        // GIVEN
         let token1: Token<NSObjectProtocol> = Token(title: "Token 1", representedObject: MockUser())
 
+        // WHEN
         sut.addToken(token1)
         sut.addToken(forTitle: "Token 2", representedObject: MockUser())
 
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
 
-        // when
+        // WHEN
         sut.removeToken(token1)
 
-        // then
+        // THEN
         XCTAssertEqual(sut.tokens.count, 1)
         XCTAssertEqual(sut.tokens.first?.title, "Token 2")
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForFilterUnwantedAttachments() {
-        // given
+        // GIVEN
         createTokens()
 
         // remove last 2 token(text and seperator) in text view
@@ -123,24 +137,24 @@ final class TokenFieldTests: XCTestCase {
         }
         sut.textView.textStorage.endEditing()
 
-        // when
+        // WHEN
         sut.filterUnwantedAttachments()
 
-        // then
+        // THEN
         XCTAssertEqual(sut.tokens.count, 3)
     }
 
     func testThatColorIsChnagedAfterUpdateTokenAttachments() {
-        // given
+        // GIVEN
         let token1: Token<NSObjectProtocol> = Token(title: "Token 1", representedObject: MockUser())
 
         sut.addToken(token1)
 
-        // when
+        // WHEN
         sut.tokenTitleColor = SemanticColors.Label.textDefault
         sut.updateTokenAttachments()
-        // then
 
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 }

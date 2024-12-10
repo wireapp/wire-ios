@@ -20,7 +20,7 @@ import Foundation
 
 protocol ObserverType: NSObjectProtocol {
     associatedtype ChangeInfo: ObjectChangeInfo
-    var notifications: [ChangeInfo] {get set}
+    var notifications: [ChangeInfo] { get set }
 }
 
 extension ObserverType {
@@ -50,10 +50,11 @@ class MessageObserver: NSObject, ZMMessageObserver {
 
     init(message: ZMMessage) {
         super.init()
-        token = MessageChangeInfo.add(
+        self.token = MessageChangeInfo.add(
             observer: self,
             for: message,
-            managedObjectContext: message.managedObjectContext!)
+            managedObjectContext: message.managedObjectContext!
+        )
     }
 
     var notifications: [MessageChangeInfo] = []
@@ -72,7 +73,7 @@ class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
 
     init(context: NSManagedObjectContext) {
         super.init()
-        token = NewUnreadMessagesChangeInfo.add(observer: self, managedObjectContext: context)
+        self.token = NewUnreadMessagesChangeInfo.add(observer: self, managedObjectContext: context)
     }
 
     func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo) {
@@ -93,7 +94,7 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
 
     init(conversation: ZMConversation) {
         super.init()
-        token = ConversationChangeInfo.add(observer: self, for: conversation)
+        self.token = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
     var notifications = [ConversationChangeInfo]()
@@ -103,17 +104,22 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
     }
 }
 
-@objcMembers class ConversationListChangeObserver: NSObject, ZMConversationListObserver {
+@objcMembers
+class ConversationListChangeObserver: NSObject, ZMConversationListObserver {
 
     public var notifications = [ConversationListChangeInfo]()
     public var observerCallback: ((ConversationListChangeInfo) -> Void)?
-    unowned var conversationList: ZMConversationList
+    unowned var conversationList: ConversationList
     var token: NSObjectProtocol?
 
-    init(conversationList: ZMConversationList, managedObjectContext: NSManagedObjectContext) {
+    init(conversationList: ConversationList, managedObjectContext: NSManagedObjectContext) {
         self.conversationList = conversationList
         super.init()
-        self.token = ConversationListChangeInfo.addListObserver(self, for: conversationList, managedObjectContext: managedObjectContext)
+        self.token = ConversationListChangeInfo.addListObserver(
+            self,
+            for: conversationList,
+            managedObjectContext: managedObjectContext
+        )
     }
 
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {

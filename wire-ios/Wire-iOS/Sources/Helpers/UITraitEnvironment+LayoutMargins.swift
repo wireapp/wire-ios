@@ -30,30 +30,31 @@ struct HorizontalMargins {
     init(userInterfaceSizeClass: UIUserInterfaceSizeClass) {
         switch userInterfaceSizeClass {
         case .regular:
-            left = 96
-            right = 96
+            self.left = 96
+            self.right = 96
         default:
-            left = 56
-            right = 16
+            self.left = 56
+            self.right = 16
         }
     }
 }
 
 extension UITraitEnvironment {
     var conversationHorizontalMargins: HorizontalMargins {
-        return conversationHorizontalMargins()
+        conversationHorizontalMargins()
     }
 
-    func conversationHorizontalMargins(windowWidth: CGFloat? = UIApplication.shared.firstKeyWindow?.frame.width) -> HorizontalMargins {
-
+    func conversationHorizontalMargins(
+        windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame
+            .width ?? UIScreen.main.bounds.width
+    ) -> HorizontalMargins {
         let userInterfaceSizeClass: UIUserInterfaceSizeClass
 
-        // On iPad 9.7 inch 2/3 mode, right view's width is  396pt, use the compact mode's narrower margin
-        if let windowWidth,
-            windowWidth <= CGFloat.SplitView.IPadMarginLimit {
-            userInterfaceSizeClass = .compact
+            // On iPad 9.7 inch 2/3 mode, right view's width is 396pt, use the compact mode's narrower margin
+            = if let windowWidth, windowWidth <= CGFloat.SplitView.IPadMarginLimit {
+            .compact
         } else {
-            userInterfaceSizeClass = .regular
+            .regular
         }
 
         return HorizontalMargins(userInterfaceSizeClass: userInterfaceSizeClass)

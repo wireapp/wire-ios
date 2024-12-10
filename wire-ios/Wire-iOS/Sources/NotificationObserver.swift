@@ -20,11 +20,13 @@ import UIKit
 import WireSyncEngine
 
 // MARK: - ObserverTokenStore
+
 protocol ObserverTokenStore: AnyObject {
     func addObserverToken(_ token: NSObjectProtocol)
 }
 
 // MARK: - ApplicationStateObserving
+
 protocol ApplicationStateObserving: ObserverTokenStore {
     func applicationDidBecomeActive()
     func applicationDidEnterBackground()
@@ -37,23 +39,29 @@ extension ApplicationStateObserving {
     func applicationWillEnterForeground() {}
 
     func setupApplicationNotifications() {
-        addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
             guard let self else { return }
             applicationDidEnterBackground()
         })
 
-        addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
             guard let self else { return }
             applicationDidBecomeActive()
         })
 
-        addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
             guard let self else { return }
             applicationWillEnterForeground()
         })
@@ -61,15 +69,18 @@ extension ApplicationStateObserving {
 }
 
 // MARK: - ContentSizeCategoryObserving
+
 protocol ContentSizeCategoryObserving: ObserverTokenStore {
     func contentSizeCategoryDidChange()
 }
 
 extension ContentSizeCategoryObserving {
     func setupContentSizeCategoryNotifications() {
-        addObserverToken(NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: UIContentSizeCategory.didChangeNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
             guard let self else { return }
             contentSizeCategoryDidChange()
         })
@@ -77,6 +88,7 @@ extension ContentSizeCategoryObserving {
 }
 
 // MARK: - AudioPermissionsObserving
+
 extension Notification.Name {
     static let UserGrantedAudioPermissions = Notification.Name("UserGrantedAudioPermissionsNotification")
 }
@@ -87,9 +99,11 @@ protocol AudioPermissionsObserving: ObserverTokenStore {
 
 extension AudioPermissionsObserving {
     func setupAudioPermissionsNotifications() {
-        addObserverToken(NotificationCenter.default.addObserver(forName: Notification.Name.UserGrantedAudioPermissions,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: Notification.Name.UserGrantedAudioPermissions,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
             self?.userDidGrantAudioPermissions()
         })
     }

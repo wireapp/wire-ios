@@ -19,9 +19,11 @@
 import Foundation
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 enum AvailabilityLabelStyle: Int {
-    case list, participants
+    case list
+    case participants
 }
 
 extension Availability {

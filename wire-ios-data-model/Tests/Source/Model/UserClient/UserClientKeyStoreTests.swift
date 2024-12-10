@@ -17,8 +17,8 @@
 //
 
 import WireCryptobox
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class UserClientKeysStoreTests: OtrBaseTest {
 
@@ -28,17 +28,20 @@ class UserClientKeysStoreTests: OtrBaseTest {
 
     override func setUp() {
         super.setUp()
-        self.accountID = UUID()
-        self.accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: accountID, applicationContainer: OtrBaseTest.sharedContainerURL)
-        self.cleanOTRFolder()
-        self.sut = UserClientKeysStore(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
+        accountID = UUID()
+        accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountID,
+            applicationContainer: OtrBaseTest.sharedContainerURL
+        )
+        cleanOTRFolder()
+        sut = UserClientKeysStore(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
     }
 
     override func tearDown() {
-        self.sut = nil
-        self.cleanOTRFolder()
-        self.accountID = nil
-        self.accountFolder = nil
+        sut = nil
+        cleanOTRFolder()
+        accountID = nil
+        accountFolder = nil
         super.tearDown()
     }
 
@@ -53,7 +56,8 @@ class UserClientKeysStoreTests: OtrBaseTest {
 
     func testThatTheOTRFolderHasBackupDisabled() {
         // when
-        guard let values = try? self.sut.cryptoboxDirectory.resourceValues(forKeys: [URLResourceKey.isExcludedFromBackupKey]) else {return XCTFail()}
+        guard let values = try? sut.cryptoboxDirectory
+            .resourceValues(forKeys: [URLResourceKey.isExcludedFromBackupKey]) else { return XCTFail() }
 
         // then
         XCTAssertTrue(values.isExcludedFromBackup!)
@@ -98,7 +102,9 @@ class UserClientKeysStoreTests: OtrBaseTest {
             // then
             iterations += 1
             if iterations > maxIterations {
-                XCTFail("Too many keys are generated without wrapping: \(iterations) iterations, max key is \(String(describing: maxKey))")
+                XCTFail(
+                    "Too many keys are generated without wrapping: \(iterations) iterations, max key is \(String(describing: maxKey))"
+                )
                 return
             }
 
@@ -121,8 +127,16 @@ class UserClientKeysStoreTests: OtrBaseTest {
 
     }
 
-    fileprivate func createLegacyOTRFolderWithDummyFile(fileName: String, data: Data, folder: URL = OtrBaseTest.legacyOtrDirectory) -> URL {
-        try! FileManager.default.createDirectory(atPath: folder.path, withIntermediateDirectories: true, attributes: [:])
+    fileprivate func createLegacyOTRFolderWithDummyFile(
+        fileName: String,
+        data: Data,
+        folder: URL = OtrBaseTest.legacyOtrDirectory
+    ) -> URL {
+        try! FileManager.default.createDirectory(
+            atPath: folder.path,
+            withIntermediateDirectories: true,
+            attributes: [:]
+        )
         try! data.write(to: folder.appendingPathComponent(fileName))
         return folder
     }

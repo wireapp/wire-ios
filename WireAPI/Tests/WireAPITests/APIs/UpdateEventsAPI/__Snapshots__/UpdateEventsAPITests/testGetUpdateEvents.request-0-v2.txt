@@ -1,4 +1,2 @@
-- HTTPRequest
-  - path: "/v2/notifications?client=abcd1234&since=d7f7f946-c4da-4300-998d-5aeba8affeee&size=500"
-  - method: get
-  - body: none
+curl \
+	"/v2/notifications?client=abcd1234&since=d7f7f946-c4da-4300-998d-5aeba8affeee&size=500"

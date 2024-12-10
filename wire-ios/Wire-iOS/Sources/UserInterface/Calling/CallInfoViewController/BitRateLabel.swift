@@ -25,16 +25,18 @@ enum BitRateStatus: String {
 
     fileprivate var localizedText: String {
         switch self {
-        case BitRateStatus.constant:
-            return L10n.Localizable.Call.Status.constantBitrate
-        case BitRateStatus.variable:
-            return L10n.Localizable.Call.Status.variableBitrate
+        case .constant:
+            L10n.Localizable.Call.Status.constantBitrate
+
+        /// We don't need to display the `Variable Bit Rate` label, because it's the default.
+        case .variable:
+            ""
         }
 
     }
 
     fileprivate var accessibilityValue: String {
-        return rawValue
+        rawValue
     }
 
     init(_ isConstantBitRate: Bool) {

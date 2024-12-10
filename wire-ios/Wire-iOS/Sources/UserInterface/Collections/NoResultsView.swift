@@ -22,13 +22,15 @@ import WireDesign
 import WireSystem
 
 final class NoResultsView: UIView {
-    let label = DynamicFontLabel(fontSpec: .body,
-                                 color: SemanticColors.Label.textCollectionSecondary)
+    let label = DynamicFontLabel(
+        style: .body1,
+        color: SemanticColors.Label.textCollectionSecondary
+    )
     private let iconView = UIImageView()
 
     var placeholderText: String? {
         get {
-            return label.text
+            label.text
         }
         set {
             label.text = newValue
@@ -59,13 +61,13 @@ final class NoResultsView: UIView {
 
         [label, iconView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          iconView.topAnchor.constraint(equalTo: topAnchor),
-          iconView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            iconView.topAnchor.constraint(equalTo: topAnchor),
+            iconView.centerXAnchor.constraint(equalTo: centerXAnchor),
 
-          label.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 24),
-          label.bottomAnchor.constraint(equalTo: bottomAnchor),
-          label.leadingAnchor.constraint(equalTo: leadingAnchor),
-          label.trailingAnchor.constraint(equalTo: trailingAnchor)
+            label.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 24),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor),
+            label.leadingAnchor.constraint(equalTo: leadingAnchor),
+            label.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
 

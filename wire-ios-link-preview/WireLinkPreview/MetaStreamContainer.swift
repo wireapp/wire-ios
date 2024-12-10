@@ -23,14 +23,14 @@ final class MetaStreamContainer {
     var bytes = Data()
 
     var stringContent: String? {
-        return parseString(from: bytes)
+        parseString(from: bytes)
     }
 
     var head: String? {
         guard let content = stringContent else { return nil }
         var startBound = content.range(of: OpenGraphXMLNode.headStart.rawValue)?.lowerBound ??
-                           content.range(of: OpenGraphXMLNode.headStartNoAttributes.rawValue)?.lowerBound ??
-                           content.startIndex
+            content.range(of: OpenGraphXMLNode.headStartNoAttributes.rawValue)?.lowerBound ??
+            content.startIndex
 
         let upperBound = content.range(of: OpenGraphXMLNode.headEnd.rawValue)?.upperBound ?? content.endIndex
 
@@ -38,13 +38,14 @@ final class MetaStreamContainer {
             startBound = content.startIndex
         }
 
-        let result = content[startBound..<upperBound]
+        let result = content[startBound ..< upperBound]
         return String(result)
     }
 
     var reachedEndOfHead = false
 
-    @discardableResult func addData(_ data: Data) -> Data {
+    @discardableResult
+    func addData(_ data: Data) -> Data {
         updateReachedEndOfHead(withData: data)
         bytes.append(data)
         return bytes as Data
@@ -58,8 +59,6 @@ final class MetaStreamContainer {
     }
 
     private func parseString(from data: Data) -> String? {
-        return String(data: data, encoding: .utf8)
-            ?? String(data: data, encoding: .isoLatin1)
+        String(decoding: data, as: UTF8.self)
     }
-
 }

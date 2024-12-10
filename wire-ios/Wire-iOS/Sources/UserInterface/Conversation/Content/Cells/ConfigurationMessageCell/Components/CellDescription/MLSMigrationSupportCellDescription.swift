@@ -45,42 +45,46 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
         let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
         let content = Self.makeAttributedString(messageType: messageType, for: user)
 
-        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
-        accessibilityLabel = content?.string
+        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
+        self.accessibilityLabel = content?.string
     }
 
     // MARK: Attributed Strings
 
-    private static func makeAttributedString(messageType: ZMSystemMessageType, for user: UserType) -> NSAttributedString? {
+    private static func makeAttributedString(
+        messageType: ZMSystemMessageType,
+        for user: UserType
+    ) -> NSAttributedString? {
         switch messageType {
         case .mlsNotSupportedSelfUser:
             return makeMLSNotSupportedMessageForSelfUser(username: user.name ?? "")
         case .mlsNotSupportedOtherUser:
             return makeMLSNotSupportedMessageForOtherUser(username: user.name ?? "")
         default:
-            assertionFailure("MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!")
+            assertionFailure(
+                "MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!"
+            )
             return nil
         }
     }
 
     private static func makeMLSNotSupportedMessageForSelfUser(username: String) -> NSAttributedString? {
 
-        let text = NSMutableAttributedString.markdown(
-            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, URL.wr_wireAppOnItunes.absoluteString),
+        NSMutableAttributedString.markdown(
+            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(
+                username,
+                WireURLs.shared.appOnItunes.absoluteString
+            ),
             style: .systemMessage
         )
-
-        return text
     }
 
     private static func makeMLSNotSupportedMessageForOtherUser(username: String) -> NSAttributedString? {
 
-        let text = NSMutableAttributedString.markdown(
+        NSMutableAttributedString.markdown(
             from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByOtherUser(username, username),
             style: .systemMessage
         )
-
-        return text
     }
 
 }

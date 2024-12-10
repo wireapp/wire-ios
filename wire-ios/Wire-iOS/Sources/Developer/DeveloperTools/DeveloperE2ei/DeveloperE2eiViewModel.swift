@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSyncEngine
 
 final class DeveloperE2eiViewModel: ObservableObject {
@@ -27,17 +28,13 @@ final class DeveloperE2eiViewModel: ObservableObject {
         return CRLExpirationDatesRepository(userID: userSession.selfUser.remoteIdentifier)
     }
 
-    @Published
-    var certificateExpirationTime = ""
+    @Published var certificateExpirationTime = ""
 
-    @Published
-    var storedCRLExpirationDatesByURL = [String: String]()
+    @Published var storedCRLExpirationDatesByURL = [String: String]()
 
-    @Published
-    var certificateValidFrom = ""
+    @Published var certificateValidFrom = ""
 
-    @Published
-    var certificateValidTo = ""
+    @Published var certificateValidTo = ""
 
     init() {
         refreshCRLExpirationDates()
@@ -55,7 +52,7 @@ final class DeveloperE2eiViewModel: ObservableObject {
         else { return }
 
         let e2eiCertificateUseCase = session.enrollE2EICertificate as? EnrollE2EICertificateUseCase
-        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
 
         Task {
             do {

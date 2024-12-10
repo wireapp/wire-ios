@@ -23,8 +23,7 @@ struct DeveloperFlagsView: View {
 
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: DeveloperFlagsViewModel
+    @StateObject var viewModel: DeveloperFlagsViewModel
 
     // MARK: - Views
 

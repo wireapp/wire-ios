@@ -19,12 +19,17 @@
 import WireImages
 import WireTransport
 
-@objcMembers public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
+@objcMembers
+public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
+    ZMContextChangeTrackerSource {
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [.allowsRequestsWhileOnline]
@@ -36,10 +41,12 @@ import WireTransport
             return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading
         }
 
-        assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
-                                                                        entityName: ZMAssetClientMessage.entityName(),
-                                                                        predicateForObjectsToDownload: downloadPredicate,
-                                                                        managedObjectContext: managedObjectContext)
+        self.assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
+            transcoder: self,
+            entityName: ZMAssetClientMessage.entityName(),
+            predicateForObjectsToDownload: downloadPredicate,
+            managedObjectContext: managedObjectContext
+        )
 
         registerForCancellationNotification()
         registerForWhitelistingNotification()
@@ -47,18 +54,22 @@ import WireTransport
 
     func registerForCancellationNotification() {
 
-        notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
-                                                                    context: self.managedObjectContext.notificationContext,
-                                                                    object: nil) { [weak self] note in
+        notificationTokens.append(NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
+            context: managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.cancelOngoingRequestForAssetClientMessage(objectID)
         })
     }
 
     func registerForWhitelistingNotification() {
-        notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.assetDownloadNotificationName,
-                                                                    context: self.managedObjectContext.notificationContext,
-                                                                    object: nil) { [weak self] note in
+        notificationTokens.append(NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.assetDownloadNotificationName,
+            context: managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.didRequestToDownloadAsset(objectID)
         })
@@ -67,10 +78,10 @@ import WireTransport
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
+            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
             guard let message = object as? ZMAssetClientMessage else { return }
             message.isDownloading = true
-            self.assetDownstreamObjectSync.whiteListObject(message)
+            assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }
@@ -78,19 +89,23 @@ import WireTransport
     func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
+            guard let message = managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage
+            else { return }
             guard message.version < 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }
-            self.applicationStatus?.requestCancellation.cancelTask(with: identifier)
+            applicationStatus?.requestCancellation.cancelTask(with: identifier)
             message.associatedTaskIdentifier = nil
         }
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return self.assetDownstreamObjectSync.nextRequest(for: apiVersion)
+        assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
-    fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
+    fileprivate func handleResponse(
+        _ response: ZMTransportResponse,
+        forMessage assetClientMessage: ZMAssetClientMessage
+    ) {
 
         assetClientMessage.isDownloading = false
 
@@ -117,9 +132,8 @@ import WireTransport
             return
         }
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
-        // swiftlint:enable todo_requires_jira_link
         fileCache.storeEncryptedFile(
             data: data,
             for: assetClientMessage
@@ -139,12 +153,16 @@ import WireTransport
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-            return [self.assetDownstreamObjectSync]
+        [assetDownstreamObjectSync]
     }
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0, .v1:
             if let assetClientMessage = object as? ZMAssetClientMessage {
@@ -153,16 +171,19 @@ import WireTransport
                     assetClientMessage.associatedTaskIdentifier = taskIdentifier
                 }
 
-                let completionHandler = ZMCompletionHandler(on: self.managedObjectContext) { response in
+                let completionHandler = ZMCompletionHandler(on: managedObjectContext) { response in
                     self.handleResponse(response, forMessage: assetClientMessage)
                 }
 
-                let progressHandler = ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
+                let progressHandler = ZMTaskProgressHandler(on: managedObjectContext) { progress in
                     assetClientMessage.progress = progress
                     self.managedObjectContext.enqueueDelayedSave()
                 }
 
-                if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage, apiVersion: apiVersion) {
+                if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(
+                    assetClientMessage,
+                    apiVersion: apiVersion
+                ) {
                     request.add(taskCreationHandler)
                     request.add(completionHandler)
                     request.add(progressHandler)
@@ -172,7 +193,7 @@ import WireTransport
 
             fatalError("Cannot generate request for \(object.safeForLoggingDescription)")
 
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2, .v3, .v4, .v5, .v6, .v7:
             return nil
         }
 

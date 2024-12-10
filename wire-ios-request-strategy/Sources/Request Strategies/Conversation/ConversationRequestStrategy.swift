@@ -18,8 +18,10 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
-public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
+public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource,
+    ZMContextChangeTrackerSource {
 
     let syncProgress: SyncProgress
     let conversationIDsSync: PaginatedSync<Payload.PaginatedConversationIDList>
@@ -37,12 +39,12 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     let conversationByQualifiedIDListTranscoder: ConversationByQualifiedIDListTranscoder
     let conversationByQualifiedIDListSync: IdentifierObjectSync<ConversationByQualifiedIDListTranscoder>
 
-    lazy var modifiedSync: ZMUpstreamModifiedObjectSync = {
-        ZMUpstreamModifiedObjectSync(transcoder: self,
-                                     entityName: ZMConversation.entityName(),
-                                     keysToSync: keysToSync,
-                                     managedObjectContext: managedObjectContext)
-    }()
+    lazy var modifiedSync: ZMUpstreamModifiedObjectSync = .init(
+        transcoder: self,
+        entityName: ZMConversation.entityName(),
+        keysToSync: keysToSync,
+        managedObjectContext: managedObjectContext
+    )
 
     let addParticipantActionHandler: AddParticipantActionHandler
     let removeParticipantActionHandler: RemoveParticipantActionHandler
@@ -128,8 +130,11 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             \.needsToBeUpdatedFromBackend
         )
 
-        conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
-        self.addParticipantActionHandler = AddParticipantActionHandler(context: managedObjectContext, eventProcessor: conversationEventProcessor)
+        self.conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
+        self.addParticipantActionHandler = AddParticipantActionHandler(
+            context: managedObjectContext,
+            eventProcessor: conversationEventProcessor
+        )
         self.removeParticipantActionHandler = RemoveParticipantActionHandler(context: managedObjectContext)
         self.updateAccessRolesActionHandler = UpdateAccessRolesActionHandler(context: managedObjectContext)
 
@@ -155,14 +160,16 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             applicationStatus: applicationStatus
         )
 
-        self.configuration = [.allowsRequestsWhileOnline,
-                              .allowsRequestsDuringSlowSync,
-                              .allowsRequestsDuringQuickSync,
-                              .allowsRequestsWhileWaitingForWebsocket]
+        self.configuration = [
+            .allowsRequestsWhileOnline,
+            .allowsRequestsDuringSlowSync,
+            .allowsRequestsDuringQuickSync,
+            .allowsRequestsWhileWaitingForWebsocket
+        ]
 
-        self.updateSync.transcoder = self
-        self.conversationByIDListSync.delegate = self
-        self.conversationByQualifiedIDListSync.delegate = self
+        updateSync.transcoder = self
+        conversationByIDListSync.delegate = self
+        conversationByQualifiedIDListSync.delegate = self
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -178,7 +185,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v0:
             conversationByIDSync.sync(identifiers: conversations.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             } else if let domain = BackendInfo.domain {
@@ -204,17 +211,17 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v0:
             conversationIDsSync.fetch { [weak self] result in
                 switch result {
-                case .success(let conversationIDList):
+                case let .success(conversationIDList):
                     self?.conversationByIDListSync.sync(identifiers: conversationIDList.conversations)
                 case .failure:
                     self?.syncProgress.failCurrentSyncPhase(phase: .fetchingConversations)
                 }
             }
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
             conversationQualifiedIDsSync.fetch { [weak self] result in
                 switch result {
-                case .success(let qualifiedConversationIDList):
+                case let .success(qualifiedConversationIDList):
 
                     // here we could use a different sync, or do the switch inside.
                     self?.conversationByQualifiedIDListSync.sync(identifiers: qualifiedConversationIDList.conversations)
@@ -227,14 +234,14 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
     public var requestGenerators: [ZMRequestGenerator] {
         if syncProgress.currentSyncPhase == .fetchingConversations {
-            return [
+            [
                 conversationIDsSync,
                 conversationQualifiedIDsSync,
                 conversationByIDListSync,
                 conversationByQualifiedIDListSync
             ]
         } else {
-            return [
+            [
                 conversationByIDSync,
                 conversationByQualifiedIDSync,
                 modifiedSync,
@@ -244,7 +251,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [updateSync, modifiedSync]
+        [updateSync, modifiedSync]
     }
 
 }
@@ -262,7 +269,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
             guard let identifier = object.remoteIdentifier else { return }
             synchronize(unqualifiedID: identifier)
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
             if let qualifiedID = object.qualifiedID {
                 synchronize(qualifiedID: qualifiedID)
             } else if let identifier = object.remoteIdentifier, let domain = BackendInfo.domain {
@@ -324,7 +331,7 @@ extension ConversationRequestStrategy: IdentifierObjectSyncDelegate {
 extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
-        return false
+        false
     }
 
     public func shouldCreateRequest(
@@ -343,7 +350,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
         var remainingKeys = keys
 
-        if keys.contains(ZMConversationUserDefinedNameKey) && conversation.userDefinedName == nil {
+        if keys.contains(ZMConversationUserDefinedNameKey), conversation.userDefinedName == nil {
             let conversationUserDefinedNameKeySet: Set<AnyHashable> = [ZMConversationUserDefinedNameKey]
             conversation.resetLocallyModifiedKeys(conversationUserDefinedNameKeySet)
             remainingKeys.remove(ZMConversationUserDefinedNameKey)
@@ -351,11 +358,11 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
         if remainingKeys.count < keys.count {
             let conversationSet: Set<NSManagedObject> = [conversation]
-            contextChangeTrackers.forEach({ $0.objectsDidChange(conversationSet) })
+            contextChangeTrackers.forEach { $0.objectsDidChange(conversationSet) }
             managedObjectContext.enqueueDelayedSave()
         }
 
-        return remainingKeys.count > 0
+        return !remainingKeys.isEmpty
     }
 
     public func shouldRetryToSyncAfterFailed(
@@ -364,7 +371,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse,
         keysToParse keys: Set<String>
     ) -> Bool {
-        return false
+        false
     }
 
     public func updateInsertedObject(
@@ -381,7 +388,6 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse,
         keysToParse: Set<String>
     ) -> Bool {
-
         guard
             keysToParse.contains(ZMConversationUserDefinedNameKey),
             let payload = response.payload
@@ -389,18 +395,24 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             return false
         }
 
+        // There is one case where you end up here:
+        // 1) selfUser edits the conversation name: a save will be enqueue when user is done editing
+        // Note: when another user edited the conversation name, ConversationEventProcessor is called directly as
+        // EventAsyncConsumer and a save will be done in EventProcessor
         conversationEventProcessor.processPayload(payload)
 
         return false
     }
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
-        return nil
+        nil
     }
 
-    public func request(forUpdating managedObject: ZMManagedObject,
-                        forKeys keys: Set<String>,
-                        apiVersion: APIVersion) -> ZMUpstreamRequest? {
+    public func request(
+        forUpdating managedObject: ZMManagedObject,
+        forKeys keys: Set<String>,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest? {
         guard
             let conversation = managedObject as? ZMConversation,
             let conversationID = conversation.remoteIdentifier?.transportString()
@@ -421,19 +433,23 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             switch apiVersion {
 
             case .v0:
-                request = ZMTransportRequest(path: "/conversations/\(conversationID)",
-                                             method: .put,
-                                             payload: payloadAsString as ZMTransportData?,
-                                             apiVersion: apiVersion.rawValue)
+                request = ZMTransportRequest(
+                    path: "/conversations/\(conversationID)",
+                    method: .put,
+                    payload: payloadAsString as ZMTransportData?,
+                    apiVersion: apiVersion.rawValue
+                )
 
-            case .v1, .v2, .v3, .v4, .v5, .v6:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
                 guard let domain else { return nil }
 
-                request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/name",
-                                             method: .put,
-                                             payload: payloadAsString as ZMTransportData?,
-                                             apiVersion: apiVersion.rawValue)
+                request = ZMTransportRequest(
+                    path: "/conversations/\(domain)/\(conversationID)/name",
+                    method: .put,
+                    payload: payloadAsString as ZMTransportData?,
+                    apiVersion: apiVersion.rawValue
+                )
             }
 
             let conversationUserDefinedNameKey = Set([ZMConversationUserDefinedNameKey])
@@ -459,12 +475,14 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             switch apiVersion {
 
             case .v0:
-                request = ZMTransportRequest(path: "/conversations/\(conversationID)/self",
-                                             method: .put,
-                                             payload: payloadAsString as ZMTransportData?,
-                                             apiVersion: apiVersion.rawValue)
+                request = ZMTransportRequest(
+                    path: "/conversations/\(conversationID)/self",
+                    method: .put,
+                    payload: payloadAsString as ZMTransportData?,
+                    apiVersion: apiVersion.rawValue
+                )
 
-            case .v1, .v2, .v3, .v4, .v5, .v6:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
                 guard let domain else { return nil }
 
@@ -495,7 +513,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         forKeys keys: Set<String>?,
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
-        return nil
+        nil
     }
 
 }
@@ -530,7 +548,11 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/conversations/\(converationID)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<UUID>,
+        completionHandler: @escaping () -> Void
+    ) {
 
         guard response.result != .permanentError else {
             if response.httpStatus == 404 {
@@ -651,10 +673,17 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         }
 
         // GET /conversations/domain/<UUID>
-        return ZMTransportRequest(getFromPath: "/conversations/\(domain)/\(conversationID)", apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            getFromPath: "/conversations/\(domain)/\(conversationID)",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<QualifiedID>,
+        completionHandler: @escaping () -> Void
+    ) {
 
         guard response.result != .permanentError else {
             markConversationsAsFetched(identifiers)
@@ -703,7 +732,8 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                 let conversation = ZMConversation.fetch(
                     with: qualifiedID.uuid,
                     domain: qualifiedID.domain,
-                    in: context)
+                    in: context
+                )
                 if conversation?.conversationType == .group {
                     return conversation
                 } else {
@@ -727,7 +757,11 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     private func removeSelfUser(_ conversations: Set<QualifiedID>) {
         for qualifiedID in conversations {
             guard
-                let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context),
+                let conversation = ZMConversation.fetch(
+                    with: qualifiedID.uuid,
+                    domain: qualifiedID.domain,
+                    in: context
+                ),
                 conversation.conversationType == .group,
                 conversation.isSelfAnActiveMember
             else {
@@ -772,11 +806,15 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         // GET /conversations?ids=?
         guard apiVersion < .v2 else { return nil }
-        let converationIDs = identifiers.map({ $0.transportString() }).joined(separator: ",")
+        let converationIDs = identifiers.map { $0.transportString() }.joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/conversations?ids=\(converationIDs)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<UUID>,
+        completionHandler: @escaping () -> Void
+    ) {
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
@@ -836,7 +874,8 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
-            let payloadData = Payload.QualifiedUserIDList(qualifiedIDs: Array(identifiers)).payloadData(encoder: encoder),
+            let payloadData = Payload.QualifiedUserIDList(qualifiedIDs: Array(identifiers))
+            .payloadData(encoder: encoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
             return nil
@@ -844,10 +883,19 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
         let path = apiVersion >= .v2 ? "/conversations/list" : "/conversations/list/v2"
 
-        return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payloadAsString as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<QualifiedID>,
+        completionHandler: @escaping () -> Void
+    ) {
 
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
@@ -884,7 +932,11 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     private func queryStatusForFailedConversations(_ conversations: [QualifiedID]) {
 
         for qualifiedID in conversations {
-            let conversation = ZMConversation.fetchOrCreate(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+            let conversation = ZMConversation.fetchOrCreate(
+                with: qualifiedID.uuid,
+                domain: qualifiedID.domain,
+                in: context
+            )
             conversation.isPendingMetadataRefresh = true
             conversation.needsToBeUpdatedFromBackend = true
         }
@@ -892,16 +944,16 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
 }
 
-private extension Collection where Element == ZMConversation {
+private extension Collection<ZMConversation> {
 
     func fallbackQualifiedIDs(localDomain: String) -> [QualifiedID] {
-        return compactMap { conversation in
+        compactMap { conversation in
             if let qualifiedID = conversation.qualifiedID {
-                return qualifiedID
+                qualifiedID
             } else if let identifier = conversation.remoteIdentifier {
-                return QualifiedID(uuid: identifier, domain: localDomain)
+                QualifiedID(uuid: identifier, domain: localDomain)
             } else {
-                return nil
+                nil
             }
         }
     }

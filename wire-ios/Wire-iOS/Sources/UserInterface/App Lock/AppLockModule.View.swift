@@ -24,10 +24,11 @@ extension AppLockModule {
 
         // MARK: - Properties
 
+        private var hasViewAppeared = false
         var presenter: AppLockPresenterViewInterface!
 
         override var prefersStatusBarHidden: Bool {
-            return true
+            true
         }
 
         let lockView = LockView()
@@ -37,12 +38,16 @@ extension AppLockModule {
         override func viewDidLoad() {
             super.viewDidLoad()
             setUpViews()
-            setUpObserver()
         }
 
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
-            presenter.processEvent(.viewDidAppear)
+
+            if !hasViewAppeared {
+                presenter.processEvent(.viewDidFirstAppear)
+                hasViewAppeared = true
+                observeViewWillEnterForeground()
+            }
         }
 
         // MARK: - Methods
@@ -53,8 +58,13 @@ extension AppLockModule {
             lockView.fitIn(view: view)
         }
 
-        private func setUpObserver() {
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        private func observeViewWillEnterForeground() {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(applicationWillEnterForeground),
+                name: UIApplication.willEnterForegroundNotification,
+                object: nil
+            )
         }
 
         @objc
@@ -78,10 +88,10 @@ extension AppLockModule {
         var showReauth: Bool {
             switch self {
             case .locked:
-                return true
+                true
 
             case .authenticating:
-                return false
+                false
             }
         }
 
@@ -106,18 +116,18 @@ extension AppLockModule {
         var buttonTitle: String {
             switch self {
             case .locked(.unavailable):
-                return Strings.GoToSettingsButton.title
+                Strings.GoToSettingsButton.title
             default:
-                return Strings.UnlockButton.title
+                Strings.UnlockButton.title
             }
         }
 
         var buttonEvent: AppLockModule.Event {
             switch self {
             case .locked(.unavailable):
-                return .openDeviceSettingsButtonTapped
+                .openDeviceSettingsButtonTapped
             default:
-                return .unlockButtonTapped
+                .unlockButtonTapped
             }
         }
     }
@@ -147,9 +157,7 @@ extension AppLockModule.View: PasscodeSetupViewControllerDelegate {
         presenter.processEvent(.passcodeSetupCompleted)
     }
 
-    func passcodeSetupControllerWasDismissed() {
-
-    }
+    func passcodeSetupControllerWasDismissed() {}
 
 }
 

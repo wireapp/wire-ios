@@ -21,27 +21,32 @@ import Foundation
 
 extension QualifiedID {
     static func randomID() -> QualifiedID {
-        return QualifiedID(uuid: UUID(), domain: "example.com")
+        QualifiedID(uuid: UUID(), domain: "example.com")
     }
 }
 
 extension MessagingTestBase {
 
-    func createConnectionPayload(_ connection: ZMConnection,
-                                 status: ZMConnectionStatus = .accepted,
-                                 lastUpdate: Date = Date()) -> Payload.Connection {
-        return Payload.Connection(
+    func createConnectionPayload(
+        _ connection: ZMConnection,
+        status: ZMConnectionStatus = .accepted,
+        lastUpdate: Date = Date()
+    ) -> Payload.Connection {
+        Payload.Connection(
             from: nil,
             to: connection.to.remoteIdentifier,
             qualifiedTo: connection.to.qualifiedID,
             conversationID: connection.to.oneOnOneConversation!.remoteIdentifier,
             qualifiedConversationID: connection.to.oneOnOneConversation!.qualifiedID,
             lastUpdate: lastUpdate,
-            status: Payload.ConnectionStatus(status)!)
+            status: Payload.ConnectionStatus(status)!
+        )
     }
 
-    func createConnectionPayload(to qualifiedTo: QualifiedID = .randomID(),
-                                 conversation qualifiedConversation: QualifiedID = .randomID()) -> Payload.Connection {
+    func createConnectionPayload(
+        to qualifiedTo: QualifiedID = .randomID(),
+        conversation qualifiedConversation: QualifiedID = .randomID()
+    ) -> Payload.Connection {
         let fromID = UUID()
         let toID = qualifiedTo.uuid
         let qualifiedTo = qualifiedTo
@@ -53,19 +58,25 @@ extension MessagingTestBase {
             conversationID: qualifiedConversation.uuid,
             qualifiedConversationID: qualifiedConversation,
             lastUpdate: Date(),
-            status: .accepted)
+            status: .accepted
+        )
     }
 
-    func responseFailure(code: Int, label: Payload.ResponseFailure.Label, message: String = "", apiVersion: APIVersion) -> ZMTransportResponse {
+    func responseFailure(
+        code: Int,
+        label: Payload.ResponseFailure.Label,
+        message: String = "",
+        apiVersion: APIVersion
+    ) -> ZMTransportResponse {
         let responseFailure = Payload.ResponseFailure(code: code, label: label, message: message, data: nil)
         let payloadData = responseFailure.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
-        let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
-                                           httpStatus: code,
-                                           transportSessionError: nil,
-                                           apiVersion: apiVersion.rawValue)
-
-        return response
+        return ZMTransportResponse(
+            payload: payloadString as ZMTransportData,
+            httpStatus: code,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
 
     }
 
@@ -74,8 +85,8 @@ extension MessagingTestBase {
         return ZMUpdateEvent(fromEventStreamPayload: payload! as ZMTransportData, uuid: UUID())!
     }
 
-    func updateEvent<Event: CodableEventData>(
-        from data: Event,
+    func updateEvent(
+        from data: some CodableEventData,
         conversationID: QualifiedID? = nil,
         senderID: QualifiedID? = nil,
         timestamp: Date? = nil
@@ -98,7 +109,7 @@ extension MessagingTestBase {
         timestamp: Date? = nil
     ) -> Payload.ConversationEvent<Event> {
 
-        return Payload.ConversationEvent<Event>(
+        Payload.ConversationEvent<Event>(
             id: conversationID?.uuid,
             data: data,
             from: senderID?.uuid,

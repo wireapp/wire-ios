@@ -16,22 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class GroupConversationCellTests: XCTestCase {
 
-    var sut: GroupConversationCell!
-    var otherUser: MockUserType!
+    private var sut: GroupConversationCell!
+    private var otherUser: MockUserType!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         otherUser = MockUserType.createDefaultOtherUser()
         sut = GroupConversationCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         otherUser = nil
 
@@ -41,9 +45,7 @@ final class GroupConversationCellTests: XCTestCase {
     private func createOneOnOneConversation() -> MockStableRandomParticipantsConversation {
         otherUser = MockUserType.createDefaultOtherUser()
 
-        let otherUserConversation = MockStableRandomParticipantsConversation.createOneOnOneConversation(otherUser: otherUser)
-
-        return otherUserConversation
+        return MockStableRandomParticipantsConversation.createOneOnOneConversation(otherUser: otherUser)
     }
 
     private func createGroupConversation() -> MockStableRandomParticipantsConversation {
@@ -59,14 +61,36 @@ final class GroupConversationCellTests: XCTestCase {
         return groupConversation
     }
 
-    private func verify(conversation: GroupConversationCellConversation,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
+    private func verify(
+        conversation: GroupConversationCellConversation,
+        file: StaticString = #filePath,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
         sut.configure(conversation: conversation)
 
-        verifyInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
+        snapshotHelper
+            .withPerceptualPrecision(0.98)
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
+
+        snapshotHelper
+            .withPerceptualPrecision(0.98)
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme",
+                file: file,
+                testName: testName,
+                line: line
+            )
     }
 
     func testOneToOneConversation() {

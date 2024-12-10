@@ -16,20 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class CompleteReactionPickerViewControllerTests: XCTestCase {
 
     // MARK: Properties
 
-    var sut: CompleteReactionPickerViewController!
-    var emojiRepository: EmojiRepository!
+    private var sut: CompleteReactionPickerViewController!
+    private var emojiRepository: EmojiRepository!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         emojiRepository = EmojiRepository()
         sut = setUpCompleteReactionPickerViewController()
     }
@@ -37,6 +41,7 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
     // MARK: tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         emojiRepository.registerRecentlyUsedEmojis([])
         emojiRepository = nil
@@ -46,9 +51,13 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
     // MARK: Snapshot Tests
 
     func testReactionPicker() {
+        // GIVEN & WHEN
         sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🐒"])
         scrollToSection(1)
-        verify(matching: sut)
+
+        // THEN
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     func testReactionPicker_scrolledToMiddle() {
@@ -57,7 +66,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         scrollToSection(4)
 
         // THEN
-        verify(matching: sut)
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     func testReactionPicker_scrolledToBottom() {
@@ -66,7 +76,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         scrollToSection(7)
 
         // THEN
-        verify(matching: sut)
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     func testReactionPicker_withRecentReactionsSection() {
@@ -76,7 +87,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🐒"])
 
         // THEN
-        verify(matching: sut)
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     func testReactionPicker_withSearchQuery() {
@@ -87,7 +99,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         scrollToSection(1)
 
         // THEN
-        verify(matching: sut)
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     // MARK: Helper Methods
@@ -104,9 +117,11 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
     private func scrollToSection(_ section: Int) {
         sut.view.subviews.forEach {
             if let collectionView = $0 as? UICollectionView {
-                collectionView.scrollToItem(at: IndexPath(item: 0, section: section),
-                                            at: .top,
-                                            animated: false)
+                collectionView.scrollToItem(
+                    at: IndexPath(item: 0, section: section),
+                    at: .top,
+                    animated: false
+                )
             }
         }
     }

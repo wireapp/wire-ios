@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public typealias Reachability = ReachabilityProvider & TearDownCapable
 
@@ -26,11 +27,10 @@ extension BackendEnvironmentProvider {
 
         let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
 
-        let serverNames: [String]
-        if let proxy = self.proxy {
-            serverNames = [proxy.host]
+        let serverNames: [String] = if let proxy {
+            [proxy.host]
         } else {
-            serverNames = [backendURL, backendWSURL].compactMap(\.host)
+            [backendURL, backendWSURL].compactMap(\.host)
         }
 
         return ZMReachability(serverNames: serverNames, group: group)
@@ -82,15 +82,19 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
     var enabled: Bool {
         didSet {
             WireLogger.backend.debug("did set reachability enabled: \(enabled)")
-            if safeReachability == nil && enabled {
+            if safeReachability == nil, enabled {
                 safeReachability = reachabilityClosure()
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: self)
+                NotificationCenter.default.post(
+                    name: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled),
+                    object: self
+                )
             } else if !enabled {
                 safeReachability?.tearDown()
                 safeReachability = nil
             }
         }
     }
+
     var reachabilityClosure: () -> Reachability
     private var safeReachability: Reachability? {
         didSet {

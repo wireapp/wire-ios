@@ -58,7 +58,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
             showUnreadDot: context.isFirstUnreadMessage,
             accentColor: accentColor
         )
-        actionController = nil
+        self.actionController = nil
     }
 
     init(configuration: View.Configuration) {
@@ -106,7 +106,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     override func willMove(toWindow newWindow: UIWindow?) {
         super.willMove(toWindow: newWindow)
 
-        if self.window == nil {
+        if window == nil {
             stopTimer()
         }
     }
@@ -120,7 +120,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     }
 
     private func reconfigure() {
-        guard let configuration = self.configuration else {
+        guard let configuration else {
             return
         }
         configure(with: configuration, animated: false)

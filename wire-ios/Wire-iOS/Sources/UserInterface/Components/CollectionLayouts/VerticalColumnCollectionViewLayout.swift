@@ -22,9 +22,7 @@ protocol VerticalColumnCollectionViewLayoutDelegate: AnyObject {
     func collectionView(_ collectionView: UICollectionView, sizeOfItemAt indexPath: IndexPath) -> CGSize
 }
 
-/**
- * A collection view layout that displays its contents within multiple columns.
- */
+/// A collection view layout that displays its contents within multiple columns.
 
 class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
 
@@ -52,7 +50,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
 
     /// The width of the collection container.
     private var contentWidth: CGFloat {
-        guard let collectionView = self.collectionView else {
+        guard let collectionView else {
             return 0
         }
 
@@ -62,7 +60,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
 
     /// The height of the collection container.
     private var contentHeight: CGFloat {
-        guard let collectionView = self.collectionView else {
+        guard let collectionView else {
             return 0
         }
 
@@ -72,7 +70,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     }
 
     override var collectionViewContentSize: CGSize {
-        return CGSize(width: contentWidth, height: contentHeight)
+        CGSize(width: contentWidth, height: contentHeight)
     }
 
     // MARK: - Layout
@@ -82,18 +80,20 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
 
     /// The current positioning context.
     private var positioningContext: VerticalColumnPositioningContext {
-        return VerticalColumnPositioningContext(contentWidth: contentWidth,
-                                                numberOfColumns: numberOfColumns,
-                                                interItemSpacing: interItemSpacing,
-                                                interColumnSpacing: interColumnSpacing)
+        VerticalColumnPositioningContext(
+            contentWidth: contentWidth,
+            numberOfColumns: numberOfColumns,
+            interItemSpacing: interItemSpacing,
+            interColumnSpacing: interColumnSpacing
+        )
     }
 
     override func prepare() {
-        guard self.positioning == nil, let collectionView, let delegate = self.delegate else {
+        guard self.positioning == nil, let collectionView, let delegate else {
             return
         }
 
-        var positioning = VerticalColumnPositioning(context: self.positioningContext)
+        var positioning = VerticalColumnPositioning(context: positioningContext)
 
         for row in 0 ..< collectionView.numberOfItems(inSection: 0) {
             let indexPath = IndexPath(row: row, section: 0)
@@ -105,7 +105,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     }
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        return positioning?.rows.filter { $0.frame.height > 0 && $0.frame.intersects(rect) }
+        positioning?.rows.filter { $0.frame.height > 0 && $0.frame.intersects(rect) }
     }
 
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {

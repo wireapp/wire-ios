@@ -21,13 +21,6 @@ import WireDesign
 
 final class Tab: LegacyButton {
 
-    var title: String = "" {
-        didSet {
-            accessibilityLabel = title
-            setTitle(title.localizedUppercase, for: .normal)
-        }
-    }
-
     init() {
         super.init(fontSpec: .bodyTwoSemibold)
 
@@ -38,7 +31,7 @@ final class Tab: LegacyButton {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 48)
+        CGSize(width: UIView.noIntrinsicMetric, height: 48)
     }
 
     private func updateColors() {

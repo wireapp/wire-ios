@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import struct WireSystem.WireLogger
+import WireLogging
 
 protocol APIMigration {
     func perform(with session: ZMUserSession, clientID: String) async throws
@@ -33,7 +33,7 @@ final class APIMigrationManager {
     }
 
     func isMigration(to apiVersion: APIVersion, neededForSessions sessions: [ZMUserSession]) -> Bool {
-        return sessions.contains {
+        sessions.contains {
             isMigration(to: apiVersion, neededForSession: $0)
         }
     }
@@ -78,14 +78,23 @@ final class APIMigrationManager {
             return
         }
 
-        WireLogger.apiMigration.info("starting API migrations from api v\(lastVersion.rawValue) to v\(currentVersion.rawValue) for session with clientID \(String(describing: clientID))")
+        WireLogger.apiMigration
+            .info(
+                "starting API migrations from api v\(lastVersion.rawValue) to v\(currentVersion.rawValue) for session with clientID \(String(describing: clientID))"
+            )
 
         for migration in migrations(between: lastVersion, and: currentVersion) {
             do {
-                WireLogger.apiMigration.info("starting migration (\(String(describing: migration))) for api v\(migration.version.rawValue)")
+                WireLogger.apiMigration
+                    .info(
+                        "starting migration (\(String(describing: migration))) for api v\(migration.version.rawValue)"
+                    )
                 try await migration.perform(with: session, clientID: clientID)
             } catch {
-                WireLogger.apiMigration.warn("migration (\(String(describing: migration))) failed for session with clientID (\(String(describing: clientID)). error: \(String(describing: error))")
+                WireLogger.apiMigration
+                    .warn(
+                        "migration (\(String(describing: migration))) failed for session with clientID (\(String(describing: clientID)). error: \(String(describing: error))"
+                    )
             }
         }
     }
@@ -99,7 +108,7 @@ final class APIMigrationManager {
     // MARK: - Helpers
 
     func lastUsedAPIVersion(for clientID: String) -> APIVersion {
-        return userDefaults(for: clientID).lastUsedAPIVersion ?? previousAPIVersion ?? .v2
+        userDefaults(for: clientID).lastUsedAPIVersion ?? previousAPIVersion ?? .v2
     }
 
     func persistLastUsedAPIVersion(for session: ZMUserSession, apiVersion: APIVersion) {
@@ -107,12 +116,13 @@ final class APIMigrationManager {
             return
         }
 
-        WireLogger.apiMigration.info("persisting last used API version (v\(apiVersion.rawValue)) for client (\(clientID))")
+        WireLogger.apiMigration
+            .info("persisting last used API version (v\(apiVersion.rawValue)) for client (\(clientID))")
         userDefaults(for: clientID).lastUsedAPIVersion = apiVersion
     }
 
     private func userDefaults(for clientID: String) -> UserDefaults {
-        return UserDefaults(suiteName: "com.wire.apiversion.\(clientID)")!
+        UserDefaults(suiteName: "com.wire.apiversion.\(clientID)")!
     }
 
     private func clientId(for session: ZMUserSession) -> String? {
@@ -129,7 +139,7 @@ final class APIMigrationManager {
         guard lVersion < rVersion else { return [] }
 
         return migrations.filter {
-            (lVersion.rawValue + 1..<rVersion.rawValue + 1).contains($0.version.rawValue)
+            (lVersion.rawValue + 1 ..< rVersion.rawValue + 1).contains($0.version.rawValue)
         }
     }
 

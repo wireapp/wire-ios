@@ -16,21 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
 
+@testable import Wire
+
 final class TextSearchResultsViewSnapshotTests: XCTestCase {
-    var sut: TextSearchResultsView!
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TextSearchResultsView!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         sut = TextSearchResultsView()
         sut.frame = CGRect(origin: .zero, size: CGSize.iPhoneSize.iPhone4_7)
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
 
         super.tearDown()
@@ -38,7 +44,7 @@ final class TextSearchResultsViewSnapshotTests: XCTestCase {
 
     func testForInitState() {
         // GIVEN & WHEN & THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForNoResultViewHidden() {
@@ -47,6 +53,6 @@ final class TextSearchResultsViewSnapshotTests: XCTestCase {
         // WHEN
         sut.noResultsView.isHidden = true
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireLinkPreview
 import XCTest
+@testable import Wire
 
 class Message_FormattingTests: XCTestCase {
 
@@ -38,9 +38,17 @@ class Message_FormattingTests: XCTestCase {
         if messageTemplate.contains("{preview-url}") {
             let url = messageTemplate.contains("giphy") ? giphyURL : previewURL
             let range = textMessageData.messageText!.range(of: url)!
-            let offset = textMessageData.messageText!.distance(from: textMessageData.messageText!.startIndex, to: range.lowerBound)
+            let offset = textMessageData.messageText!.distance(
+                from: textMessageData.messageText!.startIndex,
+                to: range.lowerBound
+            )
 
-            textMessageData.backingLinkPreview = ArticleMetadata(originalURLString: url, permanentURLString: url, resolvedURLString: url, offset: offset)
+            textMessageData.backingLinkPreview = ArticleMetadata(
+                originalURLString: url,
+                permanentURLString: url,
+                resolvedURLString: url,
+                offset: offset
+            )
         }
 
         return textMessageData
@@ -147,7 +155,9 @@ class Message_FormattingTests: XCTestCase {
 
     func testTextWithInvalidLinkAttachment() {
         // given
-        let textMessageData = createTextMessageData(withMessageTemplate: "hello:{preview-url}") // NSDataDetector gets confused by this text
+        let textMessageData =
+            createTextMessageData(withMessageTemplate: "hello:{preview-url}") // NSDataDetector gets confused by this
+        // text
 
         // when
         let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
@@ -169,7 +179,10 @@ class Message_FormattingTests: XCTestCase {
 
         // then
         XCTAssertEqual(formattedText.string, "\(previewURL)@mention")
-        XCTAssertEqual(formattedText.attributes(at: mention.range.location + 1, effectiveRange: nil)[.link] as! URL, mention.link)
+        XCTAssertEqual(
+            formattedText.attributes(at: mention.range.location + 1, effectiveRange: nil)[.link] as! URL,
+            mention.link
+        )
     }
 
     func failing_testMentionLinkOverridesDetectedLink_mentionBefore() {
@@ -186,7 +199,10 @@ class Message_FormattingTests: XCTestCase {
         // then
         XCTAssertEqual(formattedText.string, "@mention\(previewURL) lala")
         XCTAssertEqual(formattedText.attributes(at: 0, effectiveRange: nil)[.link] as! URL, mention.link)
-        let linkDetected = formattedText.attributes(at: mention.range.location + mention.range.length + 1, effectiveRange: nil)[.link] as! URL
+        let linkDetected = formattedText.attributes(
+            at: mention.range.location + mention.range.length + 1,
+            effectiveRange: nil
+        )[.link] as! URL
         XCTAssertEqual(linkDetected.absoluteString, previewURL)
     }
 
@@ -202,7 +218,10 @@ class Message_FormattingTests: XCTestCase {
         let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
 
         // then
-        XCTAssertEqual(formattedText.attributes(at: mention.range.location + 1, effectiveRange: nil)[.link] as! URL, mention.link)
+        XCTAssertEqual(
+            formattedText.attributes(at: mention.range.location + 1, effectiveRange: nil)[.link] as! URL,
+            mention.link
+        )
     }
 
     func testThatItUsesCorrectUTF16OffsetForMention_Emoji() {
@@ -217,7 +236,10 @@ class Message_FormattingTests: XCTestCase {
         let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)
 
         // then
-        XCTAssertEqual(formattedText.attributes(at: mention.range.location + 1, effectiveRange: nil)[.link] as! URL, mention.link)
+        XCTAssertEqual(
+            formattedText.attributes(at: mention.range.location + 1, effectiveRange: nil)[.link] as! URL,
+            mention.link
+        )
     }
 
     func testThatEmojiAreNotRenderedInsideCodeBlock() {

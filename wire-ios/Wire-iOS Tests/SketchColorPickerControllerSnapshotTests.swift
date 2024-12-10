@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDesign
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -25,13 +25,16 @@ import XCTest
 final class SketchColorPickerControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
+
     typealias SketchColors = SemanticColors.DrawingColors
     var sut: SketchColorPickerController!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = SketchColorPickerController()
 
         sut.sketchColors = SketchColor.getAllColors()
@@ -41,6 +44,7 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -48,21 +52,21 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
     // MARK: - Tests
 
     func testForInitState() {
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForAllItemsAreVisible() {
         sut.view.frame = CGRect(x: 0, y: 0, width: 768, height: 48)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForColorButtonBumpedThreeTimes() {
         // GIVEN & WHEN
-        for _ in 1...3 {
+        for _ in 1 ... 3 {
             sut.collectionView(sut.colorsCollectionView, didSelectItemAt: IndexPath(item: 1, section: 0))
         }
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

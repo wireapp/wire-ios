@@ -22,7 +22,11 @@ extension ModelObjectsTests {
 
     // MARK: Users & Teams Members
 
-    @discardableResult func createTeamAndMember(for user: ZMUser, with permissions: Permissions? = nil) -> (Team, Member) {
+    @discardableResult
+    func createTeamAndMember(
+        for user: ZMUser,
+        with permissions: Permissions? = nil
+    ) -> (Team, Member) {
         let member = Member.insertNewObject(in: uiMOC)
         member.team = .insertNewObject(in: uiMOC)
         member.team?.remoteIdentifier = .create()
@@ -33,7 +37,8 @@ extension ModelObjectsTests {
         return (member.team!, member)
     }
 
-    @discardableResult func createUserAndAddMember(to team: Team, with domain: String? = nil) -> (ZMUser, Member) {
+    @discardableResult
+    func createUserAndAddMember(to team: Team, with domain: String? = nil) -> (ZMUser, Member) {
         let member = Member.insertNewObject(in: uiMOC)
         member.user = .insertNewObject(in: uiMOC)
         member.user?.remoteIdentifier = .create()
@@ -45,32 +50,30 @@ extension ModelObjectsTests {
 
     @objc(userWithClients:trusted:)
     public func userWithClients(count: Int, trusted: Bool) -> ZMUser {
-        self.createSelfClient()
-        self.uiMOC.refreshAllObjects()
+        createSelfClient()
+        uiMOC.refreshAllObjects()
 
-        let selfClient: UserClient? = ZMUser.selfUser(in: self.uiMOC).selfClient()
-        let user: ZMUser = ZMUser.insertNewObject(in: self.uiMOC)
-        [0...count].forEach({ _ in
-            let client: UserClient = UserClient.insertNewObject(in: self.uiMOC)
+        let selfClient: UserClient? = ZMUser.selfUser(in: uiMOC).selfClient()
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        [0 ... count].forEach { _ in
+            let client = UserClient.insertNewObject(in: self.uiMOC)
             client.user = user
             if trusted {
                 selfClient?.trustClient(client)
             } else {
                 selfClient?.ignoreClient(client)
             }
-        })
+        }
         return user
     }
 
     // MARK: Files
 
     func createFileMetadata(filename: String? = nil) -> ZMFileMetadata {
-        let fileURL: URL
-
-        if let fileName = filename {
-            fileURL = testURLWithFilename(fileName)
+        let fileURL: URL = if let fileName = filename {
+            testURLWithFilename(fileName)
         } else {
-            fileURL = testURLWithFilename("file.dat")
+            testURLWithFilename("file.dat")
         }
 
         _ = createTestFile(at: fileURL)
@@ -85,7 +88,7 @@ extension ModelObjectsTests {
     }
 
     func createTestFile(at url: URL) -> Data {
-        let data: Data! = "Some other data".data(using: String.Encoding.utf8)
+        let data = Data("Some other data".utf8)
         try! data.write(to: url, options: [])
         return data
     }

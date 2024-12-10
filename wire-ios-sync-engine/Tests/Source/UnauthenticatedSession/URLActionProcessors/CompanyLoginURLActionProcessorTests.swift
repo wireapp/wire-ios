@@ -51,7 +51,7 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
     func testThatAuthenticationStatusIsInformed_OnCompanyLoginSuccessAction() {
         // given
         let accountId = UUID()
-        let cookieData = "cookie".data(using: .utf8)!
+        let cookieData = Data("cookie".utf8)
         let userInfo = UserInfo(identifier: accountId, cookieData: cookieData)
         let action: URLAction = .companyLoginSuccess(userInfo: userInfo)
 
@@ -75,7 +75,10 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
         // then
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
-        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError, .accountLimitReached)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError,
+            .accountLimitReached
+        )
     }
 
     func testThatSSOCodeIsPropagatedToAuthenticationStatus_OnStartCompanyLoginAction() {

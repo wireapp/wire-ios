@@ -24,7 +24,7 @@ protocol TabBarControllerDelegate: AnyObject {
 
 extension UIPageViewController {
     var scrollView: UIScrollView? {
-        return view.subviews
+        view.subviews
             .lazy
             .compactMap { $0 as? UIScrollView }
             .first
@@ -32,16 +32,6 @@ extension UIPageViewController {
 }
 
 extension UIViewController {
-    var wr_tabBarController: TabBarController? {
-        if parent == nil {
-            return nil
-        } else if parent?.isKind(of: TabBarController.self) != nil {
-            return parent as? TabBarController
-        } else {
-            return parent?.wr_tabBarController
-        }
-    }
-
     func takeFirstResponder() {
         if UIAccessibility.isVoiceOverRunning {
             return
@@ -49,7 +39,8 @@ extension UIViewController {
     }
 }
 
-final class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UIScrollViewDelegate {
+final class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource,
+    UIScrollViewDelegate {
 
     weak var delegate: TabBarControllerDelegate?
 
@@ -81,6 +72,7 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     }
 
     // MARK: - Views
+
     private var tabBar: TabBar!
     private var contentView = UIView()
     private var isSwiping = false
@@ -109,9 +101,11 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     }
 
     fileprivate func createViews() {
-        self.view.addSubview(self.contentView)
+        view.addSubview(contentView)
         contentView.backgroundColor = viewControllers.first?.view?.backgroundColor
-        add(pageViewController, to: contentView)
+        addChild(pageViewController)
+        contentView.addSubview(pageViewController.view)
+        pageViewController.didMove(toParent: self)
         pageViewController.scrollView?.delegate = self
 
         if isInteractive {
@@ -119,13 +113,13 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
             pageViewController.delegate = self
         }
 
-        let items = self.viewControllers.map { $0.tabBarItem! }
-        self.tabBar = TabBar(items: items, selectedIndex: selectedIndex)
+        let items = viewControllers.map { $0.tabBarItem! }
+        tabBar = TabBar(items: items, selectedIndex: selectedIndex)
         tabBar?.animatesTransition = isInteractive
         tabBar?.isHidden = isTabBarHidden
-        self.tabBar?.delegate = self
-        self.tabBar?.isUserInteractionEnabled = self.isEnabled && items.count > 1
-        self.view.addSubview(self.tabBar!)
+        tabBar?.delegate = self
+        tabBar?.isUserInteractionEnabled = isEnabled && items.count > 1
+        view.addSubview(tabBar!)
     }
 
     fileprivate func createConstraints() {
@@ -168,25 +162,35 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         let forward = toIndex > fromIndex
         let direction = forward ? UIPageViewController.NavigationDirection.forward : .reverse
 
-        pageViewController.setViewControllers([toViewController], direction: direction, animated: isInteractive) { [delegate, tabBar] complete in
+        pageViewController.setViewControllers(
+            [toViewController],
+            direction: direction,
+            animated: isInteractive
+        ) { [delegate, tabBar] complete in
             guard complete else { return }
             tabBar?.setSelectedIndex(index, animated: animated)
             delegate?.tabBarController(self, tabBarDidSelectIndex: index)
         }
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        return viewControllers.firstIndex(of: viewController).flatMap {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerAfter viewController: UIViewController
+    ) -> UIViewController? {
+        viewControllers.firstIndex(of: viewController).flatMap {
             let index = $0 + 1
-            guard index >= 0 && index < viewControllers.count else { return nil }
+            guard index >= 0, index < viewControllers.count else { return nil }
             return viewControllers[index]
         }
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        return viewControllers.firstIndex(of: viewController).flatMap {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerBefore viewController: UIViewController
+    ) -> UIViewController? {
+        viewControllers.firstIndex(of: viewController).flatMap {
             let index = $0 - 1
-            guard index >= 0 && index < viewControllers.count else { return nil }
+            guard index >= 0, index < viewControllers.count else { return nil }
             return viewControllers[index]
         }
     }
@@ -196,7 +200,7 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         didFinishAnimating finished: Bool,
         previousViewControllers: [UIViewController],
         transitionCompleted completed: Bool
-        ) {
+    ) {
         guard let selected = pageViewController.viewControllers?.first else { return }
         guard let index = viewControllers.firstIndex(of: selected) else { return }
 
@@ -230,13 +234,11 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         let startPercentage = increment * CGFloat(selectedIndex)
 
         // The adjusted percentage of the movement based on the scroll direction
-        let adjustedPercent: CGFloat = {
-            if startOffset <= scrollView.contentOffset.x {
-                return startPercentage + percent // going right or not moving
-            } else {
-                return startPercentage - percent // going left
-            }
-        }()
+        let adjustedPercent: CGFloat = if startOffset <= scrollView.contentOffset.x {
+            startPercentage + percent // going right or not moving
+        } else {
+            startPercentage - percent // going left
+        }
 
         tabBar?.setOffsetPercentage(adjustedPercent)
     }

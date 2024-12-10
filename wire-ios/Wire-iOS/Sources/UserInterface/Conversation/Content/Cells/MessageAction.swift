@@ -19,49 +19,51 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 
 enum MessageAction: CaseIterable, Equatable {
-    static var allCases: [MessageAction] = [.visitLink,
-                                            .digitallySign,
-                                            .copy,
-                                            .reply,
-                                            .openDetails,
-                                            .edit,
-                                            .save,
-                                            .cancel,
-                                            .download,
-                                            .forward,
-                                            .resend,
-                                            .showInConversation,
-                                            .sketchDraw,
-                                            .sketchEmoji,
-                                            .present,
-                                            .openQuote,
-                                            .resetSession,
-                                            .delete,
-                                            .react("❤️")]
+
+    static var allCases: [MessageAction] = [
+        .visitLink,
+        .digitallySign,
+        .copy,
+        .reply,
+        .openDetails,
+        .edit,
+        .save,
+        .cancel,
+        .download,
+        .resend,
+        .showInConversation,
+        .sketchDraw,
+        .sketchEmoji,
+        .present,
+        .openQuote,
+        .resetSession,
+        .delete,
+        .react("❤️")
+    ]
 
     case
-    digitallySign,
-    copy,
-    reply,
-    openDetails,
-    edit,
-    delete,
-    save,
-    cancel,
-    download,
-    forward,
-    resend,
-    showInConversation,
-    sketchDraw,
-    sketchEmoji,
-    // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
-    present,
-    openQuote,
-    resetSession,
-    react(Emoji.ID),
-    visitLink
+        digitallySign,
+        copy,
+        reply,
+        openDetails,
+        edit,
+        delete,
+        save,
+        cancel,
+        download,
+        resend,
+        showInConversation,
+        sketchDraw,
+        sketchEmoji,
+        // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
+        present,
+        openQuote,
+        resetSession,
+        react(Emoji.ID),
+        visitLink
 
     var title: String? {
         typealias MessageActionLocale = L10n.Localizable.Content.Message
@@ -84,8 +86,6 @@ enum MessageAction: CaseIterable, Equatable {
             return L10n.Localizable.General.cancel
         case .download:
             return MessageActionLocale.download
-        case .forward:
-            return MessageActionLocale.forward
         case .resend:
             return MessageActionLocale.resend
         case .showInConversation:
@@ -97,9 +97,9 @@ enum MessageAction: CaseIterable, Equatable {
         case .visitLink:
             return MessageActionLocale.OpenLinkAlert.title
         case .present,
-                .openQuote,
-                .resetSession,
-                .react:
+             .openQuote,
+             .resetSession,
+             .react:
             return nil
         }
     }
@@ -107,124 +107,115 @@ enum MessageAction: CaseIterable, Equatable {
     var icon: StyleKitIcon? {
         switch self {
         case .copy:
-            return .copy
+            .copy
         case .reply:
-            return .reply
+            .reply
         case .openDetails:
-            return .about
+            .about
         case .edit:
-            return .pencil
+            .pencil
         case .delete:
-            return .trash
+            .trash
         case .save:
-            return .save
+            .save
         case .cancel:
-            return .cross
+            .cross
         case .download:
-            return .downArrow
-        case .forward:
-            return .export
+            .downArrow
         case .resend:
-            return .redo
+            .redo
         case .showInConversation:
-            return .eye
+            .eye
         case .sketchDraw:
-            return .brush
+            .brush
         case .sketchEmoji:
-            return .emoji
+            .emoji
         case .visitLink:
-            return .externalLink
+            .externalLink
         case .present,
-                .openQuote,
-                .digitallySign,
-                .resetSession,
-                .react:
-            return nil
+             .openQuote,
+             .digitallySign,
+             .resetSession,
+             .react:
+            nil
         }
     }
 
     func systemIcon() -> UIImage? {
-        return imageSystemName().flatMap(UIImage.init(systemName:))
+        imageSystemName().flatMap(UIImage.init(systemName:))
     }
 
     private func imageSystemName() -> String? {
-        let imageName: String?
         switch self {
         case .copy:
-            imageName = "doc.on.doc"
+            "doc.on.doc"
         case .reply:
-            imageName = "arrow.uturn.left"
+            "arrow.uturn.left"
         case .openDetails:
-            imageName = "info.circle"
+            "info.circle"
         case .edit:
-            imageName = "pencil"
+            "pencil"
         case .delete:
-            imageName = "trash"
+            "trash"
         case .save:
-            imageName = "arrow.down.to.line"
+            "arrow.down.to.line"
         case .cancel:
-            imageName = "xmark"
+            "xmark"
         case .download:
-            imageName = "chevron.down"
-        case .forward:
-            imageName = "square.and.arrow.up"
+            "chevron.down"
         case .resend:
-            imageName = "arrow.clockwise"
+            "arrow.clockwise"
         case .showInConversation:
-            imageName = "eye.fill"
+            "eye.fill"
         case .sketchDraw:
-            imageName = "scribble"
+            "scribble"
         case .sketchEmoji:
-            imageName = "smiley.fill"
+            "smiley.fill"
         case .present,
-                .openQuote,
-                .digitallySign,
-                .resetSession,
-                .react,
-                .visitLink:
-            imageName = nil
+             .openQuote,
+             .digitallySign,
+             .resetSession,
+             .react,
+             .visitLink:
+            nil
         }
-
-        return imageName
     }
 
     var selector: Selector? {
         switch self {
         case .copy:
-            return #selector(ConversationMessageActionController.copyMessage)
+            #selector(ConversationMessageActionController.copyMessage)
         case .digitallySign:
-            return #selector(ConversationMessageActionController.digitallySignMessage)
+            #selector(ConversationMessageActionController.digitallySignMessage)
         case .reply:
-            return #selector(ConversationMessageActionController.quoteMessage)
+            #selector(ConversationMessageActionController.quoteMessage)
         case .openDetails:
-            return #selector(ConversationMessageActionController.openMessageDetails)
+            #selector(ConversationMessageActionController.openMessageDetails)
         case .edit:
-            return #selector(ConversationMessageActionController.editMessage)
+            #selector(ConversationMessageActionController.editMessage)
         case .delete:
-            return #selector(ConversationMessageActionController.deleteMessage)
+            #selector(ConversationMessageActionController.deleteMessage)
         case .save:
-            return #selector(ConversationMessageActionController.saveMessage)
+            #selector(ConversationMessageActionController.saveMessage)
         case .cancel:
-            return #selector(ConversationMessageActionController.cancelDownloadingMessage)
+            #selector(ConversationMessageActionController.cancelDownloadingMessage)
         case .download:
-            return #selector(ConversationMessageActionController.downloadMessage)
-        case .forward:
-            return #selector(ConversationMessageActionController.forwardMessage)
+            #selector(ConversationMessageActionController.downloadMessage)
         case .resend:
-            return #selector(ConversationMessageActionController.resendMessage)
+            #selector(ConversationMessageActionController.resendMessage)
         case .showInConversation:
-            return #selector(ConversationMessageActionController.revealMessage)
+            #selector(ConversationMessageActionController.revealMessage)
         case .react:
-            return #selector(ConversationMessageActionController.addReaction(reaction:) )
+            #selector(ConversationMessageActionController.addReaction(reaction:))
         case .visitLink:
-            return #selector(ConversationMessageActionController.visitLink)
+            #selector(ConversationMessageActionController.visitLink)
         case .present,
-                .sketchDraw,
-                .sketchEmoji,
-                .openQuote,
-                .resetSession:
+             .sketchDraw,
+             .sketchEmoji,
+             .openQuote,
+             .resetSession:
             // no message related actions are not handled in ConversationMessageActionController
-            return nil
+            nil
         }
     }
 

@@ -18,10 +18,11 @@
 
 import Foundation
 
-extension Bundle {
+public extension Bundle {
 
     // MARK: - Countly
-    public static var countlyAppKey: String? {
+
+    static var countlyAppKey: String? {
         appMainBundle.infoForKey("CountlyAppKey")
     }
 }

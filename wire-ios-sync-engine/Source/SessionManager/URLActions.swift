@@ -44,10 +44,13 @@ public enum URLAction: Equatable {
     /// Switch to a custom backend
     case accessBackend(configurationURL: URL)
 
+    /// Import external events
+    case importEvents
+
     public var causesLogout: Bool {
         switch self {
-        case .startCompanyLogin: return true
-        default: return false
+        case .startCompanyLogin: true
+        default: false
         }
     }
 
@@ -56,9 +59,10 @@ public enum URLAction: Equatable {
         case .joinConversation,
              .openConversation,
              .openUserProfile,
-             .connectBot:
-             return true
-        default: return false
+             .connectBot,
+             .importEvents:
+            true
+        default: false
         }
     }
 
@@ -67,15 +71,15 @@ public enum URLAction: Equatable {
         case .joinConversation,
              .openConversation,
              .openUserProfile:
-            return true
-        default: return false
+            true
+        default: false
         }
     }
 }
 
 extension URLComponents {
     func query(for key: String) -> String? {
-        return self.queryItems?.first(where: { $0.name == key })?.value
+        queryItems?.first(where: { $0.name == key })?.value
     }
 }
 
@@ -83,16 +87,16 @@ extension URLAction {
 
     public init?(url: URL, validatingIn defaults: UserDefaults = .shared()) throws {
         guard let components = URLComponents(string: url.absoluteString),
-            let host = components.host,
-            let scheme = components.scheme,
+              let host = components.host,
+              let scheme = components.scheme,
               scheme.starts(with: "wire") == true || scheme == Bundle.main.bundleIdentifier else {
-                return nil
+            return nil
         }
 
         switch host {
         case URL.DeepLink.user:
             if let lastComponent = url.pathComponents.last,
-                let uuid = UUID(uuidString: lastComponent) {
+               let uuid = UUID(uuidString: lastComponent) {
                 self = .openUserProfile(id: uuid)
             } else {
                 throw DeepLinkRequestError.invalidUserLink
@@ -110,11 +114,14 @@ extension URLAction {
 
         case URL.DeepLink.conversation:
             if let lastComponent = url.pathComponents.last,
-                let uuid = UUID(uuidString: lastComponent) {
+               let uuid = UUID(uuidString: lastComponent) {
                 self = .openConversation(id: uuid)
             } else {
                 throw DeepLinkRequestError.invalidConversationLink
             }
+
+        case URL.DeepLink.importEvents:
+            self = .importEvents
 
         case URL.Host.startSSO:
             if let uuidCode = url.pathComponents.last.flatMap(CompanyLoginRequestDetector.requestCode) {
@@ -125,15 +132,16 @@ extension URLAction {
 
         case URL.Host.connect:
             guard let service = components.query(for: URLQueryItem.Key.Connect.service),
-                let provider = components.query(for: URLQueryItem.Key.Connect.provider),
-                let serviceUUID = UUID(uuidString: service),
-                let providerUUID = UUID(uuidString: provider) else {
-                    throw DeepLinkRequestError.malformedLink
+                  let provider = components.query(for: URLQueryItem.Key.Connect.provider),
+                  let serviceUUID = UUID(uuidString: service),
+                  let providerUUID = UUID(uuidString: provider) else {
+                throw DeepLinkRequestError.malformedLink
             }
             self = .connectBot(serviceUser: ServiceUserData(provider: providerUUID, service: serviceUUID))
 
         case URL.Host.accessBackend:
-            guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config), let url = URL(string: config) else {
+            guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config),
+                  let url = URL(string: config) else {
                 throw DeepLinkRequestError.malformedLink
             }
             self = .accessBackend(configurationURL: url)
@@ -157,7 +165,8 @@ extension URLAction {
                 guard let cookieString = components.query(for: URLQueryItem.Key.cookie) else {
                     throw CompanyLoginError.missingRequiredParameter
                 }
-                guard let userID = components.query(for: URLQueryItem.Key.userIdentifier).flatMap(UUID.init(transportString:)) else {
+                guard let userID = components.query(for: URLQueryItem.Key.userIdentifier)
+                    .flatMap(UUID.init(transportString:)) else {
                     throw CompanyLoginError.missingRequiredParameter
                 }
 
@@ -178,6 +187,7 @@ extension URLAction {
                 }
 
                 throw CompanyLoginError(label: label)
+
             default:
                 throw ConmpanyLoginRequestError.invalidLink
             }
@@ -189,7 +199,8 @@ extension URLAction {
 
     private static func validateURLSchemeRequest(with components: URLComponents, in defaults: UserDefaults) -> Bool {
         guard let storedToken = CompanyLoginVerificationToken.current(in: defaults) else { return false }
-        guard let token = components.query(for: URLQueryItem.Key.validationToken).flatMap(UUID.init(transportString:)) else { return false }
+        guard let token = components.query(for: URLQueryItem.Key.validationToken).flatMap(UUID.init(transportString:))
+        else { return false }
         return storedToken.matches(identifier: token)
     }
 

@@ -16,25 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
+
 private let zmLog = ZMSLog(tag: "SyncStatus")
 
-extension Notification.Name {
+public extension Notification.Name {
 
-    public static let initialSync = Notification.Name("ZMInitialSyncCompletedNotification")
-    public static let resyncResources = Notification.Name("resyncResourcesNotificationName")
+    static let initialSync = Notification.Name("ZMInitialSyncCompletedNotification")
+    static let resyncResources = Notification.Name("resyncResourcesNotificationName")
 
-    static let triggerQuickSync = Notification.Name("triggerQuickSync")
+    internal static let triggerQuickSync = Notification.Name("triggerQuickSync")
 
 }
 
-@objcMembers public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
+@objcMembers
+public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "SyncStatus")
 
-    public internal (set) var currentSyncPhase: SyncPhase = .done {
+    public internal(set) var currentSyncPhase: SyncPhase = .done {
         didSet {
             if currentSyncPhase != oldValue {
-                self.log()
+                log()
                 zmLog.debug("did change sync phase: \(currentSyncPhase)")
                 notifySyncPhaseDidStart()
             }
@@ -48,29 +51,29 @@ extension Notification.Name {
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
     fileprivate var resyncResourcesToken: Any?
 
-    public internal (set) var isFetchingNotificationStream: Bool = false
-    public internal (set) var isInBackground: Bool = false
-    public internal (set) var needsToRestartQuickSync: Bool = false
-    public internal (set) var pushChannelEstablishedDate: Date?
+    public internal(set) var isFetchingNotificationStream: Bool = false
+    public internal(set) var isInBackground: Bool = false
+    public internal(set) var needsToRestartQuickSync: Bool = false
+    public internal(set) var pushChannelEstablishedDate: Date?
 
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
     public var isSlowSyncing: Bool {
-        return !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
+        !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
     }
 
     private var isForceQuickSync = false
 
     public var isSyncing: Bool {
-        return currentSyncPhase.isSyncing || !isPushChannelOpen
+        currentSyncPhase.isSyncing || !isPushChannelOpen
     }
 
     public var isSyncingInBackground: Bool {
-        return currentSyncPhase.isSyncing
+        currentSyncPhase.isSyncing
     }
 
     public var isPushChannelOpen: Bool {
-        return pushChannelEstablishedDate != nil
+        pushChannelEstablishedDate != nil
     }
 
     public init(
@@ -82,7 +85,10 @@ extension Notification.Name {
 
         super.init()
 
-        self.resyncResourcesToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] _ in
+        self.resyncResourcesToken = NotificationInContext.addObserver(
+            name: .resyncResources,
+            context: managedObjectContext.notificationContext
+        ) { [weak self] _ in
             self?.resyncResources()
         }
 
@@ -116,22 +122,26 @@ extension Notification.Name {
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
         // Reset the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
-        self.log("slow sync")
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        log("slow sync")
         syncStateDelegate?.didStartSlowSync()
     }
 
     /// Sync the resources: Teams, Users, Conversations...
-    func resyncResources() {
-       // Refetch user settings.
-       ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-       // Set the status.
-       currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
-       self.log("resyncResources")
-       syncStateDelegate?.didStartSlowSync()
-   }
+    public func resyncResources() {
+        // Refetch user settings.
+        ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
+        // If we don't have a last event id, we need to get that first, otherwise the quick sync will fetch all events
+        // in the notification queue.
+        currentSyncPhase = hasPersistedLastEventID ? SyncPhase.fetchingLastUpdateEventID
+            .nextPhase : .fetchingLastUpdateEventID
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        log("resyncResources")
+        syncStateDelegate?.didStartSlowSync()
+    }
 
     public func performQuickSync() async {
-        return await withCheckedContinuation { [weak self] continuation in
+        await withCheckedContinuation { [weak self] continuation in
             guard let self else {
                 continuation.resume()
                 return
@@ -153,7 +163,7 @@ extension Notification.Name {
     public func forceQuickSync() {
         isForceQuickSync = true
         currentSyncPhase = .fetchingMissedEvents
-        self.log("quick sync")
+        log("quick sync")
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
 
     }
@@ -161,9 +171,10 @@ extension Notification.Name {
 }
 
 // MARK: Slow Sync
-extension SyncStatus {
 
-    public func finishCurrentSyncPhase(phase: SyncPhase) {
+public extension SyncStatus {
+
+    func finishCurrentSyncPhase(phase: SyncPhase) {
         precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase '\(currentSyncPhase)'!")
 
         log("finished sync phase")
@@ -176,12 +187,15 @@ extension SyncStatus {
         currentSyncPhase = phase.nextPhase
 
         if currentSyncPhase == .done {
-            if needsToRestartQuickSync && isPushChannelOpen {
+            if needsToRestartQuickSync, isPushChannelOpen {
                 // If the push channel closed while fetching notifications
                 // We need to restart fetching the notification stream since we might be missing notifications
                 currentSyncPhase = .fetchingMissedEvents
                 needsToRestartQuickSync = false
-                WireLogger.sync.debug("restarting quick sync since push channel was closed or open after request to fetch notifiations")
+                WireLogger.sync
+                    .debug(
+                        "restarting quick sync since push channel was closed or open after request to fetch notifiations"
+                    )
             } else {
                 WireLogger.sync.debug("sync complete")
                 notifyQuickSyncDidFinish()
@@ -191,7 +205,7 @@ extension SyncStatus {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
-    public func failCurrentSyncPhase(phase: SyncPhase) {
+    func failCurrentSyncPhase(phase: SyncPhase) {
         precondition(phase == currentSyncPhase, "Failed syncPhase does not match currentPhase")
 
         WireLogger.sync.warn("failed sync phase: \(phase)")
@@ -203,22 +217,22 @@ extension SyncStatus {
         }
     }
 
-    var hasPersistedLastEventID: Bool {
-        return lastEventIDRepository.fetchLastEventID() != nil
+    internal var hasPersistedLastEventID: Bool {
+        lastEventIDRepository.fetchLastEventID() != nil
     }
 
-    public func updateLastUpdateEventID(eventID: UUID) {
+    func updateLastUpdateEventID(eventID: UUID) {
         WireLogger.sync.debug("update last eventID: \(eventID)")
         lastUpdateEventID = eventID
     }
 
-    public func persistLastUpdateEventID() {
+    func persistLastUpdateEventID() {
         guard let lastUpdateEventID else { return }
         WireLogger.sync.debug("persist last eventID: \(lastUpdateEventID)")
         lastEventIDRepository.storeLastEventID(lastUpdateEventID)
     }
 
-    public func removeLastUpdateEventID() {
+    func removeLastUpdateEventID() {
         lastUpdateEventID = nil
         WireLogger.sync.debug("remove last eventID")
         lastEventIDRepository.storeLastEventID(nil)
@@ -226,13 +240,14 @@ extension SyncStatus {
 }
 
 // MARK: Quick Sync
-extension SyncStatus {
 
-    public func beganFetchingNotificationStream() {
+public extension SyncStatus {
+
+    func beganFetchingNotificationStream() {
         isFetchingNotificationStream = true
     }
 
-    public func failedFetchingNotificationStream() {
+    func failedFetchingNotificationStream() {
         if currentSyncPhase == .fetchingMissedEvents {
             failCurrentSyncPhase(phase: .fetchingMissedEvents)
         }
@@ -241,8 +256,9 @@ extension SyncStatus {
     }
 
     @objc(completedFetchingNotificationStreamFetchBeganAt:)
-    public func completedFetchingNotificationStream(fetchBeganAt: Date?) {
-        WireLogger.sync.debug("completedFetchingNotificationStream began at: \(fetchBeganAt?.description ?? "<unknown>")")
+    func completedFetchingNotificationStream(fetchBeganAt: Date?) {
+        WireLogger.sync
+            .debug("completedFetchingNotificationStream began at: \(fetchBeganAt?.description ?? "<unknown>")")
         if currentSyncPhase == .fetchingMissedEvents {
 
             // Only complete the .fetchingMissedEvents phase if the push channel was
@@ -258,44 +274,49 @@ extension SyncStatus {
         isFetchingNotificationStream = false
     }
 
-    public func pushChannelDidClose() {
+    func pushChannelDidClose() {
         Self.logger.trace("push channel did close")
         pushChannelEstablishedDate = nil
 
         if !currentSyncPhase.isSyncing {
-            // As soon as the pushChannel closes we should notify the UI that we are syncing (if we are not already syncing)
-            self.syncStateDelegate?.didStartQuickSync()
+            // As soon as the pushChannel closes we should notify the UI that we are syncing (if we are not already
+            // syncing)
+            syncStateDelegate?.didStartQuickSync()
         }
     }
 
-    public func pushChannelDidOpen() {
+    func pushChannelDidOpen() {
         Self.logger.trace("push channel did open")
         pushChannelEstablishedDate = Date()
 
         if currentSyncPhase == .fetchingMissedEvents {
-            // If the push channel closed while we are fetching the notifications, we might be missing notifications that
-            // were sent between the server response and the channel re-opening We therefore need to mark the quick sync to be re-started
+            // If the push channel closed while we are fetching the notifications, we might be missing notifications
+            // that
+            // were sent between the server response and the channel re-opening We therefore need to mark the quick sync
+            // to be re-started
             needsToRestartQuickSync = true
         }
 
         if !currentSyncPhase.isSyncing {
             // When the push channel opens we need to start syncing (if we are not already syncing)
-            self.currentSyncPhase = .fetchingMissedEvents
+            currentSyncPhase = .fetchingMissedEvents
         }
     }
 
     private func log(_ message: String? = nil) {
-        let info = SyncStatusLog(phase: currentSyncPhase.description,
-                                 isSyncing: isSyncing,
-                                 pushChannelEstablishedDate: pushChannelEstablishedDate?.description,
-                                 message: message)
+        let info = SyncStatusLog(
+            phase: currentSyncPhase.description,
+            isSyncing: isSyncing,
+            pushChannelEstablishedDate: pushChannelEstablishedDate?.description,
+            message: message
+        )
         do {
             let data = try JSONEncoder().encode(info)
-            let jsonString = String(data: data, encoding: .utf8)
-            let message = "SYNC_STATUS: \(jsonString ?? self.description)"
+            let jsonString = String(decoding: data, as: UTF8.self)
+            let message = "SYNC_STATUS: \(jsonString)"
             WireLogger.sync.info(message, attributes: .safePublic)
         } catch {
-            let message = "SYNC_STATUS: \(self.description)"
+            let message = "SYNC_STATUS: \(description)"
             WireLogger.sync.error(message, attributes: .safePublic)
         }
     }

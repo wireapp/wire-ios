@@ -18,16 +18,16 @@
 
 import Foundation
 
-extension ConversationRemoveParticipantError {
+public extension ConversationRemoveParticipantError {
 
-    public init?(response: ZMTransportResponse) {
-       switch (response.httpStatus, response.payloadLabel()) {
-       case (403, "invalid-op"?): self = .invalidOperation
-       case (404, "no-conversation"?): self = .conversationNotFound
-       case (400..<499, _): self = .unknown
-       default: return nil
-       }
-   }
+    init?(response: ZMTransportResponse) {
+        switch (response.httpStatus, response.payloadLabel()) {
+        case (403, "invalid-op"?): self = .invalidOperation
+        case (404, "no-conversation"?): self = .conversationNotFound
+        case (400 ..< 499, _): self = .unknown
+        default: return nil
+        }
+    }
 
 }
 
@@ -38,9 +38,9 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
     override func request(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
-            return nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5, .v6:
-            return federatedRequest(for: action, apiVersion: apiVersion)
+            nonFederatedRequest(for: action, apiVersion: apiVersion)
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
+            federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
 
@@ -70,14 +70,15 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             apiVersion > .v0,
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.qualifiedID,
-            let user: ZMUser = ZMUser.existingObject(for: action.userID, in: context),
+            let user = ZMUser.existingObject(for: action.userID, in: context),
             let qualifiedUserID = user.qualifiedID
         else {
             action.notifyResult(.failure(.unknown))
             // Log error
             return nil
         }
-        let path = "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members/\(qualifiedUserID.domain)/\(qualifiedUserID.uuid)"
+        let path =
+            "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members/\(qualifiedUserID.domain)/\(qualifiedUserID.uuid)"
 
         return ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
     }
@@ -98,21 +99,23 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
                 return
             }
 
-            // TODO jacob this logic should be moved to data model
+            // swiftlint:disable:next todo_requires_jira_link
+            // TODO: jacob this logic should be moved to data model
             // Update cleared timestamp if self user left and deleted history
-            if let clearedTimestamp = conversation.clearedTimeStamp, clearedTimestamp == conversation.lastServerTimeStamp, user.isSelfUser {
+            if let clearedTimestamp = conversation.clearedTimeStamp,
+               clearedTimestamp == conversation.lastServerTimeStamp, user.isSelfUser {
                 conversation.updateCleared(fromPostPayloadEvent: updateEvent)
             }
             let success = {
-                action.notifyResult(.success(Void()))
+                action.notifyResult(.success(()))
             }
             WaitingGroupTask(context: context) { [self] in
-                await eventProcessor.processConversationEvents([updateEvent])
+                await eventProcessor.processAndSaveConversationEvents([updateEvent])
                 success()
             }
 
         case 204:
-            action.notifyResult(.success(Void()))
+            action.notifyResult(.success(()))
 
         default:
             action.notifyResult(.failure(ConversationRemoveParticipantError(response: response) ?? .unknown))

@@ -25,20 +25,20 @@ protocol BreathLoadingBarDelegate: AnyObject {
 }
 
 final class BreathLoadingBar: UIView {
+
     weak var delegate: BreathLoadingBarDelegate?
 
-    lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 0)
+    private(set) lazy var heightConstraint = heightAnchor.constraint(equalToConstant: 0)
 
     var animating: Bool = false {
         didSet {
-            guard animating != oldValue else { return}
+            guard animating != oldValue else { return }
 
             if animating {
                 startAnimation()
             } else {
                 stopAnimation()
             }
-
         }
     }
 
@@ -47,7 +47,7 @@ final class BreathLoadingBar: UIView {
             if oldValue != state {
                 updateView()
             }
-      }
+        }
     }
 
     private let BreathLoadingAnimationKey: String = "breathLoadingAnimation"
@@ -55,24 +55,34 @@ final class BreathLoadingBar: UIView {
     var animationDuration: TimeInterval = 0.0
 
     var isAnimationRunning: Bool {
-        return layer.animation(forKey: BreathLoadingAnimationKey) != nil
+        layer.animation(forKey: BreathLoadingAnimationKey) != nil
     }
 
     init(animationDuration duration: TimeInterval) {
-        animating = false
+        self.animating = false
 
         super.init(frame: .zero)
         layer.cornerRadius = CGFloat.SyncBar.cornerRadius
 
-        animationDuration = duration
+        self.animationDuration = duration
 
         createConstraints()
         updateView()
 
         backgroundColor = UIColor.accent()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -98,13 +108,13 @@ final class BreathLoadingBar: UIView {
             layer.cornerRadius = CGFloat.OfflineBar.cornerRadius
         }
 
-        self.layoutIfNeeded()
+        layoutIfNeeded()
     }
 
     private func createConstraints() {
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          heightConstraint
+            heightConstraint
         ])
     }
 
@@ -117,13 +127,15 @@ final class BreathLoadingBar: UIView {
         }
     }
 
-    @objc func applicationDidBecomeActive(_ sender: Any) {
-        if animating && !isAnimationRunning {
+    @objc
+    func applicationDidBecomeActive(_ sender: Any) {
+        if animating, !isAnimationRunning {
             startAnimation()
         }
     }
 
-    @objc func applicationDidEnterBackground(_ sender: Any) {
+    @objc
+    func applicationDidEnterBackground(_ sender: Any) {
         if animating {
             stopAnimation()
         }
@@ -140,17 +152,17 @@ final class BreathLoadingBar: UIView {
         anim.repeatCount = .infinity
         anim.duration = animationDuration
         anim.timingFunction = EasingFunction.easeInOutSine.timingFunction
-        self.layer.add(anim, forKey: BreathLoadingAnimationKey)
+        layer.add(anim, forKey: BreathLoadingAnimationKey)
     }
 
     func stopAnimation() {
         delegate?.animationDidStopped()
 
-        self.layer.removeAnimation(forKey: BreathLoadingAnimationKey)
+        layer.removeAnimation(forKey: BreathLoadingAnimationKey)
     }
 
     static func withDefaultAnimationDuration() -> BreathLoadingBar {
-        return BreathLoadingBar(animationDuration: TimeInterval.SyncBar.defaultAnimationDuration)
+        BreathLoadingBar(animationDuration: TimeInterval.SyncBar.defaultAnimationDuration)
     }
 
 }

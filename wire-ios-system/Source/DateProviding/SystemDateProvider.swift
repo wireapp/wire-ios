@@ -18,10 +18,10 @@
 
 import Foundation
 
-extension CurrentDateProviding where Self == SystemDateProvider {
+public extension CurrentDateProviding where Self == SystemDateProvider {
 
     /// Returns a new instance of `SystemDateProvider`.
-    public static var system: Self { .init() }
+    static var system: Self { .init() }
 }
 
 /// Provides date values based on the system clock.

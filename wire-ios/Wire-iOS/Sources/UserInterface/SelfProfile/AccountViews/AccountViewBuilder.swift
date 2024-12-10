@@ -25,7 +25,6 @@ struct AccountViewBuilder {
     var displayContext: DisplayContext
 
     func build() -> BaseAccountView {
-
         if let accountView = TeamAccountView(user: user, account: account, displayContext: displayContext) {
             accountView
         } else {

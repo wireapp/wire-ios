@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
 
     private func createSut(for featureChange: FeatureRepository.FeatureChange) -> UIAlertController? {
-        let result = UIAlertController.fromFeatureChange(featureChange,
-                                                         acknowledger: MockFeatureChangeAcknowledger())
+        let result = UIAlertController.fromFeatureChange(
+            featureChange,
+            acknowledger: MockFeatureChangeAcknowledger()
+        )
         result?.view.backgroundColor = .white
         return result
     }

@@ -21,20 +21,19 @@ import WireCommonComponents
 import WireDesign
 import WireSystem
 
-/**
- * A footer view to use to display a bar of actions to perform for a conversation.
- */
+/// A footer view to use to display a bar of actions to perform for a conversation.
 
 class ConversationDetailFooterView: UIView {
 
     // MARK: - Properties
+
     let rightButton = IconButton()
     var leftButton: IconButton
     private let containerView = UIView()
 
     var leftIcon: StyleKitIcon? {
         get {
-            return leftButton.icon(for: .normal)
+            leftButton.icon(for: .normal)
         }
         set {
             leftButton.isHidden = (newValue == .none)
@@ -46,7 +45,7 @@ class ConversationDetailFooterView: UIView {
 
     var rightIcon: StyleKitIcon? {
         get {
-            return rightButton.icon(for: .normal)
+            rightButton.icon(for: .normal)
         }
         set {
             rightButton.isHidden = (newValue == .none)
@@ -57,6 +56,7 @@ class ConversationDetailFooterView: UIView {
     }
 
     // MARK: - Initialization
+
     init() {
         self.leftButton = IconButton(fontSpec: .normalSemiboldFont)
         super.init(frame: .zero)
@@ -70,6 +70,7 @@ class ConversationDetailFooterView: UIView {
     }
 
     // MARK: - Layout
+
     private func setupViews() {
         let highlightedStateColor = UIColor.accent()
         let configureButton = { (button: IconButton) in
@@ -105,9 +106,9 @@ class ConversationDetailFooterView: UIView {
 
             // containerView
             containerView.heightAnchor.constraint(equalToConstant: 56),
-            containerView.leadingAnchor.constraint(equalTo: safeLeadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: safeTrailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: safeBottomAnchor),
+            containerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
 
             // leftButton
             leftButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
@@ -126,11 +127,13 @@ class ConversationDetailFooterView: UIView {
         fatal("Should be overridden in subclasses")
     }
 
-    @objc func leftButtonTapped(_ sender: IconButton) {
+    @objc
+    func leftButtonTapped(_ sender: IconButton) {
         fatal("Should be overridden in subclasses")
     }
 
-    @objc func rightButtonTapped(_ sender: IconButton) {
+    @objc
+    func rightButtonTapped(_ sender: IconButton) {
         fatal("Should be overridden in subclasses")
     }
 

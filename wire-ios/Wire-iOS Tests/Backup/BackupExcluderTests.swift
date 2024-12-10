@@ -16,15 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireCommonComponents
 import XCTest
+@testable import Wire
 
 private final class MockBackupExcluder: BackupExcluder {}
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: test protocol instead
-// swiftlint:enable todo_requires_jira_link
 final class BackupExcluderTests: XCTestCase {
     private var sut: MockBackupExcluder!
     let filename = "test.txt"
@@ -44,7 +43,8 @@ final class BackupExcluderTests: XCTestCase {
     }
 
     func delete(fileNamed: String) {
-        guard let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first else { return }
+        guard let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        else { return }
         let file = URL(fileURLWithPath: path).appendingPathComponent(fileNamed)
 
         let fileManager = FileManager.default
@@ -52,7 +52,8 @@ final class BackupExcluderTests: XCTestCase {
     }
 
     func write(text: String, to fileNamed: String) {
-        guard let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first else { return }
+        guard let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        else { return }
         let file = URL(fileURLWithPath: path).appendingPathComponent(fileNamed)
         try? text.write(to: file, atomically: false, encoding: String.Encoding.utf8)
     }

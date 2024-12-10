@@ -19,8 +19,6 @@
 import Foundation
 import WireSystem
 
-private let zmLog = ZMSLog(tag: "safeFileContext")
-
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
 
@@ -32,7 +30,7 @@ public final class SafeFileContext: NSObject {
         super.init()
 
         self.fileDescriptor = open(self.fileURL.path, 0)
-        if self.fileDescriptor <= 0 {
+        if fileDescriptor <= 0 {
             fatal("Can't obtain FileDescriptor for \(self.fileURL)")
         }
     }
@@ -42,7 +40,6 @@ public final class SafeFileContext: NSObject {
         self.releaseDirectoryLock()
         // close
         close(self.fileDescriptor)
-        zmLog.debug("Closed fileDescriptor at path: \(fileURL)")
     }
 
 }
@@ -50,16 +47,14 @@ public final class SafeFileContext: NSObject {
 public extension SafeFileContext {
 
     func acquireDirectoryLock() {
-        if flock(self.fileDescriptor, LOCK_EX) != 0 {
-            fatal("Failed to lock \(self.fileURL)")
+        if flock(fileDescriptor, LOCK_EX) != 0 {
+            fatal("Failed to lock \(fileURL)")
         }
-        zmLog.debug("Acquired lock at path: \(self.fileURL)")
     }
 
     func releaseDirectoryLock() {
-        if flock(self.fileDescriptor, LOCK_UN) != 0 {
-            fatal("Failed to unlock \(self.fileURL)")
+        if flock(fileDescriptor, LOCK_UN) != 0 {
+            fatal("Failed to unlock \(fileURL)")
         }
-        zmLog.debug("Released lock at path: \(self.fileURL)")
     }
 }

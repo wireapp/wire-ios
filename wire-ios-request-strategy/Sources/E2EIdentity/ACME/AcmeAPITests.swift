@@ -17,13 +17,13 @@
 //
 
 import Foundation
+import WireTransport
 @testable import WireRequestStrategy
 
 final class AcmeAPITests: ZMTBaseTest {
 
     var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
-    let backendDomainBackup = BackendInfo.domain
     private let encoder: JSONEncoder = .defaultEncoder
 
     override func setUp() {
@@ -39,7 +39,6 @@ final class AcmeAPITests: ZMTBaseTest {
     override func tearDown() {
         acmeApi = nil
         mockHttpClient = nil
-        BackendInfo.domain = backendDomainBackup
 
         super.tearDown()
     }
@@ -61,7 +60,10 @@ final class AcmeAPITests: ZMTBaseTest {
             return XCTFail("Failed to get ACME directory.")
         }
 
-        let acmeDirectoryResponse = try JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData)
+        let acmeDirectoryResponse = try JSONDecoder.defaultDecoder.decode(
+            AcmeDirectoriesResponse.self,
+            from: acmeDirectoryData
+        )
 
         // then
         XCTAssertEqual(acmeDirectoryResponse, expectedAcmeDirectory)
@@ -203,15 +205,18 @@ final class AcmeAPITests: ZMTBaseTest {
     func testThatItSendsChallengeRequest() async throws {
         // expectation
         let headerNonce = "ACMENonce"
-        let expectation = ChallengeResponse(type: "JWT",
-                                            url: "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcap/1pceubr",
-                                            status: "pending",
-                                            token: "NEi1HaRRYqM0R9cGZaHdv0dBWIkRbyCY",
-                                            target: "target",
-                                            nonce: headerNonce)
+        let expectation = ChallengeResponse(
+            type: "JWT",
+            url: "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcap/1pceubr",
+            status: "pending",
+            token: "NEi1HaRRYqM0R9cGZaHdv0dBWIkRbyCY",
+            target: "target",
+            nonce: headerNonce
+        )
 
         // given
-        let path = "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcapXlWSrHqu4BrD1RFORZOGrC/1pceubrFUZAvVQI5XgtLDMfLefhOt4YI"
+        let path =
+            "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcapXlWSrHqu4BrD1RFORZOGrC/1pceubrFUZAvVQI5XgtLDMfLefhOt4YI"
 
         // mock
         let mockResponse = try XCTUnwrap(HTTPURLResponse(
@@ -304,11 +309,13 @@ class MockHttpClient: HttpClientCustom {
 private class MockAcmeResponse {
 
     func acmeDirectory() -> AcmeDirectoriesResponse {
-        return AcmeDirectoriesResponse(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-                                       newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                       newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
-                                       revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
-                                       keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change")
+        AcmeDirectoriesResponse(
+            newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+            newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
+            newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
+            revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
+            keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change"
+        )
 
     }
 

@@ -20,7 +20,14 @@ import Foundation
 
 /// A message that can be sent in an mls group.
 
-public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {}
+public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator {
+
+    /// Messages can expire, e.g. if network conditions are too slow to send.
+    var shouldExpire: Bool { get }
+
+    /// Sets the expiration date with the default time interval.
+    func setExpirationDate()
+}
 
 extension ZMClientMessage: MLSMessage {}
 
@@ -28,8 +35,16 @@ extension ZMAssetClientMessage: MLSMessage {}
 
 extension GenericMessageEntity: MLSMessage {
 
+    // Just required for protocol conformance.
+    public var shouldExpire: Bool { false }
+
     public func encryptForTransport(using encrypt: (Data) async throws -> Data) async throws -> Data {
-        return try await message.encryptForTransport(using: encrypt)
+        try await message.encryptForTransport(using: encrypt)
     }
 
+    public func setExpirationDate() {
+        // Just required for protocol conformance.
+        // Generic messages are used as underlying messages in proteus and mls,
+        // so they don't need to have their own expiration date.
+    }
 }

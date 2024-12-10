@@ -25,8 +25,10 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "calling")
 
 protocol ActiveCallViewControllerDelegate: AnyObject {
-    func activeCallViewControllerDidDisappear(_ activeCallViewController: UIViewController,
-                                              for conversation: ZMConversation?)
+    func activeCallViewControllerDidDisappear(
+        _ activeCallViewController: UIViewController,
+        for conversation: ZMConversation?
+    )
 }
 
 protocol CallInfoConfigurationObserver: AnyObject {
@@ -47,7 +49,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     private let callDegradationController = CallDegradationController()
 
     var bottomSheetMinimalOffset: CGFloat {
-        return callingActionsInfoViewController.actionsViewHeightConstraint.constant
+        callingActionsInfoViewController.actionsViewHeightConstraint.constant
     }
 
     let userSession: UserSession
@@ -63,14 +65,27 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         self.voiceChannel = voiceChannel
         self.userSession = userSession
 
-        visibleVoiceChannelViewController = CallViewController(voiceChannel: voiceChannel, selfUser: userSession.selfUser, isOverlayEnabled: false, userSession: userSession)
-        callingActionsInfoViewController = CallingActionsInfoViewController(participants: voiceChannel.getParticipantsList(), selfUser: userSession.selfUser)
-        super.init(contentViewController: visibleVoiceChannelViewController, bottomSheetViewController: callingActionsInfoViewController, bottomSheetConfiguration: .init(height: bottomSheetMaxHeight, initialOffset: 112.0))
+        self.visibleVoiceChannelViewController = CallViewController(
+            voiceChannel: voiceChannel,
+            selfUser: userSession.selfUser,
+            isOverlayEnabled: false,
+            userSession: userSession
+        )
+        self.callingActionsInfoViewController = CallingActionsInfoViewController(
+            participants: voiceChannel.getParticipantsList(),
+            selfUser: userSession.selfUser
+        )
+        super.init(
+            contentViewController: visibleVoiceChannelViewController,
+            bottomSheetViewController: callingActionsInfoViewController,
+            bottomSheetConfiguration: .init(height: bottomSheetMaxHeight, initialOffset: 112.0)
+        )
 
-        callingActionsInfoViewController.setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)
+        callingActionsInfoViewController
+            .setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)
         callingActionsInfoViewController.actionsView.bottomSheetScrollingDelegate = self
         visibleVoiceChannelViewController.configurationObserver = self
-        participantsObserverToken = voiceChannel.addParticipantObserver(self)
+        self.participantsObserverToken = voiceChannel.addParticipantObserver(self)
         visibleVoiceChannelViewController.delegate = self
 
         callDegradationController.targetViewController = self
@@ -80,6 +95,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         addConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -120,8 +136,9 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         NSLayoutConstraint.activate([
             headerBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            headerBar.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            headerBar.bottomAnchor.constraint(equalTo: visibleVoiceChannelViewController.view.topAnchor).withPriority(.required),
+            headerBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            headerBar.bottomAnchor.constraint(equalTo: visibleVoiceChannelViewController.view.topAnchor)
+                .withPriority(.required),
             overlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             overlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             overlay.topAnchor.constraint(equalTo: view.topAnchor),
@@ -139,9 +156,12 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         let isLandscape = UIDevice.current.twoDimensionOrientation.isLandscape
         // if landscape then bottom sheet should take whole screen (without headerBar)
         let bottomSheetMaxHeight = isLandscape ? (height - headerBar.bounds.height) : bottomSheetMaxHeight
-        let newConfiguration = BottomSheetConfiguration(height: bottomSheetMaxHeight, initialOffset: bottomSheetMinimalOffset)
-        guard self.configuration != newConfiguration else { return }
-        self.configuration = newConfiguration
+        let newConfiguration = BottomSheetConfiguration(
+            height: bottomSheetMaxHeight,
+            initialOffset: bottomSheetMinimalOffset
+        )
+        guard configuration != newConfiguration else { return }
+        configuration = newConfiguration
         callingActionsInfoViewController.updateActionViewHeight()
         callingActionsInfoViewController.actionsView.viewWillRotate(toPortrait: !isLandscape)
         hideBottomSheet()
@@ -162,18 +182,24 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         guard toViewController != fromViewController else { return }
         addChild(toViewController)
 
-        transition(from: fromViewController,
-                   to: toViewController,
-                   duration: 0.35,
-                   options: .transitionCrossDissolve,
-                   animations: nil,
-                   completion: { _ in
-            self.addContentViewController(contentViewController: toViewController)
-            NSLayoutConstraint.activate(
-                [self.headerBar.bottomAnchor.constraint(equalTo: toViewController.view.topAnchor).withPriority(.required)])
-            fromViewController.removeFromParent()
-            self.view.bringSubviewToFront(self.bottomSheetViewController.view)
-        })
+        transition(
+            from: fromViewController,
+            to: toViewController,
+            duration: 0.35,
+            options: .transitionCrossDissolve,
+            animations: nil,
+            completion: { _ in
+                self.addContentViewController(contentViewController: toViewController)
+                NSLayoutConstraint.activate(
+                    [
+                        self.headerBar.bottomAnchor.constraint(equalTo: toViewController.view.topAnchor)
+                            .withPriority(.required)
+                    ]
+                )
+                fromViewController.removeFromParent()
+                self.view.bringSubviewToFront(self.bottomSheetViewController.view)
+            }
+        )
     }
 
     func updateVisibleVoiceChannelViewController() {
@@ -186,10 +212,16 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         }
 
         self.voiceChannel = voiceChannel
-        visibleVoiceChannelViewController = CallViewController(voiceChannel: voiceChannel, selfUser: userSession.selfUser, isOverlayEnabled: false, userSession: userSession)
+        visibleVoiceChannelViewController = CallViewController(
+            voiceChannel: voiceChannel,
+            selfUser: userSession.selfUser,
+            isOverlayEnabled: false,
+            userSession: userSession
+        )
         visibleVoiceChannelViewController.configurationObserver = self
         visibleVoiceChannelViewController.delegate = self
-        callingActionsInfoViewController.setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)
+        callingActionsInfoViewController
+            .setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)
         callingActionsInfoViewController.participants = voiceChannel.getParticipantsList()
         participantsObserverToken = voiceChannel.addParticipantObserver(self)
     }
@@ -209,7 +241,8 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     private func startCallDurationTimer() {
         stopCallDurationTimer()
         callDurationTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            guard let configuration = self?.callInfoConfiguration, case .established = configuration.state else { return }
+            guard let configuration = self?.callInfoConfiguration,
+                  case .established = configuration.state else { return }
             self?.headerBar.updateConfiguration(configuration: configuration)
         }
     }
@@ -247,7 +280,13 @@ extension CallingBottomSheetViewController: WireCallCenterCallParticipantObserve
 }
 
 extension CallingBottomSheetViewController: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         updateVisibleVoiceChannelViewController()
     }
 }
@@ -263,18 +302,21 @@ extension CallingBottomSheetViewController: CallDegradationControllerDelegate {
 }
 
 extension CallingBottomSheetViewController: CallViewControllerDelegate {
-    func callViewControllerDidDisappear(_ callController: CallViewController,
-                                        for conversation: ZMConversation?) {
+    func callViewControllerDidDisappear(
+        _ callController: CallViewController,
+        for conversation: ZMConversation?
+    ) {
         delegate?.activeCallViewControllerDidDisappear(self, for: conversation)
     }
 
-    @objc func hideCallView() {
+    @objc
+    func hideCallView() {
         delegate?.activeCallViewControllerDidDisappear(self, for: voiceChannel.conversation)
     }
 }
 
-extension VoiceChannel {
-    fileprivate func getParticipantsList() -> CallParticipantsList {
+private extension VoiceChannel {
+    func getParticipantsList() -> CallParticipantsList {
         let sortedParticipants = participants(
             ofKind: .all,
             activeSpeakersLimit: CallInfoConfiguration.maxActiveSpeakers
@@ -292,6 +334,6 @@ extension VoiceChannel {
 
 private final class PassThroughOpaqueView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-            return false
+        false
     }
 }

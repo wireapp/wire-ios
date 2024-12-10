@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol UserClientAPI {
 
-    func deleteUserClient(clientId: String, credentials: EmailCredentials?) async throws
+    func deleteUserClient(clientId: String, password: String) async throws
 
 }
 
@@ -33,16 +33,17 @@ class UserClientAPIV0: UserClientAPI {
     }
 
     open var apiVersion: APIVersion {
-        return .v0
+        .v0
     }
 
-    func deleteUserClient(clientId: String, credentials: EmailCredentials?) async throws {
+    func deleteUserClient(clientId: String, password: String) async throws {
         let requestsFactory = UserClientRequestFactory()
 
         let request = requestsFactory.deleteClientRequest(
             clientId: clientId,
-            credentials: credentials,
-            apiVersion: apiVersion)
+            password: password,
+            apiVersion: apiVersion
+        )
 
         let response = await httpClient.send(request)
         if response.result != .success {
@@ -54,36 +55,40 @@ class UserClientAPIV0: UserClientAPI {
 
 class UserClientAPIV1: UserClientAPIV0 {
     override var apiVersion: APIVersion {
-        return .v1
+        .v1
     }
 }
 
 class UserClientAPIV2: UserClientAPIV1 {
     override var apiVersion: APIVersion {
-        return .v2
+        .v2
     }
 }
 
 class UserClientAPIV3: UserClientAPIV2 {
     override var apiVersion: APIVersion {
-        return .v3
+        .v3
     }
 }
 
 class UserClientAPIV4: UserClientAPIV3 {
     override var apiVersion: APIVersion {
-        return .v4
+        .v4
     }
 }
 
 class UserClientAPIV5: UserClientAPIV4 {
     override var apiVersion: APIVersion {
-        return .v5
+        .v5
     }
 }
 
 class UserClientAPIV6: UserClientAPIV5 {
     override var apiVersion: APIVersion {
-        return .v6
+        .v6
     }
+}
+
+final class UserClientAPIV7: UserClientAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
 }

@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundleAction, SendCommitBundleActionHandler> {
 
-    let commitBundle = "bundle".data(using: .utf8)!
+    let commitBundle = Data("bundle".utf8)
 
     override func setUp() {
         super.setUp()
@@ -30,6 +30,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
     }
 
     // MARK: - Request generation
+
     func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
@@ -122,7 +123,8 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
         test_itHandlesFailure(
             status: 533,
             payload: payload as ZMTransportData,
-            expectedError: SendCommitBundleAction.Failure.unreachableDomains(Set(domains)))
+            expectedError: SendCommitBundleAction.Failure.unreachableDomains(Set(domains))
+        )
     }
 
     func test_itHandlesNonFederatingBackendsFailure() {
@@ -131,6 +133,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
         test_itHandlesFailure(
             status: 409,
             payload: payload as ZMTransportData,
-            expectedError: SendCommitBundleAction.Failure.nonFederatingDomains(Set(domains)))
+            expectedError: SendCommitBundleAction.Failure.nonFederatingDomains(Set(domains))
+        )
     }
 }

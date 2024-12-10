@@ -18,8 +18,7 @@
 
 import avs
 import Foundation
-
-private let zmLog = ZMSLog(tag: "calling")
+import WireLogging
 
 // MARK: Conversation Changes
 
@@ -46,18 +45,21 @@ extension WireCallCenterV3: ZMConversationObserver {
             return closeCall(conversationId: conversationId, reason: .securityDegraded)
         }
 
-        let updatedCallState = previousSnapshot.callState.update(isConversationDegraded: changeInfo.conversation.isDegraded)
+        let updatedCallState = previousSnapshot.callState
+            .update(isConversationDegraded: changeInfo.conversation.isDegraded)
 
         if updatedCallState != previousSnapshot.callState {
             callSnapshots[conversationId] = previousSnapshot.update(with: updatedCallState)
 
             if let context = uiMOC, let callerId = initiatorForCall(conversationId: conversationId) {
-                let notification = WireCallCenterCallStateNotification(context: context,
-                                                                       callState: updatedCallState,
-                                                                       conversationId: conversationId,
-                                                                       callerId: callerId,
-                                                                       messageTime: Date(),
-                                                                       previousCallState: previousSnapshot.callState)
+                let notification = WireCallCenterCallStateNotification(
+                    context: context,
+                    callState: updatedCallState,
+                    conversationId: conversationId,
+                    callerId: callerId,
+                    messageTime: Date(),
+                    previousCallState: previousSnapshot.callState
+                )
                 notification.post(in: context.notificationContext)
             }
         }
@@ -97,7 +99,7 @@ extension WireCallCenterV3: ZMConversationObserver {
     private func endCallIfNeeded(_ changeInfo: ConversationChangeInfo) {
         guard let conversationId = changeInfo.conversation.avsIdentifier else { return }
 
-        if changeInfo.isDeletedChanged && changeInfo.conversation.isDeletedRemotely {
+        if changeInfo.isDeletedChanged, changeInfo.conversation.isDeletedRemotely {
             Self.logger.info("closing call because conversation was deleted")
             closeCall(conversationId: conversationId)
 
@@ -115,10 +117,9 @@ extension WireCallCenterV3 {
 
     private func handleEvent(_ description: String, _ handlerBlock: @escaping () -> Void) {
         Self.logger.info("handle avs event: \(description)")
-        zmLog.debug("Handle AVS event: \(description)")
 
-        guard let context = self.uiMOC else {
-            zmLog.error("Cannot handle event '\(description)' because the UI context is not available.")
+        guard let context = uiMOC else {
+            Self.logger.error("Cannot handle event '\(description)' because the UI context is not available.")
             return
         }
 
@@ -127,9 +128,12 @@ extension WireCallCenterV3 {
         }
     }
 
-    private func handleEventInContext(_ description: String, _ handlerBlock: @escaping (NSManagedObjectContext) -> Void) {
-        guard let context = self.uiMOC else {
-            zmLog.error("Cannot handle event '\(description)' because the UI context is not available.")
+    private func handleEventInContext(
+        _ description: String,
+        _ handlerBlock: @escaping (NSManagedObjectContext) -> Void
+    ) {
+        guard let context = uiMOC else {
+            Self.logger.error("Cannot handle event '\(description)' because the UI context is not available.")
             return
         }
 
@@ -139,13 +143,27 @@ extension WireCallCenterV3 {
     }
 
     /// Handles incoming calls.
-    func handleIncomingCall(conversationId: AVSIdentifier, messageTime: Date, client: AVSClient, isVideoCall: Bool, shouldRing: Bool, conversationType: AVSConversationType) {
+    func handleIncomingCall(
+        conversationId: AVSIdentifier,
+        messageTime: Date,
+        client: AVSClient,
+        isVideoCall: Bool,
+        shouldRing: Bool,
+        conversationType: AVSConversationType
+    ) {
         handleEvent("incoming-call") {
             let isDegraded = self.isDegraded(conversationId: conversationId)
             let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
             let members = [AVSCallMember(client: client)]
 
-            self.createSnapshot(callState: callState, members: members, callStarter: client.avsIdentifier, video: isVideoCall, for: conversationId, conversationType: conversationType)
+            self.createSnapshot(
+                callState: callState,
+                members: members,
+                callStarter: client.avsIdentifier,
+                video: isVideoCall,
+                for: conversationId,
+                conversationType: conversationType
+            )
             self.handle(callState: callState, conversationId: conversationId)
         }
     }
@@ -153,7 +171,12 @@ extension WireCallCenterV3 {
     /// Handles missed calls.
     func handleMissedCall(conversationId: AVSIdentifier, messageTime: Date, userId: AVSIdentifier, isVideoCall: Bool) {
         handleEvent("missed-call") {
-            self.missed(conversationId: conversationId, userId: userId, timestamp: messageTime, isVideoCall: isVideoCall)
+            self.missed(
+                conversationId: conversationId,
+                userId: userId,
+                timestamp: messageTime,
+                isVideoCall: isVideoCall
+            )
         }
     }
 
@@ -192,34 +215,36 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Handles ended calls
-     * If the user answers on the different device, we receive a `WCALL_REASON_ANSWERED_ELSEWHERE` followed by a
-     * `WCALL_REASON_NORMAL` once the call ends.
-     *
-     * If the user leaves an ongoing group conversation or an incoming group call times out, we receive a
-     * `WCALL_REASON_STILL_ONGOING` followed by a `WCALL_REASON_NORMAL` once the call ends.
-     *
-     * If messageTime is set to 0, the event wasn't caused by a message therefore we don't have a serverTimestamp.
-     */
+    /// Handles ended calls
+    /// If the user answers on the different device, we receive a `WCALL_REASON_ANSWERED_ELSEWHERE` followed by a
+    /// `WCALL_REASON_NORMAL` once the call ends.
+    ///
+    /// If the user leaves an ongoing group conversation or an incoming group call times out, we receive a
+    /// `WCALL_REASON_STILL_ONGOING` followed by a `WCALL_REASON_NORMAL` once the call ends.
+    ///
+    /// If messageTime is set to 0, the event wasn't caused by a message therefore we don't have a serverTimestamp.
 
-    func handleCallEnd(reason: CallClosedReason, conversationId: AVSIdentifier, messageTime: Date?, userId: AVSIdentifier) {
+    func handleCallEnd(
+        reason: CallClosedReason,
+        conversationId: AVSIdentifier,
+        messageTime: Date?,
+        userId: AVSIdentifier
+    ) {
         guard isEnabled else { return }
         handleEvent("closed-call") {
-            self.handle(callState: .terminating(reason: reason), conversationId: conversationId, messageTime: messageTime, userId: userId)
+            self.handle(
+                callState: .terminating(reason: reason),
+                conversationId: conversationId,
+                messageTime: messageTime,
+                userId: userId
+            )
         }
     }
 
     /// Handles call metrics.
     func handleCallMetrics(conversationId: AVSIdentifier, metrics: String) {
-        do {
-            let metricsData = Data(metrics.utf8)
-            let jsonObject = try JSONSerialization.jsonObject(with: metricsData, options: .mutableContainers)
-            guard let attributes = jsonObject as? [String: NSObject] else { return }
-            analytics?.tagEvent("calling.avs_metrics_ended_call", attributes: attributes)
-        } catch {
-            zmLog.error("Unable to parse call metrics JSON: \(error)")
-        }
+        let metricsData = Data(metrics.utf8)
+        WireLogger.avs.info("Calling metrics: \(String(decoding: metricsData, as: UTF8.self))")
     }
 
     /// Handle requests for refreshing the calling configuration.
@@ -230,13 +255,15 @@ extension WireCallCenterV3 {
     }
 
     /// Handles sending call messages
-    internal func handleCallMessageRequest(token: WireCallMessageToken,
-                                           conversationId: AVSIdentifier,
-                                           senderUserId: AVSIdentifier,
-                                           senderClientId: String,
-                                           targets: AVSClientList?,
-                                           data: Data,
-                                           overMLSSelfConversation: Bool = false) {
+    func handleCallMessageRequest(
+        token: WireCallMessageToken,
+        conversationId: AVSIdentifier,
+        senderUserId: AVSIdentifier,
+        senderClientId: String,
+        targets: AVSClientList?,
+        data: Data,
+        overMLSSelfConversation: Bool = false
+    ) {
 
         guard isEnabled else { return }
 
@@ -247,7 +274,7 @@ extension WireCallCenterV3 {
                 selfUser.avsIdentifier == senderUserId,
                 selfUser.selfClient()?.remoteIdentifier == senderClientId
             else {
-                zmLog.warn("Received request to send calling message from non self user and/or client")
+                Self.logger.warn("Received request to send calling message from non self user and/or client")
                 return
             }
 
@@ -264,7 +291,7 @@ extension WireCallCenterV3 {
 
     /// Called when AVS is ready.
     func setCallReady(version: Int32) {
-        zmLog.debug("wcall intialized with protocol version: \(version)")
+        Self.logger.debug("wcall intialized with protocol version: \(version)")
         handleEvent("call-ready") {
             self.isReady = true
         }
@@ -273,7 +300,7 @@ extension WireCallCenterV3 {
     func handleParticipantChange(conversationId: AVSIdentifier, data: String) {
         handleEvent("participant-change") {
             guard let data = data.data(using: .utf8) else {
-                zmLog.safePublic("Invalid participant change data")
+                Self.logger.info("Invalid participant change data", attributes: .safePublic)
                 return
             }
 
@@ -294,9 +321,13 @@ extension WireCallCenterV3 {
             do {
                 let change = try self.decoder.decode(AVSParticipantsChange.self, from: data)
                 let members = change.members.map(AVSCallMember.init)
-                self.callParticipantsChanged(conversationId: AVSIdentifier.from(string: change.convid), participants: members)
+                self.callParticipantsChanged(
+                    conversationId: AVSIdentifier.from(string: change.convid),
+                    participants: members
+                )
             } catch {
-                zmLog.safePublic("Cannot decode participant change JSON")
+                let change = String(decoding: data, as: UTF8.self)
+                Self.logger.info("Cannot decode participant change JSON: \(change)", attributes: .safePublic)
             }
         }
     }
@@ -322,21 +353,33 @@ extension WireCallCenterV3 {
         }
     }
 
-    /// Handles network quality change
-    func handleNetworkQualityChange(conversationId: AVSIdentifier, userId: String, clientId: String, quality: NetworkQuality) {
+    /// This handler is called for 1:1 and conference calls.
+    ///
+    /// In 1:1 calls, `userId` and `clientId` are the ids of the remote user
+    /// In conference calls, since there is multiple remote users, the ids will be "SFT" and should be ignored
+    ///
+    /// - Parameters:
+    ///   - conversationId: the AVSIdentifier of the conversation
+    ///   - userId: the remote user's ID for 1:1 calls, defaults to "SFT" for conference calls
+    ///   - clientId: the remote user's client ID for 1:1 calls, defaults to "SFT" for conference calls
+    ///   - quality: the network quality
+    ///
+    func handleNetworkQualityChange(
+        conversationId: AVSIdentifier,
+        userId: String,
+        clientId: String,
+        quality: NetworkQuality
+    ) {
         handleEventInContext("network-quality-change") {
-            if let identifier = AVSIdentifier(string: userId) {
-                self.callParticipantNetworkQualityChanged(
-                    conversationId: conversationId,
-                    client: AVSClient(userId: identifier, clientId: clientId),
-                    quality: quality
-                )
-            }
 
-            if let call = self.callSnapshots[conversationId] {
+            // We ignore the `usedId` and `clientID` because we only need to know the network quality
+
+            if let call = self.callSnapshots[conversationId], call.networkQuality != quality {
                 self.callSnapshots[conversationId] = call.updateNetworkQuality(quality)
-                let notification = WireCallCenterNetworkQualityNotification(conversationId: conversationId,
-                                                                            networkQuality: quality)
+                let notification = WireCallCenterNetworkQualityNotification(
+                    conversationId: conversationId,
+                    networkQuality: quality
+                )
                 notification.post(in: $0.notificationContext)
             }
         }
@@ -353,7 +396,7 @@ extension WireCallCenterV3 {
             self.transport?.requestClientsList(conversationId: conversationId) { clients in
 
                 guard let json = AVSClientList(clients: clients).jsonString(encoder) else {
-                    zmLog.error("Could not encode client list to JSON")
+                    Self.logger.error("Could not encode client list to JSON")
                     return
                 }
 
@@ -369,43 +412,45 @@ extension WireCallCenterV3 {
     }
 
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
-        guard let data = data.data(using: .utf8) else {
-            WireLogger.calling.error("Invalid active speakers data", attributes: .safePublic)
-            return
-        }
+        // TODO: [WPB-9604]: - refactor to avoid processing call data on the UI context
+        handleEventInContext("active-speakers-change") {
 
-        // Example of `data`
-        //  {
-        //      "audio_levels": [
-        //          {
-        //              "userid": "3f49da1d-0d52-4696-9ef3-0dd181383e8a",
-        //              "clientid": "24cc758f602fb1f4",
-        //              "audio_level": 100,
-        //              "audio_level_now": 100
-        //          }
-        //      ]
-        // }
+            guard let data = data.data(using: .utf8) else {
+                Self.logger.error("Invalid active speakers data", attributes: .safePublic)
+                return
+            }
 
-        do {
-            let change = try self.decoder.decode(AVSActiveSpeakersChange.self, from: data)
+            // Example of `data`
+            //  {
+            //      "audio_levels": [
+            //          {
+            //              "userid": "3f49da1d-0d52-4696-9ef3-0dd181383e8a",
+            //              "clientid": "24cc758f602fb1f4",
+            //              "audio_level": 100,
+            //              "audio_level_now": 100
+            //          }
+            //      ]
+            // }
 
-            if let call = self.callSnapshots[conversationId] {
+            do {
+                let change = try self.decoder.decode(AVSActiveSpeakersChange.self, from: data)
 
-                self.callSnapshots[conversationId] = call.updateActiveSpeakers(change.activeSpeakers)
+                if let call = self.callSnapshots[conversationId] {
 
-                guard self.isSignificantActiveSpeakersChange(
-                    change: change,
-                    in: call
-                ) else {
-                    return
-                }
+                    self.callSnapshots[conversationId] = call.updateActiveSpeakers(change.activeSpeakers)
 
-                handleEventInContext("active-speakers-change") {
+                    guard self.isSignificantActiveSpeakersChange(
+                        change: change,
+                        in: call
+                    ) else {
+                        return
+                    }
+
                     WireCallCenterActiveSpeakersNotification().post(in: $0.notificationContext)
                 }
+            } catch {
+                Self.logger.error("Cannot decode active speakers change JSON", attributes: .safePublic)
             }
-        } catch {
-            WireLogger.calling.error("Cannot decode active speakers change JSON", attributes: .safePublic)
         }
     }
 
@@ -456,7 +501,7 @@ extension WireCallCenterV3 {
                     do {
                         try await mlsService.generateNewEpoch(groupID: groupIDs.subconversation)
                     } catch {
-                        WireLogger.calling.error("failed to generate new epoch: \(String(reflecting: error))")
+                        Self.logger.error("failed to generate new epoch: \(String(reflecting: error))")
                     }
                 }
             }

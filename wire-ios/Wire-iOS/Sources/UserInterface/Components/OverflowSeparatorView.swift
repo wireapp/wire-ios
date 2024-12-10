@@ -25,7 +25,7 @@ final class OverflowSeparatorView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.applyStyle()
+        applyStyle()
     }
 
     @available(*, unavailable)
@@ -34,12 +34,12 @@ final class OverflowSeparatorView: UIView {
     }
 
     private func applyStyle() {
-        self.backgroundColor = SemanticColors.View.backgroundSeparatorCell
-        self.alpha = 0
+        backgroundColor = SemanticColors.View.backgroundSeparatorCell
+        alpha = 0
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: .hairline)
+        CGSize(width: UIView.noIntrinsicMetric, height: .hairline)
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -49,7 +49,7 @@ final class OverflowSeparatorView: UIView {
             let showSeparator = contentHeight - offsetY > height
             alpha = showSeparator ? 1 : 0
         } else {
-            self.alpha = scrollView.contentOffset.y > 0 ? 1 : 0
+            alpha = scrollView.contentOffset.y > 0 ? 1 : 0
         }
     }
 }

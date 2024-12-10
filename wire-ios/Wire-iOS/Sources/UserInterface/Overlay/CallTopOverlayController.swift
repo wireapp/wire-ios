@@ -136,7 +136,7 @@ final class CallTopOverlayController: UIViewController {
             interactiveView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             interactiveView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             interactiveView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            interactiveView.topAnchor.constraint(equalTo: view.topAnchor, constant: UIScreen.safeArea.top),
+            interactiveView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             durationLabel.centerYAnchor.constraint(equalTo: interactiveView.centerYAnchor),
             durationLabel.leadingAnchor.constraint(equalTo: muteIcon.trailingAnchor, constant: 8),
             durationLabel.trailingAnchor.constraint(equalTo: interactiveView.trailingAnchor, constant: -16),
@@ -187,10 +187,10 @@ final class CallTopOverlayController: UIViewController {
     }
 
     private func updateCallDuration() {
-        if let callStartDate = self.conversation.voiceChannel?.callStartDate {
-            self.callDuration = -callStartDate.timeIntervalSinceNow
+        if let callStartDate = conversation.voiceChannel?.callStartDate {
+            callDuration = -callStartDate.timeIntervalSinceNow
         } else {
-            self.callDuration = 0
+            callDuration = 0
         }
     }
 
@@ -209,9 +209,13 @@ final class CallTopOverlayController: UIViewController {
             let duration = callDurationFormatter.string(from: callDuration) ?? ""
             return L10n.Localizable.Voice.TopOverlay.tapToReturn + "・" + duration
         default:
-            let initiator = self.conversation.voiceChannel?.initiator?.name ?? ""
-            let conversation = self.conversation.displayNameWithFallback
-            return state.description(callee: initiator, conversation: conversation, isGroup: self.conversation.conversationType == .group)
+            let initiator = conversation.voiceChannel?.initiator?.name ?? ""
+            let conversation = conversation.displayNameWithFallback
+            return state.description(
+                callee: initiator,
+                conversation: conversation,
+                isGroup: self.conversation.conversationType == .group
+            )
         }
     }
 
@@ -252,7 +256,13 @@ final class CallTopOverlayController: UIViewController {
 // MARK: - CallTopOverlayController: WireCallCenterCallStateObserver
 
 extension CallTopOverlayController: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         updateCallDurationTimer(for: callState)
     }
 }

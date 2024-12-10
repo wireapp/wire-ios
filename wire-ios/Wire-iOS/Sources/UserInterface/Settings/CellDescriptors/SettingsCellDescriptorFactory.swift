@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import SafariServices
+import WireSettingsUI
 import WireSyncEngine
 
 struct SettingsCellDescriptorFactory {
@@ -27,43 +28,51 @@ struct SettingsCellDescriptorFactory {
 
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
+    var settingsCoordinator: AnySettingsCoordinator
 
-    func rootGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
-        var rootElements: [SettingsCellDescriptorType] = []
+    func rootGroup(userSession: UserSession) -> any SettingsControllerGeneratorType &
+        SettingsInternalGroupCellDescriptorType {
+        var rootElements: [any SettingsCellDescriptorType] = []
 
         if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(manageTeamCell())
         }
 
-        rootElements.append(settingsGroup(isTeamMember: isTeamMember, userSession: userSession))
         #if MULTIPLE_ACCOUNTS_DISABLED
-            // We skip "add account" cell
+        // We skip "add account" cell
         #else
             rootElements.append(addAccountOrTeamCell())
         #endif
         let topSection = SettingsSectionDescriptor(cellDescriptors: rootElements)
 
-        return SettingsGroupCellDescriptor(items: [topSection],
-                                           title: L10n.Localizable.Self.profile,
-                                           style: .plain,
-                                           accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [topSection],
+            title: L10n.Localizable.Self.profile,
+            style: .plain,
+            accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
     func manageTeamCell() -> SettingsCellDescriptorType {
-        return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.Settings.ManageTeam.title,
-                                                    isDestructive: false,
-                                                    presentationStyle: PresentationStyle.modal,
-                                                    identifier: nil,
-                                                    presentationAction: { () -> (UIViewController?) in
-                                                        return BrowserViewController(url: URL.manageTeam(source: .settings))
-                                                    },
-                                                    previewGenerator: nil,
-                                                    icon: .team,
-                                                    accessoryViewMode: .alwaysHide,
-                                                    copiableText: nil)
+        SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.Settings.ManageTeam.title,
+            isDestructive: false,
+            presentationStyle: PresentationStyle.modal,
+            identifier: nil,
+            presentationAction: { () -> (UIViewController?) in
+                return BrowserViewController(url: URL.manageTeam(source: .settings))
+            },
+            previewGenerator: nil,
+            icon: .team,
+            accessoryViewMode: .alwaysHide,
+            copiableText: nil,
+            settingsTopLevelMenuItem: nil
+        )
     }
 
-    func addAccountOrTeamCell() -> SettingsCellDescriptorType {
+    func addAccountOrTeamCell() -> any SettingsCellDescriptorType {
 
         let sessionManager = SessionManager.shared
 
@@ -92,26 +101,34 @@ struct SettingsCellDescriptorFactory {
             return nil
         }
 
-        return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.Settings.AddTeamOrAccount.title,
-                                                    isDestructive: false,
-                                                    presentationStyle: PresentationStyle.modal,
-                                                    identifier: nil,
-                                                    presentationAction: presentationAction,
-                                                    previewGenerator: nil,
-                                                    icon: .plus,
-                                                    accessoryViewMode: .alwaysHide,
-                                                    copiableText: nil)
+        return SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.Settings.AddTeamOrAccount.title,
+            isDestructive: false,
+            presentationStyle: PresentationStyle.modal,
+            identifier: nil,
+            presentationAction: presentationAction,
+            previewGenerator: nil,
+            icon: .plus,
+            accessoryViewMode: .alwaysHide,
+            copiableText: nil,
+            settingsTopLevelMenuItem: nil
+        )
     }
 
-    func settingsGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    func settingsGroup(
+        isPublicDomain: Bool,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool
+    ) -> any SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
-                isTeamMember: isTeamMember,
-                userSession: userSession
+                isPublicDomain: isPublicDomain,
+                userSession: userSession,
+                useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
             ),
             devicesCell(),
             optionsGroup,
-            advancedGroup,
+            advancedGroup(userSession: userSession),
             helpSection(),
             aboutSection()
         ]
@@ -122,33 +139,48 @@ struct SettingsCellDescriptorFactory {
 
         let topSection = SettingsSectionDescriptor(cellDescriptors: topLevelElements)
 
-        return SettingsGroupCellDescriptor(items: [topSection],
-                                           title: L10n.Localizable.Self.settings,
-                                           style: .plain,
-                                           previewGenerator: .none,
-                                           icon: .gear,
-                                           accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [topSection],
+            title: L10n.Localizable.Self.settings,
+            style: .plain,
+            previewGenerator: .none,
+            icon: .gear,
+            accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
     func devicesCell() -> SettingsCellDescriptorType {
-        return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Devices.title,
+        SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Devices.title,
             isDestructive: false,
             presentationStyle: PresentationStyle.navigation,
             identifier: type(of: self).settingsDevicesCellIdentifier,
             presentationAction: { () -> (UIViewController?) in
-                return ClientListViewController(clientsList: .none,
-                                                credentials: .none,
-                                                detailedView: true)
+                return ClientListViewController(
+                    clientsList: .none,
+                    credentials: .none,
+                    detailedView: true
+                )
             },
             previewGenerator: { _ -> SettingsCellPreview in
                 return SettingsCellPreview.badge(ZMUser.selfUser()?.clients.count ?? 0)
             },
-           icon: .devices, copiableText: nil)
+            icon: .devices,
+            copiableText: nil,
+            settingsTopLevelMenuItem: .devices
+        )
     }
 
-    func soundGroupForSetting(_ settingsProperty: SettingsProperty, title: String, customSounds: [ZMSound], defaultSound: ZMSound) -> SettingsCellDescriptorType {
+    func soundGroupForSetting(
+        _ settingsProperty: SettingsProperty,
+        title: String,
+        customSounds: [ZMSound],
+        defaultSound: ZMSound
+    ) -> any SettingsCellDescriptorType {
         let items: [ZMSound] = [ZMSound.None, defaultSound] + customSounds
-        let previewPlayer: SoundPreviewPlayer = SoundPreviewPlayer(mediaManager: AVSMediaManager.sharedInstance())
+        let previewPlayer = SoundPreviewPlayer(mediaManager: AVSMediaManager.sharedInstance())
 
         let cells: [SettingsPropertySelectValueCellDescriptor] = items.map { item in
             let playSoundAction: SettingsPropertySelectValueCellDescriptor.SelectActionType = { _ in
@@ -165,64 +197,102 @@ struct SettingsCellDescriptorFactory {
                 }
             }
 
-            let propertyValue = item == defaultSound ? SettingsPropertyValue.none : SettingsPropertyValue.string(value: item.rawValue)
-            return SettingsPropertySelectValueCellDescriptor(settingsProperty: settingsProperty, value: propertyValue, title: item.descriptionLocalizationKey.localized, identifier: .none, selectAction: playSoundAction)
+            let propertyValue = item == defaultSound ? SettingsPropertyValue.none : SettingsPropertyValue
+                .string(value: item.rawValue)
+            return SettingsPropertySelectValueCellDescriptor(
+                settingsProperty: settingsProperty,
+                value: propertyValue,
+                title: item.descriptionLocalizationKey.localized,
+                identifier: .none,
+                selectAction: playSoundAction
+            )
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType }, header: L10n.Localizable.Self.Settings.SoundMenu.Ringtones.title)
+        let section = SettingsSectionDescriptor(
+            cellDescriptors: cells.map { $0 as any SettingsCellDescriptorType },
+            header: L10n.Localizable.Self.Settings.SoundMenu.Ringtones.title
+        )
 
         let previewGenerator: PreviewGeneratorType = { _ in
             let value = settingsProperty.value()
 
             if let stringValue = value.value() as? String,
-                let enumValue = ZMSound(rawValue: stringValue) {
+               let enumValue = ZMSound(rawValue: stringValue) {
                 return .text(enumValue.descriptionLocalizationKey.localized)
             } else {
                 return .text(defaultSound.descriptionLocalizationKey.localized)
             }
         }
 
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: title,
-                                           identifier: .none,
-                                           previewGenerator: previewGenerator,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: title,
+            identifier: .none,
+            previewGenerator: previewGenerator,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
-    func helpSection() -> SettingsCellDescriptorType {
+    func helpSection() -> any SettingsCellDescriptorType {
+        let supportButton = SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.HelpCenter.supportWebsite,
+            isDestructive: false,
+            presentationStyle: .modal,
+            presentationAction: {
+                BrowserViewController(url: WireURLs.shared.support)
+            },
+            previewGenerator: .none
+        )
 
-        let supportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.supportWebsite, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_support.appendingLocaleParameter)
-        }, previewGenerator: .none)
-
-        let contactButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.contactSupport, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_askSupport.appendingLocaleParameter)
-        }, previewGenerator: .none)
+        let contactButton = SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.HelpCenter.contactSupport,
+            isDestructive: false,
+            presentationStyle: .modal,
+            presentationAction: {
+                BrowserViewController(url: WireURLs.shared.askSupportArticle)
+            },
+            previewGenerator: .none
+        )
 
         let helpSection = SettingsSectionDescriptor(cellDescriptors: [supportButton, contactButton])
 
-        let reportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.reportAbuse, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_reportAbuse.appendingLocaleParameter)
-        }, previewGenerator: .none)
+        let reportButton = SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.reportAbuse,
+            isDestructive: false,
+            presentationStyle: .modal,
+            presentationAction: {
+                BrowserViewController(url: WireURLs.shared.reportAbuse)
+            },
+            previewGenerator: .none
+        )
 
         let reportSection = SettingsSectionDescriptor(cellDescriptors: [reportButton])
 
-        return SettingsGroupCellDescriptor(items: [helpSection, reportSection],
-                                           title: L10n.Localizable.Self.helpCenter,
-                                           style: .grouped, identifier: .none,
-                                           previewGenerator: .none,
-                                           icon: .settingsSupport,
-                                           accessibilityBackButtonText: L10n.Accessibility.SupportSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [helpSection, reportSection],
+            title: L10n.Localizable.Self.helpCenter,
+            style: .grouped, identifier: .none,
+            previewGenerator: .none,
+            icon: .settingsSupport,
+            accessibilityBackButtonText: L10n.Accessibility.SupportSettings.BackButton.description,
+            settingsTopLevelMenuItem: .support,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
-    func aboutSection() -> SettingsCellDescriptorType {
+    func aboutSection() -> any SettingsCellDescriptorType {
 
-        let legalButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Legal.title,
-                                                               isDestructive: false,
-                                                               presentationStyle: .modal,
-                                                               presentationAction: {
-            return BrowserViewController(url: URL.wr_legal.appendingLocaleParameter)
-        }, previewGenerator: .none)
+        let legalButton = SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.About.Legal.title,
+            isDestructive: false,
+            presentationStyle: .modal,
+            presentationAction: {
+                BrowserViewController(url: WireURLs.shared.legal)
+            },
+            previewGenerator: .none
+        )
 
         let shortVersion = Bundle.main.shortVersionString ?? "Unknown"
         let buildNumber = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
@@ -236,14 +306,19 @@ struct SettingsCellDescriptorFactory {
         let copyrightInfo = String(format: L10n.Localizable.About.Copyright.title, currentYear)
 
         let linksSection = SettingsSectionDescriptor(
-            cellDescriptors: [legalButton, licensesSection()],
+            cellDescriptors: [legalButton],
             header: nil,
             footer: "\n" + version + "\n" + copyrightInfo
         )
-
-        let websiteButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Website.title, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_website.appendingLocaleParameter)
-        }, previewGenerator: .none)
+        let websiteButton = SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.About.Website.title,
+            isDestructive: false,
+            presentationStyle: .modal,
+            presentationAction: {
+                BrowserViewController(url: WireURLs.shared.website)
+            },
+            previewGenerator: .none
+        )
 
         let websiteSection = SettingsSectionDescriptor(cellDescriptors: [websiteButton])
 
@@ -254,48 +329,9 @@ struct SettingsCellDescriptorFactory {
             identifier: .none,
             previewGenerator: .none,
             icon: .about,
-            accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description,
+            settingsTopLevelMenuItem: .about,
+            settingsCoordinator: settingsCoordinator
         )
-    }
-
-    func licensesSection() -> SettingsCellDescriptorType {
-        guard let licenses = LicensesLoader.shared.loadLicenses() else {
-            return webLicensesSection()
-        }
-
-        let childItems: [SettingsGroupCellDescriptor] = licenses.map { item in
-            let projectCell = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.License.openProjectButton, isDestructive: false, presentationStyle: .modal, presentationAction: {
-                return BrowserViewController(url: item.projectURL)
-            }, previewGenerator: .none)
-            let detailsSection = SettingsSectionDescriptor(cellDescriptors: [projectCell], header: L10n.Localizable.About.License.projectHeader, footer: nil)
-
-            let licenseCell = SettingsStaticTextCellDescriptor(text: item.licenseText)
-            let licenseSection = SettingsSectionDescriptor(cellDescriptors: [licenseCell], header: L10n.Localizable.About.License.licenseHeader, footer: nil)
-
-            return SettingsGroupCellDescriptor(items: [detailsSection, licenseSection],
-                                               title: item.name,
-                                               style: .grouped,
-                                               accessibilityBackButtonText: L10n.Accessibility.LicenseDetailsSettings.BackButton.description)
-        }
-
-        let licensesSection = SettingsSectionDescriptor(cellDescriptors: childItems)
-        return SettingsGroupCellDescriptor(items: [licensesSection],
-                                           title: L10n.Localizable.About.License.title,
-                                           style: .plain,
-                                           accessibilityBackButtonText: L10n.Accessibility.LicenseInformationSettings.BackButton.description)
-
-    }
-
-    func webLicensesSection() -> SettingsCellDescriptorType {
-        return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.License.title,
-                                                    isDestructive: false,
-                                                    presentationStyle: .modal,
-                                                    presentationAction: {
-            let url = URL.wr_licenseInformation.appendingLocaleParameter
-            return BrowserViewController(
-                url: url
-            )
-        },
-                                                    previewGenerator: .none)
     }
 }

@@ -24,7 +24,7 @@ extension CGSize {
         guard imageSize != .zero else { return 1 }
         guard self != .zero else { return 1 }
 
-        var minZoom = min(self.width / imageSize.width, self.height / imageSize.height)
+        var minZoom = min(width / imageSize.width, height / imageSize.height)
 
         if minZoom > 1 {
             minZoom = 1
@@ -38,7 +38,7 @@ extension CGSize {
     /// - Parameter otherSize: other CGSize to compare
     /// - Returns: true if both with and height are longer than otherSize
     func contains(_ otherSize: CGSize) -> Bool {
-        return otherSize.width < width &&
-               otherSize.height < height
+        otherSize.width < width &&
+            otherSize.height < height
     }
 }

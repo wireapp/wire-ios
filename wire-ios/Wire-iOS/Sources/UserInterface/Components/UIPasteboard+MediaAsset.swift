@@ -25,23 +25,22 @@ extension UIPasteboard {
 
     func pasteboardType(forMediaAsset mediaAsset: MediaAsset) -> String {
         if mediaAsset.isGIF {
-            return UTType.gif.identifier
+            UTType.gif.identifier
         } else if mediaAsset.isTransparent {
-            return UTType.png.identifier
+            UTType.png.identifier
         } else {
-            return UTType.jpeg.identifier
+            UTType.jpeg.identifier
         }
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: get/set
-    // swiftlint:enable todo_requires_jira_link
     func mediaAsset() -> MediaAsset? {
         if contains(pasteboardTypes: [UTType.gif.identifier]) {
-            let data: Data? = self.data(forPasteboardType: UTType.gif.identifier)
+            let data: Data? = data(forPasteboardType: UTType.gif.identifier)
             return FLAnimatedImage(animatedGIFData: data)
         } else if contains(pasteboardTypes: [UTType.png.identifier]) {
-            let data: Data? = self.data(forPasteboardType: UTType.png.identifier)
+            let data: Data? = data(forPasteboardType: UTType.png.identifier)
             if let aData = data {
                 return UIImage(data: aData)
             }

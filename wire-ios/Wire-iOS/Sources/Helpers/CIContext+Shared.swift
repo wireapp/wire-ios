@@ -19,5 +19,5 @@
 import CoreImage
 
 extension CIContext {
-    static var shared: CIContext = CIContext(options: nil)
+    static var shared: CIContext = .init(options: nil)
 }

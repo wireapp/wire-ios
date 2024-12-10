@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAPI
+import WireLogging
 
 extension ZMOperationLoop: ZMPushChannelConsumer {
 
@@ -31,7 +32,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
             // fix it. Once we're sure it works, we should remove this.
             do {
                 let decoder = JSONDecoder.defaultDecoder
-                _ = try decoder.decode(UpdateEventEnvelope.self, from: data)
+                _ = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
             } catch {
                 WireLogger.updateEvent.error("failed to decode 'UpdateEventEnvelope': \(error)")
             }
@@ -46,8 +47,11 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
         }
 
         if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: transportData), !events.isEmpty {
-            Logging.eventProcessing.info("Received \(events.count) events from push channel")
-            events.forEach { $0.appendDebugInformation("from push channel (web socket)") }
+            WireLogger.eventProcessing.info("Received \(events.count) events from push channel")
+            events.forEach {
+                WireLogger.updateEvent.info("received event", attributes: $0.logAttributes(source: .pushChannel))
+                $0.appendDebugInformation("from push channel (web socket)")
+            }
 
             if syncStatus.isSyncing {
                 WaitingGroupTask(context: syncMOC) {
@@ -58,7 +62,12 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                     do {
                         try await self.updateEventProcessor.processEvents(events)
                     } catch {
-                        WireLogger.updateEvent.error("Failed to process events: \(events.map { $0.debugInformation })", attributes: .safePublic)
+                        events.forEach {
+                            WireLogger.updateEvent.error(
+                                "Failed to process event from push channel (web socket)",
+                                attributes: $0.logAttributes(source: .pushChannel)
+                            )
+                        }
                     }
                 }
             }
@@ -66,20 +75,24 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
     }
 
     public func pushChannelDidClose() {
-        NotificationInContext(name: ZMOperationLoop.pushChannelStateChangeNotificationName,
-                              context: syncMOC.notificationContext,
-                              object: self,
-                              userInfo: [ ZMPushChannelIsOpenKey: false]).post()
+        NotificationInContext(
+            name: ZMOperationLoop.pushChannelStateChangeNotificationName,
+            context: syncMOC.notificationContext,
+            object: self,
+            userInfo: [ZMPushChannelIsOpenKey: false]
+        ).post()
 
         syncStatus.pushChannelDidClose()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
     public func pushChannelDidOpen() {
-        NotificationInContext(name: ZMOperationLoop.pushChannelStateChangeNotificationName,
-                              context: syncMOC.notificationContext,
-                              object: self,
-                              userInfo: [ ZMPushChannelIsOpenKey: true]).post()
+        NotificationInContext(
+            name: ZMOperationLoop.pushChannelStateChangeNotificationName,
+            context: syncMOC.notificationContext,
+            object: self,
+            userInfo: [ZMPushChannelIsOpenKey: true]
+        ).post()
 
         syncStatus.pushChannelDidOpen()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)

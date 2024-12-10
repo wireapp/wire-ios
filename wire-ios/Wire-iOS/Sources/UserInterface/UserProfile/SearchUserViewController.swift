@@ -19,34 +19,46 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
+import WireReusableUIComponents
 import WireSyncEngine
 
-final class SearchUserViewController: UIViewController, SpinnerCapable {
+final class SearchUserViewController: UIViewController {
 
     // MARK: - Properties
-
-    var dismissSpinner: SpinnerCompletion?
 
     private var searchDirectory: SearchDirectory!
     private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?
     private let userId: UUID
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     /// flag for handleSearchResult. Only allow to display the result once
     private var resultHandled = false
 
     // MARK: - Init
 
-    init(userId: UUID, profileViewControllerDelegate: ProfileViewControllerDelegate?, userSession: UserSession) {
+    init(
+        userId: UUID,
+        profileViewControllerDelegate: ProfileViewControllerDelegate?,
+        userSession: UserSession,
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    ) {
         self.userId = userId
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         super.init(nibName: nil, bundle: nil)
 
         if let session = ZMUserSession.shared() {
-            searchDirectory = SearchDirectory(userSession: session)
+            self.searchDirectory = SearchDirectory(userSession: session)
         }
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -66,22 +78,28 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let cancelItem = UIBarButtonItem(icon: .cross, target: self, action: #selector(cancelButtonTapped))
-        cancelItem.accessibilityIdentifier = "CancelButton"
-        cancelItem.accessibilityLabel = L10n.Localizable.General.cancel
-        navigationItem.rightBarButtonItem = cancelItem
-
-        isLoadingViewVisible = true
+        activityIndicator.start()
 
         if let task = searchDirectory?.lookup(userId: userId) {
-            task.addResultHandler({ [weak self] in
+            task.addResultHandler { [weak self] in
+                self?.activityIndicator.stop()
                 self?.handleSearchResult(searchResult: $0, isCompleted: $1)
-            })
+            }
             task.start()
 
             pendingSearchTask = task
         }
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.pendingSearchTask?.cancel()
+            self?.pendingSearchTask = nil
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.cancel)
+
+        navigationItem.rightBarButtonItem = closeItem
     }
 
     // MARK: - Methods
@@ -93,13 +111,12 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
             return
         }
 
-        let profileUser: UserType?
-        if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
-            profileUser = searchUser
+        let profileUser: UserType? = if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
+            searchUser
         } else if let memberUser = searchResult.teamMembers.first?.user, !memberUser.isAccountDeleted {
-            profileUser = memberUser
+            memberUser
         } else {
-            profileUser = nil
+            nil
         }
 
         if let profileUser {
@@ -107,7 +124,9 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
                 user: profileUser,
                 viewer: selfUser,
                 context: .profileViewer,
-                userSession: userSession
+                userSession: userSession,
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             profileViewController.delegate = profileViewControllerDelegate
 
@@ -129,14 +148,5 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
             present(alert, animated: true)
         }
-    }
-
-    // MARK: - Actions
-
-    @objc private func cancelButtonTapped(sender: AnyObject?) {
-        pendingSearchTask?.cancel()
-        pendingSearchTask = nil
-
-        dismiss(animated: true)
     }
 }

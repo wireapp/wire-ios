@@ -17,18 +17,18 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     override var needsCaches: Bool {
-        return true
+        true
     }
 
     func testThatItReturnsStatusForEmptyConversation() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
 
         // WHEN
         let status = sut.status
@@ -39,7 +39,7 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItReturnsStatusForEmptyConversation_group() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
 
         // WHEN
         let status = sut.status
@@ -50,8 +50,8 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItReturnsStatusForConversationWithUnreadOneMessage() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        (try! sut.appendText(content: "test") as! ZMMessage).sender = self.otherUser
+        let sut = otherUserConversation!
+        (try! sut.appendText(content: "test") as! ZMMessage).sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -65,8 +65,8 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItReturnsStatusForConversationWithUnreadOnePing() throws {
         // GIVEN
-        let sut = self.otherUserConversation!
-        try (sut.appendKnock() as! ZMMessage).sender = self.otherUser
+        let sut = otherUserConversation!
+        try (sut.appendKnock() as! ZMMessage).sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -81,8 +81,14 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItReturnsStatusForConversationWithUnreadOneImage() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
+        let sut = otherUserConversation!
+        (
+            try! sut
+                .appendImage(
+                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -97,10 +103,16 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItReturnsStatusForConversationWithUnreadManyMessages() throws {
         // GIVEN
-        let sut = self.otherUserConversation!
-        try (sut.appendKnock() as! ZMMessage).sender = self.otherUser
-        (try! sut.appendText(content: "test") as! ZMMessage).sender = self.otherUser
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
+        let sut = otherUserConversation!
+        try (sut.appendKnock() as! ZMMessage).sender = otherUser
+        (try! sut.appendText(content: "test") as! ZMMessage).sender = otherUser
+        (
+            try! sut
+                .appendImage(
+                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -116,10 +128,10 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItReturnsStatusForConversationWithUnreadManyTexts() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        (try! sut.appendText(content: "test 1") as! ZMMessage).sender = self.otherUser
-        (try! sut.appendText(content: "test 2") as! ZMMessage).sender = self.otherUser
-        (try! sut.appendText(content: "test 3") as! ZMMessage).sender = self.otherUser
+        let sut = otherUserConversation!
+        (try! sut.appendText(content: "test 1") as! ZMMessage).sender = otherUser
+        (try! sut.appendText(content: "test 2") as! ZMMessage).sender = otherUser
+        (try! sut.appendText(content: "test 3") as! ZMMessage).sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -135,10 +147,10 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItReturnsStatusForConversationWithUnreadManyPings() throws {
         // GIVEN
-        let sut = self.otherUserConversation!
-        try (sut.appendKnock() as! ZMMessage).sender = self.otherUser
-        try (sut.appendKnock() as! ZMMessage).sender = self.otherUser
-        try (sut.appendKnock() as! ZMMessage).sender = self.otherUser
+        let sut = otherUserConversation!
+        try (sut.appendKnock() as! ZMMessage).sender = otherUser
+        try (sut.appendKnock() as! ZMMessage).sender = otherUser
+        try (sut.appendKnock() as! ZMMessage).sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -154,10 +166,28 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItReturnsStatusForConversationWithUnreadManyImages() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
+        let sut = otherUserConversation!
+        (
+            try! sut
+                .appendImage(
+                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = otherUser
+        (
+            try! sut
+                .appendImage(
+                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = otherUser
+        (
+            try! sut
+                .appendImage(
+                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -172,7 +202,7 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItReturnsStatusForBlocked() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         otherUser.connection?.status = .blocked
 
         // WHEN
@@ -185,9 +215,9 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItDetectsMentions() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        let selfMention = Mention(range: NSRange(location: 0, length: 5), user: self.selfUser)
-        (try! sut.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = self.otherUser
+        let sut = otherUserConversation!
+        let selfMention = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
+        (try! sut.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -201,11 +231,11 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
     func testThatItDetectsReplies() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         let selfMessage = try! sut.appendText(content: "I am a programmer") as! ZMMessage
 
         selfMessage.sender = selfUser
-        (try! sut.appendText(content: "Yes, it is true", replyingTo: selfMessage) as! ZMMessage).sender = self.otherUser
+        (try! sut.appendText(content: "Yes, it is true", replyingTo: selfMessage) as! ZMMessage).sender = otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN

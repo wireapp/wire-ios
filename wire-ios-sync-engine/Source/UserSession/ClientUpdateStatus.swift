@@ -37,11 +37,12 @@ public enum ClientUpdateError: NSInteger {
     case clientToDeleteNotFound
 
     func errorForType() -> NSError {
-        return NSError(domain: ClientUpdateErrorDomain, code: self.rawValue, userInfo: nil)
+        NSError(domain: ClientUpdateErrorDomain, code: rawValue, userInfo: nil)
     }
 }
 
-@objcMembers open class ClientUpdateStatus: NSObject {
+@objcMembers
+open class ClientUpdateStatus: NSObject {
 
     var syncManagedObjectContext: NSManagedObjectContext
 
@@ -54,7 +55,7 @@ public enum ClientUpdateError: NSInteger {
     var prekeys: [IdPrekeyTuple]?
 
     open var credentials: UserEmailCredentials? {
-        return internalCredentials
+        internalCredentials
     }
 
     public init(syncManagedObjectContext: NSManagedObjectContext) {
@@ -63,7 +64,7 @@ public enum ClientUpdateError: NSInteger {
     }
 
     func determineInitialClientStatus() {
-        let hasSelfClient = !ZMClientRegistrationStatus.needsToRegisterClient(in: self.syncManagedObjectContext)
+        let hasSelfClient = !ZMClientRegistrationStatus.needsToRegisterClient(in: syncManagedObjectContext)
 
         needsToFetchClients(andVerifySelfClient: hasSelfClient)
 
@@ -86,7 +87,7 @@ public enum ClientUpdateError: NSInteger {
         if isWaitingToDeleteClients {
             return .deletingClients
         }
-        if isGeneratingPrekeys && prekeys == nil {
+        if isGeneratingPrekeys, prekeys == nil {
             return .generatingPrekeys
         }
         if prekeys == nil {
@@ -114,18 +115,27 @@ public enum ClientUpdateError: NSInteger {
             if needsToVerifySelfClient {
                 do {
                     excludingSelfClient = try filterSelfClientIfValid(excludingSelfClient)
-                    ZMClientUpdateNotification.notifyFetchingClientsCompleted(userClients: excludingSelfClient, context: syncManagedObjectContext)
+                    ZMClientUpdateNotification.notifyFetchingClientsCompleted(
+                        userClients: excludingSelfClient,
+                        context: syncManagedObjectContext
+                    )
                 } catch let error as NSError {
-                    ZMClientUpdateNotification.notifyFetchingClientsDidFail(error: error, context: syncManagedObjectContext)
+                    ZMClientUpdateNotification.notifyFetchingClientsDidFail(
+                        error: error,
+                        context: syncManagedObjectContext
+                    )
                 }
             } else {
-                ZMClientUpdateNotification.notifyFetchingClientsCompleted(userClients: clients, context: syncManagedObjectContext)
+                ZMClientUpdateNotification.notifyFetchingClientsCompleted(
+                    userClients: clients,
+                    context: syncManagedObjectContext
+                )
             }
         }
     }
 
     func filterSelfClientIfValid(_ clients: [UserClient]) throws -> [UserClient] {
-        guard let selfClient = ZMUser.selfUser(in: self.syncManagedObjectContext).selfClient()
+        guard let selfClient = ZMUser.selfUser(in: syncManagedObjectContext).selfClient()
         else {
             throw ClientUpdateError.errorForType(.selfClientIsInvalid)()
         }
@@ -172,9 +182,13 @@ public enum ClientUpdateError: NSInteger {
             if  errorCode == .clientToDeleteNotFound {
                 // the client existed locally but not remotely, we delete it locally (done by the transcoder)
                 // this should not happen since we just fetched the clients
-                // however if it happens and there is no other client to delete we should notify that all clients where deleted
+                // however if it happens and there is no other client to delete we should notify that all clients where
+                // deleted
                 internalCredentials = nil
-                ZMClientUpdateNotification.notifyDeletionCompleted(remainingClients: selfUserClientsExcludingSelfClient, context: syncManagedObjectContext)
+                ZMClientUpdateNotification.notifyDeletionCompleted(
+                    remainingClients: selfUserClientsExcludingSelfClient,
+                    context: syncManagedObjectContext
+                )
             } else if  errorCode == .invalidCredentials {
                 isWaitingToDeleteClients = false
                 internalCredentials = nil
@@ -191,12 +205,15 @@ public enum ClientUpdateError: NSInteger {
         if isWaitingToDeleteClients {
             isWaitingToDeleteClients = false
             internalCredentials = nil
-            ZMClientUpdateNotification.notifyDeletionCompleted(remainingClients: selfUserClientsExcludingSelfClient, context: syncManagedObjectContext)
+            ZMClientUpdateNotification.notifyDeletionCompleted(
+                remainingClients: selfUserClientsExcludingSelfClient,
+                context: syncManagedObjectContext
+            )
         }
     }
 
     var selfUserClientsExcludingSelfClient: [UserClient] {
-        let selfUser = ZMUser.selfUser(in: self.syncManagedObjectContext)
+        let selfUser = ZMUser.selfUser(in: syncManagedObjectContext)
         let selfClient = selfUser.selfClient()
         let remainingClients = selfUser.clients.filter { $0 != selfClient && !$0.isZombieObject }
         return Array(remainingClients)
@@ -208,11 +225,11 @@ public enum ClientUpdateError: NSInteger {
 
     public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple]) {
         self.prekeys = prekeys
-        self.isGeneratingPrekeys = false
+        isGeneratingPrekeys = false
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
     public func didUploadPrekeys() {
-        self.prekeys = nil
+        prekeys = nil
     }
 }

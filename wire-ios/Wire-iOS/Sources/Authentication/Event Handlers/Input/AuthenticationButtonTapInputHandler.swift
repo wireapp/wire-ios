@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles button taps in the authentication flow.
- */
+/// Handles button taps in the authentication flow.
 
 final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
 
@@ -37,9 +35,9 @@ final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
         case .enrollE2EIdentity:
             return [.showLoadingView, .startE2EIEnrollment]
         case .noHistory:
-            return [.showLoadingView, .configureNotifications, .completeBackupStep]
-        case .clientManagement(let clients, let credentials):
-            let nextStep = AuthenticationFlowStep.deleteClient(clients: clients, credentials: credentials)
+            return [.showLoadingView, .configureNotifications, .completeBackupStep(didSucceed: nil)]
+        case let .clientManagement(clients):
+            let nextStep = AuthenticationFlowStep.deleteClient(clients: clients)
             return [AuthenticationCoordinatorAction.transition(nextStep, mode: .normal)]
         case .pendingEmailLinkVerification:
             return [.repeatAction]

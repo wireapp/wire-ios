@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 import WireSystem
 
@@ -103,7 +104,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
 
         super.init()
 
-        observerToken = userSession.addUserObserver(self, for: user)
+        self.observerToken = userSession.addUserObserver(self, for: user)
     }
 
     // MARK: - Computed Properties
@@ -113,28 +114,28 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     }
 
     var hasLegalHoldItem: Bool {
-        return user.isUnderLegalHold || conversation?.isUnderLegalHold == true
+        user.isUnderLegalHold || conversation?.isUnderLegalHold == true
     }
 
     var hasUserClientListTab: Bool {
-        return context != .search &&
+        context != .search &&
             context != .profileViewer
     }
 
     var userSet: UserSet {
-        return UserSet(arrayLiteral: user)
+        UserSet(arrayLiteral: user)
     }
 
     var incomingRequestFooterHidden: Bool {
-        return !user.isPendingApprovalBySelfUser
+        !user.isPendingApprovalBySelfUser
     }
 
     var blockTitle: String? {
-        return BlockResult.title(for: user)
+        BlockResult.title(for: user)
     }
 
     var allBlockResult: [BlockResult] {
-        return BlockResult.all(isBlocked: user.isBlocked)
+        BlockResult.all(isBlocked: user.isBlocked)
     }
 
     // MARK: - Delegate
@@ -188,9 +189,9 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
             self?.viewModelDelegate?.stopAnimatingActivity()
 
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 self?.transition(to: conversation)
-            case .failure(let error):
+            case let .failure(error):
                 WireLogger.conversation.warn("failed to create team one on one from profile view: \(error)")
                 guard let username = self?.user.name else { return }
                 self?.viewModelDelegate?.presentConversationCreationError(username: username)
@@ -235,7 +236,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     // MARK: - Deletion
 
     func handleDeleteResult(_ result: ClearContentResult) {
-        guard case .delete(leave: let leave) = result else { return }
+        guard case let .delete(leave: leave) = result else { return }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
@@ -261,7 +262,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     }
 
     func setConversationTransitionClosure(_ closure: @escaping (ZMConversation) -> Void) {
-        self.conversationTransitionClosure = closure
+        conversationTransitionClosure = closure
     }
 
     // MARK: Connect
@@ -298,7 +299,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     }
 
     func cancelConnectionRequest(completion: @escaping Completion) {
-        self.user.cancelConnectionRequest { [weak self] error in
+        user.cancelConnectionRequest { [weak self] error in
             if let error = error as? ConnectToUserError {
                 self?.viewModelDelegate?.presentError(error)
             } else {

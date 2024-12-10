@@ -19,6 +19,7 @@
 import Photos
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class AssetCell: UICollectionViewCell {
 
@@ -46,14 +47,14 @@ final class AssetCell: UICollectionViewCell {
 
         [imageView, durationView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-          imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-          durationView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          durationView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          durationView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-          durationView.heightAnchor.constraint(equalToConstant: 20)
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            durationView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            durationView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            durationView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            durationView.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
 
@@ -63,7 +64,7 @@ final class AssetCell: UICollectionViewCell {
     }
 
     static let imageFetchOptions: PHImageRequestOptions = {
-        let options: PHImageRequestOptions = PHImageRequestOptions()
+        let options = PHImageRequestOptions()
         options.deliveryMode = .opportunistic
         options.resizeMode = .fast
         options.isSynchronous = false
@@ -85,20 +86,26 @@ final class AssetCell: UICollectionViewCell {
                 return
             }
 
-            guard let keyWindow = UIApplication.shared.firstKeyWindow else { return }
+            guard let keyWindow = (UIApplication.shared.delegate as? AppDelegate)?.mainWindow else { return }
             let maxDimensionRetina = max(bounds.size.width, bounds.size.height) * (window ?? keyWindow).screen.scale
 
             representedAssetIdentifier = asset.localIdentifier
-            imageRequestTag = manager.requestImage(for: asset,
-                                                   targetSize: CGSize(width: maxDimensionRetina, height: maxDimensionRetina),
-                                                   contentMode: .aspectFill,
-                                                   options: type(of: self).imageFetchOptions,
-                                                   resultHandler: { [weak self] result, _ in
-                                                    guard let self,
-                                                        self.representedAssetIdentifier == asset.localIdentifier
-                                                        else { return }
-                                                    self.imageView.image = result
-            })
+            imageRequestTag = manager.requestImage(
+                for: asset,
+                targetSize: CGSize(
+                    width: maxDimensionRetina,
+                    height: maxDimensionRetina
+                ),
+                contentMode: .aspectFill,
+                options: type(of: self).imageFetchOptions,
+                resultHandler: { [weak self] result, _ in
+                    guard let self,
+                          representedAssetIdentifier == asset.localIdentifier else {
+                        return
+                    }
+                    imageView.image = result
+                }
+            )
 
             if asset.mediaType == .video {
                 let duration = Int(ceil(asset.duration))

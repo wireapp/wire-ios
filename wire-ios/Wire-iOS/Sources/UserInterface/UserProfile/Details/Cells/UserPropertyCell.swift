@@ -19,9 +19,7 @@
 import UIKit
 import WireDesign
 
-/**
- * A cell that displays a user property as part of the rich profile data.
- */
+/// A cell that displays a user property as part of the rich profile data.
 
 final class UserPropertyCell: SeparatorTableViewCell {
 
@@ -29,8 +27,10 @@ final class UserPropertyCell: SeparatorTableViewCell {
     typealias LabelColors = SemanticColors.Label
 
     private let propertyNameLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .smallRegularFont,
-                                     color: LabelColors.textUserPropertyCellName)
+        let label = DynamicFontLabel(
+            style: .h4,
+            color: LabelColors.textUserPropertyCellName
+        )
         label.numberOfLines = 1
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         label.setContentHuggingPriority(.defaultLow, for: .vertical)
@@ -38,8 +38,10 @@ final class UserPropertyCell: SeparatorTableViewCell {
     }()
 
     private let propertyValueLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .normalLightFont,
-                                     color: LabelColors.textDefault)
+        let label = DynamicFontLabel(
+            style: .body1,
+            color: LabelColors.textDefault
+        )
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         label.setContentHuggingPriority(.defaultLow, for: .vertical)
@@ -51,7 +53,7 @@ final class UserPropertyCell: SeparatorTableViewCell {
     /// The name of the user property.
     var propertyName: String? {
         get {
-            return propertyNameLabel.text
+            propertyNameLabel.text
         }
         set {
             propertyNameLabel.text = newValue
@@ -63,7 +65,7 @@ final class UserPropertyCell: SeparatorTableViewCell {
     /// The value of the user property.
     var propertyValue: String? {
         get {
-            return propertyValueLabel.text
+            propertyValueLabel.text
         }
         set {
             propertyValueLabel.text = newValue

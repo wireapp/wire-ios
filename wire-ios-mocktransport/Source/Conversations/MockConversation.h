@@ -55,6 +55,7 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 @property (nonatomic, nonnull) NSString *selfIdentifier; // Identifier of self user, used to filter out self from participants in the payload
 @property (nonatomic, readonly, nullable) NSString *name;
 @property (nonatomic) ZMTConversationType type;
+@property (nonatomic, strong, nullable) NSString *domain;
 /**
   participants that are not self
   mocks ZMConversation.activeParticipants

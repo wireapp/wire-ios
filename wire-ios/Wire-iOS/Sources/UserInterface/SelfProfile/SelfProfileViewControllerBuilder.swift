@@ -18,21 +18,37 @@
 
 import UIKit
 import WireCommonComponents
+import WireMainNavigationUI
 import WireSyncEngine
 
-struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
+final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderProtocol {
 
     var selfUser: SettingsSelfUser
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
     var accountSelector: AccountSelector?
+    var trackingManager: TrackingManager?
 
-    func build() -> SelfProfileViewController {
-        .init(
+    init(
+        selfUser: SettingsSelfUser,
+        userRightInterfaceType: UserRightInterface.Type,
+        userSession: UserSession,
+        accountSelector: AccountSelector?
+    ) {
+        self.selfUser = selfUser
+        self.userRightInterfaceType = userRightInterfaceType
+        self.userSession = userSession
+        self.accountSelector = accountSelector
+    }
+
+    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
+        SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
-            accountSelector: accountSelector
+            accountSelector: accountSelector,
+            trackingManager: trackingManager,
+            mainCoordinator: mainCoordinator
         )
     }
 }

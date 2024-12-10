@@ -54,8 +54,8 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? ViewColors.backgroundUserCellHightLighted
-            : ViewColors.backgroundUserCell
+                ? ViewColors.backgroundUserCellHightLighted
+                : ViewColors.backgroundUserCell
         }
     }
 
@@ -75,7 +75,7 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 
         // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.font = FontSpec.init(.normal, .light).font!
+        titleLabel.font = FontSpec(.normal, .light).font!
 
         // avatarSpacer
         let avatarSpacer = UIView()
@@ -110,10 +110,10 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     private func configureColors() {
         let iconTintColor = SemanticColors.Icon.foregroundDefault
 
-        participantIconView.image = .init(resource: .contactsFilled).withRenderingMode(.alwaysTemplate)
+        participantIconView.image = .init(resource: .participants)
         participantIconView.tintColor = iconTintColor
 
-        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .rightChevron)
         accessoryIconView.tintColor = iconTintColor
 
         titleLabel.textColor = SemanticColors.Label.textDefault

@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 final class ProfileHeaderViewController: UIViewController {
@@ -54,40 +56,37 @@ final class ProfileHeaderViewController: UIViewController {
     typealias LabelColors = SemanticColors.Label
 
     private let nameLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .accountName, color: LabelColors.textDefault)
+        let label = DynamicFontLabel(style: .h2, color: LabelColors.textDefault)
         label.accessibilityLabel = AccountPageStrings.Name.description
         label.accessibilityIdentifier = "name"
 
-        label.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
-        label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-
         label.accessibilityTraits.insert(.header)
-        label.lineBreakMode = .byTruncatingTail
-        label.numberOfLines = 3
+        label.lineBreakMode = .byTruncatingMiddle
+        label.numberOfLines = 2
         label.textAlignment = .center
 
         return label
     }()
 
-    private let e2eiCertifiedImageView = {
-        let imageView = UIImageView(image: .init(resource: .certificateValid))
-        imageView.contentMode = .center
-        imageView.isHidden = true
-        return imageView
-    }()
-    private let proteusVerifiedImageView = {
-        let imageView = UIImageView(image: .init(resource: .verifiedShield))
-        imageView.contentMode = .center
-        imageView.isHidden = true
-        return imageView
+    private let qrCodeButton = {
+        let button = IconButton()
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 12
+        button.layer.masksToBounds = true
+
+        let boldConfig = UIImage.SymbolConfiguration(weight: .black)
+        let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
+        button.setImage(boldImage, for: .normal)
+
+        button.accessibilityIdentifier = "QR code button"
+        button.accessibilityLabel = L10n.Accessibility.Profile.ShareProfileButton.description
+
+        return button
     }()
 
-    private let handleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: LabelColors.textDefault)
-    private let teamNameLabel = DynamicFontLabel(fontSpec: .accountTeam, color: LabelColors.textDefault)
-    private let remainingTimeLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont, color: LabelColors.textDefault)
+    private let handleLabel = DynamicFontLabel(style: .subline1, color: LabelColors.textDefault)
+    private let teamNameLabel = DynamicFontLabel(style: .h4, color: LabelColors.textDefault)
+    private let remainingTimeLabel = DynamicFontLabel(style: .h5, color: LabelColors.textDefault)
     let imageView = UserImageView(size: .big)
     private let userStatusViewController: UserStatusViewController
 
@@ -108,7 +107,8 @@ final class ProfileHeaderViewController: UIViewController {
     /// - parameter options: The options for the appearance and behavior of the view.
     /// - parameter userSession: The user session.
     /// - parameter isUserE2EICertifiedUseCase: Use case for getting the user's MLS verification status.
-    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status, if `user.isSelfUser` is `true`.
+    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status, if
+    /// `user.isSelfUser` is `true`.
     /// Note: You can change the options later through the `options` property.
     init(
         user: UserType,
@@ -119,16 +119,16 @@ final class ProfileHeaderViewController: UIViewController {
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
-        userStatus = .init(user: user, isE2EICertified: false)
+        self.userStatus = .init(user: user, isE2EICertified: false)
         self.user = user
         self.userSession = userSession
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
-        isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
+        self.isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        userStatusViewController = .init(
+        self.userStatusViewController = .init(
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             settings: .shared
         )
@@ -162,16 +162,14 @@ final class ProfileHeaderViewController: UIViewController {
         handleLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         handleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        let nameShieldStackView = UIStackView(arrangedSubviews: [nameLabel, e2eiCertifiedImageView, proteusVerifiedImageView])
-        nameShieldStackView.axis = .horizontal
-        nameShieldStackView.spacing = 4
-
-        let nameHandleStack = UIStackView(arrangedSubviews: [nameShieldStackView, handleLabel])
+        let nameHandleStack = UIStackView(arrangedSubviews: [nameLabel, handleLabel])
         nameHandleStack.axis = .vertical
         nameHandleStack.alignment = .center
         nameHandleStack.spacing = 8
 
         teamNameLabel.accessibilityLabel = AccountPageStrings.TeamName.description
+        teamNameLabel.numberOfLines = 0
+        teamNameLabel.textAlignment = .center
         teamNameLabel.accessibilityIdentifier = "team name"
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
@@ -192,6 +190,7 @@ final class ProfileHeaderViewController: UIViewController {
         updateGroupRoleIndicator()
         updateHandleLabel()
         updateTeamLabel()
+        updateQRCodeButton()
 
         addChild(userStatusViewController)
 
@@ -220,6 +219,7 @@ final class ProfileHeaderViewController: UIViewController {
         stackView.wr_addCustomSpacing(20, after: federatedIndicator)
 
         view.addSubview(stackView)
+        view.addSubview(qrCodeButton)
 
         guestIndicator.tintColor = SemanticColors.Icon.foregroundDefault
         view.backgroundColor = UIColor.clear
@@ -244,24 +244,54 @@ final class ProfileHeaderViewController: UIViewController {
     private func configureConstraints() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        qrCodeButton.translatesAutoresizingMaskIntoConstraints = false
 
-        let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40)
+        let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 56)
         let topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
-        let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
+        let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -56)
         let bottomSpaceConstraint = stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
 
         let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
-            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint
+            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint,
+            bottomSpaceConstraint,
+            qrCodeButton.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            qrCodeButton.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 8),
+            qrCodeButton.heightAnchor.constraint(equalToConstant: 32),
+            qrCodeButton.widthAnchor.constraint(equalToConstant: 40)
         ])
     }
 
     private func applyUserStatus() {
-        nameLabel.text = userStatus.name
+        nameLabel.text = userStatus.displayName
+        nameLabel.attributedText = combineUserNameWithIcons()
         userStatusViewController.userStatus = userStatus
-        e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
-        proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
+    }
+
+    private func combineUserNameWithIcons() -> NSAttributedString {
+        var userNameWithIcons: [NSAttributedString] = []
+
+        let userName = NSAttributedString(string: userStatus.displayName)
+        userNameWithIcons.append(userName)
+
+        if userStatus.isProteusVerified {
+            let verifiedShieldAttachment = NSTextAttachment()
+            verifiedShieldAttachment.image = UIImage(resource: .verifiedShield)
+            let verifiedShieldIconString = NSAttributedString(attachment: verifiedShieldAttachment)
+
+            userNameWithIcons.append(verifiedShieldIconString)
+        }
+
+        if userStatus.isE2EICertified {
+            let certificateValidAttachment = NSTextAttachment()
+            certificateValidAttachment.image = UIImage(resource: .certificateValid)
+            let certificateValidIconString = NSAttributedString(attachment: certificateValidAttachment)
+
+            userNameWithIcons.append(certificateValidIconString)
+        }
+
+        return userNameWithIcons.joined(separator: NSAttributedString(string: " "))
     }
 
     private func updateGuestIndicator() {
@@ -281,12 +311,11 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateGroupRoleIndicator() {
-        let groupRoleIndicatorHidden: Bool
-        switch conversation?.conversationType {
+        let groupRoleIndicatorHidden: Bool = switch conversation?.conversationType {
         case .group?:
-            groupRoleIndicatorHidden = !(conversation.map(user.isGroupAdmin) ?? false)
+            !(conversation.map(user.isGroupAdmin) ?? false)
         default:
-            groupRoleIndicatorHidden = true
+            true
         }
         groupRoleIndicator.isHidden = groupRoleIndicatorHidden
 
@@ -320,7 +349,8 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateAvailabilityVisibility() {
-        let isHidden = options.contains(.hideAvailability) || !options.contains(.allowEditingAvailability) && user.availability == .none
+        let isHidden = options.contains(.hideAvailability) || !options.contains(.allowEditingAvailability) && user
+            .availability == .none
         userStatusViewController.view?.isHidden = isHidden
     }
 
@@ -353,6 +383,57 @@ final class ProfileHeaderViewController: UIViewController {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }
         }
+    }
+
+    private func updateQRCodeButton() {
+        let qrCodeAction = UIAction { _ in
+            self.qrCodeButtonTapped()
+        }
+        qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
+        qrCodeButton.isHidden = !user.isSelfUser
+        updateColors()
+    }
+
+    private func updateColors() {
+        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .normal)
+        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.surfaceVariant, for: .normal)
+        qrCodeButton.setIconColor(ColorTheme.Buttons.Secondary.onEnabled, for: .normal)
+
+        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .highlighted)
+        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .highlighted)
+    }
+
+    private func qrCodeButtonTapped() {
+        guard let viewModel = makeUserQRCodeViewModel(selfUser: user) else {
+            return
+        }
+        let qrCodeView = QRCodeView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: qrCodeView)
+        hostingController.setupNavigationBarTitle(L10n.Localizable.Qrcode.title)
+
+        hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            },
+            accessibilityLabel: L10n.Accessibility.ShareProfile.CloseButton.description
+        )
+        navigationController?.pushViewController(hostingController, animated: true)
+    }
+
+    private func makeUserQRCodeViewModel(selfUser: UserType) -> UserQRCodeViewModel? {
+        guard
+            let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
+            let profileDeepLink = selfUser.profileDeepLink,
+            let handle = selfUser.handle
+        else {
+            return nil
+        }
+
+        return UserQRCodeViewModel(
+            profileLink: profileLink,
+            profileDeepLink: profileDeepLink,
+            handle: handle
+        )
     }
 
     // MARK: -
@@ -396,13 +477,14 @@ extension ProfileHeaderViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.nameChanged {
-            userStatus.name = changeInfo.user.name ?? ""
+            userStatus.displayName = changeInfo.user.name ?? ""
         }
         if changeInfo.handleChanged {
             updateHandleLabel()
         }
         if changeInfo.availabilityChanged {
             updateAvailabilityVisibility()
+            userStatus.availability = changeInfo.user.availability
         }
         if changeInfo.trustLevelChanged {
             userStatus.isProteusVerified = changeInfo.user.isVerified
@@ -420,4 +502,19 @@ extension ProfileHeaderViewController: TeamObserver {
             updateTeamLabel()
         }
     }
+}
+
+// MARK: - TraitCollectionDidChange
+
+extension ProfileHeaderViewController {
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else {
+            return
+        }
+        updateColors()
+    }
+
 }

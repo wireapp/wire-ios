@@ -18,12 +18,12 @@
 
 import CoreData
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
-    static private let timeout: TimeInterval = 10
+    private static let timeout: TimeInterval = 10
 
     @discardableResult @available(*, noasync)
-    public func performGroupedAndWait<T>(_ block: () -> T) -> T {
+    func performGroupedAndWait<T>(_ block: () -> T) -> T {
 
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return performAndWait {
@@ -38,7 +38,7 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    public func performGrouped<T>(_ block: @escaping () -> T) async -> T {
+    func performGrouped<T>(_ block: @escaping () -> T) async -> T {
 
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return await perform {
@@ -53,7 +53,7 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult @available(*, noasync)
-    public func performGroupedAndWait<T>(_ block: () throws -> T) throws -> T {
+    func performGroupedAndWait<T>(_ block: () throws -> T) throws -> T {
 
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return try performAndWait {
@@ -68,7 +68,7 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    public func performGrouped<T>(
+    func performGrouped<T>(
         _ execute: @escaping () throws -> T
     ) async throws -> T {
 
@@ -85,11 +85,10 @@ extension NSManagedObjectContext {
     }
 }
 
-/**
- Wrapper around Task to make sure tests are waiting for the task to be finished using dispatchGroups attached to NSManagedObjectContext.
-
- We call `NSManagedObjectContext/enterAllGroupsExceptSecondary()` before the Task and leave the groups at the end.
- */
+/// Wrapper around Task to make sure tests are waiting for the task to be finished using dispatchGroups attached to
+/// NSManagedObjectContext.
+///
+/// We call `NSManagedObjectContext/enterAllGroupsExceptSecondary()` before the Task and leave the groups at the end.
 public struct WaitingGroupTask {
 
     let context: NSManagedObjectContext

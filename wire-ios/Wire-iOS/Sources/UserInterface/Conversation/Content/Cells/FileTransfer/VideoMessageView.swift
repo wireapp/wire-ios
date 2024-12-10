@@ -27,7 +27,7 @@ final class VideoMessageView: UIView, TransferView {
 
     var timeLabelHidden: Bool = false {
         didSet {
-            self.timeLabel.isHidden = timeLabelHidden
+            timeLabel.isHidden = timeLabelHidden
         }
     }
 
@@ -37,9 +37,11 @@ final class VideoMessageView: UIView, TransferView {
         let button = IconButton()
         button.setIconColor(
             SemanticColors.Icon.foregroundDefaultWhite,
-            for: .normal)
+            for: .normal
+        )
         return button
     }()
+
     private let bottomGradientView = GradientView()
     private let timeLabel: UILabel = {
         let label = UILabel()
@@ -47,36 +49,37 @@ final class VideoMessageView: UIView, TransferView {
 
         return label
     }()
+
     private let loadingView = ThreeDotsLoadingView()
 
     private var allViews: [UIView] = []
     private var state: FileMessageViewState = .unavailable
 
-    required override init(frame: CGRect) {
+    override required init(frame: CGRect) {
         super.init(frame: frame)
 
-        self.previewImageView.contentMode = .scaleAspectFill
-        self.previewImageView.clipsToBounds = true
-        self.previewImageView.backgroundColor = SemanticColors.View.backgroundCollectionCell
+        previewImageView.contentMode = .scaleAspectFill
+        previewImageView.clipsToBounds = true
+        previewImageView.backgroundColor = SemanticColors.View.backgroundCollectionCell
 
-        self.playButton.addTarget(self, action: #selector(VideoMessageView.onActionButtonPressed(_:)), for: .touchUpInside)
-        self.playButton.accessibilityIdentifier = "VideoActionButton"
-        self.playButton.accessibilityLabel = L10n.Accessibility.AudioMessage.Play.value
-        self.playButton.layer.masksToBounds = true
+        playButton.addTarget(self, action: #selector(VideoMessageView.onActionButtonPressed(_:)), for: .touchUpInside)
+        playButton.accessibilityIdentifier = "VideoActionButton"
+        playButton.accessibilityLabel = L10n.Accessibility.AudioMessage.Play.value
+        playButton.layer.masksToBounds = true
 
-        self.progressView.isUserInteractionEnabled = false
-        self.progressView.accessibilityIdentifier = "VideoProgressView"
-        self.progressView.deterministic = true
+        progressView.isUserInteractionEnabled = false
+        progressView.accessibilityIdentifier = "VideoProgressView"
+        progressView.deterministic = true
 
-        self.bottomGradientView.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.4).cgColor]
+        bottomGradientView.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.4).cgColor]
 
-        self.timeLabel.numberOfLines = 1
-        self.timeLabel.accessibilityIdentifier = "VideoActionTimeLabel"
+        timeLabel.numberOfLines = 1
+        timeLabel.accessibilityIdentifier = "VideoActionTimeLabel"
 
-        self.loadingView.isHidden = true
+        loadingView.isHidden = true
 
         self.allViews = [previewImageView, playButton, bottomGradientView, progressView, timeLabel, loadingView]
-        self.allViews.forEach(self.addSubview)
+        allViews.forEach(addSubview)
 
         createConstraints()
 
@@ -140,16 +143,16 @@ final class VideoMessageView: UIView, TransferView {
     func configure(for message: ZMConversationMessage, isInitial: Bool) {
         self.fileMessage = message
 
-        guard let fileMessage = self.fileMessage,
+        guard let fileMessage,
               let fileMessageData = fileMessage.fileMessageData,
               let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
 
         self.state = state
-        self.previewImageView.image = nil
+        previewImageView.image = nil
 
         if state != .unavailable {
             updateTimeLabel(withFileMessageData: fileMessageData)
-            self.timeLabel.textColor = SemanticColors.Label.textDefault
+            timeLabel.textColor = SemanticColors.Label.textDefault
 
             fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
                 guard let image else { return }
@@ -158,12 +161,12 @@ final class VideoMessageView: UIView, TransferView {
         }
 
         if state == .uploading || state == .downloading {
-            self.progressView.setProgress(fileMessageData.progress, animated: !isInitial)
+            progressView.setProgress(fileMessageData.progress, animated: !isInitial)
         }
 
         if let viewsState = state.viewsStateForVideo() {
-            self.playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
-            self.playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
+            playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
+            playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
         }
 
         updateVisibleViews()
@@ -187,7 +190,7 @@ final class VideoMessageView: UIView, TransferView {
             break
         }
 
-        if !previewImageView.isHidden && previewImageView.image != nil {
+        if !previewImageView.isHidden, previewImageView.image != nil {
             visibleViews.append(bottomGradientView)
         }
 
@@ -214,23 +217,23 @@ final class VideoMessageView: UIView, TransferView {
             timeLabelText = time + " " + String.MessageToolbox.middleDot + " " + timeLabelText
         }
 
-        self.timeLabel.text = timeLabelText
-        self.timeLabel.accessibilityValue = self.timeLabel.text
+        timeLabel.text = timeLabelText
+        timeLabel.accessibilityValue = timeLabel.text
     }
 
     private func updateVisibleViews() {
-        updateVisibleViews(allViews, visibleViews: visibleViews(for: state), animated: !self.loadingView.isHidden)
+        updateVisibleViews(allViews, visibleViews: visibleViews(for: state), animated: !loadingView.isHidden)
     }
 
     override var tintColor: UIColor! {
         didSet {
-            self.progressView.tintColor = self.tintColor
+            progressView.tintColor = tintColor
         }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.playButton.layer.cornerRadius = self.playButton.bounds.size.width / 2.0
+        playButton.layer.cornerRadius = playButton.bounds.size.width / 2.0
     }
 
     // MARK: - Actions
@@ -244,17 +247,17 @@ final class VideoMessageView: UIView, TransferView {
         switch fileMessageData.transferState {
         case .uploading:
             guard fileMessageData.hasLocalFileData else { return }
-            self.delegate?.transferView(self, didSelect: .cancel)
+            delegate?.transferView(self, didSelect: .cancel)
 
         case .uploadingCancelled, .uploadingFailed:
-            self.delegate?.transferView(self, didSelect: .resend)
+            delegate?.transferView(self, didSelect: .resend)
 
         case .uploaded:
             if case .downloading = fileMessageData.downloadState {
-                self.progressView.setProgress(0, animated: false)
-                self.delegate?.transferView(self, didSelect: .cancel)
+                progressView.setProgress(0, animated: false)
+                delegate?.transferView(self, didSelect: .cancel)
             } else {
-                self.delegate?.transferView(self, didSelect: .present)
+                delegate?.transferView(self, didSelect: .present)
             }
         }
     }

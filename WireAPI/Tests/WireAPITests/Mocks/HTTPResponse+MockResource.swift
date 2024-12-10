@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import XCTest
+@testable import WireAPI
 
 extension HTTPResponse {
 
     // MARK: Error
 
     static func mockError(
-        code: Int,
+        code: HTTPStatusCode,
         label: String,
         message: String? = nil
     ) throws -> HTTPResponse {
         let payloadString = """
         {
-            "code": \(code),
+            "code": \(code.rawValue),
             "label": "\(label)",
             "message": "\(message ?? "")"
         }
@@ -38,7 +38,7 @@ extension HTTPResponse {
         let payload = try XCTUnwrap(payloadString.data(using: .utf8))
 
         return HTTPResponse(
-            code: code,
+            code: code.rawValue,
             payload: payload
         )
     }
@@ -46,12 +46,12 @@ extension HTTPResponse {
     // MARK: JSON
 
     static func mockJSONResource(
-        code: Int,
+        code: HTTPStatusCode,
         name: String
     ) throws -> HTTPResponse {
         let resource = try MockJSONPayloadResource(name: name)
         return HTTPResponse(
-            code: code,
+            code: code.rawValue,
             payload: resource.jsonData
         )
     }

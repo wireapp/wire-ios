@@ -21,7 +21,7 @@ import UIKit
 public extension UIImage {
 
     var imageWithAlphaTrimmed: UIImage {
-        let originalSize = self.size
+        let originalSize = size
 
         var minX = Int.max
         var maxX = Int.min
@@ -34,12 +34,13 @@ public extension UIImage {
 
         draw(at: CGPoint.zero)
 
-        if let context = UIGraphicsGetCurrentContext(), var pixelData = context.data?.assumingMemoryBound(to: UInt32.self) {
+        if let context = UIGraphicsGetCurrentContext(),
+           var pixelData = context.data?.assumingMemoryBound(to: UInt32.self) {
 
             let alignment = (8 - (context.width % 8)) % 8
 
-            for y in 0..<context.height * 1 {
-                for x in 0..<context.width * 1 {
+            for y in 0 ..< context.height * 1 {
+                for x in 0 ..< context.width * 1 {
                     let alpha = UInt8((pixelData.pointee >> 24) & 255)
 
                     if alpha > 0 {
@@ -54,7 +55,12 @@ public extension UIImage {
                 pixelData = pixelData.advanced(by: alignment)
             }
 
-            nonAlphaBounds = CGRect(x: CGFloat(minX) / scale, y: CGFloat(minY) / scale, width: CGFloat(maxX - minX) / scale, height: CGFloat(maxY - minY) / scale)
+            nonAlphaBounds = CGRect(
+                x: CGFloat(minX) / scale,
+                y: CGFloat(minY) / scale,
+                width: CGFloat(maxX - minX) / scale,
+                height: CGFloat(maxY - minY) / scale
+            )
         }
 
         UIGraphicsEndImageContext()

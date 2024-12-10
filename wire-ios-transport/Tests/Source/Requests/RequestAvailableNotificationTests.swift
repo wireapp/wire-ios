@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
-@objc class NotificationObserver: NSObject, RequestAvailableObserver {
+@objc
+class NotificationObserver: NSObject, RequestAvailableObserver {
 
     var requestsAvailable = false
 
@@ -53,7 +54,7 @@ class RequestAvailableNotificationTests: XCTestCase {
         // when
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
 
-        // then 
+        // then
         XCTAssertTrue(sut.requestsAvailable)
     }
 

@@ -58,7 +58,11 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
     // MARK: - Tests
 
-    func checkThatItNotifiesTheObserverOfAChange(_ user: ZMUser, modifier: (ZMUser) -> Void, expectedChangedField: UserInfoChangeKey) {
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ user: ZMUser,
+        modifier: (ZMUser) -> Void,
+        expectedChangedField: UserInfoChangeKey
+    ) {
         checkThatItNotifiesTheObserverOfAChange(user, modifier: modifier, expectedChangedFields: [expectedChangedField])
     }
 
@@ -70,16 +74,16 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         line: UInt = #line
     ) {
         // given
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
 
-        self.token = UserChangeInfo.add(observer: userObserver, for: user, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: userObserver, for: user, in: uiMOC)
 
         // when
         modifier(user)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
 
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
 
         // then
@@ -87,52 +91,62 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         XCTAssertEqual(changeCount, 1, file: file, line: line)
 
         // and when
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
-        XCTAssertEqual(userObserver.notifications.count, changeCount, "Should not have changed further once", file: file, line: line)
+        XCTAssertEqual(
+            userObserver.notifications.count,
+            changeCount,
+            "Should not have changed further once",
+            file: file,
+            line: line
+        )
 
         guard let changes = userObserver.notifications.first else { return }
-        changes.checkForExpectedChangeFields(userInfoKeys: Set(userInfoChangeKeys.map { $0.rawValue }),
-                                             expectedChangedFields: Set(expectedChangedFields.map { $0.rawValue }))
+        changes.checkForExpectedChangeFields(
+            userInfoKeys: Set(userInfoChangeKeys.map(\.rawValue)),
+            expectedChangedFields: Set(expectedChangedFields.map(\.rawValue))
+        )
     }
 
     func testThatItNotifiesTheObserverOfANameChange() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "George"
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.name = "Phil" },
-                                                     expectedChangedField: .name)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.name = "Phil" },
+            expectedChangedField: .name
+        )
 
     }
 
     func testThatItNotifiestheObserverOfMultipleNameChanges() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
 
-        self.token = UserChangeInfo.add(observer: userObserver, for: user, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: userObserver, for: user, in: uiMOC)
 
         // when
         user.name = "Foo"
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(userObserver.notifications.count, 1)
 
         // and when
         user.name = "Bar"
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(userObserver.notifications.count, 2)
 
         // and when
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
     }
 
     func testThatItNotifiesTheObserverOfAnAccentColorChange() {
@@ -151,7 +165,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfAMediumProfileImageChange() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID.create()
         user.completeProfileAssetIdentifier = UUID.create().transportString()
         user.setImage(data: verySmallJPEGData(), size: .complete)
@@ -159,127 +173,131 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.setImage(data: Data(), size: .complete) },
-                                                     expectedChangedField: .imageMediumData)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.setImage(data: Data(), size: .complete) },
+            expectedChangedField: .imageMediumData
+        )
     }
 
     func testThatItNotifiesTheObserverOfASmallProfileImageChange() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID.create()
         user.previewProfileAssetIdentifier = UUID.create().transportString()
         user.setImage(data: verySmallJPEGData(), size: .preview)
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.setImage(data: Data(), size: .preview) },
-                                                     expectedChangedField: .imageSmallProfileData)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.setImage(data: Data(), size: .preview) },
+            expectedChangedField: .imageSmallProfileData
+        )
     }
 
     func testThatItNotifiesTheObserverOfAnEmailChange() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.setEmailAddress("foo@example.com", on: user)
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        setEmailAddress("foo@example.com", on: user)
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { self.setEmailAddress(nil, on: $0) },
-                                                     expectedChangedField: .profileInfo)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { self.setEmailAddress(nil, on: $0) },
+            expectedChangedField: .profileInfo
+        )
     }
 
     func testThatItNotifiesTheObserverOfAnUsernameChange_fromNil() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         XCTAssertNil(user.handle)
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.setValue("handle", forKey: "handle") },
-                                                     expectedChangedField: .handle)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.setValue("handle", forKey: "handle") },
+            expectedChangedField: .handle
+        )
     }
 
     func testThatItNotifiesTheObserverOfAnUsernameChange() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.setValue("oldHandle", forKey: "handle")
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.setValue("newHandle", forKey: "handle") },
-                                                     expectedChangedField: .handle)
-    }
-
-    func testThatItNotifiesTheObserverOfAPhoneNumberChange() {
-        // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.setPhoneNumber("+99-32312423423", on: user)
-        uiMOC.saveOrRollback()
-
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { self.setPhoneNumber("+99-0000", on: $0) },
-                                                     expectedChangedField: .profileInfo)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.setValue("newHandle", forKey: "handle") },
+            expectedChangedField: .handle
+        )
     }
 
     func testThatItNotifiesTheObserverOfAConnectionStateChange() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        user.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.connection = ZMConnection.insertNewObject(in: uiMOC)
         user.connection!.status = ZMConnectionStatus.pending
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.connection!.status = ZMConnectionStatus.accepted },
-                                                     expectedChangedField: .connectionState)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.connection!.status = ZMConnectionStatus.accepted },
+            expectedChangedField: .connectionState
+        )
     }
 
     func testThatItNotifiesTheObserverOfACreatedIncomingConnection() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: {
-                                                        $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-                                                        $0.connection!.status = ZMConnectionStatus.pending
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: {
+                $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+                $0.connection!.status = ZMConnectionStatus.pending
             },
-                                                     expectedChangedField: .connectionState)
+            expectedChangedField: .connectionState
+        )
     }
 
     func testThatItNotifiesTheObserverOfACreatedOutgoingConnection() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: {
-                                                        $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-                                                        $0.connection!.status = ZMConnectionStatus.sent
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: {
+                $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+                $0.connection!.status = ZMConnectionStatus.sent
             },
-                                                     expectedChangedField: .connectionState)
+            expectedChangedField: .connectionState
+        )
     }
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
 
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.setEmailAddress("foo@example.com", on: user)
-        self.uiMOC.saveOrRollback()
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        setEmailAddress("foo@example.com", on: user)
+        uiMOC.saveOrRollback()
 
-        self.token = UserChangeInfo.add(observer: userObserver, for: user, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: userObserver, for: user, in: uiMOC)
 
         // when
-        self.token = nil
-        self.setEmailAddress("aaaaa@example.com", on: user)
-        self.uiMOC.saveOrRollback()
+        token = nil
+        setEmailAddress("aaaaa@example.com", on: user)
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(userObserver.notifications.count, 0)
@@ -288,21 +306,23 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     func testThatItNotifiesUserForClientStartsTrusting() {
 
         // given
-        let user = ZMUser.selfUser(in: self.uiMOC)
-        let client = UserClient.insertNewObject(in: self.uiMOC)
-        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
-        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.selfUser(in: uiMOC)
+        let client = UserClient.insertNewObject(in: uiMOC)
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        let otherClient = UserClient.insertNewObject(in: uiMOC)
         user.mutableSetValue(forKey: UserClientsKey).add(client)
         otherUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
 
         // when
-        self.uiMOC.saveOrRollback()
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        self.checkThatItNotifiesTheObserverOfAChange(otherUser,
-                                                     modifier: { _ in client.trustClient(otherClient) },
-                                                     expectedChangedField: .trustLevel)
+        checkThatItNotifiesTheObserverOfAChange(
+            otherUser,
+            modifier: { _ in client.trustClient(otherClient) },
+            expectedChangedField: .trustLevel
+        )
 
         XCTAssertTrue(otherClient.trustedByClients.contains(client))
     }
@@ -310,22 +330,24 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     func testThatItNotifiesUserForClientStartsIgnoring() {
 
         // given
-        let user = ZMUser.selfUser(in: self.uiMOC)
-        let client = UserClient.insertNewObject(in: self.uiMOC)
-        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
-        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.selfUser(in: uiMOC)
+        let client = UserClient.insertNewObject(in: uiMOC)
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        let otherClient = UserClient.insertNewObject(in: uiMOC)
         user.mutableSetValue(forKey: UserClientsKey).add(client)
         otherUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
 
         // when
         client.trustClient(otherClient)
-        self.uiMOC.saveOrRollback()
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        self.checkThatItNotifiesTheObserverOfAChange(otherUser,
-                                                     modifier: { _ in client.ignoreClient(otherClient) },
-                                                     expectedChangedField: .trustLevel)
+        checkThatItNotifiesTheObserverOfAChange(
+            otherUser,
+            modifier: { _ in client.ignoreClient(otherClient) },
+            expectedChangedField: .trustLevel
+        )
 
         XCTAssertFalse(otherClient.trustedByClients.contains(client))
         XCTAssertTrue(otherClient.ignoredByClients.contains(client))
@@ -334,20 +356,21 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     func testThatItUpdatesClientObserversWhenClientIsAdded() {
 
         // given
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        let selfClient = UserClient.insertNewObject(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient = UserClient.insertNewObject(in: uiMOC)
         selfUser.mutableSetValue(forKey: UserClientsKey).add(selfClient)
-        self.uiMOC.saveOrRollback()
-        self.token = UserChangeInfo.add(observer: userObserver, for: selfUser, in: self.uiMOC)
+        uiMOC.saveOrRollback()
+        token = UserChangeInfo.add(observer: userObserver, for: selfUser, in: uiMOC)
 
         // when
-        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        let otherClient = UserClient.insertNewObject(in: uiMOC)
         selfUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
-        self.uiMOC.saveOrRollback()
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let changeInfo = userObserver.notifications.first else { return XCTFail("Should receive a changeInfo for the added client") }
+        guard let changeInfo = userObserver.notifications.first
+        else { return XCTFail("Should receive a changeInfo for the added client") }
         XCTAssertTrue(changeInfo.clientsChanged)
         XCTAssertTrue(changeInfo.changedKeys.contains(UserClientsKey))
     }
@@ -355,23 +378,24 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     func testThatItUpdatesClientObserversWhenClientIsRemoved() {
 
         // given
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        let selfClient = UserClient.insertNewObject(in: self.uiMOC)
-        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient = UserClient.insertNewObject(in: uiMOC)
+        let otherClient = UserClient.insertNewObject(in: uiMOC)
         selfUser.mutableSetValue(forKey: UserClientsKey).add(selfClient)
         selfUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
         XCTAssertEqual(selfUser.clients.count, 2)
 
-        self.token = UserChangeInfo.add(observer: userObserver, for: selfUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: userObserver, for: selfUser, in: uiMOC)
 
         // when
         selfUser.mutableSetValue(forKey: UserClientsKey).remove(otherClient)
-        self.uiMOC.saveOrRollback()
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let changeInfo = userObserver.notifications.first else { return XCTFail("Should receive a changeInfo for the added client") }
+        guard let changeInfo = userObserver.notifications.first
+        else { return XCTFail("Should receive a changeInfo for the added client") }
         XCTAssertTrue(changeInfo.clientsChanged)
         XCTAssertTrue(changeInfo.changedKeys.contains(UserClientsKey))
         XCTAssertEqual(selfUser.clients, [selfClient])
@@ -395,7 +419,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
             return XCTFail("Unable to get user with objectID in uiMOC")
         }
 
-        self.token = UserChangeInfo.add(observer: userObserver, for: uiMOCUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: userObserver, for: uiMOCUser, in: uiMOC)
 
         // when adding a new client on the syncMOC
         syncMOC.performGroupedAndWait {
@@ -424,7 +448,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         uiMOC.refresh(user, mergeChanges: true)
         XCTAssertTrue(user.isFault)
-        self.token = UserChangeInfo.add(observer: userObserver, for: user, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: userObserver, for: user, in: uiMOC)
 
         // when
         let client = UserClient.insertNewObject(in: uiMOC)
@@ -454,7 +478,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         let otherClient = UserClient.insertNewObject(in: uiMOC)
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.token = UserChangeInfo.add(observer: userObserver, for: observedUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: userObserver, for: observedUser, in: uiMOC)
 
         // when
         observedUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
@@ -477,34 +501,39 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
         XCTAssertEqual(observedUser.clients.count, 1)
         XCTAssertEqual(userChangeInfos.count, 2)
-        XCTAssertEqual(userChangeInfos.map { $0.trustLevelChanged }, [false, true])
-        XCTAssertEqual(userChangeInfos.map { $0.clientsChanged }, [true, false])
+        XCTAssertEqual(userChangeInfos.map(\.trustLevelChanged), [false, true])
+        XCTAssertEqual(userChangeInfos.map(\.clientsChanged), [true, false])
     }
 
     func testThatItNotifiesAboutAnAddedTeam() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: {
-                                                        let team = Team.insertNewObject(in: self.uiMOC)
-                                                        let member = Member.insertNewObject(in: self.uiMOC)
-                                                        member.user = $0
-                                                        member.team = team },
-                                                     expectedChangedField: .teams)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: {
+                let team = Team.insertNewObject(in: self.uiMOC)
+                let member = Member.insertNewObject(in: self.uiMOC)
+                member.user = $0
+                member.team = team
+            },
+            expectedChangedField: .teams
+        )
     }
 
     func testThatItNotifiesAboutChangeInAvailability() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.updateAvailability(.away) },
-                                                     expectedChangedField: .availability)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.updateAvailability(.away) },
+            expectedChangedField: .availability
+        )
     }
 
     func testThatItNotifiesTheObserverOfReadReceiptsEnabledChanged() {
@@ -514,9 +543,11 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.readReceiptsEnabled = true },
-                                                     expectedChangedField: .readReceiptsEnabled)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.readReceiptsEnabled = true },
+            expectedChangedField: .readReceiptsEnabled
+        )
     }
 
     func testThatItNotifiesTheObserverOfReadReceiptsEnabledChangedRemotelyChanged() {
@@ -526,9 +557,11 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.readReceiptsEnabledChangedRemotely = true },
-                                                     expectedChangedField: .readReceiptsEnabledChangedRemotely)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.readReceiptsEnabledChangedRemotely = true },
+            expectedChangedField: .readReceiptsEnabledChangedRemotely
+        )
     }
 
     func testThatItNotifiesTheObserverOfRichProfileChanged() {
@@ -537,9 +570,11 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         let richProfile = [UserRichProfileField(type: "type", value: "value")]
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.richProfile = richProfile },
-                                                     expectedChangedField: .richProfile)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.richProfile = richProfile },
+            expectedChangedField: .richProfile
+        )
     }
 
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Request() {
@@ -550,9 +585,11 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         let legalHoldRequest = LegalHoldRequest.mockRequest(for: user)
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.userDidReceiveLegalHoldRequest(legalHoldRequest) },
-                                                     expectedChangedField: .legalHoldStatus)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.userDidReceiveLegalHoldRequest(legalHoldRequest) },
+            expectedChangedField: .legalHoldStatus
+        )
 
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
@@ -566,9 +603,11 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         user.userDidReceiveLegalHoldRequest(request)
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.userDidAcceptLegalHoldRequest(request) },
-                                                     expectedChangedField: .legalHoldStatus)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.userDidAcceptLegalHoldRequest(request) },
+            expectedChangedField: .legalHoldStatus
+        )
 
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
@@ -578,22 +617,24 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         let user = ZMUser.selfUser(in: uiMOC)
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { _ in UserClient.createMockLegalHoldSelfUserClient(in: uiMOC) },
-                                                     expectedChangedFields: [.legalHoldStatus, .isUnderLegalHold])
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { _ in
+                UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
+            },
+            expectedChangedFields: [.legalHoldStatus, .isUnderLegalHold]
+        )
 
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
 
-    // swiftlint:disable todo_requires_jira_link
-    // TODO: [jacob] re-enable WPB-5917 and fix calling `legalHoldClient.deleteClientAndEndSession()`
-    // swiftlint:enable todo_requires_jira_link
+    // TODO: [WPB-5917] re-enable and fix calling `legalHoldClient.deleteClientAndEndSession()`
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
         user.acknowledgeLegalHoldStatus()
 
-        let legalHoldClient = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
+        _ = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
 
         let modifier: (ZMUser) -> Void = { _ in
             self.performPretendingUiMocIsSyncMoc {
@@ -604,9 +645,11 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         }
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: modifier,
-                                                     expectedChangedFields: [.legalHoldStatus, .isUnderLegalHold])
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: modifier,
+            expectedChangedFields: [.legalHoldStatus, .isUnderLegalHold]
+        )
 
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
@@ -619,9 +662,11 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         client.user = user
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { _ in client.deviceClass = .legalHold },
-                                                     expectedChangedField: .isUnderLegalHold)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { _ in client.deviceClass = .legalHold },
+            expectedChangedField: .isUnderLegalHold
+        )
     }
 
     func testThatItNotifiesTheObserverOfAnalyticsIdentifierChange() {
@@ -630,9 +675,11 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         user.analyticsIdentifier = "foo"
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.analyticsIdentifier = "bar" },
-                                                     expectedChangedField: .analyticsIdentifier)
+        checkThatItNotifiesTheObserverOfAChange(
+            user,
+            modifier: { $0.analyticsIdentifier = "bar" },
+            expectedChangedField: .analyticsIdentifier
+        )
     }
 
 }

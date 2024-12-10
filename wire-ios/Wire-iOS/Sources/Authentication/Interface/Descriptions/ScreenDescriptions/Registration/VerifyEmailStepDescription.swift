@@ -25,8 +25,14 @@ final class VerifyEmailStepSecondaryView: AuthenticationFooterViewDescription {
     typealias TeamActivationCode = L10n.Localizable.Team.ActivationCode.Button
 
     init(canResend: Bool = true, canChangeEmail: Bool = true) {
-        let resendCode = SecondaryButtonDescription(title: TeamActivationCode.resend.capitalized, accessibilityIdentifier: "resend_button")
-        let changeEmail = SecondaryButtonDescription(title: TeamActivationCode.changeEmail.capitalized, accessibilityIdentifier: "change_email_button")
+        let resendCode = SecondaryButtonDescription(
+            title: TeamActivationCode.resend.capitalized,
+            accessibilityIdentifier: "resend_button"
+        )
+        let changeEmail = SecondaryButtonDescription(
+            title: TeamActivationCode.changeEmail.capitalized,
+            accessibilityIdentifier: "change_email_button"
+        )
         var views: [SecondaryButtonDescription] = []
 
         if canResend {
@@ -60,15 +66,11 @@ final class VerifyEmailStepDescription: AuthenticationStepDescription {
 
     init(email: String, canChangeEmail: Bool = true) {
         self.email = email
-        backButton = nil
-        mainView = VerificationCodeFieldDescription()
-        headline = L10n.Localizable.Team.ActivationCode.headline
-        subtext = .markdown(from: L10n.Localizable.Team.ActivationCode.subheadline(email), style: .login)
-        secondaryView = nil
-        footerView = VerifyEmailStepSecondaryView(canChangeEmail: canChangeEmail)
-    }
-
-    func shouldSkipFromNavigation() -> Bool {
-        return true
+        self.backButton = nil
+        self.mainView = VerificationCodeFieldDescription()
+        self.headline = L10n.Localizable.Team.ActivationCode.headline
+        self.subtext = .markdown(from: L10n.Localizable.Team.ActivationCode.subheadline(email), style: .login)
+        self.secondaryView = nil
+        self.footerView = VerifyEmailStepSecondaryView(canChangeEmail: canChangeEmail)
     }
 }

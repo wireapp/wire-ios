@@ -18,6 +18,7 @@
 
 import Foundation
 import PushKit
+import WireLogging
 
 extension SessionManager: VoIPPushManagerDelegate {
 
@@ -31,21 +32,18 @@ extension SessionManager: VoIPPushManagerDelegate {
 
         // We were given some time to run, resume background task creation.
         BackgroundActivityFactory.shared.resume()
-        notificationsTracker?.registerReceivedPush()
 
         guard
             let accountId = accountId(from: payload),
-            let account = self.accountManager.account(with: accountId),
+            let account = accountManager.account(with: accountId),
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
                 name: "\(payload.stringIdentifier)",
-                expirationHandler: { [weak self] in
-                  WireLogger.notifications.warn("Processing push payload expired: \(payload)")
-                  self?.notificationsTracker?.registerProcessingExpired()
+                expirationHandler: {
+                    WireLogger.notifications.warn("Processing push payload expired: \(payload)")
                 }
             )
         else {
             WireLogger.notifications.warn("Aborted processing of payload: \(payload)")
-            notificationsTracker?.registerProcessingAborted()
             return completion()
         }
 
@@ -55,9 +53,8 @@ extension SessionManager: VoIPPushManagerDelegate {
                 attributes: .safePublic
             )
 
-            userSession.receivedPushNotification(with: payload, completion: { [weak self] in
+            userSession.receivedPushNotification(with: payload, completion: {
                 WireLogger.notifications.info("Processing push payload completed")
-                self?.notificationsTracker?.registerNotificationProcessingCompleted()
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 completion()
             })
@@ -104,7 +101,7 @@ extension SessionManager: VoIPPushManagerDelegate {
 private extension VoIPPushPayload {
 
     func caller(in context: NSManagedObjectContext) -> ZMUser? {
-        return ZMUser.fetch(
+        ZMUser.fetch(
             with: senderID,
             domain: senderDomain,
             in: context
@@ -112,7 +109,7 @@ private extension VoIPPushPayload {
     }
 
     func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
-        return ZMConversation.fetch(
+        ZMConversation.fetch(
             with: conversationID,
             domain: conversationDomain,
             in: context
@@ -121,7 +118,7 @@ private extension VoIPPushPayload {
 
 }
 
-private extension Dictionary where Key == AnyHashable, Value == Any {
+private extension [AnyHashable: Any] {
 
     var stringIdentifier: String {
         guard
@@ -129,7 +126,7 @@ private extension Dictionary where Key == AnyHashable, Value == Any {
             let innerData = data["data"] as? [AnyHashable: Any],
             let id = innerData["id"]
         else {
-            return self.description
+            return description
         }
 
         return "\(id)"

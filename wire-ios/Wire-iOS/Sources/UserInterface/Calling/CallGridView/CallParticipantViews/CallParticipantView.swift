@@ -46,11 +46,13 @@ final class CallParticipantView: BaseCallParticipantView {
 
     // MARK: - Initialization
 
-    override init(stream: Stream,
-                  isCovered: Bool,
-                  shouldShowActiveSpeakerFrame: Bool,
-                  shouldShowBorderWhenVideoIsStopped: Bool,
-                  pinchToZoomRule: PinchToZoomRule) {
+    override init(
+        stream: Stream,
+        isCovered: Bool,
+        shouldShowActiveSpeakerFrame: Bool,
+        shouldShowBorderWhenVideoIsStopped: Bool,
+        pinchToZoomRule: PinchToZoomRule
+    ) {
         super.init(
             stream: stream,
             isCovered: isCovered,
@@ -121,6 +123,10 @@ final class CallParticipantView: BaseCallParticipantView {
         self.videoContainerView?.removeFromSuperview()
         self.videoContainerView = videoContainerView
 
+        let videoView = makeVideoView()
+        self.videoView = videoView
+        videoContainerView.setupVideoView(videoView)
+
         // Adding the preview into a container allows smoother scaling
         let scalableView = ScalableView(isScalingEnabled: shouldEnableScaling)
         scalableView.addSubview(videoContainerView)
@@ -147,9 +153,11 @@ final class CallParticipantView: BaseCallParticipantView {
         self.snapshotView = snapshotView
     }
 
-    private func executeAnimations(animated: Bool,
-                                   animationBlock: @escaping () -> Void,
-                                   completionBlock: @escaping (Bool) -> Void) {
+    private func executeAnimations(
+        animated: Bool,
+        animationBlock: @escaping () -> Void,
+        completionBlock: @escaping (Bool) -> Void
+    ) {
         if animated {
             UIView.animate(withDuration: 0.2, animations: animationBlock, completion: completionBlock)
         } else {
@@ -161,15 +169,6 @@ final class CallParticipantView: BaseCallParticipantView {
     // MARK: Override Base
 
     override func updateVideoShouldFill(_ shouldFill: Bool) {
-        if shouldFill, videoView == nil {
-            // [WPB-8954] Setup video only when the video really starts to avoid
-            // calls crashing on the iOS 17 simulator.
-            let videoView = makeVideoView()
-            self.videoView = videoView
-
-            videoContainerView?.setupVideoView(videoView)
-        }
-
         videoView?.shouldFill = shouldFill
     }
 

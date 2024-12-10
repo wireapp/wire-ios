@@ -20,7 +20,7 @@ import Foundation
 
 /// Service information for a bot.
 
-public struct Service: Equatable, Codable {
+public struct Service: Equatable, Codable, Sendable {
 
     /// The service's id.
 

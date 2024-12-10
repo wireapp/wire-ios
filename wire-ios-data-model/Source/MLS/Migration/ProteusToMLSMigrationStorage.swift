@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireFoundation
 
 // sourcery: AutoMockable
 protocol ProteusToMLSMigrationStorageInterface {
@@ -43,7 +43,7 @@ class ProteusToMLSMigrationStorage: ProteusToMLSMigrationStorageInterface {
         userID: UUID,
         userDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: userDefaults
         )

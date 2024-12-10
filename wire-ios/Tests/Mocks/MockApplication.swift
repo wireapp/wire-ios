@@ -21,11 +21,10 @@ import UIKit
 @testable import Wire
 
 final class MockApplication: ApplicationProtocol {
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: ((Bool) -> Void)!) {
+
+    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void) {
         grantedHandler(true)
     }
-
-    var applicationState: UIApplication.State = .active
 
     var statusBarOrientation: UIInterfaceOrientation = .unknown
 }

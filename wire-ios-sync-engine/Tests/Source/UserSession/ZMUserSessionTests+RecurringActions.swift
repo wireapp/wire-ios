@@ -58,7 +58,6 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
         // Then
         XCTAssertFalse(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
-        XCTAssertEqual(mockPushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 
     func testUpdatesUsersMissingMetadataAction() {
@@ -122,7 +121,10 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         return user
     }
 
-    private func createConversationIsPendingMetadataRefresh(moc: NSManagedObjectContext, domain: String?) -> ZMConversation {
+    private func createConversationIsPendingMetadataRefresh(
+        moc: NSManagedObjectContext,
+        domain: String?
+    ) -> ZMConversation {
         let conversation = ZMConversation(context: moc)
         conversation.remoteIdentifier = UUID()
         conversation.domain = domain

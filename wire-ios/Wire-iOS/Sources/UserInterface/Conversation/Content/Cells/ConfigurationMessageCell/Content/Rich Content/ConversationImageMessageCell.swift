@@ -21,14 +21,14 @@ import WireDataModel
 import WireDesign
 
 final class ConversationImageMessageCell: UIView,
-                                          ConversationMessageCell,
-                                          ContextMenuDelegate {
+    ConversationMessageCell,
+    ContextMenuDelegate {
 
     struct Configuration {
         let image: ZMImageMessageData
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -49,16 +49,13 @@ final class ConversationImageMessageCell: UIView,
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
 
-    var containerColor: UIColor? = SemanticColors.View.backgroundCollectionCell
-    var containerHeightConstraint: NSLayoutConstraint!
-
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return containerView
+        containerView
     }
 
     override init(frame: CGRect) {
@@ -109,13 +106,15 @@ final class ConversationImageMessageCell: UIView,
 
     func configure(with object: Configuration, animated: Bool) {
         let scaleFactor: CGFloat = object.image.isAnimatedGIF ? 1 : 0.5
-        let imageSize = object.image.originalSize.applying(CGAffineTransform.init(scaleX: scaleFactor, y: scaleFactor))
+        let imageSize = object.image.originalSize.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
         let imageAspectRatio = imageSize.width > 0 ? imageSize.height / imageSize.width : 1.0
 
-        aspectConstraint.map({ containerView.removeConstraint($0) })
+        aspectConstraint.map { containerView.removeConstraint($0) }
         let isRestricted = (!object.message.canBeShared && !object.isObfuscated)
-        aspectConstraint = containerView.heightAnchor.constraint(equalTo: containerView.widthAnchor,
-                                                                 multiplier: !isRestricted ? imageAspectRatio : 9 / 16)
+        aspectConstraint = containerView.heightAnchor.constraint(
+            equalTo: containerView.widthAnchor,
+            multiplier: !isRestricted ? imageAspectRatio : 9 / 16
+        )
         aspectConstraint?.isActive = true
         widthConstraint?.constant = imageSize.width
         heightConstraint?.constant = imageSize.height
@@ -183,7 +182,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     let containsHighlightableContent: Bool = true
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
+        configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
     }
 
     let accessibilityLabel: String?
@@ -191,7 +190,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     init(message: ZMConversationMessage, image: ZMImageMessageData) {
         self.message = message
         self.configuration = View.Configuration(image: image, message: message)
-        accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
     }
 
 }

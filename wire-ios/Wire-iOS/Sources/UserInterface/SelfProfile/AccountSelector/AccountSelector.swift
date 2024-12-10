@@ -28,9 +28,9 @@ public protocol AccountSelector {
 
 }
 
-extension AccountSelector {
+public extension AccountSelector {
 
-    public func switchTo(account: Account) {
+    func switchTo(account: Account) {
         switchTo(account: account, completion: .none)
     }
 

@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles errors in the final state of registration.
- */
+/// Handles errors in the final state of registration.
 
 final class RegistrationFinalErrorHandler: AuthenticationEventHandler {
 
@@ -38,7 +36,10 @@ final class RegistrationFinalErrorHandler: AuthenticationEventHandler {
         }
 
         // Present alert
-        let alert = AuthenticationCoordinatorErrorAlert(error: error, completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: error,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         return [.hideLoadingView, .presentErrorAlert(alert)]
     }
 

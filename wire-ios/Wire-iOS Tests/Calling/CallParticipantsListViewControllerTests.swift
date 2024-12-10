@@ -16,18 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import WireUtilities
 import XCTest
 
-final class CallParticipantsListHelper {
-    static func participants(count participantCount: Int,
-                             videoState: VideoState? = nil,
-                             microphoneState: MicrophoneState? = nil,
-                             mockUsers: [UserType]) -> CallParticipantsList {
-        let sortedParticipants = (0..<participantCount)
+@testable import Wire
+
+enum CallParticipantsListHelper {
+
+    static func participants(
+        count participantCount: Int,
+        videoState: VideoState? = nil,
+        microphoneState: MicrophoneState? = nil,
+        mockUsers: [UserType]
+    ) -> CallParticipantsList {
+        let sortedParticipants = (0 ..< participantCount)
             .lazy
             .map { mockUsers[$0] }
             .sortedAscendingPrependingNil(by: \.name)
@@ -36,9 +39,11 @@ final class CallParticipantsListHelper {
             callParticipantState = .connected(videoState: videoState, microphoneState: microphoneState)
         }
 
-        return sortedParticipants.map { CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: $0),
-                                                                                              callParticipantState: callParticipantState,
-                                                                                              activeSpeakerState: .inactive)
+        return sortedParticipants.map { CallParticipantsListCellConfiguration.callParticipant(
+            user: HashBox(value: $0),
+            callParticipantState: callParticipantState,
+            activeSpeakerState: .inactive
+        )
         }
     }
 
@@ -48,15 +53,22 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: CallParticipantsListViewController!
-    var mockParticipants: CallParticipantsList!
-    var selfUser: UserType!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: CallParticipantsListViewController!
+    private var mockParticipants: CallParticipantsList!
+    private var selfUser: UserType!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        mockParticipants = CallParticipantsListHelper.participants(count: 10, videoState: .stopped, microphoneState: .muted, mockUsers: SwiftMockLoader.mockUsers())
+        snapshotHelper = .init()
+        mockParticipants = CallParticipantsListHelper.participants(
+            count: 10,
+            videoState: .stopped,
+            microphoneState: .muted,
+            mockUsers: SwiftMockLoader.mockUsers()
+        )
         selfUser = ZMUser.selfUser()
         guard selfUser != nil else {
             XCTFail("ZMUser.selfUser() is nil")
@@ -67,6 +79,7 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         selfUser = nil
         mockParticipants = nil
         sut = nil
@@ -88,7 +101,7 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
         sut.view.backgroundColor = .white
 
         // THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testCallParticipants_Overflowing_Dark() {
@@ -105,7 +118,7 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
         sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testCallParticipants_Truncated_Light() {
@@ -119,7 +132,7 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
         sut.view.backgroundColor = .white
 
         // THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testCallParticipants_Truncated_Dark() {
@@ -134,7 +147,7 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
         sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testCallParticipants_ConnectingState_Light() {
@@ -149,7 +162,7 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
         sut.view.backgroundColor = .white
 
         // THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testCallParticipants_ConnectingState_Dark() {
@@ -165,6 +178,6 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
         sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 }

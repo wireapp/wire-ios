@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
 protocol CallPermissionsConfiguration {
     var canAcceptAudioCalls: Bool { get }
@@ -33,11 +33,11 @@ protocol CallPermissionsConfiguration {
 extension CallPermissionsConfiguration {
 
     var isAudioDisabledForever: Bool {
-        return canAcceptAudioCalls == false && isPendingAudioPermissionRequest == false
+        canAcceptAudioCalls == false && isPendingAudioPermissionRequest == false
     }
 
     var isVideoDisabledForever: Bool {
-        return canAcceptVideoCalls == false && isPendingVideoPermissionRequest == false
+        canAcceptVideoCalls == false && isPendingVideoPermissionRequest == false
     }
 
     var preferredVideoPlaceholderState: CallVideoPlaceholderState {
@@ -48,8 +48,8 @@ extension CallPermissionsConfiguration {
 }
 
 func == (lhs: CallPermissionsConfiguration, rhs: CallPermissionsConfiguration) -> Bool {
-    return lhs.canAcceptAudioCalls == rhs.canAcceptAudioCalls &&
-           lhs.isPendingAudioPermissionRequest == rhs.isPendingAudioPermissionRequest &&
-           lhs.canAcceptVideoCalls == rhs.canAcceptVideoCalls &&
-           lhs.isPendingVideoPermissionRequest == rhs.isPendingVideoPermissionRequest
+    lhs.canAcceptAudioCalls == rhs.canAcceptAudioCalls &&
+        lhs.isPendingAudioPermissionRequest == rhs.isPendingAudioPermissionRequest &&
+        lhs.canAcceptVideoCalls == rhs.canAcceptVideoCalls &&
+        lhs.isPendingVideoPermissionRequest == rhs.isPendingVideoPermissionRequest
 }

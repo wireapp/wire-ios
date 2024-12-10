@@ -39,7 +39,10 @@ final class ConversationTests: ZMConversationTestsBase {
 
         // when
 
-        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "@Sømebôdy", selfUser: selfUser))
+        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(
+            forSearchQuery: "@Sømebôdy",
+            selfUser: selfUser
+        ))
         let result = try uiMOC.fetch(request)
 
         // then
@@ -53,7 +56,10 @@ final class ConversationTests: ZMConversationTestsBase {
 
         // when
 
-        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "Sømebôdy", selfUser: selfUser))
+        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(
+            forSearchQuery: "Sømebôdy",
+            selfUser: selfUser
+        ))
         let result = try uiMOC.fetch(request)
 
         // then
@@ -67,7 +73,10 @@ final class ConversationTests: ZMConversationTestsBase {
 
         // when
 
-        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "9:3", selfUser: selfUser))
+        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(
+            forSearchQuery: "9:3",
+            selfUser: selfUser
+        ))
         let result = try uiMOC.fetch(request)
 
         // then
@@ -81,7 +90,10 @@ final class ConversationTests: ZMConversationTestsBase {
 
         // when
 
-        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "Sømebôdy ", selfUser: selfUser))
+        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(
+            forSearchQuery: "Sømebôdy ",
+            selfUser: selfUser
+        ))
         let result = try uiMOC.fetch(request)
 
         // then
@@ -95,7 +107,10 @@ final class ConversationTests: ZMConversationTestsBase {
 
         // when
 
-        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "Sømebôdy to", selfUser: selfUser))
+        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(
+            forSearchQuery: "Sømebôdy to",
+            selfUser: selfUser
+        ))
         let result = try uiMOC.fetch(request)
 
         // then
@@ -111,7 +126,7 @@ extension ConversationTests {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let sender = ZMUser.insertNewObject(in: self.uiMOC)
+        let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
 
         // when
@@ -119,7 +134,15 @@ extension ConversationTests {
         message.sender = sender
         message.markAsSent()
 
-        let genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: message.nonce!, text: Text(content: "Edited Test Message", mentions: [], linkPreviews: [], replyingTo: nil)), nonce: UUID.create())
+        let genericMessage = GenericMessage(
+            content: MessageEdit(replacingMessageID: message.nonce!, text: Text(
+                content: "Edited Test Message",
+                mentions: [],
+                linkPreviews: [],
+                replyingTo: nil
+            )),
+            nonce: UUID.create()
+        )
         let genericMessageData = try? genericMessage.serializedData()
         let payload: NSDictionary = try [
             "conversation": XCTUnwrap(conversation.remoteIdentifier?.transportString()),
@@ -133,7 +156,7 @@ extension ConversationTests {
         let updateEvent = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID.create())
 
         var newMessage: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             newMessage = ZMClientMessage.createOrUpdate(from: updateEvent!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -165,7 +188,10 @@ extension ConversationTests {
                 return
             }
             let conversationID = QualifiedID(uuid: remoteIdentifier, domain: "")
-            let message = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: newLastRead), nonce: UUID.create())
+            let message = GenericMessage(
+                content: LastRead(conversationID: conversationID, lastReadTimestamp: newLastRead),
+                nonce: UUID.create()
+            )
             let contentData = try XCTUnwrap(message.serializedData())
             let data = contentData.base64EncodedString()
 
@@ -181,9 +207,13 @@ extension ConversationTests {
             // when
             ZMClientMessage.createOrUpdate(from: event!, in: syncMOC, prefetchResult: nil)
         }
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // then
-            XCTAssertEqual(updatedConversation!.lastReadServerTimeStamp!.timeIntervalSince1970, newLastRead.timeIntervalSince1970, accuracy: 1.5)
+            XCTAssertEqual(
+                updatedConversation!.lastReadServerTimeStamp!.timeIntervalSince1970,
+                newLastRead.timeIntervalSince1970,
+                accuracy: 1.5
+            )
         }
     }
 
@@ -198,9 +228,17 @@ extension ConversationTests {
 
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
-            try! conversation.appendText(content: "Le fromage c'est delicieux", mentions: [], fetchLinkPreview: true, nonce: messageID)
+            try! conversation.appendText(
+                content: "Le fromage c'est delicieux",
+                mentions: [],
+                fetchLinkPreview: true,
+                nonce: messageID
+            )
 
-            let message = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())
+            let message = GenericMessage(
+                content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID),
+                nonce: UUID.create()
+            )
             let contentData = try XCTUnwrap(message.serializedData())
             let data = contentData.base64EncodedString()
 
@@ -246,7 +284,10 @@ extension ConversationTests {
             syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: imageData, for: message)
 
             // delete
-            let deleteMessage = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())
+            let deleteMessage = GenericMessage(
+                content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID),
+                nonce: UUID.create()
+            )
             let contentData = try XCTUnwrap(deleteMessage.serializedData())
             let data = contentData.base64EncodedString()
 
@@ -292,7 +333,7 @@ extension ConversationTests {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
-            let fileMetadata = ZMFileMetadata.init(fileURL: fileURL, thumbnail: nil)
+            let fileMetadata = ZMFileMetadata(fileURL: fileURL, thumbnail: nil)
             let message = try! conversation.appendFile(with: fileMetadata, nonce: messageID)
 
             // store asset data
@@ -300,7 +341,10 @@ extension ConversationTests {
             self.syncMOC.zm_fileAssetCache.storeEncryptedFile(data: fileData, for: message)
 
             // delete
-            let deleteMessage = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())
+            let deleteMessage = GenericMessage(
+                content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID),
+                nonce: UUID.create()
+            )
             let contentData = try XCTUnwrap(deleteMessage.serializedData())
             let data = contentData.base64EncodedString()
 
@@ -337,10 +381,18 @@ extension ConversationTests {
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
-            try! conversation.appendText(content: "Le fromage c'est delicieux", mentions: [], fetchLinkPreview: true, nonce: UUID.create())
+            try! conversation.appendText(
+                content: "Le fromage c'est delicieux",
+                mentions: [],
+                fetchLinkPreview: true,
+                nonce: UUID.create()
+            )
             let previusMessagesCount = conversation.allMessages.count
 
-            let message = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: UUID.create()), nonce: UUID.create())
+            let message = GenericMessage(
+                content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: UUID.create()),
+                nonce: UUID.create()
+            )
             let contentData = try XCTUnwrap(message.serializedData())
             let data = contentData.base64EncodedString()
 
@@ -375,10 +427,18 @@ extension ConversationTests {
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
-            try conversation.appendText(content: "Le fromage c'est delicieux", mentions: [], fetchLinkPreview: true, nonce: messageID)
+            try conversation.appendText(
+                content: "Le fromage c'est delicieux",
+                mentions: [],
+                fetchLinkPreview: true,
+                nonce: messageID
+            )
             let previusMessagesCount = conversation.allMessages.count
 
-            let message = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: UUID.create()), nonce: UUID.create())
+            let message = GenericMessage(
+                content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: UUID.create()),
+                nonce: UUID.create()
+            )
             let contentData = try XCTUnwrap(message.serializedData())
             let data = contentData.base64EncodedString()
 
@@ -413,10 +473,18 @@ extension ConversationTests {
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
-            try! conversation.appendText(content: "Le fromage c'est delicieux", mentions: [], fetchLinkPreview: true, nonce: messageID)
+            try! conversation.appendText(
+                content: "Le fromage c'est delicieux",
+                mentions: [],
+                fetchLinkPreview: true,
+                nonce: messageID
+            )
             let previusMessagesCount = conversation.allMessages.count
 
-            let message = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: UUID.create()), nonce: UUID.create())
+            let message = GenericMessage(
+                content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: UUID.create()),
+                nonce: UUID.create()
+            )
             let contentData = try XCTUnwrap(message.serializedData())
             let data = contentData.base64EncodedString()
 

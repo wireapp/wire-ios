@@ -17,32 +17,52 @@
 //
 
 import WireCommonComponents
+import WireDesign
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class AvailabilityLabelTests: XCTestCase {
 
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setup
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
+    }
+
     // MARK: - List labels
 
     func testThatItRendersCorrectly_List_NoneAvailability() {
-        verify(matching: createLabelForList(.none))
+        snapshotHelper.verify(matching: createLabelForList(.none))
     }
 
     func testThatItRendersCorrectly_List_AvailableAvailability() {
-        verify(matching: createLabelForList(.available))
+        snapshotHelper.verify(matching: createLabelForList(.available))
     }
 
     func testThatItRendersCorrectly_List_AvailableAvailabilitySelfUser() {
-        verify(matching: createLabelForList(.available, appendYouSuffix: true))
+        snapshotHelper.verify(matching: createLabelForList(.available, appendYouSuffix: true))
     }
 
     func testThatItRendersCorrectly_List_AwayAvailability() {
-        verify(matching: createLabelForList(.away))
+        snapshotHelper.verify(matching: createLabelForList(.away))
     }
 
     func testThatItRendersCorrectly_List_BusyAvailability() {
-        verify(matching: createLabelForList(.busy))
+        snapshotHelper.verify(matching: createLabelForList(.busy))
     }
 
     // MARK: - Helper Method
@@ -71,19 +91,19 @@ final class AvailabilityLabelTests: XCTestCase {
     // MARK: - Participants labels
 
     func testThatItRendersCorrectly_Participants_NoneAvailability() {
-        verify(matching: createLabelForParticipants(.none))
+        snapshotHelper.verify(matching: createLabelForParticipants(.none))
     }
 
     func testThatItRendersCorrectly_Participants_AvailableAvailability() {
-        verify(matching: createLabelForParticipants(.available))
+        snapshotHelper.verify(matching: createLabelForParticipants(.available))
     }
 
     func testThatItRendersCorrectly_Participants_AwayAvailability() {
-        verify(matching: createLabelForParticipants(.away))
+        snapshotHelper.verify(matching: createLabelForParticipants(.away))
     }
 
     func testThatItRendersCorrectly_Participants_BusyAvailability() {
-        verify(matching: createLabelForParticipants(.busy))
+        snapshotHelper.verify(matching: createLabelForParticipants(.busy))
     }
 
     // MARK: - Helper Method

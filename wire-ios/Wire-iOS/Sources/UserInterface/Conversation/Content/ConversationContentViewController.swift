@@ -20,17 +20,15 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
 import WireRequestStrategy
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
 /// The main conversation view controller
-final class ConversationContentViewController: UIViewController, PopoverPresenter, SpinnerCapable {
-    // MARK: PopoverPresenter
-    var presentedPopover: UIPopoverPresentationController?
-    var popoverPointToView: UIView?
-    var dismissSpinner: SpinnerCompletion?
+final class ConversationContentViewController: UIViewController {
 
     weak var delegate: ConversationContentViewControllerDelegate?
     let conversation: ZMConversation
@@ -72,8 +70,8 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         return button
     }()
 
-    let tableView: UpsideDownTableView = UpsideDownTableView(frame: .zero, style: .plain)
-    let bottomContainer: UIView = UIView(frame: .zero)
+    let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
+    let bottomContainer: UIView = .init(frame: .zero)
     var searchQueries: [String]? {
         didSet {
             guard let searchQueries,
@@ -83,21 +81,21 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         }
     }
 
-    let mentionsSearchResultsViewController: UserSearchResultsViewController = UserSearchResultsViewController()
+    let mentionsSearchResultsViewController: UserSearchResultsViewController = .init()
 
-    lazy var dataSource: ConversationTableViewDataSource = {
-        return ConversationTableViewDataSource(
-            conversation: conversation,
-            tableView: tableView,
-            actionResponder: self,
-            cellDelegate: self,
-            userSession: userSession
-        )
-    }()
+    lazy var dataSource: ConversationTableViewDataSource = .init(
+        conversation: conversation,
+        tableView: tableView,
+        actionResponder: self,
+        cellDelegate: self,
+        userSession: userSession
+    )
 
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
+    let mainCoordinator: AnyMainCoordinator
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
@@ -110,14 +108,22 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     private weak var messageVisibleOnLoad: ZMConversationMessage?
     private var token: NSObjectProtocol?
 
-    init(conversation: ZMConversation,
-         message: ZMConversationMessage? = nil,
-         mediaPlaybackManager: MediaPlaybackManager?,
-         userSession: UserSession) {
-        messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+    private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
+    init(
+        conversation: ZMConversation,
+        message: ZMConversationMessage? = nil,
+        mediaPlaybackManager: MediaPlaybackManager?,
+        userSession: UserSession,
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    ) {
+        self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversation = conversation
-        messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
+        self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
 
         super.init(nibName: nil, bundle: nil)
 
@@ -126,13 +132,19 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         messagePresenter.targetViewController = self
         messagePresenter.modalTargetController = parent
 
-        token = NotificationCenter.default.addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
+        self.token = NotificationCenter.default.addObserver(
+            forName: .activeMediaPlayerChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateMediaBar()
         }
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] note in
+        NotificationCenter.default.addObserver(
+            forName: .featureDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -146,7 +158,12 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self, name: ZMConversation.failedToSendMessageNotificationName, object: nil)
+        DeveloperToolsViewModel.context.currentConversation = nil
+        NotificationCenter.default.removeObserver(
+            self,
+            name: ZMConversation.failedToSendMessageNotificationName,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -201,7 +218,8 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.delaysContentTouches = false
-        tableView.keyboardDismissMode = AutomationHelper.sharedHelper.disableInteractiveKeyboardDismissal ? .none : .interactive
+        tableView.keyboardDismissMode = AutomationHelper.sharedHelper
+            .disableInteractiveKeyboardDismissal ? .none : .interactive
 
         tableView.backgroundColor = SemanticColors.View.backgroundConversationView
         view.backgroundColor = SemanticColors.View.backgroundConversationView
@@ -236,8 +254,10 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     @objc
     private func showErrorAlertToSendMessage(_ notification: Notification) {
         typealias MessageSendError = L10n.Localizable.Error.Message.Send
-        UIAlertController.showErrorAlertWithLink(title: MessageSendError.title,
-                                                 message: MessageSendError.missingLegalholdConsent)
+        UIAlertController.showErrorAlertWithLink(
+            title: MessageSendError.title,
+            message: MessageSendError.missingLegalholdConsent
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -281,22 +301,10 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         super.viewDidLayoutSubviews()
 
         scrollToFirstUnreadMessageIfNeeded()
-        updatePopover()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
-
-        guard let coordinator else { return }
-
-        super.viewWillTransition(to: size, with: coordinator)
-
-        coordinator.animate(alongsideTransition: nil) { _ in
-            self.updatePopoverSourceRect()
-        }
+        wr_supportedInterfaceOrientations
     }
 
     func setupMentionsResultsView() {
@@ -316,7 +324,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     }
 
     override var shouldAutorotate: Bool {
-        return true
+        true
     }
 
     override func didReceiveMemoryWarning() {
@@ -370,11 +378,12 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     }
 
     var isScrolledToBottom: Bool {
-        return !dataSource.hasNewerMessagesToLoad &&
-        tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
+        !dataSource.hasNewerMessagesToLoad &&
+            tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
     }
 
     // MARK: - Actions
+
     func highlight(_ message: ZMConversationMessage) {
         dataSource.highlight(message: message)
     }
@@ -421,21 +430,30 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     }
 
     // MARK: - MediaPlayer
+
     /// Update media bar visiblity
     private func updateMediaBar() {
-        let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let mediaPlayingMessage = appDelegate.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage else {
+            return
+        }
 
-        if let mediaPlayingMessage,
-           mediaPlayingMessage.conversationLike === conversation,
+        if mediaPlayingMessage.conversationLike === conversation,
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {
-            DispatchQueue.main.async(execute: {
-                self.delegate?.conversationContentViewController(self, didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            DispatchQueue.main.async {
+                self.delegate?.conversationContentViewController(
+                    self,
+                    didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage
+                )
+            }
         } else {
-            DispatchQueue.main.async(execute: {
-                self.delegate?.conversationContentViewController(self, willDisplayActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            DispatchQueue.main.async {
+                self.delegate?.conversationContentViewController(
+                    self,
+                    willDisplayActiveMediaPlayerFor: mediaPlayingMessage
+                )
+            }
         }
     }
 
@@ -466,9 +484,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         // using dispatch_async because when this method gets run, the cell is not yet in visible cells,
         // so the update will fail
         // dispatch_async runs it with next runloop, when the cell has been added to visible cells
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             self.updateVisibleMessagesWindow()
-        })
+        }
 
         cachedRowHeights[indexPath] = cell.frame.size.height
     }
@@ -480,11 +498,11 @@ extension ConversationContentViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return cachedRowHeights[indexPath] ?? UITableView.automaticDimension
+        cachedRowHeights[indexPath] ?? UITableView.automaticDimension
     }
 
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        return willSelectRow(at: indexPath, tableView: tableView)
+        willSelectRow(at: indexPath, tableView: tableView)
     }
 }
 
@@ -496,26 +514,32 @@ extension ConversationContentViewController: UITableViewDataSourcePrefetching {
 
 private extension UIAlertController {
 
-    static func showErrorAlertWithLink(title: String,
-                                       message: String) {
+    static func showErrorAlertWithLink(
+        title: String,
+        message: String
+    ) {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: URL.wr_legalHoldLearnMore.appendingLocaleParameter)
+            let browserViewController = BrowserViewController(url: WireURLs.shared.legalHoldInfo)
             topmostViewController?.present(browserViewController, animated: true)
         }
 
-        let alertController = UIAlertController(title: title,
-                                                message: message,
-                                                preferredStyle: .alert)
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
 
         alertController.addAction(UIAlertAction(
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.LegalholdActive.Alert.learnMore,
-                                                style: .default,
-                                                handler: legalHoldLearnMoreHandler))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.LegalholdActive.Alert.learnMore,
+            style: .default,
+            handler: legalHoldLearnMoreHandler
+        ))
 
         topmostViewController?.present(alertController, animated: true)
     }

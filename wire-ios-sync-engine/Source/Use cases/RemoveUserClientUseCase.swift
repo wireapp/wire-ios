@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol RemoveUserClientUseCaseProtocol {
 
-    func invoke(clientId: String, credentials: EmailCredentials?) async throws
+    func invoke(clientId: String, password: String) async throws
 
 }
 
@@ -36,23 +36,24 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     init(
         userClientAPI: UserClientAPI,
-        syncContext: NSManagedObjectContext) {
-            self.userClientAPI = userClientAPI
-            self.syncContext = syncContext
-        }
+        syncContext: NSManagedObjectContext
+    ) {
+        self.userClientAPI = userClientAPI
+        self.syncContext = syncContext
+    }
 
     // MARK: - Public interface
 
-    func invoke(clientId: String, credentials: EmailCredentials?) async throws {
+    func invoke(clientId: String, password: String) async throws {
         let userClient = await syncContext.perform {
-            return UserClient.fetchExistingUserClient(with: clientId, in: self.syncContext)
+            UserClient.fetchExistingUserClient(with: clientId, in: self.syncContext)
         }
         guard let userClient else {
             throw RemoveUserClientError.clientDoesNotExistLocally
         }
 
         do {
-            try await userClientAPI.deleteUserClient(clientId: clientId, credentials: credentials)
+            try await userClientAPI.deleteUserClient(clientId: clientId, password: password)
             await didDeleteClient(userClient)
 
         } catch let networkError as NetworkError {
@@ -66,12 +67,13 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
         await userClient.deleteClientAndEndSession()
         await ZMClientUpdateNotification.notifyDeletionCompleted(
             remainingClients: selfUserClientsExcludingSelfClient,
-            context: syncContext)
+            context: syncContext
+        )
     }
 
     private var selfUserClientsExcludingSelfClient: [UserClient] {
         get async {
-            return await syncContext.perform {
+            await syncContext.perform {
                 let selfUser = ZMUser.selfUser(in: self.syncContext)
                 let selfClient = selfUser.selfClient()
                 let remainingClients = selfUser.clients.filter { $0 != selfClient && !$0.isZombieObject }
@@ -82,7 +84,7 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     private func handleFailure(_ failure: NetworkError, userClient: UserClient) async throws {
         switch failure {
-        case .invalidRequestError(let failureResponse, _):
+        case let .invalidRequestError(failureResponse, _):
             switch failureResponse.label {
             case .clientNotFound:
                 // the client existed locally but not remotely, we delete it locally

@@ -25,7 +25,9 @@ final class AudioButtonOverlay: UIView {
     // MARK: - AudioButtonOverlayButtonType
 
     enum AudioButtonOverlayButtonType {
-        case play, send, stop
+        case play
+        case send
+        case stop
     }
 
     // MARK: - Properties
@@ -153,13 +155,12 @@ final class AudioButtonOverlay: UIView {
 
     // MARK: - Actions
 
-    @objc func buttonPressed(_ sender: IconButton) {
-        let type: AudioButtonOverlayButtonType
-
-        if sender == sendButton {
-            type = .send
+    @objc
+    func buttonPressed(_ sender: IconButton) {
+        let type: AudioButtonOverlayButtonType = if sender == sendButton {
+            .send
         } else {
-            type = playingState == .idle ? .play : .stop
+            playingState == .idle ? .play : .stop
         }
 
         buttonHandler?(type)

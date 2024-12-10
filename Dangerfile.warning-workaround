@@ -1,0 +1,31 @@
+require 'json'
+
+xcode_summary.report ENV["XCRESULT_PATH"]
+
+# don't display all the warnings, but use cache restore/save
+# to remember a number of warnings and only warn on the PR
+# once the number of warnings increased
+warning_error_count = xcode_summary.warning_error_count ENV["XCRESULT_PATH"]
+current_result = JSON.parse(warning_error_count, symbolize_names: true)
+
+directory = "Danger.results"
+filename = directory + "/" + ENV["XCRESULT_PATH"]
+Dir.mkdir(directory) unless Dir.exist?(directory)
+
+# read previous values
+previous_result = { warnings: 0, errors: 0 }
+if File.exist?(filename)
+  previous_result = JSON.parse(File.read(filename), symbolize_names: true)
+end
+
+# compare and notify if there are warnings
+if current_result[:warnings] > 0 && current_result[:warnings] == previous_result[:warnings]
+  message "⚠️ The number of warnings is still #{current_result[:warnings]}."
+elsif current_result[:warnings] < previous_result[:warnings]
+  message "❤️ The number of warnings decreased from #{previous_result[:warnings]} to #{current_result[:warnings]}."
+elsif current_result[:warnings] > previous_result[:warnings]
+  warn "🚨 #{current_result[:warnings] - previous_result[:warnings]} warning(s) introduced, please fix them!"
+end
+
+# store current values
+File.write(filename, JSON.generate(current_result))

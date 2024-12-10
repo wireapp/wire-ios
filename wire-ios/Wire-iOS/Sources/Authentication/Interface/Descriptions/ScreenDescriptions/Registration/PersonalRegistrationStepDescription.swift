@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The step to start personal user registration.
- */
+/// The step to start personal user registration.
 
 final class PersonalRegistrationStepDescription: AuthenticationStepDescription {
 
@@ -32,12 +30,12 @@ final class PersonalRegistrationStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init() {
-        backButton = BackButtonDescription()
-        mainView = EmptyViewDescription()
-        headline = L10n.Localizable.Registration.Personal.title
-        subtext = nil
-        secondaryView = nil
-        footerView = nil
+        self.backButton = BackButtonDescription()
+        self.mainView = EmptyViewDescription()
+        self.headline = L10n.Localizable.Registration.Personal.title
+        self.subtext = nil
+        self.secondaryView = nil
+        self.footerView = nil
     }
 
 }

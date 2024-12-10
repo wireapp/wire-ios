@@ -23,6 +23,7 @@
 #import "MockTransportSession+OTR.h"
 #import "MockAsset.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 @implementation MockTransportSession (Search)
 
@@ -37,8 +38,8 @@
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequestWithPredicate:predicate];
         fetchRequest.fetchLimit = limit;
         
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
         NSMutableArray *userPayload = [NSMutableArray array];
         for (MockUser *user in users) {
             
@@ -79,7 +80,7 @@
         }
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
         
         // This method is just a simulation, it does not do any actual matching, it just returns all users
         NSMutableArray *results = [NSMutableArray array];

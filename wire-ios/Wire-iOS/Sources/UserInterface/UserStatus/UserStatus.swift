@@ -22,11 +22,11 @@ import WireDataModel
 /// handle, availability and verification status.
 struct UserStatus {
 
-    var name = ""
+    var displayName = ""
 
     var availability = Availability.none
 
-    // TODO [WPB-6770]: (tech dept) consider adding `UserLegalHoldStatus`
+    // TODO: [WPB-6770]: (tech dept) consider adding `UserLegalHoldStatus`
 
     /// `true` if the user has a valid certificate (MLS), `false` otherwise.
     var isE2EICertified = false
@@ -35,12 +35,12 @@ struct UserStatus {
     var isProteusVerified = false
 
     init(
-        name: String,
+        displayName: String,
         availability: Availability,
         isE2EICertified: Bool,
         isProteusVerified: Bool
     ) {
-        self.name = name
+        self.displayName = displayName
         self.availability = availability
         self.isE2EICertified = isE2EICertified
         self.isProteusVerified = isProteusVerified

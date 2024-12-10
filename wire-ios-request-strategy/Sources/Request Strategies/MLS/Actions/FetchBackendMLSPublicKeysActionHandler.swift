@@ -32,7 +32,7 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v5, .v6:
+        case .v5, .v6, .v7:
             return ZMTransportRequest(
                 path: "/mls/public-keys",
                 method: .get,
@@ -42,32 +42,6 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
         }
     }
 
-    // MARK: - Response
-
-    struct ResponsePayload: Codable, Equatable {
-
-        let removal: MLSKeys
-
-        struct MLSKeys: Codable, Equatable {
-
-            enum CodingKeys: String, CodingKey {
-                case ed25519
-                case ed448
-                case p256 = "ecdsa_secp256r1_sha256"
-                case p384 = "ecdsa_secp384r1_sha384"
-                case p521 = "ecdsa_secp521r1_sha512"
-            }
-
-            let ed25519: String?
-            let ed448: String?
-            let p256: String?
-            let p384: String?
-            let p521: String?
-
-        }
-
-    }
-
     override func handleResponse(_ response: ZMTransportResponse, action: FetchBackendMLSPublicKeysAction) {
         var action = action
 
@@ -75,7 +49,7 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
         case (200, _):
             guard
                 let data = response.rawData,
-                let payload = try? JSONDecoder().decode(ResponsePayload.self, from: data)
+                let payload = try? JSONDecoder().decode(Payload.ExternalSenderKeys.self, from: data)
             else {
                 return action.fail(with: .malformedResponse)
             }
@@ -100,11 +74,13 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
                 .flatMap(\.base64DecodedBytes)
                 .map(\.data)
 
-            action.succeed(with: Action.Result(removal: .init(ed25519: ed25519RemovalKey,
-                                                              ed448: ed448RemovalKey,
-                                                              p256: p256RemovalKey,
-                                                              p384: p384RemovalKey,
-                                                              p521: p521RemovalKey)))
+            action.succeed(with: Action.Result(removal: .init(
+                ed25519: ed25519RemovalKey,
+                ed448: ed448RemovalKey,
+                p256: p256RemovalKey,
+                p384: p384RemovalKey,
+                p521: p521RemovalKey
+            )))
 
         case (400, "mls-not-enabled"):
             action.fail(with: .mlsNotEnabled)
@@ -113,6 +89,34 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             let error = response.errorInfo
             action.fail(with: .unknown(status: error.status, label: error.label, message: error.message))
         }
+    }
+
+}
+
+extension Payload {
+
+    struct ExternalSenderKeys: Codable, Equatable {
+
+        let removal: MLSKeys
+
+        struct MLSKeys: Codable, Equatable {
+
+            enum CodingKeys: String, CodingKey {
+                case ed25519
+                case ed448
+                case p256 = "ecdsa_secp256r1_sha256"
+                case p384 = "ecdsa_secp384r1_sha384"
+                case p521 = "ecdsa_secp521r1_sha512"
+            }
+
+            let ed25519: String?
+            let ed448: String?
+            let p256: String?
+            let p384: String?
+            let p521: String?
+
+        }
+
     }
 
 }

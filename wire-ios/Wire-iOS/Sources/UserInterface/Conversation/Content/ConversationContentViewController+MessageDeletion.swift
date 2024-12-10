@@ -51,54 +51,49 @@ protocol HighlightableView {
 }
 
 extension CollectionCell: SelectableView {
-    var selectionView: UIView! {
-        return self
-    }
-
-    var selectionRect: CGRect {
-        return frame
-    }
+    var selectionView: UIView! { self }
+    var selectionRect: CGRect { frame }
 }
 
 final class DeletionDialogPresenter: NSObject {
 
     private weak var sourceViewController: UIViewController?
 
-    func deleteAlert(message: ZMConversationMessage,
-                     sourceView: UIView?,
-                     userSession: UserSession,
-                     completion: ResultHandler? = nil) -> UIAlertController {
-        let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, alert in
+    func deleteAlert(
+        message: ZMConversationMessage,
+        sourceView: UIView,
+        userSession: UserSession,
+        completion: @escaping (_ succeeded: Bool) -> Void
+    ) -> UIAlertController {
+        let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, _ in
 
             // Tracking needs to be called before performing the action, since the content of the message is cleared
-            if case .delete(let type) = action {
+            if case let .delete(type) = action {
 
-                userSession.enqueue({
+                userSession.enqueue {
                     switch type {
                     case .local:
                         ZMMessage.hideMessage(message)
                     case .everywhere:
                         ZMMessage.deleteForEveryone(message)
                     }
-                }, completionHandler: {
-                    completion?(true)
-                })
+                } completionHandler: {
+                    completion(true)
+                }
             } else {
-                completion?(false)
+                completion(false)
             }
-
-            alert.dismiss(animated: true, completion: nil)
         }
 
-        if let presentationController = alert.popoverPresentationController,
-            let source = sourceView {
-            if let selectableView = source as? SelectableView,
-                selectableView.selectionView != nil {
-                presentationController.sourceView = selectableView.selectionView
-                presentationController.sourceRect = selectableView.selectionRect
+        if let popoverPresentationController = alert.popoverPresentationController {
+            let sourceView = if let selectableView = sourceView as? SelectableView,
+                                let selectionView = selectableView.selectionView {
+                selectionView
             } else {
-                alert.configPopover(pointToView: source, popoverPresenter: sourceViewController as? PopoverPresenterViewController)
+                sourceView
             }
+            popoverPresentationController.sourceView = sourceView.superview
+            popoverPresentationController.sourceRect = sourceView.frame.insetBy(dx: -4, dy: -4)
         }
 
         return alert
@@ -109,27 +104,34 @@ final class DeletionDialogPresenter: NSObject {
         super.init()
     }
 
-    /**
-     Presents a `UIAlertController` of type action sheet with the options to delete a message everywhere, locally
-     or to cancel. An optional completion block can be provided to get notified when an action has been selected.
-     The delete everywhere option is only shown if this action is allowed for the input message.
-     
-     - parameter message: The message for which the alert controller should be shown.
-     - parameter source: The source view used for a potential popover presentation of the dialog.
-     - parameter completion: A completion closure which will be invoked with `true` if a deletion occured and `false` otherwise.
-     */
-    func presentDeletionAlertController(forMessage message: ZMConversationMessage, source: UIView?, userSession: UserSession, completion: ResultHandler?) {
+    /// Presents a `UIAlertController` of type action sheet with the options to delete a message everywhere, locally
+    /// or to cancel. An optional completion block can be provided to get notified when an action has been selected.
+    /// The delete everywhere option is only shown if this action is allowed for the input message.
+    ///
+    /// - parameter message: The message for which the alert controller should be shown.
+    /// - parameter source: The source view used for a potential popover presentation of the dialog.
+    /// - parameter completion: A completion closure which will be invoked with `true` if a deletion occured and `false`
+    /// otherwise.
+    func presentDeletionAlertController(
+        forMessage message: ZMConversationMessage,
+        source: UIView,
+        userSession: UserSession,
+        completion: @escaping (_ succeeded: Bool) -> Void
+    ) {
         guard !message.hasBeenDeleted else { return }
 
-        let alert = deleteAlert(message: message,
-                                sourceView: source,
-                                userSession: userSession,
-                                completion: completion)
+        let alert = deleteAlert(
+            message: message,
+            sourceView: source,
+            userSession: userSession,
+            completion: completion
+        )
         sourceViewController?.present(alert, animated: true)
     }
 }
 
 private enum AlertAction {
+
     enum DeletionType {
         case local
         case everywhere
@@ -142,46 +144,61 @@ private enum AlertAction {
 // Unfortunately this can not be done with an `OptionSetType`
 // as there is no way to enforce a non-empty option set.
 private enum DeletionConfiguration {
-    case hide, delete, hideAndDelete
+    case hide
+    case delete
+    case hideAndDelete
 
     var showHide: Bool {
         switch self {
-        case .hide, .hideAndDelete: return true
-        case .delete: return false
+        case .hide, .hideAndDelete: true
+        case .delete: false
         }
     }
 
     var showDelete: Bool {
         switch self {
-        case .delete, .hideAndDelete: return true
-        case .hide: return false
+        case .delete, .hideAndDelete: true
+        case .hide: false
         }
     }
 }
 
 private extension UIAlertController {
 
-    static func forMessageDeletion(with configuration: DeletionConfiguration, selectedAction: @escaping (AlertAction, UIAlertController) -> Void) -> UIAlertController {
+    static func forMessageDeletion(
+        with configuration: DeletionConfiguration,
+        selectedAction: @escaping (AlertAction, UIAlertController) -> Void
+    ) -> UIAlertController {
         let alertTitle = L10n.Localizable.Message.DeleteDialog.message
         let alert = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)
 
         if configuration.showHide {
             let hideTitle = L10n.Localizable.Message.DeleteDialog.Action.hide
-            let hideAction = UIAlertAction(title: hideTitle, style: .destructive) { [unowned alert] _ in selectedAction(.delete(.local), alert) }
+            let hideAction = UIAlertAction(title: hideTitle, style: .destructive) { [unowned alert] _ in selectedAction(
+                .delete(.local),
+                alert
+            ) }
             alert.addAction(hideAction)
         }
 
         if configuration.showDelete {
             let deleteTitle = L10n.Localizable.Message.DeleteDialog.Action.delete
-            let deleteForEveryoneAction = UIAlertAction(title: deleteTitle, style: .destructive) { [unowned alert] _ in selectedAction(.delete(.everywhere), alert) }
+            let deleteForEveryoneAction = UIAlertAction(title: deleteTitle, style: .destructive) { [unowned alert] _ in
+                selectedAction(
+                    .delete(.everywhere),
+                    alert
+                )
+            }
             alert.addAction(deleteForEveryoneAction)
         }
 
         let cancelTitle = L10n.Localizable.Message.DeleteDialog.Action.cancel
-        let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { [unowned alert] _ in selectedAction(.cancel, alert) }
+        let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { [unowned alert] _ in selectedAction(
+            .cancel,
+            alert
+        ) }
         alert.addAction(cancelAction)
 
         return alert
     }
-
 }

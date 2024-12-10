@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 enum ConversationEventPayloadProcessorError: Error {
     case noBackendConversationId
@@ -78,18 +79,18 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) async {
         guard let timestamp = payload.timestamp else {
-            Logging.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
+            WireLogger.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
             return
         }
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
-            Logging.eventProcessing.error("Conversation creation missing conversationID in event, aborting...")
+            WireLogger.eventProcessing.error("Conversation creation missing conversationID in event, aborting...")
             return
         }
         guard await context.perform({
             ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context) == nil
         }) else {
-            Logging.eventProcessing.warn("Conversation already exists, aborting...")
+            WireLogger.eventProcessing.warn("Conversation already exists, aborting...")
             return
         }
 
@@ -108,13 +109,13 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) async {
         let conversation = await context.perform {
-            self.fetchOrCreateConversation(
+            fetchOrCreateConversation(
                 from: payload,
                 in: context
             )
         }
         guard let conversation else {
-            Logging.eventProcessing.error("Conversation deletion missing conversation in event, aborting...")
+            WireLogger.eventProcessing.error("Conversation deletion missing conversation in event, aborting...")
             return
         }
 
@@ -147,12 +148,14 @@ struct ConversationEventPayloadProcessor {
             return (conversation, removedUsers)
         }
         guard let conversation, let removedUsers else {
-            return Logging.eventProcessing.error("Member leave update missing conversation or users, aborting...")
+            WireLogger.eventProcessing.error("Member leave update missing conversation or users, aborting...")
+            return
         }
 
         let (isSelfUserRemoved, messageProtocol) = await context.perform {
             if !conversation.localParticipants.isDisjoint(with: removedUsers) {
-                // TODO jacob refactor to append method on conversation
+                // swiftlint:disable:next todo_requires_jira_link
+                // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(
                     from: originalEvent,
                     in: context
@@ -166,14 +169,20 @@ struct ConversationEventPayloadProcessor {
 
             // Idea for improvement, return removed users from this call to benefit from
             // checking that the participants are in the conversation before being removed
-            conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: initiatingUser)
+            conversation.removeParticipantsAndUpdateConversationState(
+                users: Set(removedUsers),
+                initiatingUser: initiatingUser
+            )
 
             let isSelfUserRemoved = removedUsers.contains(where: \.isSelfUser)
             return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
-            await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        if mlsFeature.isEnabled {
+            if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
+                await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
+            }
         }
 
         await context.perform {
@@ -213,7 +222,7 @@ struct ConversationEventPayloadProcessor {
             from: payload,
             in: context
         ) else {
-            Logging.eventProcessing.error("Member join update missing conversation, aborting...")
+            WireLogger.eventProcessing.error("Member join update missing conversation, aborting...")
             return
         }
 
@@ -224,11 +233,12 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )!
         }) {
-            let users = Set(usersAndRoles.map { $0.0 })
+            let users = Set(usersAndRoles.map(\.0))
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if newUsers && conversation.conversationType == .group {
-                // TODO jacob refactor to append method on conversation
+            if newUsers, conversation.conversationType == .group {
+                // swiftlint:disable:next todo_requires_jira_link
+                // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
 
@@ -239,8 +249,10 @@ struct ConversationEventPayloadProcessor {
             let users = Set(users)
             let selfUser = ZMUser.selfUser(in: context)
 
-            if (!users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser)) && conversation.conversationType == .group {
-                // TODO jacob refactor to append method on conversation
+            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser),
+               conversation.conversationType == .group {
+                // swiftlint:disable:next todo_requires_jira_link
+                // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
             conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
@@ -258,12 +270,14 @@ struct ConversationEventPayloadProcessor {
             from: payload,
             in: context
         ) else {
-            Logging.eventProcessing.error("Conversation name update missing conversation, aborting...")
+            WireLogger.eventProcessing.error("Conversation name update missing conversation, aborting...")
             return
         }
 
-        if conversation.userDefinedName != payload.data.name || ((conversation.modifiedKeys?.contains(ZMConversationUserDefinedNameKey)) != nil) {
-            // TODO jacob refactor to append method on conversation
+        if conversation.userDefinedName != payload.data.name
+            || ((conversation.modifiedKeys?.contains(ZMConversationUserDefinedNameKey)) != nil) {
+            // swiftlint:disable:next todo_requires_jira_link
+            // TODO: jacob refactor to append method on conversation
             _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
         }
 
@@ -286,7 +300,8 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )
         else {
-            Logging.eventProcessing.error("Conversation member update missing conversation or target user, aborting...")
+            WireLogger.eventProcessing
+                .error("Conversation member update missing conversation or target user, aborting...")
             return
         }
 
@@ -317,13 +332,14 @@ struct ConversationEventPayloadProcessor {
             from: payload,
             in: context
         ) else {
-            Logging.eventProcessing.error("Converation access update missing conversation, aborting...")
+            WireLogger.eventProcessing.error("Converation access update missing conversation, aborting...")
             return
         }
 
         if let accessRoles = payload.data.accessRoleV2 {
             conversation.updateAccessStatus(accessModes: payload.data.access, accessRoles: accessRoles)
-        } else if let accessRole = payload.data.accessRole, let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
+        } else if let accessRole = payload.data.accessRole,
+                  let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
             let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
             conversation.updateAccessStatus(accessModes: payload.data.access, accessRoles: accessRoles.map(\.rawValue))
         }
@@ -345,7 +361,8 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )
         else {
-            Logging.eventProcessing.error("Conversation message timer update missing sender or conversation, aborting...")
+            WireLogger.eventProcessing
+                .error("Conversation message timer update missing sender or conversation, aborting...")
             return
         }
 
@@ -375,9 +392,10 @@ struct ConversationEventPayloadProcessor {
                 in: context
             ),
             let timestamp = payload.timestamp,
-            conversation.lastServerTimeStamp == nil || conversation.lastServerTimeStamp! < timestamp // Discard event if it has already been applied
+            conversation.lastServerTimeStamp == nil || conversation
+            .lastServerTimeStamp! < timestamp // Discard event if it has already been applied
         else {
-            Logging.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
+            WireLogger.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
             return
         }
 
@@ -393,7 +411,8 @@ struct ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
-        // TODO jacob refactor to append method on conversation
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: jacob refactor to append method on conversation
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
     }
 
@@ -405,7 +424,10 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) async {
         guard let qualifiedID = payload.qualifiedID else {
-            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
+            WireLogger.eventProcessing
+                .error(
+                    "processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting..."
+                )
             return
         }
 
@@ -413,7 +435,10 @@ struct ConversationEventPayloadProcessor {
             var action = SyncConversationAction(qualifiedID: qualifiedID)
             try await action.perform(in: context.notificationContext)
         } catch {
-            Logging.eventProcessing.error("processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)")
+            WireLogger.eventProcessing
+                .error(
+                    "processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)"
+                )
         }
     }
 
@@ -461,7 +486,7 @@ struct ConversationEventPayloadProcessor {
         case .oneOnOne:
             // Conversations are of type `oneOnOne` when the connection
             // is accepted.
-            return await self.updateOrCreateOneToOneConversation(
+            return await updateOrCreateOneToOneConversation(
                 from: payload,
                 in: context,
                 serverTimestamp: serverTimestamp,
@@ -482,7 +507,7 @@ struct ConversationEventPayloadProcessor {
     ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
-            Logging.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
+            WireLogger.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
             return nil
         }
 
@@ -501,19 +526,22 @@ struct ConversationEventPayloadProcessor {
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
             conversation.isPendingInitialFetch = false
-            self.updateAttributes(from: payload, for: conversation, context: context)
-            self.updateMetadata(from: payload, for: conversation, context: context)
-            self.updateMembers(from: payload, for: conversation, context: context)
-            self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-            self.updateConversationStatus(from: payload, for: conversation)
+            updateAttributes(from: payload, for: conversation, context: context)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateConversationStatus(from: payload, for: conversation)
 
             if isInitialFetch {
-                self.assignMessageProtocol(from: payload, for: conversation, in: context)
+                assignMessageProtocol(from: payload, for: conversation, in: context)
             } else {
-                self.updateMessageProtocol(from: payload, for: conversation, in: context)
+                updateMessageProtocol(from: payload, for: conversation, in: context)
             }
 
-            Flow.createGroup.checkpoint(description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
+            Flow.createGroup
+                .checkpoint(
+                    description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"
+                )
 
             return conversation
         }
@@ -546,7 +574,8 @@ struct ConversationEventPayloadProcessor {
     private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
         guard
             conversation.conversationType == .oneOnOne,
-            let otherUser = conversation.localParticipantsExcludingSelf.first
+            let otherUser = conversation.localParticipantsExcludingSelf.first,
+            otherUser.oneOnOneConversation == nil
         else {
             return
         }
@@ -562,7 +591,7 @@ struct ConversationEventPayloadProcessor {
         source: Source
     ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
-            Logging.eventProcessing.error("Missing conversationID in self conversation payload, aborting...")
+            WireLogger.eventProcessing.error("Missing conversationID in self conversation payload, aborting...")
             return nil
         }
 
@@ -615,12 +644,15 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
-        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))")
+        WireLogger.mls
+            .debug(
+                "createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))"
+            )
 
         if await context.perform({ conversation.epoch <= 0 }) {
             let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
             await context.perform { conversation.ciphersuite = ciphersuite }
-        } else if await !mlsService.conversationExists(groupID: groupID) {
+        } else if try await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }
     }
@@ -633,7 +665,7 @@ struct ConversationEventPayloadProcessor {
         source: Source
     ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
-            Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+            WireLogger.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
 
@@ -670,11 +702,11 @@ struct ConversationEventPayloadProcessor {
             let conversationID = payload.id ?? payload.qualifiedID?.uuid,
             let conversationType = payload.type.map(BackendConversationType.clientConversationType)
         else {
-            Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+            WireLogger.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
 
-        let conversation = await context.perform {
+        return await context.perform {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
@@ -699,8 +731,6 @@ struct ConversationEventPayloadProcessor {
 
             return conversation
         }
-
-        return conversation
     }
 
     private func updateAttributes(
@@ -717,8 +747,7 @@ struct ConversationEventPayloadProcessor {
 
         if
             let base64String = payload.mlsGroupID,
-            let mlsGroupID = MLSGroupID(base64Encoded: base64String)
-        {
+            let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
             conversation.mlsGroupID = mlsGroupID
         }
 
@@ -822,12 +851,12 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) {
         guard let messageProtocolString = payload.messageProtocol else {
-            Logging.eventProcessing.warn("message protocol is missing")
+            WireLogger.eventProcessing.warn("message protocol is missing")
             return
         }
 
         guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
-            Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            WireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
 
@@ -841,12 +870,12 @@ struct ConversationEventPayloadProcessor {
     ) {
 
         guard let messageProtocolString = payload.messageProtocol else {
-            Logging.eventProcessing.warn("message protocol is missing")
+            WireLogger.eventProcessing.warn("message protocol is missing")
             return
         }
 
         guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
-            Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            WireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
 
@@ -869,7 +898,10 @@ struct ConversationEventPayloadProcessor {
         case .mixed:
             switch newMessageProtocol {
             case .proteus:
-                WireLogger.updateEvent.warn("update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!")
+                WireLogger.updateEvent
+                    .warn(
+                        "update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!"
+                    )
             case .mixed:
                 break // no update, ignore
             case .mls:
@@ -880,7 +912,10 @@ struct ConversationEventPayloadProcessor {
         case .mls:
             switch newMessageProtocol {
             case .proteus, .mixed:
-                WireLogger.updateEvent.warn("update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!")
+                WireLogger.updateEvent
+                    .warn(
+                        "update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"
+                    )
             case .mls:
                 break // no update, ignore
             }
@@ -893,6 +928,9 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        guard mlsFeature.isEnabled else { return }
+
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,
@@ -933,8 +971,8 @@ struct ConversationEventPayloadProcessor {
         }
     }
 
-    func fetchOrCreateConversation<T>(
-        from payload: Payload.ConversationEvent<T>,
+    func fetchOrCreateConversation(
+        from payload: Payload.ConversationEvent<some Any>,
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
@@ -952,7 +990,11 @@ struct ConversationEventPayloadProcessor {
         from payload: Payload.UpdateConverationMemberLeave,
         in context: NSManagedObjectContext
     ) -> [ZMUser]? {
-        if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(with: $0.uuid, domain: $0.domain, in: context) }) {
+        if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(
+            with: $0.uuid,
+            domain: $0.domain,
+            in: context
+        ) }) {
             return users
         }
 
@@ -963,8 +1005,8 @@ struct ConversationEventPayloadProcessor {
         return nil
     }
 
-    func fetchOrCreateSender<T>(
-        from payload: Payload.ConversationEvent<T>,
+    func fetchOrCreateSender(
+        from payload: Payload.ConversationEvent<some Any>,
         in context: NSManagedObjectContext
     ) -> ZMUser? {
         guard let userID = payload.from ?? payload.qualifiedFrom?.uuid else {
@@ -998,7 +1040,7 @@ struct ConversationEventPayloadProcessor {
         conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) -> [(ZMUser, Role?)] {
-        return payload.others.compactMap {
+        payload.others.compactMap {
             fetchUserAndRole(
                 from: $0,
                 for: conversation,

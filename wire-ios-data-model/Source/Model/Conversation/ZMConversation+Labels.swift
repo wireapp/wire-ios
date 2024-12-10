@@ -18,12 +18,11 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
-    @objc
-    public var isFavorite: Bool {
+    @objc var isFavorite: Bool {
         get {
-            return labels.any({ $0.kind == .favorite })
+            labels.any { $0.kind == .favorite }
         }
         set {
             guard let managedObjectContext else { return }
@@ -39,13 +38,12 @@ extension ZMConversation {
 
     }
 
-    @objc
-    public var folder: LabelType? {
-        return labels.first(where: { $0.kind == .folder })
+    @objc var folder: LabelType? {
+        labels.first(where: { $0.kind == .folder })
     }
 
     @objc
-    public func moveToFolder(_ folder: LabelType) {
+    func moveToFolder(_ folder: LabelType) {
         guard let label = folder as? Label, !label.isZombieObject, label.kind == .folder else { return }
 
         removeFromFolder()
@@ -53,20 +51,20 @@ extension ZMConversation {
     }
 
     @objc
-    public func removeFromFolder() {
-        let existingFolders = labels.filter({ $0.kind == .folder })
+    func removeFromFolder() {
+        let existingFolders = labels.filter { $0.kind == .folder }
         labels.subtract(existingFolders)
 
-        for emptyFolder in existingFolders.filter({ $0.conversations.isEmpty }) {
+        for emptyFolder in existingFolders.filter(\.conversations.isEmpty) {
             emptyFolder.markForDeletion()
         }
     }
 
-    func assignLabel(_ label: Label) {
+    internal func assignLabel(_ label: Label) {
         labels.insert(label)
     }
 
-    func removeLabel(_ label: Label) {
+    internal func removeLabel(_ label: Label) {
         labels.remove(label)
     }
 

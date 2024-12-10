@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 
 final class DeveloperToolsPresenter: NSObject {
 
     private var displayedDeveloperTools = false
 
-    func presentIfNotDisplayed(with router: AppRootRouter?, from topMostViewController: @escaping @autoclosure () -> UIViewController?) {
+    func presentIfNotDisplayed(
+        with router: AppRootRouter?,
+        from topMostViewController: @escaping @autoclosure () -> UIViewController?
+    ) {
 
         guard !displayedDeveloperTools else { return }
 
@@ -36,13 +38,13 @@ final class DeveloperToolsPresenter: NSObject {
                         self?.displayedDeveloperTools = false
                     }
                 ))
-            }
+            }.navigationViewStyle(.stack)
         )
         developerTools.presentationController?.delegate = self
 
-        topMostViewController()?.present(developerTools, animated: true, completion: { [weak self] in
+        topMostViewController()?.present(developerTools, animated: true) { [weak self] in
             self?.displayedDeveloperTools = true
-        })
+        }
     }
 }
 
@@ -50,6 +52,6 @@ extension DeveloperToolsPresenter: UIAdaptivePresentationControllerDelegate {
 
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         // called when dismissed by swipe for example
-        self.displayedDeveloperTools = false
+        displayedDeveloperTools = false
     }
 }

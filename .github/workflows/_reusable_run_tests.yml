@@ -1,74 +1,19 @@
 on:
   workflow_call:
     inputs:
-      wire-ios:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-sync-engine:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-data-model:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-system:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-request-strategy:
-        type: boolean
-        default: false
-        required: false
-      wire-api:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-transport:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-share-engine:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-cryptobox:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-mocktransport:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-notification-engine:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-protos:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-images:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-link-preview:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-utilities:
-        type: boolean
-        default: false
-        required: false
-      wire-ios-testing:
-        type: boolean
-        default: false
-        required: false
+      folders:
+        type: string
       all:
         type: boolean
         default: false
         required: false
+      branch:
+        type: string
+        required: true
+      notify_secret:
+        type: string
+        required: true
+      
     secrets:
       ZENKINS_USERNAME:
         required: true
@@ -78,18 +23,25 @@ on:
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
+  REPO_ROOT: ${{ github.workspace }}
+  PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
 
 jobs:
   run-tests:
     runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    outputs:
+      xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
 
     steps:
-      - uses: actions/checkout@v3
-      
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          lfs: 'true'
+
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
@@ -111,9 +63,29 @@ jobs:
           path: Carthage
           key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
 
+      - name: Restore Danger results
+        id: restore-danger-results
+        uses: actions/cache/restore@v4
+        with:
+          path: Danger.results
+          key: ${{ github.event.before || github.event.pull_request.base.sha }}-Danger.results
+
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+
+        # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-false
+
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -123,196 +95,58 @@ jobs:
       - name: Setup workspace
         run: |
           ./setup.sh
-      
+
       - name: Setup simulator
         run: |
           bundle exec fastlane prepare_for_tests
-        
-      - name: Test WireSystem
-        if: ${{ inputs.wire-ios-system || inputs.all }}
-        run: |
-          echo "WireSystem has changes"
-          echo "Building WireSystem..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-system.log | bundle exec xcpretty
-          echo "Testing WireSystem..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-system.log | bundle exec xcpretty --report junit --output build/reports/WireSystem.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test WireTesting
-        if: ${{ inputs.wire-ios-testing || inputs.all }}
-        run: |
-          echo "WireTesting has changes"
-          echo "Building WireTesting..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-testing.log | bundle exec xcpretty
-          echo "Testing WireTesting..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-testing.log | bundle exec xcpretty --report junit --output build/reports/WireTesting.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test WireUtilities
-        if: ${{ inputs.wire-ios-utilities || inputs.all }}
-        run: |
-          echo "WireUtilities has changes"
-          echo "Building WireUtilities..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-utilities.log | bundle exec xcpretty
-          echo "Testing WireUtilities..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-utilities.log | bundle exec xcpretty --report junit --output build/reports/WireUtilities.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test WireCryptobox
-        if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
-        run: |
-          echo "WireCryptobox has changes"
-          echo "Building WireCryptobox..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-cryptobox.log | bundle exec xcpretty
-          echo "Testing WireCryptobox..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-cryptobox.log | bundle exec xcpretty --report junit --output build/reports/WireCryptobox.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test WireTransport
-        if: ${{ inputs.wire-ios-transport || inputs.all }}
-        run: |
-          echo "WireTransport has changes"
-          echo "Building WireTransport..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-transport.log | bundle exec xcpretty
-          echo "Testing WireTransport..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-transport.log | bundle exec xcpretty --report junit --output build/reports/WireTransport.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test WireLinkPreview
-        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
-        run: |
-          echo "WireLinkPreview has changes"
-          echo "Building WireLinkPreview..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty
-          echo "Testing WireLinkPreview..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty --report junit --output build/reports/WireLinkPreview.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test WireImages
-        if: ${{ inputs.wire-ios-images || inputs.all }}
-        run: |
-          echo "WireImages has changes"
-          echo "Building WireImages..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-images.log | bundle exec xcpretty
-          echo "Testing WireImages..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-images.log | bundle exec xcpretty --report junit --output build/reports/WireImages.junit
-          exit ${PIPESTATUS[0]}          
 
-      - name: Test WireProtos
-        if: ${{ inputs.wire-ios-protos || inputs.all }}
+      - name: "Test all selected frameworks" 
+        id: set_frameworks
         run: |
-          echo "WireProtos has changes"
-          echo "Building WireProtos..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-protos.log | bundle exec xcpretty
-          echo "Testing WireProtos..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-protos.log | bundle exec xcpretty
-          exit ${PIPESTATUS[0]}          
-          
-      - name: Test WireMockTransport
-        if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
-        run: |
-          echo "WireMockTransport has changes"
-          echo "Building WireMockTransport..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-mocktransport.log | bundle exec xcpretty
-          echo "Testing WireMockTransport..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-mocktransport.log | bundle exec xcpretty --report junit --output build/reports/WireMockTransport.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test WireDataModel
-        if: ${{ inputs.wire-ios-data-model || inputs.all }}
-        run: |
-          echo "WireDataModel has changes"
-          echo "Building WireDataModel..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-data-model.log | bundle exec xcpretty
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-data-model.log | bundle exec xcpretty --report junit --output build/reports/WireDataModel.junit
-          exit ${PIPESTATUS[0]}
+          bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
 
-      - name: Test WireAPI
-        if: ${{ inputs.wire-api || inputs.all }}
+      - name: Find all .xcresult files
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        id: find-xcresults
         run: |
-          echo "WireAPI has changes"
-          echo "Building WireAPI..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-api.log | bundle exec xcpretty
-          echo "Testing WireAPI..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test WireRequestStrategy
-        if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
+          # Find all .xcresult directories and convert them to a JSON array
+          files=`find artifacts -type d -name "*.xcresult" | jq -R . | jq -s .`
+          echo xcresult_files=${files} >> $GITHUB_OUTPUT
+      - name: Debug Print xcresult files
         run: |
-          echo "WireRequestStrategy has changes"
-          echo "Building WireRequestStrategy..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-request-strategy.log | bundle exec xcpretty
-          echo "Testing WireRequestStrategy..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-request-strategy.log | bundle exec xcpretty --report junit --output build/reports/WireRequestStrategy.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test WireShareEngine
-        if: ${{ inputs.wire-ios-share-engine || inputs.all }}
-        run: |
-          echo "WireShareEngine has changes"
-          echo "Building WireShareEngine..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-share-engine.log | bundle exec xcpretty
-          echo "Testing WireShareEngine..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-share-engine.log | bundle exec xcpretty --report junit --output build/reports/WireShareEngine.junit
-          exit ${PIPESTATUS[0]}
+          echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+      - name: Upload .xcresult files as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcresults
+          path: artifacts/**/*.xcresult  # Adjust this if necessary
 
-      - name: Test WireSyncEngine
-        if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
+      # Scripts
+      - name: Test Scripts
+        if: ${{ contains(inputs.folders, 'scripts') || inputs.all }}
         run: |
-          echo "WireSyncEngine has changes"
-          echo "Building WireSyncEngine..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty
-          echo "Testing WireSyncEngine..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty --report junit --output build/reports/WireSyncEngine.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test Wire-iOS
-        if: ${{ inputs.wire-ios || inputs.all }}
-        run: |
-          echo "Wire-iOS has changes"
-          echo "Building Wire-iOS..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios.log | bundle exec xcpretty
-          echo "Testing Wire-iOS..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan AllTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS-EN.junit
-          exit ${PIPESTATUS[0]}
-          
-      - name: Test Wire-iOS German Locale Tests
-        if: ${{ inputs.wire-ios || inputs.all }}
-        run: |
-          echo "Testing Wire-iOS German Locale Tests..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan GermanLocaleTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-de.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS-DE.junit
-          exit ${PIPESTATUS[0]}
+          echo "Scripts has changes"
+          echo "Testing Scripts..."
+          xcrun swift test --package-path ./scripts
 
       - name: Upload Failed snapshots
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Failed Snapshots and log
           path: |
-            wire-ios/SnapshotResults/    
+            **/SnapshotResults/
             xcodebuild*.log
 
-      # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build
-      # Wire-iOS stating that symbols from the notification can't be found. to workaround this, test the notification
-      # after the Wire-iOS.
-      - name: Test WireNotificationEngine
-        if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
-        run: |
-          echo "WireNotificationEngine has changes"
-          echo "Building WireNotificationEngine..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty
-          echo "Testing WireNotificationEngine..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty --report junit --output build/reports/WireNotificationEngine.junit
-          exit ${PIPESTATUS[0]}
-
       - name: Upload Test Reports as Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-reports
           path: |
             build/reports/*.junit
+            artifacts/**/*.junit
 
       - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2
@@ -320,10 +154,11 @@ jobs:
         with:
           files: |
             build/reports/*.junit
+            artifacts/**/*.junit
           compare_to_earlier_commit: false
-            
+
       - name: Archiving DerivedData Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: derived-data-xcode
@@ -331,12 +166,58 @@ jobs:
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
 
-      - name: Notify on Wire if failed
-        if: ${{ failure() && github.ref_name == 'develop' }}
+      - name: Get Commit SHA
+        if: always()
+        id: get_commit_sha
+        run: echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+      - name: Notify on Wire for iOS Nightly 🤖
         uses: 8398a7/action-slack@v3
+        if: ${{ inputs.all && always() }}
         with:
           status: ${{ job.status }}
-          text: "🆘 Tests for 'develop' failed 🆘\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: |
+            **Tests for ${{ inputs.branch }}**
+
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      
+      - name: Notify on Wire for iOS CI
+        uses: 8398a7/action-slack@v3
+        if: ${{ !inputs.all && failure() }}
+        with:
+          status: ${{ job.status }}
+          text: |
+            **🚨 Tests for ${{ inputs.branch }} failed 🆘**
+
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  analyze-xcresults:
+    needs: run-tests
+    if: ${{ always() && github.event_name == 'pull_request' }}
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    strategy:
+      matrix:
+        xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
+    steps:
+      - name: Download .xcresult files
+        uses: actions/download-artifact@v4
+        with:
+          name: xcresults
+          path: ./artifacts
+
+      - name: Display downloaded files
+        run: ls -R
+      
+      - name: Analyze .xcresult file
+        uses: wireapp/analyze-xcoderesults-action@v1
+        with:
+          results: ${{ matrix.xcresult_file }}
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload-test-results-datadadog:
     runs-on: ubuntu-latest

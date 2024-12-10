@@ -26,7 +26,11 @@ enum ProgressViewType {
     case infinite
 }
 
-typealias FileMessageViewViewsState = (progressViewType: ProgressViewType?, playButtonIcon: StyleKitIcon?, playButtonBackgroundColor: UIColor?)
+typealias FileMessageViewViewsState = (
+    progressViewType: ProgressViewType?,
+    playButtonIcon: StyleKitIcon?,
+    playButtonBackgroundColor: UIColor?
+)
 
 enum FileMessageViewState {
 
@@ -104,50 +108,56 @@ enum FileMessageViewState {
     ///               ======>      |            #playButtonIcon
     ///               ======>      |            |        #playButtonBackgroundColor
     static let viewsStateForCellStateForVideoMessage: ViewsStateMapping =
-        [.uploading: (.determ, .cross, normalColor),
-         .uploaded: (.none, .play, normalColor),
-         .downloading: (.determ, .cross, normalColor),
-         .downloaded: (.none, .play, normalColor),
-         .failedUpload: (.none, .redo, failureColor),
-         .cancelledUpload: (.none, .redo, normalColor),
-         .failedDownload: (.none, .redo, failureColor) ]
+        [
+            .uploading: (.determ, .cross, normalColor),
+            .uploaded: (.none, .play, normalColor),
+            .downloading: (.determ, .cross, normalColor),
+            .downloaded: (.none, .play, normalColor),
+            .failedUpload: (.none, .redo, failureColor),
+            .cancelledUpload: (.none, .redo, normalColor),
+            .failedDownload: (.none, .redo, failureColor)
+        ]
 
     /// Mapping of cell state to it's views state for media message:
     ///  # Cell state ======>      #progressViewType
     ///               ======>      |            #playButtonIcon
     ///               ======>      |            |        #playButtonBackgroundColor
     static let viewsStateForCellStateForAudioMessage: ViewsStateMapping =
-        [.uploading: (.determ, .cross, normalColor),
-         .uploaded: (.none, .play, normalColor),
-         .downloading: (.determ, .cross, normalColor),
-         .downloaded: (.none, .play, normalColor),
-         .failedUpload: (.none, .redo, failureColor),
-         .cancelledUpload: (.none, .redo, normalColor),
-         .failedDownload: (.none, .redo, failureColor) ]
+        [
+            .uploading: (.determ, .cross, normalColor),
+            .uploaded: (.none, .play, normalColor),
+            .downloading: (.determ, .cross, normalColor),
+            .downloaded: (.none, .play, normalColor),
+            .failedUpload: (.none, .redo, failureColor),
+            .cancelledUpload: (.none, .redo, normalColor),
+            .failedDownload: (.none, .redo, failureColor)
+        ]
 
     /// Mapping of cell state to it's views state for normal file message:
     ///  # Cell state ======>      #progressViewType
     ///               ======>      |            #actionButtonIcon
     ///               ======>      |            |        #actionButtonBackgroundColor
     static let viewsStateForCellStateForFileMessage: ViewsStateMapping =
-        [.uploading: (.determ, .cross, normalColor),
-         .downloading: (.determ, .cross, normalColor),
-         .downloaded: (.none, .none, clearColor),
-         .uploaded: (.none, .none, clearColor),
-         .failedUpload: (.none, .redo, failureColor),
-         .cancelledUpload: (.none, .redo, normalColor),
-         .failedDownload: (.none, .save, failureColor) ]
+        [
+            .uploading: (.determ, .cross, normalColor),
+            .downloading: (.determ, .cross, normalColor),
+            .downloaded: (.none, .none, clearColor),
+            .uploaded: (.none, .none, clearColor),
+            .failedUpload: (.none, .redo, failureColor),
+            .cancelledUpload: (.none, .redo, normalColor),
+            .failedDownload: (.none, .save, failureColor)
+        ]
 
     func viewsStateForVideo() -> FileMessageViewViewsState? {
-        return type(of: self).viewsStateForCellStateForVideoMessage[self]
+        type(of: self).viewsStateForCellStateForVideoMessage[self]
     }
 
     func viewsStateForAudio() -> FileMessageViewViewsState? {
-        return type(of: self).viewsStateForCellStateForAudioMessage[self]
+        type(of: self).viewsStateForCellStateForAudioMessage[self]
     }
 
     func viewsStateForFile() -> FileMessageViewViewsState? {
-        return type(of: self).viewsStateForCellStateForFileMessage[self]
+        type(of: self).viewsStateForCellStateForFileMessage[self]
     }
 
 }

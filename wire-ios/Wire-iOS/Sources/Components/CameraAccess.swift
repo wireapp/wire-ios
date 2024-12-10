@@ -33,7 +33,10 @@ final class CameraAccess: NSObject {
     ///   - feature: a CameraAccessFeature for alert's message
     ///   - viewController: the viewController to present the alert
     /// - Returns: true is there is an on going call and a alert is shown
-    static func displayAlertIfOngoingCall(at feature: CameraAccessFeature, from viewController: UIViewController) -> Bool {
+    static func displayAlertIfOngoingCall(
+        at feature: CameraAccessFeature,
+        from viewController: UIViewController
+    ) -> Bool {
         if ZMUserSession.shared()?.isCallOngoing == true {
             CameraAccess.displayCameraAlertForOngoingCall(at: feature, from: viewController)
             return true
@@ -42,7 +45,7 @@ final class CameraAccess: NSObject {
         return false
     }
 
-    static private func displayCameraAlertForOngoingCall(
+    private static func displayCameraAlertForOngoingCall(
         at feature: CameraAccessFeature,
         from viewController: UIViewController
     ) {
@@ -60,12 +63,12 @@ final class CameraAccess: NSObject {
     }
 }
 
-fileprivate extension CameraAccessFeature {
+private extension CameraAccessFeature {
     var message: String {
         switch self {
-        case .recordVideo: return L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Video.message
-        case .recordAudioMessage: return L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Audio.message
-        case .takePhoto: return L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Photo.message
+        case .recordVideo: L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Video.message
+        case .recordAudioMessage: L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Audio.message
+        case .takePhoto: L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Photo.message
         }
     }
 }

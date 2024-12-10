@@ -34,12 +34,13 @@ protocol Shareable {
     func previewView() -> UIView?
 }
 
-final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController, UITableViewDelegate, UITableViewDataSource {
+final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController,
+    UITableViewDelegate, UITableViewDataSource {
     let destinations: [D]
     let shareable: S
     private(set) var selectedDestinations: Set<D> = Set() {
         didSet {
-            sendButton.isEnabled = self.selectedDestinations.count > 0
+            sendButton.isEnabled = selectedDestinations.count > 0
         }
     }
 
@@ -79,14 +80,12 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         self.allowsMultipleSelection = allowsMultipleSelection
         super.init(nibName: nil, bundle: nil)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameWillChange(notification:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameDidChange(notification:)),
-                                               name: UIResponder.keyboardDidChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange(notification:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
         createViews()
         createConstraints()
     }
@@ -120,15 +119,15 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     private var filterString: String? = .none {
         didSet {
             if let filterString, !filterString.isEmpty {
-                self.filteredDestinations = self.destinations.filter {
+                filteredDestinations = destinations.filter {
                     let name = $0.displayNameWithFallback
                     return name.range(of: filterString, options: .caseInsensitive) != nil
                 }
             } else {
-                self.filteredDestinations = self.destinations
+                filteredDestinations = destinations
             }
 
-            self.destinationsTableView.reloadData()
+            destinationsTableView.reloadData()
         }
     }
 
@@ -141,9 +140,9 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
 
     @objc
     func onSendButtonPressed(sender: AnyObject?) {
-        if self.selectedDestinations.count > 0 {
-            self.shareable.share(to: Array(self.selectedDestinations))
-            self.onDismiss?(self, true)
+        if !selectedDestinations.isEmpty {
+            shareable.share(to: Array(selectedDestinations))
+            onDismiss?(self, true)
         }
     }
 
@@ -154,27 +153,24 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         updateClearIndicator(for: tokenField)
     }
 
-    func resetQuery() {
-        tokenField.filterUnwantedAttachments()
-    }
-
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredDestinations.count
+        filteredDestinations.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ShareDestinationCell<D>.reuseIdentifier) as! ShareDestinationCell<D>
+        let cell = tableView
+            .dequeueReusableCell(withIdentifier: ShareDestinationCell<D>.reuseIdentifier) as! ShareDestinationCell<D>
 
-        let destination = self.filteredDestinations[indexPath.row]
+        let destination = filteredDestinations[indexPath.row]
         cell.destination = destination
-        cell.allowsMultipleSelection = self.allowsMultipleSelection
-        cell.isSelected = self.selectedDestinations.contains(destination)
+        cell.allowsMultipleSelection = allowsMultipleSelection
+        cell.isSelected = selectedDestinations.contains(destination)
         if cell.isSelected {
             tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
         }
@@ -182,48 +178,47 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let destination = self.filteredDestinations[indexPath.row]
+        let destination = filteredDestinations[indexPath.row]
 
         tokenField.addToken(forTitle: destination.displayNameWithFallback, representedObject: destination)
 
-        self.selectedDestinations.insert(destination)
+        selectedDestinations.insert(destination)
 
-        if !self.allowsMultipleSelection {
-            self.onSendButtonPressed(sender: nil)
+        if !allowsMultipleSelection {
+            onSendButtonPressed(sender: nil)
         }
     }
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let destination = self.filteredDestinations[indexPath.row]
+        let destination = filteredDestinations[indexPath.row]
 
-        guard let token = self.tokenField.token(forRepresentedObject: destination) else {
+        guard let token = tokenField.token(forRepresentedObject: destination) else {
             return
         }
-        self.tokenField.removeToken(token)
+        tokenField.removeToken(token)
 
-        self.selectedDestinations.remove(destination)
+        selectedDestinations.remove(destination)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.topSeparatorView.scrollViewDidScroll(scrollView: scrollView)
+        topSeparatorView.scrollViewDidScroll(scrollView: scrollView)
     }
 
     @objc
     private func keyboardFrameWillChange(notification: Notification) {
         let inputAccessoryHeight = UIResponder.currentFirst?.inputAccessoryView?.bounds.size.height ?? 0
 
-        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: {[weak self] keyboardFrameInView in
-            guard let self else { return }
+        UIView.animate(
+            withKeyboardNotification: notification,
+            in: view,
+            animations: { [weak self] keyboardFrameInView in
+                guard let self else { return }
 
-            let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-            bottomConstraint?.constant = keyboardHeight == 0 ? -view.safeAreaInsetsOrFallback.bottom : CGFloat(0)
-            view.layoutIfNeeded()
-        })
-    }
-
-    @objc
-    private func keyboardFrameDidChange(notification: Notification) {
-        updatePopoverFrame()
+                let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
+                bottomConstraint?.constant = keyboardHeight == 0 ? -view.safeAreaInsets.bottom : CGFloat(0)
+                view.layoutIfNeeded()
+            }
+        )
     }
 
     private func updateClearIndicator(for tokenField: TokenField) {

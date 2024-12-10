@@ -24,7 +24,7 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
     override func setUp() {
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
+        flag.isOn = true
 
         super.setUp()
     }
@@ -62,7 +62,7 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
         }
 
         // When
-        guard let encryptedMessage = try? await message.encryptForTransport(using: self.encryptionFunction) else {
+        guard let encryptedMessage = try? await message.encryptForTransport(using: encryptionFunction) else {
             return XCTFail("failed to encrypt message")
         }
 
@@ -96,7 +96,7 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
         }
 
         // When
-        let encryptedMessage = try await message.encryptForTransport(using: self.encryptionFunction)
+        let encryptedMessage = try await message.encryptForTransport(using: encryptionFunction)
 
         await syncMOC.perform {
             // Then

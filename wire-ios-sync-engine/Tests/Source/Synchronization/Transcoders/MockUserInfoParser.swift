@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objcMembers public class MockUserInfoParser: NSObject, UserInfoParser {
+@objcMembers
+public class MockUserInfoParser: NSObject, UserInfoParser {
 
     public var accountExistsLocallyCalled = 0
     public var existingAccounts = [UserInfo]()
@@ -38,6 +39,11 @@
     public func userIdentifier(from response: ZMTransportResponse) -> UUID? {
         userIdentifierCalled += 1
         return userId
+    }
+
+    public var reportBackupImportDidSucceedCalled = 0
+    public func reportBackupImportDidSucceed(_ didSucceed: Bool) {
+        reportBackupImportDidSucceedCalled += 1
     }
 
 }

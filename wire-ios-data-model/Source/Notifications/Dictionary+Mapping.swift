@@ -39,7 +39,7 @@ extension Array where Element: Hashable {
     }
 }
 
-extension Set {
+public extension Set {
 
     func mapToDictionary<Value>(with block: (Element) -> Value?) -> [Element: Value] {
         var dict = [Element: Value]()

@@ -29,7 +29,11 @@ final class MockAttachmentDetector: LinkAttachmentDetectorType {
     var downloadCount: Int = 0
     var excludedRanges: [NSRange] = []
 
-    func downloadLinkAttachments(inText text: String, excluding: [NSRange], completion: @escaping ([LinkAttachment]) -> Void) {
+    func downloadLinkAttachments(
+        inText text: String,
+        excluding: [NSRange],
+        completion: @escaping ([LinkAttachment]) -> Void
+    ) {
         downloadCount += 1
         excludedRanges = excluding
         completion(nextResult)
@@ -56,7 +60,12 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
 
     // MARK: - Helper
 
-    func createMessage(text: String = "text message 123", mentions: [Mention] = [], needsUpdate: Bool = true, isEphemeral: Bool = false) -> ZMClientMessage {
+    func createMessage(
+        text: String = "text message 123",
+        mentions: [Mention] = [],
+        needsUpdate: Bool = true,
+        isEphemeral: Bool = false
+    ) -> ZMClientMessage {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
@@ -68,20 +77,21 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
     }
 
     var thumbnailURL: URL {
-        return URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!
+        URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!
     }
 
     func createAttachment(withCachedImage: Bool = true) -> LinkAttachment {
-        let attachment = LinkAttachment(type: .youTubeVideo, title: "Pingu Season 1 Episode 1",
-                                       permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
-                                       thumbnails: [thumbnailURL],
-                                       originalRange: NSRange(location: 20, length: 43))
-
-        return attachment
+        LinkAttachment(
+            type: .youTubeVideo,
+            title: "Pingu Season 1 Episode 1",
+            permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
+            thumbnails: [thumbnailURL],
+            originalRange: NSRange(location: 20, length: 43)
+        )
     }
 
     func assertThatItProcessesMessageWithLinkAttachmentState(_ needsUpdate: Bool, line: UInt = #line) {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let message = self.createMessage(needsUpdate: needsUpdate)
 
@@ -89,10 +99,15 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             let callCount: Int = needsUpdate ? 1 : 0
-            XCTAssertEqual(self.mockDetector.downloadCount, callCount, "Failure processing for update state \(needsUpdate)", line: line)
+            XCTAssertEqual(
+                self.mockDetector.downloadCount,
+                callCount,
+                "Failure processing for update state \(needsUpdate)",
+                line: line
+            )
             self.mockDetector.downloadCount = 0
         }
     }
@@ -104,9 +119,9 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
 
     func testThatItDoesNotStoreTheOriginalImageDataInTheCacheAndFinishesWhenItReceivesAPreviewWithImage() {
         var message: ZMClientMessage!
-        let attachment = self.createAttachment(withCachedImage: true)
+        let attachment = createAttachment(withCachedImage: true)
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockDetector.nextResult = [attachment]
             message = self.createMessage()
@@ -115,7 +130,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadCount, 1)
             XCTAssertEqual(message.linkAttachments, [attachment])
@@ -127,7 +142,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
 
     func testThatItFinishesIfNoAttachmentsAreReturned() {
         var message: ZMClientMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             message = self.createMessage()
@@ -136,7 +151,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadCount, 1)
             XCTAssertFalse(message.needsLinkAttachmentsUpdate)
@@ -146,7 +161,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
     func testThatItFinishesIfTheMessageDoesNotHaveTextMessageData() {
         var message: ZMClientMessage!
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -162,7 +177,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertFalse(message.needsLinkAttachmentsUpdate)
         }
@@ -172,7 +187,10 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let text = "@john - www.sunet.se hello"
-            let message = self.createMessage(text: text, mentions: [Mention(range: NSRange(location: 0, length: 20), user: self.otherUser)])
+            let message = self.createMessage(
+                text: text,
+                mentions: [Mention(range: NSRange(location: 0, length: 20), user: self.otherUser)]
+            )
 
             // WHEN
             self.sut.processMessage(message)
@@ -215,7 +233,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
     func testThatItReturnsAnEphemeralMessageAfterPreProcessingAnEphemeral() {
         var message: ZMClientMessage!
         var attachment: LinkAttachment!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             attachment = self.createAttachment()
@@ -227,7 +245,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadCount, 1)
             XCTAssertFalse(message.needsLinkAttachmentsUpdate)
@@ -243,7 +261,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
 
     func testThatItDoesNotUpdateMessageWhenMessageHasBeenObfuscatedAndSetsPreviewStateToDone() {
         var message: ZMClientMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let attachment = self.createAttachment()
             self.mockDetector.nextResult = [attachment]
@@ -256,7 +274,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(message.linkAttachments, [])
             XCTAssertFalse(message.needsLinkAttachmentsUpdate)

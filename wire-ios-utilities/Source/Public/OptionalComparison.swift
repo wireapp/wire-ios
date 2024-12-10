@@ -47,12 +47,13 @@ public enum OptionalComparison {
     }
 }
 
-extension Collection {
-    /// Returns the elements of the sequence, sorted ascending using the given keyPath as the comparison between elements.
+public extension Collection {
+    /// Returns the elements of the sequence, sorted ascending using the given keyPath as the comparison between
+    /// elements.
     /// - Parameter keyPath: The keypath to compare, the value can be optional.
     /// - Returns: An ascending sorted array of the sequence’s elements with prepending `nil` values.
-    public func sortedAscendingPrependingNil<Value: Comparable>(
-        by keyPath: KeyPath<Element, Value?>
+    func sortedAscendingPrependingNil(
+        by keyPath: KeyPath<Element, (some Comparable)?>
     ) -> [Element] {
         sorted { lhsRoot, rhsRoot in
             OptionalComparison.prependingNilAscending(
@@ -62,11 +63,12 @@ extension Collection {
         }
     }
 
-    /// Returns the elements of the sequence, sorted ascending using the given closure as the comparison between elements.
+    /// Returns the elements of the sequence, sorted ascending using the given closure as the comparison between
+    /// elements.
     /// - Parameter keyPath: The keypath to compare, the value can be optional.
     /// - Returns: An ascending sorted array of the sequence’s elements with prepending `nil` values.
-    public func sortedAscendingPrependingNil<Value: Comparable>(
-        by value: (Element) -> Value?
+    func sortedAscendingPrependingNil(
+        by value: (Element) -> (some Comparable)?
     ) -> [Element] {
         sorted { lhsRoot, rhsRoot in
             OptionalComparison.prependingNilAscending(

@@ -20,27 +20,28 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
-/**
- * Handles the notification informing the user that backups are ready to be imported.
- */
+/// Handles the notification informing the user that backups are ready to be imported.
 
 final class AuthenticationBackupReadyEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: Bool) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: Bool
+    ) -> [AuthenticationCoordinatorAction]? {
         let existingAccount = context
 
         // Automatically complete the backup for @fastLogin automation
         guard AutomationHelper.sharedHelper.automationEmailCredentials == nil else {
-            return [.showLoadingView, .configureNotifications, .completeBackupStep]
+            return [.showLoadingView, .configureNotifications, .completeBackupStep(didSucceed: nil)]
         }
 
         // Get the signed-in user credentials
         let authenticationCredentials: UserCredentials?
 
         switch currentStep {
-        case .authenticateEmailCredentials(let credentials):
+        case let .authenticateEmailCredentials(credentials):
             authenticationCredentials = credentials
         case .companyLogin:
             authenticationCredentials = nil

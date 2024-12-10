@@ -20,9 +20,9 @@ import Foundation
 
 class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
@@ -45,9 +45,9 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: TeamResponseV0.self)
-            .failure(code: 404, error: TeamsAPIError.invalidTeamID)
-            .failure(code: 404, label: "no-team", error: TeamsAPIError.teamNotFound)
+            .success(code: .ok, type: TeamResponseV0.self)
+            .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
+            .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
             .parse(response)
     }
 
@@ -62,9 +62,9 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: ConversationRolesListResponseV0.self)
-            .failure(code: 403, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
-            .failure(code: 404, error: TeamsAPIError.teamNotFound)
+            .success(code: .ok, type: ConversationRolesListResponseV0.self)
+            .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .failure(code: .notFound, error: TeamsAPIError.teamNotFound)
             .parse(response)
     }
 
@@ -89,19 +89,19 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: TeamMemberListResponseV0.self)
-            .failure(code: 400, error: TeamsAPIError.invalidQueryParmeter)
-            .failure(code: 403, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
-            .failure(code: 404, error: TeamsAPIError.teamNotFound)
+            .success(code: .ok, type: TeamMemberListResponseV0.self)
+            .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParmeter)
+            .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .failure(code: .notFound, error: TeamsAPIError.teamNotFound)
             .parse(response)
     }
 
-    // MARK: - Get legalhold status
+    // MARK: - Get team member legalhold
 
-    func getLegalholdStatus(
+    func getLegalholdInfo(
         for teamID: Team.ID,
         userID: UUID
-    ) async throws -> LegalholdStatus {
+    ) async throws -> TeamMemberLegalholdInfo {
         let request = HTTPRequest(
             path: "\(basePath(for: teamID))/legalhold/\(userID.transportString())",
             method: .get
@@ -110,9 +110,9 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: LegalholdStatusResponseV0.self)
-            .failure(code: 404, error: TeamsAPIError.invalidRequest)
-            .failure(code: 404, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
+            .success(code: .ok, type: TeamMemberLegalholdResponseV0.self)
+            .failure(code: .notFound, error: TeamsAPIError.invalidRequest)
+            .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
             .parse(response)
     }
 
@@ -203,23 +203,23 @@ enum ConversationActionResponseV0: String, Decodable {
     func toAPIModel() -> ConversationAction {
         switch self {
         case .addConversationMember:
-            return .addConversationMember
+            .addConversationMember
         case .removeConversationMember:
-            return .removeConversationMember
+            .removeConversationMember
         case .modifyConversationName:
-            return .modifyConversationName
+            .modifyConversationName
         case .modifyConversationMessageTimer:
-            return .modifyConversationMessageTimer
+            .modifyConversationMessageTimer
         case .modifyConversationReceiptMode:
-            return .modifyConversationReceiptMode
+            .modifyConversationReceiptMode
         case .modifyConversationAccess:
-            return .modifyConversationAccess
+            .modifyConversationAccess
         case .modifyOtherConversationMember:
-            return .modifyOtherConversationMember
+            .modifyOtherConversationMember
         case .leaveConversation:
-            return .leaveConversation
+            .leaveConversation
         case .deleteConversation:
-            return .deleteConversation
+            .deleteConversation
         }
     }
 
@@ -231,7 +231,7 @@ struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
     let members: [TeamMemberResponseV0]
 
     func toAPIModel() -> [TeamMember] {
-        return members.map {
+        members.map {
             $0.toAPIModel()
         }
     }
@@ -243,7 +243,7 @@ struct TeamMemberResponseV0: Decodable {
     let user: UUID
     let permissions: PermissionsResponseV0?
     let createdBy: UUID?
-    let createdAt: Date?
+    let createdAt: UTCTimeMillis?
     let legalholdStatus: LegalholdStatusV0?
 
     enum CodingKeys: String, CodingKey {
@@ -259,7 +259,7 @@ struct TeamMemberResponseV0: Decodable {
     func toAPIModel() -> TeamMember {
         TeamMember(
             userID: user,
-            creationDate: createdAt,
+            creationDate: createdAt?.date,
             creatorID: createdBy,
             legalholdStatus: legalholdStatus?.toAPIModel(),
             permissions: permissions?.toAPIModel()
@@ -292,24 +292,44 @@ enum LegalholdStatusV0: String, Decodable {
     func toAPIModel() -> LegalholdStatus {
         switch self {
         case .enabled:
-            return .enabled
+            .enabled
         case .pending:
-            return .pending
+            .pending
         case .disabled:
-            return .disabled
+            .disabled
         case .noConsent:
-            return .noConsent
+            .noConsent
         }
     }
-
 }
 
-struct LegalholdStatusResponseV0: Decodable, ToAPIModelConvertible {
+struct LegalHoldLastPrekeyV0: Decodable, ToAPIModelConvertible {
+    let id: Int
+    let key: String
 
+    func toAPIModel() -> Prekey {
+        Prekey(
+            id: id,
+            base64EncodedKey: key
+        )
+    }
+}
+
+struct TeamMemberLegalholdResponseV0: Decodable, ToAPIModelConvertible {
+
+    let lastPrekey: LegalHoldLastPrekeyV0
     let status: LegalholdStatusV0
 
-    func toAPIModel() -> LegalholdStatus {
-        return status.toAPIModel()
+    enum CodingKeys: String, CodingKey {
+        case status
+        case lastPrekey = "last_prekey"
+    }
+
+    func toAPIModel() -> TeamMemberLegalholdInfo {
+        TeamMemberLegalholdInfo(
+            status: status.toAPIModel(),
+            prekey: lastPrekey.toAPIModel()
+        )
     }
 
 }

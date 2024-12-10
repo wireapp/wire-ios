@@ -16,8 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
+
+enum Database {
+    case messaging
+    case event
+
+    func databaseFixtureFileName(for version: String) -> String {
+        switch self {
+        case .messaging:
+            // The naming scheme is slightly different for fixture files
+            let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
+            return "store" + fixedVersion
+        case .event:
+            return "event_\(version)"
+        }
+    }
+
+    var `extension`: String {
+        switch self {
+        case .messaging:
+            "wiredatabase"
+        case .event:
+            "sqlite"
+        }
+    }
+}
 
 struct DatabaseMigrationHelper {
 
@@ -72,7 +97,7 @@ struct DatabaseMigrationHelper {
         storeDirectory: URL,
         preMigrationAction: MigrationAction,
         postMigrationAction: MigrationAction,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         // GIVEN
@@ -128,46 +153,59 @@ struct DatabaseMigrationHelper {
         applicationContainer: URL,
         accountIdentifier: UUID,
         versionName: String,
-        file: StaticString = #file,
+        database: Database = .messaging,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        let storeFile = CoreDataStack.accountDataFolder(
+
+        var storeFile = CoreDataStack.accountDataFolder(
             accountIdentifier: accountIdentifier,
             applicationContainer: applicationContainer
-        ).appendingPersistentStoreLocation()
+        )
+        switch database {
+        case .messaging:
+            storeFile = storeFile.appendingPersistentStoreLocation()
+        case .event:
+            storeFile = storeFile.appendingEventStoreLocation()
+        }
 
-        try createFixtureDatabase(storeFile: storeFile, versionName: versionName)
+        try createFixtureDatabase(storeFile: storeFile, versionName: versionName, database: database)
     }
 
     func createFixtureDatabase(
         storeFile: URL,
         versionName: String,
-        file: StaticString = #file,
+        database: Database = .messaging,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        try FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(
+            at: storeFile.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
 
         // copy old version database into the expected location
-        guard let source = databaseFixtureURL(version: versionName, file: file, line: line) else {
+        guard let source = databaseFixtureURL(version: versionName, database: database, file: file, line: line) else {
             return
         }
         try FileManager.default.copyItem(at: source, to: storeFile)
     }
 
-    func databaseFixtureURL(version: String, file: StaticString = #file, line: UInt = #line) -> URL? {
-        let name = databaseFixtureFileName(for: version)
-        guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: "wiredatabase") else {
-            XCTFail("Could not find \(name).wiredatabase in test bundle", file: file, line: line)
+    func databaseFixtureURL(
+        version: String,
+        database: Database = .messaging,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> URL? {
+
+        let name = database.databaseFixtureFileName(for: version)
+
+        guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: database.extension)
+        else {
+            XCTFail("Could not find \(name).\(database.extension) in test bundle", file: file, line: line)
             return nil
         }
         return source
-    }
-
-    // The naming scheme is slightly different for fixture files
-    func databaseFixtureFileName(for version: String) -> String {
-        let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
-        let name = "store" + fixedVersion
-        return name
     }
 
     // MARK: - Migration Helpers
@@ -235,7 +273,7 @@ extension XCTestCase {
     func createStorageStackAndWaitForCompletion(
         userID: UUID,
         applicationContainer: URL,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> CoreDataStack {
 
@@ -249,7 +287,7 @@ extension XCTestCase {
             inMemoryStore: false
         )
 
-        let exp = self.expectation(description: "should wait for loadStores to finish")
+        let exp = expectation(description: "should wait for loadStores to finish")
         var setupError: Error?
         stack.setup(onStartMigration: {
             // do nothing

@@ -20,6 +20,6 @@ import Foundation
 
 extension Array {
     func prefixed(by amount: Int) -> [Element] {
-        return Array(prefix(amount))
+        Array(prefix(amount))
     }
 }

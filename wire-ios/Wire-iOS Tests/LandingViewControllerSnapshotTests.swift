@@ -16,27 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import WireTransport
 import XCTest
+
+@testable import Wire
 
 final class LandingViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: LandingViewController!
+    private var sut: LandingViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = .init()
         sut = LandingViewController()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -45,25 +49,30 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
 
     func testForInitState() {
         sut = LandingViewController()
-        verifyInAllDeviceSizes(matching: sutInUiNavigationController())
+        snapshotHelper.verifyInAllDeviceSizes(matching: sutInUiNavigationController())
     }
 
     func testForBackendWithCustomURL() {
         let customBackend = MockEnvironment()
         customBackend.backendURL = URL(string: "https://api.example.org")!
         customBackend.proxy = nil
-        customBackend.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
+        customBackend
+            .environmentType =
+            EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
         sut = LandingViewController(backendEnvironmentProvider: {
             customBackend
         })
 
-        verifyInAllDeviceSizes(matching: sutInUiNavigationController())
+        snapshotHelper.verifyInAllDeviceSizes(matching: sutInUiNavigationController())
     }
 
     // MARK: - Helper Method
 
     func sutInUiNavigationController() -> UINavigationController {
-        let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
+        let navigationController = UINavigationController(
+            navigationBarClass: AuthenticationNavigationBar.self,
+            toolbarClass: nil
+        )
         navigationController.setOverrideTraitCollection(UITraitCollection(horizontalSizeClass: .compact), forChild: sut)
         navigationController.viewControllers = [sut]
 
@@ -80,13 +89,13 @@ final class FakeProxySettings: NSObject, ProxySettingsProvider {
     var port: Int
     var needsAuthentication: Bool
 
-    internal init(host: String = "api.example.org", port: Int = 1345, needsAuthentication: Bool = false) {
+    init(host: String = "api.example.org", port: Int = 1345, needsAuthentication: Bool = false) {
         self.host = host
         self.port = port
         self.needsAuthentication = needsAuthentication
     }
 
     func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable: Any]? {
-        return nil
+        nil
     }
 }

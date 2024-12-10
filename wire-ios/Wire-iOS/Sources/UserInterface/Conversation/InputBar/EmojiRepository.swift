@@ -17,11 +17,11 @@
 //
 
 import Foundation
+import WireLogging
 import WireUtilities
 
 protocol EmojiRepositoryInterface {
 
-    func allEmojis() -> [Emoji]
     func emojis(for category: EmojiCategory) -> [Emoji]
     func emoji(for id: String) -> Emoji?
     func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID])
@@ -42,23 +42,19 @@ final class EmojiRepository: EmojiRepositoryInterface {
     // MARK: - Life cycle
 
     init() {
-        allEmojiData = Self.loadAllFromDisk()
+        self.allEmojiData = Self.loadAllFromDisk()
             .filter { Self.isEmojiAvailable($0) }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
 
     // MARK: - Fetch
 
-    func allEmojis() -> [Emoji] {
-        return allEmojiData
-    }
-
     func emojis(for category: EmojiCategory) -> [Emoji] {
-        return emojisByCategory[category] ?? []
+        emojisByCategory[category] ?? []
     }
 
     func emoji(for id: String) -> Emoji? {
-        return emojisByValue[id]
+        emojisByValue[id]
     }
 
     // MARK: - Recently used
@@ -97,15 +93,11 @@ final class EmojiRepository: EmojiRepositoryInterface {
         return emojiVersionTruncated <= supportedEmojiVersion
     }
 
-    private static let supportedEmojiVersion: Double = {
-        if #available(iOS 16.4, *) {
-            return 15.0
-        } else if #available(iOS 15.4, *) {
-            return 14.0
-        } else {
-            return 13.1
-        }
-    }()
+    private static let supportedEmojiVersion: Double = if #available(iOS 16.4, *) {
+        15.0
+    } else {
+        14.0
+    }
 
 }
 

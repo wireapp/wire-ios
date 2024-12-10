@@ -151,7 +151,7 @@
     
     // Add the context group to all operations:
     ZMSDispatchGroup *group = self.managedObjectContext.dispatchGroup;
-    ZMSDispatchGroup *completionGroup = [ZMSDispatchGroup groupWithLabel:@"ZMAssetPreProcessingTracker"];
+    ZMSDispatchGroup *completionGroup = [[ZMSDispatchGroup alloc] initWithLabel:@"ZMAssetPreProcessingTracker"];
     for (NSOperation *op in operations) {
         [group enter];
         [completionGroup enter];
@@ -187,9 +187,8 @@
 
 - (NSOperation * __nullable)preprocessingCompleteOperationForImageOwner:(id<ZMImageOwner> __nonnull)imageOwner
 {
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: should this use the imageOwner's dispatchGroup? Currently this only works because both the image owner and this object coincidentally use the same dispatchGroup
-    // swiftlint:enable todo_requires_jira_link
     ZMSDispatchGroup *group = self.managedObjectContext.dispatchGroup;
     [group enter];
     

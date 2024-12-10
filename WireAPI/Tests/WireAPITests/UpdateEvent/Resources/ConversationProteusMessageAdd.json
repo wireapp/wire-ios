@@ -12,7 +12,7 @@
     "data": {
         "text": "foo",
         "data": "bar",
-        "sender": "f55fe9b0-a0cc-4b11-944b-125c834d9b6a",
-        "recipient": "f55fe9b0-a0cc-4b11-944b-125c834d9b6a"
+        "sender": "abc123",
+        "recipient": "def456"
     }
 }

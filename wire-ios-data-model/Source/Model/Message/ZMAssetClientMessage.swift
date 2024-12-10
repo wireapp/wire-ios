@@ -17,22 +17,26 @@
 //
 
 import Foundation
+import WireLogging
 
 /// An asset message (image, file, ...)
-@objcMembers public class ZMAssetClientMessage: ZMOTRMessage {
+@objcMembers
+public class ZMAssetClientMessage: ZMOTRMessage {
 
     /// In memory cache
     var cachedUnderlyingAssetMessage: GenericMessage?
 
-    internal convenience init(asset: WireProtos.Asset,
-                              nonce: UUID,
-                              managedObjectContext: NSManagedObjectContext,
-                              expiresAfter timeout: TimeInterval?) throws {
+    convenience init(
+        asset: WireProtos.Asset,
+        nonce: UUID,
+        managedObjectContext: NSManagedObjectContext,
+        expiresAfter timeout: TimeInterval?
+    ) throws {
 
         self.init(nonce: nonce, managedObjectContext: managedObjectContext)
 
-        transferState = .uploading
-        version = 3
+        self.transferState = .uploading
+        self.version = 3
 
         let genericMessage = GenericMessage(content: asset, nonce: nonce, expiresAfterTimeInterval: timeout)
         try mergeWithExistingData(message: genericMessage)
@@ -48,22 +52,22 @@ import Foundation
 
     /// Remote asset ID
     public var assetId: UUID? {
-        get { return transientUUID(forKey: #keyPath(ZMAssetClientMessage.assetId)) }
+        get { transientUUID(forKey: #keyPath(ZMAssetClientMessage.assetId)) }
         set { setTransientUUID(newValue, forKey: #keyPath(ZMAssetClientMessage.assetId)) }
     }
 
     public static func keyPathsForValuesAffectingAssetID() -> Set<String> {
-        return [#keyPath(ZMAssetClientMessage.assetID_data)]
+        [#keyPath(ZMAssetClientMessage.assetID_data)]
     }
 
     /// Preprocessed size of image
     public var preprocessedSize: CGSize {
-        get { return transientCGSize(forKey: #keyPath(ZMAssetClientMessage.preprocessedSize)) }
+        get { transientCGSize(forKey: #keyPath(ZMAssetClientMessage.preprocessedSize)) }
         set { setTransientCGSize(newValue, forKey: #keyPath(ZMAssetClientMessage.preprocessedSize)) }
     }
 
     public static func keyPathsForValuesPreprocessedSize() -> Set<String> {
-        return [#keyPath(ZMAssetClientMessage.assetID_data)]
+        [#keyPath(ZMAssetClientMessage.assetID_data)]
     }
 
     /// Original file size
@@ -98,22 +102,22 @@ import Foundation
     /// Download state
     public var downloadState: AssetDownloadState {
         if hasDownloadedFile {
-            return .downloaded
+            .downloaded
         } else if isDownloading {
-            return .downloading
+            .downloading
         } else {
-            return .remote
+            .remote
         }
     }
 
     /// Whether the image preview has been downloaded
     public var hasDownloadedPreview: Bool {
-        return asset?.hasDownloadedPreview ?? false
+        asset?.hasDownloadedPreview ?? false
     }
 
     /// Whether the file has been downloaded
     public var hasDownloadedFile: Bool {
-        return asset?.hasDownloadedFile ?? false
+        asset?.hasDownloadedFile ?? false
     }
 
     // Wheather the referenced asset is encrypted
@@ -143,41 +147,43 @@ import Foundation
     public var associatedTaskIdentifier: ZMTaskIdentifier? {
         get {
             let key = #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)
-            self.willAccessValue(forKey: key)
-            let data = self.primitiveValue(forKey: key) as? Data
-            self.didAccessValue(forKey: key)
-            let value = data.flatMap { ZMTaskIdentifier(from: $0) }
-            return value
+            willAccessValue(forKey: key)
+            let data = primitiveValue(forKey: key) as? Data
+            didAccessValue(forKey: key)
+            return data.flatMap { ZMTaskIdentifier(from: $0) }
         }
         set {
             let key = #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)
-            self.willChangeValue(forKey: key)
-            self.setPrimitiveValue(newValue?.data, forKey: key)
-            self.didChangeValue(forKey: key)
+            willChangeValue(forKey: key)
+            setPrimitiveValue(newValue?.data, forKey: key)
+            didChangeValue(forKey: key)
         }
     }
 
     static func keyPathsForValuesAffectingAssociatedTaskIdentifier() -> Set<String> {
-        return [#keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)]
+        [#keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)]
     }
 
     var v2Asset: V2Asset? {
-        return V2Asset(with: self)
+        V2Asset(with: self)
     }
 
     var v3Asset: V3Asset? {
-        return V3Asset(with: self)
+        V3Asset(with: self)
     }
 
     var asset: AssetProxyType? {
-        return self.v2Asset ?? self.v3Asset
+        v2Asset ?? v3Asset
     }
 
-    public override func expire() {
-        super.expire()
+    public override func expire(withReason reason: ExpirationReason) {
+        super.expire(withReason: reason)
 
-        if transferState != .uploaded {
+        switch transferState {
+        case .uploading:
             transferState = .uploadingFailed
+        case .uploaded, .uploadingCancelled, .uploadingFailed:
+            break
         }
     }
 
@@ -188,8 +194,8 @@ import Foundation
 
     public override var isUpdatingExistingMessage: Bool {
         guard let genericMessage = underlyingMessage,
-            let content = genericMessage.content else {
-                return false
+              let content = genericMessage.content else {
+            return false
         }
         switch content {
         case .edited, .reaction:
@@ -200,7 +206,7 @@ import Foundation
     }
 
     func setObfuscationTimerIfNeeded() {
-        guard self.isEphemeral else {
+        guard isEphemeral else {
             return
         }
 
@@ -212,7 +218,7 @@ import Foundation
             transferState = .uploading
         }
 
-        self.progress = 0
+        progress = 0
         setLocallyModifiedKeys([#keyPath(ZMAssetClientMessage.transferState)])
 
         super.resend()
@@ -221,7 +227,7 @@ import Foundation
     public override func update(withPostPayload payload: [AnyHashable: Any], updatedKeys: Set<AnyHashable>?) {
         if let serverTimestamp = (payload as NSDictionary).optionalDate(forKey: "time") {
             self.serverTimestamp = serverTimestamp
-            self.expectsReadConfirmation = self.conversation?.hasReadReceiptsEnabled ?? false
+            expectsReadConfirmation = conversation?.hasReadReceiptsEnabled ?? false
         }
 
         conversation?.updateTimestampsAfterUpdatingMessage(self)
@@ -231,7 +237,7 @@ import Foundation
     }
 
     public override var isSilenced: Bool {
-        return conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
+        conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
     }
 
     // Private implementation
@@ -242,34 +248,35 @@ import Foundation
 }
 
 // MARK: - Core data
-extension ZMAssetClientMessage {
 
-    override public func awakeFromInsert() {
+public extension ZMAssetClientMessage {
+
+    override func awakeFromInsert() {
         super.awakeFromInsert()
-        self.cachedUnderlyingAssetMessage = nil
+        cachedUnderlyingAssetMessage = nil
     }
 
-    override public func awakeFromFetch() {
+    override func awakeFromFetch() {
         super.awakeFromFetch()
-        self.cachedUnderlyingAssetMessage = nil
+        cachedUnderlyingAssetMessage = nil
     }
 
-    override public func awake(fromSnapshotEvents flags: NSSnapshotEventType) {
+    override func awake(fromSnapshotEvents flags: NSSnapshotEventType) {
         super.awake(fromSnapshotEvents: flags)
-        self.cachedUnderlyingAssetMessage = nil
+        cachedUnderlyingAssetMessage = nil
     }
 
-    override public func didTurnIntoFault() {
+    override func didTurnIntoFault() {
         super.didTurnIntoFault()
-        self.cachedUnderlyingAssetMessage = nil
+        cachedUnderlyingAssetMessage = nil
     }
 
-    public override static func entityName() -> String {
-        return "AssetClientMessage"
+    override static func entityName() -> String {
+        "AssetClientMessage"
     }
 
-    public override var ignoredKeys: Set<AnyHashable>? {
-        return (super.ignoredKeys ?? Set())
+    override var ignoredKeys: Set<AnyHashable>? {
+        (super.ignoredKeys ?? Set())
             .union([
                 #keyPath(ZMAssetClientMessage.assetID_data),
                 #keyPath(ZMAssetClientMessage.preprocessedSize_data),
@@ -284,31 +291,35 @@ extension ZMAssetClientMessage {
 
     }
 
-    override static public func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
-        return nil
+    override static func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
+        nil
     }
 }
 
-@objc public enum AssetClientMessageDataType: UInt {
+@objc
+public enum AssetClientMessageDataType: UInt {
     case placeholder = 1
     case fullAsset = 2
     case thumbnail = 3
 }
 
-@objc public enum AssetDownloadState: Int16 {
+@objc
+public enum AssetDownloadState: Int16 {
     case remote = 0
     case downloaded
     case downloading
 }
 
-@objc public enum AssetTransferState: Int16 {
+@objc
+public enum AssetTransferState: Int16 {
     case uploading = 0
     case uploaded
     case uploadingFailed
     case uploadingCancelled
 }
 
-@objc public enum AssetProcessingState: Int16 {
+@objc
+public enum AssetProcessingState: Int16 {
     case done = 0
     case preprocessing
     case uploading
@@ -317,7 +328,9 @@ extension ZMAssetClientMessage {
 struct CacheAsset: AssetType {
 
     enum AssetType {
-        case image, file, thumbnail
+        case image
+        case file
+        case thumbnail
     }
 
     var owner: ZMAssetClientMessage
@@ -333,26 +346,26 @@ struct CacheAsset: AssetType {
     var needsPreprocessing: Bool {
         switch type {
         case .file:
-            return false
+            false
         case .image,
              .thumbnail:
-            return true
+            true
         }
     }
 
     var hasOriginal: Bool {
         if case .file = type {
-            return cache.hasOriginalFileData(for: owner)
+            cache.hasOriginalFileData(for: owner)
         } else {
-            return cache.hasOriginalImageData(for: owner)
+            cache.hasOriginalImageData(for: owner)
         }
     }
 
     var original: Data? {
         if case .file = type {
-            return cache.originalFileData(for: owner)
+            cache.originalFileData(for: owner)
         } else {
-            return cache.originalImageData(for: owner)
+            cache.originalImageData(for: owner)
         }
     }
 
@@ -369,18 +382,18 @@ struct CacheAsset: AssetType {
     var hasEncrypted: Bool {
         switch type {
         case .file:
-            return cache.hasEncryptedFileData(for: owner)
+            cache.hasEncryptedFileData(for: owner)
         case .image, .thumbnail:
-            return cache.hasEncryptedMediumImageData(for: owner)
+            cache.hasEncryptedMediumImageData(for: owner)
         }
     }
 
     var encrypted: Data? {
         switch type {
         case .file:
-            return cache.encryptedFileData(for: owner)
+            cache.encryptedFileData(for: owner)
         case .image, .thumbnail:
-            return cache.encryptedMediumImageData(for: owner)
+            cache.encryptedMediumImageData(for: owner)
         }
     }
 
@@ -424,7 +437,10 @@ struct CacheAsset: AssetType {
         do {
             try owner.mergeWithExistingData(message: genericMessage)
         } catch {
-            Logging.messageProcessing.warn("Failed to update asset id. Reason: \(error.localizedDescription)")
+            WireLogger.messageProcessing.warn(
+                "Failed to update asset id. Reason: \(error.localizedDescription)",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
             return
         }
     }
@@ -456,7 +472,8 @@ struct CacheAsset: AssetType {
         do {
             try owner.setUnderlyingMessage(genericMessage)
         } catch {
-            Logging.messageProcessing.warn("Failed to update preprocessed image data. Reason: \(error.localizedDescription)")
+            Logging.messageProcessing
+                .warn("Failed to update preprocessed image data. Reason: \(error.localizedDescription)")
         }
     }
 
@@ -467,9 +484,16 @@ struct CacheAsset: AssetType {
 
         switch type {
         case .file:
-            WireLogger.assets.debug("encrypting file")
+            WireLogger.assets.debug(
+                "encrypting file",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
             if let keys = cache.encryptFileAndComputeSHA256Digest(owner) {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
+                WireLogger.assets.debug(
+                    "encrypted file",
+                    attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+                )
             }
         case .image:
             if !needsPreprocessing, let original {
@@ -477,21 +501,40 @@ struct CacheAsset: AssetType {
                 cache.storeMediumImage(data: original, for: owner)
             }
 
-            WireLogger.assets.debug("encrypting image")
+            WireLogger.assets.debug(
+                "encrypting image",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
+                WireLogger.assets.debug(
+                    "encrypted image",
+                    attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+                )
+
             }
         case .thumbnail:
-            WireLogger.assets.debug("encrypting thumbnail")
+            WireLogger.assets.debug(
+                "encrypting thumbnail",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAssetPreview(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
+                WireLogger.assets.debug(
+                    "encrypted thumbnail",
+                    attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+                )
+
             }
         }
 
         do {
             try owner.setUnderlyingMessage(genericMessage)
         } catch {
-            Logging.messageProcessing.warn("Failed to encrypt asset message data. Reason: \(error.localizedDescription)")
+            WireLogger.messageProcessing.warn(
+                "Failed to encrypt asset message data. Reason: \(error.localizedDescription)",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
         }
     }
 
@@ -522,7 +565,7 @@ extension ZMAssetClientMessage: AssetMessage {
     }
 
     public var processingState: AssetProcessingState {
-        let assets = self.assets
+        let assets = assets
 
         // There is an asset that still needs encrypting and uploading.
         if assets.contains(where: {

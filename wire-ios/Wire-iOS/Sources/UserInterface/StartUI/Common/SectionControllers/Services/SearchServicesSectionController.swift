@@ -37,44 +37,60 @@ final class SearchServicesSectionController: SearchSectionController {
     }
 
     override var isHidden: Bool {
-        return services.isEmpty
+        services.isEmpty
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
-        collectionView?.register(OpenServicesAdminCell.self, forCellWithReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier)
+        collectionView?.register(
+            OpenServicesAdminCell.self,
+            forCellWithReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier
+        )
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if canSelfUserManageTeam {
-            return services.count + 1
+            services.count + 1
         } else {
-            return services.count
+            services.count
         }
     }
 
     override var sectionTitle: String {
-        return L10n.Localizable.Peoplepicker.Header.services
+        L10n.Localizable.Peoplepicker.Header.services
     }
 
     func service(for indexPath: IndexPath) -> ServiceUser {
         if canSelfUserManageTeam {
-            return services[indexPath.row - 1]
+            services[indexPath.row - 1]
         } else {
-            return services[indexPath.row]
+            services[indexPath.row]
         }
     }
 
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize.zero
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        CGSize.zero
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if canSelfUserManageTeam && indexPath.row == 0 {
-            return collectionView.dequeueReusableCell(withReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier, for: indexPath)
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        if canSelfUserManageTeam, indexPath.row == 0 {
+            return collectionView.dequeueReusableCell(
+                withReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier,
+                for: indexPath
+            )
         } else {
-            let service = self.service(for: indexPath)
+            let service = service(for: indexPath)
 
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: UserCell.zm_reuseIdentifier,
+                for: indexPath
+            ) as! UserCell
             if let selfUser = ZMUser.selfUser() {
                 cell.configure(
                     user: service,
@@ -91,10 +107,10 @@ final class SearchServicesSectionController: SearchSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if canSelfUserManageTeam && indexPath.row == 0 {
+        if canSelfUserManageTeam, indexPath.row == 0 {
             delegate?.addServicesSectionDidRequestOpenServicesAdmin()
         } else {
-            let service = self.service(for: indexPath)
+            let service = service(for: indexPath)
             delegate?.searchSectionController(self, didSelectUser: service, at: indexPath)
         }
     }

@@ -18,20 +18,20 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireRequestStrategy
 import WireUtilities
 
 extension ZMConversation: Conversation {
 
-    private static let logger = ZMSLog(tag: "message-processing")
-
-    public var name: String? { return displayName }
+    public var name: String? { displayName }
 
     public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
         do {
             return try appendText(content: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
         } catch {
-            Self.logger.warn("Failed to append text message from Share Ext. Reason: \(error.localizedDescription)")
+            WireLogger.messageProcessing
+                .warn("Failed to append text message from Share Ext. Reason: \(error.localizedDescription)")
             return nil
         }
     }
@@ -40,7 +40,8 @@ extension ZMConversation: Conversation {
         do {
             return try appendImage(from: data) as? Sendable
         } catch {
-            Self.logger.warn("Failed to append image message from Share Ext. Reason: \(error.localizedDescription)")
+            WireLogger.messageProcessing
+                .warn("Failed to append image message from Share Ext. Reason: \(error.localizedDescription)")
             return nil
         }
     }
@@ -49,7 +50,8 @@ extension ZMConversation: Conversation {
         do {
             return try appendFile(with: metadata) as? Sendable
         } catch {
-            Self.logger.warn("Failed to append file message from Share Ext. Reason: \(error.localizedDescription)")
+            WireLogger.messageProcessing
+                .warn("Failed to append file message from Share Ext. Reason: \(error.localizedDescription)")
             return nil
         }
     }
@@ -58,14 +60,16 @@ extension ZMConversation: Conversation {
         do {
             return try appendLocation(with: location) as? Sendable
         } catch {
-            Self.logger.warn("Failed to append location message from Share Ext. Reason: \(error.localizedDescription)")
+            WireLogger.messageProcessing
+                .warn("Failed to append location message from Share Ext. Reason: \(error.localizedDescription)")
             return nil
         }
     }
 
     /// Adds an observer for when the conversation verification status degrades
-    public func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void) -> TearDownCapable {
-        return DegradationObserver(conversation: self, callback: conversationVerificationDegradedObserver)
+    public func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void)
+        -> TearDownCapable {
+        DegradationObserver(conversation: self, callback: conversationVerificationDegradedObserver)
     }
 }
 
@@ -90,10 +94,14 @@ final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapab
         self.callback = callback
         self.conversation = conversation
         super.init()
-        self.observer = NotificationCenter.default.addObserver(forName: contextWasMergedNotification, object: nil, queue: nil) { [weak self] _ in
-                                                DispatchQueue.main.async {
-                                                    self?.processSaveNotification()
-                                                }
+        self.observer = NotificationCenter.default.addObserver(
+            forName: contextWasMergedNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.processSaveNotification()
+            }
         }
     }
 
@@ -102,28 +110,33 @@ final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapab
     }
 
     func tearDown() {
-        if let observer = self.observer {
+        if let observer {
             NotificationCenter.default.removeObserver(observer)
             self.observer = nil
         }
     }
 
     private func processSaveNotification() {
-        if !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty {
-            let untrustedUsers = self.conversation.localParticipants.filter {
+        if !conversation.messagesThatCausedSecurityLevelDegradation.isEmpty {
+            let untrustedUsers = conversation.localParticipants.filter {
                 $0.clients.first { !$0.verified } != nil
             }
 
-            self.callback(ConversationDegradationInfo(conversation: self.conversation,
-                                                      users: untrustedUsers)
+            callback(
+                ConversationDegradationInfo(
+                    conversation: conversation,
+                    users: untrustedUsers
+                )
             )
         }
     }
 
     func conversationDidChange(_ note: ConversationChangeInfo) {
         if note.causedByConversationPrivacyChange {
-            self.callback(ConversationDegradationInfo(conversation: note.conversation,
-                                                      users: Set(note.usersThatCausedConversationToDegrade)))
+            callback(ConversationDegradationInfo(
+                conversation: note.conversation,
+                users: Set(note.usersThatCausedConversationToDegrade)
+            ))
         }
     }
 }

@@ -30,38 +30,39 @@ public enum ZMSound: String, CustomStringConvertible {
     public static let ringtones = [ZMSound]()
 
     public func isRingtone() -> Bool {
-        return type(of: self).ringtones.contains(self)
+        type(of: self).ringtones.contains(self)
     }
 
     fileprivate static var playingPreviewID: SystemSoundID?
     fileprivate static var playingPreviewURL: URL?
 
     fileprivate static func stopPlayingPreview() {
-        if self.playingPreviewURL != nil,
-            let soundId = self.playingPreviewID {
+        if playingPreviewURL != nil,
+           let soundId = playingPreviewID {
             AudioServicesDisposeSystemSoundID(soundId)
-            self.playingPreviewID = .none
-            self.playingPreviewURL = .none
+            playingPreviewID = .none
+            playingPreviewURL = .none
         }
     }
 
     public static func playPreviewForURL(_ mediaURL: URL) {
-        self.stopPlayingPreview()
+        stopPlayingPreview()
 
-        self.playingPreviewURL = mediaURL
+        playingPreviewURL = mediaURL
         var soundId: SystemSoundID = 0
 
         if AudioServicesCreateSystemSoundID(mediaURL as CFURL, &soundId) == kAudioServicesNoError {
-            self.playingPreviewID = soundId
+            playingPreviewID = soundId
         }
 
         AudioServicesPlaySystemSound(soundId)
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(4 * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)) {
-            if self.playingPreviewID == soundId {
-                self.stopPlayingPreview()
+        DispatchQueue.main
+            .asyncAfter(deadline: DispatchTime.now() + Double(Int64(4 * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)) {
+                if playingPreviewID == soundId {
+                    stopPlayingPreview()
+                }
             }
-        }
     }
 
     public func fileURL() -> URL? {
@@ -69,7 +70,11 @@ public enum ZMSound: String, CustomStringConvertible {
         case .None:
             return nil
         case .WireText, .WirePing, .WireCall:
-            guard let path = Bundle.main.path(forResource: self.rawValue, ofType: type(of: self).fileExtension, inDirectory: "audio-notifications") else {
+            guard let path = Bundle.main.path(
+                forResource: rawValue,
+                ofType: type(of: self).fileExtension,
+                inDirectory: "audio-notifications"
+            ) else {
                 return nil
             }
             return URL(fileURLWithPath: path)
@@ -79,23 +84,23 @@ public enum ZMSound: String, CustomStringConvertible {
     fileprivate static let fileExtension = "m4a"
 
     public func filename() -> String {
-        return (self.rawValue as NSString).appendingPathExtension(type(of: self).fileExtension)!
+        (rawValue as NSString).appendingPathExtension(type(of: self).fileExtension)!
     }
 
     public var description: String {
-        return self.rawValue.capitalized
+        rawValue.capitalized
     }
 
     public var descriptionLocalizationKey: String {
         switch self {
         case .None:
-            return "self.settings.sound_menu.sounds.none"
+            "self.settings.sound_menu.sounds.none"
         case .WireCall:
-            return "self.settings.sound_menu.sounds.wire_call"
+            "self.settings.sound_menu.sounds.wire_call"
         case .WireText:
-            return "self.settings.sound_menu.sounds.wire_message"
+            "self.settings.sound_menu.sounds.wire_message"
         case .WirePing:
-            return "self.settings.sound_menu.sounds.wire_ping"
+            "self.settings.sound_menu.sounds.wire_ping"
         }
     }
 

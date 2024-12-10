@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
-    static let legalHoldURL: URL = .wr_legalHoldLearnMore
+    static let legalHoldURL: URL = WireURLs.shared.legalHoldInfo
     var conversation: ZMConversation?
 
     struct Configuration {
@@ -51,7 +51,6 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
         imageView.image = object.icon
         conversation = object.conversation
     }
-
 }
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
@@ -73,11 +72,17 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     let accessibilityLabel: String?
 
     init(systemMessageType: ZMSystemMessageType, conversation: ZMConversation) {
-        configuration = ConversationLegalHoldCellDescription.configuration(for: systemMessageType, in: conversation)
-        accessibilityLabel = configuration.attributedText?.string
+        self.configuration = ConversationLegalHoldCellDescription.configuration(
+            for: systemMessageType,
+            in: conversation
+        )
+        self.accessibilityLabel = configuration.attributedText?.string
     }
 
-    private static func configuration(for systemMessageType: ZMSystemMessageType, in conversation: ZMConversation) -> View.Configuration {
+    private static func configuration(
+        for systemMessageType: ZMSystemMessageType,
+        in conversation: ZMConversation
+    ) -> View.Configuration {
         let systemMessageTitle = title(for: systemMessageType)
         let attributedText = NSAttributedString.markdown(from: systemMessageTitle, style: .systemMessage)
 
@@ -89,30 +94,13 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+            L10n.Localizable.Content.System.MessageLegalHold
+                .enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
         case .legalHoldDisabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.disabled
+            L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:
-            return ""
+            ""
         }
-    }
-
-}
-
-extension ConversationLegalHoldSystemMessageCell {
-
-    override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-
-        if url == ConversationLegalHoldSystemMessageCell.legalHoldURL,
-            let conversation,
-            let clientViewController = ZClientViewController.shared {
-
-            LegalHoldDetailsViewController.present(in: clientViewController, conversation: conversation, userSession: clientViewController.userSession)
-
-            return true
-        }
-
-        return false
     }
 
 }

@@ -15,57 +15,57 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 import UIKit
 import WireSyncEngine
 
 final class ConversationActionController {
 
-    struct PresentationContext {
-        let view: UIView
-        let rect: CGRect
-    }
-
     enum Context {
-        case list, details
+        case list
+        case details
     }
 
     private let conversation: GroupDetailsConversationType
-    unowned let target: UIViewController
-    weak var sourceView: UIView?
-    var currentContext: PresentationContext?
-    weak var alertController: UIAlertController?
+    private unowned let target: UIViewController
+    private(set) weak var sourceView: UIView?
+    var currentContext: PopoverPresentationControllerConfiguration?
+    private(set) weak var alertController: UIAlertController?
     let userSession: UserSession
 
-    init(conversation: GroupDetailsConversationType,
-         target: UIViewController,
-         sourceView: UIView?,
-         userSession: UserSession) {
+    init(
+        conversation: GroupDetailsConversationType,
+        target: UIViewController,
+        sourceView: UIView,
+        userSession: UserSession
+    ) {
         self.conversation = conversation
         self.target = target
         self.sourceView = sourceView
         self.userSession = userSession
     }
 
-    func presentMenu(from sourceView: UIView?, context: Context) {
-        currentContext = sourceView.map {
-            .init(
-                view: target.view,
-                rect: target.view.convert($0.frame, from: $0.superview).insetBy(dx: 8, dy: 8)
-            )
-        }
+    func presentMenu(from sourceView: UIView, context: Context) {
 
-        let actions: [ZMConversation.Action]
-        switch context {
+        let actions: [ZMConversation.Action] = switch context {
         case .details:
-            actions = (conversation as? ZMConversation)?.detailActions ?? []
+            (conversation as? ZMConversation)?.detailActions ?? []
         case .list:
-            actions = (conversation as? ZMConversation)?.listActions ?? []
+            (conversation as? ZMConversation)?.listActions ?? []
         }
 
         let title = context == .list ? conversation.displayName : nil
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         actions.map(alertAction).forEach(controller.addAction)
         controller.addAction(.cancel())
+
+        if controller.popoverPresentationController != nil {
+            currentContext = .sourceView(
+                sourceView: sourceView.superview!,
+                sourceRect: sourceView.frame
+            )
+        }
+
         present(controller)
 
         alertController = controller
@@ -91,20 +91,20 @@ final class ConversationActionController {
             requestDeleteGroupResult { result in
                 self.handleDeleteGroupResult(result, conversation: conversation, in: userSession)
             }
-        case .archive(isArchived: let isArchived): self.transitionToListAndEnqueue {
-            conversation.isArchived = !isArchived
+        case let .archive(isArchived: isArchived): transitionToListAndEnqueue {
+                conversation.isArchived = !isArchived
             }
-        case .markRead: self.enqueue {
-            conversation.markAsRead()
+        case .markRead: enqueue {
+                conversation.markAsRead()
             }
-        case .markUnread: self.enqueue {
-            conversation.markAsUnread()
+        case .markUnread: enqueue {
+                conversation.markAsUnread()
             }
-        case .configureNotifications: self.requestNotificationResult(for: conversation) { result in
-            self.handleNotificationResult(result, for: conversation)
-        }
-        case .silence(isSilenced: let isSilenced): self.enqueue {
-            conversation.mutedMessageTypes = isSilenced ? .none : .all
+        case .configureNotifications: requestNotificationResult(for: conversation) { result in
+                self.handleNotificationResult(result, for: conversation)
+            }
+        case let .silence(isSilenced: isSilenced): enqueue {
+                conversation.mutedMessageTypes = isSilenced ? .none : .all
             }
         case .leave:
             request(LeaveResult.self) { result in
@@ -112,92 +112,48 @@ final class ConversationActionController {
             }
         case .clearContent:
             requestClearContentResult(for: conversation) { result in
-            self.handleClearContentResult(result, for: conversation)
+                self.handleClearContentResult(result, for: conversation)
             }
         case .cancelRequest:
             guard let user = conversation.connectedUser else { return }
-            self.requestCancelConnectionRequestResult(for: user) { result in
+            requestCancelConnectionRequestResult(for: user) { result in
                 self.handleConnectionRequestResult(result, for: conversation)
             }
-        case .block: self.requestBlockResult(for: conversation) { result in
-            self.handleBlockResult(result, for: conversation)
+        case .block: requestBlockResult(for: conversation) { result in
+                self.handleBlockResult(result, for: conversation)
             }
         case .moveToFolder:
-            self.openMoveToFolder(for: conversation)
+            openMoveToFolder(for: conversation)
         case .removeFromFolder:
             enqueue {
                 conversation.removeFromFolder()
             }
-        case .favorite(isFavorite: let isFavorite):
+        case let .favorite(isFavorite: isFavorite):
             enqueue {
                 conversation.isFavorite = !isFavorite
             }
         case .remove: fatalError()
-        case .duplicateConversation:
-            duplicateConversation()
         }
     }
 
     private func alertAction(for action: ZMConversation.Action) -> UIAlertAction {
-        return action.alertAction { [weak self] in
+        action.alertAction { [weak self] in
             guard let self else { return }
-            self.handleAction(action)
+            handleAction(action)
         }
-    }
-
-    func present(_ controller: UIViewController) {
-        present(controller,
-                currentContext: currentContext,
-                target: target)
     }
 
     func presentError(_ error: LocalizedError) {
         target.presentLocalizedErrorAlert(error)
     }
 
-    private func prepare(viewController: UIViewController, with context: PresentationContext) {
-        viewController.popoverPresentationController.map {
-            $0.sourceView = context.view
-            $0.sourceRect = context.rect
-        }
-    }
+    func present(_ controller: UIViewController) {
 
-    private func present(_ controller: UIViewController,
-                         currentContext: PresentationContext?,
-                         target: UIViewController) {
-        currentContext.map {
-            prepare(viewController: controller, with: $0)
+        _ = currentContext.map {
+            controller.configurePopoverPresentationController(using: $0)
         }
-
-        controller.configPopover(pointToView: sourceView ?? target.view, popoverPresenter: target as? PopoverPresenterViewController)
 
         target.present(controller, animated: true)
-    }
-
-    private func duplicateConversation() {
-        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
-
-        guard let context = (userSession as? ZMUserSession)?.syncContext,
-            let conversation = conversation as? ZMConversation else {
-            return
-        }
-        context.performAndWait {
-            guard let original = ZMConversation.existingObject(for: conversation.objectID, in: context) else {
-                return
-            }
-            let duplicate = ZMConversation.insertNewObject(in: context)
-            duplicate.remoteIdentifier = original.remoteIdentifier
-            duplicate.domain = original.domain
-            duplicate.nonTeamRoles = original.nonTeamRoles
-            duplicate.creator = original.creator
-            duplicate.conversationType = original.conversationType
-            duplicate.participantRoles = original.participantRoles
-
-            context.saveOrRollback()
-
-            WireLogger.conversation.debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
-        }
-
     }
 
 }

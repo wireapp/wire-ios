@@ -25,23 +25,27 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
     var mainView: ViewDescriptor & ValueSubmission {
         emailPasswordFieldDescription
     }
+
     let headline: String
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let initialValidation: ValueValidation
     let footerView: AuthenticationFooterViewDescription?
 
-    private let emailPasswordFieldDescription = EmailPasswordFieldDescription(forRegistration: true, usePasswordDeferredValidation: true)
+    private let emailPasswordFieldDescription = EmailPasswordFieldDescription(
+        forRegistration: true,
+        usePasswordDeferredValidation: true
+    )
 
     init() {
-        backButton = BackButtonDescription()
-        headline = L10n.Localizable.Registration.AddEmailPassword.Hero.title
-        subtext = .markdown(from: L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph, style: .login)
-        initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
-        footerView = nil
+        self.backButton = BackButtonDescription()
+        self.headline = L10n.Localizable.Registration.AddEmailPassword.Hero.title
+        self.subtext = .markdown(from: L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph, style: .login)
+        self.initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
+        self.footerView = nil
 
         let loginDescription = CTAFooterDescription()
-        secondaryView = loginDescription
+        self.secondaryView = loginDescription
         loginDescription.ctaButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
 
         emailPasswordFieldDescription.textField.delegate = self
@@ -56,19 +60,24 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
             return
         }
 
-        let credentials = (emailPasswordFieldDescription.textField.emailField.input, emailPasswordFieldDescription.textField.passwordField.input)
+        let credentials = (
+            emailPasswordFieldDescription.textField.emailField.input,
+            emailPasswordFieldDescription.textField.passwordField.input
+        )
         emailPasswordFieldDescription.valueSubmitted?(credentials)
     }
 
     private func updateLoginButtonState(_ textField: EmailPasswordTextField) {
-        (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField.passwordField.isInputValid
+        (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField
+            .passwordField.isInputValid
     }
 }
 
 extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
 
     func textFieldDidUpdateText(_ textField: EmailPasswordTextField) {
-        (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField.passwordField.isInputValid
+        (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField
+            .passwordField.isInputValid
     }
 
     func textField(_ textField: EmailPasswordTextField, didConfirmCredentials credentials: (String, String)) {}
@@ -112,6 +121,6 @@ private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondar
     }
 
     func display(on error: Error) -> ViewDescriptor? {
-        return nil
+        nil
     }
 }

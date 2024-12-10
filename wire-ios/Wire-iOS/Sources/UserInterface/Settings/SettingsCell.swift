@@ -29,13 +29,13 @@ enum SettingsCellPreview {
 }
 
 protocol SettingsCellType: AnyObject {
-    var titleText: String {get set}
-    var preview: SettingsCellPreview {get set}
-    var descriptor: SettingsCellDescriptorType? {get set}
-    var icon: StyleKitIcon? {get set}
+    var titleText: String { get set }
+    var preview: SettingsCellPreview { get set }
+    var descriptor: SettingsCellDescriptorType? { get set }
+    var icon: StyleKitIcon? { get set }
 }
 
-typealias SettingsTableCellProtocol = UITableViewCell & SettingsCellType
+typealias SettingsTableCellProtocol = SettingsCellType & UITableViewCell
 
 class SettingsTableCell: SettingsTableCellProtocol {
     private let iconImageView: UIImageView = {
@@ -48,7 +48,8 @@ class SettingsTableCell: SettingsTableCellProtocol {
     let cellNameLabel: UILabel = {
         let label = DynamicFontLabel(
             fontSpec: .normalSemiboldFont,
-            color: SemanticColors.Label.textDefault)
+            color: SemanticColors.Label.textDefault
+        )
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         label.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
@@ -78,8 +79,10 @@ class SettingsTableCell: SettingsTableCellProtocol {
     }()
 
     private let badgeLabel: UILabel = {
-        let badgeLabel = DynamicFontLabel(fontSpec: .smallMediumFont,
-                                          color: SemanticColors.Label.textDefaultWhite)
+        let badgeLabel = DynamicFontLabel(
+            fontSpec: .smallMediumFont,
+            color: SemanticColors.Label.textDefaultWhite
+        )
         badgeLabel.textAlignment = .center
         return badgeLabel
     }()
@@ -94,7 +97,10 @@ class SettingsTableCell: SettingsTableCellProtocol {
         return imagePreview
     }()
 
-    private lazy var cellNameLabelToIconInset: NSLayoutConstraint = cellNameLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 24)
+    private lazy var cellNameLabelToIconInset: NSLayoutConstraint = cellNameLabel.leadingAnchor.constraint(
+        equalTo: iconImageView.trailingAnchor,
+        constant: 24
+    )
 
     var titleText: String = "" {
         didSet {
@@ -105,7 +111,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
     var preview: SettingsCellPreview = .none {
         didSet {
             switch preview {
-            case .text(let string):
+            case let .text(string):
                 valueLabel.text = string
                 badgeLabel.text = ""
                 badge.isHidden = true
@@ -114,7 +120,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
                 imagePreview.accessibilityValue = nil
                 imagePreview.isAccessibilityElement = false
 
-            case .badge(let value):
+            case let .badge(value):
                 valueLabel.text = ""
                 badgeLabel.text = "\(value)"
                 badge.isHidden = false
@@ -123,7 +129,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
                 imagePreview.accessibilityValue = nil
                 imagePreview.isAccessibilityElement = false
 
-            case .image(let image):
+            case let .image(image):
                 valueLabel.text = ""
                 badgeLabel.text = ""
                 badge.isHidden = true
@@ -132,7 +138,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
                 imagePreview.accessibilityValue = "image"
                 imagePreview.isAccessibilityElement = true
 
-            case .color(let color):
+            case let .color(color):
                 valueLabel.text = ""
                 badgeLabel.text = ""
                 badge.isHidden = true
@@ -260,7 +266,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
     func updateBackgroundColor() {
         backgroundColor = SemanticColors.View.backgroundUserCell
 
-        if isHighlighted && selectionStyle != .none {
+        if isHighlighted, selectionStyle != .none {
             backgroundColor = SemanticColors.View.backgroundUserCellHightLighted
             badge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
             badgeLabel.textColor = SemanticColors.Label.textDefaultWhite
@@ -293,8 +299,8 @@ final class SettingsToggleCell: SettingsTableCell {
     }
 
     @objc
-    func onSwitchChanged(_ sender: UIResponder) {
-        descriptor?.select(SettingsPropertyValue(switchView.isOn))
+    func onSwitchChanged(_ sender: UISwitch) {
+        descriptor?.select(SettingsPropertyValue(switchView.isOn), sender: sender)
     }
 }
 
@@ -302,31 +308,38 @@ final class SettingsValueCell: SettingsTableCell {
     override var descriptor: SettingsCellDescriptorType? {
         willSet {
             if let propertyDescriptor = descriptor as? SettingsPropertyCellDescriptorType {
-                NotificationCenter.default.removeObserver(self,
-                                                          name: propertyDescriptor.settingsProperty.propertyName.notificationName,
-                                                          object: nil)
+                NotificationCenter.default.removeObserver(
+                    self,
+                    name: propertyDescriptor.settingsProperty.propertyName
+                        .notificationName,
+                    object: nil
+                )
             }
         }
         didSet {
             if let propertyDescriptor = descriptor as? SettingsPropertyCellDescriptorType {
 
-                NotificationCenter.default.addObserver(self,
-                                                       selector: #selector(SettingsValueCell.onPropertyChanged(_:)),
-                                                       name: propertyDescriptor.settingsProperty.propertyName.notificationName,
-                                                       object: nil)
+                NotificationCenter.default.addObserver(
+                    self,
+                    selector: #selector(SettingsValueCell.onPropertyChanged(_:)),
+                    name: propertyDescriptor.settingsProperty.propertyName
+                        .notificationName,
+                    object: nil
+                )
             }
         }
     }
 
     // MARK: - Properties observing
 
-    @objc func onPropertyChanged(_ notification: Notification) {
+    @objc
+    func onPropertyChanged(_ notification: Notification) {
         descriptor?.featureCell(self)
     }
 }
 
 final class SettingsTextCell: SettingsTableCell,
-                              UITextFieldDelegate {
+    UITextFieldDelegate {
     var textInput: UITextField = TailEditingTextField(frame: CGRect.zero)
 
     override func setup() {
@@ -360,7 +373,10 @@ final class SettingsTextCell: SettingsTableCell,
         NSLayoutConstraint.activate([
             textInput.topAnchor.constraint(equalTo: contentView.topAnchor, constant: -8),
             textInput.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8),
-            textInput.trailingAnchor.constraint(equalTo: trailingBoundaryView.trailingAnchor, constant: -textInputSpacing),
+            textInput.trailingAnchor.constraint(
+                equalTo: trailingBoundaryView.trailingAnchor,
+                constant: -textInputSpacing
+            ),
 
             cellNameLabel.trailingAnchor.constraint(equalTo: textInput.leadingAnchor, constant: -textInputSpacing)
         ])
@@ -385,7 +401,11 @@ final class SettingsTextCell: SettingsTableCell,
 
     // MARK: - UITextFieldDelegate
 
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         if string.rangeOfCharacter(from: CharacterSet.newlines) != .none {
             textField.resignFirstResponder()
             return false
@@ -395,12 +415,12 @@ final class SettingsTextCell: SettingsTableCell,
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        return true
+        true
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let text = textInput.text {
-            descriptor?.select(SettingsPropertyValue.string(value: text))
+            descriptor?.select(SettingsPropertyValue.string(value: text), sender: textField)
         }
     }
 }

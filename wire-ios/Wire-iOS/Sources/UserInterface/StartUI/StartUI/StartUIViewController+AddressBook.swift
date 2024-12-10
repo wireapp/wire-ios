@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireMainNavigationUI
 
 extension StartUIViewController {
 
@@ -37,12 +38,32 @@ extension StartUIViewController {
 extension StartUIViewController: ShareContactsViewControllerDelegate {
 
     func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController) {
-        viewController.dismiss(animated: true)
+        // called once user has given its contact permission
+
+        if let navigationController = viewController.navigationController {
+            var viewControllers = navigationController.viewControllers
+            _ = viewControllers.popLast()
+            viewControllers.append(ContactsViewController(isFederationUsageAllowed: userSession.isFederationUsageAllowed))
+            navigationController.setViewControllers(viewControllers, animated: true)
+        } else {
+            viewController.dismiss(animated: true) {
+                self.inviteMoreButtonTapped(nil)
+            }
+        }
     }
 
     func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController) {
-        dismiss(animated: true) {
-            UIApplication.shared.topmostViewController()?.presentInviteActivityViewController(with: self.quickActionsBar)
+        guard
+            let navigationController,
+            let sourceView = quickActionsBar.inviteButton?.superview,
+            let sourceRect = quickActionsBar.inviteButton?.frame.insetBy(dx: -2, dy: -2)
+        else { return }
+
+        navigationController.popViewController(animated: true) { [weak self] in
+            self?.presentInviteActivityViewController(
+                popoverPresentationConfiguration: .sourceView(sourceView, sourceRect),
+                completionWithItemsHandler: { _, _, _, _ in self?.dismiss(animated: true) }
+            )
         }
     }
 }

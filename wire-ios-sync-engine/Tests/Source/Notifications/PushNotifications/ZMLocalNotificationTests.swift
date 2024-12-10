@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class ZMLocalNotificationTests: MessagingTest {
 
@@ -36,7 +36,7 @@ class ZMLocalNotificationTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        selfUser = ZMUser.selfUser(in: self.uiMOC)
+        selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
         sender = insertUser(with: UUID.create(), name: "Super User")
         otherUser1 = insertUser(with: UUID.create(), name: "Other User1")
@@ -47,7 +47,8 @@ class ZMLocalNotificationTests: MessagingTest {
             name: "Super Conversation",
             type: .oneOnOne,
             mutedMessages: .none,
-            otherParticipants: [selfUser, sender])
+            otherParticipants: [selfUser, sender]
+        )
         groupConversation = insertConversation(
             with: UUID.create(),
             name: "Super Conversation",
@@ -101,7 +102,7 @@ class ZMLocalNotificationTests: MessagingTest {
 
     func insertUser(with remoteID: UUID, name: String?) -> ZMUser {
         var user: ZMUser!
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             user = ZMUser.insertNewObject(in: self.uiMOC)
             user.name = name
             user.remoteIdentifier = remoteID
@@ -115,23 +116,30 @@ class ZMLocalNotificationTests: MessagingTest {
         name: String?,
         type: ZMConversationType,
         mutedMessages: MutedMessageTypes,
-        otherParticipants: [ZMUser]) -> ZMConversation {
+        otherParticipants: [ZMUser]
+    ) -> ZMConversation {
         var conversation: ZMConversation!
-            conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = remoteID
-            conversation.userDefinedName = name
-            conversation.conversationType = type
-            conversation.mutedMessageTypes = mutedMessages
-            conversation.lastServerTimeStamp = Date()
-            conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp
-            conversation?.addParticipantsAndUpdateConversationState(
-                users: Set(otherParticipants + [selfUser]),
-                role: nil)
-            self.uiMOC.saveOrRollback()
+        conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = remoteID
+        conversation.userDefinedName = name
+        conversation.conversationType = type
+        conversation.mutedMessageTypes = mutedMessages
+        conversation.lastServerTimeStamp = Date()
+        conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp
+        conversation?.addParticipantsAndUpdateConversationState(
+            users: Set(otherParticipants + [selfUser]),
+            role: nil
+        )
+        uiMOC.saveOrRollback()
         return conversation
     }
 
-    func noteWithPayload(_ data: NSDictionary?, fromUserID: UUID?, in conversation: ZMConversation, type: String) -> ZMLocalNotification? {
+    func noteWithPayload(
+        _ data: NSDictionary?,
+        fromUserID: UUID?,
+        in conversation: ZMConversation,
+        type: String
+    ) -> ZMLocalNotification? {
         var note: ZMLocalNotification?
         uiMOC.performGroupedAndWait {
             let payload = self.payloadForEvent(in: conversation, type: type, data: data, from: fromUserID)
@@ -142,11 +150,21 @@ class ZMLocalNotificationTests: MessagingTest {
         return note
     }
 
-    func noteWithPayload(_ data: NSDictionary?, from user: ZMUser, in conversation: ZMConversation, type: String) -> ZMLocalNotification? {
-        return noteWithPayload(data, fromUserID: user.remoteIdentifier, in: conversation, type: type)
+    func noteWithPayload(
+        _ data: NSDictionary?,
+        from user: ZMUser,
+        in conversation: ZMConversation,
+        type: String
+    ) -> ZMLocalNotification? {
+        noteWithPayload(data, fromUserID: user.remoteIdentifier, in: conversation, type: type)
     }
 
-    func payloadForEvent(in conversation: ZMConversation, type: String, data: NSDictionary?, from userID: UUID?) -> NSMutableDictionary {
+    func payloadForEvent(
+        in conversation: ZMConversation,
+        type: String,
+        data: NSDictionary?,
+        from userID: UUID?
+    ) -> NSMutableDictionary {
         let userRemoteID = userID ?? UUID.create()
         let convRemoteID = conversation.remoteIdentifier ?? UUID.create()
         let serverTimeStamp = conversation.lastReadServerTimeStamp?.addingTimeInterval(5) ?? Date()
@@ -160,7 +178,12 @@ class ZMLocalNotificationTests: MessagingTest {
         ]).mutableCopy() as! NSMutableDictionary
     }
 
-    func createUpdateEvent(_ nonce: UUID, conversationID: UUID, genericMessage: GenericMessage, senderID: UUID = UUID.create()) -> ZMUpdateEvent {
+    func createUpdateEvent(
+        _ nonce: UUID,
+        conversationID: UUID,
+        genericMessage: GenericMessage,
+        senderID: UUID = UUID.create()
+    ) -> ZMUpdateEvent {
         let payload: [String: Any] = [
             "id": UUID.create().transportString(),
             "conversation": conversationID.transportString(),
@@ -173,11 +196,18 @@ class ZMLocalNotificationTests: MessagingTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
 
-    func createMemberJoinUpdateEvent(_ nonce: UUID, conversationID: UUID, users: [ZMUser], senderID: UUID = UUID.create()) -> ZMUpdateEvent {
+    func createMemberJoinUpdateEvent(
+        _ nonce: UUID,
+        conversationID: UUID,
+        users: [ZMUser],
+        senderID: UUID = UUID.create()
+    ) -> ZMUpdateEvent {
         let userIds = users.map { $0.remoteIdentifier.transportString() }
         let usersWithRoles = users.map { user -> [String: String] in
-            return ["id": user.remoteIdentifier.transportString(),
-                    "conversation_role": "wire_admin"]
+            return [
+                "id": user.remoteIdentifier.transportString(),
+                "conversation_role": "wire_admin"
+            ]
         }
 
         let payload: [String: Any] = [
@@ -193,7 +223,12 @@ class ZMLocalNotificationTests: MessagingTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
 
-    func createMemberLeaveUpdateEvent(_ nonce: UUID, conversationID: UUID, users: [ZMUser], senderID: UUID = UUID.create()) -> ZMUpdateEvent {
+    func createMemberLeaveUpdateEvent(
+        _ nonce: UUID,
+        conversationID: UUID,
+        users: [ZMUser],
+        senderID: UUID = UUID.create()
+    ) -> ZMUpdateEvent {
         let userIds = users.map { $0.remoteIdentifier.transportString() }
         let payload: [String: Any] = [
             "from": senderID.transportString(),
@@ -207,15 +242,21 @@ class ZMLocalNotificationTests: MessagingTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
 
-    func createMessageTimerUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = UUID.create(), timer: Int64 = 31536000, timestamp: Date = Date()) -> ZMUpdateEvent {
+    func createMessageTimerUpdateEvent(
+        _ nonce: UUID,
+        conversationID: UUID,
+        senderID: UUID = UUID.create(),
+        timer: Int64 = 31_536_000,
+        timestamp: Date = Date()
+    ) -> ZMUpdateEvent {
 
-       let payload: [String: Any] = [
-        "from": senderID.transportString(),
-        "conversation": conversationID.transportString(),
-        "time": timestamp.transportString(),
-        "data": ["message_timer": timer],
-        "type": "conversation.message-timer-update"
-       ]
+        let payload: [String: Any] = [
+            "from": senderID.transportString(),
+            "conversation": conversationID.transportString(),
+            "time": timestamp.transportString(),
+            "data": ["message_timer": timer],
+            "type": "conversation.message-timer-update"
+        ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
 

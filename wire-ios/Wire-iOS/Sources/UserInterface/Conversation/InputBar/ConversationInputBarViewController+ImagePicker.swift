@@ -17,19 +17,19 @@
 //
 
 import AVFoundation
-import Foundation
+import UIKit
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "ConversationInputBarViewController - Image Picker")
 
 extension ConversationInputBarViewController {
 
-    func presentImagePicker(with sourceType: UIImagePickerController.SourceType,
-                            mediaTypes: [String],
-                            allowsEditing: Bool,
-                            pointToView: UIView?) {
-
-        guard let rootViewController = UIApplication.shared.firstKeyWindow?.rootViewController as? PopoverPresenterViewController else { return }
+    func presentImagePicker(
+        sourceType: UIImagePickerController.SourceType,
+        mediaTypes: [String],
+        allowsEditing: Bool,
+        pointToView: UIView
+    ) {
 
         if !UIImagePickerController.isSourceTypeAvailable(sourceType) {
             if UIDevice.isSimulator {
@@ -39,42 +39,33 @@ extension ConversationInputBarViewController {
                 }
             }
             return
-            // Don't crash on Simulator
+                // Don't crash on Simulator
         }
 
-        let presentController = {
+        let presentController = { [self] in
 
-            let context = ImagePickerPopoverPresentationContext(presentViewController: rootViewController,
-                                                                sourceType: sourceType)
-
-            let pickerController = UIImagePickerController.popoverForIPadRegular(with: context)
+            let pickerController = UIImagePickerController()
+            pickerController.sourceType = sourceType
+            pickerController.preferredContentSize = .IPadPopover.preferredContentSize
             pickerController.delegate = self
             pickerController.allowsEditing = allowsEditing
             pickerController.mediaTypes = mediaTypes
-            pickerController.videoMaximumDuration = self.userSession.maxVideoLength
+            pickerController.videoMaximumDuration = userSession.maxVideoLength
             pickerController.videoExportPreset = AVURLAsset.defaultVideoQuality
-
-            if let popover = pickerController.popoverPresentationController,
-                let imageView = pointToView {
-                popover.config(from: rootViewController,
-                               pointToView: imageView,
-                               sourceView: rootViewController.view)
-
-                popover.backgroundColor = .white
-                popover.permittedArrowDirections = .down
-            }
-
             if sourceType == .camera {
                 let settingsCamera: SettingsCamera? = Settings.shared[.preferredCamera]
-                switch settingsCamera {
-                case .back?:
-                    pickerController.cameraDevice = .rear
-                case .front?, .none:
-                    pickerController.cameraDevice = .front
-                }
+                pickerController.cameraDevice = settingsCamera == .back ? .rear : .front
             }
 
-            rootViewController.present(pickerController, animated: true)
+            if sourceType != .camera,
+               let popoverPresentationController = pickerController.popoverPresentationController {
+                popoverPresentationController.sourceView = pointToView.superview
+                popoverPresentationController.sourceRect = pointToView.frame
+                popoverPresentationController.backgroundColor = .white
+                popoverPresentationController.permittedArrowDirections = .down
+            }
+
+            present(pickerController, animated: true)
         }
 
         if sourceType == .camera {
@@ -84,8 +75,10 @@ extension ConversationInputBarViewController {
         }
     }
 
-    func processVideo(info: [UIImagePickerController.InfoKey: Any],
-                      picker: UIImagePickerController) {
+    func processVideo(
+        info: [UIImagePickerController.InfoKey: Any],
+        picker: UIImagePickerController
+    ) {
         guard let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL else {
             parent?.dismiss(animated: true)
             zmLog.error("Video not provided form \(picker): info \(info)")
@@ -96,8 +89,11 @@ extension ConversationInputBarViewController {
             return
         }
 
-        let videoTempURL = URL(fileURLWithPath: NSTemporaryDirectory(),
-            isDirectory: true).appendingPathComponent(String.filename(for: selfUser)).appendingPathExtension(videoURL.pathExtension)
+        let videoTempURL = URL(
+            fileURLWithPath: NSTemporaryDirectory(),
+            isDirectory: true
+        ).appendingPathComponent(String.filename(for: selfUser))
+            .appendingPathExtension(videoURL.pathExtension)
 
         do {
             try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)
@@ -106,19 +102,29 @@ extension ConversationInputBarViewController {
             return
         }
 
-        if picker.sourceType == UIImagePickerController.SourceType.camera && UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoTempURL.path),
+        if picker.sourceType == UIImagePickerController.SourceType.camera,
+           UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoTempURL.path),
            MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
-            UISaveVideoAtPathToSavedPhotosAlbum(videoTempURL.path, self, #selector(video(_:didFinishSavingWithError:contextInfo:)), nil)
+            UISaveVideoAtPathToSavedPhotosAlbum(
+                videoTempURL.path,
+                self,
+                #selector(video(_:didFinishSavingWithError:contextInfo:)),
+                nil
+            )
         }
 
-        AVURLAsset.convertVideoToUploadFormat(at: videoTempURL, fileLengthLimit: Int64(userSession.maxUploadFileSize)) { resultURL, _, error in
-            if error == nil,
-               let resultURL {
-                self.uploadFile(at: resultURL)
+        AVURLAsset
+            .convertVideoToUploadFormat(
+                at: videoTempURL,
+                fileLengthLimit: Int64(userSession.maxUploadFileSize)
+            ) { resultURL, _, error in
+                if error == nil,
+                   let resultURL {
+                    self.uploadFile(at: resultURL)
+                }
+
+                self.parent?.dismiss(animated: true)
             }
-
-            self.parent?.dismiss(animated: true)
-        }
     }
 
 }

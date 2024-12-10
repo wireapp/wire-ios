@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireSyncEngine
 import WireSyncEngineSupport
+import WireTestingPackage
+import WireTransport
 import XCTest
 
 @testable import Wire
@@ -68,15 +69,16 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var mockConversation: MockConversation!
-    var mockUserSession: UserSessionMock!
-    var mockCreateSecuredGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
+    private var mockConversation: MockConversation!
+    private var mockUserSession: UserSessionMock!
+    private var mockCreateSecuredGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp method
 
     override func setUp() {
         super.setUp()
-        BackendInfo.storage = .temporary()
+        snapshotHelper = SnapshotHelper()
         mockConversation = MockConversation()
         mockUserSession = UserSessionMock()
         mockCreateSecuredGuestLinkUseCase = MockCreateConversationGuestLinkUseCaseProtocol()
@@ -85,10 +87,11 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     // MARK: - tearDown method
 
     override func tearDown() {
-        BackendInfo.storage = UserDefaults.standard
+        snapshotHelper = nil
         mockConversation = nil
         mockUserSession = nil
         mockCreateSecuredGuestLinkUseCase = nil
+
         super.tearDown()
     }
 
@@ -111,7 +114,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersGuestsScreenWhenAllowGuestsIsEnabled_DarkTheme() {
@@ -120,10 +123,11 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testThatItRendersGuestsScreenWhenAllowGuestsIsDisabled() {
@@ -134,7 +138,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersGuestsScreenWhenAllowGuestsIsDisabled_DarkTheme() {
@@ -143,10 +147,11 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     // MARK: Renders Guests Screen when Guests link is enabled/disabled etc
@@ -154,50 +159,64 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     func testThatItRendersAllowGuests_WithLink() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
+        config.linkResult = .success((
+            uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9",
+            secured: false
+        ))
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WithLink_DarkTheme() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
+        config.linkResult = .success((
+            uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9",
+            secured: false
+        ))
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WithLink_Copying() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
 
-        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
+        config.linkResult = .success((
+            uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9",
+            secured: false
+        ))
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         viewModel.copyInProgress = true
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WithLink_DarkTheme_Copying() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
+        config.linkResult = .success((
+            uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9",
+            secured: false
+        ))
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         viewModel.copyInProgress = true
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WithoutLink() {
@@ -208,7 +227,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WithoutLink_DarkTheme() {
@@ -218,10 +237,11 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WhenGuestsLinksAreDisabled_IsSelfTeamConversation() {
@@ -234,7 +254,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WhenGuestsLinksAreDisabled_IsSelfTeamConversation_DarkTheme() {
@@ -245,10 +265,11 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WhenGuestsLinksAreDisabled_IsOtherTeamConversation() {
@@ -260,7 +281,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WhenGuestsLinksAreDisabled_IsOtherTeamConversation_DarkTheme() {
@@ -271,10 +292,11 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WhenGuestsLinksAreEnabled_IsOtherTeamConversation() {
@@ -287,7 +309,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WhenGuestsLinksAreEnabled_IsOtherTeamConversation_DarkTheme() {
@@ -299,10 +321,11 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WhenGuestLinkFeatureStatusIsUnknown() {
@@ -312,7 +335,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersAllowGuests_WhenGuestLinkFeatureStatusIsUnknown_DarkTheme() {
@@ -321,10 +344,11 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     // MARK: Renders Group's Title in Guests Screen
@@ -335,7 +359,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
-        verify(matching: sut.wrapInNavigationController())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 
     // MARK: Renders Guests Screen when a change is occured
@@ -351,7 +375,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         config.allowGuests = true
         config.allowGuestsChangedHandler?(true)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItUpdatesWhenItReceivesAChange_Loading() {
@@ -363,20 +387,23 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         config.allowGuests = true
         config.allowGuestsChangedHandler?(true)
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersLoading() {
-        // GIVEN
+
+        // Given
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
         let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         let navigationController = sut.wrapInNavigationController()
-        // WHEN
-        viewModel.setAllowGuests(true)
-        // THEN
-        verify(matching: navigationController)
+
+        // When
+        viewModel.setAllowGuests(true, view: .init())
+
+        // Then
+        snapshotHelper.verify(matching: navigationController)
     }
 
     func testThatItRendersLoading_DarkTheme() {
@@ -384,13 +411,14 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-        sut.overrideUserInterfaceStyle = .dark
         let navigationController = sut.wrapInNavigationController()
-        sut.overrideUserInterfaceStyle = .dark
         // WHEN
-        viewModel.setAllowGuests(true)
+        viewModel.setAllowGuests(true, view: .init())
+
         // THEN
-        verify(matching: navigationController)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: navigationController)
     }
 
     // MARK: Renders different kind of alerts
@@ -413,7 +441,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         config.areGuestPresent = false
         let viewModel = makeViewModel(config: config)
         // Show the alert
-        let sut = viewModel.setAllowGuests(false)
+        let sut = viewModel.setAllowGuests(false, view: .init())
         // THEN
         XCTAssertNil(sut)
     }
@@ -425,7 +453,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         // for ConversationOptionsViewModel's delegate
         _ = ConversationGuestOptionsViewController(viewModel: viewModel)
         // Show the alert
-        guard let sut = viewModel.setAllowGuests(false) else {
+        guard let sut = viewModel.setAllowGuests(false, view: .init()) else {
             return XCTFail("This sut shouldn't be nil")
         }
         // THEN
@@ -440,18 +468,21 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = makeViewModel(config: config)
         let mock = MockConversationGuestOptionsViewModelDelegate()
-        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
-        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
-        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
+        mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
+        mock.conversationGuestOptionsViewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.conversationGuestOptionsViewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
         mockCreateSecuredGuestLinkUseCase.invokeConversationPasswordCompletion_MockMethod = { _, _, _ in }
 
         // WHEN
-        viewModel.startGuestLinkCreationFlow()
+        viewModel.startGuestLinkCreationFlow(from: .init())
 
         // THEN
-        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 1)
+        XCTAssertEqual(
+            mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count,
+            1
+        )
     }
 
     func testThatGuestLinkWithOptionalPasswordAlertIsNotShownIfApiVersionIsBelowFour() {
@@ -461,20 +492,21 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         let viewModel = makeViewModel(config: config)
 
         let mock = MockConversationGuestOptionsViewModelDelegate()
-        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
+        mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
 
         mockCreateSecuredGuestLinkUseCase.invokeConversationPasswordCompletion_MockMethod = { _, _, _ in }
 
-        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
-        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
+        mock.conversationGuestOptionsViewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.conversationGuestOptionsViewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
         // WHEN
-        viewModel.startGuestLinkCreationFlow()
+        viewModel.startGuestLinkCreationFlow(from: .init())
 
         // THEN
-        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 0)
-
+        XCTAssertEqual(
+            mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count,
+            0
+        )
     }
-
 }

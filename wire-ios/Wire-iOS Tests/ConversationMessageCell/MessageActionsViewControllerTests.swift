@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 
 @testable import Wire
@@ -29,6 +28,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }
@@ -38,10 +38,17 @@ final class MessageActionsViewControllerTests: XCTestCase {
     func testReactionPicker_ExistForStandardMessage() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         // WHEN
-        let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
-                                                                                   actionController: actionController)
+        let messageActionsViewController = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
         // THEN
         XCTAssertTrue(messageActionsViewController.view.containsBasicReactionPicker())
     }
@@ -50,10 +57,17 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
         message.isEphemeral = true
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         // WHEN
-        let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
-                                                                                   actionController: actionController)
+        let messageActionsViewController = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
         // THEN
         XCTAssertFalse(messageActionsViewController.view.containsBasicReactionPicker())
     }
@@ -62,10 +76,17 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
         message.deliveryState = .failedToSend
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         // WHEN
-        let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
-                                                                                   actionController: actionController)
+        let messageActionsViewController = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
         // THEN
         XCTAssertFalse(messageActionsViewController.view.containsBasicReactionPicker())
     }
@@ -76,7 +97,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Delete", "Cancel"])
     }
 
     func testMenuActionsForImageMessage() {
@@ -85,7 +106,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Save", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Save", "Delete", "Cancel"])
     }
 
     func testMenuActionsForAudioMessage() {
@@ -106,7 +127,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Delete", "Cancel"])
     }
 
     func testMenuActionsForLinkMessage() {
@@ -115,7 +136,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertEqual(actionsTitles, ["Visit Link", "Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Visit Link", "Copy", "Reply", "Details", "Delete", "Cancel"])
     }
 
     func testMenuActionsForPingMessage() {
@@ -129,31 +150,37 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
     func actionsTitlesForMessage(message: MockMessage) -> [String] {
         message.senderUser = MockUserType.createUser(name: "Bob")
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
-        let sut = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
+        let sut = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
 
         return sut.actions.map { $0.title ?? "" }
     }
-
 }
 
 // MARK: - UIView extension
 
-fileprivate extension UIView {
+private extension UIView {
 
     func containsBasicReactionPicker() -> Bool {
-        if self.subviews.contains(
+        if subviews.contains(
             where: { $0.isKind(of: BasicReactionPicker.self) }
         ) {
             return true
         }
 
-        for subview in self.subviews
-        where subview.containsBasicReactionPicker() {
+        for subview in subviews
+            where subview.containsBasicReactionPicker() {
             return true
         }
 
         return false
     }
-
 }

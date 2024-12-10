@@ -16,24 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 class CallParticipantViewTests: XCTestCase {
-    var size = XCTestCase.DeviceSizeIPhone5
-    var sut: CallParticipantView!
-    var stubProvider = StreamStubProvider()
-    var unmutedStream = StreamStubProvider().stream(muted: false)
+
+    private var snapshotHelper: SnapshotHelper!
+    private var size = XCTestCase.DeviceSizeIPhone5
+    private var sut: CallParticipantView!
+    private var stubProvider = StreamStubProvider()
+    private var unmutedStream = StreamStubProvider().stream(muted: false)
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = .init()
+    }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
-    private func createView(from stream: Wire.Stream, isCovered: Bool, pinchToZoomRule: PinchToZoomRule = .enableWhenMaximized) -> CallParticipantView {
+    private func createView(
+        from stream: Wire.Stream,
+        isCovered: Bool,
+        pinchToZoomRule: PinchToZoomRule = .enableWhenMaximized
+    ) -> CallParticipantView {
         let view = CallParticipantView(
             stream: stream,
             isCovered: isCovered,
@@ -79,7 +90,7 @@ class CallParticipantViewTests: XCTestCase {
         sut = createView(from: unmutedStream, isCovered: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testMutedState() {
@@ -88,7 +99,7 @@ class CallParticipantViewTests: XCTestCase {
         sut = createView(from: stream, isCovered: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testActiveState() {
@@ -97,7 +108,7 @@ class CallParticipantViewTests: XCTestCase {
         sut = createView(from: stream, isCovered: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testPausedState() {
@@ -108,7 +119,7 @@ class CallParticipantViewTests: XCTestCase {
         sut.isPaused = true
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testVideoStoppedState() {
@@ -117,7 +128,7 @@ class CallParticipantViewTests: XCTestCase {
         sut = createView(from: stream, isCovered: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testVideoStoppedBorder_IsZero_WhenMaximized() {
@@ -138,7 +149,7 @@ class CallParticipantViewTests: XCTestCase {
         sut = createView(from: unmutedStream, isCovered: true)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThat_ScalingIsDisabled_WhenRuleIs_EnableWhenFitted_And_ShouldFill_IsTrue() {

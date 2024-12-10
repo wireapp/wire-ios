@@ -33,14 +33,17 @@ protocol AudioRecordBaseViewController: AnyObject {
 protocol AudioRecordViewControllerDelegate: AnyObject {
     func audioRecordViewControllerDidCancel(_ audioRecordViewController: AudioRecordBaseViewController)
     func audioRecordViewControllerDidStartRecording(_ audioRecordViewController: AudioRecordBaseViewController)
-    func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController,
-                                                   recordingURL: URL,
-                                                   duration: TimeInterval,
-                                                   filter: AVSAudioEffectType)
+    func audioRecordViewControllerWantsToSendAudio(
+        _ audioRecordViewController: AudioRecordBaseViewController,
+        recordingURL: URL,
+        duration: TimeInterval,
+        filter: AVSAudioEffectType
+    )
 }
 
 enum AudioRecordState {
-    case recording, finishedRecording
+    case recording
+    case finishedRecording
 }
 
 final class AudioRecordViewController: UIViewController, AudioRecordBaseViewController {
@@ -69,17 +72,22 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     typealias ConversationInputBarAudio = L10n.Localizable.Conversation.InputBar.AudioMessage
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(audioRecorder: AudioRecorderType? = nil,
-         userSession: UserSession) {
+    init(
+        audioRecorder: AudioRecorderType? = nil,
+        userSession: UserSession
+    ) {
         let maxAudioLength = userSession.maxAudioMessageLength
         let maxUploadSize = userSession.maxUploadFileSize
-        self.recorder = audioRecorder ?? AudioRecorder(format: .wav,
-                                                       maxRecordingDuration: maxAudioLength,
-                                                       maxFileSize: maxUploadSize)
+        self.recorder = audioRecorder ?? AudioRecorder(
+            format: .wav,
+            maxRecordingDuration: maxAudioLength,
+            maxFileSize: maxUploadSize
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -89,8 +97,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
         updateRecordingState(recordingState)
 
-        if Bundle.developerModeEnabled && Settings.shared.maxRecordingDurationDebug != 0 {
-            self.recorder.maxRecordingDuration = Settings.shared.maxRecordingDurationDebug
+        if Bundle.developerModeEnabled, Settings.shared.maxRecordingDurationDebug != 0 {
+            recorder.maxRecordingDuration = Settings.shared.maxRecordingDurationDebug
         }
     }
 
@@ -100,11 +108,14 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     }
 
     func beginRecording() {
-        self.recorder.startRecording { _ in
+        recorder.startRecording { _ in
             let feedbackGenerator = UINotificationFeedbackGenerator()
             feedbackGenerator.prepare()
             feedbackGenerator.notificationOccurred(.success)
-            AppDelegate.shared.mediaPlaybackManager?.audioTrackPlayer.stop()
+
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                appDelegate.mediaPlaybackManager?.audioTrackPlayer.stop()
+            }
 
             self.delegate?.audioRecordViewControllerDidStartRecording(self)
         }
@@ -113,7 +124,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     func finishRecordingIfNeeded(_ sender: UIGestureRecognizer) {
         guard recorder.state != .initializing else {
             recorder.stopRecording()
-            self.delegate?.audioRecordViewControllerDidCancel(self)
+            delegate?.audioRecordViewControllerDidCancel(self)
             return
         }
 
@@ -143,11 +154,12 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     }
 
     private func configureViews(userSession: UserSession) {
-        accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
-            if let color {
-                self.audioPreviewView.color = color
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+                if let color {
+                    audioPreviewView.color = color
+                }
             }
-        }
 
         topContainerView.backgroundColor = backgroundViewColor
         bottomContainerView.backgroundColor = backgroundViewColor
@@ -160,7 +172,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
         topContainerView.addSubview(topTooltipLabel)
         [bottomContainerView, topContainerView, buttonOverlay].forEach(view.addSubview)
-        [topSeparator, rightSeparator, audioPreviewView, timeLabel, cancelButton, recordingDotView].forEach(bottomContainerView.addSubview)
+        [topSeparator, rightSeparator, audioPreviewView, timeLabel, cancelButton, recordingDotView]
+            .forEach(bottomContainerView.addSubview)
 
         timeLabel.accessibilityLabel = "audioRecorderTimeLabel"
         timeLabel.font = FontSpec(.small, .none).font!
@@ -181,11 +194,11 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
                 return
             }
             switch buttonType {
-            case .send: self.sendAudio()
+            case .send: sendAudio()
             case .play:
 
-                self.recorder.playRecording()
-            case .stop: self.recorder.stopPlaying()
+                recorder.playRecording()
+            case .stop: recorder.stopPlaying()
             }
         }
     }
@@ -212,28 +225,40 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
         constraints.append(bottomContainerView.heightAnchor.constraint(equalToConstant: 56))
 
-        constraints.append(contentsOf: [bottomContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                        bottomContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                                        bottomContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)])
+        constraints.append(contentsOf: [
+            bottomContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
 
         constraints.append(button.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor))
 
-        constraints.append(contentsOf: [topContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                        topContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                                        topContainerView.topAnchor.constraint(equalTo: view.topAnchor)])
+        constraints.append(contentsOf: [
+            topContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topContainerView.topAnchor.constraint(equalTo: view.topAnchor)
+        ])
 
-        constraints.append(contentsOf: [topContainerView.bottomAnchor.constraint(equalTo: bottomContainerView.topAnchor),
+        constraints.append(contentsOf: [
+            topContainerView.bottomAnchor.constraint(equalTo: bottomContainerView.topAnchor),
 
-                                        topContainerView.centerYAnchor.constraint(equalTo: topTooltipLabel.centerYAnchor),
-                                        topTooltipLabel.rightAnchor.constraint(equalTo: buttonOverlay.leftAnchor, constant: -12),
+            topContainerView.centerYAnchor
+                .constraint(equalTo: topTooltipLabel.centerYAnchor),
+            topTooltipLabel.rightAnchor.constraint(equalTo: buttonOverlay.leftAnchor, constant: -12),
 
-                                        topSeparator.heightAnchor.constraint(equalToConstant: .hairline),
-                                        topSeparator.rightAnchor.constraint(equalTo: buttonOverlay.leftAnchor, constant: -8),
-                                        topSeparator.leftAnchor.constraint(equalTo: bottomContainerView.leftAnchor, constant: 16),
-                                        topSeparator.topAnchor.constraint(equalTo: bottomContainerView.topAnchor)])
+            topSeparator.heightAnchor.constraint(equalToConstant: .hairline),
+            topSeparator.rightAnchor.constraint(equalTo: buttonOverlay.leftAnchor, constant: -8),
+            topSeparator.leftAnchor.constraint(equalTo: bottomContainerView.leftAnchor, constant: 16),
+            topSeparator.topAnchor.constraint(equalTo: bottomContainerView.topAnchor)
+        ])
 
-        recordingDotViewHidden = [timeLabel.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor),
-                                  timeLabel.leftAnchor.constraint(equalTo: bottomContainerView.leftAnchor, constant: margin)]
+        recordingDotViewHidden = [
+            timeLabel.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor),
+            timeLabel.leftAnchor.constraint(
+                equalTo: bottomContainerView.leftAnchor,
+                constant: margin
+            )
+        ]
 
         recordingDotViewVisible = [
             timeLabel.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor),
@@ -244,28 +269,48 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         ]
 
         recordingDotViewVisible.append(contentsOf: [
-        recordingDotView.widthAnchor.constraint(equalToConstant: 8),
-        recordingDotView.heightAnchor.constraint(equalToConstant: 8)
+            recordingDotView.widthAnchor.constraint(equalToConstant: 8),
+            recordingDotView.heightAnchor.constraint(equalToConstant: 8)
         ])
 
         NSLayoutConstraint.activate(recordingDotViewVisible)
 
-        constraints.append(contentsOf: [rightSeparator.rightAnchor.constraint(equalTo: bottomContainerView.rightAnchor),
-                                        rightSeparator.leftAnchor.constraint(equalTo: buttonOverlay.rightAnchor, constant: 8),
-                                        rightSeparator.topAnchor.constraint(equalTo: bottomContainerView.topAnchor),
-                                        rightSeparator.heightAnchor.constraint(equalToConstant: .hairline),
+        constraints.append(contentsOf: [
+            rightSeparator.rightAnchor.constraint(equalTo: bottomContainerView.rightAnchor),
+            rightSeparator.leftAnchor.constraint(
+                equalTo: buttonOverlay.rightAnchor,
+                constant: 8
+            ),
+            rightSeparator.topAnchor.constraint(equalTo: bottomContainerView.topAnchor),
+            rightSeparator.heightAnchor.constraint(equalToConstant: .hairline),
 
-                                        audioPreviewView.leftAnchor.constraint(equalTo: timeLabel.rightAnchor, constant: 8),
-                                        audioPreviewView.topAnchor.constraint(equalTo: bottomContainerView.topAnchor, constant: 12),
-                                        audioPreviewView.bottomAnchor.constraint(equalTo: bottomContainerView.bottomAnchor, constant: -12),
-                                        audioPreviewView.rightAnchor.constraint(equalTo: buttonOverlay.leftAnchor, constant: -12),
+            audioPreviewView.leftAnchor.constraint(
+                equalTo: timeLabel.rightAnchor,
+                constant: 8
+            ),
+            audioPreviewView.topAnchor.constraint(
+                equalTo: bottomContainerView.topAnchor,
+                constant: 12
+            ),
+            audioPreviewView.bottomAnchor.constraint(
+                equalTo: bottomContainerView.bottomAnchor,
+                constant: -12
+            ),
+            audioPreviewView.rightAnchor.constraint(
+                equalTo: buttonOverlay.leftAnchor,
+                constant: -12
+            ),
 
-                                        cancelButton.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor),
-                                        cancelButton.rightAnchor.constraint(equalTo: bottomContainerView.rightAnchor),
-                                        buttonOverlay.rightAnchor.constraint(equalTo: cancelButton.leftAnchor, constant: -12),
-                                        cancelButton.widthAnchor.constraint(equalToConstant: 56),
-                                        cancelButton.heightAnchor.constraint(equalToConstant: 56)
-                                       ])
+            cancelButton.centerYAnchor
+                .constraint(equalTo: bottomContainerView.centerYAnchor),
+            cancelButton.rightAnchor.constraint(equalTo: bottomContainerView.rightAnchor),
+            buttonOverlay.rightAnchor.constraint(
+                equalTo: cancelButton.leftAnchor,
+                constant: -12
+            ),
+            cancelButton.widthAnchor.constraint(equalToConstant: 56),
+            cancelButton.heightAnchor.constraint(equalToConstant: 56)
+        ])
 
         NSLayoutConstraint.activate(constraints)
 
@@ -282,7 +327,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
             recordingState = .finishedRecording
 
-            if case .failure(let error) = result, let error = error as? RecordingError,
+            if case let .failure(error) = result, let error = error as? RecordingError,
                let alert = recorder.alertForRecording(error: error) {
                 present(alert, animated: true, completion: .none)
             }
@@ -299,7 +344,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         }
     }
 
-    @objc func topContainerTapped(_ sender: UITapGestureRecognizer) {
+    @objc
+    func topContainerTapped(_ sender: UITapGestureRecognizer) {
         delegate?.audioRecordViewControllerDidCancel(self)
     }
 
@@ -316,7 +362,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     private func updateRecordingState(_ state: AudioRecordState) {
 
         let visible = visibleViewsForState(state)
-        let allViews = Set(view.subviews.flatMap { $0.subviews }) // Well, 2 levels 'all'
+        let allViews = Set(view.subviews.flatMap(\.subviews)) // Well, 2 levels 'all'
         let hidden = allViews.subtracting(visible)
 
         visible.forEach { $0.isHidden = false }
@@ -325,9 +371,10 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         buttonOverlay.recordingState = state
         let finished = state == .finishedRecording
 
-        self.recordingDotView.animating = !finished
+        recordingDotView.animating = !finished
 
-        let textForTopToolTip = finished ? ConversationInputBarAudio.Tooltip.tapSend : ConversationInputBarAudio.Tooltip.pullSend
+        let textForTopToolTip = finished ? ConversationInputBarAudio.Tooltip.tapSend : ConversationInputBarAudio.Tooltip
+            .pullSend
         topTooltipLabel.text = textForTopToolTip
 
         if recordingState == .recording {
@@ -347,7 +394,15 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     }
 
     func visibleViewsForState(_ state: AudioRecordState) -> [UIView] {
-        var visibleViews = [bottomContainerView, topContainerView, buttonOverlay, topSeparator, timeLabel, audioPreviewView, topTooltipLabel]
+        var visibleViews = [
+            bottomContainerView,
+            topContainerView,
+            buttonOverlay,
+            topSeparator,
+            timeLabel,
+            audioPreviewView,
+            topTooltipLabel
+        ]
 
         switch state {
         case .finishedRecording:
@@ -364,7 +419,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     func setOverlayState(_ state: AudioButtonOverlayState, animated: Bool) {
         let animations = { self.buttonOverlay.setOverlayState(state) }
 
-        if state.animatable && animated {
+        if state.animatable, animated {
             UIView.animate(
                 withDuration: state.duration,
                 delay: 0,
@@ -379,7 +434,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         }
     }
 
-    @objc func cancelButtonPressed(_ sender: IconButton) {
+    @objc
+    func cancelButtonPressed(_ sender: IconButton) {
         recorder.stopPlaying()
         stopAndDeleteRecordingIfNeeded()
         delegate?.audioRecordViewControllerDidCancel(self)
@@ -413,10 +469,12 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
                 effectPath.deleteFileAtPath()
 
                 if success {
-                    self.delegate?.audioRecordViewControllerWantsToSendAudio(self,
-                                                                             recordingURL: NSURL(fileURLWithPath: convertedPath) as URL,
-                                                                             duration: self.recorder.currentDuration,
-                                                                             filter: .none)
+                    self.delegate?.audioRecordViewControllerWantsToSendAudio(
+                        self,
+                        recordingURL: NSURL(fileURLWithPath: convertedPath) as URL,
+                        duration: self.recorder.currentDuration,
+                        filter: .none
+                    )
                 }
             }
         }

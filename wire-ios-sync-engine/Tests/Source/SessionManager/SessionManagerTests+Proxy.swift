@@ -26,7 +26,7 @@ final class SessionManagerProxyTests: IntegrationTest {
 
     override func createSessionManager() {
         guard
-            let application = self.application,
+            let application,
             let transportSession = mockTransportSession
         else {
             return XCTFail()
@@ -36,7 +36,11 @@ final class SessionManagerProxyTests: IntegrationTest {
 
         reachabilityWrapper = ReachabilityWrapper(enabled: false, reachabilityClosure: { reachability })
 
-        unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession, environment: mockEnvironment, reachability: reachability)
+        unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(
+            transportSession: transportSession,
+            environment: mockEnvironment,
+            reachability: reachability
+        )
         authenticatedSessionFactory = MockAuthenticatedSessionFactory(
             application: application,
             mediaManager: mockMediaManager,
@@ -57,7 +61,7 @@ final class SessionManagerProxyTests: IntegrationTest {
             delegate: self,
             application: application,
             pushRegistry: pushRegistry,
-            dispatchGroup: self.dispatchGroup,
+            dispatchGroup: dispatchGroup,
             environment: mockEnvironment,
             configuration: sessionManagerConfiguration,
             detector: jailbreakDetector,
@@ -67,14 +71,14 @@ final class SessionManagerProxyTests: IntegrationTest {
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: false,
             sharedUserDefaults: sharedUserDefaults,
-            deleteUserLogs: {}
+            deleteUserLogs: {},
+            analyticsServiceConfiguration: nil
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete
 
         sessionManager?.start(launchOptions: [:])
-
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func test_markNetworkSessionsAsReady_createsUnauthenticatedSession() {
@@ -96,7 +100,10 @@ final class SessionManagerProxyTests: IntegrationTest {
         XCTAssertFalse(unauthenticatedSessionFactory.readyForRequests)
 
         // EXPECT
-        customExpectation(forNotification: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: nil) { _ -> Bool in
+        customExpectation(
+            forNotification: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled),
+            object: nil
+        ) { _ -> Bool in
             return true
         }
 

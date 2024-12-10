@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 /// Replicates the launch screen to prevent the black screen being visible, cause of later UI initialization
 class LaunchImageViewController: UIViewController {
@@ -27,17 +28,12 @@ class LaunchImageViewController: UIViewController {
     private let loadingScreenLabel = UILabel()
     private let activityIndicator = ProgressSpinner()
 
-    /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning animation
+    /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning
+    /// animation
     func showLoadingScreen() {
         shouldShowLoadingScreenOnViewDidLoad = true
         loadingScreenLabel.isHidden = false
         activityIndicator.startAnimation()
-    }
-
-    /// Convenience method for hiding all the animation related functionality
-    func hideLoadingScreen() {
-        activityIndicator.stopAnimation()
-        loadingScreenLabel.isHidden = true
     }
 
     override func viewDidLoad() {

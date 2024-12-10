@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 protocol UserSessionLogoutDelegate: AnyObject {
 
@@ -39,13 +40,14 @@ extension SessionManager: UserSessionLogoutDelegate {
 
     public func authenticationInvalidated(_ error: NSError, accountId: UUID) {
         guard
-            let userSessionErrorCode = ZMUserSessionErrorCode(rawValue: UInt(error.code)),
+            let userSessionErrorCode = UserSessionErrorCode(rawValue: error.code),
             let account = accountManager.account(with: accountId)
         else {
             return
         }
 
-        WireLogger.authentication.warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
+        WireLogger.authentication
+            .warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
 
         switch userSessionErrorCode {
         case .clientDeletedRemotely:

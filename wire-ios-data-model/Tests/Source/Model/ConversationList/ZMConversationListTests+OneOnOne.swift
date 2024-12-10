@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireDataModel
 
 final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
@@ -57,16 +58,15 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
         let predicateFactory = ConversationPredicateFactory(selfTeam: team)
 
         // When
-        let sut = ZMConversationList(
+        let sut = ConversationList(
             allConversations: [oneOnOneConversation, fakeOneOnOne, unconnectedConversation],
             filteringPredicate: predicateFactory.predicateForOneToOneConversations(),
-            moc: uiMOC,
+            managedObjectContext: uiMOC,
             description: "oneToOneConversations"
         )
 
         // Then
-        let results = try XCTUnwrap(sut as? [ZMConversation])
-        XCTAssertEqual(Set(results), [oneOnOneConversation, fakeOneOnOne, unconnectedConversation])
+        XCTAssertEqual(Set(sut.items), [oneOnOneConversation, fakeOneOnOne, unconnectedConversation])
     }
 
     func testThatItDoesNotReturnNonOneOnOneConversations() throws {
@@ -91,16 +91,14 @@ final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
         let predicateFactory = ConversationPredicateFactory(selfTeam: nil)
 
         // When
-        let sut = ZMConversationList(
+        let sut = ConversationList(
             allConversations: [groupConversation, invalidOneOnOneConversation],
             filteringPredicate: predicateFactory.predicateForOneToOneConversations(),
-            moc: uiMOC,
+            managedObjectContext: uiMOC,
             description: "oneToOneConversations"
         )
 
         // Then
-        let results = try XCTUnwrap(sut as? [ZMConversation])
-        XCTAssertEqual(results, [])
+        XCTAssertEqual(sut.items, [])
     }
-
 }

@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireLogging
+import WireSystem
 
 @objcMembers
 public class ZMClientMessage: ZMOTRMessage {
@@ -27,7 +29,7 @@ public class ZMClientMessage: ZMOTRMessage {
     //// From https://github.com/wearezeta/generic-message-proto:
     //// "If payload is smaller then 256KB then OM can be sent directly"
     //// Just to be sure we set the limit lower, to 128KB (base 10)
-    public static let byteSizeExternalThreshold: UInt = 128000
+    public static let byteSizeExternalThreshold: UInt = 128_000
 
     /// Link Preview state
     @NSManaged public var updatedTimestamp: Date?
@@ -36,16 +38,16 @@ public class ZMClientMessage: ZMOTRMessage {
     var cachedUnderlyingMessage: GenericMessage?
 
     public override static func entityName() -> String {
-        return "ClientMessage"
+        "ClientMessage"
     }
 
     open override var ignoredKeys: Set<AnyHashable>? {
-        return (super.ignoredKeys ?? Set())
+        (super.ignoredKeys ?? Set())
             .union([#keyPath(updatedTimestamp)])
     }
 
     public override var updatedAt: Date? {
-        return updatedTimestamp
+        updatedTimestamp
     }
 
     public override var hashOfContent: Data? {
@@ -75,7 +77,7 @@ public class ZMClientMessage: ZMOTRMessage {
 
     public override var isUpdatingExistingMessage: Bool {
         guard let content = underlyingMessage?.content else {
-                return false
+            return false
         }
         switch content {
         case .edited, .reaction:
@@ -86,48 +88,56 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public static func keyPathsForValuesAffectingUnderlyingMessage() -> Set<String> {
-        return Set([#keyPath(ZMClientMessage.dataSet),
-                    #keyPath(ZMClientMessage.dataSet) + ".data"])
+        Set([
+            #keyPath(ZMClientMessage.dataSet),
+            #keyPath(ZMClientMessage.dataSet) + ".data"
+        ])
     }
 
-    public override func expire() {
-        WireLogger.messaging.warn("expiring client message " + String(describing: underlyingMessage?.safeForLoggingDescription))
+    public override func expire(withReason reason: ExpirationReason) {
+        WireLogger.messaging
+            .warn("expiring client message " + String(describing: underlyingMessage?.safeForLoggingDescription))
 
         guard
-            let genericMessage = self.underlyingMessage,
+            let genericMessage = underlyingMessage,
             let content = genericMessage.content else {
-                super.expire()
-                return
+            super.expire(withReason: reason)
+            return
         }
 
         switch content {
         case .edited:
             // Replace the nonce with the original
-            // This way if we get a delete from a different device while we are waiting for the response it will delete this message
+            // This way if we get a delete from a different device while we are waiting for the response it will delete
+            // this message
             let originalID = underlyingMessage.flatMap { UUID(uuidString: $0.edited.replacingMessageID) }
             nonce = originalID
         case .buttonAction:
             guard
                 let managedObjectContext,
                 let conversation else {
-                    return
+                return
             }
-            ZMClientMessage.expireButtonState(forButtonAction: genericMessage.buttonAction,
-                                              forConversation: conversation,
-                                              inContext: managedObjectContext)
+            ZMClientMessage.expireButtonState(
+                forButtonAction: genericMessage.buttonAction,
+                forConversation: conversation,
+                inContext: managedObjectContext
+            )
         default:
             break
         }
-        super.expire()
+        super.expire(withReason: reason)
     }
 
     public override func resend() {
         if let genericMessage = underlyingMessage,
-            case .edited? = genericMessage.content {
+           case .edited? = genericMessage.content {
             // Re-apply the edit since we've restored the orignal nonce when the message expired
-            editText(self.textMessageData?.messageText ?? "",
-                     mentions: self.textMessageData?.mentions ?? [],
-                     fetchLinkPreview: true)
+            editText(
+                textMessageData?.messageText ?? "",
+                mentions: textMessageData?.mentions ?? [],
+                fetchLinkPreview: true
+            )
         }
         super.resend()
     }
@@ -137,7 +147,7 @@ public class ZMClientMessage: ZMOTRMessage {
         guard
             let genericMessage = underlyingMessage,
             let content = genericMessage.content else {
-                return
+            return
         }
         switch content {
         case .confirmation, .reaction:
@@ -147,16 +157,19 @@ public class ZMClientMessage: ZMOTRMessage {
             guard
                 let managedObjectContext,
                 let conversation else {
-                    return
+                return
             }
 
             let original = ZMMessage.fetch(withNonce: originalID, for: conversation, in: managedObjectContext)
             original?.sender = nil
             original?.senderClientID = nil
         case .edited:
-            if let nonce = self.nonce(fromPostPayload: payload),
-                self.nonce != nonce {
-                Logging.messageProcessing.error("sent message response nonce does not match")
+            if let nonce = nonce(fromPostPayload: payload),
+               self.nonce != nonce {
+                WireLogger.messaging.error(
+                    "sent message response nonce does not match \(nonce)",
+                    attributes: logInformation
+                )
                 return
             }
 
@@ -168,7 +181,15 @@ public class ZMClientMessage: ZMOTRMessage {
         }
     }
 
-    override static public func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
+    private var logInformation: LogAttributes {
+        [
+            .nonce: nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+        ].merging(.safePublic, uniquingKeysWith: { _, new in new })
+    }
+
+    public override static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
         let encryptedNotSynced = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         return NSCompoundPredicate(andPredicateWithSubpredicates: [encryptedNotSynced, notExpired])
@@ -187,10 +208,10 @@ public class ZMClientMessage: ZMOTRMessage {
         guard isEphemeral else {
             return
         }
-        if let genericMessage = self.underlyingMessage,
-            genericMessage.textData != nil,
-            !genericMessage.linkPreviews.isEmpty,
-            linkPreviewState != ZMLinkPreviewState.done {
+        if let genericMessage = underlyingMessage,
+           genericMessage.textData != nil,
+           !genericMessage.linkPreviews.isEmpty,
+           linkPreviewState != ZMLinkPreviewState.done {
             // If we have link previews and they are not sent yet, we wait until they are sent
             return
         }
@@ -199,7 +220,7 @@ public class ZMClientMessage: ZMOTRMessage {
 
     func hasDownloadedImage() -> Bool {
         guard
-            let textMessageData = self.textMessageData,
+            let textMessageData,
             textMessageData.linkPreview != nil,
             let cache = managedObjectContext?.zm_fileAssetCache
         else {
@@ -210,17 +231,17 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 }
 
-extension ZMClientMessage {
+public extension ZMClientMessage {
 
-    public override var imageMessageData: ZMImageMessageData? {
-        return nil
+    override var imageMessageData: ZMImageMessageData? {
+        nil
     }
 
-    public override var fileMessageData: ZMFileMessageData? {
-        return nil
+    override var fileMessageData: ZMFileMessageData? {
+        nil
     }
 
-    public override var isSilenced: Bool {
-        return conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
+    override var isSilenced: Bool {
+        conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
     }
 }

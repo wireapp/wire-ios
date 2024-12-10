@@ -30,10 +30,10 @@ public protocol Pasteboard: AnyObject {
 extension UIPasteboard: Pasteboard {
 
     public var text: String? {
-        guard self.hasStrings else {
+        guard hasStrings else {
             return nil
         }
-        return self.string
+        return string
     }
 
 }

@@ -54,7 +54,6 @@ static NSString *const ActiveCallConversationsKey = @"activeCallConversations";
 static NSString *const ConnectionKey = @"connection";
 static NSString *const OneOnOneConversationKey = @"oneOnOneConversation";
 static NSString *const EmailAddressKey = @"emailAddress";
-static NSString *const PhoneNumberKey = @"phoneNumber";
 static NSString *const NameKey = @"name";
 static NSString *const HandleKey = @"handle";
 static NSString *const SystemMessagesKey = @"systemMessages";
@@ -150,7 +149,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic) ZMAccentColorRawValue accentColorValue;
 @property (nonatomic, copy) NSString *emailAddress;
-@property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *normalizedEmailAddress;
 @property (nonatomic, copy) NSString *managedBy;
 @property (nonatomic, readonly) UserClient *selfClient;
@@ -204,7 +202,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 @dynamic name;
 @dynamic normalizedEmailAddress;
 @dynamic normalizedName;
-@dynamic phoneNumber;
 @dynamic clients;
 @dynamic handle;
 @dynamic addressBookEntry;
@@ -389,26 +386,6 @@ static NSString *const PrimaryKey = @"primaryKey";
     }
 }
 
-+ (nullable instancetype)userWithPhoneNumber:(NSString *)phoneNumber inContext:(NSManagedObjectContext *)context
-{
-    RequireString(0 != phoneNumber.length, "phoneNumber required");
-    
-    NSFetchRequest *usersWithPhoneFetch = [NSFetchRequest fetchRequestWithEntityName:[ZMUser entityName]];
-    usersWithPhoneFetch.predicate = [NSPredicate predicateWithFormat:@"%K = %@", PhoneNumberKey, phoneNumber];
-    NSArray<ZMUser *> *users = (NSArray<ZMUser *> *) [context executeFetchRequestOrAssert:usersWithPhoneFetch];
-    
-    RequireString(users.count <= 1, "More than one user with the same phone number");
-    
-    if (0 == users.count) {
-        return nil;
-    }
-    else if (1 == users.count) {
-        return users.firstObject;
-    }
-    else {
-        return nil;
-    }
-}
 
 + (NSSet <ZMUser *> *)usersWithRemoteIDs:(NSSet <NSUUID *>*)UUIDs inContext:(NSManagedObjectContext *)moc;
 {
@@ -510,12 +487,7 @@ static NSString *const PrimaryKey = @"primaryKey";
     if ([transportData objectForKey:@"email"] || authoritative) {
         self.emailAddress = email.stringByRemovingExtremeCombiningCharacters;
     }
-    
-    NSString *phone = [transportData optionalStringForKey:@"phone"];
-    if ([transportData objectForKey:@"phone"] || authoritative) {
-        self.phoneNumber = phone.stringByRemovingExtremeCombiningCharacters;
-    }
-    
+     
     NSNumber *accentId = [transportData optionalNumberForKey:@"accent_id"];
     if (accentId != nil || authoritative) {
         self.accentColorValue = (ZMAccentColorRawValue) accentId.integerValue;
@@ -922,37 +894,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 {
     NSString *value = [password copy];
     return [self validatePassword:&value error:nil];
-}
-
-+ (BOOL)validatePhoneNumber:(NSString **)ioPhoneNumber error:(NSError **)outError
-{
-    if (ioPhoneNumber == NULL || [*ioPhoneNumber length] < 1) {
-        return NO;
-    }
-    else {
-        return [ZMPhoneNumberValidator validateValue:ioPhoneNumber error:outError];
-    }
-}
-
-+ (BOOL)isValidPhoneNumber:(NSString *)phoneNumber
-{
-    NSString *value = [phoneNumber copy];
-    return [self validatePhoneNumber:&value error:nil];
-}
-
-+ (BOOL)validatePhoneVerificationCode:(NSString **)ioVerificationCode error:(NSError **)outError
-{
-    return [StringLengthValidator validateValue:ioVerificationCode
-                            minimumStringLength:6
-                            maximumStringLength:6
-                              maximumByteLength:INT_MAX
-                                          error:outError];
-}
-
-+ (BOOL)isValidPhoneVerificationCode:(NSString *)phoneVerificationCode
-{
-    NSString *value = [phoneVerificationCode copy];
-    return [self validatePhoneVerificationCode:&value error:nil];
 }
 
 - (BOOL)validateValue:(id *)value forKey:(NSString *)key error:(NSError **)error

@@ -24,8 +24,9 @@ extension Loggable {
 
     var logger: os.Logger {
 
-        return os.Logger(category: String(describing: type(of: self))
-)
+        os.Logger(
+            category: String(describing: type(of: self))
+        )
     }
 
 }

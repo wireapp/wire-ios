@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Fetch an existing conversation or create a new one if it doesn't already exist.
     ///
@@ -28,10 +28,13 @@ extension ZMConversation {
     ///     - context: `NSManagedObjectContext` on which to fetch or create the conversation.
     ///                NOTE that this **must** be the sync context.
 
-    @objc public static func fetchOrCreate(with remoteIdentifier: UUID,
-                                           domain: String?,
-                                           in context: NSManagedObjectContext) -> ZMConversation {
-        var created: Bool = false
+    @objc
+    static func fetchOrCreate(
+        with remoteIdentifier: UUID,
+        domain: String?,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        var created = false
         return fetchOrCreate(with: remoteIdentifier, domain: domain, in: context, created: &created)
     }
 
@@ -44,10 +47,13 @@ extension ZMConversation {
     ///                NOTE that this **must** be the sync context.
     ///     - created: Will be set `true` if a new user was created.
 
-    @objc public static func fetchOrCreate(with remoteIdentifier: UUID,
-                                           domain: String?,
-                                           in context: NSManagedObjectContext,
-                                           created: UnsafeMutablePointer<Bool>) -> ZMConversation {
+    @objc
+    static func fetchOrCreate(
+        with remoteIdentifier: UUID,
+        domain: String?,
+        in context: NSManagedObjectContext,
+        created: UnsafeMutablePointer<Bool>
+    ) -> ZMConversation {
         // We must only ever call this on the sync context. Otherwise, there's a race condition
         // where the UI and sync contexts could both insert the same user (same UUID) and we'd end up
         // having two duplicates of that user, and we'd have a really hard time recovering from that.
@@ -70,60 +76,70 @@ extension ZMConversation {
     /// To create new conversations see ConversationService.
 
     @objc(insertGroupConversationIntoManagedObjectContext:withParticipants:)
-    static public func insertGroupConversation(moc: NSManagedObjectContext,
-                                               participants: [ZMUser]) -> ZMConversation? {
-        return self.insertGroupConversation(moc: moc, participants: participants, name: nil)
+    static func insertGroupConversation(
+        moc: NSManagedObjectContext,
+        participants: [ZMUser]
+    ) -> ZMConversation? {
+        insertGroupConversation(moc: moc, participants: participants, name: nil)
     }
 
     /// FOR TESTS ONLY.
     /// To create new conversations see ConversationService.
 
     @objc
-    static public func insertGroupConversation(session: ContextProvider,
-                                               participants: [UserType],
-                                               name: String? = nil,
-                                               team: Team? = nil,
-                                               allowGuests: Bool = true,
-                                               allowServices: Bool = true,
-                                               readReceipts: Bool = false,
-                                               participantsRole: Role? = nil) -> ZMConversation? {
-        return self.insertGroupConversation(moc: session.viewContext,
-                                            participants: participants.materialize(in: session.viewContext),
-                                            name: name,
-                                            team: team,
-                                            allowGuests: allowGuests,
-                                            allowServices: allowServices,
-                                            readReceipts: readReceipts,
-                                            participantsRole: participantsRole)
+    static func insertGroupConversation(
+        session: ContextProvider,
+        participants: [UserType],
+        name: String? = nil,
+        team: Team? = nil,
+        allowGuests: Bool = true,
+        allowServices: Bool = true,
+        readReceipts: Bool = false,
+        participantsRole: Role? = nil
+    ) -> ZMConversation? {
+        insertGroupConversation(
+            moc: session.viewContext,
+            participants: participants.materialize(in: session.viewContext),
+            name: name,
+            team: team,
+            allowGuests: allowGuests,
+            allowServices: allowServices,
+            readReceipts: readReceipts,
+            participantsRole: participantsRole
+        )
     }
 
     /// FOR TESTS ONLY.
     /// To create new conversations see ConversationService.
 
     @objc
-    static public func insertGroupConversation(moc: NSManagedObjectContext,
-                                               participants: [ZMUser],
-                                               name: String? = nil,
-                                               team: Team? = nil,
-                                               allowGuests: Bool = true,
-                                               allowServices: Bool = true,
-                                               readReceipts: Bool = false,
-                                               participantsRole: Role? = nil) -> ZMConversation? {
-        return insertConversation(moc: moc,
-                                  participants: participants,
-                                  name: name,
-                                  team: team,
-                                  allowGuests: allowGuests,
-                                  allowServices: allowServices,
-                                  readReceipts: readReceipts,
-                                  participantsRole: participantsRole,
-                                  type: .group)
+    static func insertGroupConversation(
+        moc: NSManagedObjectContext,
+        participants: [ZMUser],
+        name: String? = nil,
+        team: Team? = nil,
+        allowGuests: Bool = true,
+        allowServices: Bool = true,
+        readReceipts: Bool = false,
+        participantsRole: Role? = nil
+    ) -> ZMConversation? {
+        insertConversation(
+            moc: moc,
+            participants: participants,
+            name: name,
+            team: team,
+            allowGuests: allowGuests,
+            allowServices: allowServices,
+            readReceipts: readReceipts,
+            participantsRole: participantsRole,
+            type: .group
+        )
     }
 
     /// FOR TESTS ONLY.
     /// To create new conversations see ConversationService.
 
-    static public func insertConversation(
+    static func insertConversation(
         moc: NSManagedObjectContext,
         participants: [ZMUser],
         name: String? = nil,
@@ -137,7 +153,7 @@ extension ZMConversation {
     ) -> ZMConversation? {
         let selfUser = ZMUser.selfUser(in: moc)
 
-        if team != nil && !selfUser.canCreateConversation(type: type) {
+        if team != nil, !selfUser.canCreateConversation(type: type) {
             return nil
         }
 
@@ -165,7 +181,7 @@ extension ZMConversation {
 
         // We need to check if we should add a 'secure' system message in case all participants are trusted
         conversation.increaseSecurityLevelIfNeededAfterTrusting(
-            clients: Set(participantsIncludingSelf.flatMap { $0.clients })
+            clients: Set(participantsIncludingSelf.flatMap(\.clients))
         )
 
         return conversation

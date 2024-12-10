@@ -17,9 +17,9 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireTesting
 import XCTest
+@testable import WireDataModel
 
 public class DiskDatabaseTest: ZMTBaseTest {
 
@@ -27,24 +27,24 @@ public class DiskDatabaseTest: ZMTBaseTest {
     var sharedContainerURL: URL!
     var accountId: UUID!
     var moc: NSManagedObjectContext {
-        return coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     var coreDataStack: CoreDataStack!
 
     var storeURL: URL {
-        return CoreDataStack.accountDataFolder(
+        CoreDataStack.accountDataFolder(
             accountIdentifier: accountId,
             applicationContainer: sharedContainerURL
-            ).appendingPersistentStoreLocation()
+        ).appendingPersistentStoreLocation()
     }
 
     public override func setUp() {
         super.setUp()
 
         accountId = .create()
-        cacheURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
-        sharedContainerURL = cacheURL.appendingPathComponent("\(UUID().uuidString)")
+        cacheURL = FileManager.default.randomCacheURL
+        sharedContainerURL = cacheURL.appendingPathComponent(UUID().uuidString)
         cleanUp()
         createDatabase()
         setupCaches()
@@ -76,23 +76,29 @@ public class DiskDatabaseTest: ZMTBaseTest {
 
     private func createDatabase() {
         let account = Account(userName: "", userIdentifier: accountId)
-        coreDataStack = CoreDataStack(account: account,
-                                      applicationContainer: sharedContainerURL,
-                                      inMemoryStore: false,
-                                      dispatchGroup: dispatchGroup)
+        coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            inMemoryStore: false,
+            dispatchGroup: dispatchGroup
+        )
 
         coreDataStack.loadStores { error in
             XCTAssertNil(error)
         }
 
-        self.moc.performGroupedAndWait {
+        moc.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.moc)
             selfUser.remoteIdentifier = self.accountId
         }
     }
 
     private func cleanUp() {
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+        try? FileManager.default.contentsOfDirectory(
+            at: sharedContainerURL,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ).forEach {
             try? FileManager.default.removeItem(at: $0)
         }
     }
@@ -101,40 +107,40 @@ public class DiskDatabaseTest: ZMTBaseTest {
 extension DiskDatabaseTest {
 
     func createClient(user: ZMUser) -> UserClient {
-        let client = UserClient.insertNewObject(in: self.moc)
+        let client = UserClient.insertNewObject(in: moc)
         client.user = user
         client.remoteIdentifier = UUID().transportString()
         return client
     }
 
     func createUser() -> ZMUser {
-        let user = ZMUser.insertNewObject(in: self.moc)
+        let user = ZMUser.insertNewObject(in: moc)
         user.remoteIdentifier = UUID()
         return user
     }
 
     func createConversation() -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: self.moc)
+        let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.remoteIdentifier = UUID()
         conversation.conversationType = .group
         return conversation
     }
 
     func createTeam() -> Team {
-        let team = Team.insertNewObject(in: self.moc)
+        let team = Team.insertNewObject(in: moc)
         team.remoteIdentifier = UUID()
         return team
     }
 
     func createMembership(user: ZMUser, team: Team) -> Member {
-        let member = Member.insertNewObject(in: self.moc)
+        let member = Member.insertNewObject(in: moc)
         member.user = user
         member.team = team
         return member
     }
 
     func createConnection(to: ZMUser, conversation: ZMConversation) -> ZMConnection {
-        let connection = ZMConnection.insertNewObject(in: self.moc)
+        let connection = ZMConnection.insertNewObject(in: moc)
         connection.to = to
         to.oneOnOneConversation = conversation
         connection.status = .accepted

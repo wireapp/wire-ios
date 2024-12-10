@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class ZMGenericMessageDataTests: ModelObjectsTests {
 
@@ -138,7 +138,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
     // MARK: - Helpers
 
     private func createGenericMessage(text: String) -> GenericMessage {
-        return GenericMessage(content: Text(content: text))
+        GenericMessage(content: Text(content: text))
     }
 
     @discardableResult

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ContactsDataSourceTests: XCTestCase {
 
@@ -27,7 +27,7 @@ final class ContactsDataSourceTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Thread.sleep(forTimeInterval: 0.5)
-        dataSource = ContactsDataSource()
+        dataSource = ContactsDataSource(isFederationUsageAllowed: true)
     }
 
     override func tearDown() {
@@ -72,7 +72,10 @@ final class ContactsDataSourceTests: XCTestCase {
         XCTAssertEqual(numberOfRawsInFirstSection, 20, "")
 
         let numberOfSections: Int? = dataSource?.numberOfSections(in: UITableView())
-        let numberOfRawsInLastSection: Int? = dataSource?.tableView(UITableView(), numberOfRowsInSection: (numberOfSections ?? 0) - 2)
+        let numberOfRawsInLastSection: Int? = dataSource?.tableView(
+            UITableView(),
+            numberOfRowsInSection: (numberOfSections ?? 0) - 2
+        )
         XCTAssertEqual(numberOfRawsInLastSection, 3, "")
     }
 
@@ -80,10 +83,10 @@ final class ContactsDataSourceTests: XCTestCase {
         // GIVEN
         let mockUsers = SwiftMockLoader.mockUsers(fromResource: "a_lot_of_people.json")
 
-        measure({
+        measure {
             // WHEN
             self.dataSource?.ungroupedSearchResults = mockUsers
-        })
+        }
     }
 
 }

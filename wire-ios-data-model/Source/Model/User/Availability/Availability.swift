@@ -18,5 +18,23 @@
 
 @objc(ZMAvailability)
 public enum Availability: Int, CaseIterable {
-    case none, available, busy, away
+    case none
+    case available
+    case busy
+    case away
+}
+
+extension Availability: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .none:
+            "none"
+        case .available:
+            "available"
+        case .busy:
+            "busy"
+        case .away:
+            "away"
+        }
+    }
 }

@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
 
 extension UIButton {
 
@@ -27,9 +27,11 @@ extension UIButton {
     ///   - iconType: the StyleKitIcontype
     ///   - size: StyleKitIcon.Size
     ///   - state: UIControl state
-    func setIcon(_ iconType: StyleKitIcon?,
-                 size: StyleKitIcon.Size,
-                 for state: UIControl.State) {
+    func setIcon(
+        _ iconType: StyleKitIcon?,
+        size: StyleKitIcon.Size,
+        for state: UIControl.State
+    ) {
         guard let iconType else {
             setImage(nil, for: state)
             return

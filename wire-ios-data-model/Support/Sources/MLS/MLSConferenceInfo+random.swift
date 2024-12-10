@@ -18,20 +18,20 @@
 
 @testable import WireDataModel
 
-extension MLSConferenceInfo {
+public extension MLSConferenceInfo {
 
-    public static func random() -> Self {
+    static func random() -> Self {
         .init(
-            epoch: .random(in: (.min)...(.max)),
+            epoch: .random(in: .min ... .max),
             keyData: Data.random(byteCount: 8),
             members: [.random()]
         )
     }
 }
 
-extension MLSConferenceInfo.Member {
+public extension MLSConferenceInfo.Member {
 
-    public static func random() -> Self {
+    static func random() -> Self {
         .init(
             id: .random(),
             isInSubconversation: .random()

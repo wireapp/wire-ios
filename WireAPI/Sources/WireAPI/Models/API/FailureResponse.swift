@@ -20,7 +20,7 @@ import Foundation
 
 /// A object representing an error returned from the server.
 
-public struct FailureResponse: Decodable, Error {
+public struct FailureResponse: Codable, Error {
 
     /// The http status code.
 

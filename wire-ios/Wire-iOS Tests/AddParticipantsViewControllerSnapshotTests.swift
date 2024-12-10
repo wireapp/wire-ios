@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class MockTeam: TeamType {
     var conversations: Set<ZMConversation> = []
@@ -42,25 +44,37 @@ final class MockTeam: TeamType {
 }
 
 final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
+
+    // MARK: - Properties
+
     var userSession: UserSessionMock!
     var mockSelfUser: MockUserType!
-
     var sut: AddParticipantsViewController!
+    var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
+        mockSelfUser.canCreateService = true
         userSession = UserSessionMock(mockUser: mockSelfUser)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         userSession = nil
         mockSelfUser = nil
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForEveryOneIsHere() {
         let newValues = ConversationCreationValues(
@@ -72,7 +86,7 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         )
 
         sut = AddParticipantsViewController(context: .create(newValues), userSession: userSession)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForAddParticipantsButtonIsShown() {
@@ -82,7 +96,7 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         sut.userSelection.add(user)
         sut.userSelection(UserSelection(), didAddUser: user)
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatTabBarIsShown_WhenBotCanBeAdded() {
@@ -93,11 +107,30 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         mockConversation.conversationType = .group
         mockConversation.teamType = MockTeam()
         mockConversation.allowServices = true
+        mockConversation.messageProtocol = .proteus
 
         sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
 
         // THEN
-        verify(matching: sut)
+        XCTAssertTrue(mockConversation.botCanBeAdded)
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testThatTabBarIsNotShown_WhenBotCanNotBeAdded() {
+        // GIVEN
+        let mockConversation = MockGroupDetailsConversation()
+
+        // WHEN
+        mockConversation.conversationType = .group
+        mockConversation.teamType = MockTeam()
+        mockConversation.allowServices = true
+        mockConversation.messageProtocol = .mls
+
+        sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
+
+        // THEN
+        XCTAssertFalse(mockConversation.botCanBeAdded)
+        snapshotHelper.verify(matching: sut)
     }
 
 }

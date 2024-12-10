@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import XCTest
+@testable import WireAPI
 
 final class PayloadPagerTests: XCTestCase {
 
@@ -31,18 +31,21 @@ final class PayloadPagerTests: XCTestCase {
                     hasMore: true,
                     nextStart: "second"
                 )
+
             case "second":
                 return PayloadPager.Page(
                     element: ["D", "E", "F"],
                     hasMore: true,
                     nextStart: "third"
                 )
+
             case "third":
                 return PayloadPager.Page(
                     element: ["G", "H", "I"],
                     hasMore: false,
                     nextStart: ""
                 )
+
             default:
                 throw TestError(message: "unknown index: \(String(describing: index))")
             }
@@ -76,6 +79,7 @@ final class PayloadPagerTests: XCTestCase {
                     hasMore: true,
                     nextStart: "second"
                 )
+
             default:
                 throw expectedError
             }

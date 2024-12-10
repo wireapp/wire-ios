@@ -19,11 +19,12 @@
 import Foundation
 import XCTest
 
+import WireTransport
 @testable import WireRequestStrategy
 
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
 
-    enum CodingKeys: CodingKey { }
+    enum CodingKeys: CodingKey {}
 
     typealias InitCall = (Decoder, APIVersion)
 
@@ -41,11 +42,11 @@ private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
         mockEncode?(encoder, apiVersion)
     }
 
-    init() { }
+    init() {}
 }
 
 private struct CodableObject: Codable {
-    enum CodingKeys: CodingKey { }
+    enum CodingKeys: CodingKey {}
 
     var initCalls = [Decoder]()
 
@@ -61,7 +62,7 @@ private struct CodableObject: Codable {
         mockEncode?(encoder)
     }
 
-    init() { }
+    init() {}
 }
 
 class Payload_CodingTests: XCTestCase {
@@ -75,7 +76,6 @@ class Payload_CodingTests: XCTestCase {
     }
 
     override func tearDown() {
-        BackendInfo.apiVersion = .v3
         data = nil
         super.tearDown()
     }

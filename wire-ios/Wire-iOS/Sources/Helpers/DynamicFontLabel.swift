@@ -18,6 +18,8 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
+import WireFoundation
 
 /// A helper class that provides the label with Dynamic Type Support
 /// by conforming to the DynamicTypeCapable Protocol.
@@ -35,7 +37,7 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
         color: UIColor
     ) {
         // Not needed when we use a font style.
-        onRedrawFont = { return nil }
+        self.onRedrawFont = { nil }
         super.init(frame: .zero)
         self.text = text
         self.textColor = color
@@ -49,7 +51,7 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
         fontSpec: FontSpec = .normalRegularFont,
         color: UIColor
     ) {
-        self.onRedrawFont = { return fontSpec.font }
+        self.onRedrawFont = { fontSpec.font }
 
         super.init(frame: .zero)
 
@@ -58,13 +60,15 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
         self.textColor = color
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: Methods
+
     func redrawFont() {
         guard let newFont = onRedrawFont() else { return }
-        self.font = newFont
+        font = newFont
     }
 }

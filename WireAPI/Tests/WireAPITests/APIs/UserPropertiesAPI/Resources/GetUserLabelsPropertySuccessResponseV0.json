@@ -1,0 +1,22 @@
+{
+    "labels": [
+            {
+            "id": "f3d302fb-3fd5-43b2-927b-6336f9e787b0",
+            "name": "Foo",
+            "type": 0,
+            "conversations": [
+                "ffd0a9af-c0d0-4748-be9b-ab309c640dde",
+                "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8"
+            ]
+        },
+        {
+            "id": "2AA27182-AA54-4D79-973E-8974A3BBE375",
+            "type": 1,
+            "conversations": [
+                "ceb3f577-3b22-4fe9-8ffd-757f29c47ffc",
+                "eca55fdb-8f81-4112-9175-4ffca7691bf8"
+            ]
+        }
+    ]
+}
+

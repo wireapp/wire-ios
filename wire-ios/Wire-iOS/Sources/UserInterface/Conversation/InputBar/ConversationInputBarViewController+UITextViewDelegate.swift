@@ -18,20 +18,12 @@
 
 import UIKit
 import WireDataModel
+import WireFoundation
 
 // MARK: SplitViewController reveal
 
 extension CharacterSet {
     static var newlinesAndTabulation = CharacterSet(charactersIn: "\r\n\t")
-}
-
-extension ConversationInputBarViewController {
-    func hideLeftView() {
-        guard self.isIPadRegularPortrait(device: UIDevice.current, application: UIApplication.shared) else { return }
-        guard let splitViewController = wr_splitViewController, splitViewController.isLeftViewControllerRevealed else { return }
-
-        splitViewController.setLeftViewControllerRevealed(false, animated: true)
-    }
 }
 
 extension ConversationInputBarViewController: UITextViewDelegate {
@@ -43,30 +35,36 @@ extension ConversationInputBarViewController: UITextViewDelegate {
             return
         }
 
-        conversation.setIsTyping(textView.text.count > 0)
+        conversation.setIsTyping(!textView.text.isEmpty)
 
         triggerMentionsIfNeeded(from: textView)
         updateRightAccessoryView()
     }
 
-    func textView(_ textView: UITextView, shouldInteractWith textAttachment: NSTextAttachment, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        return textAttachment.image == nil
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith textAttachment: NSTextAttachment,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
+        textAttachment.image == nil
     }
 
     var isMentionsViewKeyboardCollapsed: Bool {
         // Press tab or enter to insert mention if iPhone keyboard is collapsed
         if let isKeyboardCollapsed = mentionsView?.isKeyboardCollapsed {
-            return isKeyboardCollapsed
+            isKeyboardCollapsed
         } else {
-            return false
+            false
         }
     }
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         // send only if send key pressed
+        let currentDevice = DeviceWrapper(device: .current)
         if textView.returnKeyType == .send && (text == "\n") {
-            if UIDevice.current.type == .iPad,
-                canInsertMention {
+            if currentDevice.userInterfaceIdiom == .pad,
+               canInsertMention {
                 insertBestMatchMention()
             } else {
                 inputBar.textView.autocorrectLastWord()
@@ -77,20 +75,27 @@ extension ConversationInputBarViewController: UITextViewDelegate {
 
         // insert mention if return or tab key is pressed and mention view is visible
         if text.count == 1,
-            text.containsCharacters(from: CharacterSet.newlinesAndTabulation),
-            canInsertMention,
-            UIDevice.current.type == .iPad || isMentionsViewKeyboardCollapsed {
+           text.containsCharacters(from: CharacterSet.newlinesAndTabulation),
+           canInsertMention,
+           currentDevice.userInterfaceIdiom == .pad || isMentionsViewKeyboardCollapsed {
 
             insertBestMatchMention()
             return false
         }
 
         // we are deleting text one by one
-        if text == "" && range.length == 1 {
-            if let cursor = textView.selectedTextRange, let deletionStart = textView.position(from: cursor.start, offset: -1) {
-                if cursor.start == cursor.end && // We have only caret, no selected text
-                    textView.attributedText.containsAttachments(in: range) { // Text to be deleted has text attachment
-                    textView.selectedTextRange = textView.textRange(from: deletionStart, to: cursor.start) // Select the text to be deleted and ignore the backspace
+        if text == "", range.length == 1 {
+            if let cursor = textView.selectedTextRange, let deletionStart = textView.position(
+                from: cursor.start,
+                offset: -1
+            ) {
+                if cursor.start == cursor.end, // We have only caret, no selected text
+                   textView.attributedText.containsAttachments(in: range) { // Text to be deleted has text attachment
+                    textView.selectedTextRange = textView
+                        .textRange(
+                            from: deletionStart,
+                            to: cursor.start
+                        ) // Select the text to be deleted and ignore the backspace
                     return false
                 }
             }
@@ -109,15 +114,14 @@ extension ConversationInputBarViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         updateAccessoryViews()
         updateNewButtonTitleLabel()
-        hideLeftView()
     }
 
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
-        return delegate?.conversationInputBarViewControllerShouldEndEditing(self) ?? true
+        delegate?.conversationInputBarViewControllerShouldEndEditing(self) ?? true
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.count > 0 {
+        if !textView.text.isEmpty {
             conversation.setIsTyping(false)
         }
 

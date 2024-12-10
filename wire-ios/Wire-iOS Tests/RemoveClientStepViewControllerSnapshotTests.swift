@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -25,10 +25,11 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
 
     var coreDataFixture: CoreDataFixture!
     var sut: RemoveClientStepViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
         sut = RemoveClientStepViewController(
             clients: [
@@ -37,12 +38,12 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
                 mockUserClient(),
                 mockUserClient(),
                 mockUserClient()
-            ],
-            credentials: UserCredentials()
+            ]
         )
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         coreDataFixture = nil
 
@@ -51,10 +52,13 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
 
     func testForWrappedInNavigationController() {
         // GIVEN & WHEN
-        let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
+        let navigationController = UINavigationController(
+            navigationBarClass: AuthenticationNavigationBar.self,
+            toolbarClass: nil
+        )
         navigationController.viewControllers = [UIViewController(), sut]
 
         // THEN
-        verify(matching: navigationController)
+        snapshotHelper.verify(matching: navigationController)
     }
 }

@@ -72,6 +72,8 @@ protocol MLSActionsProviderProtocol {
         conversationID: UUID,
         domain: String,
         subgroupType: SubgroupType,
+        epoch: Int,
+        groupID: MLSGroupID,
         context: NotificationContext
     ) async throws
 
@@ -102,7 +104,9 @@ protocol MLSActionsProviderProtocol {
 
 final class MLSActionsProvider: MLSActionsProviderProtocol {
 
-    func fetchBackendPublicKeys(
+    public init() {}
+
+    public func fetchBackendPublicKeys(
         in context: NotificationContext
     ) async throws -> BackendMLSPublicKeys {
         var action = FetchBackendMLSPublicKeysAction()
@@ -157,8 +161,9 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
 
     func sendCommitBundle(
         _ bundle: Data,
-        in context: NotificationContext)
-    async throws -> [ZMUpdateEvent] {
+        in context: NotificationContext
+    )
+        async throws -> [ZMUpdateEvent] {
         var action = SendCommitBundleAction(commitBundle: bundle)
         return try await action.perform(in: context)
     }
@@ -207,12 +212,16 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
         conversationID: UUID,
         domain: String,
         subgroupType: SubgroupType,
+        epoch: Int,
+        groupID: MLSGroupID,
         context: NotificationContext
     ) async throws {
         var action = DeleteSubgroupAction(
             conversationID: conversationID,
             domain: domain,
-            subgroupType: subgroupType
+            subgroupType: subgroupType,
+            epoch: epoch,
+            groupID: groupID
         )
 
         try await action.perform(in: context)

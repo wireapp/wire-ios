@@ -23,14 +23,14 @@ import WireSyncEngine
 extension ZMConversationMessage {
 
     var mediaShareRestrictionManager: MediaShareRestrictionManager {
-        return MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+        MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
     }
 
     /// Whether the message can be digitally signed in.
     var canBeDigitallySigned: Bool {
         guard
+            // TODO: [WPB-11830] phone number is no longer available so digital signature can't work
             let selfUser = SelfUser.provider?.providedSelfUser,
-            selfUser.phoneNumber != nil,
             selfUser.isTeamMember,
             selfUser.hasDigitalSignatureEnabled
         else {
@@ -45,8 +45,8 @@ extension ZMConversationMessage {
             return false
         }
         return mediaShareRestrictionManager.canUseClipboard &&
-               !isEphemeral &&
-               (isText || isImage || isLocation)
+            !isEphemeral &&
+            (isText || isImage || isLocation)
     }
 
     /// Whether the message can be edited.
@@ -56,10 +56,10 @@ extension ZMConversationMessage {
             return false
         }
         return !isEphemeral &&
-               isText &&
-               conversation.isSelfAnActiveMember &&
-               sender.isSelfUser &&
-               deliveryState.isOne(of: .delivered, .sent, .read)
+            isText &&
+            conversation.isSelfAnActiveMember &&
+            sender.isSelfUser &&
+            deliveryState.isOne(of: .delivered, .sent, .read)
     }
 
     /// Whether the message can be quoted.
@@ -68,7 +68,8 @@ extension ZMConversationMessage {
             return false
         }
 
-        return !isEphemeral && conversation.isSelfAnActiveMember && isSent && (isText || isImage || isLocation || isFile)
+        return !isEphemeral && conversation
+            .isSelfAnActiveMember && isSent && (isText || isImage || isLocation || isFile)
     }
 
     /// Whether message details are available for this message.
@@ -113,7 +114,7 @@ extension ZMConversationMessage {
 
     /// Whether it is possible to download the message content.
     var canBeDownloaded: Bool {
-        guard let fileMessageData = self.fileMessageData,
+        guard let fileMessageData,
               canBeShared,
               mediaShareRestrictionManager.canDownloadMedia else {
             return false
@@ -122,7 +123,7 @@ extension ZMConversationMessage {
     }
 
     var canCancelDownload: Bool {
-        guard let fileMessageData = self.fileMessageData else {
+        guard let fileMessageData else {
             return false
         }
         return isFile && fileMessageData.downloadState == .downloading
@@ -133,8 +134,8 @@ extension ZMConversationMessage {
         guard canBeShared,
               !isEphemeral,
               mediaShareRestrictionManager.canDownloadMedia else {
-                  return false
-              }
+            return false
+        }
 
         if isImage {
             return true
@@ -142,25 +143,10 @@ extension ZMConversationMessage {
             return videoCanBeSavedToCameraRoll()
         } else if isAudio {
             return audioCanBeSaved()
-        } else if isFile, let fileMessageData = self.fileMessageData {
+        } else if isFile, let fileMessageData {
             return fileMessageData.hasLocalFileData
         } else {
             return false
-        }
-    }
-
-    /// Whether it should be possible to forward given message to another conversation.
-    var canBeForwarded: Bool {
-        guard !isEphemeral,
-              canBeShared,
-              mediaShareRestrictionManager.canUseClipboard else {
-                  return false
-              }
-
-        if isFile, let fileMessageData = self.fileMessageData {
-            return fileMessageData.hasLocalFileData
-        } else {
-            return (isText || isImage || isLocation || isFile)
         }
     }
 
@@ -172,14 +158,14 @@ extension ZMConversationMessage {
         }
 
         return conversation.isSelfAnActiveMember &&
-               sender.isSelfUser &&
-               (isText || isImage || isLocation || isFile) &&
-               deliveryState == .failedToSend
+            sender.isSelfUser &&
+            (isText || isImage || isLocation || isFile) &&
+            deliveryState == .failedToSend
     }
 
     /// Whether the message can be sent or received.
     var canBeShared: Bool {
-        return !isRestricted
+        !isRestricted
     }
 
 }

@@ -122,7 +122,7 @@ static ZMReachability *sharedReachabilityMock = nil;
 - (void)setUp;
 {
     [super setUp];
-    [self setDefaults];
+    [self setBackendInfoDefaults];
     BackgroundActivityFactory.sharedFactory.activityManager = UIApplication.sharedApplication;
     [BackgroundActivityFactory.sharedFactory resume];
     
@@ -260,8 +260,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     self.groupIdentifier = nil;
     self.sharedContainerURL = nil;
 
-    [self unsetDefaultAPIVersion];
-
     [self.lastEventIDRepository storeLastEventID:nil];
 
     [super tearDown];
@@ -315,11 +313,6 @@ static ZMReachability *sharedReachabilityMock = nil;
 - (void)setEmailAddress:(NSString *)emailAddress onUser:(ZMUser *)user;
 {
     user.emailAddress = emailAddress;
-}
-
-- (void)setPhoneNumber:(NSString *)phoneNumber onUser:(ZMUser *)user;
-{
-    user.phoneNumber = phoneNumber;
 }
 
 @end

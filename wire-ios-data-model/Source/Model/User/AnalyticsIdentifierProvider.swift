@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public struct AnalyticsIdentifierProvider {
 
@@ -34,7 +35,7 @@ public struct AnalyticsIdentifierProvider {
     }
 
     func setAnalytics(identifier: UUID, forSelfUser user: ZMUser) {
-        guard user.isSelfUser && user.isTeamMember else { return }
+        guard user.isSelfUser else { return }
 
         user.analyticsIdentifier = identifier.transportString()
 
@@ -49,7 +50,12 @@ public struct AnalyticsIdentifierProvider {
 
     private func broadcast(identifier: UUID, context: NSManagedObjectContext) {
         let message = DataTransfer(trackingIdentifier: identifier)
-        _ = try? ZMConversation.sendMessageToSelfClients(message, in: context)
+        do {
+            try ZMConversation.sendMessageToSelfClients(message, in: context)
+        } catch {
+            WireLogger.messaging
+                .error("Error broadcasting analytics ID: \(identifier.safeForLoggingDescription) \(error)")
+        }
     }
 
 }

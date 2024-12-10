@@ -17,9 +17,10 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
+import WireDomainSupport
 import WireSyncEngineSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class SupportedProtocolsServiceTests: XCTestCase {
 
@@ -27,7 +28,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     private var mockCoreDataStack: CoreDataStack!
 
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var mockUserRepository: MockUserRepositoryProtocol!
+    private var mockSelfUserProvider: MockSelfUserProviderProtocol!
 
     private var sut: SupportedProtocolsService!
 
@@ -42,18 +43,18 @@ final class SupportedProtocolsServiceTests: XCTestCase {
         mockCoreDataStack = try await coreDataStackHelper.createStack()
 
         mockFeatureRepository = MockFeatureRepositoryInterface()
-        mockUserRepository = MockUserRepositoryProtocol()
+        mockSelfUserProvider = MockSelfUserProviderProtocol()
 
         sut = SupportedProtocolsService(
             featureRepository: mockFeatureRepository,
-            userRepository: mockUserRepository
+            selfUserProvider: mockSelfUserProvider
         )
     }
 
     override func tearDown() async throws {
         sut = nil
         mockFeatureRepository = nil
-        mockUserRepository = nil
+        mockSelfUserProvider = nil
         mockCoreDataStack = nil
 
         try coreDataStackHelper.cleanupDirectory()
@@ -66,7 +67,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
 
     private func mock(allActiveMLSClients: Bool) throws {
         let selfUser = createSelfUser(in: syncContext)
-        mockUserRepository.fetchSelfUser_MockValue = selfUser
+        mockSelfUserProvider.fetchSelfUser_MockValue = selfUser
 
         let selfClient = createSelfClient(in: syncContext)
         selfClient.lastActiveDate = Date(timeIntervalSinceNow: -.oneDay)
@@ -87,14 +88,14 @@ final class SupportedProtocolsServiceTests: XCTestCase {
             otherClient.mlsPublicKeys = Bool.random() ? validMLSPublicKeys : invalidMLSPublicKeys
 
             // But make sure we do have an invalid client.
-            if otherClient.lastActiveDate == validLastActiveDate && otherClient.mlsPublicKeys == validMLSPublicKeys {
+            if otherClient.lastActiveDate == validLastActiveDate, otherClient.mlsPublicKeys == validMLSPublicKeys {
                 otherClient.lastActiveDate = invalidLastActiveDate
             }
         }
     }
 
     private func randomMLSPublicKeys() -> UserClient.MLSPublicKeys {
-        return UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
+        UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
     }
 
     private func mock(remoteSupportedProtocols: Set<Feature.MLS.Config.MessageProtocol>) {

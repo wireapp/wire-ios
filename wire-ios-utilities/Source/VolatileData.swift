@@ -39,14 +39,14 @@ public final class VolatileData {
     /// **Important**: assign only to a constant (with the `let` keyword) to ensure that no
     /// memory resources are duplicated.
 
-    private(set) public var _storage: Data
+    public private(set) var _storage: Data
 
     // MARK: - Life Cycle
 
     /// Initialize the container with the given data.
 
     public init(from data: Data) {
-        _storage = data
+        self._storage = data
     }
 
     deinit {
@@ -58,7 +58,7 @@ public final class VolatileData {
     /// Reset all bytes in the underlying storage to zero.
 
     public func resetBytes() {
-        _storage.resetBytes(in: (_storage.startIndex)..<(_storage.endIndex))
+        _storage.resetBytes(in: (_storage.startIndex) ..< (_storage.endIndex))
     }
 
 }
@@ -66,7 +66,7 @@ public final class VolatileData {
 extension VolatileData: Equatable {
 
     public static func == (lhs: VolatileData, rhs: VolatileData) -> Bool {
-        return lhs._storage == rhs._storage
+        lhs._storage == rhs._storage
     }
 
 }

@@ -25,17 +25,17 @@ protocol TokenizedTextViewDelegate: AnyObject {
 
 // ! Custom UITextView subclass to be used in TokenField.
 // ! Shouldn't be used anywhere else.
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: as a inner class of TokenField
-// swiftlint:enable todo_requires_jira_link
 
 class TokenizedTextView: TextView {
 
     weak var tokenizedTextViewDelegate: TokenizedTextViewDelegate?
 
-    private lazy var tapSelectionGestureRecognizer: UITapGestureRecognizer = {
-        return UITapGestureRecognizer(target: self, action: #selector(didTapText(_:)))
-    }()
+    private lazy var tapSelectionGestureRecognizer: UITapGestureRecognizer = .init(
+        target: self,
+        action: #selector(didTapText(_:))
+    )
 
     convenience init() {
         self.init(frame: .zero)
@@ -48,9 +48,10 @@ class TokenizedTextView: TextView {
     }
 
     // MARK: - Actions
+
     override var contentOffset: CGPoint {
         get {
-            return super.contentOffset
+            super.contentOffset
         }
 
         set(contentOffset) {
@@ -77,14 +78,22 @@ class TokenizedTextView: TextView {
         location.y -= textContainerInset.top
 
         // Find the character that's been tapped on
-        var characterIndex: Int = 0
+        var characterIndex = 0
         var fraction: CGFloat = 0
 
         withUnsafePointer(to: &fraction) {
-            characterIndex = layoutManager.characterIndex(for: location, in: textContainer, fractionOfDistanceBetweenInsertionPoints: UnsafeMutablePointer<CGFloat>(mutating: $0))
+            characterIndex = layoutManager.characterIndex(
+                for: location,
+                in: textContainer,
+                fractionOfDistanceBetweenInsertionPoints: UnsafeMutablePointer<CGFloat>(mutating: $0)
+            )
         }
 
-        tokenizedTextViewDelegate?.tokenizedTextView(self, didTapTextRange: NSRange(location: characterIndex, length: 1), fraction: fraction)
+        tokenizedTextViewDelegate?.tokenizedTextView(
+            self,
+            didTapTextRange: NSRange(location: characterIndex, length: 1),
+            fraction: fraction
+        )
     }
 
     override func copy(_ sender: Any?) {
@@ -114,14 +123,18 @@ class TokenizedTextView: TextView {
     private func pasteboardString(from range: NSRange) -> String? {
         // enumerate range of current text, resolving person attachents with user name.
         var string = ""
-        for i in range.location..<NSMaxRange(range) {
+        for i in range.location ..< NSMaxRange(range) {
             guard let nsstring = attributedText?.string as NSString? else {
                 continue
             }
 
             if nsstring.character(at: i) == NSTextAttachment.character {
 
-                if let tokenAttachemnt = attributedText?.attribute(.attachment, at: i, effectiveRange: nil) as? TokenTextAttachment {
+                if let tokenAttachemnt = attributedText?.attribute(
+                    .attachment,
+                    at: i,
+                    effectiveRange: nil
+                ) as? TokenTextAttachment {
                     string += tokenAttachemnt.token.title
                     if i < NSMaxRange(range) - 1 {
                         string += ", "
@@ -138,7 +151,10 @@ class TokenizedTextView: TextView {
 // MARK: - UIGestureRecognizerDelegate
 
 extension TokenizedTextView: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        true
     }
 }

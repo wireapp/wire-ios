@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 private let zmLog = ZMSLog(tag: "PushNotificationStatus")
 
@@ -41,7 +42,8 @@ open class PushNotificationStatus: NSObject {
     private var isFetching = false
 
     public var hasEventsToFetch: Bool {
-        return eventIdRanking.count > 0 && !isFetching
+        // swiftformat:disable:next isEmpty
+        eventIdRanking.count > 0 && !isFetching
     }
 
     public init(
@@ -55,7 +57,8 @@ open class PushNotificationStatus: NSObject {
     /// Schedule to fetch an event with a given UUID
     ///
     /// - parameter eventId: UUID of the event to fetch
-    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when there's no more events to fetch
+    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when
+    /// there's no more events to fetch
     @objc(fetchEventId:completionHandler:)
     public func fetch(eventId: UUID, completionHandler: @escaping () -> Void) {
         fetch(eventId: eventId) { _ in
@@ -66,11 +69,19 @@ open class PushNotificationStatus: NSObject {
     /// Schedule to fetch an event with a given UUID
     ///
     /// - parameter eventId: UUID of the event to fetch
-    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when there's no more events to fetch
+    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when
+    /// there's no more events to fetch
 
     public func fetch(eventId: UUID, completionHandler: @escaping FetchCompletion) {
+        let logAttributes: LogAttributes = [LogAttributesKey.eventId: eventId.safeForLoggingDescription].merging(
+            .safePublic,
+            uniquingKeysWith: { _, new in new }
+        )
         guard eventId.isType1UUID else {
-            zmLog.error("Attempt to fetch event id not conforming to UUID type1: \(eventId)")
+            WireLogger.eventProcessing.error(
+                "Attempt to fetch event id not conforming to UUID type1",
+                attributes: logAttributes
+            )
             completionHandler(.failure(.invalidEventID))
             return
         }
@@ -79,12 +90,12 @@ open class PushNotificationStatus: NSObject {
             lastEventId: lastEventIDRepository.fetchLastEventID(),
             eventId: eventId
         ) {
-            Logging.eventProcessing.info("Already fetched event with [\(eventId)]")
+            WireLogger.eventProcessing.info("Already fetched event", attributes: logAttributes)
             completionHandler(.failure(.alreadyFetchedEvent))
             return
         }
 
-        Logging.eventProcessing.info("Scheduling to fetch events notified by push [\(eventId)]")
+        WireLogger.eventProcessing.info("Scheduling to fetch events notified by push", attributes: logAttributes)
 
         eventIdRanking.add(eventId)
         completionHandlers[eventId] = completionHandler
@@ -107,16 +118,19 @@ open class PushNotificationStatus: NSObject {
         highestRankingEventId.map(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
-        WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.uuidString), attributes: .safePublic)
-
-        if let lastEventId {
-            lastEventIDRepository.storeLastEventID(lastEventId)
-        }
+        WireLogger.updateEvent.info(
+            "finished fetching all available events, last event id: " +
+                String(describing: lastEventId?.safeForLoggingDescription),
+            attributes: .safePublic
+        )
 
         guard finished else { return }
 
         // We take all events that are older than or equal to lastEventId and add highest ranking event ID
-        for eventId in completionHandlers.keys.filter({ self.lastEventIdIsNewerThan(lastEventId: lastEventId, eventId: $0) || highestRankingEventId == $0 }) {
+        for eventId in completionHandlers.keys.filter({ self.lastEventIdIsNewerThan(
+            lastEventId: lastEventId,
+            eventId: $0
+        ) || highestRankingEventId == $0 }) {
             let completionHandler = completionHandlers.removeValue(forKey: eventId)
             completionHandler?(.success(()))
         }

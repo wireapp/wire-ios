@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
 import WireTesting
+import WireTransport
+import XCTest
+
+@testable import WireSyncEngine
 
 public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
@@ -42,7 +44,6 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
             userPropertyValidator: UserPropertyValidator()
         )
         sut.groupQueue.add(dispatchGroup)
-        setCurrentAPIVersion(.v0)
     }
 
     public override func tearDown() {
@@ -51,7 +52,6 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         transportSession = nil
         mockDelegate = nil
         reachability = nil
-        resetCurrentAPIVersion()
 
         super.tearDown()
     }
@@ -68,7 +68,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)
         XCTAssertEqual(transportSession.lastEnqueuedRequest?.path, "/custom-backend/by-domain/example.com")
-        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.get)
+        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, .get)
     }
 
     func testThatItURLEncodeRequest() {
@@ -81,15 +81,15 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)
         XCTAssertEqual(transportSession.lastEnqueuedRequest?.path, "/custom-backend/by-domain/example%20com")
-        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.get)
+        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, .get)
     }
 
     func testThatItLookupReturnsNoAPiVersionError() {
         // given
-        setCurrentAPIVersion(nil)
+        BackendInfo.apiVersion = nil
         let domain = "example com"
 
-        let expectation = self.customExpectation(description: "should get an error")
+        let expectation = customExpectation(description: "should get an error")
         var gettingExpectedError = false
         // when
         sut.lookup(domain: domain) { result in
@@ -110,69 +110,91 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
     // MARK: Response handling
 
     func testThat404ResponseWithNoMatchingLabelIsError() {
-        checkThat(statusCode: 404,
-                  isProcessedAs:
-            .failure(DomainLookupError.unknown), payload: nil)
+        checkThat(
+            statusCode: 404,
+            isProcessedAs:
+            .failure(DomainLookupError.unknown),
+            payload: nil
+        )
     }
 
     func testThat404ResponseWithMatchingLabelIsNotFound() {
         let payload = ["label": "custom-instance-not-found"]
-        checkThat(statusCode: 404,
-                  isProcessedAs: .failure(DomainLookupError.notFound),
-                  payload: payload as ZMTransportData)
+        checkThat(
+            statusCode: 404,
+            isProcessedAs: .failure(DomainLookupError.notFound),
+            payload: payload as ZMTransportData
+        )
     }
 
     func testThat500ResponseIsError() {
-        checkThat(statusCode: 500,
-                  isProcessedAs: .failure(DomainLookupError.networkFailure),
-                  payload: nil)
+        checkThat(
+            statusCode: 500,
+            isProcessedAs: .failure(DomainLookupError.networkFailure),
+            payload: nil
+        )
     }
 
     func testThat200ResponseIsProcessedAsValid() {
         let url = URL(string: "https://wire.com/config.json")!
         let payload = ["foo": "bar", "config_json_url": url.absoluteString]
 
-        checkThat(statusCode: 200,
-                  isProcessedAs: .success(DomainInfo(configurationURL: url)),
-                  payload: payload as ZMTransportData)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .success(DomainInfo(configurationURL: url)),
+            payload: payload as ZMTransportData
+        )
     }
 
     func testThat200ResponseWithMalformdURLGeneratesParseError() {
-        checkThat(statusCode: 200,
-                  isProcessedAs: .failure(DomainLookupError.malformedData),
-                  payload: ["config_json_url": "22"] as ZMTransportData)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .failure(DomainLookupError.malformedData),
+            payload: ["config_json_url": "22"] as ZMTransportData
+        )
     }
 
     func testThat200ResponseWithMissingPayloadGeneratesParseError() {
-        checkThat(statusCode: 200,
-                  isProcessedAs: .failure(DomainLookupError.malformedData),
-                  payload: nil)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .failure(DomainLookupError.malformedData),
+            payload: nil
+        )
     }
 
     // MARK: - Helpers
 
-    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<DomainInfo, Error>, payload: ZMTransportData?) {
+    func checkThat(
+        statusCode: Int,
+        isProcessedAs expectedResult: Result<DomainInfo, Error>,
+        payload: ZMTransportData?
+    ) {
         let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")
 
         // given
         sut.lookup(domain: "example.com") { result in
 
             switch (result, expectedResult) {
-            case (.success(let lhsDomainInfo), .success(let rhsDomainInfo)):
+            case let (.success(lhsDomainInfo), .success(rhsDomainInfo)):
                 if lhsDomainInfo == rhsDomainInfo {
                     resultExpectation.fulfill()
                 }
-            case (.failure(let lhsError), .failure(let rhsError)):
+            case let (.failure(lhsError), .failure(rhsError)):
                 if (lhsError as? DomainLookupError) == (rhsError as? DomainLookupError) {
                     resultExpectation.fulfill()
                 }
             default:
-                    break
+                break
             }
         }
 
         // when
-        transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(payload: payload, httpStatus: statusCode, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(
+            payload: payload,
+            httpStatus: statusCode,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

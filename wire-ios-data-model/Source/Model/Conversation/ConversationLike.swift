@@ -53,7 +53,8 @@ public protocol ConversationLike: AnyObject {
     var domain: String? { get }
 }
 
-// Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another protocol to abstract Swift only properties
+// Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
+// protocol to abstract Swift only properties
 public protocol SwiftConversationLike {
     var accessMode: ConversationAccessMode? { get }
     var accessRoles: Set<ConversationAccessRoleV2> { get }
@@ -68,7 +69,7 @@ public protocol SwiftConversationLike {
 
 extension ZMConversation: ConversationLike {
     public var localParticipantsCount: Int {
-        return localParticipants.count
+        localParticipants.count
     }
 
     public func localParticipantsContain(user: UserType) -> Bool {
@@ -77,18 +78,18 @@ extension ZMConversation: ConversationLike {
     }
 
     public var connectedUserType: UserType? {
-        return connectedUser
-	}
+        connectedUser
+    }
 
-	public var sortedOtherParticipants: [UserType] {
+    public var sortedOtherParticipants: [UserType] {
         localParticipants
             .filter { !$0.isServiceUser }
             .sortedAscendingPrependingNil(by: \.name)
-	}
+    }
 
-	public var sortedServiceUsers: [UserType] {
-		localParticipants
-            .filter { $0.isServiceUser }
+    public var sortedServiceUsers: [UserType] {
+        localParticipants
+            .filter(\.isServiceUser)
             .sortedAscendingPrependingNil(by: \.name)
     }
 

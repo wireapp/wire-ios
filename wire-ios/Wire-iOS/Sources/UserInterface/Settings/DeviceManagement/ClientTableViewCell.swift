@@ -28,6 +28,7 @@ final class ClientTableViewCell: UITableViewCell {
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Properties
+
     let nameLabel = DynamicFontLabel(
         style: .h3,
         color: LabelColors.textDefault
@@ -63,12 +64,11 @@ final class ClientTableViewCell: UITableViewCell {
     var wr_editable: Bool
 
     private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
-    private var mlsInfoHeighConstraint: NSLayoutConstraint { mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 0)
-    }
 
     // MARK: - Initialization
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        wr_editable = true
+        self.wr_editable = true
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         createConstraints()
@@ -81,6 +81,7 @@ final class ClientTableViewCell: UITableViewCell {
     }
 
     // MARK: - Override method
+
     override func setEditing(_ editing: Bool, animated: Bool) {
         if wr_editable {
             super.setEditing(editing, animated: animated)
@@ -88,6 +89,7 @@ final class ClientTableViewCell: UITableViewCell {
     }
 
     // MARK: - Methods
+
     func setupStyle() {
         nameLabel.accessibilityIdentifier = "device name"
         proteusIdLabel.accessibilityIdentifier = "device proteus ID"

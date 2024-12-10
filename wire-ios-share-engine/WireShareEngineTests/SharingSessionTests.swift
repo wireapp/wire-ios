@@ -17,9 +17,10 @@
 //
 
 import WireDataModel
-@testable import WireShareEngine
 import WireTesting
 import XCTest
+
+@testable import WireShareEngine
 
 final class SharingSessionTests: BaseSharingSessionTests {
 

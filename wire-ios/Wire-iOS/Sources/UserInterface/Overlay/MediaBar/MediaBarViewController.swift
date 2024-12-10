@@ -18,12 +18,13 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class MediaBarViewController: UIViewController {
     private var mediaPlaybackManager: MediaPlaybackManager?
 
     private var mediaBarView: MediaBar? {
-        return view as? MediaBar
+        view as? MediaBar
     }
 
     required init(mediaPlaybackManager: MediaPlaybackManager?) {
@@ -51,10 +52,6 @@ final class MediaBarViewController: UIViewController {
         updatePlayPauseButton()
     }
 
-    private func updateTitleLabel() {
-        mediaBarView?.titleLabel.text = mediaPlaybackManager?.activeMediaPlayer?.title?.uppercasedWithCurrentLocale
-    }
-
     func updatePlayPauseButton() {
         let playPauseIcon: StyleKitIcon
         let accessibilityIdentifier: String
@@ -72,6 +69,7 @@ final class MediaBarViewController: UIViewController {
     }
 
     // MARK: - Actions
+
     @objc
     private func playPause(_ sender: Any?) {
         if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {

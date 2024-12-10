@@ -20,10 +20,11 @@ import Foundation
 import WireDataModel
 import WireDataModelSupport
 import WireMockTransport
-@testable import WireNotificationEngine
 import WireRequestStrategy
 import WireTesting
 import XCTest
+
+@testable import WireNotificationEngine
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
@@ -54,9 +55,9 @@ class BaseTest: ZMTBaseTest {
         authenticationStatus = FakeAuthenticationStatus()
         cachesDirectory = try! FileManager.default.url(
             for: .cachesDirectory,
-               in: .userDomainMask,
-               appropriateFor: nil,
-               create: true
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
         )
 
         let account = Account(
@@ -115,7 +116,6 @@ class BaseTest: ZMTBaseTest {
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             pushNotificationStatus: pushNotificationStatus,
-            notificationsTracker: nil,
             lastEventIDRepository: lastEventIDRepository
         )
 
@@ -176,7 +176,8 @@ class BaseTest: ZMTBaseTest {
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             earService: mockEARService,
             proteusService: mockProteusService,
-            mlsDecryptionService: mockMLSDecryptionService
+            mlsDecryptionService: mockMLSDecryptionService,
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 }

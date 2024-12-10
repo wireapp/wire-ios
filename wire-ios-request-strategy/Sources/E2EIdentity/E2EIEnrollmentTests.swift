@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
+import WireTransport
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
@@ -30,16 +31,16 @@ class E2EIEnrollmentTests: ZMTBaseTest {
     var mockApiProvider: MockAPIProviderInterface!
     var mockE2eiService: MockE2EIServiceInterface!
     var mockKeyRotator: MockE2EIKeyPackageRotating!
-    var previousApiVersion: APIVersion!
 
     override func setUp() {
         super.setUp()
 
-        previousApiVersion = BackendInfo.apiVersion
-        let acmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-                                          newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                          newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
-                                          revokeCert: "")
+        let acmeDirectory = AcmeDirectory(
+            newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+            newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
+            newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
+            revokeCert: ""
+        )
         mockAcmeApi = MockAcmeAPIInterface()
         mockApiProvider = MockAPIProviderInterface()
         mockE2eiService = MockE2EIServiceInterface()
@@ -51,7 +52,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             acmeDirectory: acmeDirectory,
             keyRotator: mockKeyRotator
         )
-        BackendInfo.storage = .temporary()
+        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {
@@ -60,8 +61,6 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         mockApiProvider = nil
         mockE2eiService = nil
         mockKeyRotator = nil
-        BackendInfo.apiVersion = previousApiVersion
-        BackendInfo.storage = .standard
 
         super.tearDown()
     }
@@ -72,7 +71,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.getACMENoncePath_MockMethod = { _ in
-            return expectedNonce
+            expectedNonce
         }
 
         // when
@@ -88,14 +87,15 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let acmeResponse = ACMEResponse(
             nonce: expectedNonce,
             location: "Location",
-            response: Data())
+            response: Data()
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return acmeResponse
+            acmeResponse
         }
         mockE2eiService.getNewAccountRequestNonce_MockMethod = { _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setAccountResponseAccountData_MockMethod = { _ in }
 
@@ -112,22 +112,24 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedLocation = "Location"
         let expectedAcmeOrder = NewAcmeOrder(
             delegate: Data(),
-            authorizations: ["new order"])
+            authorizations: ["new order"]
+        )
 
         let acmeResponse = ACMEResponse(
             nonce: expectedNonce,
             location: expectedLocation,
-            response: Data())
+            response: Data()
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return acmeResponse
+            acmeResponse
         }
         mockE2eiService.getNewOrderRequestNonce_MockMethod = { _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setOrderResponseOrder_MockMethod = { _ in
-            return expectedAcmeOrder
+            expectedAcmeOrder
         }
 
         // when
@@ -148,28 +150,31 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let wireOidcChallenge = AcmeChallenge(
             delegate: Data(),
             url: "url",
-            target: "google")
+            target: "google"
+        )
 
         let newAcmeAuthz = NewAcmeAuthz(
             identifier: "111",
             keyauth: "keyauth",
-            challenge: wireOidcChallenge)
+            challenge: wireOidcChallenge
+        )
 
         let authorizationResponse = ACMEAuthorizationResponse(
             nonce: expectedNonce,
             location: expectedLocation,
             response: Data(),
-            challengeType: expectedChallengeType)
+            challengeType: expectedChallengeType
+        )
 
         // given
         mockAcmeApi.sendAuthorizationRequestPathRequestBody_MockMethod = { _, _ in
-            return authorizationResponse
+            authorizationResponse
         }
         mockE2eiService.getNewAuthzRequestUrlPreviousNonce_MockMethod = { _, _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setAuthzResponseAuthz_MockMethod = { _ in
-            return newAcmeAuthz
+            newAcmeAuthz
         }
 
         // when
@@ -188,8 +193,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         // given
         BackendInfo.apiVersion = .v5
         let e2eIAPI = MockE2eIAPI()
-        e2eIAPI.getWireNonceClientId_MockMethod = {_ in
-            return expectedNonce
+        e2eIAPI.getWireNonceClientId_MockMethod = { _ in
+            expectedNonce
         }
         mockApiProvider.e2eIAPIApiVersion_MockValue = e2eIAPI
 
@@ -206,7 +211,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockE2eiService.createDpopTokenNonce_MockMethod = { _ in
-            return expectedDPoPToken
+            expectedDPoPToken
         }
 
         // when
@@ -223,8 +228,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         // given
         BackendInfo.apiVersion = .v5
         let e2eIAPI = MockE2eIAPI()
-        e2eIAPI.getAccessTokenClientIdDpopToken_MockMethod = {_, _ in
-            return expectedAccessToken
+        e2eIAPI.getAccessTokenClientIdDpopToken_MockMethod = { _, _ in
+            expectedAccessToken
         }
         mockApiProvider.e2eIAPIApiVersion_MockValue = e2eIAPI
 
@@ -243,14 +248,15 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             status: "valid",
             token: "token",
             target: "target",
-            nonce: "nonce")
+            nonce: "nonce"
+        )
 
         // given
         mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
-            return expectedChallengeResponse
+            expectedChallengeResponse
         }
         mockE2eiService.getNewDpopChallengeRequestAccessTokenNonce_MockMethod = { _, _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setDPoPChallengeResponseChallenge_MockMethod = { _ in }
 
@@ -258,11 +264,13 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let acmeChallenge = AcmeChallenge(
             delegate: Data(),
             url: "",
-            target: "")
+            target: ""
+        )
         let result = try await sut.validateDPoPChallenge(
             accessToken: "11",
             prevNonce: "Nonce",
-            acmeChallenge: acmeChallenge)
+            acmeChallenge: acmeChallenge
+        )
 
         // then
         XCTAssertEqual(result, expectedChallengeResponse)
@@ -276,14 +284,15 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             status: "valid",
             token: "token",
             target: "target",
-            nonce: "nonce")
+            nonce: "nonce"
+        )
 
         // given
         mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
-            return expectedChallengeResponse
+            expectedChallengeResponse
         }
         mockE2eiService.getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod = { _, _, _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setOIDCChallengeResponseChallenge_MockMethod = { _ in }
 
@@ -291,13 +300,15 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let acmeChallenge = AcmeChallenge(
             delegate: Data(),
             url: "",
-            target: "")
+            target: ""
+        )
 
         let result = try await sut.validateOIDCChallenge(
             idToken: "idToken",
             refreshToken: "refreshToken",
             prevNonce: "Nonce",
-            acmeChallenge: acmeChallenge)
+            acmeChallenge: acmeChallenge
+        )
 
         // then
         XCTAssertEqual(result, expectedChallengeResponse)
@@ -311,7 +322,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             status: "valid",
             token: "token",
             target: "target",
-            nonce: "nonce")
+            nonce: "nonce"
+        )
         mockE2eiService.setDPoPChallengeResponseChallenge_MockMethod = { _ in }
 
         // when
@@ -329,7 +341,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             status: "valid",
             token: "token",
             target: "target",
-            nonce: "nonce")
+            nonce: "nonce"
+        )
         mockE2eiService.setOIDCChallengeResponseChallenge_MockMethod = { _ in }
 
         // when
@@ -348,17 +361,18 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedACMEResponse = ACMEResponse(
             nonce: expectedNonce,
             location: expectedLocation,
-            response: expectedData)
+            response: expectedData
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return expectedACMEResponse
+            expectedACMEResponse
         }
         mockE2eiService.checkOrderRequestOrderUrlNonce_MockMethod = { _, _ in
-            return Data()
+            Data()
         }
         mockE2eiService.checkOrderResponseOrder_MockMethod = { _ in
-            return expectedOrder
+            expectedOrder
         }
 
         // when
@@ -378,17 +392,18 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedACMEResponse = ACMEResponse(
             nonce: expectedNonce,
             location: expectedLocation,
-            response: expectedData)
+            response: expectedData
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return expectedACMEResponse
+            expectedACMEResponse
         }
         mockE2eiService.finalizeRequestNonce_MockMethod = { _ in
-            return Data()
+            Data()
         }
         mockE2eiService.finalizeResponseFinalize_MockMethod = { _ in
-            return expected
+            expected
         }
 
         // when
@@ -407,14 +422,15 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedACMEResponse = ACMEResponse(
             nonce: expectedNonce,
             location: expectedLocation,
-            response: expectedData)
+            response: expectedData
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return expectedACMEResponse
+            expectedACMEResponse
         }
         mockE2eiService.certificateRequestNonce_MockMethod = { _ in
-            return Data()
+            Data()
         }
 
         // when

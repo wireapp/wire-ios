@@ -27,13 +27,23 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
     private let titleLabel = UILabel()
     private let toggle = Switch(style: .default)
     private let subtitleLabel = UILabel()
-    private var action: ((Bool, UIView?) -> Void)?
+    private var action: ((Bool, UIView) -> Void)?
 
-    private lazy var imageContainerWidthConstraint: NSLayoutConstraint = imageContainer.widthAnchor.constraint(equalToConstant: CGFloat.IconCell.IconWidth)
-    private lazy var iconImageViewLeadingConstraint: NSLayoutConstraint = iconImageView.leadingAnchor.constraint(equalTo: topContainer.leadingAnchor, constant: CGFloat.IconCell.IconSpacing)
+    private lazy var imageContainerWidthConstraint: NSLayoutConstraint = imageContainer.widthAnchor
+        .constraint(equalToConstant: CGFloat.IconCell.IconWidth)
+    private lazy var iconImageViewLeadingConstraint: NSLayoutConstraint = iconImageView.leadingAnchor.constraint(
+        equalTo: topContainer.leadingAnchor,
+        constant: CGFloat.IconCell.IconSpacing
+    )
 
-    private lazy var subtitleTopConstraint: NSLayoutConstraint = subtitleLabel.topAnchor.constraint(equalTo: topContainer.bottomAnchor, constant: subtitleInsets.top)
-    private lazy var subtitleBottomConstraint: NSLayoutConstraint = subtitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -subtitleInsets.bottom)
+    private lazy var subtitleTopConstraint: NSLayoutConstraint = subtitleLabel.topAnchor.constraint(
+        equalTo: topContainer.bottomAnchor,
+        constant: subtitleInsets.top
+    )
+    private lazy var subtitleBottomConstraint: NSLayoutConstraint = subtitleLabel.bottomAnchor.constraint(
+        equalTo: contentView.bottomAnchor,
+        constant: -subtitleInsets.bottom
+    )
 
     private let subtitleInsets = UIEdgeInsets(top: 16, left: 16, bottom: 24, right: 16)
 
@@ -41,8 +51,8 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
         get {
             guard let title = titleLabel.text,
                   let subtitle = subtitleLabel.text else {
-                      return nil
-                  }
+                return nil
+            }
             return "\(title), \(subtitle)"
         }
 
@@ -53,7 +63,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
 
     override var accessibilityValue: String? {
         get {
-            return toggle.accessibilityValue
+            toggle.accessibilityValue
         }
 
         set {
@@ -63,7 +73,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
 
     override var accessibilityTraits: UIAccessibilityTraits {
         get {
-            return toggle.accessibilityTraits
+            toggle.accessibilityTraits
         }
         set {
             super.accessibilityTraits = newValue
@@ -112,11 +122,17 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
         NSLayoutConstraint.activate([
             imageContainerWidthConstraint,
             iconImageView.centerYAnchor.constraint(equalTo: topContainer.centerYAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: CGFloat.IconCell.IconSpacing),
+            titleLabel.leadingAnchor.constraint(
+                equalTo: iconImageView.trailingAnchor,
+                constant: CGFloat.IconCell.IconSpacing
+            ),
             iconImageViewLeadingConstraint,
 
             toggle.centerYAnchor.constraint(equalTo: topContainer.centerYAnchor),
-            toggle.trailingAnchor.constraint(equalTo: topContainer.trailingAnchor, constant: -CGFloat.IconCell.IconSpacing),
+            toggle.trailingAnchor.constraint(
+                equalTo: topContainer.trailingAnchor,
+                constant: -CGFloat.IconCell.IconSpacing
+            ),
             titleLabel.centerYAnchor.constraint(equalTo: topContainer.centerYAnchor),
 
             topContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -124,8 +140,14 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
             topContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             topContainer.heightAnchor.constraint(equalToConstant: 56),
 
-            subtitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: subtitleInsets.leading),
-            subtitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -subtitleInsets.trailing),
+            subtitleLabel.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: subtitleInsets.leading
+            ),
+            subtitleLabel.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -subtitleInsets.trailing
+            ),
             subtitleTopConstraint,
             subtitleBottomConstraint
         ])
@@ -139,20 +161,23 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
         topContainer.addBorder(for: .bottom)
     }
 
-    @objc private func toggleChanged(_ sender: UISwitch) {
+    @objc
+    private func toggleChanged(_ sender: UISwitch) {
         action?(sender.isOn, self)
     }
 
     func configure(with configuration: CellConfiguration) {
-        guard case let .iconToggle(title,
-                                   subtitle,
-                                   identifier,
-                                   titleIdentifier,
-                                   icon,
-                                   _,
-                                   isEnabled,
-                                   get,
-                                   set) = configuration else { preconditionFailure() }
+        guard case let .iconToggle(
+            title,
+            subtitle,
+            identifier,
+            titleIdentifier,
+            icon,
+            _,
+            isEnabled,
+            get,
+            set
+        ) = configuration else { preconditionFailure() }
 
         let mainColor = SemanticColors.Label.textDefault
 

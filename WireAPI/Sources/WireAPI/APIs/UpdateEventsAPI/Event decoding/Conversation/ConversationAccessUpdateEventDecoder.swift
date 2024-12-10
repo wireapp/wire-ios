@@ -42,7 +42,7 @@ struct ConversationAccessUpdateEventDecoder {
             conversationID: conversationID,
             senderID: senderID,
             accessModes: payload.accessModes,
-            accessRoles: payload.accessRoles ?? [],
+            accessRoles: payload.accessRoles,
             legacyAccessRole: payload.legacyAccessRole
         )
     }

@@ -18,8 +18,6 @@
 
 import WireTransport
 
-private let zmLog = ZMSLog(tag: "event-processing")
-
 /// This enum matches the backend convention for type
 @objc(ZMBackendConversationType)
 public enum BackendConversationType: Int {
@@ -49,22 +47,22 @@ extension ZMConversationType: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
         case .group:
-            return "group"
+            "group"
         case .oneOnOne:
-            return "oneOnOne"
+            "oneOnOne"
         case .connection:
-            return "connection"
+            "connection"
         case .`self`:
-            return "self"
+            "self"
         case .invalid:
-            return "invalid"
+            "invalid"
         }
     }
 }
 
-extension ZMConversation {
+public extension ZMConversation {
 
-    public struct PayloadKeys {
+    struct PayloadKeys {
 
         private init() {}
 
@@ -94,52 +92,54 @@ extension ZMConversation {
         public static let OTRArchivedReferenceKey = "otr_archived_ref"
     }
 
-    public func updateCleared(fromPostPayloadEvent event: ZMUpdateEvent ) {
+    func updateCleared(fromPostPayloadEvent event: ZMUpdateEvent) {
         if let timeStamp = event.timestamp {
             updateCleared(timeStamp, synchronize: true)
         }
     }
 
     @objc
-    public func update(updateEvent: ZMUpdateEvent) {
+    func update(updateEvent: ZMUpdateEvent) {
         if let timeStamp = updateEvent.timestamp {
-            self.updateServerModified(timeStamp)
+            updateServerModified(timeStamp)
         }
     }
 
-    public func updateMessageDestructionTimeout(timeout: TimeInterval) {
+    func updateMessageDestructionTimeout(timeout: TimeInterval) {
         // Backend is sending the miliseconds, we need to convert to seconds.
         setMessageDestructionTimeoutValue(.init(rawValue: timeout / 1000), for: .groupConversation)
     }
 
-    public func updateAccessStatus(accessModes: [String], accessRoles: [String]) {
+    func updateAccessStatus(accessModes: [String], accessRoles: [String]) {
         accessModeStrings = accessModes
         accessRoleStringsV2 = accessRoles
     }
 
-    public func updateReceiptMode(_ receiptMode: Int?) {
+    func updateReceiptMode(_ receiptMode: Int?) {
         if let receiptMode {
             let enabled = receiptMode > 0
-            let receiptModeChanged = !self.hasReadReceiptsEnabled && enabled
-            self.hasReadReceiptsEnabled = enabled
+            let receiptModeChanged = !hasReadReceiptsEnabled && enabled
+            hasReadReceiptsEnabled = enabled
 
             // We only want insert a system message if this is an existing conversation (non empty)
-            if receiptModeChanged && self.lastMessage != nil {
-                self.appendMessageReceiptModeIsOnMessage(timestamp: Date())
+            if receiptModeChanged, lastMessage != nil {
+                appendMessageReceiptModeIsOnMessage(timestamp: Date())
             }
         }
     }
 
-    public func updateMembers(_ usersAndRoles: [(ZMUser, Role?)], selfUserRole: Role?) {
-        guard let context = self.managedObjectContext else {
+    func updateMembers(_ usersAndRoles: [(ZMUser, Role?)], selfUserRole: Role?) {
+        guard let context = managedObjectContext else {
             return
         }
 
-        let allParticipants = Set(usersAndRoles.map { $0.0 })
-        let removedParticipants = self.localParticipantsExcludingSelf.subtracting(allParticipants)
+        let allParticipants = Set(usersAndRoles.map(\.0))
+        let removedParticipants = localParticipantsExcludingSelf.subtracting(allParticipants)
         addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        removeParticipantsAndUpdateConversationState(users: removedParticipants,
-                                                     initiatingUser: ZMUser.selfUser(in: context))
+        removeParticipantsAndUpdateConversationState(
+            users: removedParticipants,
+            initiatingUser: ZMUser.selfUser(in: context)
+        )
 
         let selfUser = ZMUser.selfUser(in: context)
         if let role = selfUserRole {
@@ -151,14 +151,15 @@ extension ZMConversation {
         updatePotentialGapSystemMessagesIfNeeded(users: localParticipants)
     }
 
-    public func updateTeam(identifier: UUID?) {
+    func updateTeam(identifier: UUID?) {
         guard let teamId = identifier,
-              let moc = self.managedObjectContext else { return }
-        self.teamRemoteIdentifier = teamId
-        self.team = Team.fetch(with: teamId, in: moc)
+              let moc = managedObjectContext else { return }
+        teamRemoteIdentifier = teamId
+        team = Team.fetch(with: teamId, in: moc)
     }
 
-    @objc func updatePotentialGapSystemMessagesIfNeeded(users: Set<ZMUser>) {
+    @objc
+    internal func updatePotentialGapSystemMessagesIfNeeded(users: Set<ZMUser>) {
         guard let latestSystemMessage = ZMSystemMessage.fetchLatestPotentialGapSystemMessage(in: self)
         else { return }
 
@@ -170,7 +171,7 @@ extension ZMConversation {
         latestSystemMessage.updateNeedsUpdatingUsersIfNeeded()
     }
 
-    public func updateArchivedStatus(archived: Bool, referenceDate: Date) {
+    func updateArchivedStatus(archived: Bool, referenceDate: Date) {
         guard updateArchived(referenceDate, synchronize: false) else {
             return
         }
@@ -180,15 +181,15 @@ extension ZMConversation {
 
     private func updateIsArchived(payload: [String: Any]) -> Bool {
         if let silencedRef = (payload as NSDictionary).optionalDate(forKey: PayloadKeys.OTRArchivedReferenceKey),
-           self.updateArchived(silencedRef, synchronize: false) {
-            self.internalIsArchived = (payload[PayloadKeys.OTRArchivedValueKey] as? Int) == 1
+           updateArchived(silencedRef, synchronize: false) {
+            internalIsArchived = (payload[PayloadKeys.OTRArchivedValueKey] as? Int) == 1
             return true
         }
         return false
     }
 
     /// Update the muted status when from event or response payloads
-    public func updateMutedStatus(status: Int32, referenceDate: Date) {
+    func updateMutedStatus(status: Int32, referenceDate: Date) {
         guard updateMuted(referenceDate, synchronize: false) else {
             return
         }
@@ -197,12 +198,12 @@ extension ZMConversation {
     }
 
     @objc(shouldAddEvent:)
-    public func shouldAdd(event: ZMUpdateEvent) -> Bool {
-        if let clearedTime = self.clearedTimeStamp, let time = event.timestamp,
+    func shouldAdd(event: ZMUpdateEvent) -> Bool {
+        if let clearedTime = clearedTimeStamp, let time = event.timestamp,
            clearedTime.compare(time) != .orderedAscending {
             return false
         }
-        return self.conversationType != .self
+        return conversationType != .self
     }
 
 }

@@ -28,14 +28,18 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     // MARK: - Properties
 
+    let apiService: any APIServiceProtocol
+
     var apiVersion: APIVersion { .v0 }
 
-    let httpClient: HTTPClient
+    var basePath: String {
+        "/conversations"
+    }
 
     // MARK: - Initialize
 
-    init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID> {
@@ -45,26 +49,35 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         //
         // For design reasons, we decided to implement two functions rather than passing the domain from the outside
         // and manually mapping `QualifiedID`. This task can be performed by the caller.
-        // As soon as APIVersion.v0 is removed, the legacy function can be deleted, making the code clean and easy to understand.
+        // As soon as APIVersion.v0 is removed, the legacy function can be deleted, making the code clean and easy to
+        // understand.
 
-        let resourcePath = "/conversations/list-ids/"
+        let components = URLComponents(string: "\(basePath)/list-ids/")
         let jsonEncoder = JSONEncoder.defaultEncoder
+
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
 
         return PayloadPager<UUID> { start in
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try jsonEncoder.encode(params)
 
-            let request = HTTPRequest(
-                path: resourcePath,
-                method: .post,
-                body: body
+            let request = URLRequestBuilder(url: url)
+                .withMethod(.post)
+                .withBody(body, contentType: .json)
+                .build()
+
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
             )
-            let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
-                .success(code: 200, type: PaginatedConversationIDsV0.self)
-                .parse(response)
+                .success(code: .ok, type: PaginatedConversationIDsV0.self)
+                .parse(code: response.statusCode, data: data)
         }
     }
 
@@ -76,20 +89,69 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        let resourcePath = "\(pathPrefix)/conversations/list/v2"
+        var components = URLComponents(string: "\(pathPrefix)\(basePath)/list/v2")
 
-        let request = HTTPRequest(
-            path: resourcePath,
-            method: .post,
-            body: body
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
         )
-        let response = try await self.httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: QualifiedConversationListV0.self)
-            .failure(code: 400, error: ConversationsAPIError.invalidBody)
-            .parse(response)
+            .success(code: .ok, type: QualifiedConversationListV0.self)
+            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+            .parse(code: response.statusCode, data: data)
     }
+
+    func getMLSOneToOneConversation(
+        userID: String,
+        in domain: String
+    ) async throws -> Conversation {
+        throw ConversationsAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    func getConversationGuestLink(
+        conversationID: String
+    ) async throws -> String? {
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/\(conversationID)/code")
+
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationCodeV0.self)
+            .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+            .failure(code: .notFound, label: "cnv", error: ConversationsAPIError.invalidConversationID)
+            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+            .failure(
+                code: .notFound,
+                label: "no-conversation-code",
+                error: ConversationsAPIError.conversationCodeNotFound
+            )
+            .failure(code: .conflict, label: "guest-links-disabled", error: ConversationsAPIError.guestLinksDisabled)
+            .parse(code: response.statusCode, data: data)
+    }
+
 }
 
 // MARK: Encodables
@@ -129,9 +191,9 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
 
 struct QualifiedConversationListV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
-        case found = "found"
+        case found
         case notFound = "not_found"
-        case failed = "failed"
+        case failed
     }
 
     let found: [ConversationV0]
@@ -176,7 +238,7 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
     var epoch: UInt?
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: Date?
+    var lastEventTime: UTCTimeMillis?
     var legacyAccessRole: ConversationAccessRoleLegacy?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?
@@ -208,7 +270,18 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
             accessRoles: accessRoles,
             legacyAccessRole: legacyAccessRole,
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime
+            lastEventTime: lastEventTime?.date
         )
+    }
+}
+
+struct ConversationCodeV0: Decodable, ToAPIModelConvertible {
+
+    let code: String
+    let key: String
+    let uri: String?
+
+    func toAPIModel() -> String? {
+        uri
     }
 }

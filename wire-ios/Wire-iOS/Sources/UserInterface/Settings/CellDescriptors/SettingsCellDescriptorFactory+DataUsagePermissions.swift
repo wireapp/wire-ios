@@ -19,30 +19,30 @@
 import Foundation
 
 extension SettingsCellDescriptorFactory {
-    func dataUsagePermissionsGroup(isTeamMember: Bool) -> SettingsCellDescriptorType {
+    func dataUsagePermissionsGroup(isPublicDomain: Bool) -> any SettingsCellDescriptorType {
 
-        let sendCrashData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.disableCrashSharing), inverse: true)
-        let sendCrashDataSection = SettingsSectionDescriptor(cellDescriptors: [sendCrashData], footer: L10n.Localizable.Self.Settings.PrivacyCrashMenu.Description.title)
+        var items: [SettingsSectionDescriptor] = []
 
-        var items: [SettingsSectionDescriptor] = [sendCrashDataSection]
-
-        // show analytics toggle for team members only
-        if isTeamMember {
-            let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing), inverse: true)
-            let sendAnalyticsDataSection = SettingsSectionDescriptor(cellDescriptors: [sendAnalyticsData], footer: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Description.title)
+        // show analytics toggle for public domain
+        if isPublicDomain {
+            let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(
+                settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing),
+                inverse: true
+            )
+            let sendAnalyticsDataSection = SettingsSectionDescriptor(
+                cellDescriptors: [sendAnalyticsData],
+                footer: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Description.title
+            )
 
             items.append(sendAnalyticsDataSection)
         }
 
-        let receiveNewsAndOffersData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.receiveNewsAndOffers))
-        let receiveNewsAndOffersSection = SettingsSectionDescriptor(cellDescriptors: [receiveNewsAndOffersData], footer: L10n.Localizable.Self.Settings.ReceiveNewsAndOffers.Description.title)
-
-        items.append(receiveNewsAndOffersSection)
-
         return SettingsGroupCellDescriptor(
             items: items,
             title: L10n.Localizable.Self.Settings.Account.DataUsagePermissions.title,
-            accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 }

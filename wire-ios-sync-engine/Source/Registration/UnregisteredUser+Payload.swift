@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireFoundation
 
 extension UnregisteredUser {
 

@@ -21,7 +21,9 @@ import WireCommonComponents
 import WireDesign
 
 enum EditButtonType {
-    case undo, confirm, cancel
+    case undo
+    case confirm
+    case cancel
 }
 
 protocol InputBarEditViewDelegate: AnyObject {
@@ -30,7 +32,7 @@ protocol InputBarEditViewDelegate: AnyObject {
 }
 
 final class InputBarEditView: UIView {
-typealias IconColors = SemanticColors.Icon
+    typealias IconColors = SemanticColors.Icon
 
     private static var iconButtonTemplate: IconButton {
         let iconButton = IconButton()
@@ -66,7 +68,10 @@ typealias IconColors = SemanticColors.Icon
             $0.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         }
 
-        undoButton.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(didLongPressUndoButton)))
+        undoButton.addGestureRecognizer(UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(didLongPressUndoButton)
+        ))
         undoButton.setIcon(.undo, size: .tiny, for: [])
         undoButton.accessibilityIdentifier = "undoButton"
         confirmButton.setIcon(.checkmark, size: .medium, for: [])
@@ -100,13 +105,15 @@ typealias IconColors = SemanticColors.Icon
         ])
     }
 
-    @objc func buttonTapped(_ sender: IconButton) {
+    @objc
+    func buttonTapped(_ sender: IconButton) {
         let typeBySender = [undoButton: EditButtonType.undo, confirmButton: .confirm, cancelButton: .cancel]
         guard let type = typeBySender[sender] else { return }
         delegate?.inputBarEditView(self, didTapButtonWithType: type)
     }
 
-    @objc func didLongPressUndoButton(_ sender: UILongPressGestureRecognizer) {
+    @objc
+    func didLongPressUndoButton(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else { return }
         delegate?.inputBarEditViewDidLongPressUndoButton(self)
     }

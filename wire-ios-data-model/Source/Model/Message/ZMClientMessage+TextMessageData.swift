@@ -18,15 +18,15 @@
 
 import Foundation
 
-extension ZMClientMessage: ZMTextMessageData {
+extension ZMClientMessage: TextMessageData {
 
     @NSManaged public var quote: ZMMessage?
 
     public var quoteMessage: ZMConversationMessage? {
-        return quote
+        quote
     }
 
-    public override var textMessageData: ZMTextMessageData? {
+    public override var textMessageData: TextMessageData? {
         guard underlyingMessage?.textData != nil else {
             return nil
         }
@@ -34,26 +34,30 @@ extension ZMClientMessage: ZMTextMessageData {
     }
 
     public var isQuotingSelf: Bool {
-        return quote?.sender?.isSelfUser ?? false
+        quote?.sender?.isSelfUser ?? false
     }
 
     public var hasQuote: Bool {
-        return underlyingMessage?.textData?.hasQuote ?? false
+        underlyingMessage?.textData?.hasQuote ?? false
     }
 
     public var messageText: String? {
-        return underlyingMessage?.textData?.content.removingExtremeCombiningCharacters
+        underlyingMessage?.textData?.content.removingExtremeCombiningCharacters
     }
 
     public var mentions: [Mention] {
-        return Mention.mentions(from: underlyingMessage?.textData?.mentions, messageText: messageText, moc: managedObjectContext)
+        Mention.mentions(
+            from: underlyingMessage?.textData?.mentions,
+            messageText: messageText,
+            moc: managedObjectContext
+        )
     }
 
     public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
         guard let nonce, isEditableMessage else { return }
 
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
-        let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: self.quote as? ZMOTRMessage)
+        let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: quote as? ZMOTRMessage)
         let editNonce = UUID()
         let content = MessageEdit(replacingMessageID: nonce, text: editedText)
         let updatedMessage = GenericMessage(content: content, nonce: editNonce)
@@ -68,11 +72,10 @@ extension ZMClientMessage: ZMTextMessageData {
         updateNormalizedText()
 
         self.nonce = editNonce
-        self.updatedTimestamp = Date()
-        self.reactions.removeAll()
-        self.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
-        self.linkAttachments = nil
-        self.delivered = false
+        updatedTimestamp = Date()
+        reactions.removeAll()
+        linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+        linkAttachments = nil
+        delivered = false
     }
-
 }

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireDataModelSupport
+@testable import WireDataModel
 
 final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
@@ -51,7 +51,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: uiMOC)
 
         // when
         searchUser.updateImageData(for: .preview, imageData: verySmallJPEGData())
@@ -66,13 +66,13 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesTheObserverOfASmallProfilePictureChangeIfTheInternalUserUpdates() {
 
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID()
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
         let searchUser = makeSearchUser(name: "", remoteIdentifier: nil, user: user)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: uiMOC)
 
         // when
         user.previewProfileAssetIdentifier = UUID().transportString()
@@ -93,10 +93,10 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: uiMOC)
 
         // when
-        self.token = nil
+        token = nil
         searchUser.updateImageData(for: .preview, imageData: verySmallJPEGData())
 
         // then
@@ -108,12 +108,14 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         // given
         let remoteID = UUID()
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
-        let actionHandler = MockActionHandler<ConnectToUserAction>(result: .success(()),
-                                                                   context: uiMOC.notificationContext)
+        let actionHandler = MockActionHandler<ConnectToUserAction>(
+            result: .success(()),
+            context: uiMOC.notificationContext
+        )
 
         XCTAssertFalse(searchUser.isPendingApprovalByOtherUser)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: uiMOC)
 
         // when
         searchUser.connect(completion: { _ in })
@@ -122,7 +124,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         // then
         XCTAssertTrue(actionHandler.didPerformAction)
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
-        guard let note = testObserver.receivedChangeInfo.first else { return XCTFail()}
+        guard let note = testObserver.receivedChangeInfo.first else { return XCTFail() }
         XCTAssertEqual(note.user as? ZMSearchUser, searchUser)
         XCTAssertTrue(note.connectionStateChanged)
     }

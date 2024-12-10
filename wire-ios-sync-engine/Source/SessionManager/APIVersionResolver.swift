@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireTransport
 
 final class APIVersionResolver {
@@ -29,7 +30,7 @@ final class APIVersionResolver {
     let clientDevVersions: Set<APIVersion>
     let isDeveloperModeEnabled: Bool
 
-    private let queue: ZMSGroupQueue = DispatchGroupQueue(queue: .main)
+    private let queue: GroupQueue = DispatchGroupQueue(queue: .main)
     private let transportSession: UnauthenticatedTransportSessionProtocol
 
     // MARK: - Life cycle
@@ -49,9 +50,8 @@ final class APIVersionResolver {
     // MARK: - Methods
 
     func resolveAPIVersion(completion: @escaping (Error?) -> Void = { _ in }) {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: check if it's been 24hours and proceed or not
-        // swiftlint:enable todo_requires_jira_link
         sendRequest(completion: completion)
     }
 
@@ -72,10 +72,14 @@ final class APIVersionResolver {
         WireLogger.environment.info("received api version response")
 
         guard response.result == .success else {
-            WireLogger.environment.warn("api version response was not success, falling back to v0")
-            BackendInfo.apiVersion = .v0
-            BackendInfo.domain = "wire.com"
-            BackendInfo.isFederationEnabled = false
+            if response.httpStatus == 404 {
+                WireLogger.environment.warn("api version response was not success, falling back to v0")
+                BackendInfo.apiVersion = .v0
+                BackendInfo.domain = "wire.com"
+                BackendInfo.isFederationEnabled = false
+                return
+            }
+            WireLogger.environment.warn("api version response was not successful")
             return
         }
 
@@ -83,7 +87,7 @@ final class APIVersionResolver {
             let data = response.rawData,
             let payload = APIVersionResponsePayload(data)
         else {
-            fatalError()
+            fatal("Couldn't parse api version response payload")
         }
 
         let backendProdVersions = Set(payload.supported.compactMap(APIVersion.init(rawValue:)))
@@ -96,11 +100,9 @@ final class APIVersionResolver {
             WireLogger.environment.warn("no common api versions, app will be blacklisted")
             reportBlacklist(payload: payload)
             BackendInfo.apiVersion = nil
-        } else if
-            isDeveloperModeEnabled,
-            let preferredAPIVersion = BackendInfo.preferredAPIVersion,
-            allBackendVersions.contains(preferredAPIVersion)
-        {
+        } else if isDeveloperModeEnabled,
+                  let preferredAPIVersion = BackendInfo.preferredAPIVersion,
+                  allBackendVersions.contains(preferredAPIVersion) {
             WireLogger.environment.info("resolving to preferred api version \(preferredAPIVersion.rawValue)")
             BackendInfo.apiVersion = preferredAPIVersion
         } else if let apiVersion = commonProductionVersions.max() {
@@ -117,7 +119,7 @@ final class APIVersionResolver {
         let wasFederationEnabled = BackendInfo.isFederationEnabled
         BackendInfo.isFederationEnabled = payload.federation
 
-        if previousBackendDomain == payload.domain && !wasFederationEnabled && BackendInfo.isFederationEnabled {
+        if previousBackendDomain == payload.domain, !wasFederationEnabled, BackendInfo.isFederationEnabled {
             delegate?.apiVersionResolverDetectedFederationHasBeenEnabled()
         }
 
@@ -183,7 +185,7 @@ public extension APIVersion {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5]
+    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6]
 
     /// API versions currently under development and not suitable for production
     /// environments.

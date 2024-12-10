@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,11 +37,10 @@
 "general.on" = "Вкл.";
 "general.loading" = "Загрузка…";
 "general.paste" = "Вставить";
+"general.or" = "или";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
-
-"general.guest-room-name" = "Гостевая комната";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Вы)";
@@ -61,8 +60,8 @@
 "peoplepicker.header.directory" = "Связаться";
 "peoplepicker.header.federation" = "Подключиться к другому домену";
 
-"peoplepicker.group.title.singular" = "Добавить участников";
-"peoplepicker.group.title.plural" = "Добавить участников (%d)";
+"peoplepicker.group.title.singular" = "Выбрать участников";
+"peoplepicker.group.title.plural" = "Выбрать участников (%d)";
 "peoplepicker.group.skip" = "Пропустить";
 "peoplepicker.group.done" = "Готово";
 "peoplepicker.group.create" = "Создать";
@@ -102,8 +101,6 @@
 "peoplepicker.invite_more_people" = "Пригласить больше пользователей";
 "peoplepicker.invite_team_members" = "Пригласите пользователей в команду";
 "peoplepicker.quick-action.open-conversation" = "Открыть";
-"peoplepicker.quick-action.create-conversation" = "Создать группу";
-"peoplepicker.quick-action.create-guest-room" = "Создать гостевую комнату";
 "peoplepicker.quick-action.admin-services" = "Управление сервисами";
 
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
@@ -127,6 +124,23 @@
 "conversation_list.empty.all_archived.message" = "Архивировано";
 "conversation_list.empty.no_contacts.message" = "Начните беседу или\nсоздайте группу.";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Поиск бесед";
+"conversation_list.search_bar.favoritesPlaceholder" = "Поиск в избранном";
+"conversation_list.search_bar.groupsPlaceholder" = "Поиск групп";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Поиск по беседам 1:1";
+"conversation_list.search_bar.foldersPlaceholder" = "Поиск %@";
+
+
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "Все беседы";
+"conversation_list.filter.favorites.title" = "Избранное";
+"conversation_list.filter.groups.title" = "Группы";
+"conversation_list.filter.oneOnOneConversations.title" = "Беседы 1:1";
+"conversation_list.filter.folders.title" = "Папки";
+"conversation_list.filter_label.text" = "Отфильтровано по %@";
+"conversation_list.filter.remove_button.title" = "Удалить";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Присоединиться";
@@ -135,17 +149,21 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Теперь активна.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Есть новые сообщения.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Контакты";
-"conversation_list.bottom_bar.conversations.title" = "Беседы";
-"conversation_list.bottom_bar.folders.title" = "Папки";
-"conversation_list.bottom_bar.archived.title" = "Архив";
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Добро пожаловать";
+"conversation_list.empty_placeholder.all.subheadline" = "Свяжитесь с друзьями или создайте новую группу, чтобы начать совместную работу!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Отметьте свои любимые беседы, и вы найдете их здесь.";
+"conversation_list.empty_placeholder.favorite.link" = "Как помечать беседы как избранные";
+"conversation_list.empty_placeholder.group.subheadline" = "Вы еще не участвуете ни в одной групповой беседе. Начните новую!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "У вас пока нет контактов. Ищите друзей в %@ и общайтесь.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
 
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Помогите нам сделать Wire лучше";
-"conversation_list.data_usage_permission_alert.message" = "Я согласен с тем, что Wire может создавать и анализировать анонимные отчеты об использовании и ошибках для улучшения приложения Wire. Я могу отозвать данное согласие в любое время.";
-"conversation_list.data_usage_permission_alert.disagree" = "Нет";
-"conversation_list.data_usage_permission_alert.agree" = "Принять";
+"conversation_list.empty_placeholder.search.subheadline.phone" = "Не удалось найти ни одной беседы.\n\nСвяжитесь с пользователями или начните новую групповую беседу:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "Ничего не найдено.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "Новая беседа";
+"conversation_list.empty_placeholder.search.button.ipad" = "Начать новую беседу";
+"conversation_list.empty_placeholder.search.connect_button" = "Связаться с пользователями";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
@@ -312,11 +330,10 @@
 "conversation.input_bar.message_too_long.message" = "Вы можете отправлять сообщения длиной до %d символов.";
 
 "conversation.create.group_name.title" = "Создать группу";
-"conversation.create.group_name.placeholder" = "Название группы";
+"conversation.create.group_name.label" = "Имя группы";
 "conversation.create.guidance.empty" = "Не менее 1 символа";
 "conversation.create.guidance.toolong" = "Слишком много символов";
-"conversation.create.options.title" = "Настройки беседы";
-"conversation.create.options.subtitle" = "Гости: %@, Сервисы: %@, Отчеты о прочтении: %@";
+"conversation.create.options.title" = "НАСТРОЙКИ БЕСЕДЫ";
 "conversation.create.guests.title" = "Разрешить гостей";
 "conversation.create.guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
 "conversation.create.services.title" = "Разрешить сервисы";
@@ -400,6 +417,9 @@
 "location.unauthorized_alert.message" = "Для отправки вашего местоположения, включите службы геолокации и разрешите Wire доступ.";
 "location.unauthorized_alert.cancel" = "Отмена";
 "location.unauthorized_alert.settings" = "Настройки";
+
+"location.error.alert.title" = "Местоположение не может быть отправлено.";
+"location.error.alert.description" = "В данный момент Wire не может получить ваше местоположение. Проверьте, разрешили ли вы Wire получать доступ к вашему местоположению в настройках устройства.";
 
 // Twitter
 "twitter_status.on_twitter" = "%@ в Twitter";
@@ -515,6 +535,7 @@
 "content.system.message_delivered_timestamp" = "Доставлено";
 "content.system.message_read_timestamp" = "Прочитано";
 "content.system.failedtosend_message.general_reason" = "Не удалось отправить сообщение из-за проблем с подключением.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Сообщение не отправлено после отмены отправки.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Сообщение не может быть отправлено, поскольку бэкэнд **%@** недоступен. [Узнать больше](%@)";
 "content.system.failedtosend_message.retry" = "Повторить";
 
@@ -624,7 +645,6 @@
 
 "content.message.like" = "Нравится";
 "content.message.unlike" = "Не нравится";
-"content.message.forward" = "Поделиться";
 "content.message.go_to_conversation" = "Показать";
 "content.message.forward.to" = "Поиск…";
 "content.message.open" = "Открыть";
@@ -1013,6 +1033,20 @@
 "group_details.conversation_admins_header.title" = "Администраторы группы";
 "group_details.conversation_members_header.title" = "Участники группы";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Создание ссылки, защищенной паролем";
+"secured_guest_link_with_password.warning_label.title" = "Пользователям, которые хотят присоединиться к беседе по гостевой ссылке, потребуется ввести этот пароль.\n**Вы не сможете изменить пароль позже. Обязательно скопируйте и сохраните его**.";
+"secured_guest_link_with_password.generate_password_button.title" = "Сгенерировать пароль";
+"secured_guest_link_with_password.textfield.header" = "Установить пароль";
+"secured_guest_link_with_password.textfield.footer" = "Используйте как минимум 15 символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
+"secured_guest_link_with_password.textfield.placeholder" = "Введите пароль";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Подтвердить пароль";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Подтвердите пароль";
+"secured_guest_link_with_password.createLinkButton.title" = "Создать ссылку";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Пароль скопирован";
+"secured_guest_link_with_password.alertController.message" = "Пароль скопирован в буфер обмена устройства.";
 "group_details.conversation_verification_status.e2ei" = "Верифицировано (сквозная идентификация)";
 "group_details.conversation_verification_status.proteus" = "Верифицировано (Proteus)";
 
@@ -1027,8 +1061,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Поделиться профилем";
+"qrcode.share_message" = "Поделитесь своим профилем, чтобы было проще связаться с другими людьми. Вы должны принять запрос на подключение, прежде чем начнете общаться.";
+"qrcode.share_profile_link.button.title" = "Поделиться ссылкой на профиль";
+"qrcode.share_qrcode.button.title" = "Поделиться QR-кодом";
+
+// Options menu contents
 "self.settings" = "Настройки";
 "self.profile" = "Профиль";
 "self.account" = "Аккаунт";
@@ -1046,14 +1086,8 @@
 "about.legal.title" = "Юридическая информация";
 "about.tos.title" = "Условия использования";
 "about.privacy.title" = "Политика конфиденциальности";
-"about.license.title" = "Информация о лицензии";
 "about.website.title" = "Веб-сайт Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Профиль";
-"about.license.open_project_button" = "Просмотреть страницу проекта";
-"about.license.license_header" = "Благодарности";
 
 // Self new devices
 "self.new_device_alert.title" = "Ваша учетная запись использовалась на:";
@@ -1148,9 +1182,6 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Отчеты об использовании и сбоях";
 
-// Crash
-"self.settings.privacy_crash.title" = "Отправка анонимных данных о сбоях";
-"self.settings.privacy_crash_menu.description.title" = "Отправлять анонимные сообщения о сбоях и базовые данные, такие как номер версии и операционная система, чтобы помочь Wire идентифицировать и решить проблемы с приложением.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Отправка анонимных данных об использовании";
@@ -1159,7 +1190,11 @@
 "self.settings.receiveNews_and_offers.title" = "Получать рассылку";
 "self.settings.receiveNews_and_offers.description.title" = "Получайте новости и обновления от Wire по электронной почте.";
 
-
+"self.settings.privacy_analytics.alert.title" = "Согласие на передачу пользовательских данных";
+"self.settings.privacy_analytics.alert.message" = "Помогите улучшить Wire, поделившись данными о своем использовании с помощью псевдонимного идентификатора. Эти данные не связаны с вашей личной информацией и не передаются третьим лицам, помимо Wire Group. К ним относятся, например, время использования функции, версия вашего приложения, тип устройства или операционная система. Эти данные будут удалены не позднее чем через 365 дней. Более подробная информация содержится в нашей Политике конфиденциальности. Вы можете отозвать свое согласие в любое время.";
+"self.settings.privacy_analytics.alert.button.agree" = "Принять";
+"self.settings.privacy_analytics.alert.button.decline" = "Отклонить";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "Политика конфиденциальности";
 
 // Change Username
 
@@ -1296,16 +1331,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "При возникновении проблем с push-уведомлениями, служба поддержки Wire может попросить вас обновить токен.";
 "self.settings.advanced.reset_push_token_alert.title" = "Токен Push-уведомлений был обновлен";
 "self.settings.advanced.reset_push_token_alert.message" = "Уведомления будут восстановлены в течение нескольких секунд.";
-"self.settings.advanced.version_technical_details.title" = "Техническая информация о версии";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Разрешение на использование данных";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "Технический отчет";
-"self.settings.technical_report.send_report" = "Отправить отчет в Wire";
+"self.settings.technical_report_section.title" = "Отладочный отчет";
+"self.settings.technical_report.send_report" = "Отправить отчет";
+"self.settings.technical_report.share_report" = "Поделиться отчетом через Wire";
 "self.settings.technical_report.mail.subject" = "Отладочный отчет Wire";
 "self.settings.technical_report.include_log" = "Включить подробный журнал";
+"self.settings.technical_report.info" = "Если при использовании Wire вы столкнулись с неожиданным поведением или ошибкой, то можете отправить отчет в нашу службу поддержки. Отчет об ошибке может содержать личную информацию. \n\nВы также можете поделиться журналами отладки непосредственно с администратором вашей команды через Wire.";
 "self.settings.technical_report.privacy_warning" = "Подробные журналы могут содержать личные данные";
 "self.settings.technical_report.no_mail_alert" = "Почтовый клиент не обнаружен. Нажмите \"OK\" и отправьте журналы вручную: ";
 
@@ -1420,6 +1456,12 @@
 
 "guest_room.link.button.title" = "Создать ссылку";
 
+"guest_room.secure_link.header.title" = "Ссылка защищена паролем";
+"guest_room.secure_link.header.subtitle" = "Для подключения к беседе по гостевой ссылке необходимо сначала ввести этот пароль. \n\nЗабыли пароль? Аннулируйте ссылку и создайте новую.";
+
+"guest_room.create.link_with_password.action" = "Создание ссылки, защищенной паролем";
+"guest_room.create.link_without_password.action" = "Создание ссылки без пароля";
+
 "guest_room.actions.copy_link" = "Скопировать ссылку";
 "guest_room.actions.copied_link" = "Ссылка скопирована!";
 "guest_room.actions.share_link" = "Поделиться ссылкой";
@@ -1429,6 +1471,13 @@
 
 "guest_room.expiration.hours_left" = "Осталось %@ час.";
 "guest_room.expiration.less_than_minutes_left" = "Осталось менее %@ мин.";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Введите пароль";
+"join.group.conversation.alert.message" = "Эта беседа защищена паролем";
+"join.group.conversation.alert.textfield.placeholder" = "Введите пароль беседы";
+"join.group.conversation.alert.joinAction.title" = "Присоединиться к беседе";
+"join.group.conversation.alert.learnMoreAction.title" = "Узнать больше о гостевых ссылках";
 
 // Services Options
 
@@ -1788,7 +1837,7 @@
 "giphy.conversation.message" = "%@ · через giphy.com";
 "giphy.conversation.random_message" = "через giphy.com";
 "giphy.error.no_more_results" = "gif-ок больше нет";
-"giphy.error.no_result" = "gif не найдена";
+"giphy.error.no_result" = "GIF не найдена";
 
 "giphy.confirm" = "отправить";
 "giphy.cancel" = "отмена";
@@ -1893,6 +1942,8 @@
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "Ссылка на беседу недействительна.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Узнать больше о гостевых ссылках";
 
+"url_action.join_conversation.error.alert.invalid_password.message" = "Пароль неверен, попробуйте еще раз.";
+
 // Deep Link
 "url_action.invalid_user.title" = "Wire не может найти этого человека.";
 "url_action.invalid_user.message" = "Возможно, у вас нет разрешения на использование этой учетной записи или она больше не существует.";
@@ -1905,13 +1956,6 @@
 
 "url_action.invalid_link.title" = "Недействительная ссылка.";
 "url_action.invalid_link.message" = "Открытая вами ссылка недействительна.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Вы хотите получать новости и обновления от Wire по электронной почте?";
-"news_offers.consent.message" = "Вы сможете отписаться в любое время.";
-"news_offers.consent.button.privacy_policy.title" = "Политика конфиденциальности";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

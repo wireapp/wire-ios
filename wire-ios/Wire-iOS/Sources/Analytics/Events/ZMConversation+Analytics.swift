@@ -27,19 +27,19 @@ enum ConversationType: Int {
 extension ConversationType {
     var analyticsTypeString: String {
         switch  self {
-        case .oneToOne:     return "one_to_one"
-        case .group:        return "group"
+        case .oneToOne:     "one_to_one"
+        case .group:        "group"
         }
     }
 
     static func type(_ conversation: ZMConversation) -> ConversationType? {
         switch conversation.conversationType {
         case .oneOnOne:
-            return .oneToOne
+            .oneToOne
         case .group:
-            return .group
+            .group
         default:
-            return nil
+            nil
         }
     }
 }
@@ -47,24 +47,11 @@ extension ConversationType {
 extension ZMConversation {
 
     var analyticsTypeString: String? {
-        return ConversationType.type(self)?.analyticsTypeString
+        ConversationType.type(self)?.analyticsTypeString
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: move to DM
-    /// Whether the conversation is a 1-on-1 conversation with a service user
-    var isOneOnOneServiceUserConversation: Bool {
-        guard self.localParticipants.count == 2,
-             let otherUser = firstActiveParticipantOtherThanSelf else {
-            return false
-        }
-
-        return otherUser.serviceIdentifier != nil &&
-                otherUser.providerIdentifier != nil
-    }
-
-    // TODO: move to DM
-    // swiftlint:enable todo_requires_jira_link
     /// Whether the conversation includes at least 1 service user.
     var includesServiceUser: Bool {
         let participants = Array(localParticipants)
@@ -81,12 +68,12 @@ extension ZMConversation {
             "conversation_size": participants.count.logRound(),
             "is_global_ephemeral": hasSyncedMessageDestructionTimeout,
             "conversation_services": sortedServiceUsers.count.logRound(),
-            "conversation_guests_wireless": participants.filter({
+            "conversation_guests_wireless": participants.filter {
                 $0.isWirelessUser && $0.isGuest(in: self)
-            }).count.logRound(),
-            "conversation_guests_pro": participants.filter({
+            }.count.logRound(),
+            "conversation_guests_pro": participants.filter {
                 $0.isGuest(in: self) && $0.hasTeam
-            }).count.logRound()
+            }.count.logRound()
         ]
 
         return attributes.merging(guestAttributes) { _, new in new }
@@ -94,9 +81,9 @@ extension ZMConversation {
 
     var guestAttributes: [String: Any] {
 
-        let numGuests = sortedActiveParticipants.filter({
+        let numGuests = sortedActiveParticipants.filter {
             $0.isGuest(in: self)
-        }).count
+        }.count
 
         var attributes: [String: Any] = [
             "conversation_guests": numGuests.logRound()

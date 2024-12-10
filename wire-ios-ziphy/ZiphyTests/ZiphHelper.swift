@@ -19,22 +19,20 @@
 import Foundation
 @testable import Ziphy
 
-final class ZiphHelper {
-    class func createZiph(id: String, url: URL) -> Ziph {
+enum ZiphHelper {
+    static func createZiph(id: String, url: URL) -> Ziph {
         let imagesList: [ZiphyImageType: ZiphyAnimatedImage] = [
-            .preview: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 51200),
-            .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204800),
-            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2048000),
-            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000)
+            .preview: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 51_200),
+            .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204_800),
+            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2_048_000),
+            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5_000_000)
         ]
 
         return createZiph(id: id, url: url, imagesList: imagesList)
     }
 
-    class func createZiph(id: String, url: URL, imagesList: [ZiphyImageType: ZiphyAnimatedImage]) -> Ziph {
+    static func createZiph(id: String, url: URL, imagesList: [ZiphyImageType: ZiphyAnimatedImage]) -> Ziph {
 
-        let ziph = Ziph(identifier: id, images: ZiphyAnimatedImageList(images: imagesList), title: id)
-
-        return ziph
+        Ziph(identifier: id, images: ZiphyAnimatedImageList(images: imagesList), title: id)
     }
 }

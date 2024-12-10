@@ -16,21 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class RoundedBlurViewTests: XCTestCase {
 
     private var sut: RoundedBlurView!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = RoundedBlurView()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -44,7 +47,7 @@ final class RoundedBlurViewTests: XCTestCase {
         // put the blur view in front of an image
         let frame = CGRect(x: 0, y: 0, width: 200, height: 200)
         let container = UIView(frame: frame)
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let imageView = UIImageView(image: image)
         imageView.frame = frame
         imageView.contentMode = .scaleAspectFill
@@ -53,7 +56,7 @@ final class RoundedBlurViewTests: XCTestCase {
         container.addSubview(sut)
 
         // THEN
-        verify(matching: container)
+        snapshotHelper.verify(matching: container)
     }
 
 }

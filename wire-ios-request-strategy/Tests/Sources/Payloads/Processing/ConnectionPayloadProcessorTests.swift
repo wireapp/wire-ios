@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
+import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 final class ConnectionPayloadProcessorTests: MessagingTestBase {
 
@@ -26,12 +27,11 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         sut = ConnectionPayloadProcessor()
-        BackendInfo.storage = .temporary()
+        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
         sut = nil
-        BackendInfo.storage = .standard
         super.tearDown()
     }
 

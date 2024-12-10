@@ -103,13 +103,15 @@ public enum Payload {
         let deviceClass: String?
         let deviceModel: String?
 
-        init(id: String,
-             deviceClass: String? = nil,
-             type: String? = nil,
-             creationDate: Date? = nil,
-             label: String? = nil,
-             location: Location? = nil,
-             deviceModel: String? = nil) {
+        init(
+            id: String,
+            deviceClass: String? = nil,
+            type: String? = nil,
+            creationDate: Date? = nil,
+            label: String? = nil,
+            location: Location? = nil,
+            deviceModel: String? = nil
+        ) {
             self.id = id
             self.type = type
             self.creationDate = creationDate
@@ -226,23 +228,25 @@ public enum Payload {
         /// contain a field from when it sets the field to nil.
         let updatedKeys: Set<CodingKeys>
 
-        init(id: UUID? = nil,
-             qualifiedID: QualifiedID? = nil,
-             teamID: UUID? = nil,
-             serviceID: ServiceID? = nil,
-             SSOID: SSOID? = nil,
-             name: String? = nil,
-             handle: String? = nil,
-             phone: String? = nil,
-             email: String? = nil,
-             assets: [Asset] = [],
-             managedBy: String? = nil,
-             accentColor: Int? = nil,
-             isDeleted: Bool? = nil,
-             expiresAt: Date? = nil,
-             legalholdStatus: LegalholdStatus? = nil,
-             supportedProtocols: Set<MessageProtocol>? = nil,
-             updatedKeys: Set<CodingKeys>? = nil) {
+        init(
+            id: UUID? = nil,
+            qualifiedID: QualifiedID? = nil,
+            teamID: UUID? = nil,
+            serviceID: ServiceID? = nil,
+            SSOID: SSOID? = nil,
+            name: String? = nil,
+            handle: String? = nil,
+            phone: String? = nil,
+            email: String? = nil,
+            assets: [Asset] = [],
+            managedBy: String? = nil,
+            accentColor: Int? = nil,
+            isDeleted: Bool? = nil,
+            expiresAt: Date? = nil,
+            legalholdStatus: LegalholdStatus? = nil,
+            supportedProtocols: Set<MessageProtocol>? = nil,
+            updatedKeys: Set<CodingKeys>? = nil
+        ) {
 
             self.id = id
             self.qualifiedID = qualifiedID
@@ -280,7 +284,10 @@ public enum Payload {
             self.isDeleted = try container.decodeIfPresent(Bool.self, forKey: .isDeleted)
             self.expiresAt = try container.decodeIfPresent(Date.self, forKey: .expiresAt)
             self.legalholdStatus = try container.decodeIfPresent(LegalholdStatus.self, forKey: .legalholdStatus)
-            self.supportedProtocols = try container.decodeIfPresent(Set<MessageProtocol>.self, forKey: .supportedProtocols)
+            self.supportedProtocols = try container.decodeIfPresent(
+                Set<MessageProtocol>.self,
+                forKey: .supportedProtocols
+            )
             self.updatedKeys = Set(container.allKeys)
         }
     }
@@ -333,7 +340,7 @@ public enum Payload {
 
             public func encode(to encoder: Encoder) throws {
                 var container = encoder.singleValueContainer()
-                try container.encode(self.rawValue)
+                try container.encode(rawValue)
             }
         }
 
@@ -374,7 +381,47 @@ public enum Payload {
         let deleted: ClientListByUserID
     }
 
-    public struct MessageSendingStatus: Codable, Equatable {
+    public struct MessageSendingStatusV1: Codable, Equatable {
+
+        enum CodingKeys: String, CodingKey {
+            case time
+            case missing
+            case redundant
+            case deleted
+            case failedToSend = "failed_to_send"
+        }
+
+        /// Time of sending message.
+        let time: Date
+
+        /// Clients that the message should have been encrypted for, but wasn't.
+        let missing: ClientListByQualifiedUserID
+
+        /// Clients that the message was encrypted for, but isn't necessary. For
+        /// example for a client who's user has been removed from the conversation.
+        let redundant: ClientListByQualifiedUserID
+
+        /// Clients that the message was encrypted for, but has since been deleted.
+        let deleted: ClientListByQualifiedUserID
+
+        /// When a message is partially sent contains the list of clients which
+        /// didn't receive the message.
+        let failedToSend: ClientListByQualifiedUserID
+
+        func toAPIModel() -> MessageSendingStatus {
+            MessageSendingStatus(
+                time: time,
+                missing: missing,
+                redundant: redundant,
+                deleted: deleted,
+                failedToSend: failedToSend,
+                failedToConfirm: [:]
+            )
+        }
+
+    }
+
+    public struct MessageSendingStatusV4: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case time
@@ -385,7 +432,48 @@ public enum Payload {
             case failedToConfirm = "failed_to_confirm_clients"
         }
 
-        public init(time: Date, missing: ClientListByQualifiedUserID, redundant: ClientListByQualifiedUserID, deleted: ClientListByQualifiedUserID, failedToSend: ClientListByQualifiedUserID, failedToConfirm: ClientListByQualifiedUserID) {
+        /// Time of sending message.
+        let time: Date
+
+        /// Clients that the message should have been encrypted for, but wasn't.
+        let missing: ClientListByQualifiedUserID
+
+        /// Clients that the message was encrypted for, but isn't necessary. For
+        /// example for a client who's user has been removed from the conversation.
+        let redundant: ClientListByQualifiedUserID
+
+        /// Clients that the message was encrypted for, but has since been deleted.
+        let deleted: ClientListByQualifiedUserID
+
+        /// When a message is partially sent contains the list of clients which
+        /// didn't receive the message.
+        let failedToSend: ClientListByQualifiedUserID
+
+        /// The lists the users for which the client verification could not be performed.
+        let failedToConfirm: ClientListByQualifiedUserID
+
+        func toAPIModel() -> MessageSendingStatus {
+            MessageSendingStatus(
+                time: time,
+                missing: missing,
+                redundant: redundant,
+                deleted: deleted,
+                failedToSend: failedToSend,
+                failedToConfirm: failedToConfirm
+            )
+        }
+    }
+
+    public struct MessageSendingStatus: Equatable {
+
+        public init(
+            time: Date,
+            missing: ClientListByQualifiedUserID,
+            redundant: ClientListByQualifiedUserID,
+            deleted: ClientListByQualifiedUserID,
+            failedToSend: ClientListByQualifiedUserID,
+            failedToConfirm: ClientListByQualifiedUserID
+        ) {
             self.time = time
             self.missing = missing
             self.redundant = redundant
@@ -460,7 +548,7 @@ public enum Payload {
 
 extension Payload.ResponseFailure {
 
-    func updateExpirationReason(for message: OTREntity, with reason: MessageSendFailure) {
+    func updateExpirationReason(for message: OTREntity, with reason: ExpirationReason) {
         message.expirationReasonCode = NSNumber(value: reason.rawValue)
     }
 

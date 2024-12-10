@@ -56,21 +56,24 @@ final class CallDegradationController: UIViewController {
 
     fileprivate func updateState() {
         switch state {
-        case .outgoing(reason: let degradationReason):
+        case let .outgoing(reason: degradationReason):
             switch degradationReason {
             case .invalidCertificate:
-                visibleAlertController = UIAlertController.makeOutgoingDegradedMLSCall { [weak self] continueDegradedCall in
-                    continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?.cancelDegradedCall()
-                }
-            case .degradedUser(user: let degradeduser):
-                visibleAlertController = UIAlertController.makeOutgoingDegradedProteusCall(
-                    degradedUser: degradeduser?.value) { [weak self] continueDegradedCall in
-                        if continueDegradedCall {
-                            self?.delegate?.continueDegradedCall()
-                        } else {
-                            self?.delegate?.cancelDegradedCall()
-                        }
+                visibleAlertController = UIAlertController
+                    .makeOutgoingDegradedMLSCall { [weak self] continueDegradedCall in
+                        continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?
+                            .cancelDegradedCall()
                     }
+            case let .degradedUser(user: degradeduser):
+                visibleAlertController = UIAlertController.makeOutgoingDegradedProteusCall(
+                    degradedUser: degradeduser?.value
+                ) { [weak self] continueDegradedCall in
+                    if continueDegradedCall {
+                        self?.delegate?.continueDegradedCall()
+                    } else {
+                        self?.delegate?.cancelDegradedCall()
+                    }
+                }
             }
         case .none, .incoming, .terminating:
             return
@@ -94,7 +97,7 @@ final class CallDegradationController: UIViewController {
             viewIsReady,
             let alertViewController = visibleAlertController,
             !alertViewController.isBeingPresented
-            else { return }
+        else { return }
 
         Log.calling.debug("Presenting alert about degraded call")
         targetViewController?.present(alertViewController, animated: !ProcessInfo.processInfo.isRunningTests)

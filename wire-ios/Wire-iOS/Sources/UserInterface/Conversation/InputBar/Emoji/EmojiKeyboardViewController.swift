@@ -36,7 +36,7 @@ final class EmojiKeyboardViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
 
-        emojiDataSource = EmojiDataSource(provider: cellForEmoji)
+        self.emojiDataSource = EmojiDataSource(provider: cellForEmoji)
         collectionView.dataSource = emojiDataSource
         collectionView.delegate = self
         sectionViewController.sectionDelegate = self
@@ -75,8 +75,10 @@ final class EmojiKeyboardViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        let sectionViewControllerViewTrailing = sectionViewControllerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)
-
+        let sectionViewControllerViewTrailing = sectionViewControllerView.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor,
+            constant: -32
+        )
         sectionViewControllerViewTrailing.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
@@ -84,7 +86,10 @@ final class EmojiKeyboardViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: sectionViewControllerView.topAnchor),
-            sectionViewControllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -UIScreen.safeArea.bottom),
+            sectionViewControllerView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -view.safeAreaInsets.bottom
+            ),
             sectionViewControllerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             sectionViewControllerViewTrailing,
             sectionViewControllerView.widthAnchor.constraint(lessThanOrEqualToConstant: 400)
@@ -92,22 +97,27 @@ final class EmojiKeyboardViewController: UIViewController {
     }
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji.value
         return cell
     }
 
     func updateSectionSelection() {
-        let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
+        let minSection = Set(collectionView.indexPathsForVisibleItems.map(\.section)).min()
         guard let section = minSection  else { return }
-        self.sectionViewController.didSelectSection(self.emojiDataSource[section].id)
+        sectionViewController.didSelectSection(emojiDataSource[section].id)
     }
 
-    @objc func backspaceTapped(_ sender: IconButton) {
+    @objc
+    func backspaceTapped(_ sender: IconButton) {
         delete()
     }
 
-    @objc func backspaceLongPressed(_ sender: UILongPressGestureRecognizer) {
+    @objc
+    func backspaceLongPressed(_ sender: UILongPressGestureRecognizer) {
         switch sender.state {
         case .began:
             deleting = true
@@ -145,15 +155,19 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
         guard let result = emojiDataSource.register(used: emoji) else { return }
         collectionView.performBatchUpdates({
             switch result {
-            case .insert(let section): collectionView.insertSections(IndexSet(integer: section))
-            case .reload(let section): collectionView.reloadSections(IndexSet(integer: section))
+            case let .insert(section): collectionView.insertSections(IndexSet(integer: section))
+            case let .reload(section): collectionView.reloadSections(IndexSet(integer: section))
             }
         }, completion: { _ in
             self.updateSectionSelection()
         })
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
         let (first, last) = (section == 0, section == collectionView.numberOfSections)
         return UIEdgeInsets(top: 0, left: !first ? 12 : 0, bottom: 0, right: !last ? 12 : 0)
     }

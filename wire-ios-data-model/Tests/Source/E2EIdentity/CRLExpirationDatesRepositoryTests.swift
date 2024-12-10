@@ -17,9 +17,10 @@
 //
 
 import Foundation
+import WireFoundation
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 class CRLExpirationDatesRepositoryTests: XCTestCase {
 

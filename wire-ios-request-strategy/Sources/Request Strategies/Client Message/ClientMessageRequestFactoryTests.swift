@@ -18,15 +18,16 @@
 
 import WireDataModel
 import WireProtos
-@testable import WireRequestStrategy
+import WireTransport
 import WireUtilities
 import XCTest
+@testable import WireRequestStrategy
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
 
     private var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -34,15 +35,10 @@ class ClientMessageRequestFactoryTests: MessagingTestBase {
         super.setUp()
         apiVersion = .v0
     }
-
-    override func tearDown() {
-        apiVersion = nil
-        super.tearDown()
-    }
-
 }
 
 // MARK: - Client discovery
+
 extension ClientMessageRequestFactoryTests {
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {
@@ -50,9 +46,10 @@ extension ClientMessageRequestFactoryTests {
             // GIVEN
             let conversationID = UUID()
             let expectedMessage = Proteus_NewOtrMessage(
-                withSender: self.selfClient,
+                withSenderId: self.selfClient.hexRemoteIdentifier,
                 nativePush: false,
-                recipients: []
+                recipients: [],
+                missingClientsStrategy: .doNotIgnoreAnyMissingClient
             )
 
             // WHEN
@@ -107,7 +104,10 @@ extension ClientMessageRequestFactoryTests {
             // THEN
             XCTAssertNotNil(request)
             XCTAssertNotNil(message)
-            XCTAssertEqual(request?.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages")
+            XCTAssertEqual(
+                request?.path,
+                "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages"
+            )
             XCTAssertEqual(message, expectedMessage)
         }
     }

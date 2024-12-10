@@ -32,8 +32,8 @@ final class ConversationSelectionViewController: UITableViewController {
     private let searchController = UISearchController(searchResultsController: nil)
 
     init(conversations: [Conversation]) {
-        allConversations = conversations
-        visibleConversations = conversations
+        self.allConversations = conversations
+        self.visibleConversations = conversations
 
         super.init(style: .plain)
 
@@ -49,8 +49,9 @@ final class ConversationSelectionViewController: UITableViewController {
         definesPresentationContext = true
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
@@ -61,16 +62,19 @@ final class ConversationSelectionViewController: UITableViewController {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return visibleConversations.count
+        visibleConversations.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let conversation = visibleConversations[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as! TargetConversationCell
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: cellReuseIdentifier,
+            for: indexPath
+        ) as! TargetConversationCell
         cell.configure(for: conversation)
         return cell
     }
@@ -88,9 +92,9 @@ extension ConversationSelectionViewController: UISearchResultsUpdating {
         if let searchText = searchController.searchBar.text, !searchText.isEmpty {
             visibleConversations = allConversations.filter { conversation in
                 if conversation.name?.range(of: searchText, options: [.diacriticInsensitive, .caseInsensitive]) != nil {
-                    return true
+                    true
                 } else {
-                    return false
+                    false
                 }
             }
         } else {

@@ -18,29 +18,33 @@
 
 import UIKit
 import WireDesign
-import struct WireCommonComponents.FontSpec
 
 final class BackupPasswordViewController: UIViewController {
 
+    typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
     typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
-    typealias ViewColors = SemanticColors.View
+
     var onCompletion: ((_ password: String?) -> Void)?
 
     private var password: String?
     private let passwordView = SimpleTextField()
 
     private let subtitleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: HistoryBackup.Password.description,
-                                     fontSpec: .mediumRegularFont,
-                                     color: LabelColors.textSectionHeader)
+        let label = DynamicFontLabel(
+            text: HistoryBackup.Password.description,
+            style: .subline1,
+            color: LabelColors.textSectionHeader
+        )
         label.numberOfLines = 0
         return label
     }()
 
     private let passwordRulesLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                     color: LabelColors.textSectionHeader)
+        let label = DynamicFontLabel(
+            style: .subline1,
+            color: LabelColors.textSectionHeader
+        )
         label.numberOfLines = 0
         return label
     }()
@@ -68,11 +72,11 @@ final class BackupPasswordViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private func setupViews() {
-        view.backgroundColor = SemanticColors.View.backgroundDefault
+        view.backgroundColor = ViewColors.backgroundDefault
         passwordRulesLabel.text = PasswordRuleSet.localizedErrorMessage
 
         [passwordView, subtitleLabel, passwordRulesLabel].forEach {
@@ -80,7 +84,7 @@ final class BackupPasswordViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        passwordView.placeholder = HistoryBackup.Password.placeholder.capitalized
+        passwordView.placeholder = HistoryBackup.Password.placeholder
         passwordView.accessibilityIdentifier = "password input"
         passwordView.accessibilityHint = PasswordRuleSet.localizedErrorMessage
         passwordView.returnKeyType = .done
@@ -88,8 +92,10 @@ final class BackupPasswordViewController: UIViewController {
         passwordView.delegate = self
         passwordView.textColor = LabelColors.textSectionHeader
         passwordView.backgroundColor = ViewColors.backgroundUserCell
-        let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
-                                                        .font: FontSpec.smallRegularFont.font!]
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
+            .font: UIFont.font(for: .body1)
+        ]
         passwordView.updatePlaceholderAttributedText(attributes: attributes)
     }
 
@@ -109,27 +115,24 @@ final class BackupPasswordViewController: UIViewController {
     }
 
     private func setupNavigationBar() {
-        let textColor = LabelColors.textDefault
         navigationController?.navigationBar.backgroundColor = ViewColors.backgroundDefault
-        navigationController?.navigationBar.tintColor = textColor
-        navigationController?.navigationBar.barTintColor = textColor
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: textColor)
 
-        navigationItem.setupNavigationBarTitle(title: HistoryBackup.Password.title.capitalized)
+        setupNavigationBarTitle(HistoryBackup.Password.title)
 
-        let cancelButtonItem: UIBarButtonItem = .createNavigationLeftBarButtonItem(
-            title: HistoryBackup.Password.cancel.capitalized,
-            systemImage: false,
-            target: self,
-            action: #selector(cancel)
+        let cancelButtonItem = UIBarButtonItem.createNavigationLeftBarButtonItem(
+            title: HistoryBackup.Password.cancel,
+            action: UIAction { [weak self] _ in
+                self?.onCompletion?(nil)
+            }
         )
 
-        let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-            title: HistoryBackup.Password.next.capitalized,
-            systemImage: false,
-            target: self,
-            action: #selector(completeWithCurrentResult)
-       )
+        let nextButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+            title: HistoryBackup.Password.next,
+            action: UIAction { [weak self] _ in
+                self?.onCompletion?(self?.password)
+            }
+        )
+
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
 
@@ -148,11 +151,8 @@ final class BackupPasswordViewController: UIViewController {
         }
     }
 
-    @objc dynamic private func cancel() {
-        onCompletion?(nil)
-    }
-
-    @objc dynamic private func completeWithCurrentResult() {
+    @objc
+    private dynamic func completeWithCurrentResult() {
         onCompletion?(password)
     }
 }
@@ -160,7 +160,12 @@ final class BackupPasswordViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 
 extension BackupPasswordViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
 
         if string.containsCharacters(from: .whitespaces) {
             return false
@@ -175,7 +180,7 @@ extension BackupPasswordViewController: UITextFieldDelegate {
 
         let newString = ((textField.text ?? "") as NSString).replacingCharacters(in: range, with: string)
 
-        self.updateState(with: newString)
+        updateState(with: newString)
 
         return true
     }
