@@ -216,7 +216,8 @@ jobs:
           status: ${{ job.status }}
           text: |
             **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀
-            **DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}\n**CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
+            **DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}
+            **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
             **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
             **AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`
             **Triggered by:** ${{ github.triggering_actor }}
