@@ -16,23 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Countly
-import Foundation
-import WireAnalytics
+public import Foundation
+public import WireAnalytics
+public import Countly
 
-struct CountlyWrapper: CountlyAbstraction {
+public struct CountlyWrapper: CountlyAbstraction {
 
     var countly: () -> Countly
 
-    init(countly: @escaping @autoclosure () -> Countly = .sharedInstance()) {
+    public init(countly: @escaping @autoclosure () -> Countly = .sharedInstance()) {
         self.countly = countly
     }
 
-    func resetInstance() {
+    public func resetInstance() {
         countly().resetInstance()
     }
 
-    func start(
+    public func start(
         appKey: String,
         host: URL
     ) {
@@ -43,7 +43,7 @@ struct CountlyWrapper: CountlyAbstraction {
         countly().start(with: config)
     }
 
-    func setUserValue(
+    public func setUserValue(
         _ value: String?,
         forKey key: String
     ) {
@@ -54,7 +54,7 @@ struct CountlyWrapper: CountlyAbstraction {
         }
     }
 
-    func changeDeviceID(
+    public func changeDeviceID(
         _ id: String,
         mergeData: Bool
     ) {
@@ -65,15 +65,15 @@ struct CountlyWrapper: CountlyAbstraction {
         }
     }
 
-    func beginSession() {
+    public func beginSession() {
         countly().beginSession()
     }
 
-    func endSession() {
+    public func endSession() {
         countly().endSession()
     }
 
-    func recordEvent(
+    public func recordEvent(
         _ key: String,
         segmentation: [String: String]?
     ) {
