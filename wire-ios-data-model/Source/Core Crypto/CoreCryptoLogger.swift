@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 final class CoreCryptoLoggerProxy: CoreCryptoLogger {
 
