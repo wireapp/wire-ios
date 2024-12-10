@@ -58,10 +58,11 @@ final class SearchTaskTests: DatabaseTest {
         super.tearDown()
     }
 
-    func createConnectedUser(withName name: String) -> ZMUser {
+    func createConnectedUser(withName name: String, domain: String? = nil) -> ZMUser {
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = name
         user.remoteIdentifier = UUID.create()
+        user.domain = domain
 
         let connection = ZMConnection.insertNewObject(in: uiMOC)
         connection.to = user
@@ -323,6 +324,63 @@ final class SearchTaskTests: DatabaseTest {
         task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.contacts.compactMap(\.user), [user])
+        }
+
+        // when
+        task.performLocalSearch()
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItDoesNotFindUsersWithOtherDomainsIfSearchDomainIsRequired() {
+        // given
+        let resultArrived = customExpectation(description: "received result")
+        let user = createConnectedUser(withName: "userA", domain: "bella.com")
+
+        let request = SearchRequest(query: "userA@bella.com", searchDomain: "anta.com", searchOptions: [.contacts])
+        let task = makeSearchTask(request: request)
+
+        // expect
+        task.addResultHandler { result, _ in
+            resultArrived.fulfill()
+            XCTAssertEqual(result.contacts.count, 0)
+        }
+
+        // when
+        task.performLocalSearch()
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItFindsUsersWithSameDomainAsSelfUser() {
+        // given
+        let resultArrived = customExpectation(description: "received result")
+        let user = createConnectedUser(withName: "userA", domain: "anta.com")
+
+        let request = SearchRequest(query: "userA@anta.com", searchOptions: [.contacts])
+        let task = makeSearchTask(request: request)
+
+        // expect
+        task.addResultHandler { result, _ in
+            resultArrived.fulfill()
+            XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
+        }
+
+        // when
+        task.performLocalSearch()
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItFindsUsersWithOtherDomainsIfSearchDomainIsNotRequired() {
+        // given
+        let resultArrived = customExpectation(description: "received result")
+        let user = createConnectedUser(withName: "userA", domain: "bella.com")
+
+        let request = SearchRequest(query: "userA@bella.com", searchOptions: [.contacts])
+        let task = makeSearchTask(request: request)
+
+        // expect
+        task.addResultHandler { result, _ in
+            resultArrived.fulfill()
+            XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
         }
 
         // when

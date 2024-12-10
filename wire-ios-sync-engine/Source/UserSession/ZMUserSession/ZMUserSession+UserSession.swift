@@ -369,6 +369,13 @@ extension ZMUserSession: UserSession {
         CreateConversationFolderUseCase(context: syncContext)
     }
 
+    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
+        SearchUsersUseCase(
+            context: syncContext,
+            searchDirectory: SearchDirectory(userSession: self),
+            isFederationUsageAllowed: isFederationUsageAllowed)
+    }
+
 }
 
 extension UInt64 {

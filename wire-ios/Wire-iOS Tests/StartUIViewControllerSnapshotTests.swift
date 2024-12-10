@@ -44,6 +44,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         snapshotHelper = SnapshotHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock()
+        accentColor = .blue
     }
 
     // MARK: - tearDown
