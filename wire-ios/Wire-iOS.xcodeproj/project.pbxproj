@@ -18,6 +18,17 @@
 			name = "Format & Lint Swift Code";
 			productName = "Format Swift Code";
 		};
+		59974F3A2D08822E00721261 /* Find Dead Code */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 59974F3C2D08822E00721261 /* Build configuration list for PBXAggregateTarget "Find Dead Code" */;
+			buildPhases = (
+				59974F3B2D08822E00721261 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Find Dead Code";
+			productName = "Format Swift Code";
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -8895,6 +8906,7 @@
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
 				592996512C2EB98A008C334F /* Format & Lint Swift Code */,
 				59974F2E2D08819E00721261 /* AllTargetsTests */,
+				59974F3A2D08822E00721261 /* Find Dead Code */,
 			);
 		};
 /* End PBXProject section */
@@ -9049,6 +9061,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Format\n\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n    \"$PROJECT_DIR/..\"\n\n# Lint\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --fix \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --strict \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n";
+		};
+		59974F3B2D08822E00721261 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "periphery scan \\\n    --workspace ../wire-ios-mono.xcworkspace \\\n    --config ../.periphery.yml \\\n    --schemes AllTargetsTests \\\n    --targets AllTargetsTests \\\n    --report-exclude ../wire-ios/Wire-iOS/Generated \\\n    -- -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4'\n";
 		};
 		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11489,6 +11519,22 @@
 			};
 			name = Release;
 		};
+		59974F3D2D08822E00721261 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		59974F3E2D08822E00721261 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		8F42C556199244A700288E4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11832,6 +11878,15 @@
 			buildConfigurations = (
 				59974F352D08819E00721261 /* Debug */,
 				59974F362D08819E00721261 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		59974F3C2D08822E00721261 /* Build configuration list for PBXAggregateTarget "Find Dead Code" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59974F3D2D08822E00721261 /* Debug */,
+				59974F3E2D08822E00721261 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
