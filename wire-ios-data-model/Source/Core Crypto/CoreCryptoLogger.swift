@@ -36,21 +36,31 @@ final class CoreCryptoLoggerProxy: CoreCryptoLogger {
         switch level {
         case .off:
             return
-
         case .trace, .debug:
-            WireLogger.coreCrypto.debug(message, attributes: attributes)
-
+            WireLogger.coreCrypto.debug(
+                message,
+                attributes: attributes
+            )
         case .info:
-            WireLogger.coreCrypto.info(message, attributes: attributes)
-
+            WireLogger.coreCrypto.info(
+                message,
+                attributes: attributes
+            )
         case .warn:
-            WireLogger.coreCrypto.warn(message, attributes: attributes)
-
+            WireLogger.coreCrypto.warn(
+                message,
+                attributes: attributes
+            )
         case .error:
-            WireLogger.coreCrypto.error(message, attributes: attributes)
-
+            WireLogger.coreCrypto.error(
+                message,
+                attributes: attributes
+            )
         @unknown default:
-            WireLogger.coreCrypto.debug(message, attributes: attributes)
+            WireLogger.coreCrypto.debug(
+                message,
+                attributes: attributes
+            )
         }
     }
 
