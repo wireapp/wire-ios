@@ -85,7 +85,7 @@ final class UserClientsAPITests: XCTestCase {
             for version in testedVersions {
                 // Given
                 let apiService = MockAPIServiceProtocol.withResponses([
-                    (.ok, "GetUserClientsSuccessResponseV0")
+                    (.ok, "GetOtherUserClientsSuccessResponseV0")
                 ])
 
                 let sut = version.buildAPI(apiService: apiService)
