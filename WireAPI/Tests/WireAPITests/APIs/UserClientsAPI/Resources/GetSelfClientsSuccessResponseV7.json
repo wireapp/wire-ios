@@ -1,10 +1,8 @@
 [
   {
-    "capabilities": {
-      "capabilities": [
-        "legalhold-implicit-consent"
-      ]
-    },
+    "capabilities": [
+      "legalhold-implicit-consent"
+    ],
     "class": "phone",
     "cookie": "string",
     "id": "string",
@@ -21,11 +19,9 @@
     "type": "temporary"
   },
   {
-    "capabilities": {
-      "capabilities": [
-        "legalhold-implicit-consent"
-      ]
-    },
+    "capabilities": [
+      "legalhold-implicit-consent"
+    ],
     "class": "phone",
     "cookie": "string",
     "id": "string",
