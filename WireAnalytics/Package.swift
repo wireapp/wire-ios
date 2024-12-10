@@ -14,8 +14,7 @@ let package = Package(
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"]),
         .library(name: "WireCountly", targets: ["WireCountly"]),
-        .library(name: "WireDatadog", targets: ["WireDatadog"]),
-        .library(name: "WireAnalyticsDummy", targets: ["WarningPrevention"]) // don't use
+        .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
         .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
@@ -50,7 +49,7 @@ let package = Package(
             sources: datadogFiles()
         ),
 
-        // This target prevents warnings saying countly-sdk-ios or dd-sdk-ios are not used.
+        // This target prevents warnings about `countly-sdk-ios` or `dd-sdk-ios` not being used.
         .target(
             name: "WarningPrevention",
             dependencies: [
