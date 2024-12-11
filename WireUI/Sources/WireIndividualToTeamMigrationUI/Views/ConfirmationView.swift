@@ -26,6 +26,8 @@ struct ConfirmationView: View {
         case `continue`
     }
 
+    let termsOfUseURL: String
+    let privacyPolicyURL: String
     let actionCallback: (Action) -> Void
     @State private var migrationConfirmed: Bool = false
     @State private var termsAccepted: Bool = false
@@ -54,7 +56,7 @@ struct ConfirmationView: View {
                 )
                 Checkbox(
                     isChecked: $termsAccepted,
-                    title: .localizedMarkdown(key: "individualToTeam.confirmation.termsCheckbox", bundle: .module)
+                    title: .formattedMarkdown(key: "individualToTeam.confirmation.termsCheckbox", bundle: .module, termsOfUseURL, privacyPolicyURL)
                 )
             }
             Spacer()

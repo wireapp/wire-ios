@@ -34,7 +34,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     enum Step: Sendable {
         case teamPlanSelection(features: [TeamPlanFeature])
         case teamName
-        case confirmation(teamName: String)
+        case confirmation(teamName: String, termsOfUseURL: String, privacyPolicyURL: String)
         case completion(profileName: String, teamName: String)
 
         var title: String {
@@ -106,11 +106,15 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     let childController: UINavigationController
     var currentStep: Step
     let features: [TeamPlanFeature]
+    let termsOfUseURL: String
+    let privacyPolicyURL: String
     let useCase: any IndividualToTeamMigrationUseCase
     let userProfileName: String
 
     public init(
         features: [TeamPlanFeature],
+        privacyPolicyURL: String,
+        termsOfUseURL: String,
         useCase: any IndividualToTeamMigrationUseCase,
         userProfileName: String,
         actionCallback: @escaping @Sendable (Action) -> Void
@@ -119,18 +123,24 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         self.currentStep = .teamPlanSelection(features: features)
         self.childController = UINavigationController()
         self.features = features
+        self.privacyPolicyURL = privacyPolicyURL
+        self.termsOfUseURL = termsOfUseURL
         self.useCase = useCase
         self.userProfileName = userProfileName
         super.init(nibName: nil, bundle: nil)
     }
 
     public convenience init(
+        privacyPolicyURL: String,
+        termsOfUseURL: String,
         useCase: any IndividualToTeamMigrationUseCase,
         userProfileName: String,
         actionCallback: @escaping @Sendable (Action) -> Void
     ) {
         self.init(
             features: .features,
+            privacyPolicyURL: privacyPolicyURL,
+            termsOfUseURL: termsOfUseURL,
             useCase: useCase,
             userProfileName: userProfileName,
             actionCallback: actionCallback
@@ -181,7 +191,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             childController.pushViewController(vc, animated: true)
         case let .toConfirmation(teamName):
             let vc = hostedView(
-                for: .confirmation(teamName: teamName),
+                for: .confirmation(teamName: teamName, termsOfUseURL: termsOfUseURL, privacyPolicyURL: privacyPolicyURL),
                 stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
@@ -314,8 +324,11 @@ private func viewFor(
                 transitionCallback(.toConfirmation(teamName: teamName))
             }
         }
-    case let .confirmation(teamName):
-        ConfirmationView { action in
+    case let .confirmation(teamName, termsOfUseURL, privacyPolicyURL):
+        ConfirmationView(
+            termsOfUseURL: termsOfUseURL,
+            privacyPolicyURL: privacyPolicyURL
+        ) { action in
             switch action {
             case .continue:
                 transitionCallback(.toTeamCreation(teamName: teamName))

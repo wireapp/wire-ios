@@ -261,7 +261,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accept our [Terms & Conditions](https://wire.com/en/terms-of-use-business) and [Privacy Policy](https://wire.com/en/privacy-policy)."
+            "value" : "Accept our [Terms & Conditions](%@) and [Privacy Policy](%@)."
           }
         }
       }

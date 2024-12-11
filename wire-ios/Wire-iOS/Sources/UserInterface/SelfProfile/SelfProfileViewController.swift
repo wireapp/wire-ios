@@ -119,7 +119,7 @@ final class SelfProfileViewController: UIViewController {
             apiVersion >= .v7 {
             self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
                 actionCallback: { [weak self] action in
-                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
+                    self?.onTeamCreationBannerInteraction(action, apiVersion: .v7)
                 }
             )
         }
@@ -254,8 +254,7 @@ final class SelfProfileViewController: UIViewController {
             let sessionContextProvider = userSession.contextProvider
             let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
             guard let userName = user.normalizedName,
-                  let useCase = SessionManager.shared?.activeUserSession?
-                  .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
+                    let useCase = SessionManager.shared?.activeUserSession?.createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
                 return
             }
             userDidTapCreateTeam(useCase: useCase, userName: userName)
@@ -264,6 +263,8 @@ final class SelfProfileViewController: UIViewController {
 
     private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
         let vc = IndividualToTeamMigrationViewController(
+            privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
+            termsOfUseURL: WireURLs.shared.legal.absoluteString,
             useCase: useCase,
             userProfileName: userName,
             actionCallback: { [weak self] action in
@@ -274,7 +275,7 @@ final class SelfProfileViewController: UIViewController {
                         case .cancel:
                             presentedViewController?.dismiss(animated: true)
                         case .toLearnMoreAboutPlans:
-                            _ = URL(string: "https://wire.com/pricing")?.open()
+                            _ = WireURLs.shared.wireEnterpriseInfo.open()
                         case .completionGoToApp:
                             dismissIndividualToTeamMigrationBanner()
                             presentedViewController?.dismiss(animated: true)
@@ -302,6 +303,7 @@ final class SelfProfileViewController: UIViewController {
 
     private func navigateToTeam() {
         // TODO: [WPB-11968] navigate to team
+        URL.manageTeam(source: .settings).open()
     }
 
     @objc
