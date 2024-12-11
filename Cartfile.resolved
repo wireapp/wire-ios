@@ -1,6 +1,6 @@
 binary "wire-avs.json" "9.10.16"
 github "wireapp/ZipArchive" "v2.4.2"
-github "wireapp/core-crypto" "v1.0.2"
+github "wireapp/core-crypto" "v2.0.0"
 github "wireapp/cryptobox-ios" "v1.1.0_xcframework_arm64simulator"
 github "wireapp/generic-message-proto" "v1.51.0"
 github "wireapp/libPhoneNumber-iOS" "1.1"

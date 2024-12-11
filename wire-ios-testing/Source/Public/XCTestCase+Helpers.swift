@@ -51,6 +51,24 @@ public extension XCTestCase {
     typealias EquatableError = Equatable & Error
 
     func assertItThrows(
+        block: AsyncThrowingBlock,
+        errorHandler: (any Error) -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async {
+        do {
+            try await block()
+            XCTFail(
+                "No error was thrown",
+                file: file,
+                line: line
+            )
+        } catch {
+            errorHandler(error)
+        }
+    }
+
+    func assertItThrows(
         error expectedError: some EquatableError,
         block: AsyncThrowingBlock,
         file: StaticString = #filePath,
