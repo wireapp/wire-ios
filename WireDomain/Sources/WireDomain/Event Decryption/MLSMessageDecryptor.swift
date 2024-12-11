@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Decrypt MLS messages.

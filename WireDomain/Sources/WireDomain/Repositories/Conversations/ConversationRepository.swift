@@ -437,13 +437,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let currentConversationName = await conversationsLocalStore.conversationName(conversation: conversation)
 
         if currentConversationName != newName {
-            let messageType = MessageType.conversationNameChanged(
+            let messageType = SystemMessageType.conversationNameChanged(
                 newName: newName,
                 sender: (senderID, senderDomain),
                 date: date
             )
 
-            await messageRepository.addMessageToConversation(
+            await messageRepository.addSystemMessage(
                 messageType: messageType,
                 conversationID: conversationID,
                 conversationDomain: conversationDomain
@@ -634,6 +634,36 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Private
+    
+    private func addSystemMessage(
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String?,
+        date: Date,
+        removedUsers: Set<UserID>,
+        reason: ConversationMemberLeaveReason
+    ) async {
+        var systemMessageType: SystemMessageType = switch reason {
+        case .userDeleted, .userLeft:
+            .teamMemberRemoved(
+                member: (senderID, senderDomain),
+                date: date
+            )
+        case .userRemoved:
+            .participantsRemoved(
+                participants: removedUsers.map { ($0.uuid, $0.domain) },
+                sender: (senderID, senderDomain),
+                date: date
+            )
+        }
+
+        await messageRepository.addSystemMessage(
+            messageType: systemMessageType,
+            conversationID: conversationID,
+            conversationDomain: conversationDomain
+        )
+    }
 
     private func getRemovedUsers(
         from userIDs: Set<UserID>

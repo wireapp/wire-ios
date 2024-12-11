@@ -713,35 +713,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(clearedMessage, conversation)
     }
 
-}
-
-public class MockConversationProtobufMessageProcessorProtocol: ConversationProtobufMessageProcessorProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - processProtobufMessage
-
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations: [(message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, logAttributes: LogAttributes, date: Date)] = []
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockError: Error?
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod: ((GenericMessage, GenericMessage.OneOf_Content, ZMConversation, ConversationID, UserID, String?, LogAttributes, Date) async throws -> Void)?
-
-    public func processProtobufMessage(_ message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, logAttributes: LogAttributes, date: Date) async throws {
-        processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.append((message: message, content: content, conversation: conversation, conversationID: conversationID, senderID: senderID, senderClientID: senderClientID, logAttributes: logAttributes, date: date))
-
-        if let error = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockError {
-            throw error
-        }
-
-        guard let mock = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod else {
-            fatalError("no mock for `processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate`")
-        }
-
-        try await mock(message, content, conversation, conversationID, senderID, senderClientID, logAttributes, date)
-    }
-
     // MARK: - updateTypingUsers
 
     public var updateTypingUsersConversationIDUsersID_Invocations: [(conversationID: NSManagedObjectID, usersID: Set<NSManagedObjectID>)] = []
@@ -851,6 +822,35 @@ public class MockConversationProtobufMessageProcessorProtocol: ConversationProto
         } else {
             fatalError("no mock for `fetchOtherUserIDInOneOnOneConversationConversation`")
         }
+    }
+
+}
+
+public class MockConversationProtobufMessageProcessorProtocol: ConversationProtobufMessageProcessorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - processProtobufMessage
+
+    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations: [(message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, logAttributes: LogAttributes, date: Date)] = []
+    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockError: Error?
+    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod: ((GenericMessage, GenericMessage.OneOf_Content, ZMConversation, ConversationID, UserID, String?, LogAttributes, Date) async throws -> Void)?
+
+    public func processProtobufMessage(_ message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, logAttributes: LogAttributes, date: Date) async throws {
+        processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.append((message: message, content: content, conversation: conversation, conversationID: conversationID, senderID: senderID, senderClientID: senderClientID, logAttributes: logAttributes, date: date))
+
+        if let error = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockError {
+            throw error
+        }
+
+        guard let mock = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod else {
+            fatalError("no mock for `processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate`")
+        }
+
+        try await mock(message, content, conversation, conversationID, senderID, senderClientID, logAttributes, date)
     }
 
 }
@@ -2285,6 +2285,105 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
         }
     }
 
+    // MARK: - storeClient
+
+    public var storeClientDiscoveryDateClient_Invocations: [(discoveryDate: Date, client: WireDataModel.UserClient)] = []
+    public var storeClientDiscoveryDateClient_MockMethod: ((Date, WireDataModel.UserClient) async -> Void)?
+
+    public func storeClient(discoveryDate: Date, client: WireDataModel.UserClient) async {
+        storeClientDiscoveryDateClient_Invocations.append((discoveryDate: discoveryDate, client: client))
+
+        guard let mock = storeClientDiscoveryDateClient_MockMethod else {
+            fatalError("no mock for `storeClientDiscoveryDateClient`")
+        }
+
+        await mock(discoveryDate, client)
+    }
+
+    // MARK: - addNewClientToIgnored
+
+    public var addNewClientToIgnoredSelfClientNewClient_Invocations: [(selfClient: WireDataModel.UserClient, newClient: WireDataModel.UserClient)] = []
+    public var addNewClientToIgnoredSelfClientNewClient_MockMethod: ((WireDataModel.UserClient, WireDataModel.UserClient) async -> Void)?
+
+    public func addNewClientToIgnored(selfClient: WireDataModel.UserClient, newClient: WireDataModel.UserClient) async {
+        addNewClientToIgnoredSelfClientNewClient_Invocations.append((selfClient: selfClient, newClient: newClient))
+
+        guard let mock = addNewClientToIgnoredSelfClientNewClient_MockMethod else {
+            fatalError("no mock for `addNewClientToIgnoredSelfClientNewClient`")
+        }
+
+        await mock(selfClient, newClient)
+    }
+
+    // MARK: - proteusSessionID
+
+    public var proteusSessionIDFor_Invocations: [WireDataModel.UserClient] = []
+    public var proteusSessionIDFor_MockMethod: ((WireDataModel.UserClient) async -> ProteusSessionID?)?
+    public var proteusSessionIDFor_MockValue: ProteusSessionID??
+
+    public func proteusSessionID(for client: WireDataModel.UserClient) async -> ProteusSessionID? {
+        proteusSessionIDFor_Invocations.append(client)
+
+        if let mock = proteusSessionIDFor_MockMethod {
+            return await mock(client)
+        } else if let mock = proteusSessionIDFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `proteusSessionIDFor`")
+        }
+    }
+
+    // MARK: - clientSessionCreated
+
+    public var clientSessionCreatedSelfClientNewClient_Invocations: [(selfClient: WireDataModel.UserClient, newClient: WireDataModel.UserClient)] = []
+    public var clientSessionCreatedSelfClientNewClient_MockMethod: ((WireDataModel.UserClient, WireDataModel.UserClient) async -> Void)?
+
+    public func clientSessionCreated(selfClient: WireDataModel.UserClient, newClient: WireDataModel.UserClient) async {
+        clientSessionCreatedSelfClientNewClient_Invocations.append((selfClient: selfClient, newClient: newClient))
+
+        guard let mock = clientSessionCreatedSelfClientNewClient_MockMethod else {
+            fatalError("no mock for `clientSessionCreatedSelfClientNewClient`")
+        }
+
+        await mock(selfClient, newClient)
+    }
+
+    // MARK: - fetchSelfClient
+
+    public var fetchSelfClient_Invocations: [Void] = []
+    public var fetchSelfClient_MockMethod: (() async -> WireDataModel.UserClient?)?
+    public var fetchSelfClient_MockValue: WireDataModel.UserClient??
+
+    public func fetchSelfClient() async -> WireDataModel.UserClient? {
+        fetchSelfClient_Invocations.append(())
+
+        if let mock = fetchSelfClient_MockMethod {
+            return await mock()
+        } else if let mock = fetchSelfClient_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfClient`")
+        }
+    }
+
+    // MARK: - fetchClient
+
+    public var fetchClientIdForUserCreateIfNeeded_Invocations: [(id: String, user: ZMUser, createIfNeeded: Bool)] = []
+    public var fetchClientIdForUserCreateIfNeeded_MockMethod: ((String, ZMUser, Bool) async -> WireDataModel.UserClient?)?
+    public var fetchClientIdForUserCreateIfNeeded_MockValue: WireDataModel.UserClient??
+
+    public func fetchClient(id: String, forUser user: ZMUser, createIfNeeded: Bool) async -> WireDataModel.UserClient? {
+        fetchClientIdForUserCreateIfNeeded_Invocations.append((id: id, user: user, createIfNeeded: createIfNeeded))
+
+        if let mock = fetchClientIdForUserCreateIfNeeded_MockMethod {
+            return await mock(id, user, createIfNeeded)
+        } else if let mock = fetchClientIdForUserCreateIfNeeded_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchClientIdForUserCreateIfNeeded`")
+        }
+    }
+
 }
 
 public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
@@ -2406,69 +2505,6 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
         } else {
             fatalError("no mock for `allSelfUserClientsAreActiveMLSClients`")
         }
-    }
-
-    // MARK: - storeClient
-
-    public var storeClientDiscoveryDateClient_Invocations: [(discoveryDate: Date, client: WireDataModel.UserClient)] = []
-    public var storeClientDiscoveryDateClient_MockMethod: ((Date, WireDataModel.UserClient) async -> Void)?
-
-    public func storeClient(discoveryDate: Date, client: WireDataModel.UserClient) async {
-        storeClientDiscoveryDateClient_Invocations.append((discoveryDate: discoveryDate, client: client))
-
-        guard let mock = storeClientDiscoveryDateClient_MockMethod else {
-            fatalError("no mock for `storeClientDiscoveryDateClient`")
-        }
-
-        await mock(discoveryDate, client)
-    }
-
-    // MARK: - addNewClientToIgnored
-
-    public var addNewClientToIgnoredSelfClientNewClient_Invocations: [(selfClient: WireDataModel.UserClient, newClient: WireDataModel.UserClient)] = []
-    public var addNewClientToIgnoredSelfClientNewClient_MockMethod: ((WireDataModel.UserClient, WireDataModel.UserClient) async -> Void)?
-
-    public func addNewClientToIgnored(selfClient: WireDataModel.UserClient, newClient: WireDataModel.UserClient) async {
-        addNewClientToIgnoredSelfClientNewClient_Invocations.append((selfClient: selfClient, newClient: newClient))
-
-        guard let mock = addNewClientToIgnoredSelfClientNewClient_MockMethod else {
-            fatalError("no mock for `addNewClientToIgnoredSelfClientNewClient`")
-        }
-
-        await mock(selfClient, newClient)
-    }
-
-    // MARK: - proteusSessionID
-
-    public var proteusSessionIDFor_Invocations: [WireDataModel.UserClient] = []
-    public var proteusSessionIDFor_MockMethod: ((WireDataModel.UserClient) async -> ProteusSessionID?)?
-    public var proteusSessionIDFor_MockValue: ProteusSessionID??
-
-    public func proteusSessionID(for client: WireDataModel.UserClient) async -> ProteusSessionID? {
-        proteusSessionIDFor_Invocations.append(client)
-
-        if let mock = proteusSessionIDFor_MockMethod {
-            return await mock(client)
-        } else if let mock = proteusSessionIDFor_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `proteusSessionIDFor`")
-        }
-    }
-
-    // MARK: - clientSessionCreated
-
-    public var clientSessionCreatedSelfClientNewClient_Invocations: [(selfClient: WireDataModel.UserClient, newClient: WireDataModel.UserClient)] = []
-    public var clientSessionCreatedSelfClientNewClient_MockMethod: ((WireDataModel.UserClient, WireDataModel.UserClient) async -> Void)?
-
-    public func clientSessionCreated(selfClient: WireDataModel.UserClient, newClient: WireDataModel.UserClient) async {
-        clientSessionCreatedSelfClientNewClient_Invocations.append((selfClient: selfClient, newClient: newClient))
-
-        guard let mock = clientSessionCreatedSelfClientNewClient_MockMethod else {
-            fatalError("no mock for `clientSessionCreatedSelfClientNewClient`")
-        }
-
-        await mock(selfClient, newClient)
     }
 
     // MARK: - fetchClient
@@ -2711,6 +2747,21 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         await mock(user)
     }
 
+    // MARK: - updateSelfUserAnalyticsID
+
+    public var updateSelfUserAnalyticsIDAnalyticsIDConversation_Invocations: [(analyticsID: String, conversation: ZMConversation)] = []
+    public var updateSelfUserAnalyticsIDAnalyticsIDConversation_MockMethod: ((String, ZMConversation) async -> Void)?
+
+    public func updateSelfUserAnalyticsID(analyticsID: String, conversation: ZMConversation) async {
+        updateSelfUserAnalyticsIDAnalyticsIDConversation_Invocations.append((analyticsID: analyticsID, conversation: conversation))
+
+        guard let mock = updateSelfUserAnalyticsIDAnalyticsIDConversation_MockMethod else {
+            fatalError("no mock for `updateSelfUserAnalyticsIDAnalyticsIDConversation`")
+        }
+
+        await mock(analyticsID, conversation)
+    }
+
     // MARK: - persistUser
 
     public var persistUserUserInfo_Invocations: [NewUserInfo] = []
@@ -2762,21 +2813,6 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         } else {
             fatalError("no mock for `fetchAllUserIDsWithOneOnOneConversation`")
         }
-    }
-
-    // MARK: - updateSelfUserAnalyticsID
-
-    public var updateSelfUserAnalyticsIDAnalyticsIDConversation_Invocations: [(analyticsID: String, conversation: ZMConversation)] = []
-    public var updateSelfUserAnalyticsIDAnalyticsIDConversation_MockMethod: ((String, ZMConversation) async -> Void)?
-
-    public func updateSelfUserAnalyticsID(analyticsID: String, conversation: ZMConversation) async {
-        updateSelfUserAnalyticsIDAnalyticsIDConversation_Invocations.append((analyticsID: analyticsID, conversation: conversation))
-
-        guard let mock = updateSelfUserAnalyticsIDAnalyticsIDConversation_MockMethod else {
-            fatalError("no mock for `updateSelfUserAnalyticsIDAnalyticsIDConversation`")
-        }
-
-        await mock(analyticsID, conversation)
     }
 
 }

@@ -38,7 +38,7 @@ protocol ProteusMessageDecryptorProtocol {
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
     let proteusService: any ProteusServiceInterface
-    let userClientsRepository: any UserClientsRepositoryProtocol
+    let userClientsLocalStore: any UserClientsLocalStoreProtocol
     let userRepository: any UserRepositoryProtocol
 
     typealias Context = (
@@ -47,14 +47,16 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         senderClient: WireDataModel.UserClient,
         proteusSessionID: ProteusSessionID
     )
+    
+    private let maxCiphertextSize = Int(12_000 * 1.5)
 
     init(
         proteusService: any ProteusServiceInterface,
-        userClientsRepository: any UserClientsRepositoryProtocol,
+        userClientsLocalStore: any UserClientsLocalStoreProtocol,
         userRepository: any UserRepositoryProtocol
     ) {
         self.proteusService = proteusService
-        self.userClientsRepository = userClientsRepository
+        self.userClientsLocalStore = userClientsLocalStore
         self.userRepository = userRepository
     }
 
@@ -78,7 +80,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         )
 
         if didCreateSession {
-            await userClientsRepository.clientSessionCreated(
+            await userClientsLocalStore.clientSessionCreated(
                 selfClient: context.selfClient,
                 newClient: context.senderClient
             )
@@ -88,6 +90,15 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         decryptedEvent.message.decryptedMessage = plaintextData.base64String()
 
         return decryptedEvent
+    }
+    
+    private func validateExternalCiphertext(_ ciphertext: String) throws {
+        // External messages aren't encrypted via Proteus, instead they are symmetrically
+        // encrypted with a key that is E2EE via Proteus. Decryption of external messages
+        // happens during event processing, here we just want to validate it.
+        guard ciphertext.count <= maxCiphertextSize else {
+            throw ProteusMessageDecryptorError.decodeError
+        }
     }
 
     private func validateCiphertext(_ ciphertext: String) throws -> Data {
@@ -105,7 +116,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     private func extractContext(
         from eventData: ConversationProteusMessageAddEvent
     ) async throws -> Context {
-        guard let selfClient = await userClientsRepository.fetchSelfClient() else {
+        guard let selfClient = await userClientsLocalStore.fetchSelfClient() else {
             throw ProteusMessageDecryptorError.selfClientNotFound
         }
 
@@ -114,7 +125,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
             domain: eventData.senderID.domain
         )
 
-        guard let senderClient = await userClientsRepository.fetchClient(
+        guard let senderClient = await userClientsLocalStore.fetchClient(
             id: eventData.messageSenderClientID,
             forUser: senderUser,
             createIfNeeded: true
@@ -122,17 +133,17 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
             throw ProteusMessageDecryptorError.selfClientNotFound
         }
 
-        await userClientsRepository.storeClient(
+        await userClientsLocalStore.storeClient(
             discoveryDate: eventData.timestamp,
             client: senderClient
         )
 
-        await userClientsRepository.addNewClientToIgnored(
+        await userClientsLocalStore.addNewClientToIgnored(
             selfClient: selfClient,
             newClient: senderClient
         )
 
-        guard let proteusSessionID = await userClientsRepository.proteusSessionID(
+        guard let proteusSessionID = await userClientsLocalStore.proteusSessionID(
             for: senderClient
         ) else {
             throw ProteusMessageDecryptorError.proteusSessionIDNotFound

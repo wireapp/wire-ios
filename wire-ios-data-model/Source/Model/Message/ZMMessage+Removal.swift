@@ -66,7 +66,7 @@ extension ZMMessage {
         moc.delete(message)
     }
 
-    static func remove(
+    public static func remove(
         remotelyDeletedMessage deletedMessage: MessageDelete,
         inConversation conversation: ZMConversation,
         senderID: UUID,

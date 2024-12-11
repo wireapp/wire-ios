@@ -19,6 +19,7 @@
 import WireAPI
 import WireDataModel
 import WireSystem
+import WireLogging
 
 /// Process conversation mls message add events.
 

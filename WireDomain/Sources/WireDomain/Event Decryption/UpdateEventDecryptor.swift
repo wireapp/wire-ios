@@ -45,14 +45,14 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         proteusService: any ProteusServiceInterface,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
-        userClientsRepository: any UserClientsRepositoryProtocol,
+        userClientsLocalStore: any UserClientsLocalStoreProtocol,
         messageRepository: any MessageRepositoryProtocol,
         userRepository: any UserRepositoryProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
-            userClientsRepository: userClientsRepository,
+            userClientsLocalStore: userClientsLocalStore,
             userRepository: userRepository
         )
 
@@ -150,7 +150,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         let systemMessageType: SystemMessageType = .decryptionFailed(
             sender: (eventData.senderID.uuid, eventData.senderID.domain),
             senderClientID: eventData.messageSenderClientID,
-            errorCode: error.rawValue,
+            remoteIdentityChanged: error == .RemoteIdentityChanged,
             date: eventData.timestamp
         )
 

@@ -19,6 +19,7 @@
 import WireAPI
 import WireDataModel
 import WireProtos
+import WireLogging
 
 // sourcery: AutoMockable
 /// A common processor for processing MLS / Proteus protobuf message.

@@ -89,7 +89,7 @@ public enum SystemMessageType: Sendable {
     case decryptionFailed(
         sender: (id: UUID, domain: String?),
         senderClientID: String,
-        errorCode: Int,
+        remoteIdentityChanged: Bool,
         date: Date
     )
 

@@ -19,6 +19,7 @@
 import CoreData
 import WireCryptobox
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
@@ -856,7 +857,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .decryptionFailed(let sender, let senderClientID, let errorCode, let date):
+        case .decryptionFailed(let sender, let senderClientID, let remoteIdentityChanged, let date):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
@@ -870,7 +871,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 })
             }
 
-            let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
+            let type = remoteIdentityChanged ? ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
 
             let clients = senderClient.flatMap { [$0] } ?? Set<UserClient>()
 

@@ -661,13 +661,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         if !newUsers.isEmpty, await isGroupConversation(localConversation) {
 
-            let systemMessageType: MessageType = .participantsAdded(
+            let systemMessageType: SystemMessageType = .participantsAdded(
                 participants: participants.map { ($0.id, $0.domain) },
                 sender: sender,
                 date: date
             )
 
-            await messageLocalStore.addSystemMessageToConversation(
+            await messageLocalStore.addSystemMessage(
                 messageType: systemMessageType,
                 conversationID: conversation.id,
                 conversationDomain: conversation.domain
@@ -1014,12 +1014,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             if isTeamMember, conversationTeam == userTeam {
 
-                let systemMessageType: MessageType = .teamMemberRemoved(
+                let systemMessageType: SystemMessageType = .teamMemberRemoved(
                     member: (participantID, participantDomain),
                     date: date
                 )
 
-                await messageLocalStore.addSystemMessageToConversation(
+                await messageLocalStore.addSystemMessage(
                     messageType: systemMessageType,
                     conversationID: conversationID,
                     conversationDomain: conversationDomain
@@ -1027,13 +1027,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             } else {
 
-                let systemMessageType: MessageType = .participantsRemoved(
+                let systemMessageType: SystemMessageType = .participantsRemoved(
                     participants: [(participantID, participantDomain)],
                     sender: (participantID, participantDomain),
                     date: date
                 )
 
-                await messageLocalStore.addSystemMessageToConversation(
+                await messageLocalStore.addSystemMessage(
                     messageType: systemMessageType,
                     conversationID: conversationID,
                     conversationDomain: conversationDomain
