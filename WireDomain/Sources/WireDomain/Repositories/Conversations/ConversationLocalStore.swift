@@ -598,10 +598,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     context.object(with: $0) as? ZMUser
                 }
 
-                context.typingUsers?.update(
-                    typingUsers: Set(users),
-                    in: conversation
-                )
+                // TODO: [WPB-14889] Implement a new mechanism to send events from WireDomain to the UI
+                
+//                context.typingUsers?.update(
+//                    typingUsers: Set(users),
+//                    in: conversation
+//                )
 
                 self.notifyTypingUsers(
                     Set(users),
@@ -1004,10 +1006,11 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         _ typingUsers: Set<ZMUser>,
         in conversation: ZMConversation
     ) {
+        let typingNotificationName = Notification.Name(rawValue: "ZMTypingNotification")
         let typingNotificationUsersKey = "typingUsers"
 
         NotificationInContext(
-            name: .typingNotification,
+            name: typingNotificationName,
             context: context.notificationContext,
             object: self,
             userInfo: [typingNotificationUsersKey: typingUsers]

@@ -455,8 +455,10 @@ final class ConversationLocalStoreTests: XCTestCase {
             users: Set([userObjectID]),
             conversationID: conversationObjectID
         )
+        
+        let typingNotificationName = Notification.Name(rawValue: "ZMTypingNotification")
 
-        subscription = NotificationCenter.default.publisher(for: .typingNotification)
+        subscription = NotificationCenter.default.publisher(for: typingNotificationName)
             .compactMap { $0.userInfo?["typingUsers"] as? Set<ZMUser> }
             .sink { typingUsers in
                 // Then

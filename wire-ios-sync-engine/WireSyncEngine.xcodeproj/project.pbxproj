@@ -424,6 +424,8 @@
 		BF8367311C52651900364B37 /* store125.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BF8367301C52651900364B37 /* store125.wiredatabase */; };
 		BFCE9A5B1C4E4C4D00951B3D /* store124.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BFCE9A581C4E4C4D00951B3D /* store124.wiredatabase */; };
 		BFE7FCBF2101E50700D1165F /* CompanyLoginVerificationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7FCBE2101E50700D1165F /* CompanyLoginVerificationToken.swift */; };
+		C95078AF2D09950500D7D1DC /* TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95078AD2D09950500D7D1DC /* TypingUsers.swift */; };
+		C95078B02D09950500D7D1DC /* NSManagedObjectContext+TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95078AE2D09950500D7D1DC /* NSManagedObjectContext+TypingUsers.swift */; };
 		CB4895532C4FB77C00CA2C25 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4895522C4FB77C00CA2C25 /* WireTesting.framework */; };
 		CBD3AED02C4A742B007643A0 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD3AECF2C4A742B007643A0 /* TestSetup.swift */; };
 		D522571E2062552800562561 /* AssetDeletionRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D522571D2062552800562561 /* AssetDeletionRequestStrategy.swift */; };
@@ -1127,6 +1129,8 @@
 		BFCE9A581C4E4C4D00951B3D /* store124.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = store124.wiredatabase; sourceTree = "<group>"; };
 		BFE7FCBE2101E50700D1165F /* CompanyLoginVerificationToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLoginVerificationToken.swift; sourceTree = "<group>"; };
 		C3BF3961360B7EB12679AF27 /* ZMOperationLoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMOperationLoopTests.swift; sourceTree = "<group>"; };
+		C95078AD2D09950500D7D1DC /* TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingUsers.swift; sourceTree = "<group>"; };
+		C95078AE2D09950500D7D1DC /* NSManagedObjectContext+TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+TypingUsers.swift"; sourceTree = "<group>"; };
 		CB4895522C4FB77C00CA2C25 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79AC7B2C6DFAA2003CF5F4 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBD3AECF2C4A742B007643A0 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
@@ -1684,7 +1688,9 @@
 				EE1108FA23D2087F005DC663 /* Typing.swift */,
 				EE1108F823D1F945005DC663 /* TypingUsersTimeout.swift */,
 				EE1DEBBC23D5E0390087EE1F /* TypingUsersTimeout+Key.swift */,
+				C95078AD2D09950500D7D1DC /* TypingUsers.swift */,
 				16F5F16B1E4092C00062F0AE /* NSManagedObjectContext+CTCallCenter.swift */,
+				C95078AE2D09950500D7D1DC /* NSManagedObjectContext+TypingUsers.swift */,
 				0640C26C26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift */,
 				16085B321F71811A000B9F22 /* UserChangeInfo+UserSession.swift */,
 				8754B8491F73C25400EC02AD /* ConversationListChangeInfo+UserSession.swift */,
@@ -3491,6 +3497,8 @@
 				549710081F6FF5C100026EDD /* NotificationInContext+UserSession.swift in Sources */,
 				16D0A11D234C8CD700A83F87 /* LabelUpstreamRequestStrategy.swift in Sources */,
 				63FE4B9E25C1D2EC002878E5 /* VideoGridPresentationMode.swift in Sources */,
+				C95078AF2D09950500D7D1DC /* TypingUsers.swift in Sources */,
+				C95078B02D09950500D7D1DC /* NSManagedObjectContext+TypingUsers.swift in Sources */,
 				8798607B1C3D48A400218A3E /* DeleteAccountRequestStrategy.swift in Sources */,
 				E9A96E7E2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift in Sources */,
 				E967757F2BD8237D00EFEED5 /* SetAllowGuestAndServicesUseCase.swift in Sources */,
