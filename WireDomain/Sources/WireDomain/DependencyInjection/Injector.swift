@@ -18,7 +18,7 @@ extension Optional: OptionalProtocol {
 }
 
 final class Injector {
-    static private(set) public var shared = Injector()
+    nonisolated(unsafe) static private(set) public var shared = Injector()
     private var services: [ServiceKey: ServiceEntryProtocol] = [:]
     
     // MARK: - Object lifecycle
@@ -35,6 +35,26 @@ final class Injector {
     
     @discardableResult
     func register<Service, Arg1>(_ serviceType: Service.Type, factory: @escaping (Arg1) -> Service) -> ServiceEntry<Service> {
+        return _register(serviceType, factory: factory)
+    }
+    
+    @discardableResult
+    func register<Service, Arg1, Arg2>(_ serviceType: Service.Type, factory: @escaping (Arg1, Arg2) -> Service) -> ServiceEntry<Service> {
+        return _register(serviceType, factory: factory)
+    }
+    
+    @discardableResult
+    func register<Service, Arg1, Arg2, Arg3>(_ serviceType: Service.Type, factory: @escaping (Arg1, Arg2, Arg3) -> Service) -> ServiceEntry<Service> {
+        return _register(serviceType, factory: factory)
+    }
+    
+    @discardableResult
+    func register<Service, Arg1, Arg2, Arg3, Arg4>(_ serviceType: Service.Type, factory: @escaping (Arg1, Arg2, Arg3, Arg4) -> Service) -> ServiceEntry<Service> {
+        return _register(serviceType, factory: factory)
+    }
+    
+    @discardableResult
+    func register<Service, Arg1, Arg2, Arg3, Arg4, Arg5>(_ serviceType: Service.Type, factory: @escaping (Arg1, Arg2, Arg3, Arg4, Arg5) -> Service) -> ServiceEntry<Service> {
         return _register(serviceType, factory: factory)
     }
     
@@ -63,7 +83,27 @@ final class Injector {
         return _genericResolve(serviceType: Service.self) { (factory: FactoryType) in factory((argument)) }
     }
     
-    private func _genericResolve<Service, Arguments>(serviceType: Service.Type, invoker: @escaping ((Arguments) -> Any) -> Any) -> Service {
+    func resolve<Service, Arg1, Arg2>(arguments arg1: Arg1, _ arg2: Arg2) -> Service {
+        typealias FactoryType = ((Arg1, Arg2)) -> Any
+        return _genericResolve(serviceType: Service.self) { (factory: FactoryType) in factory((arg1, arg2)) }
+    }
+    
+    func resolve<Service, Arg1, Arg2, Arg3>(arguments arg1: Arg1, _ arg2: Arg2, _ arg3: Arg3) -> Service {
+        typealias FactoryType = ((Arg1, Arg2, Arg3)) -> Any
+        return _genericResolve(serviceType: Service.self) { (factory: FactoryType) in factory((arg1, arg2, arg3)) }
+    }
+    
+    func resolve<Service, Arg1, Arg2, Arg3, Arg4>(arguments arg1: Arg1, _ arg2: Arg2, _ arg3: Arg3, _ arg4: Arg4) -> Service {
+        typealias FactoryType = ((Arg1, Arg2, Arg3, Arg4)) -> Any
+        return _genericResolve(serviceType: Service.self) { (factory: FactoryType) in factory((arg1, arg2, arg3, arg4)) }
+    }
+    
+    func resolve<Service, Arg1, Arg2, Arg3, Arg4, Arg5>(arguments arg1: Arg1, _ arg2: Arg2, _ arg3: Arg3, _ arg4: Arg4, _ arg5: Arg5) -> Service {
+        typealias FactoryType = ((Arg1, Arg2, Arg3, Arg4, Arg5)) -> Any
+        return _genericResolve(serviceType: Service.self) { (factory: FactoryType) in factory((arg1, arg2, arg3, arg4, arg5)) }
+    }
+    
+    func _genericResolve<Service, Arguments>(serviceType: Service.Type, invoker: @escaping ((Arguments) -> Any) -> Any) -> Service {
         var resolvedInstance: Service?
         var type: Any.Type
         
