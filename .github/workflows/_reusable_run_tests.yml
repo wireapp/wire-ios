@@ -91,6 +91,10 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Display all fastlane lanes
+        run: |
+          bundle exec fastlane lanes
+
       - name: Setup workspace
         run: |
           ./setup.sh
