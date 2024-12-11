@@ -124,13 +124,13 @@ extension ConversationListViewController {
 
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
 
-        public var profileNotifications: ProfileNotifications? {
+        public var showProfileNotificationsBadge: Bool {
             if userSession.selfUser.isTeamMember {
-                return nil
+                return false
             }
             guard let apiVersion = BackendInfo.apiVersion,
                   apiVersion > .v6 else {
-                return nil
+                return false
             }
 
             let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
@@ -140,7 +140,7 @@ extension ConversationListViewController {
                 userDefaults.set(false, forKey: .didViewSelfProfile)
             }
 
-            return (value as? Bool) == false ? .many : nil
+            return (value as? Bool) == false ? true : false
         }
 
         init(

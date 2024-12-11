@@ -93,7 +93,7 @@ public final class AccountImageView: UIView {
         set { availabilityIndicatorView.backgroundViewColor = newValue }
     }
 
-    public var notifications: ProfileNotifications? {
+    public var showProfileNotificationsBadge: Bool = false {
         didSet { updateNotificationBadge() }
     }
 
@@ -102,7 +102,7 @@ public final class AccountImageView: UIView {
     private let accountImageView = UIImageView()
     private let initialsLabel = UILabel()
     let availabilityIndicatorView = AvailabilityIndicatorView()
-    let notificationBadgeView = NotificationBadgeView(notifications: .many)
+    let notificationBadgeView = NotificationBadgeView(showNotifications: true)
     public override var intrinsicContentSize: CGSize {
         .init(
             width: imageBorderWidth * 2 + accountImageHeight,
@@ -302,8 +302,8 @@ public final class AccountImageView: UIView {
     }
 
     private func updateNotificationBadge() {
-        if notificationBadgeView.notifications != notifications {
-            notificationBadgeView.notifications = notifications
+        if notificationBadgeView.showNotifications != showProfileNotificationsBadge {
+            notificationBadgeView.showNotifications = showProfileNotificationsBadge
         }
     }
 }
@@ -337,7 +337,9 @@ struct AccountImageView_Previews: PreviewProvider {
         _ availability: Availability?
     ) -> some View {
         NavigationStack {
-            AccountImageViewRepresentable(source, availability, .many)
+            AccountImageViewRepresentable(source: source,
+                                          availability: availability,
+                                          showNotificationsBadge: true)
                 // slightly differnet colors so that we can verify that the view modifiers work
                 .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
                 .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
@@ -360,7 +362,9 @@ struct AccountImageView_Previews: PreviewProvider {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {} label: {
-                            AccountImageViewRepresentable(source, availability, .many)
+                            AccountImageViewRepresentable(source: source,
+                                                          availability: availability,
+                                                          showNotificationsBadge: true)
                                 .padding(.horizontal)
                         }
                     }

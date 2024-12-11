@@ -39,7 +39,7 @@ struct SidebarViewControllerBuilder {
                     source: accountImage.mapToAccountImageSource(),
                     availability: availability?.mapToAccountImageAvailability(),
                     // TODO: Use the actual value based on team membership, available API version & UserDefaults, 
-                    profileNotifications: .none
+                    showNotificationsBadge: false
                 )
                 .accountImageBorderWidth(accountImageViewDesign.borderWidth)
                 .accountImageViewBorderColor(accountImageViewDesign.borderColor)

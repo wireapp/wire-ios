@@ -47,7 +47,7 @@ final class NotificationBadgeView: UIView {
         didSet { backgroundView.backgroundColor = backgroundViewColor }
     }
 
-    var notifications: ProfileNotifications? {
+    var showNotifications: Bool = false {
         didSet { setNeedsLayout() }
     }
 
@@ -106,7 +106,7 @@ final class NotificationBadgeView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        guard let notifications else {
+        guard showNotifications else {
             shapeContainerView.layer.mask = nil
             backgroundView.isHidden = true
             shapeView.backgroundColor = .none
@@ -121,8 +121,7 @@ final class NotificationBadgeView: UIView {
         shapeView.frame = baseCircleFrame
         shapeView.layer.cornerRadius = diameter / 2
 
-        switch notifications {
-        case .many:
+        if showNotifications {
             shapeView.backgroundColor = badgeColor
             shapeContainerView.layer.mask = nil
         }
@@ -138,10 +137,10 @@ final class NotificationBadgeView: UIView {
 extension NotificationBadgeView {
 
     public convenience init(
-        notifications: ProfileNotifications?
+        showNotifications: Bool
     ) {
         self.init()
-        self.notifications = notifications
+        self.showNotifications = showNotifications
         setNeedsLayout()
     }
 }
@@ -151,17 +150,17 @@ extension NotificationBadgeView {
 @available(iOS 17, *)
 #Preview {
     VStack {
-        NotificationsBadgeViewRepresentable(notifications: nil)
-        NotificationsBadgeViewRepresentable(notifications: .many)
+        NotificationsBadgeViewRepresentable(showNotifications: false)
+        NotificationsBadgeViewRepresentable(showNotifications: true)
     }
     .background(Color(UIColor.systemGray2))
 }
 
 
 private struct NotificationsBadgeViewRepresentable: UIViewRepresentable {
-    @State private(set) var notifications: ProfileNotifications?
+    @State private(set) var showNotifications: Bool
     func makeUIView(context: Context) -> NotificationBadgeView { .init() }
     func updateUIView(_ view: NotificationBadgeView, context: Context) {
-        view.notifications = notifications
+        view.showNotifications = showNotifications
     }
 }
