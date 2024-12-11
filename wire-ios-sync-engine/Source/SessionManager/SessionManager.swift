@@ -1082,6 +1082,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         deleteTemporaryData()
 
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
+        PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
         let accountID = account.userIdentifier
         accountManager.remove(account)
