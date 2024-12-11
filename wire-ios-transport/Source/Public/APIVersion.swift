@@ -20,7 +20,6 @@
 
 @objc
 public enum APIVersion: Int32 {
-
     case v0
     case v1
     case v2
@@ -29,7 +28,6 @@ public enum APIVersion: Int32 {
     case v5
     case v6
     case v7
-
 }
 
 // MARK: - CaseIterable

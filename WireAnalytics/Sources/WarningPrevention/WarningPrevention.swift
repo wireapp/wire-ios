@@ -16,14 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAnalytics
-
-protocol CountlyInstance {
-    func recordEvent(_ key: String, segmentation: [String: String]?)
-    func start(with config: WireCountlyConfig)
-
-    static func sharedInstance() -> Self
-}
-
-extension WireCountly: CountlyInstance {}
+// A signle empty file needed for the `WarningPrevention` target.
+// The target is not to be referenced, its purpose is only to not trigger
+// warnings about unused dependencies when Countly or Datadog are not
+// enabled via environment variables.

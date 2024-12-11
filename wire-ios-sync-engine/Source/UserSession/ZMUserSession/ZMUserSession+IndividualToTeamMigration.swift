@@ -17,32 +17,19 @@
 //
 
 import Foundation
-import WireAnalytics
+import WireAPI
+import WireDomain
+import WireDomainAPI
 
-// MARK: - EnableAnalyticsSharingUseCaseProtocol
-
-// sourcery: AutoMockable
-/// Enable analytics tracking.
-public protocol EnableAnalyticsUseCaseProtocol {
-
-    /// Enable analytics tracking.
-
-    func invoke() async throws
-
-}
-
-// MARK: - EnableAnalyticsUseCase
-
-struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
-
-    let service: any AnalyticsServiceProtocol
-    let provider: any AnalyticsEventTrackerProvider
-
-    func invoke() async throws {
-        let user = try await provider.createAnalyticsUser()
-        try await service.enableTracking()
-        try service.switchUser(user)
-        provider.setAnalyticsEventTracker(service)
+public extension ZMUserSession {
+    func createIndividualToTeamMigrationUseCase(apiVersion: WireAPI.APIVersion) -> IndividualToTeamMigrationUseCase? {
+        guard let apiService else {
+            assertionFailure("apiService is nil")
+            return nil
+        }
+        return IndividualToTeamMigrationUseCaseImplementation(
+            apiService: apiService,
+            apiVersion: apiVersion
+        )
     }
-
 }
