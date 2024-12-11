@@ -20,16 +20,16 @@ import WireAnalytics
 
 extension IndividualToTeamMigrationViewController.Step {
 
-    var analyticsEvent: AnalyticsEvent {
+    var flowStartedAnalyticsEvent: AnalyticsEvent {
         switch self {
         case .teamPlanSelection(let features):
-            .User.personalTeamCreationFlowStarted
+            .User.personalTeamCreationFlowStarted(step: 1)
         case .teamName:
-            <#code#>
+            .User.personalTeamCreationFlowStarted(step: 2)
         case .confirmation(let teamName):
-            <#code#>
+            .User.personalTeamCreationFlowStarted(step: 1)
         case .completion(let profileName, let teamName):
-            <#code#>
+            fatalError("TODO")
         }
     }
 }

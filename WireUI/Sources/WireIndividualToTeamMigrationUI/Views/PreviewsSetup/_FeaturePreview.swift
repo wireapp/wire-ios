@@ -56,6 +56,7 @@ private struct FeaturePreviewContainer: UIViewControllerRepresentable {
             features: features,
             useCase: MockUseCase.success(),
             userProfileName: "Some User",
+            analyticsEventTracker: nil,
             actionCallback: { _ in }
         )
     }

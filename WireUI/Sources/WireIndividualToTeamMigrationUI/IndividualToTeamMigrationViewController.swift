@@ -22,6 +22,7 @@ import WireDesign
 import WireDomainAPI
 import WireFoundation
 import WireReusableUIComponents
+import WireAnalytics
 
 public class IndividualToTeamMigrationViewController: UIViewController {
     public enum Action: Sendable {
@@ -103,19 +104,22 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         accessibilityAnnouncement: .localizedAccessibilityLabel(key: "individualToTeam.loading", bundle: .module)
     )
     let childController: UINavigationController
-    var currentStep: Step
+    //var currentStep: Step // TODO: why is this never read?
     let features: [TeamPlanFeature]
     let useCase: any IndividualToTeamMigrationUseCase
     let userProfileName: String
+    private let analyticsEventTracker: (any AnalyticsEventTracker)?
 
     public init(
         features: [TeamPlanFeature],
         useCase: any IndividualToTeamMigrationUseCase,
         userProfileName: String,
+        analyticsEventTracker: (any AnalyticsEventTracker)?,
         actionCallback: @escaping @Sendable (Action) -> Void
     ) {
+        self.analyticsEventTracker = analyticsEventTracker
         self.actionCallback = actionCallback
-        self.currentStep = .teamPlanSelection(features: features)
+        //self.currentStep = .teamPlanSelection(features: features)
         self.childController = UINavigationController()
         self.features = features
         self.useCase = useCase
@@ -126,12 +130,14 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     public convenience init(
         useCase: any IndividualToTeamMigrationUseCase,
         userProfileName: String,
+        analyticsEventTracker: (any AnalyticsEventTracker)?,
         actionCallback: @escaping @Sendable (Action) -> Void
     ) {
         self.init(
             features: .features,
             useCase: useCase,
             userProfileName: userProfileName,
+            analyticsEventTracker: analyticsEventTracker,
             actionCallback: actionCallback
         )
     }
@@ -165,41 +171,54 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .dismissCancellationAlert:
             childController.dismiss(animated: true)
         case .toPlans:
+            let step = Step.teamPlanSelection(features: features)
             let vc = hostedView(
-                for: .teamPlanSelection(features: features),
+                for: step,
                 stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
-            childController.pushViewController(vc, animated: false)
+            childController.pushViewController(vc, animated: false) { [analyticsEventTracker] in
+                analyticsEventTracker?.trackEvent(step.flowStartedAnalyticsEvent)
+            }
         case .toTeamName:
+            let step = Step.teamName
             let vc = hostedView(
-                for: .teamName,
+                for: step,
                 stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
-            childController.pushViewController(vc, animated: true)
+            childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
+                analyticsEventTracker?.trackEvent(step.flowStartedAnalyticsEvent)
+            }
         case let .toConfirmation(teamName):
+            let step = Step.confirmation(teamName: teamName)
             let vc = hostedView(
-                for: .confirmation(teamName: teamName),
+                for: step,
                 stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
-            childController.pushViewController(vc, animated: true)
+            childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
+                analyticsEventTracker?.trackEvent(step.flowStartedAnalyticsEvent)
+            }
         case let .toTeamCreation(teamName: teamName):
             createTeam(named: teamName)
         case let .toError(error):
             displayError(error)
         case let .toCompletion(teamName):
+            let step = Step.completion(profileName: userProfileName, teamName: teamName)
             let vc = hostedView(
-                for: .completion(profileName: userProfileName, teamName: teamName),
+                for: step,
                 stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
-            childController.pushViewController(vc, animated: true)
+            childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
+                fatalError("TODO")
+                //analyticsEventTracker?.trackEvent(step.flowStartedAnalyticsEvent) // TODO: completed event
+            }
         case .toApp:
             actionCallback(.completionGoToApp)
         case .toTeamManagement:

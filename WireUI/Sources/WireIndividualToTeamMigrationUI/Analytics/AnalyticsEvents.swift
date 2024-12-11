@@ -46,7 +46,7 @@ public extension AnalyticsEvent.User {
         AnalyticsEvent(
             name: "user.personal-team-creation-flow-started",
             segmentation: [
-                SegmentationEntry(key: "step_modalcreateteam", value: "\(step)") // TODO: ensure the value is correct (0...3)?
+                SegmentationEntry(key: "step_modalcreateteam", value: "\(step)")
             ]
         )
     }
