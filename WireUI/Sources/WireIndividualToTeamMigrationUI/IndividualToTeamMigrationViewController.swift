@@ -266,6 +266,7 @@ private func hostedView(
             stepCount: stepCount,
             stepTitle: step.title
         )
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         .ignoresSafeArea(.container, edges: .bottom)
     )
     vc.title = step.title
