@@ -521,6 +521,7 @@
 		CB1BF6FC2C8AF6A5001EC670 /* ExpirationReason+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */; };
 		CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979172C747652006FBA58 /* WireTransportSupport.framework */; };
 		CB79791B2C7476AC006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79791A2C7476AC006FBA58 /* TestSetup.swift */; };
+		CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = CBD35F2B2D09EBB20080DA37 /* WireCrypto */; };
 		CE4EDC091D6D9A3D002A20AA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4EDC081D6D9A3D002A20AA /* Reaction.swift */; };
 		CE4EDC0B1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4EDC0A1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift */; };
 		CE58A3FF1CD3B3580037B626 /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */; };
@@ -1883,6 +1884,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
+				CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */,
 				591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
@@ -3837,6 +3839,7 @@
 				E6707E8F2BBD683F00469D57 /* PINCache */,
 				59B48C5B2C89CBBD00EA7999 /* WireFoundation */,
 				59537CDA2CFF8F2B00920B59 /* WireLogging */,
+				CBD35F2B2D09EBB20080DA37 /* WireCrypto */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -5212,6 +5215,10 @@
 		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
+		};
+		CBD35F2B2D09EBB20080DA37 /* WireCrypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCrypto;
 		};
 		E6707E8F2BBD683F00469D57 /* PINCache */ = {
 			isa = XCSwiftPackageProductDependency;

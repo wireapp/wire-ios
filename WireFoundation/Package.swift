@@ -7,6 +7,8 @@ let package = Package(
     name: "WireFoundation",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
+        .library(name: "Clibsodium", targets: ["Clibsodium"]),
+        .library(name: "WireCrypto", targets: ["WireCrypto"]),
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
@@ -17,6 +19,21 @@ let package = Package(
         .package(path: "../WirePlugins")
     ],
     targets: [
+        .binaryTarget(
+            name: "Clibsodium",
+            url: "https://github.com/wireapp/libsodium/releases/download/1.0.14/Clibsodium.xcframework.zip",
+            checksum: "837bd861aa034f0bf0000bad55d030beab03369baeda11ef9e4c3672b0d7459f"
+        ),
+
+        .target(
+            name: "WireCrypto",
+            dependencies: ["Clibsodium"]
+        ),
+        .testTarget(
+            name: "WireCryptoTests",
+            dependencies: ["WireCrypto"]
+        ),
+
         .target(name: "WireFoundation"),
         .testTarget(
             name: "WireFoundationTests",
@@ -39,7 +56,7 @@ let package = Package(
     swiftLanguageModes: [.v6]
 )
 
-for target in package.targets {
+for target in package.targets where target.name != "Clibsodium" {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("FullTypedThrows"),
