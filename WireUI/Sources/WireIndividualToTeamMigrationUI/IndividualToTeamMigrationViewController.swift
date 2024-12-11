@@ -191,7 +191,11 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             childController.pushViewController(vc, animated: true)
         case let .toConfirmation(teamName):
             let vc = hostedView(
-                for: .confirmation(teamName: teamName, termsOfUseURL: termsOfUseURL, privacyPolicyURL: privacyPolicyURL),
+                for: .confirmation(
+                    teamName: teamName,
+                    termsOfUseURL: termsOfUseURL,
+                    privacyPolicyURL: privacyPolicyURL
+                ),
                 stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }

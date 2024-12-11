@@ -56,7 +56,12 @@ struct ConfirmationView: View {
                 )
                 Checkbox(
                     isChecked: $termsAccepted,
-                    title: .formattedMarkdown(key: "individualToTeam.confirmation.termsCheckbox", bundle: .module, termsOfUseURL, privacyPolicyURL)
+                    title: .formattedMarkdown(
+                        key: "individualToTeam.confirmation.termsCheckbox",
+                        bundle: .module,
+                        termsOfUseURL,
+                        privacyPolicyURL
+                    )
                 )
             }
             Spacer()
