@@ -92,6 +92,7 @@ jobs:
           bundler-cache: true
 
       - name: Display all fastlane lanes
+        if: ${{ contains(inputs.folders, 'fastlane') || inputs.all }}
         run: |
           bundle exec fastlane lanes
 
