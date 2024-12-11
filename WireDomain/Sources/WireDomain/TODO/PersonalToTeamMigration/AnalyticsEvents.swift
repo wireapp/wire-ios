@@ -32,30 +32,33 @@ extension AnalyticsEvent.UI {
 
     static let clickedPersonalMigrationCTA = AnalyticsEvent(name: "ui.clicked-personal-migration-cta")
 
+}
+
+extension AnalyticsEvent.User {
+
     /// Count of user reaching for each modal step (Step 1 through 3)
     ///
     /// Segmentation: app_name; app_version
 
-    static let clickedPersonalMigrationCTA = AnalyticsEvent(name: "user.personal-team-creation-flow-started")
+    static let personalTeamCreationFlowStarted = AnalyticsEvent(name: "user.personal-team-creation-flow-started")
 
     /// Count of user dropping for at each modal step (Step 1 through 3)
     ///
     /// Segmentation: app_name; app_version; modal_disclaimers; modal_team-name; modal_confirmation
 
-    static let clickedPersonalMigrationCTA = AnalyticsEvent(name: "user.personal-team-creation-flow-stopped")
+    static let personalTeamCreationFlowStopped = AnalyticsEvent(name: "user.personal-team-creation-flow-stopped")
 
     /// Count of user reaching the cancellation modal
     ///
     /// Segmentation: app_name; app_version; modal_continue-clicked; modal_leave-clicked
 
-    static let clickedPersonalMigrationCTA = AnalyticsEvent(name: "user.personal-team-creation-flow-cancelled")
+    static let personalTeamCreationFlowCancelled = AnalyticsEvent(name: "user.personal-team-creation-flow-cancelled")
 
     /// Count of user reach the final stage (Step 4)
     ///
     /// Segmentation: app_name; app_version; modal_back-to-wire-clicked; modal_open-tm-clicked
 
-    static let clickedPersonalMigrationCTA = AnalyticsEvent(name: "user.personal-team-creation-flow-completed")
-
+    static let personalTeamCreationFlowCompleted = AnalyticsEvent(name: "user.personal-team-creation-flow-completed")
 
     // TODO: Count of user click on the "Open Team Management" button on the final stage
     // (see event and segmentation “user.personal-team-creation-flow-completed”)

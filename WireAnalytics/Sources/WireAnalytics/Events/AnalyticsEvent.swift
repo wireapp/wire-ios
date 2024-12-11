@@ -36,7 +36,7 @@ public struct AnalyticsEvent: Equatable, Identifiable, Sendable {
     ///   - name: A unique name.
     ///   - segmentation: Additional metadata.
 
-    init(
+    public init(
         name: String,
         segmentation: Set<SegmentationEntry> = []
     ) {

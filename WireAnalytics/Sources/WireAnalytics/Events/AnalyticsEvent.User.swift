@@ -17,5 +17,5 @@
 //
 
 extension AnalyticsEvent {
-    public enum UI {}
+    public enum User {}
 }
