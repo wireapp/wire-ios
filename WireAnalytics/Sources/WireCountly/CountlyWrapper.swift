@@ -20,7 +20,7 @@ public import Foundation
 public import WireAnalytics
 public import Countly
 
-public struct CountlyWrapper: CountlyAbstraction {
+public struct CountlyWrapper: CountlyProtocol {
 
     var countly: () -> Countly
 

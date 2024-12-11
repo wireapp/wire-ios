@@ -365,7 +365,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
-        countlyProvider: @escaping () -> CountlyAbstraction
+        countlyProvider: @escaping () -> CountlyProtocol
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -485,7 +485,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         minTLSVersion: String? = nil,
         deleteUserLogs: (() -> Void)? = nil,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
-        countlyProvider: @escaping () -> CountlyAbstraction
+        countlyProvider: @escaping () -> CountlyProtocol
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment

@@ -27,8 +27,8 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     public typealias Config = (secretKey: String, serverHost: URL)
 
     private let config: Config?
-    private let countlyProvider: () -> any CountlyAbstraction
-    private var countly: (any CountlyAbstraction)?
+    private let countlyProvider: () -> any CountlyProtocol
+    private var countly: (any CountlyProtocol)?
     private var currentUser: AnalyticsUser?
     private let baseSegmentation: Set<SegmentationEntry>
     private let logger: WireLogger
@@ -43,7 +43,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         config: Config?,
         deviceModel: String,
         deviceOS: String,
-        countlyProvider: @escaping () -> any CountlyAbstraction
+        countlyProvider: @escaping () -> any CountlyProtocol
     ) {
         self.init(
             config: config,
@@ -58,7 +58,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     init(
         config: Config?,
         baseSegmentation: Set<SegmentationEntry>,
-        countlyProvider: @escaping () -> any CountlyAbstraction
+        countlyProvider: @escaping () -> any CountlyProtocol
     ) {
         self.config = config
         self.baseSegmentation = baseSegmentation
