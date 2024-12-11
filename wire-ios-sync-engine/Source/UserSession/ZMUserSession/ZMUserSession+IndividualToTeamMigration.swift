@@ -16,6 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UserPropertiesAPIV7: UserPropertiesAPIV6 {
-    override var apiVersion: APIVersion { .v7 }
+import Foundation
+import WireAPI
+import WireDomain
+import WireDomainAPI
+
+public extension ZMUserSession {
+    func createIndividualToTeamMigrationUseCase(apiVersion: WireAPI.APIVersion) -> IndividualToTeamMigrationUseCase? {
+        guard let apiService else {
+            assertionFailure("apiService is nil")
+            return nil
+        }
+        return IndividualToTeamMigrationUseCaseImplementation(
+            apiService: apiService,
+            apiVersion: apiVersion
+        )
+    }
 }

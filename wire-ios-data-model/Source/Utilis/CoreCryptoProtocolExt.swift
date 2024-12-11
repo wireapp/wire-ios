@@ -58,7 +58,7 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func conversationEpoch(conversationId: Data) async throws -> UInt64
 
-    func conversationExists(conversationId: Data) async -> Bool
+    func conversationExists(conversationId: Data) async throws -> Bool
 
     func createConversation(
         conversationId: Data,
@@ -124,6 +124,8 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
         certificateChain: String,
         newKeyPackagesCount: UInt32
     ) async throws -> WireCoreCrypto.RotateBundle
+
+    func e2eiRotate(conversationId: Data) async throws -> WireCoreCrypto.CommitBundle
 
     func encryptMessage(conversationId: Data, message: Data) async throws -> Data
 
@@ -204,7 +206,7 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func proteusInit() async throws
 
-    func proteusLastErrorCode() -> UInt32
+    func proteusLastErrorCode() -> UInt16?
 
     func proteusLastResortPrekey() async throws -> Data
 
@@ -235,6 +237,8 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func setCallbacks(callbacks: any WireCoreCrypto.CoreCryptoCallbacks) async throws
 
+    func transaction(command: any WireCoreCrypto.CoreCryptoCommand) async throws
+
     func unload() async throws
 
     func updateKeyingMaterial(conversationId: Data) async throws -> WireCoreCrypto.CommitBundle
@@ -242,4 +246,5 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
     func wipe() async throws
 
     func wipeConversation(conversationId: Data) async throws
+
 }

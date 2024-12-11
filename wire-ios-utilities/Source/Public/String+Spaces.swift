@@ -24,4 +24,8 @@ public extension String {
 
     /// A standard non-breaking space (&#160;).
     static let nonBreakingSpace = "\u{00A0}"
+
+    func trim() -> String {
+        trimmingCharacters(in: .whitespaces)
+    }
 }
