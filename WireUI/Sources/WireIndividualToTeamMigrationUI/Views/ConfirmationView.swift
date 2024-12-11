@@ -33,15 +33,15 @@ struct ConfirmationView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 56) {
             VStack(alignment: .leading) {
-                HStack(alignment: .top, spacing: 4) {
+                HStack(alignment: .top, spacing: 8) {
                     Text("•")
                     Text(String.localized(key: "individualToTeam.confirmation.body.createTeam", bundle: .module))
                 }
-                HStack(spacing: 4) {
+                HStack(alignment: .top, spacing: 8) {
                     Text("•")
                     Text(String.localized(key: "individualToTeam.confirmation.body.teamOwner", bundle: .module))
                 }
-                HStack(spacing: 4) {
+                HStack(alignment: .top, spacing: 8) {
                     Text("•")
                     Text(String.localized(key: "individualToTeam.confirmation.body.permanent", bundle: .module))
                 }
