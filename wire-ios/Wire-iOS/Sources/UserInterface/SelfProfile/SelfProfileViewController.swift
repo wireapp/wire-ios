@@ -273,6 +273,8 @@ final class SelfProfileViewController: UIViewController {
                         switch action {
                         case .cancel:
                             presentedViewController?.dismiss(animated: true)
+                        case .toLearnMoreAboutPlans:
+                            _ = URL(string: "https://wire.com/pricing")?.open()
                         case .completionGoToApp:
                             dismissIndividualToTeamMigrationBanner()
                             presentedViewController?.dismiss(animated: true)
