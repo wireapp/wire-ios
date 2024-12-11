@@ -16,7 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol ShareContactsViewControllerDelegate: AnyObject {
-    func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController)
-    func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController)
+public import Foundation
+public import WireAnalytics
+
+public typealias CountlyWrapper = CountlyDummy
+
+public struct CountlyDummy: CountlyProtocol {
+
+    public init() {}
+
+    public func resetInstance() {}
+    public func start(appKey: String, host: URL) {}
+    public func setUserValue(_ value: String?, forKey key: String) {}
+    public func changeDeviceID(_ id: String, mergeData: Bool) {}
+    public func beginSession() {}
+    public func endSession() {}
+    public func recordEvent(_ key: String, segmentation: [String: String]?) {}
 }

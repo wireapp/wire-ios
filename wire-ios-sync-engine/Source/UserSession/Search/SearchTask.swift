@@ -43,7 +43,6 @@ public class SearchTask {
     private var result = SearchResult(
         contacts: [],
         teamMembers: [],
-        addressBook: [],
         directory: [],
         conversations: [],
         services: [],
@@ -163,7 +162,8 @@ extension SearchTask {
             /// search for the local user with matching user ID and active
             let activeMembers = teamMembers(matchingQuery: "", team: selfUser.team, searchOptions: options)
             let teamMembers = activeMembers.filter { $0.remoteIdentifier == userId }
-            let connectedUsers = connectedUsers(matchingQuery: "", hostedOnDomain: nil).filter { $0.remoteIdentifier == userId }
+            let connectedUsers = connectedUsers(matchingQuery: "", hostedOnDomain: nil)
+                .filter { $0.remoteIdentifier == userId }
 
             contextProvider.viewContext.performGroupedBlock { [self] in
 
@@ -187,7 +187,6 @@ extension SearchTask {
                             searchUsersCache: searchUsersCache
                         )
                     },
-                    addressBook: [],
                     directory: [],
                     conversations: [],
                     services: [],
@@ -215,7 +214,10 @@ extension SearchTask {
 
             let selfUser = ZMUser.selfUser(in: searchContext)
             let connectedUsers = request.searchOptions
-                .contains(.contacts) ? connectedUsers(matchingQuery: request.normalizedQuery, hostedOnDomain: request.searchDomain) : []
+                .contains(.contacts) ? connectedUsers(
+                    matchingQuery: request.normalizedQuery,
+                    hostedOnDomain: request.searchDomain
+                ) : []
             let teamMembers = request.searchOptions.contains(.teamMembers) ? teamMembers(
                 matchingQuery: request.normalizedQuery,
                 team: team,
@@ -257,7 +259,6 @@ extension SearchTask {
                 let result = SearchResult(
                     contacts: searchConnectedUsers,
                     teamMembers: searchTeamMembers,
-                    addressBook: [],
                     directory: [],
                     conversations: conversations,
                     services: [],
@@ -265,13 +266,6 @@ extension SearchTask {
                 )
 
                 self.result = self.result.union(withLocalResult: result.copy(on: contextProvider.viewContext))
-
-                if request.searchOptions.contains(.addressBook) {
-                    self.result = self.result.extendWithContactsFromAddressBook(
-                        request.normalizedQuery,
-                        contextProvider: contextProvider
-                    )
-                }
 
                 tasksRemaining -= 1
             }
@@ -316,11 +310,13 @@ extension SearchTask {
     }
 
     func connectedUsers(matchingQuery query: String, hostedOnDomain: String?) -> [ZMUser] {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult>
-        if let hostedOnDomain {
-            fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(withSearch: query, hostedOnDomain: hostedOnDomain))
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = if let hostedOnDomain {
+            ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(
+                withSearch: query,
+                hostedOnDomain: hostedOnDomain
+            ))
         } else {
-            fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(withSearch: query))
+            ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(withSearch: query))
         }
 
         return searchContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
@@ -621,7 +617,6 @@ extension SearchTask {
                             self?.result = SearchResult(
                                 contacts: prevResult.contacts,
                                 teamMembers: prevResult.teamMembers,
-                                addressBook: prevResult.addressBook,
                                 directory: result.directory + prevResult.directory,
                                 conversations: prevResult.conversations,
                                 services: prevResult.services,

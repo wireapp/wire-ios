@@ -16,11 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-class UpdateEventsAPIV7: UpdateEventsAPIV6 {
-
-    override var apiVersion: APIVersion {
-        .v7
-    }
+final class UpdateEventsAPIV7: UpdateEventsAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
 }

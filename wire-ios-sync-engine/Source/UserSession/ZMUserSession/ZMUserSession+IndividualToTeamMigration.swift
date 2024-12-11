@@ -16,16 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ContactsViewController: SearchHeaderViewControllerDelegate {
+import Foundation
+import WireAPI
+import WireDomain
+import WireDomainAPI
 
-    func searchHeaderViewController(
-        _ searchHeaderViewController: SearchHeaderViewController,
-        updatedSearchQuery query: String
-    ) {
-        dataSource.searchQuery = query
-    }
-
-    func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
-        // No op
+public extension ZMUserSession {
+    func createIndividualToTeamMigrationUseCase(apiVersion: WireAPI.APIVersion) -> IndividualToTeamMigrationUseCase? {
+        guard let apiService else {
+            assertionFailure("apiService is nil")
+            return nil
+        }
+        return IndividualToTeamMigrationUseCaseImplementation(
+            apiService: apiService,
+            apiVersion: apiVersion
+        )
     }
 }
