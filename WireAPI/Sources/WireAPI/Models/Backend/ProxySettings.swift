@@ -32,7 +32,7 @@ public enum ProxySettings {
 
     /// Dictionary to be used with `URLSessionConfiguration.connectionProxyDictionary`.
 
-    func proxyDictionary() -> [AnyHashable : Any] {
+    func proxyDictionary() -> [AnyHashable: Any] {
         let socksEnable = "SOCKSEnable"
         let socksProxy = "SOCKSProxy"
         let socksPort = "SOCKSPort"
