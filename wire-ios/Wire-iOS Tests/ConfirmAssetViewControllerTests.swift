@@ -47,7 +47,10 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testThatItRendersTheAssetViewControllerWithLandscapeImage() {
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg")))
+        )
 
         accentColor = .green
         sut.previewTitle = "Matterhorn"
@@ -56,7 +59,10 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     }
 
     func testThatItRendersTheAssetViewControllerWithPortraitImage() {
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg"))))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg")))
+        )
 
         accentColor = .red
         sut.previewTitle = "Burger & Beer"
@@ -65,7 +71,13 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     }
 
     func testThatItRendersTheAssetViewControllerWithSmallImage() {
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_small.jpg").imageScaled(with: 0.5)!)))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(
+                    mediaAsset: image(inTestBundleNamed: "unsplash_small.jpg")
+                        .imageScaled(with: 0.5)!
+                ))
+        )
 
         accentColor = .red
         sut.previewTitle = "Sea Food"
@@ -78,7 +90,8 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     func testThatItShowsEditOptionsForSignalFrameGIF() {
         // GIVEN & WHEN
         sut = ConfirmAssetViewController(
-            context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif")))
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "not_animated.gif")))
         )
 
         // THEN
@@ -88,7 +101,10 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     func testThatItHidesEditOptionsForAnimatedGIF() {
         // GIVEN & WHEN
         let data = dataInTestBundleNamed("animated.gif")
-        sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data))))
+        sut = ConfirmAssetViewController(
+            context: ConfirmAssetViewController
+                .Context(asset: .image(mediaAsset: FLAnimatedImage(animatedGIFData: data)))
+        )
 
         // THEN
         XCTAssertFalse(sut.showEditingOptions)

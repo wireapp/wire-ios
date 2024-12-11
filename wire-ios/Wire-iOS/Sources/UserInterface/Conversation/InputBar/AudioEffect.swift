@@ -25,7 +25,8 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "UI")
 
 extension String {
-    @discardableResult func deleteFileAtPath() -> Bool {
+    @discardableResult
+    func deleteFileAtPath() -> Bool {
         do {
             try FileManager.default.removeItem(atPath: self)
         } catch {
@@ -41,76 +42,76 @@ extension AVSAudioEffectType: CustomStringConvertible {
     var icon: StyleKitIcon {
         switch self {
         case .none:
-            return .person
+            .person
         case .pitchupInsane:
-            return .effectBalloon
+            .effectBalloon
         case .pitchdownInsane:
-            return .effectJellyfish
+            .effectJellyfish
         case .paceupMed:
-            return .effectRabbit
+            .effectRabbit
         case .reverbMax:
-            return .effectChurch
+            .effectChurch
         case .chorusMax:
-            return .alien
+            .alien
         case .vocoderMed:
-            return .robot
+            .robot
         case .pitchUpDownMax:
-            return .effectRollercoaster
+            .effectRollercoaster
         default:
-            return .exclamationMark
+            .exclamationMark
         }
     }
 
     public var description: String {
         switch self {
         case .chorusMin:
-            return "ChorusMin"
+            "ChorusMin"
         case .chorusMax:
-            return "Alien"
+            "Alien"
         case .reverbMin:
-            return "ReverbMin"
+            "ReverbMin"
         case .reverbMed:
-            return "ReverbMed"
+            "ReverbMed"
         case .reverbMax:
-            return "Cathedral"
+            "Cathedral"
         case .pitchupMin:
-            return "PitchupMin"
+            "PitchupMin"
         case .pitchupMed:
-            return "PitchupMed"
+            "PitchupMed"
         case .pitchupMax:
-            return "PitchupMax"
+            "PitchupMax"
         case .pitchupInsane:
-            return "Helium"
+            "Helium"
         case .pitchdownMin:
-            return "PitchdownMin"
+            "PitchdownMin"
         case .pitchdownMed:
-            return "PitchdownMed"
+            "PitchdownMed"
         case .pitchdownMax:
-            return "PitchdownMax"
+            "PitchdownMax"
         case .pitchdownInsane:
-            return "Jellyfish"
+            "Jellyfish"
         case .paceupMin:
-            return "PaceupMin"
+            "PaceupMin"
         case .paceupMed:
-            return "Hare"
+            "Hare"
         case .paceupMax:
-            return "PaceupMax"
+            "PaceupMax"
         case .pacedownMin:
-            return "PacedownMin"
+            "PacedownMin"
         case .pacedownMed:
-            return "PacedownMed"
+            "PacedownMed"
         case .pacedownMax:
-            return "Turtle"
+            "Turtle"
         case .reverse:
-            return "UpsideDown"
+            "UpsideDown"
         case .vocoderMed:
-            return "VocoderMed"
+            "VocoderMed"
         case .pitchUpDownMax:
-            return "Roller coaster"
+            "Roller coaster"
         case .none:
-            return "None"
+            "None"
         default:
-            return "Unknown"
+            "Unknown"
         }
     }
 
@@ -139,14 +140,16 @@ extension AVSAudioEffectType: CustomStringConvertible {
         }
     }
 
-    static let displayedEffects: [AVSAudioEffectType] = [.none,
-                                                                .pitchupInsane,
-                                                                .pitchdownInsane,
-                                                                .paceupMed,
-                                                                .reverbMax,
-                                                                .chorusMax,
-                                                                .vocoderMed,
-                                                                .pitchUpDownMax]
+    static let displayedEffects: [AVSAudioEffectType] = [
+        .none,
+        .pitchupInsane,
+        .pitchdownInsane,
+        .paceupMed,
+        .reverbMax,
+        .chorusMax,
+        .vocoderMed,
+        .pitchUpDownMax
+    ]
 
     static let wr_convertQueue = DispatchQueue(label: "audioEffectQueue")
 

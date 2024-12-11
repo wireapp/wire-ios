@@ -35,11 +35,11 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        registerPushTokenActionHandler = RegisterPushTokenActionHandler(context: managedObjectContext)
-        removePushTokenActionHandler = RemovePushTokenActionHandler(context: managedObjectContext)
-        getPushTokensActionHandler = GetPushTokensActionHandler(context: managedObjectContext)
+        self.registerPushTokenActionHandler = RegisterPushTokenActionHandler(context: managedObjectContext)
+        self.removePushTokenActionHandler = RemovePushTokenActionHandler(context: managedObjectContext)
+        self.getPushTokensActionHandler = GetPushTokensActionHandler(context: managedObjectContext)
 
-        actionSync = EntityActionSync(actionHandlers: [
+        self.actionSync = EntityActionSync(actionHandlers: [
             registerPushTokenActionHandler,
             removePushTokenActionHandler,
             getPushTokensActionHandler
@@ -51,7 +51,7 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
     // MARK: - Requests
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return actionSync.nextRequest(for: apiVersion)
+        actionSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMEventConsumer

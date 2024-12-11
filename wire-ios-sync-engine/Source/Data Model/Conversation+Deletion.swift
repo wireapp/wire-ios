@@ -18,16 +18,19 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireSystem
 
 public enum ConversationDeletionError: Error {
-    case unknown, invalidOperation, conversationNotFound
+    case unknown
+    case invalidOperation
+    case conversationNotFound
 
     init?(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "invalid-op"?): self = .invalidOperation
         case (404, "no-conversation"?): self = .conversationNotFound
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }
@@ -63,10 +66,10 @@ extension ZMConversation {
             if response.httpStatus == 200 {
 
                 let conversation = ZMConversation.fetch(
-                        with: conversationId,
-                        domain: nil,
-                        in: contextProvider.syncContext
-                    )
+                    with: conversationId,
+                    domain: nil,
+                    in: contextProvider.syncContext
+                )
 
                 guard let conversation else {
                     DispatchQueue.main.async {
@@ -106,7 +109,7 @@ extension ZMConversation {
 
 }
 
-struct ConversationDeletionRequestFactory {
+enum ConversationDeletionRequestFactory {
 
     static func requestForDeletingTeamConversation(_ conversation: ZMConversation) -> ZMTransportRequest? {
         guard

@@ -16,183 +16,94 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
+import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class ConnectionsRepositoryTests: XCTestCase {
 
     private var sut: ConnectionsRepository!
     private var connectionsAPI: MockConnectionsAPI!
-    private var stack: CoreDataStack!
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var modelHelper: ModelHelper!
-
-    private var context: NSManagedObjectContext {
-        stack.syncContext
-    }
+    private var connectionsLocalStore: MockConnectionsLocalStoreProtocol!
 
     override func setUp() async throws {
-        try await super.setUp()
-        BackendInfo.isFederationEnabled = false
-
-        modelHelper = ModelHelper()
-        coreDataStackHelper = CoreDataStackHelper()
-        stack = try await coreDataStackHelper.createStack()
         connectionsAPI = MockConnectionsAPI()
+        connectionsLocalStore = MockConnectionsLocalStoreProtocol()
+
         sut = ConnectionsRepository(
             connectionsAPI: connectionsAPI,
-            connectionsLocalStore: ConnectionsLocalStore(context: context)
+            connectionsLocalStore: connectionsLocalStore
         )
     }
 
     override func tearDown() async throws {
-        try await super.tearDown()
-        stack = nil
         connectionsAPI = nil
+        connectionsLocalStore = nil
         sut = nil
-        try coreDataStackHelper.cleanupDirectory()
-        modelHelper = nil
-        coreDataStackHelper = nil
     }
 
     // MARK: - Tests
 
-    func testPullConnections_GivenOneConnectionFails_OtherConnectionsAreStored() async throws {
+    func testPullConnections_It_Invokes_Local_Store_Method() async throws {
         // Mock
+
         let connection = Scaffolding.connection
-        let brokenConnection = Scaffolding.brokenConnection
 
         connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
 
             WireAPI.PayloadPager.Page(
-                element: [
-                    brokenConnection,
-                    connection
-                ],
+                element: [connection],
                 hasMore: false,
                 nextStart: "first"
             )
         })
 
+        connectionsLocalStore.storeConnection_MockMethod = { _ in }
+
         // When
+
         try await sut.pullConnections()
 
         // Then
-        try await context.perform { [context] in
-            // There is a connection in the database.
-            let fetchRequest = NSFetchRequest<any NSFetchRequestResult>(entityName: ZMConnection.entityName())
-            let a = try context.fetch(fetchRequest)
-            XCTAssertEqual(a.count, 1)
-        }
+
+        XCTAssertEqual(connectionsLocalStore.storeConnection_Invocations.count, 1)
     }
 
-    func testPullConnections_GivenConnectionDoesNotExist_FederationDisabled() async throws {
-        try await internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: false)
-    }
-
-    func testPullConnections_GivenConnectionDoesNotExist_FederationEnabled() async throws {
-        BackendInfo.isFederationEnabled = true
-        try await internalTestPullConnections_GivenConnectionDoesNotExist(federationEnabled: true)
-    }
-
-    // MARK: Private
-
-    func internalTestPullConnections_GivenConnectionDoesNotExist(
-        federationEnabled: Bool,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) async throws {
+    func testUpdateConnection_It_Invokes_Local_Store_Method() async throws {
         // Mock
-        let connection = Scaffolding.connection
-        connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
-            WireAPI.PayloadPager.Page(element: [connection], hasMore: false, nextStart: "first")
-        })
-
-        // When
-        try await sut.pullConnections()
-
-        // Then
-        try await context.perform { [context] in
-            // There is a connection in the database.
-            let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
-
-            XCTAssertEqual(storedConnection.lastUpdateDateInGMT, connection.lastUpdate)
-
-            XCTAssertEqual(storedConnection.to.remoteIdentifier, connection.receiverID)
-            if federationEnabled {
-                XCTAssertEqual(storedConnection.to.domain, connection.receiverQualifiedID?.domain)
-            } else {
-                XCTAssertNil(storedConnection.to.domain)
-            }
-            XCTAssertEqual(storedConnection.status, ZMConnectionStatus.accepted)
-
-            let relatedConversation = try XCTUnwrap(storedConnection.to.oneOnOneConversation)
-            XCTAssertEqual(relatedConversation.remoteIdentifier, connection.qualifiedConversationID?.uuid)
-
-            if federationEnabled {
-                XCTAssertEqual(relatedConversation.domain, connection.qualifiedConversationID?.domain)
-            } else {
-                XCTAssertNil(relatedConversation.domain)
-            }
-
-            XCTAssertTrue(relatedConversation.needsToBeUpdatedFromBackend)
-        }
-    }
-
-    func testUpdateConnection_It_Successfully_Updates_Connection_Locally() async throws {
-        // Given
 
         let connection = Scaffolding.connection
+        connectionsLocalStore.storeConnection_MockMethod = { _ in }
 
         // When
 
         try await sut.updateConnection(connection)
 
         // Then
-        try await context.perform { [context] in
-            let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
 
-            XCTAssertEqual(storedConnection.lastUpdateDateInGMT, connection.lastUpdate)
-
-            XCTAssertEqual(storedConnection.to.remoteIdentifier, connection.receiverID)
-            XCTAssertNil(storedConnection.to.domain)
-            XCTAssertEqual(storedConnection.status, ZMConnectionStatus.accepted)
-
-            let relatedConversation = try XCTUnwrap(storedConnection.to.oneOnOneConversation)
-            XCTAssertEqual(relatedConversation.remoteIdentifier, connection.qualifiedConversationID?.uuid)
-
-            XCTAssertNil(relatedConversation.domain)
-
-            XCTAssertTrue(relatedConversation.needsToBeUpdatedFromBackend)
-        }
+        XCTAssertEqual(connectionsLocalStore.storeConnection_Invocations.count, 1)
     }
 
     private enum Scaffolding {
-        static let member1ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
-        static let conversationID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
-        static let member2ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
+        static let member1ID = WireAPI.QualifiedID(uuid: .mockID1, domain: String.randomDomain())
+        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: String.randomDomain())
+        static let member2ID = WireAPI.QualifiedID(uuid: .mockID3, domain: String.randomDomain())
         static let lastUpdate = Date()
         static let connectionStatus = ConnectionStatus.accepted
 
-        static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
-                                                   receiverID: Scaffolding.member2ID.uuid,
-                                                   receiverQualifiedID: Scaffolding.member2ID,
-                                                   conversationID: Scaffolding.conversationID.uuid,
-                                                   qualifiedConversationID: Scaffolding.conversationID,
-                                                   lastUpdate: Scaffolding.lastUpdate,
-                                                   status: Scaffolding.connectionStatus)
-
-        static let brokenConnection = WireAPI.Connection(senderID: nil,
-                                                         receiverID: nil,
-                                                         receiverQualifiedID: nil,
-                                                         conversationID: nil,
-                                                         qualifiedConversationID: nil,
-                                                         lastUpdate: Date(),
-                                                         status: .pending)
+        static let connection = WireAPI.Connection(
+            senderID: Scaffolding.member1ID.uuid,
+            receiverID: Scaffolding.member2ID.uuid,
+            receiverQualifiedID: Scaffolding.member2ID,
+            conversationID: Scaffolding.conversationID.uuid,
+            qualifiedConversationID: Scaffolding.conversationID,
+            lastUpdate: Scaffolding.lastUpdate,
+            status: Scaffolding.connectionStatus
+        )
     }
 
 }

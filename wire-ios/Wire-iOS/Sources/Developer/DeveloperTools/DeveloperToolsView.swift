@@ -16,17 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Inject
 import SwiftUI
 
 struct DeveloperToolsView: View {
 
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: DeveloperToolsViewModel
-
-    @ObserveInjection var inject
+    @StateObject var viewModel: DeveloperToolsViewModel
 
     // MARK: - Views
 
@@ -39,7 +35,7 @@ struct DeveloperToolsView: View {
                     title: Text(viewModel.alertTitle ?? ""),
                     message: Text(viewModel.alertBody ?? "")
                 )
-            }.enableInjection()
+            }
     }
 
     private func sectionView(for section: DeveloperToolsViewModel.Section) -> some View {
@@ -76,7 +72,6 @@ struct DeveloperToolsView: View {
 
         case let .destination(destinationItem):
             NavigationLink(destinationItem.title, destination: destinationItem.makeView)
-
         }
     }
 

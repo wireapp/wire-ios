@@ -36,9 +36,9 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    public func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke(
         withLocationData locationData: LocationData,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) throws {
 
         try conversation.appendLocation(with: locationData, nonce: UUID())

@@ -24,7 +24,7 @@ final class SectionTableFooter: UITableViewHeaderFooterView {
     private let footerView = SectionFooterView()
 
     var titleLabel: UILabel {
-        return footerView.titleLabel
+        footerView.titleLabel
     }
 
     override init(reuseIdentifier: String?) {

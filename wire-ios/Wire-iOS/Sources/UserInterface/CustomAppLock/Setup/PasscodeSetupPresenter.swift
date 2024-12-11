@@ -23,17 +23,19 @@ final class PasscodeSetupPresenter {
     private var interactorInput: PasscodeSetupInteractorInput
 
     private var passcodeValidationResult: PasswordValidationResult?
-    private let passcodeCharacterClasses: [PasswordCharacterClass] = [.uppercase,
-                                                                      .lowercase,
-                                                                      .special,
-                                                                      .digits]
+    private let passcodeCharacterClasses: [PasswordCharacterClass] = [
+        .uppercase,
+        .lowercase,
+        .special,
+        .digits
+    ]
 
     var isPasscodeValid: Bool {
         switch passcodeValidationResult {
         case .valid:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -43,8 +45,10 @@ final class PasscodeSetupPresenter {
         interactor.interactorOutput = self
     }
 
-    init(userInterface: PasscodeSetupUserInterface,
-         interactorInput: PasscodeSetupInteractorInput) {
+    init(
+        userInterface: PasscodeSetupUserInterface,
+        interactorInput: PasscodeSetupInteractorInput
+    ) {
         self.userInterface = userInterface
         self.interactorInput = interactorInput
     }
@@ -79,7 +83,7 @@ extension PasscodeSetupPresenter: PasscodeSetupInteractorOutput {
         case .valid:
             userInterface?.createButtonEnabled = true
             resetValidationLabels(errors: Set(PasscodeError.allCases), passed: true)
-        case .invalid(let violations):
+        case let .invalid(violations):
             userInterface?.createButtonEnabled = false
 
             resetValidationLabels(errors: Set(PasscodeError.allCases), passed: true)
@@ -97,7 +101,7 @@ extension PasscodeSetupPresenter {
             switch violation {
             case .tooShort:
                 passcodeErrors.insert(.tooShort)
-            case .missingRequiredClasses(let passwordCharacterClass):
+            case let .missingRequiredClasses(passwordCharacterClass):
                 passcodeErrors = passcodeErrors.union(passcodeError(from: passwordCharacterClass))
             default:
                 break

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class ReactionsSortingTests: BaseZMMessageTests {
     func testThatReactionsAreSortedByDate() {
@@ -26,16 +26,38 @@ class ReactionsSortingTests: BaseZMMessageTests {
         let user1 = ZMUser(context: uiMOC)
         user1.remoteIdentifier = UUID()
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        let expectedOrder = ["👽", "🤖", "🎃", "👾"] // The emojis are sorted by dates of creation, newest emojis first [0x1F383, 0x1F47E, 0x1F916, 0x1F47D]
+        let expectedOrder = [
+            "👽",
+            "🤖",
+            "🎃",
+            "👾"
+        ] // The emojis are sorted by dates of creation, newest emojis first [0x1F383, 0x1F47E, 0x1F916, 0x1F47D]
         // when
-        message.setReactions(["👽"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneMinute))
-        message.setReactions(["👽", "🤖"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .fiveMinutes))
-        // Since all of the emojis were added by the same user each one of them will have different creation date (corresponding to first occurrence)
-        message.setReactions(["👽", "🤖", "👾"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneHour))
-        message.setReactions(["🎃"], forUser: user1, newReactionsCreationDate: Date(timeIntervalSince1970: .fiveMinutes).addingTimeInterval(.tenSeconds))
-        self.uiMOC.saveOrRollback()
+        message.setReactions(
+            ["👽"],
+            forUser: selfUser,
+            newReactionsCreationDate: Date(timeIntervalSince1970: .oneMinute)
+        )
+        message.setReactions(
+            ["👽", "🤖"],
+            forUser: selfUser,
+            newReactionsCreationDate: Date(timeIntervalSince1970: .fiveMinutes)
+        )
+        // Since all of the emojis were added by the same user each one of them will have different creation date
+        // (corresponding to first occurrence)
+        message.setReactions(
+            ["👽", "🤖", "👾"],
+            forUser: selfUser,
+            newReactionsCreationDate: Date(timeIntervalSince1970: .oneHour)
+        )
+        message.setReactions(
+            ["🎃"],
+            forUser: user1,
+            newReactionsCreationDate: Date(timeIntervalSince1970: .fiveMinutes).addingTimeInterval(.tenSeconds)
+        )
+        uiMOC.saveOrRollback()
         // then
-        let result = message.reactionsSortedByCreationDate().map { $0.reactionString }
+        let result = message.reactionsSortedByCreationDate().map(\.reactionString)
         XCTAssertEqual(result, expectedOrder)
     }
 }

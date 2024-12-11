@@ -49,7 +49,8 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
         await context.perform { [self] in
             let selfUserDomain = ZMUser.selfUser(in: context).domain ?? ""
 
-            /// For all conversations owned by self domain, remove all users that belong to `domain` from those conversations.
+            /// For all conversations owned by self domain, remove all users that belong to `domain` from those
+            /// conversations.
             removeFederationConnection(
                 with: domain,
                 forConversationsOwnedBy: selfUserDomain
@@ -61,7 +62,8 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
                 forConversationsOwnedBy: domain
             )
 
-            /// For all conversations that are NOT owned by self domain or `domain` and contain users from self domain and `domain`, remove users from `domain` and `otherDomain` from those conversations.
+            /// For all conversations that are NOT owned by self domain or `domain` and contain users from self domain
+            /// and `domain`, remove users from `domain` and `otherDomain` from those conversations.
             removeFederationConnection(
                 with: [selfUserDomain, domain],
                 forConversationsNotOwnedBy: [selfUserDomain, domain]
@@ -70,7 +72,8 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
             /// For any connection from a user on self domain to a user on `domain`, delete the connection.
             removeConnectionRequests(with: domain)
 
-            /// For any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations.
+            /// For any 1:1 conversation, where one of the two users is on `domain`, remove self user from those
+            /// conversations.
             markOneToOneConversationsAsReadOnly(with: domain)
 
             /// Remove connection for all connected users owned by `domain`.
@@ -183,15 +186,13 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
     ) -> Set<ZMUser> {
         let localParticipants = Set(conversation.participantRoles.compactMap(\.user))
 
-        let participants = localParticipants.filter { user in
+        return localParticipants.filter { user in
             if let domain = user.domain {
                 domain.isOne(of: domains)
             } else {
                 false
             }
         }
-
-        return participants
     }
 
     private func removeConnectionRequests(with domain: String) {

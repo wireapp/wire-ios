@@ -18,22 +18,22 @@
 
 import WireAnalytics
 
-extension SessionManager {
+public extension SessionManager {
 
-    enum AnalyticsError: Error {
+    internal enum AnalyticsError: Error {
 
         case noActiveSession
 
     }
 
-    public func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
+    func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
         DisableAnalyticsUseCase(
             service: analyticsService,
             provider: activeUserSession
         )
     }
 
-    public func makeEnableAnalyticsUseCase() async throws -> EnableAnalyticsUseCaseProtocol {
+    func makeEnableAnalyticsUseCase() async throws -> EnableAnalyticsUseCaseProtocol {
         guard let activeUserSession else {
             throw AnalyticsError.noActiveSession
         }
@@ -42,6 +42,10 @@ extension SessionManager {
             service: analyticsService,
             provider: activeUserSession
         )
+    }
+
+    var canEnableTracking: Bool {
+        analyticsService.canEnableTracking
     }
 
 }

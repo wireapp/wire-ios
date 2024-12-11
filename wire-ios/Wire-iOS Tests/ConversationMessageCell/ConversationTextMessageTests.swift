@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireLinkPreview
 import XCTest
+@testable import Wire
 
 final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
@@ -45,8 +45,10 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
     func testPlainText_WithALongUsernameAndShowingTheDateOfTheMessage() {
         // GIVEN, WHEN
-        message = createMessage(withText: "Welcome to Dub Dub 2023",
-                                userName: "Bruno with a long long long long long long long long long long long long name")
+        message = createMessage(
+            withText: "Welcome to Dub Dub 2023",
+            userName: "Bruno with a long long long long long long long long long long long long name"
+        )
 
         message.deliveryState = .delivered
 
@@ -136,9 +138,13 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         // GIVEN
         message = createMessage(withText: "https://www.youtube.com/watch?v=l7aqpSTa234")
         message.linkAttachments = [
-            LinkAttachment(type: .youTubeVideo, title: "Lagar mat med Fernando Di Luca",
-                           permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
-                           thumbnails: [], originalRange: NSRange(location: 0, length: 43))
+            LinkAttachment(
+                type: .youTubeVideo,
+                title: "Lagar mat med Fernando Di Luca",
+                permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
+                thumbnails: [],
+                originalRange: NSRange(location: 0, length: 43)
+            )
         ]
 
         // THEN
@@ -149,30 +155,38 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         // GIVEN
         message = createMessage(withText: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")
         message.linkAttachments = [
-            LinkAttachment(type: .soundCloudTrack, title: "Bridgit Mendler - Atlantis feat. Kaiydo",
-                           permalink: URL(string: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")!,
-                           thumbnails: [], originalRange: NSRange(location: 0, length: 74))
+            LinkAttachment(
+                type: .soundCloudTrack,
+                title: "Bridgit Mendler - Atlantis feat. Kaiydo",
+                permalink: URL(string: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")!,
+                thumbnails: [],
+                originalRange: NSRange(location: 0, length: 74)
+            )
         ]
 
         // THEN
-#if targetEnvironment(simulator) && swift(>=5.4)
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is flaky, may be related to sound cloud preview text view?", options: options) {
+        #if targetEnvironment(simulator) && swift(>=5.4)
+            let options = XCTExpectedFailure.Options()
+            options.isStrict = false
+            XCTExpectFailure("This test is flaky, may be related to sound cloud preview text view?", options: options) {
+                verify(message: message, waitForTextViewToLoad: true)
+            }
+        #else
             verify(message: message, waitForTextViewToLoad: true)
-        }
-#else
-        verify(message: message, waitForTextViewToLoad: true)
-#endif
+        #endif
     }
 
     func testSoundCloudSetMediaPreviewAttachment() {
         // GIVEN
         message = createMessage(withText: "https://soundcloud.com/playback/sets/2019-artists-to-watch")
         message.linkAttachments = [
-            LinkAttachment(type: .soundCloudPlaylist, title: "Artists To Watch 2019",
-                           permalink: URL(string: "https://soundcloud.com/playback/sets/2019-artists-to-watch")!,
-                           thumbnails: [], originalRange: NSRange(location: 0, length: 58))
+            LinkAttachment(
+                type: .soundCloudPlaylist,
+                title: "Artists To Watch 2019",
+                permalink: URL(string: "https://soundcloud.com/playback/sets/2019-artists-to-watch")!,
+                thumbnails: [],
+                originalRange: NSRange(location: 0, length: 58)
+            )
         ]
 
         // THEN
@@ -193,9 +207,13 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         message = createMessage(withText: "Look at this! https://www.youtube.com/watch?v=l7aqpSTa234")
         message.backingTextMessageData.backingLinkPreview = article
         message.linkAttachments = [
-            LinkAttachment(type: .youTubeVideo, title: "Lagar mat med Fernando Di Luca",
-                           permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
-                           thumbnails: [], originalRange: NSRange(location: 14, length: 43))
+            LinkAttachment(
+                type: .youTubeVideo,
+                title: "Lagar mat med Fernando Di Luca",
+                permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
+                thumbnails: [],
+                originalRange: NSRange(location: 14, length: 43)
+            )
         ]
 
         // THEN
@@ -204,8 +222,11 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Helper Methods
 
-    func createMessage(withText: String = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.",
-                       userName: String = "Bruno") -> MockMessage {
+    func createMessage(
+        withText: String =
+            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.",
+        userName: String = "Bruno"
+    ) -> MockMessage {
         let message = MockMessageFactory.textMessage(withText: withText)
         mockOtherUser = MockUserType.createConnectedUser(name: userName)
         message.senderUser = mockOtherUser

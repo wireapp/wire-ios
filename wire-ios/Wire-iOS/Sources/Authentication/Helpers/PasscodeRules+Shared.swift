@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireUtilities
 
 extension PasswordRuleSet {
@@ -71,15 +72,15 @@ extension PasswordRuleSet {
         let localizedRules: [String] = ruleSet.requiredCharacters.compactMap { requiredClass in
             switch requiredClass {
             case .digits:
-                return L10n.Localizable.Registration.Password.Rules.number(1)
+                L10n.Localizable.Registration.Password.Rules.number(1)
             case .lowercase:
-                return L10n.Localizable.Registration.Password.Rules.lowercase(1)
+                L10n.Localizable.Registration.Password.Rules.lowercase(1)
             case .uppercase:
-                return L10n.Localizable.Registration.Password.Rules.uppercase(1)
+                L10n.Localizable.Registration.Password.Rules.uppercase(1)
             case .special:
-                return L10n.Localizable.Registration.Password.Rules.special(1)
+                L10n.Localizable.Registration.Password.Rules.special(1)
             default:
-                return nil
+                nil
             }
         }
 

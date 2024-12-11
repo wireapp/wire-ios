@@ -26,16 +26,24 @@ final class AccentColorChangeHandler: UserObserving {
     private var observer: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
 
-    static func addObserver(_ observer: NSObjectProtocol?, userSession: UserSession, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock) -> Self {
-        return self.init(observer: observer, handlerBlock: changeHandler, userSession: userSession)
+    static func addObserver(
+        _ observer: NSObjectProtocol?,
+        userSession: UserSession,
+        handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock
+    ) -> Self {
+        self.init(observer: observer, handlerBlock: changeHandler, userSession: userSession)
     }
 
-    init(observer: NSObjectProtocol?, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock, userSession: UserSession) {
-        handlerBlock = changeHandler
+    init(
+        observer: NSObjectProtocol?,
+        handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock,
+        userSession: UserSession
+    ) {
+        self.handlerBlock = changeHandler
         self.observer = observer
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
-            userObserverToken = userSession.addUserObserver(self, for: selfUser)
+            self.userObserverToken = userSession.addUserObserver(self, for: selfUser)
         }
     }
 

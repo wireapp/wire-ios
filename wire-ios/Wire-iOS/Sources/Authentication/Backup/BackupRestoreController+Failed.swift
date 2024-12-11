@@ -45,23 +45,25 @@ extension BackupRestoreController {
     private func title(for error: Error) -> String {
         switch error {
         case
-            CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
-            return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongVersion.title
+            CoreDataStack.BackupImportError
+            .incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
+            L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongVersion.title
         case CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.userMismatch):
-            return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongAccount.title
+            L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongAccount.title
         default:
-            return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.title
+            L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.title
         }
     }
 
     private func message(for error: Error) -> String {
         switch error {
-        case CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
-            return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongVersion.message
+        case CoreDataStack.BackupImportError
+            .incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
+            L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongVersion.message
         case CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.userMismatch):
-            return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongAccount.message
+            L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongAccount.message
         default:
-            return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.message + "\n\(error.localizedDescription)"
+            L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.message + "\n\(error.localizedDescription)"
         }
     }
 

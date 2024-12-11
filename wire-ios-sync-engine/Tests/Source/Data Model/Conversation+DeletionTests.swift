@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class Conversation_DeletionTests: DatabaseTest {
 
@@ -37,8 +37,24 @@ class Conversation_DeletionTests: DatabaseTest {
     func testThatItParsesAllKnownConversationDeletionErrorResponses() {
 
         let errorResponses: [(ConversationDeletionError, ZMTransportResponse)] = [
-            (ConversationDeletionError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (ConversationDeletionError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            (
+                ConversationDeletionError.invalidOperation,
+                ZMTransportResponse(
+                    payload: ["label": "invalid-op"] as ZMTransportData,
+                    httpStatus: 403,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            ),
+            (
+                ConversationDeletionError.conversationNotFound,
+                ZMTransportResponse(
+                    payload: ["label": "no-conversation"] as ZMTransportData,
+                    httpStatus: 404,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            )
         ]
 
         for (expectedError, response) in errorResponses {
@@ -61,7 +77,7 @@ class Conversation_DeletionTests: DatabaseTest {
 
         // WHEN
         conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
-            if case .failure(let error) = result {
+            if case let .failure(error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
                 }
@@ -81,7 +97,7 @@ class Conversation_DeletionTests: DatabaseTest {
 
         // WHEN
         conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
-            if case .failure(let error) = result {
+            if case let .failure(error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
                 }
@@ -102,10 +118,14 @@ class Conversation_DeletionTests: DatabaseTest {
         conversation.teamRemoteIdentifier = UUID()
 
         // WHEN
-        guard let request = WireSyncEngine.ConversationDeletionRequestFactory.requestForDeletingTeamConversation(conversation) else { return XCTFail() }
+        guard let request = WireSyncEngine.ConversationDeletionRequestFactory
+            .requestForDeletingTeamConversation(conversation) else { return XCTFail() }
 
         // THEN
-        XCTAssertEqual(request.path, "/teams/\(conversation.teamRemoteIdentifier!.transportString())/conversations/\(conversation.remoteIdentifier!.transportString())")
+        XCTAssertEqual(
+            request.path,
+            "/teams/\(conversation.teamRemoteIdentifier!.transportString())/conversations/\(conversation.remoteIdentifier!.transportString())"
+        )
     }
 
 }

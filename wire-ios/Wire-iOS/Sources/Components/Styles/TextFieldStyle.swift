@@ -24,8 +24,9 @@ struct TextFieldStyle {
     typealias TextFieldColors = SemanticColors.SearchBar
 
     var borderColorSelected: UIColor {
-        return .accent()
+        .accent()
     }
+
     var borderColorNotSelected: UIColor
     var textColor: UIColor
     var backgroundColor: UIColor
@@ -33,9 +34,11 @@ struct TextFieldStyle {
     var cornerRadius: CGFloat = 12
     var borderWidth: CGFloat = 1
 
-    static let `default` = TextFieldStyle(borderColorNotSelected: SemanticColors.SearchBar.borderInputView,
-                                          textColor: SemanticColors.SearchBar.textInputView,
-                                          backgroundColor: SemanticColors.SearchBar.backgroundInputView)
+    static let `default` = TextFieldStyle(
+        borderColorNotSelected: SemanticColors.SearchBar.borderInputView,
+        textColor: SemanticColors.SearchBar.textInputView,
+        backgroundColor: SemanticColors.SearchBar.backgroundInputView
+    )
 }
 
 extension UITextField: Stylable {

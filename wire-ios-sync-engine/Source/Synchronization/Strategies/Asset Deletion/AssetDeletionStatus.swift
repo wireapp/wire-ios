@@ -20,7 +20,8 @@ import Foundation
 
 private let log = ZMSLog(tag: "AssetDeletion")
 
-@objc public protocol AssetDeletionIdentifierProviderType: AnyObject {
+@objc
+public protocol AssetDeletionIdentifierProviderType: AnyObject {
     func nextIdentifierToDelete() -> String?
     func didDelete(identifier: String)
     func didFailToDelete(identifier: String)
@@ -33,7 +34,7 @@ public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProvide
     private let queue: GroupQueue
 
     private var remainingIdentifiersToDelete: Set<String> {
-        return provider.assetIdentifiersToBeDeleted.subtracting(identifiersInProgress)
+        provider.assetIdentifiersToBeDeleted.subtracting(identifiersInProgress)
     }
 
     @objc(initWithProvider:queue:)
@@ -41,11 +42,18 @@ public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProvide
         self.queue = queue
         self.provider = provider
         super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(handle), name: .deleteAssetNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handle),
+            name: .deleteAssetNotification,
+            object: nil
+        )
     }
 
-    @objc private func handle(note: Notification) {
-        guard note.name == Notification.Name.deleteAssetNotification, let identifier = note.object as? String else { return }
+    @objc
+    private func handle(note: Notification) {
+        guard note.name == Notification.Name.deleteAssetNotification,
+              let identifier = note.object as? String else { return }
         queue.performGroupedBlock { [weak self] in
             self?.add(identifier)
         }

@@ -37,6 +37,7 @@
 "general.on" = "Вкл.";
 "general.loading" = "Загрузка…";
 "general.paste" = "Вставить";
+"general.or" = "или";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -49,7 +50,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Поиск по имени или псевдониму";
 "peoplepicker.header.top_people" = "Топ-контакты";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Создать группу";
 "peoplepicker.button.add_to_conversation" = "Добавить участников";
 "peoplepicker.header.conversations" = "Группы";
 "peoplepicker.header.team_conversations" = "Группы %@";
@@ -59,8 +60,8 @@
 "peoplepicker.header.directory" = "Связаться";
 "peoplepicker.header.federation" = "Подключиться к другому домену";
 
-"peoplepicker.group.title.singular" = "Select Participants";
-"peoplepicker.group.title.plural" = "Select Participants (%d)";
+"peoplepicker.group.title.singular" = "Выбрать участников";
+"peoplepicker.group.title.plural" = "Выбрать участников (%d)";
 "peoplepicker.group.skip" = "Пропустить";
 "peoplepicker.group.done" = "Готово";
 "peoplepicker.group.create" = "Создать";
@@ -125,18 +126,20 @@
 
 // Conversation List - Search Bar
 
-"conversation_list.search_bar.placeholder" = "Search conversations";
-"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
-"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
-"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.placeholder" = "Поиск бесед";
+"conversation_list.search_bar.favoritesPlaceholder" = "Поиск в избранном";
+"conversation_list.search_bar.groupsPlaceholder" = "Поиск групп";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Поиск по беседам 1:1";
+"conversation_list.search_bar.foldersPlaceholder" = "Поиск %@";
 
 
 // Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.all_conversations.title" = "Все беседы";
 "conversation_list.filter.favorites.title" = "Избранное";
 "conversation_list.filter.groups.title" = "Группы";
 "conversation_list.filter.oneOnOneConversations.title" = "Беседы 1:1";
-"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.folders.title" = "Папки";
+"conversation_list.filter_label.text" = "Отфильтровано по %@";
 "conversation_list.filter.remove_button.title" = "Удалить";
 
 // Conversation List Indicator
@@ -147,13 +150,20 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Есть новые сообщения.";
 
 // Conversation List - Empty states
-"conversation_list.empty_placeholder.all.headline" = "Welcome";
-"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
-"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
-"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
-"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
-"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.all.headline" = "Добро пожаловать";
+"conversation_list.empty_placeholder.all.subheadline" = "Свяжитесь с друзьями или создайте новую группу, чтобы начать совместную работу!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Отметьте свои любимые беседы, и вы найдете их здесь.";
+"conversation_list.empty_placeholder.favorite.link" = "Как помечать беседы как избранные";
+"conversation_list.empty_placeholder.group.subheadline" = "Вы еще не участвуете ни в одной групповой беседе. Начните новую!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "У вас пока нет контактов. Ищите друзей в %@ и общайтесь.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "Не удалось найти ни одной беседы.\n\nСвяжитесь с пользователями или начните новую групповую беседу:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "Ничего не найдено.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "Новая беседа";
+"conversation_list.empty_placeholder.search.button.ipad" = "Начать новую беседу";
+"conversation_list.empty_placeholder.search.connect_button" = "Связаться с пользователями";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
@@ -320,11 +330,10 @@
 "conversation.input_bar.message_too_long.message" = "Вы можете отправлять сообщения длиной до %d символов.";
 
 "conversation.create.group_name.title" = "Создать группу";
-"conversation.create.group_name.label" = "Group name";
+"conversation.create.group_name.label" = "Имя группы";
 "conversation.create.guidance.empty" = "Не менее 1 символа";
 "conversation.create.guidance.toolong" = "Слишком много символов";
-"conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Гости: %@, Сервисы: %@, Отчеты о прочтении: %@";
+"conversation.create.options.title" = "НАСТРОЙКИ БЕСЕДЫ";
 "conversation.create.guests.title" = "Разрешить гостей";
 "conversation.create.guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
 "conversation.create.services.title" = "Разрешить сервисы";

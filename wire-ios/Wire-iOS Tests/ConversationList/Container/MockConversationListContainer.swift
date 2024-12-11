@@ -36,7 +36,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
 
     var hasUsernameTakeoverViewController: Bool {
         // no-op
-        return false
+        false
     }
 
     @discardableResult
@@ -52,8 +52,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
 
     func updateBottomBarSeparatorVisibility(
         with controller: ConversationListContentController
-    ) {
-    }
+    ) {}
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
         // no-op
@@ -108,7 +107,14 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(
-        _ viewModel: Wire.ConversationListViewController.ViewModel) {
+        _ viewModel: Wire.ConversationListViewController.ViewModel
+    ) {
         // no-op
+    }
+
+    func conversationListViewControllerViewModelDidReloadContent(
+        _ viewModel: ConversationListViewController.ViewModel
+    ) {
+        // no - op
     }
 }

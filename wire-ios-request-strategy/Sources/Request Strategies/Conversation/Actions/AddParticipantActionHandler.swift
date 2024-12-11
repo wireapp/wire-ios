@@ -18,20 +18,20 @@
 
 import Foundation
 
-extension ConversationAddParticipantsError {
+public extension ConversationAddParticipantsError {
 
-   public init?(response: ZMTransportResponse) {
-       switch (response.httpStatus, response.payloadLabel()) {
-       case (403, "invalid-op"?): self = .invalidOperation
-       case (403, "access-denied"?): self = .accessDenied
-       case (403, "not-connected"?): self = .notConnectedToUser
-       case (404, "no-conversation"?): self = .conversationNotFound
-       case (403, "too-many-members"?): self = .tooManyMembers
-       case (412, "missing-legalhold-consent"?): self = .missingLegalHoldConsent
-       case (400..<499, _): self = .unknown
-       default: return nil
-       }
-   }
+    init?(response: ZMTransportResponse) {
+        switch (response.httpStatus, response.payloadLabel()) {
+        case (403, "invalid-op"?): self = .invalidOperation
+        case (403, "access-denied"?): self = .accessDenied
+        case (403, "not-connected"?): self = .notConnectedToUser
+        case (404, "no-conversation"?): self = .conversationNotFound
+        case (403, "too-many-members"?): self = .tooManyMembers
+        case (412, "missing-legalhold-consent"?): self = .missingLegalHoldConsent
+        case (400 ..< 499, _): self = .unknown
+        default: return nil
+        }
+    }
 
 }
 
@@ -41,7 +41,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     private let eventProcessor: ConversationEventProcessorProtocol
 
-    convenience override init(context: NSManagedObjectContext) {
+    override convenience init(context: NSManagedObjectContext) {
         self.init(
             context: context,
             eventProcessor: ConversationEventProcessor(context: context)
@@ -59,11 +59,11 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
     override func request(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
-            return v0Request(for: action)
+            v0Request(for: action)
         case .v1:
-            return v1Request(for: action)
-        case .v2, .v3, .v4, .v5, .v6:
-            return v2Request(for: action, apiVersion: apiVersion)
+            v1Request(for: action)
+        case .v2, .v3, .v4, .v5, .v6, .v7:
+            v2Request(for: action, apiVersion: apiVersion)
         }
     }
 
@@ -163,7 +163,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             // Refresh user data since this operation might have failed
             // due to a team member being removed/deleted from the team.
             let users: [ZMUser]? = action.userIDs.existingObjects(in: context)
-            users?.filter(\.isTeamMember).forEach({ $0.refreshData() })
+            users?.filter(\.isTeamMember).forEach { $0.refreshData() }
 
             action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
 

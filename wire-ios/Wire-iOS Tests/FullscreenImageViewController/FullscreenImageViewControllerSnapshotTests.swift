@@ -55,7 +55,10 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
     @MainActor
     func testThatSmallImageIsCenteredInTheScreen() {
-        sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
+        sut = createFullscreenImageViewControllerForTest(
+            imageFileName: "unsplash_matterhorn_small_size.jpg",
+            userSession: userSession
+        )
 
         snapshotHelper.verify(matching: sut.view)
     }
@@ -63,7 +66,10 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
     @MainActor
     func testThatSmallImageIsScaledToFitTheScreenAfterDoubleTapped() {
         // GIVEN
-        sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
+        sut = createFullscreenImageViewControllerForTest(
+            imageFileName: "unsplash_matterhorn_small_size.jpg",
+            userSession: userSession
+        )
 
         // WHEN
         doubleTap(fullscreenImageViewController: sut)
@@ -74,7 +80,10 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
     @MainActor
     func testThatImageIsDarkenWhenSelectedByMenu() {
-        sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
+        sut = createFullscreenImageViewControllerForTest(
+            imageFileName: "unsplash_matterhorn_small_size.jpg",
+            userSession: userSession
+        )
 
         sut.setSelectedByMenu(true, animated: false)
         // test for tap again does not add one more layer

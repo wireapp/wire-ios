@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireTesting
 import XCTest
+@testable import WireDataModel
 
 class TestEntity: NSManagedObject {
     @NSManaged var identifier: String?
@@ -60,12 +60,14 @@ class BatchDeleteTests: ZMTBaseTest {
     }
 
     func createTestCoreData() throws -> (NSManagedObjectModel, NSManagedObjectContext) {
-        let model = self.model
+        let model = model
         let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
-        _ = try persistentStoreCoordinator.addPersistentStore(type: .sqlite,
-                                                          configuration: nil,
-                                                          at: URL(fileURLWithPath: storagePath),
-                                                          options: [:])
+        _ = try persistentStoreCoordinator.addPersistentStore(
+            type: .sqlite,
+            configuration: nil,
+            at: URL(fileURLWithPath: storagePath),
+            options: [:]
+        )
 
         let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = persistentStoreCoordinator
@@ -89,8 +91,8 @@ class BatchDeleteTests: ZMTBaseTest {
             try! self.moc.persistentStoreCoordinator!.remove($0)
         }
 
-        self.moc = nil
-        self.mom = nil
+        moc = nil
+        mom = nil
         cleanStorage()
         super.tearDown()
     }
@@ -99,7 +101,7 @@ class BatchDeleteTests: ZMTBaseTest {
         // given
         let entity = mom.entitiesByName["\(TestEntity.self)"]!
 
-        let ints = Array(0...10)
+        let ints = Array(0 ... 10)
         let objects: [TestEntity] = ints.map { (id: Int) in
             let object = TestEntity(entity: entity, insertInto: self.moc)
             object.identifier = "\(id)"
@@ -135,11 +137,13 @@ class BatchDeleteTests: ZMTBaseTest {
         class FetchRequestObserver: NSObject, NSFetchedResultsControllerDelegate {
             var deletedCount: Int = 0
 
-            public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                                   didChange anObject: Any,
-                                   at indexPath: IndexPath?,
-                                   for type: NSFetchedResultsChangeType,
-                                   newIndexPath: IndexPath?) {
+            public func controller(
+                _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+                didChange anObject: Any,
+                at indexPath: IndexPath?,
+                for type: NSFetchedResultsChangeType,
+                newIndexPath: IndexPath?
+            ) {
                 switch type {
                 case .delete:
                     deletedCount += 1
@@ -158,7 +162,7 @@ class BatchDeleteTests: ZMTBaseTest {
         // given
         let entity = mom.entitiesByName["\(TestEntity.self)"]!
 
-        let object = TestEntity(entity: entity, insertInto: self.moc)
+        let object = TestEntity(entity: entity, insertInto: moc)
         object.identifier = "1"
         object.parameter = nil
 
@@ -170,10 +174,12 @@ class BatchDeleteTests: ZMTBaseTest {
 
         let fetchRequest = NSFetchRequest<TestEntity>(entityName: "\(TestEntity.self)")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(TestEntity.identifier), ascending: true)]
-        let fetchRequestController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                                managedObjectContext: moc,
-                                                                sectionNameKeyPath: nil,
-                                                                cacheName: nil)
+        let fetchRequestController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: moc,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
         fetchRequestController.delegate = observer
         try fetchRequestController.performFetch()
         XCTAssertEqual(fetchRequestController.sections?.count, 1)

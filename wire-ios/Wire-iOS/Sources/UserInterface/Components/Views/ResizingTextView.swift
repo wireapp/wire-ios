@@ -26,7 +26,7 @@ class ResizingTextView: DragInteractionRestrictionTextView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return sizeThatFits(CGSize(width: bounds.size.width, height: UIView.noIntrinsicMetric))
+        sizeThatFits(CGSize(width: bounds.size.width, height: UIView.noIntrinsicMetric))
     }
 
     override func paste(_ sender: Any?) {

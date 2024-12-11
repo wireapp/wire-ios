@@ -20,9 +20,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-/**
- * An object that coordinates disclosing the legal hold state to the user.
- */
+/// An object that coordinates disclosing the legal hold state to the user.
 
 final class LegalHoldDisclosureController: UserObserving {
 
@@ -92,13 +90,19 @@ final class LegalHoldDisclosureController: UserObserving {
     }
 
     private func configureObservers(userSession: UserSession) {
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterForeground), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterForeground),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
         userObserverToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
     }
 
     // MARK: - Notifications
 
-    @objc private func applicationDidEnterForeground() {
+    @objc
+    private func applicationDidEnterForeground() {
         discloseCurrentState(cause: .appOpen)
     }
 
@@ -120,7 +124,7 @@ final class LegalHoldDisclosureController: UserObserving {
         case .enabled:
             discloseEnabledStateIfPossible()
 
-        case .pending(let request):
+        case let .pending(request):
             disclosePendingRequestIfPossible(request)
 
         case .disabled:
@@ -195,17 +199,23 @@ final class LegalHoldDisclosureController: UserObserving {
 
         switch state {
         case .warningAboutDisabled:
-            alertController = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(for: selfUserLegalHoldSubject, suggestedStateChangeHandler: assignState)
+            alertController = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(
+                for: selfUserLegalHoldSubject,
+                suggestedStateChangeHandler: assignState
+            )
         case .warningAboutEnabled:
-            alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(for: selfUserLegalHoldSubject, suggestedStateChangeHandler: assignState)
-        case .warningAboutPendingRequest(let request, let fingerprint):
+            alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(
+                for: selfUserLegalHoldSubject,
+                suggestedStateChangeHandler: assignState
+            )
+        case let .warningAboutPendingRequest(request, fingerprint):
             alertController = LegalHoldAlertFactory.makeLegalHoldActivationAlert(
                 for: request,
                 fingerprint: fingerprint,
                 user: selfUserLegalHoldSubject,
                 suggestedStateChangeHandler: assignState
             )
-        case .warningAboutAcceptationResult(let alert):
+        case let .warningAboutAcceptationResult(alert):
             alertController = alert
         case .acceptingRequest, .none:
             break

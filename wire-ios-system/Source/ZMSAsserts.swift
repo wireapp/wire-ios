@@ -17,15 +17,22 @@
 //
 
 import Foundation
+import WireLogging
 
 /// Reports an error and terminates the application
 public func fatal(
     _ message: String,
-    file: StaticString = #file,
+    file: StaticString = #fileID,
     line: UInt = #line
 ) -> Never {
 
-    let output = NSString(format: "ASSERT: [%s:%d] <%s> %s", "\(file)", Int32(line), "Swift assertion", message) as String
+    let output = NSString(
+        format: "ASSERT: [%s:%d] <%s> %s",
+        "\(file)",
+        Int32(line),
+        "Swift assertion",
+        message
+    ) as String
 
     // report error to datadog or other loggers
     WireLogger.system.critical(output, attributes: .safePublic)
@@ -40,14 +47,18 @@ public func fatal(
 }
 
 /// If the condition is not true, reports an error and terminates the application
-public func require(_ condition: Bool, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func require(_ condition: Bool, _ message: String = "", file: StaticString = #fileID, line: UInt = #line) {
     if !condition {
         fatal(message, file: file, line: line)
     }
 }
 
-@objc public enum AppBuild: UInt8 {
-    case appStore, debug, develop, unknown
+@objc
+public enum AppBuild: UInt8 {
+    case appStore
+    case debug
+    case develop
+    case unknown
 
     static var current: AppBuild {
         guard let identifier = Bundle.main.bundleIdentifier else { return .unknown }
@@ -70,7 +81,12 @@ public func require(_ condition: Bool, _ message: String = "", file: StaticStrin
 }
 
 /// Terminates the application if the condition is `false` and the current build is not an AppStore build
-public func requireInternal(_ condition: Bool, _ message: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
+public func requireInternal(
+    _ condition: Bool,
+    _ message: @autoclosure () -> String,
+    file: StaticString = #fileID,
+    line: UInt = #line
+) {
     guard !condition else { return }
     let errorMessage = message()
     if AppBuild.current.canFatalError {

@@ -18,9 +18,10 @@
 
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
+import WireTestingPackage
 import XCTest
+@testable import WireDomain
 
 final class MessageLocalStoreTests: XCTestCase {
 
@@ -129,8 +130,10 @@ final class MessageLocalStoreTests: XCTestCase {
             modelHelper.createUser(id: Scaffolding.userID, in: context)
         }
 
-        userLocalStore.fetchUserIdDomain_MockValue = user
         userLocalStore.fetchOrCreateUserIdDomain_MockValue = user
+        userLocalStore.fetchUserIdDomain_MockValue = user
+        userLocalStore.fetchSelfUser_MockValue = user
+        userLocalStore.fetchOrCreateUsersUserIDs_MockValue = Set([user])
 
         for messageType in Scaffolding.allSystemMessageTypes {
             let conversation = await makeConversation(creator: user)
@@ -146,7 +149,7 @@ final class MessageLocalStoreTests: XCTestCase {
 
             // Then
 
-            await internalTest_assertConversationLastSystemMessages(
+            await internalTest_assertConversationLastMessages(
                 messageType: messageType,
                 conversation: conversation
             )
@@ -171,15 +174,13 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     private func makeConversation(creator: ZMUser) async -> ZMConversation {
-        let conversation = await context.perform { [self] in
+        await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(in: context)
             conversation.creator = creator
             conversation.hasReadReceiptsEnabled = true
 
             return conversation
         }
-
-        return conversation
     }
 
     private func expectedResults(
@@ -196,7 +197,7 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.mlsNotSupportedOtherUser])
         case .teamMemberRemoved:
             (messagesCount: 1, [.teamMemberLeave])
-        case .participantRemoved:
+        case .participantsRemoved:
             (messagesCount: 1, [.participantsRemoved])
         case .newConversationCreated:
             (messagesCount: 2, [.newConversation, .readReceiptsOn])
@@ -208,6 +209,14 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.mlsMigrationFinalized])
         case .receiptModeIsOn:
             (messagesCount: 1, [.readReceiptsOn])
+        case .messageTimerUpdate:
+            (messagesCount: 1, [.messageTimerUpdate])
+        case .participantsAdded:
+            (messagesCount: 1, [.participantsAdded])
+        case .conversationNameChanged:
+            (messagesCount: 1, [.conversationNameChanged])
+        case let .readReceiptsStatus(isEnabled, _, _):
+            (messagesCount: 1, [isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled])
         case .invalid:
             (messagesCount: 1, [.invalid])
         case .decryptionFailed:
@@ -244,6 +253,13 @@ final class MessageLocalStoreTests: XCTestCase {
             .invalid(sender: (id: userID, domain: domain1), date: date),
             .decryptionFailed(sender: (id: userID, domain: domain1), senderClientID: otherUserID.uuidString, errorCode: 4, date: date),
             .sessionReset(sender: (id: userID, domain: domain), senderClientID: otherUserID.uuidString, date: date)
+            .participantsAdded(
+                participants: [(id: userID, domain: domain1)],
+                sender: (id: userID, domain: domain1),
+                date: date
+            ),
+            .conversationNameChanged(newName: "newName", sender: (userID, domain1), date: date),
+            .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date)
         ]
     }
 

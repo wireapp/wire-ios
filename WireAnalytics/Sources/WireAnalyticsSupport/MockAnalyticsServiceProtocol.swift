@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-import WireAnalytics
+
+public import WireAnalytics
 
 // this mock is generated manually because of (any Error)?
 // TODO: [WPB-11829] update sourcery
@@ -33,6 +34,15 @@ public class MockAnalyticsServiceProtocol: AnalyticsServiceProtocol {
     }
 
     public var underlyingIsTrackingEnabled: Bool!
+
+    // MARK: - canEnableTracking
+
+    public var canEnableTracking: Bool {
+        get { underlyingCanEnableTracking }
+        set(value) { underlyingCanEnableTracking = value }
+    }
+
+    public var underlyingCanEnableTracking: Bool!
 
     // MARK: - enableTracking
 

@@ -35,8 +35,8 @@ final class CallGridViewController: UIViewController {
 
     static var maxItemsPerPage: Int {
         switch CallingConfiguration.config.streamLimit {
-        case .limit(amount: let amount): return amount
-        case .noLimit: return 8
+        case let .limit(amount: amount): amount
+        case .noLimit: 8
         }
     }
 
@@ -85,7 +85,7 @@ final class CallGridViewController: UIViewController {
     }
 
     var previewOverlay: UIView? {
-        return thumbnailViewController.contentView
+        thumbnailViewController.contentView
     }
 
     /// Update view visibility when this view controller is covered or not
@@ -166,16 +166,16 @@ final class CallGridViewController: UIViewController {
         [gridView, thumbnailViewController.view, topStack, hintView, networkConditionView, pageIndicator].forEach {
             $0?.translatesAutoresizingMaskIntoConstraints = false
         }
-            [ thumbnailViewController.view].forEach {
-                $0.fitIn(view: view)
-            }
+        [thumbnailViewController.view].forEach {
+            $0.fitIn(view: view)
+        }
 
-            NSLayoutConstraint.activate([
-                gridView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                gridView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                gridView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                gridView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-            ])
+        NSLayoutConstraint.activate([
+            gridView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            gridView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            gridView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            gridView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+        ])
 
         let topStackTopDistance = 6.0
         NSLayoutConstraint.activate([
@@ -191,7 +191,8 @@ final class CallGridViewController: UIViewController {
         pageIndicator.transform = pageIndicator.transform.rotated(by: .pi / 2)
     }
 
-    @objc func didChangePage(sender: UIPageControl) {
+    @objc
+    func didChangePage(sender: UIPageControl) {
         let newCurrentPage = sender.currentPage
         pageIndicator.currentPage = newCurrentPage
         gridView.scrollToPage(page: newCurrentPage, animated: true)
@@ -263,7 +264,7 @@ final class CallGridViewController: UIViewController {
             } else if isMaximized(stream: stream) {
                 hintView.show(hint: .goBackOrZoom)
             }
-        case .maximizationChanged(stream: let stream, maximized: let maximized):
+        case let .maximizationChanged(stream: stream, maximized: maximized):
             if maximized {
                 hintView.show(hint: stream.isSharingVideo ? .goBackOrZoom : .goBack)
             } else {
@@ -364,7 +365,10 @@ final class CallGridViewController: UIViewController {
         // We have a stream but don't have a preview view yet.
         if thumbnailViewController.contentView == nil, let previewView = selfCallParticipantView {
             Log.calling.debug("Adding self video to floating preview")
-            thumbnailViewController.setThumbnailContentView(previewView, contentSize: .previewSize(for: traitCollection))
+            thumbnailViewController.setThumbnailContentView(
+                previewView,
+                contentSize: .previewSize(for: traitCollection)
+            )
         }
     }
 
@@ -414,7 +418,7 @@ final class CallGridViewController: UIViewController {
               endIndex > startIndex
         else { return }
 
-        let clients = dataSource[startIndex..<endIndex]
+        let clients = dataSource[startIndex ..< endIndex]
             .filter(\.isSharingVideo)
             .map(\.streamId)
 
@@ -457,7 +461,7 @@ final class CallGridViewController: UIViewController {
     // MARK: - Helpers
 
     private var shouldShowBorderWhenVideoIsStopped: Bool {
-       !gridHasOnlyOneTile && !gridIsOneToOneWithFloatingTile
+        !gridHasOnlyOneTile && !gridIsOneToOneWithFloatingTile
     }
 
     private var gridHasOnlyOneTile: Bool {
@@ -469,7 +473,7 @@ final class CallGridViewController: UIViewController {
     }
 
     private func cachedStreamView(for stream: Stream) -> OrientableView? {
-        return viewCache[stream.streamId]
+        viewCache[stream.streamId]
     }
 
     private func streamView(at location: CGPoint) -> BaseCallParticipantView? {
@@ -482,7 +486,7 @@ final class CallGridViewController: UIViewController {
     private func stream(with streamId: AVSClient) -> Stream? {
         var stream = configuration.streams.first(where: { $0.streamId == streamId })
 
-        if stream == nil && configuration.floatingStream?.streamId == streamId {
+        if stream == nil, configuration.floatingStream?.streamId == streamId {
             stream = configuration.floatingStream
         }
 
@@ -503,15 +507,21 @@ final class CallGridViewController: UIViewController {
 extension CallGridViewController: UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataSource.count
+        dataSource.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GridCell.reuseIdentifier, for: indexPath) as? GridCell else {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: GridCell.reuseIdentifier,
+            for: indexPath
+        ) as? GridCell else {
             return UICollectionViewCell()
         }
 
@@ -607,6 +617,6 @@ extension Notification.Name {
 
 }
 
-fileprivate extension CGFloat {
+private extension CGFloat {
     static let pageIndicatorHeight: CGFloat = 24
 }

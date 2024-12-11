@@ -16,19 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
+import WireTestingPackage
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class UserClientsRepositoryTests: XCTestCase {
 
     private var sut: UserClientsRepository!
     private var userClientsAPI: MockUserClientsAPI!
     private var userRepository: MockUserRepositoryProtocol!
+    private var userClientsLocalStore: MockUserClientsLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -38,21 +40,21 @@ final class UserClientsRepositoryTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        try await super.setUp()
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         userClientsAPI = MockUserClientsAPI()
         userRepository = MockUserRepositoryProtocol()
+        userClientsLocalStore = MockUserClientsLocalStoreProtocol()
+
         sut = UserClientsRepository(
             userClientsAPI: userClientsAPI,
             userRepository: userRepository,
-            context: context
+            userClientsLocalStore: userClientsLocalStore
         )
     }
 
     override func tearDown() async throws {
-        try await super.tearDown()
         stack = nil
         userClientsAPI = nil
         sut = nil
@@ -63,95 +65,65 @@ final class UserClientsRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testFetchOrCreateClient() async throws {
-        // Given
+    func testFetchOrCreateClient_It_Invokes_Local_Store_Method() async throws {
+        // Mock
 
-        await context.perform { [self] in
-            let userClient = modelHelper.createSelfClient(
+        let userClient = await context.perform { [self] in
+            return modelHelper.createSelfClient(
                 id: Scaffolding.userClientID,
                 in: context
             )
-
-            XCTAssertEqual(userClient.remoteIdentifier, Scaffolding.userClientID)
         }
+
+        userClientsLocalStore.fetchOrCreateClientId_MockValue = (userClient, false)
 
         // When
 
-        let userClient = try await sut.fetchOrCreateClient(
-            with: Scaffolding.userClientID
+        _ = try await sut.fetchOrCreateClient(
+            id: Scaffolding.userClientID
         )
 
         // Then
 
-        await context.perform {
-            XCTAssertNotNil(userClient)
-        }
+        XCTAssertEqual(userClientsLocalStore.fetchOrCreateClientId_Invocations.count, 1)
     }
 
-    func testUpdatesClient() async throws {
-        // Given
+    func testUpdateClient_It_Invokes_Local_Store_Method() async throws {
+        // Mock
 
-        let createdClient = try await sut.fetchOrCreateClient(
-            with: Scaffolding.userClientID
-        )
-
-        let clientID = await context.perform {
-            createdClient.client.remoteIdentifier!
-        }
+        userClientsLocalStore.updateClientIdIsNewClientUserClientInfo_MockMethod = { _, _, _ in }
 
         // When
 
         try await sut.updateClient(
-            with: clientID,
+            id: Scaffolding.userClientID,
             from: Scaffolding.selfUserClient,
-            isNewClient: createdClient.isNew
+            isNewClient: false
         )
 
         // Then
 
-        try await context.perform { [context] in
-            let updatedClient = try XCTUnwrap(UserClient.fetchExistingUserClient(
-                with: Scaffolding.userClientID,
-                in: context
-            ))
-
-            XCTAssertEqual(updatedClient.remoteIdentifier, Scaffolding.userClientID)
-            XCTAssertEqual(updatedClient.type, .permanent)
-            XCTAssertEqual(updatedClient.label, Scaffolding.selfUserClient.label)
-            XCTAssertEqual(updatedClient.model, Scaffolding.selfUserClient.model)
-            XCTAssertEqual(updatedClient.deviceClass, .phone)
-        }
+        XCTAssertEqual(userClientsLocalStore.updateClientIdIsNewClientUserClientInfo_Invocations.count, 1)
     }
 
-    func testPullSelfClients() async throws {
+    func testPullSelfClients_It_Invokes_Local_Store_And_User_Repo_Methods() async throws {
         // Mock
 
-        let selfUser = await context.perform { [self] in
-            let selfUser = modelHelper.createSelfUser(id: UUID(), in: context)
-            modelHelper.createSelfClient(
-                id: Scaffolding.userClientID,
-                in: context
-            )
-
-            modelHelper.createSelfClient(
+        let selfUserClient = await context.perform { [self] in
+            return modelHelper.createSelfClient(
                 id: Scaffolding.otherUserClientID,
                 in: context
             )
-
-            return selfUser
-        }
-
-        await context.perform {
-            let selfUserClientsIDs = selfUser.clients.map(\.remoteIdentifier)
-            XCTAssertTrue(selfUserClientsIDs.contains(Scaffolding.userClientID))
-            XCTAssertTrue(selfUserClientsIDs.contains(Scaffolding.otherUserClientID))
         }
 
         userClientsAPI.getSelfClients_MockValue = [
             Scaffolding.selfUserClient
         ]
 
-        userRepository.fetchSelfUser_MockValue = selfUser
+        userClientsLocalStore.fetchOrCreateClientId_MockValue = (selfUserClient, false)
+        userClientsLocalStore.updateClientIdIsNewClientUserClientInfo_MockMethod = { _, _, _ in }
+        userClientsLocalStore.deletedSelfClientsNewClients_MockValue = [Scaffolding.userClientID]
+        userClientsLocalStore.deleteClientId_MockMethod = { _ in }
 
         // When
 
@@ -159,52 +131,43 @@ final class UserClientsRepositoryTests: XCTestCase {
 
         // Then
 
-        try await context.perform {
-            let selfUserClientsIDs = selfUser.clients.map(\.remoteIdentifier)
-            XCTAssertTrue(selfUserClientsIDs.contains(Scaffolding.userClientID))
-            XCTAssertFalse(selfUserClientsIDs.contains(Scaffolding.otherUserClientID)) // should be deleted
-
-            let updatedClient = try XCTUnwrap(selfUser.clients.first(where: { $0.remoteIdentifier == Scaffolding.userClientID })) // should be updated
-
-            XCTAssertEqual(updatedClient.type.rawValue, Scaffolding.selfUserClient.type.rawValue)
-            XCTAssertEqual(updatedClient.label, Scaffolding.selfUserClient.label)
-            XCTAssertEqual(updatedClient.model, Scaffolding.selfUserClient.model)
-        }
+        XCTAssertEqual(userClientsLocalStore.fetchOrCreateClientId_Invocations.count, 1)
+        XCTAssertEqual(userClientsLocalStore.updateClientIdIsNewClientUserClientInfo_Invocations.count, 1)
+        XCTAssertEqual(userClientsLocalStore.deletedSelfClientsNewClients_Invocations.count, 1)
+        XCTAssertEqual(userClientsLocalStore.deleteClientId_Invocations.count, 1)
     }
 
-    func testDeleteClients() async throws {
-        // Given
+    func testDeleteClient_It_Invokes_Local_Store_Method() async throws {
+        // Mock
 
-        let (newClient, _) = try await sut.fetchOrCreateClient(with: Scaffolding.userClientID)
-
-        let localClient = await context.perform { [context] in
-            WireDataModel.UserClient.fetchExistingUserClient(
-                with: Scaffolding.userClientID,
-                in: context
-            )
-        }
-
-        XCTAssertEqual(localClient, newClient)
+        userClientsLocalStore.deleteClientId_MockMethod = { _ in }
 
         // When
 
-        await sut.deleteClient(with: Scaffolding.userClientID)
+        await sut.deleteClient(id: Scaffolding.userClientID)
 
         // Then
 
-        let deletedClient = await context.perform { [context] in
-            WireDataModel.UserClient.fetchExistingUserClient(
-                with: Scaffolding.userClientID,
-                in: context
-            )
-        }
+        XCTAssertEqual(userClientsLocalStore.deleteClientId_Invocations.count, 1)
+    }
 
-        XCTAssertEqual(deletedClient, nil)
+    func testAllSelfUserClientsAreActiveMLSClients_It_Invokes_Local_Store_Method() async {
+        // Mock
+
+        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
+
+        // When
+
+        _ = await sut.allSelfUserClientsAreActiveMLSClients()
+
+        // Then
+
+        XCTAssertEqual(userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_Invocations.count, 1)
     }
 
     private enum Scaffolding {
-        static let userClientID = UUID().uuidString
-        static let otherUserClientID = UUID().uuidString
+        static let userClientID = UUID.mockID1.uuidString
+        static let otherUserClientID = UUID.mockID2.uuidString
 
         static let selfUserClient = WireAPI.SelfUserClient(
             id: userClientID,
@@ -215,17 +178,6 @@ final class UserClientsRepositoryTests: XCTestCase {
             deviceClass: .phone,
             capabilities: []
         )
-
-        static let selfUserOtherClient = WireAPI.SelfUserClient(
-            id: otherUserClientID,
-            type: .permanent,
-            activationDate: .now,
-            label: "test",
-            model: "test",
-            deviceClass: .phone,
-            capabilities: []
-        )
-
     }
 
 }

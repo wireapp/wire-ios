@@ -36,7 +36,7 @@ public final class CookieLabel: NSObject {
     }
 
     public var length: Int {
-        return value.count
+        value.count
     }
 
     public static var current: CookieLabel {

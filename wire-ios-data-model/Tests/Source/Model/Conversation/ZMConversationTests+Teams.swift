@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireTesting
+@testable import WireDataModel
 
 final class ConversationTests_Teams: ZMConversationTestsBase {
 
@@ -111,6 +111,7 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
 }
 
 // MARK: - System messages
+
 extension ConversationTests_Teams {
     func testThatItCreatesSystemMessageWithTeamMemberLeave() {
         // given
@@ -127,13 +128,18 @@ extension ConversationTests_Teams {
         conversation.appendTeamMemberRemovedSystemMessage(user: otherUser, at: timestamp)
 
         // then
-        guard let message = conversation.lastMessage as? ZMSystemMessage else { XCTFail("Last message should be system message"); return }
+        guard let message = conversation.lastMessage as? ZMSystemMessage
+        else { XCTFail("Last message should be system message"); return }
 
         XCTAssertEqual(message.systemMessageType, .teamMemberLeave)
         XCTAssertEqual(message.sender, otherUser)
         XCTAssertEqual(message.users, [otherUser])
         XCTAssertEqual(message.serverTimestamp, timestamp)
         XCTAssertFalse(message.shouldGenerateUnreadCount())
-        XCTAssertEqual(conversation.lastModifiedDate, previousLastModifiedDate, "Message should not change lastModifiedDate")
+        XCTAssertEqual(
+            conversation.lastModifiedDate,
+            previousLastModifiedDate,
+            "Message should not change lastModifiedDate"
+        )
     }
 }

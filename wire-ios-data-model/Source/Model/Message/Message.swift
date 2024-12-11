@@ -23,49 +23,49 @@ public extension ZMConversationMessage {
     /// Returns YES, if the message has text to display.
     /// This also includes linkPreviews or links to soundcloud, youtube or vimeo
     var isText: Bool {
-        return textMessageData != nil
+        textMessageData != nil
     }
 
     var isImage: Bool {
-        return imageMessageData != nil || (fileMessageData != nil && fileMessageData!.v3_isImage)
+        imageMessageData != nil || (fileMessageData != nil && fileMessageData!.v3_isImage)
     }
 
     var isKnock: Bool {
-        return knockMessageData != nil
+        knockMessageData != nil
     }
 
     /// Returns YES, if the message is a file transfer message
     /// This also includes audio messages and video messages
     var isFile: Bool {
-        return fileMessageData != nil && !fileMessageData!.v3_isImage
+        fileMessageData != nil && !fileMessageData!.v3_isImage
     }
 
     var isPDF: Bool {
-        return isFile && fileMessageData?.isPDF ?? false
+        isFile && fileMessageData?.isPDF ?? false
     }
 
     var isPass: Bool {
-        return isFile && fileMessageData!.isPass
+        isFile && fileMessageData!.isPass
     }
 
     var isVideo: Bool {
-        return isFile && fileMessageData!.isVideo
+        isFile && fileMessageData!.isVideo
     }
 
     var isAudio: Bool {
-        return isFile && fileMessageData!.isAudio
+        isFile && fileMessageData!.isAudio
     }
 
     var isLocation: Bool {
-        return locationMessageData != nil
+        locationMessageData != nil
     }
 
     var isSystem: Bool {
-        return systemMessageData != nil
+        systemMessageData != nil
     }
 
     var isNormal: Bool {
-        return isText
+        isText
             || isImage
             || isKnock
             || isFile
@@ -92,7 +92,7 @@ public extension ZMConversationMessage {
 
 public extension ConversationCompositeMessage {
     var isComposite: Bool {
-        return compositeMessageData != nil
+        compositeMessageData != nil
     }
 }
 
@@ -104,69 +104,69 @@ public class Message: NSObject {
     /// This also includes linkPreviews or links to soundcloud, youtube or vimeo
     @objc(isTextMessage:)
     public class func isText(_ message: ZMConversationMessage) -> Bool {
-        return message.isText
+        message.isText
     }
 
     @objc(isImageMessage:)
     public class func isImage(_ message: ZMConversationMessage) -> Bool {
-        return message.isImage
+        message.isImage
     }
 
     @objc(isKnockMessage:)
     public class func isKnock(_ message: ZMConversationMessage) -> Bool {
-        return message.isKnock
+        message.isKnock
     }
 
     /// Returns YES, if the message is a file transfer message
     /// This also includes audio messages and video messages
     @objc(isFileTransferMessage:)
     public class func isFileTransfer(_ message: ZMConversationMessage) -> Bool {
-        return message.isFile
+        message.isFile
     }
 
     @objc(isPDFMessage:)
     public class func isPDF(_ message: ZMConversationMessage) -> Bool {
-        return message.isPDF
+        message.isPDF
     }
 
     @objc(isVideoMessage:)
     public class func isVideo(_ message: ZMConversationMessage) -> Bool {
-        return message.isVideo
+        message.isVideo
     }
 
     @objc(isAudioMessage:)
     public class func isAudio(_ message: ZMConversationMessage) -> Bool {
-        return message.isAudio
+        message.isAudio
     }
 
     @objc(isLocationMessage:)
     public class func isLocation(_ message: ZMConversationMessage) -> Bool {
-        return message.isLocation
+        message.isLocation
     }
 
     @objc(isSystemMessage:)
     public class func isSystem(_ message: ZMConversationMessage) -> Bool {
-        return message.isSystem
+        message.isSystem
     }
 
     @objc(isNormalMessage:)
     public class func isNormal(_ message: ZMConversationMessage) -> Bool {
-        return message.isNormal
+        message.isNormal
     }
 
     @objc(isConnectionRequestMessage:)
     public class func isConnectionRequest(_ message: ZMConversationMessage) -> Bool {
-        return message.isConnectionRequest
+        message.isConnectionRequest
     }
 
     @objc(isMissedCallMessage:)
     public class func isMissedCall(_ message: ZMConversationMessage) -> Bool {
-        return message.isMissedCall
+        message.isMissedCall
     }
 
     @objc(isDeletedMessage:)
     public class func isDeleted(_ message: ZMConversationMessage) -> Bool {
-        return message.isDeletion
+        message.isDeletion
     }
 
 }

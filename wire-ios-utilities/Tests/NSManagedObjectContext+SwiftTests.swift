@@ -29,7 +29,8 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)
+        sut = ZMMockManagedObjectContextFactory
+            .testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)
         sut.createDispatchGroups()
     }
 
@@ -40,15 +41,16 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
     func testThatItWorksWithoutGroups() {
         // given
-        let moc = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)!
+        let moc = ZMMockManagedObjectContextFactory
+            .testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)!
         // when & then
-        moc.performGroupedAndWait { }
+        moc.performGroupedAndWait {}
     }
 
     func testThatItReturnsNonOptionalValue() {
         // given
         let closure: () -> Int = {
-            return 42
+            42
         }
 
         // when
@@ -63,7 +65,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
     func testThatItReturnsOptionalValue() {
         // given
         let closure: () -> Int? = {
-            return nil
+            nil
         }
 
         // when
@@ -78,7 +80,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
     func testThatItReturnsNonOptionalValue_Throwing() throws {
         // given
         sut.dispatchGroup?.enter()
-        let expectation = self.expectation(description: "wait for group to be left on error")
+        let expectation = expectation(description: "wait for group to be left on error")
         let group = try XCTUnwrap(sut.dispatchGroup)
         group.notify(on: DispatchQueue.main) {
             expectation.fulfill()

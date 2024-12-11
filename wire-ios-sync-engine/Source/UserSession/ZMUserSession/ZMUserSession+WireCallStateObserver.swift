@@ -48,11 +48,14 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
     }
 
     private func isVideoCall(for conversation: ZMConversation) -> Bool {
-        return conversation.voiceChannel?.isVideoCall ?? false
+        conversation.voiceChannel?.isVideoCall ?? false
     }
 
     private func trackCallInitialized(isVideo: Bool, conversationType: ZMConversationType) {
-        let event = AnalyticsEvent.callInitialized(isVideo: isVideo, conversationType: mapConversationType(conversationType))
+        let event = AnalyticsEvent.callInitialized(
+            isVideo: isVideo,
+            conversationType: mapConversationType(conversationType)
+        )
         trackAnalyticsEvent(event)
     }
 
@@ -64,11 +67,11 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
     private func mapConversationType(_ type: ZMConversationType) -> ConversationType {
         switch type {
         case .group:
-            return .group
+            .group
         case .oneOnOne:
-            return .oneOnOne
+            .oneOnOne
         default:
-            return .unknown
+            .unknown
         }
     }
 }

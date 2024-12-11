@@ -59,6 +59,7 @@ final class Switch: UISwitch, Stylable {
         addTarget(self, action: #selector(valueDidChange), for: .valueChanged)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -74,7 +75,7 @@ final class Switch: UISwitch, Stylable {
         backgroundColor = style.enabledOffStateColor
         onTintColor = style.enabledOnStateColor
 
-        layer.cornerRadius = self.frame.height / 2.0
+        layer.cornerRadius = frame.height / 2.0
         layer.borderColor = isOn ? style.enabledOnStateBorderColor.cgColor : style.enabledOffStateBorderColor.cgColor
         layer.borderWidth = style.borderWidth
         clipsToBounds = true

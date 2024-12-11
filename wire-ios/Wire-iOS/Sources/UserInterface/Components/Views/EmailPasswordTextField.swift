@@ -52,7 +52,12 @@ class RevisedEmailPasswordTextField: EmailPasswordTextField {
 class EmailPasswordTextField: UIView, MagicTappable {
 
     let emailField = ValidatedTextField(kind: .email, cornerRadius: 12, setNewColors: true, style: .default)
-    let passwordField = ValidatedTextField(kind: .password(.nonEmpty, isNew: false), cornerRadius: 12, setNewColors: true, style: .default)
+    let passwordField = ValidatedTextField(
+        kind: .password(.nonEmpty, isNew: false),
+        cornerRadius: 12,
+        setNewColors: true,
+        style: .default
+    )
     let contentStack = UIStackView()
 
     var hasPrefilledValue: Bool = false
@@ -70,7 +75,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
     // MARK: - Helpers
 
     var isPasswordEmpty: Bool {
-        return passwordField.input.isEmpty
+        passwordField.input.isEmpty
     }
 
     // MARK: - Initialization
@@ -148,45 +153,47 @@ class EmailPasswordTextField: UIView, MagicTappable {
     // MARK: - Responder
 
     override var isFirstResponder: Bool {
-        return emailField.isFirstResponder || passwordField.isFirstResponder
+        emailField.isFirstResponder || passwordField.isFirstResponder
     }
 
     override var canBecomeFirstResponder: Bool {
-        return logicalFirstResponder.canBecomeFirstResponder
+        logicalFirstResponder.canBecomeFirstResponder
     }
 
     override func becomeFirstResponder() -> Bool {
-        return logicalFirstResponder.becomeFirstResponder()
+        logicalFirstResponder.becomeFirstResponder()
     }
 
     override var canResignFirstResponder: Bool {
-        return emailField.canResignFirstResponder || passwordField.canResignFirstResponder
+        emailField.canResignFirstResponder || passwordField.canResignFirstResponder
     }
 
-    @discardableResult override func resignFirstResponder() -> Bool {
+    @discardableResult
+    override func resignFirstResponder() -> Bool {
         if emailField.isFirstResponder {
-            return emailField.resignFirstResponder()
+            emailField.resignFirstResponder()
         } else if passwordField.isFirstResponder {
-            return passwordField.resignFirstResponder()
+            passwordField.resignFirstResponder()
         } else {
-            return false
+            false
         }
     }
 
     /// Returns the text field that should be used to become first responder.
     private var logicalFirstResponder: UITextField {
         // If we have a pre-filled email and the password field is empty, start with the password field
-        if hasPrefilledValue && (passwordField.text ?? "").isEmpty {
-            return passwordField
+        if hasPrefilledValue, (passwordField.text ?? "").isEmpty {
+            passwordField
         } else {
-            return emailField
+            emailField
         }
     }
 
     // MARK: - Submission
 
-    @objc func confirmButtonTapped() {
-        guard emailValidationError == nil && passwordValidationError == nil else {
+    @objc
+    func confirmButtonTapped() {
+        guard emailValidationError == nil, passwordValidationError == nil else {
             delegate?.textFieldDidSubmitWithValidationError(self)
             return
         }
@@ -195,7 +202,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
     }
 
     func performMagicTap() -> Bool {
-        guard emailField.isInputValid && passwordField.isInputValid else {
+        guard emailField.isInputValid, passwordField.isInputValid else {
             return false
         }
 
@@ -203,7 +210,8 @@ class EmailPasswordTextField: UIView, MagicTappable {
         return true
     }
 
-    @objc private func textInputDidChange(sender: UITextField) {
+    @objc
+    private func textInputDidChange(sender: UITextField) {
         if sender == emailField {
             emailField.validateInput()
         } else if sender == passwordField {
@@ -214,7 +222,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
     }
 
     var hasValidInput: Bool {
-        return emailField.isInputValid && passwordField.isInputValid
+        emailField.isInputValid && passwordField.isInputValid
     }
 
 }

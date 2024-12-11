@@ -24,12 +24,6 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
-#elseif os(OSX)
-import AppKit
-#endif
 
 import WireAnalytics
 
@@ -556,6 +550,38 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
 
 }
 
+public class MockSearchUsersUseCaseProtocol: SearchUsersUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeQueryOptionsMessageProtocol_Invocations: [(query: String, options: SearchOptions, messageProtocol: MessageProtocol?)] = []
+    public var invokeQueryOptionsMessageProtocol_MockError: Error?
+    public var invokeQueryOptionsMessageProtocol_MockMethod: ((String, SearchOptions, MessageProtocol?) async throws -> SearchResult)?
+    public var invokeQueryOptionsMessageProtocol_MockValue: SearchResult?
+
+    public func invoke(query: String, options: SearchOptions, messageProtocol: MessageProtocol?) async throws -> SearchResult {
+        invokeQueryOptionsMessageProtocol_Invocations.append((query: query, options: options, messageProtocol: messageProtocol))
+
+        if let error = invokeQueryOptionsMessageProtocol_MockError {
+            throw error
+        }
+
+        if let mock = invokeQueryOptionsMessageProtocol_MockMethod {
+            return try await mock(query, options, messageProtocol)
+        } else if let mock = invokeQueryOptionsMessageProtocol_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeQueryOptionsMessageProtocol`")
+        }
+    }
+
+}
+
 public class MockSecurityClassificationProviding: SecurityClassificationProviding {
 
     // MARK: - Life cycle
@@ -1010,30 +1036,6 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockSubmitCallQualitySurveyUseCaseProtocol: SubmitCallQualitySurveyUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invoke_Invocations: [CallQualitySurveyReview] = []
-    public var invoke_MockMethod: ((CallQualitySurveyReview) -> Void)?
-
-    public func invoke(_ review: CallQualitySurveyReview) {
-        invoke_Invocations.append(review)
-
-        guard let mock = invoke_MockMethod else {
-            fatalError("no mock for `invoke`")
-        }
-
-        mock(review)
-    }
-
-}
-
 public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
 
     // MARK: - Life cycle
@@ -1057,30 +1059,6 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
         } else {
             fatalError("no mock for `calculateSupportedProtocols`")
         }
-    }
-
-}
-
-public class MockToFolderMovableConversation: ToFolderMovableConversation {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - moveToFolder
-
-    public var moveToFolder_Invocations: [LabelType] = []
-    public var moveToFolder_MockMethod: ((LabelType) -> Void)?
-
-    public func moveToFolder(_ folder: LabelType) {
-        moveToFolder_Invocations.append(folder)
-
-        guard let mock = moveToFolder_MockMethod else {
-            fatalError("no mock for `moveToFolder`")
-        }
-
-        mock(folder)
     }
 
 }

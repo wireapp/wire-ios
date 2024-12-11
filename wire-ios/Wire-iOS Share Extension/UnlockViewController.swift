@@ -29,8 +29,8 @@ final class UnlockViewController: UIViewController {
 
     var callback: Callback?
 
-    private let contentView: UIView = UIView()
-    private let stackView: UIStackView = UIStackView.verticalStackView()
+    private let contentView: UIView = .init()
+    private let stackView: UIStackView = .verticalStackView()
 
     private lazy var unlockButton: UIButton = {
         var button = UIButton()
@@ -91,8 +91,10 @@ final class UnlockViewController: UIViewController {
         style.firstLineHeadIndent = leadingMargin
         style.headIndent = leadingMargin
 
-        label.attributedText = NSAttributedString(string: L10n.ShareExtension.Unlock.hintLabel,
-                                                  attributes: [NSAttributedString.Key.paragraphStyle: style])
+        label.attributedText = NSAttributedString(
+            string: L10n.ShareExtension.Unlock.hintLabel,
+            attributes: [NSAttributedString.Key.paragraphStyle: style]
+        )
         return label
     }()
 
@@ -113,6 +115,7 @@ final class UnlockViewController: UIViewController {
         setupViews()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -202,7 +205,13 @@ extension UnlockViewController {
     }
 
     func showWrongPasscodeMessage() {
-        let textAttachment = NSTextAttachment.textAttachment(for: .exclamationMarkCircle, with: SemanticColors.Label.textErrorDefault, iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize, verticalCorrection: -1, insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4))
+        let textAttachment = NSTextAttachment.textAttachment(
+            for: .exclamationMarkCircle,
+            with: SemanticColors.Label.textErrorDefault,
+            iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize,
+            verticalCorrection: -1,
+            insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
+        )
 
         let attributedString = NSMutableAttributedString(string: L10n.ShareExtension.Unlock.errorLabel)
         attributedString.addAttributes([.font: hintFont], range: NSRange(location: 0, length: attributedString.length))

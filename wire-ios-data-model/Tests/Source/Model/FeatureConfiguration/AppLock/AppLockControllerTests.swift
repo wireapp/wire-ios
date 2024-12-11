@@ -17,9 +17,9 @@
 //
 
 import LocalAuthentication
+import XCTest
 @_spi(AppLockControllerState) @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
@@ -320,7 +320,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         try sut.updatePasscode("boo!")
 
         let mockBiometricsState = MockBiometricsStateProtocol()
-        mockBiometricsState.persistState_MockMethod = { }
+        mockBiometricsState.persistState_MockMethod = {}
         sut.biometricsState = mockBiometricsState
 
         // When
@@ -411,7 +411,7 @@ extension AppLockControllerTests {
     typealias Input = (passcodePreference: AppLockPasscodePreference, canEvaluate: Bool, biometricsChanged: Bool)
     typealias Output = AppLockAuthenticationResult
 
-    private func assert(input: Input, output: Output, file: StaticString = #file, line: UInt = #line) {
+    private func assert(input: Input, output: Output, file: StaticString = #filePath, line: UInt = #line) {
         mockAuthenticationContext.canEvaluatePolicyError_MockValue = input.canEvaluate
 
         let sut = createSut()

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 protocol ExpiringActivityInterface {
 
@@ -24,15 +25,17 @@ protocol ExpiringActivityInterface {
 
 }
 
-extension ProcessInfo: ExpiringActivityInterface { }
+extension ProcessInfo: ExpiringActivityInterface {}
 
 /// The expiring activity is not allowed to run possibly because the background execution time has already expired.
 
-public struct ExpiringActivityNotAllowedToRun: Error { }
+public struct ExpiringActivityNotAllowedToRun: Error {}
 
 /// Execute an async function inside an [performExpiringActivity](https://developer.apple.com/documentation/foundation/processinfo/1617030-performexpiringactivity)
-/// which cancels the task when the activity expires. It's up to the async function to handle the cancellation by for example
-/// calling [Task.checkCancellation](https://developer.apple.com/documentation/swift/task/checkcancellation()) at the appropriate time.
+/// which cancels the task when the activity expires. It's up to the async function to handle the cancellation by for
+/// example
+/// calling [Task.checkCancellation](https://developer.apple.com/documentation/swift/task/checkcancellation()) at the
+/// appropriate time.
 ///
 /// - Parameters:
 ///   - reason: Description of what the activity does, helpful for debugging purposes.
@@ -45,14 +48,14 @@ public func withExpiringActivity(reason: String, block: @escaping () async throw
 
 actor ExpiringActivityManager {
 
-    let api: ExpiringActivityInterface
-    var task: Task<Void, Error>?
+    let api: any ExpiringActivityInterface
+    var task: Task<Void, any Error>?
 
     init() {
         self.init(api: ProcessInfo.processInfo)
     }
 
-    init(api: ExpiringActivityInterface) {
+    init(api: any ExpiringActivityInterface) {
         self.api = api
     }
 
@@ -88,7 +91,7 @@ actor ExpiringActivityManager {
         }
     }
 
-    func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, Error> {
+    func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, any Error> {
         let task = Task {
             defer {
                 WireLogger.backgroundActivity.debug("Releasing semaphore")

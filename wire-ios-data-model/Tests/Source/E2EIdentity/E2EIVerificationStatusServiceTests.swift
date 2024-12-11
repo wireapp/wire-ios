@@ -54,7 +54,7 @@ class E2EIVerificationStatusServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         mockCoreCrypto.e2eiConversationStateConversationId_MockMethod = { _ in
-            return .verified
+            .verified
         }
 
         // When

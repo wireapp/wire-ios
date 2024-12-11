@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
 
@@ -76,7 +76,9 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
 
         userRepository.isSelfUserIdDomain_MockMethod = { _, _ in true }
         conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
-        conversationRepository.addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_MockMethod = { _, _, _, _, _ in }
+        conversationRepository
+            .addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_MockMethod =
+            { _, _, _, _, _ in }
         conversationLocalStore.updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_MockMethod = { _, _, _ in }
 
         // When
@@ -87,8 +89,16 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
 
         XCTAssertEqual(userRepository.isSelfUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationRepository
+                .addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_Invocations.count,
+            1
+        )
     }
 
     private enum Scaffolding {

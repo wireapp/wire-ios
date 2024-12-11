@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 extension XCTestCase {
 
@@ -36,11 +36,11 @@ extension XCTestCase {
     }
 
     var validDatabaseKey: VolatileData {
-        return VolatileData(from: .zmRandomSHA256Key())
+        VolatileData(from: .zmRandomSHA256Key())
     }
 
     var malformedDatabaseKey: VolatileData {
-        return VolatileData(from: .zmRandomSHA256Key().dropFirst())
+        VolatileData(from: .zmRandomSHA256Key().dropFirst())
     }
 
 }

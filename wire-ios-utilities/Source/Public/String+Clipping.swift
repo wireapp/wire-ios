@@ -22,14 +22,14 @@ public extension String {
 
     func truncated(afterCharacterCount count: Int = 25) -> String {
         if self.count > count {
-            return String(
-                self[...self.index(
-                    self.startIndex,
+            String(
+                self[...index(
+                    startIndex,
                     offsetBy: count
                 )]
             ) + "..."
         } else {
-            return self
+            self
         }
     }
 

@@ -22,10 +22,11 @@ import WireSyncEngine
 
 extension SelfProfileViewController {
 
-    @discardableResult func presentUserSettingChangeControllerIfNeeded() -> Bool {
+    @discardableResult
+    func presentUserSettingChangeControllerIfNeeded() -> Bool {
         if ZMUser.selfUser()?.readReceiptsEnabledChangedRemotely ?? false {
             let currentValue = ZMUser.selfUser()!.readReceiptsEnabled
-            self.presentReadReceiptsChangedAlert(with: currentValue)
+            presentReadReceiptsChangedAlert(with: currentValue)
 
             return true
         } else {
@@ -34,13 +35,17 @@ extension SelfProfileViewController {
     }
 
     // TODO: [WPB-11951] ensure this alert does not conflict with the alert about new devices having been added.
-    fileprivate func presentReadReceiptsChangedAlert(with newValue: Bool) {
-        let title = newValue ? L10n.Localizable.Self.ReadReceiptsEnabled.title : L10n.Localizable.Self.ReadReceiptsDisabled.title
+    private func presentReadReceiptsChangedAlert(with newValue: Bool) {
+        let title = newValue ? L10n.Localizable.Self.ReadReceiptsEnabled.title : L10n.Localizable.Self
+            .ReadReceiptsDisabled.title
         let description = L10n.Localizable.Self.ReadReceiptsDescription.title
 
         let settingsChangedAlert = UIAlertController(title: title, message: description, preferredStyle: .alert)
 
-        let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { [weak settingsChangedAlert] _ in
+        let okAction = UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ) { [weak settingsChangedAlert] _ in
             ZMUserSession.shared()?.perform {
                 ZMUser.selfUser()?.readReceiptsEnabledChangedRemotely = false
             }
@@ -49,7 +54,7 @@ extension SelfProfileViewController {
 
         settingsChangedAlert.addAction(okAction)
 
-        self.present(settingsChangedAlert, animated: true)
+        present(settingsChangedAlert, animated: true)
     }
 
 }

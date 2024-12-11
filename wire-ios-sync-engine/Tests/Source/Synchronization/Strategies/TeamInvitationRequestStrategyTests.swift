@@ -32,7 +32,11 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 
         applicationStatus = MockApplicationStatus()
         teamInvitationStatus = TeamInvitationStatus()
-        sut = TeamInvitationRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: applicationStatus, teamInvitationStatus: teamInvitationStatus)
+        sut = TeamInvitationRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: applicationStatus,
+            teamInvitationStatus: teamInvitationStatus
+        )
         applicationStatus.mockOperationState = .foreground
         applicationStatus.mockSynchronizationState = .online
     }
@@ -70,7 +74,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
         let request = sutNextRequest(for: .v0)
 
         // then
-        let id = try XCTUnwrap(syncMOC.performAndWait({ team.remoteIdentifier }))
+        let id = try XCTUnwrap(syncMOC.performAndWait { team.remoteIdentifier })
         XCTAssertEqual(request?.path, "/teams/\(id.transportString())/invitations")
         XCTAssertEqual(request?.payload?.asDictionary()?["email"] as? String, "example1@test.com")
         XCTAssertEqual(request?.payload?.asDictionary()?["inviter_name"] as? String, "Self User")
@@ -86,7 +90,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
         let request2 = sutNextRequest(for: .v0)
 
         // then
-        let id = try XCTUnwrap(syncMOC.performAndWait({ team.remoteIdentifier }))
+        let id = try XCTUnwrap(syncMOC.performAndWait { team.remoteIdentifier })
         XCTAssertEqual(request1?.path, "/teams/\(id.transportString())/invitations")
         XCTAssertNil(request2)
     }
@@ -98,12 +102,17 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 
         // when
         let request = sutNextRequest(for: .v0)
-        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request?.complete(with: ZMTransportResponse(
+            payload: nil,
+            httpStatus: 408,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         let retryRequest = sutNextRequest(for: .v0)
-        let id = try XCTUnwrap(syncMOC.performAndWait({ team.remoteIdentifier }))
+        let id = try XCTUnwrap(syncMOC.performAndWait { team.remoteIdentifier })
         XCTAssertEqual(retryRequest?.path, "/teams/\(id.transportString())/invitations")
         XCTAssertEqual(retryRequest?.payload?.asDictionary()?["email"] as? String, "example1@test.com")
         XCTAssertEqual(retryRequest?.payload?.asDictionary()?["inviter_name"] as? String, "Self User")
@@ -111,14 +120,16 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 
     func testInvitationResultParsing() {
 
-        let responseCases = [(201, ""),
-                             (403, "too-many-team-invitations"),
-                             (403, "blacklisted-email"),
-                             (403, "invalid-email"),
-                             (403, "no-identity"),
-                             (403, "no-email"),
-                             (409, "email-exists"),
-                             (404, "unknown-error")]
+        let responseCases = [
+            (201, ""),
+            (403, "too-many-team-invitations"),
+            (403, "blacklisted-email"),
+            (403, "invalid-email"),
+            (403, "no-identity"),
+            (403, "no-email"),
+            (409, "email-exists"),
+            (404, "unknown-error")
+        ]
 
         let responses: [ZMTransportResponse] = responseCases.map { value in
             let (httpStatus, label) = value
@@ -127,18 +138,25 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
                 "code": httpStatus
             ]
 
-            return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: httpStatus, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: httpStatus,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
-        let inviteResults = responses.map({ InviteResult.init(response: $0, email: "") })
-        let expectedResults: [InviteResult] = [.success(email: ""),
-                                                .failure(email: "", error: .tooManyTeamInvitations),
-                                                .failure(email: "", error: .blacklistedEmail),
-                                                .failure(email: "", error: .invalidEmail),
-                                                .failure(email: "", error: .noIdentity),
-                                                .failure(email: "", error: .noEmail),
-                                                .failure(email: "", error: .alreadyRegistered),
-                                                .failure(email: "", error: .unknown)]
+        let inviteResults = responses.map { InviteResult(response: $0, email: "") }
+        let expectedResults: [InviteResult] = [
+            .success(email: ""),
+            .failure(email: "", error: .tooManyTeamInvitations),
+            .failure(email: "", error: .blacklistedEmail),
+            .failure(email: "", error: .invalidEmail),
+            .failure(email: "", error: .noIdentity),
+            .failure(email: "", error: .noEmail),
+            .failure(email: "", error: .alreadyRegistered),
+            .failure(email: "", error: .unknown)
+        ]
 
         zip(inviteResults, expectedResults).forEach { tuple in
             let (result, expectedResult) = tuple
@@ -147,27 +165,27 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
     }
 
     private func sutNextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-       syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
+        syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
     }
 
 }
 
 extension TeamInvitationRequestStrategyTests: ZMRequestCancellation, ZMSyncStateDelegate {
-    func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) { }
+    func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {}
 
-    func cancelTask(with taskIdentifier: ZMTaskIdentifier) { }
+    func cancelTask(with taskIdentifier: ZMTaskIdentifier) {}
 
-    func didStartSlowSync() { }
+    func didStartSlowSync() {}
 
-    func didFinishSlowSync() { }
+    func didFinishSlowSync() {}
 
-    func didStartQuickSync() { }
+    func didStartQuickSync() {}
 
-    func didFinishQuickSync() { }
+    func didFinishQuickSync() {}
 
-    func didRegisterSelfUserClient(_ userClient: UserClient) { }
+    func didRegisterSelfUserClient(_ userClient: UserClient) {}
 
-    func didFailToRegisterSelfUserClient(error: Error) { }
+    func didFailToRegisterSelfUserClient(error: Error) {}
 
-    func didDeleteSelfUserClient(error: Error) { }
+    func didDeleteSelfUserClient(error: Error) {}
 }

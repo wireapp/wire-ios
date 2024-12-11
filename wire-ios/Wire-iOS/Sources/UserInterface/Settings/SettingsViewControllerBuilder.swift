@@ -38,7 +38,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         return settingsPropertyFactory
     }
 
-    private func settingsCellDescriptorFactory(settingsCoordinator: AnySettingsCoordinator) -> SettingsCellDescriptorFactory {
+    private func settingsCellDescriptorFactory(settingsCoordinator: AnySettingsCoordinator)
+        -> SettingsCellDescriptorFactory {
         .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self,
@@ -58,7 +59,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
 
     func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsTableViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
-        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let factory =
+            settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.settingsGroup(
             isPublicDomain: isPublicDomain,
             userSession: userSession,
@@ -93,7 +95,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
 
     private func buildAccount(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
-        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let factory =
+            settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.accountGroup(
             isPublicDomain: isPublicDomain,
             userSession: userSession,
@@ -111,7 +114,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
 
     private func buildOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
-        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let factory =
+            settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.optionsGroup as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
@@ -121,7 +125,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
 
     private func buildAdvanced(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
-        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let factory =
+            settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.advancedGroup(userSession: userSession) as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
@@ -131,7 +136,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
 
     private func buildSupport(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
-        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let factory =
+            settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.helpSection() as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
@@ -141,7 +147,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
 
     private func buildAbout(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
-        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let factory =
+            settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.aboutSection() as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
@@ -151,7 +158,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
 
     private func buildDeveloperOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
-        let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        let factory =
+            settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.developerGroup as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,

@@ -33,7 +33,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     private var sut: SetAllowGuestAndServicesUseCaseProtocol!
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     // MARK: - setUp
@@ -79,7 +79,10 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
             // GIVEN
             setUpRoleAndAction()
 
-            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+                result: .success(()),
+                context: syncContext.notificationContext
+            )
 
             let expectation = XCTestExpectation(description: "completion should be called")
 
@@ -89,7 +92,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 switch result {
                 case .success:
                     print("Operation successful")
-                case .failure(let error):
+                case let .failure(error):
                     XCTFail("Test failed with error: \(error)")
                 }
                 expectation.fulfill()
@@ -102,9 +105,15 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     func testGuestEnablementFails_WithInsufficientPermissions() async {
         await syncContext.perform { [self] in
             // GIVEN
-            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .failure(.unknown), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+                result: .failure(.unknown),
+                context: syncContext.notificationContext
+            )
 
-            let expectation = XCTestExpectation(description: "Completion should be called with a failure due to insufficient permissions")
+            let expectation =
+                XCTestExpectation(
+                    description: "Completion should be called with a failure due to insufficient permissions"
+                )
 
             // WHEN
             sut.invoke(conversation: mockConversation, allowGuests: true, allowServices: false) { result in
@@ -112,7 +121,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 switch result {
                 case .success:
                     XCTFail("Expected operation to fail, but it succeeded.")
-                case .failure(let error):
+                case let .failure(error):
                     break
                 }
                 expectation.fulfill()
@@ -128,7 +137,10 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
             // GIVEN
             setUpRoleAndAction()
 
-            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+                result: .success(()),
+                context: syncContext.notificationContext
+            )
 
             let expectation = XCTestExpectation(description: "completion should be called")
 
@@ -138,7 +150,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 switch result {
                 case .success:
                     break
-                case .failure(let error):
+                case let .failure(error):
                     XCTFail("Test failed with error: \(error)")
                 }
 
@@ -153,8 +165,14 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
 
         await syncContext.perform { [self] in
             // GIVEN
-            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .failure(.unknown), context: syncContext.notificationContext)
-            let expectation = XCTestExpectation(description: "Completion should be called with a failure due to insufficient permissions")
+            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+                result: .failure(.unknown),
+                context: syncContext.notificationContext
+            )
+            let expectation =
+                XCTestExpectation(
+                    description: "Completion should be called with a failure due to insufficient permissions"
+                )
 
             // WHEN
             sut.invoke(conversation: mockConversation, allowGuests: false, allowServices: true) { result in

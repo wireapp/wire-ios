@@ -52,11 +52,11 @@ class BaseAccountView: UIView {
     var hasUnreadMessages: Bool {
         switch unreadCountStyle {
         case .none:
-            return false
+            false
         case .current:
-            return account.unreadConversationCount > 0
+            account.unreadConversationCount > 0
         case .others:
-            return ((SessionManager.shared?.accountManager.totalUnreadCount ?? 0) - account.unreadConversationCount) > 0
+            ((SessionManager.shared?.accountManager.totalUnreadCount ?? 0) - account.unreadConversationCount) > 0
         }
     }
 
@@ -69,8 +69,10 @@ class BaseAccountView: UIView {
     var onTap: (Account) -> Void = { _ in }
 
     var accessibilityState: String {
-        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
-        var result = selected ? ConversationListHeaderAccessibilityLocale.active : ConversationListHeaderAccessibilityLocale.inactive
+        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam
+            .AccessibilityValue
+        var result = selected ? ConversationListHeaderAccessibilityLocale
+            .active : ConversationListHeaderAccessibilityLocale.inactive
 
         if hasUnreadMessages {
             result += "\(L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue.hasNewMessages)"
@@ -87,34 +89,41 @@ class BaseAccountView: UIView {
         super.init(frame: .zero)
 
         if let userSession = SessionManager.shared?.activeUserSession {
-            selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
+            self.selfUserObserver = UserChangeInfo.add(
+                observer: self,
+                for: userSession.providedSelfUser,
+                in: userSession
+            )
         }
 
         selectionView.layer.borderColor = UIColor.accent().cgColor
 
         [imageViewContainer, outlineView, selectionView].forEach(addSubview)
 
-        let iconWidth: CGFloat
-
-        switch displayContext {
+        let iconWidth = switch displayContext {
         case .conversationListHeader:
-            iconWidth = CGFloat.ConversationListHeader.avatarSize
+            CGFloat.ConversationListHeader.avatarSize
         case .accountSelector:
-            iconWidth = CGFloat.AccountView.iconWidth
+            CGFloat.AccountView.iconWidth
         }
 
         setupConstraints(iconWidth: iconWidth)
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
-        self.addGestureRecognizer(tapGesture)
+        addGestureRecognizer(tapGesture)
 
-        self.unreadCountToken = NotificationCenter.default.addObserver(forName: .AccountUnreadCountDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+        self.unreadCountToken = NotificationCenter.default.addObserver(
+            forName: .AccountUnreadCountDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateAppearance()
         }
 
         updateAppearance()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -144,28 +153,31 @@ class BaseAccountView: UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        NSLayoutConstraint.activate(
-            selectionView.fitInConstraints(view: imageViewContainer, inset: -1) +
-            [
-                imageViewContainer.topAnchor.constraint(equalTo: topAnchor, constant: containerInset),
-                imageViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
-                widthAnchor.constraint(greaterThanOrEqualTo: imageViewContainer.widthAnchor),
+        NSLayoutConstraint.activate([
+            selectionView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: -1),
+            selectionView.trailingAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: 1),
+            selectionView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: -1),
+            selectionView.bottomAnchor.constraint(equalTo: imageViewContainer.bottomAnchor, constant: 1),
 
-                imageViewContainer.widthAnchor.constraint(equalToConstant: iconWidth),
-                imageViewContainer.heightAnchor.constraint(equalTo: imageViewContainer.widthAnchor),
+            imageViewContainer.topAnchor.constraint(equalTo: topAnchor, constant: containerInset),
+            imageViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
+            widthAnchor.constraint(greaterThanOrEqualTo: imageViewContainer.widthAnchor),
 
-                imageViewContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -containerInset),
-                imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
-                imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
-                widthAnchor.constraint(lessThanOrEqualToConstant: 128)
-            ])
+            imageViewContainer.widthAnchor.constraint(equalToConstant: iconWidth),
+            imageViewContainer.heightAnchor.constraint(equalTo: imageViewContainer.widthAnchor),
+
+            imageViewContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -containerInset),
+            imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
+            imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
+            widthAnchor.constraint(lessThanOrEqualToConstant: 128)
+        ])
     }
 
     // MARK: - Actions
 
     func update() {
-        if self.autoUpdateSelection {
-            self.selected = SessionManager.shared?.accountManager.selectedAccount == self.account
+        if autoUpdateSelection {
+            selected = SessionManager.shared?.accountManager.selectedAccount == account
         }
     }
 
@@ -221,7 +233,7 @@ extension BaseAccountView: UserObserving {
 extension TeamType {
 
     var teamImageViewContent: TeamImageView.Content? {
-        return TeamImageView.Content(imageData: imageData, name: name)
+        TeamImageView.Content(imageData: imageData, name: name)
     }
 
 }
@@ -231,6 +243,6 @@ extension TeamType {
 extension Account {
 
     var teamImageViewContent: TeamImageView.Content? {
-        return TeamImageView.Content(imageData: teamImageData, name: teamName)
+        TeamImageView.Content(imageData: teamImageData, name: teamName)
     }
 }

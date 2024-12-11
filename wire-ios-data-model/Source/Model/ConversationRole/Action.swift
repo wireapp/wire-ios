@@ -28,7 +28,7 @@ public final class Action: ZMManagedObject {
     @NSManaged public var name: String?
 
     public override static func entityName() -> String {
-        return String(describing: Action.self)
+        String(describing: Action.self)
     }
 
     @discardableResult
@@ -71,7 +71,7 @@ public final class Action: ZMManagedObject {
         name: String,
         in context: NSManagedObjectContext
     ) -> Action? {
-        let fetchRequest = NSFetchRequest<Action>(entityName: self.entityName())
+        let fetchRequest = NSFetchRequest<Action>(entityName: entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", nameKey, name)
         let actions = context.fetchOrAssert(request: fetchRequest)
         return actions.first
@@ -88,7 +88,7 @@ public final class Action: ZMManagedObject {
     }
 
     public override static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
 }

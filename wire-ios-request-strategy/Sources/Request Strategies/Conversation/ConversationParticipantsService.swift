@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol ConversationParticipantsServiceInterface {
@@ -103,9 +104,12 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 users: users,
                 conversation: conversation
             )
-        } catch ConversationParticipantsError.failedToAddSomeUsers(users: let failedUsers) {
+        } catch let ConversationParticipantsError.failedToAddSomeUsers(users: failedUsers) {
             let failedUserIds = await context.perform { failedUsers.map { $0.remoteIdentifier.transportString() } }
-            Flow.addParticipants.checkpoint(description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))")
+            Flow.addParticipants
+                .checkpoint(
+                    description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))"
+                )
 
             await appendFailedToAddUsersMessage(
                 in: conversation,
@@ -154,10 +158,11 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
         do {
             try await mlsParticipantsService.addParticipants(users, to: conversation)
-        } catch MLSConversationParticipantsError.failedToClaimKeyPackages(users: let failedUsers) {
+        } catch let MLSConversationParticipantsError.failedToClaimKeyPackages(users: failedUsers) {
 
             guard !failedUsers.isEmpty else {
-                return Flow.addParticipants.checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
+                return Flow.addParticipants
+                    .checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
             }
 
             let users = Set(users)
@@ -197,7 +202,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         conversation: ZMConversation
     ) async throws {
         switch error {
-        case .unreachableDomains(let domains):
+        case let .unreachableDomains(domains):
             let unreachableUsers = await context.perform { users.belongingTo(domains: domains) }
 
             if unreachableUsers.isEmpty {
@@ -216,7 +221,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                     excludingDomains: domains
                 )
             }
-        case .nonFederatingDomains(let domains):
+        case let .nonFederatingDomains(domains):
             try await retryAddingParticipants(
                 users,
                 to: conversation,

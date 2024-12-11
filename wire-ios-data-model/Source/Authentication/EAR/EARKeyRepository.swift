@@ -19,6 +19,7 @@
 import Foundation
 import LocalAuthentication
 import Security
+import WireLogging
 
 // sourcery: AutoMockable
 protocol EARKeyRepositoryInterface {
@@ -116,7 +117,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
     }
 
     func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
-        return try KeychainManager.deleteItem(description)
+        try KeychainManager.deleteItem(description)
     }
 
     // MARK: - Cache

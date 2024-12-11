@@ -53,7 +53,7 @@ final class GetUserAccountImageSourceUseCaseTests: XCTestCase {
         )
 
         // Then
-        guard case .image(let accountImage) = accountImageSource, accountImage.pngData() == accountImageData else {
+        guard case let .image(accountImage) = accountImageSource, accountImage.pngData() == accountImageData else {
             return XCTFail("Expected account image to match actual image")
         }
     }

@@ -18,16 +18,16 @@
 
 import Foundation
 
-extension ZMAssetClientMessage {
+public extension ZMAssetClientMessage {
 
-    @objc override public var isEphemeral: Bool {
-        return destructionDate != nil
+    @objc override var isEphemeral: Bool {
+        destructionDate != nil
             || ephemeral != nil
             || isObfuscated
     }
 
-    var ephemeral: Ephemeral? {
-        return dataSet.lazy
+    internal var ephemeral: Ephemeral? {
+        dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
             .first(where: { message -> Bool in
                 guard case .ephemeral? = message.content else {
@@ -37,14 +37,15 @@ extension ZMAssetClientMessage {
             })?.ephemeral
     }
 
-    @objc override public var deletionTimeout: TimeInterval {
-        guard let ephemeral = self.ephemeral else {
+    @objc override var deletionTimeout: TimeInterval {
+        guard let ephemeral else {
             return -1
         }
         return TimeInterval(ephemeral.expireAfterMillis / 1000)
     }
 
-    @objc override public func obfuscate() {
+    @objc
+    override func obfuscate() {
         super.obfuscate()
 
         var obfuscatedMessage: GenericMessage?
@@ -59,23 +60,27 @@ extension ZMAssetClientMessage {
             do {
                 _ = try createNewGenericMessageData(with: obfuscatedMessage)
             } catch {
-                Logging.messageProcessing.warn("Failed to process obfuscated message. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to process obfuscated message. Reason: \(error.localizedDescription)")
             }
         }
     }
 
-    @discardableResult @objc public override func startDestructionIfNeeded() -> Bool {
+    @discardableResult @objc
+    override func startDestructionIfNeeded() -> Bool {
         let imageNotDownloaded = imageMessageData != nil && !hasDownloadedFile
         let fileHasNoUploadState = fileMessageData != nil
             && underlyingMessage?.assetData?.hasUploaded == false
             && underlyingMessage?.assetData?.hasNotUploaded == false
-        // in super.startDestructionIfNeeded() there is a logic split that triggers destruction or obfuscation depending on sender and context
+        // in super.startDestructionIfNeeded() there is a logic split that triggers destruction or obfuscation depending
+        // on sender and context
         let isOtherSender = sender?.isSelfUser == false && managedObjectContext?.zm_isUserInterfaceContext == true
         let isNotSelfSender = sender == nil || isOtherSender
         if fileHasNoUploadState {
             return false
-        } else if isNotSelfSender && imageNotDownloaded {
-            // we do not destroy images sent by other user that are not downloaded yet, it is synced after asset is downloaded
+        } else if isNotSelfSender, imageNotDownloaded {
+            // we do not destroy images sent by other user that are not downloaded yet, it is synced after asset is
+            // downloaded
             return false
         }
         return super.startDestructionIfNeeded()
@@ -85,15 +90,15 @@ extension ZMAssetClientMessage {
     /// than the current destruction date. If a timer is already running,
     /// then it will be stopped and restarted with the new date, otherwise
     /// a new timer will be created.
-    public func extendDestructionTimer(to date: Date) {
+    func extendDestructionTimer(to date: Date) {
         let timeout = date.timeIntervalSince(Date())
 
         guard
             let isSelfUser = sender?.isSelfUser,
-            let destructionDate = self.destructionDate,
+            let destructionDate,
             date > destructionDate,
             timeout > 0 else {
-                return
+            return
         }
 
         let msg = self as ZMMessage

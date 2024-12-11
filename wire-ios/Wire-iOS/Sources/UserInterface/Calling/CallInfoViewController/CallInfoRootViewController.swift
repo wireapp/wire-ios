@@ -23,13 +23,19 @@ import WireDesign
 import WireSyncEngine
 
 protocol CallInfoRootViewControllerDelegate: CallingActionsViewDelegate {
-    func infoRootViewController(_ viewController: CallInfoRootViewController, contextDidChange context: CallInfoRootViewController.Context)
+    func infoRootViewController(
+        _ viewController: CallInfoRootViewController,
+        contextDidChange context: CallInfoRootViewController.Context
+    )
 }
 
-final class CallInfoRootViewController: UIViewController, UINavigationControllerDelegate, CallInfoViewControllerDelegate, CallDegradationControllerDelegate {
+final class CallInfoRootViewController: UIViewController, UINavigationControllerDelegate,
+    CallInfoViewControllerDelegate,
+    CallDegradationControllerDelegate {
 
     enum Context {
-        case overview, participants
+        case overview
+        case participants
     }
 
     weak var delegate: CallInfoRootViewControllerDelegate?
@@ -59,14 +65,14 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     ) {
         self.configuration = configuration
 
-        contentController = .init(
+        self.contentController = .init(
             configuration: configuration,
             selfUser: selfUser,
             userSession: userSession
         )
 
-        contentNavigationController = contentController.wrapInNavigationController()
-        callDegradationController = CallDegradationController()
+        self.contentNavigationController = contentController.wrapInNavigationController()
+        self.callDegradationController = CallDegradationController()
 
         super.init(nibName: nil, bundle: nil)
 
@@ -106,7 +112,10 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
         contentNavigationController.navigationBar.tintColor = SemanticColors.Label.textDefault
         contentNavigationController.navigationBar.isTranslucent = true
         contentNavigationController.navigationBar.barTintColor = .clear
-        contentNavigationController.navigationBar.setBackgroundImage(UIImage.singlePixelImage(with: .clear), for: .default)
+        contentNavigationController.navigationBar.setBackgroundImage(
+            UIImage.singlePixelImage(with: .clear),
+            for: .default
+        )
 
         UIView.animate(withDuration: 0.2) { [view, configuration] in
             view?.backgroundColor = configuration.overlayBackgroundColor
@@ -122,7 +131,10 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
         }
 
         context = .participants
-        let participantsList = CallParticipantsListViewController(scrollableWithConfiguration: configuration, selfUser: selfUser)
+        let participantsList = CallParticipantsListViewController(
+            scrollableWithConfiguration: configuration,
+            selfUser: selfUser
+        )
         participantsViewController = participantsList
         contentNavigationController.pushViewController(participantsList, animated: true)
     }
@@ -142,7 +154,11 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
         }
     }
 
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
         guard viewController is CallInfoViewController else { return }
         context = .overview
     }

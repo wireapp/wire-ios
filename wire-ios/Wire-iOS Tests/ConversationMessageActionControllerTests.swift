@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
@@ -41,7 +41,12 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         message.conversation = otherUserConversation
 
         // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         let singleTapAction = actionController.singleTapAction
 
         // THEN
@@ -55,7 +60,12 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         message.conversation = otherUserConversation
 
         // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         let singleTapAction = actionController.singleTapAction
 
         // THEN
@@ -71,7 +81,12 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         message.conversation = otherUserConversation
 
         // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         let doubleTapAction = actionController.doubleTapAction
 
         // THEN
@@ -86,7 +101,12 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         message.isEphemeral = true
 
         // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         let doubleTapAction = actionController.doubleTapAction
 
         // THEN
@@ -103,8 +123,14 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         message.deliveryState = .failedToSend
 
         // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
-        let supportsReply = actionController.canPerformAction(#selector(ConversationMessageActionController.quoteMessage))
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
+        let supportsReply = actionController
+            .canPerformAction(#selector(ConversationMessageActionController.quoteMessage))
 
         // THEN
         XCTAssertFalse(supportsReply)
@@ -120,7 +146,12 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         message.conversation = otherUserConversation
 
         // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         let supportsCopy = actionController.canPerformAction(#selector(ConversationMessageActionController.copyMessage))
 
         // THEN
@@ -137,7 +168,12 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         message!.backingIsRestricted = true
 
         // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message!, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message!,
+            context: .content,
+            view: UIView()
+        )
         let supportsSave = actionController.canPerformAction(#selector(ConversationMessageActionController.saveMessage))
 
         // THEN
@@ -154,8 +190,14 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         message!.backingIsRestricted = true
 
         // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message!, context: .content, view: UIView())
-        let supportsDownload = actionController.canPerformAction(#selector(ConversationMessageActionController.downloadMessage))
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message!,
+            context: .content,
+            view: UIView()
+        )
+        let supportsDownload = actionController
+            .canPerformAction(#selector(ConversationMessageActionController.downloadMessage))
 
         // THEN
         XCTAssertFalse(supportsDownload)
@@ -168,8 +210,14 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         message.conversation = otherUserConversation
 
         // WHEN
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
-        let supportsVisitLink = actionController.canPerformAction(#selector(ConversationMessageActionController.visitLink))
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
+        let supportsVisitLink = actionController
+            .canPerformAction(#selector(ConversationMessageActionController.visitLink))
 
         // THEN
         XCTAssertTrue(supportsVisitLink)

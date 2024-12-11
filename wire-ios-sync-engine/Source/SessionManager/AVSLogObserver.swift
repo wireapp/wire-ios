@@ -17,12 +17,13 @@
 //
 
 import avs
+import WireLogging
 
 final class AVSLogObserver: AVSLogger {
     private var token: Any!
 
     init() {
-        token = SessionManager.addLogger(self)
+        self.token = SessionManager.addLogger(self)
     }
 
     // MARK: - AVSLogger

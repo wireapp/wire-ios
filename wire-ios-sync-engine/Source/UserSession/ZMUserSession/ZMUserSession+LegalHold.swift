@@ -30,24 +30,26 @@ public enum LegalHoldActivationError: Error, Equatable {
     case missingAPIVersion
 }
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
-    /**
-     * Sends a request to accept a legal hold request for the specified user.
-     * - parameter request: The request that was accepted by the user.
-     * - parameter password: The password of the user to send in the payload, if it's not a SSO user.
-     * - parameter completionHandler: The block that will be called with the result of the request.
-     * - parameter error: The error that prevented the approval of legal hold.
-     */
+    /// Sends a request to accept a legal hold request for the specified user.
+    /// - parameter request: The request that was accepted by the user.
+    /// - parameter password: The password of the user to send in the payload, if it's not a SSO user.
+    /// - parameter completionHandler: The block that will be called with the result of the request.
+    /// - parameter error: The error that prevented the approval of legal hold.
 
-    public func accept(legalHoldRequest: LegalHoldRequest, password: String?, completionHandler: @escaping (_ error: LegalHoldActivationError?) -> Void) {
+    func accept(
+        legalHoldRequest: LegalHoldRequest,
+        password: String?,
+        completionHandler: @escaping (_ error: LegalHoldActivationError?) -> Void
+    ) {
 
         guard let apiVersion = BackendInfo.apiVersion else {
             return completionHandler(.missingAPIVersion)
         }
 
         // 1) Check the state
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         guard let teamID = selfUser.team?.remoteIdentifier else {
             return completionHandler(.selfUserNotInTeam)
@@ -78,7 +80,12 @@ extension ZMUserSession {
             payload["password"] = password
 
             let path = "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())/approve"
-            let request = ZMTransportRequest(path: path, method: .put, payload: payload as NSDictionary, apiVersion: apiVersion.rawValue)
+            let request = ZMTransportRequest(
+                path: path,
+                method: .put,
+                payload: payload as NSDictionary,
+                apiVersion: apiVersion.rawValue
+            )
             let response = await self.transportSession.enqueue(request, queue: self.syncManagedObjectContext)
 
             if response.httpStatus == 200 {

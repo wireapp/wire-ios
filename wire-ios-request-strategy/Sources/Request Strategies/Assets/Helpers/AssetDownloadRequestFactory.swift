@@ -21,7 +21,12 @@ import WireTransport
 
 public final class AssetDownloadRequestFactory {
 
-    public func requestToGetAsset(withKey key: String, token: String?, domain: String?, apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func requestToGetAsset(
+        withKey key: String,
+        token: String?,
+        domain: String?,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
 
         let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
         let path: String
@@ -31,7 +36,7 @@ public final class AssetDownloadRequestFactory {
         case .v1:
             guard let domain else { return nil }
             path = "/assets/v4/\(domain)/\(key)"
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2, .v3, .v4, .v5, .v6, .v7:
             guard let domain else { return nil }
             path = "/assets/\(domain)/\(key)"
         }

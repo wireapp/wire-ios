@@ -17,8 +17,8 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class BaseFetchMLSGroupInfoActionHandlerTests<
     Action: BaseFetchMLSGroupInfoAction,
@@ -32,6 +32,7 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
         action = nil
         super.tearDown()
     }
+
     // MARK: - Request generation
 
     func test_itDoesntGenerateRequests_APIBelowV5() {

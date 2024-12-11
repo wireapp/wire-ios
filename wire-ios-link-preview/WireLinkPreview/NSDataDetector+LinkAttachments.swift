@@ -20,14 +20,15 @@ import Foundation
 
 extension NSDataDetector {
 
-    /**
-     * Returns attachment-eligible URLs found in text together with their range in within the text.
-     * - parameter text: The text in which to search for URLs.
-     * - parameter excludedRanges: Ranges within the text which should we excluded from the search.
-     * - returns: The list of URL and their attachment type and range in the text.
-     */
+    /// Returns attachment-eligible URLs found in text together with their range in within the text.
+    /// - parameter text: The text in which to search for URLs.
+    /// - parameter excludedRanges: Ranges within the text which should we excluded from the search.
+    /// - returns: The list of URL and their attachment type and range in the text.
 
-    public func detectLinkAttachments(in text: String, excluding excludedRanges: [NSRange] = []) -> [URL: (LinkAttachmentType, NSRange)] {
+    public func detectLinkAttachments(in text: String, excluding excludedRanges: [NSRange] = []) -> [URL: (
+        LinkAttachmentType,
+        NSRange
+    )] {
         let wholeTextRange = NSRange(text.startIndex ..< text.endIndex, in: text)
         let validRangeIndexSet = NSMutableIndexSet(indexesIn: wholeTextRange)
         excludedRanges.forEach(validRangeIndexSet.remove)
@@ -68,7 +69,7 @@ extension NSDataDetector {
         if pathComponents.count == 3 {
             // Match soundcloud.com/<artist>/<track>
             return .soundCloudTrack
-        } else if pathComponents.count == 4 && pathComponents[2] == "sets" {
+        } else if pathComponents.count == 4, pathComponents[2] == "sets" {
             // Match soundcloud.com/<user>/sets/<playlist_name>
             return .soundCloudPlaylist
         }

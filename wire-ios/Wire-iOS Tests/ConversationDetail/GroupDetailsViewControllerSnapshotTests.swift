@@ -140,6 +140,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockSelfUser.canModifyAccessControlSettings = true
 
         createGroupConversation()
+        mockConversation.teamType = MockTeam()
         mockConversation.teamRemoteIdentifier = mockSelfUser.teamIdentifier
         mockConversation.allowGuests = true
         mockConversation.allowServices = true

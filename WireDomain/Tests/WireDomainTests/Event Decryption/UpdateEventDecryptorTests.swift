@@ -142,43 +142,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
 
         // Mock
         proteusMessageDecryptor.decryptedEventDataFrom_MockMethod = { _ in
-            throw ProteusError.duplicateMessage
-        }
-
-        // When
-        let events = try await sut.decryptEvents(in: envelope)
-
-        // Then we skipped over the proteus message.
-        XCTAssertEqual(events, [.user(.pushRemove)])
-
-        // Then no system message was appended.
-        try await context.perform { [context] in
-            let conversation = try XCTUnwrap(
-                ZMConversation.fetch(
-                    with: Scaffolding.conversationID.uuid,
-                    domain: Scaffolding.conversationID.domain,
-                    in: context
-                )
-            )
-
-            XCTAssertNil(conversation.lastMessage)
-        }
-    }
-
-    func testWhenOutdatedMessageErrorIsThrownThenNoSystemMessageIsAppended() async throws {
-        // Given some events.
-        let envelope = UpdateEventEnvelope(
-            id: UUID(),
-            events: [
-                .conversation(.proteusMessageAdd(Scaffolding.proteusMessage)),
-                .user(.pushRemove)
-            ],
-            isTransient: false
-        )
-
-        // Mock
-        proteusMessageDecryptor.decryptedEventDataFrom_MockMethod = { _ in
-            throw ProteusError.outdatedMessage
+            throw ProteusService.DecryptionError.failedToDecryptData(.DuplicateMessage)
         }
 
         // When

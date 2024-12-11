@@ -52,15 +52,14 @@ extension Date: TransportCoding {
     }
 }
 
-extension NSDate {
+public extension NSDate {
 
-    @objc(transportString)
-    public var transportString: String {
+    @objc(transportString) var transportString: String {
         (self as Date).transportString()
     }
 
     @objc(dateWithTransportString:)
-    public static func date(transportString: String) -> NSDate? {
+    static func date(transportString: String) -> NSDate? {
         Date(transportString: transportString) as NSDate?
     }
 }

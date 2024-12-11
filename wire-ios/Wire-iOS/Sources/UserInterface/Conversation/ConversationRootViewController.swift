@@ -35,7 +35,7 @@ final class ConversationRootViewController: UIViewController {
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
-    fileprivate let networkStatusViewController: NetworkStatusViewController = NetworkStatusViewController()
+    fileprivate let networkStatusViewController: NetworkStatusViewController = .init()
     fileprivate(set) weak var conversationViewController: ConversationViewController?
 
     // MARK: - Init
@@ -61,7 +61,7 @@ final class ConversationRootViewController: UIViewController {
             networkStatusObservable: NetworkStatus.shared
         )
 
-        conversationViewController = conversationController
+        self.conversationViewController = conversationController
 
         super.init(nibName: .none, bundle: .none)
 
@@ -126,15 +126,15 @@ final class ConversationRootViewController: UIViewController {
     }
 
     private var child: UIViewController? {
-        return conversationViewController?.contentViewController
+        conversationViewController?.contentViewController
     }
 
     override var childForStatusBarStyle: UIViewController? {
-        return child
+        child
     }
 
     override var childForStatusBarHidden: UIViewController? {
-        return child
+        child
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -142,18 +142,21 @@ final class ConversationRootViewController: UIViewController {
 
         if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
             // Refresh navigation items to get new buttons with updated colors
-            guard let conversationViewController = self.conversationViewController else { return }
+            guard let conversationViewController else { return }
 
-            navigationItem.rightBarButtonItems = conversationViewController.rightNavigationItems(forConversation: conversation)
-            navigationItem.leftBarButtonItems = conversationViewController.leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
+            navigationItem.rightBarButtonItems = conversationViewController
+                .rightNavigationItems(forConversation: conversation)
+            navigationItem.leftBarButtonItems = conversationViewController
+                .leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
         }
     }
 
     func configure() {
-        guard let conversationViewController = self.conversationViewController else { return }
+        guard let conversationViewController else { return }
 
         // Set left navigation items (back button, search, unread status, etc.)
-        navigationItem.leftBarButtonItems = conversationViewController.leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
+        navigationItem.leftBarButtonItems = conversationViewController
+            .leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
 
         // Set right navigation items (call buttons etc.) from the conversation controller
         navigationItem.rightBarButtonItems = conversationViewController.navigationItem.rightBarButtonItems
@@ -161,8 +164,8 @@ final class ConversationRootViewController: UIViewController {
         // Set the custom title view which includes conversation name and search functionality
         navigationItem.titleView = conversationViewController.navigationItem.titleView
 
-        self.view.backgroundColor = SemanticColors.View.backgroundDefault
-        self.view.addSubview(self.contentView)
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+        view.addSubview(contentView)
 
         // This container view will have the same background color as the inputBar
         // and extend to the bottom of the screen.
@@ -172,7 +175,7 @@ final class ConversationRootViewController: UIViewController {
         contentView.addSubview(inputBarContainer)
         contentView.sendSubviewToBack(inputBarContainer)
 
-        self.addToSelf(networkStatusViewController)
+        addToSelf(networkStatusViewController)
 
         [
             contentView,
@@ -197,7 +200,7 @@ final class ConversationRootViewController: UIViewController {
 
             inputBarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             inputBarContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            inputBarContainer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            inputBarContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             inputBarContainer.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
@@ -213,7 +216,7 @@ final class ConversationRootViewController: UIViewController {
 
 extension ConversationRootViewController: NetworkStatusBarDelegate {
     var bottomMargin: CGFloat {
-        return 0
+        0
     }
 
     func showInIPad(
@@ -221,18 +224,18 @@ extension ConversationRootViewController: NetworkStatusBarDelegate {
         with orientation: UIInterfaceOrientation
     ) -> Bool {
         // always show on iPad for any orientation in regular mode
-        return true
+        true
     }
 }
 
 // MARK: - ZMConversation extension
 
-extension ZMConversation {
+private extension ZMConversation {
 
     /// Check if the conversation data is out of date, and in case update it.
     /// This in an opportunistic update of the data, with an on-demand strategy.
     /// Whenever the conversation is opened by the user, we check if anything is missing.
-    fileprivate func refreshDataIfNeeded(userSession: UserSession) {
+    func refreshDataIfNeeded(userSession: UserSession) {
         userSession.enqueue {
             self.markToDownloadRolesIfNeeded()
         }

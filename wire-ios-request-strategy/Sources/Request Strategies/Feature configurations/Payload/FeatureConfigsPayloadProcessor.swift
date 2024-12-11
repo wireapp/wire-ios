@@ -212,8 +212,11 @@ struct FeatureConfigsPayloadProcessor {
         switch featureName {
         case .conferenceCalling:
             if let apiVersion = BackendInfo.apiVersion,
-                apiVersion >= .v6 {
-                let response = try decoder.decode(FeatureStatusWithConfig<Feature.ConferenceCalling.Config>.self, from: data)
+               apiVersion >= .v6 {
+                let response = try decoder.decode(
+                    FeatureStatusWithConfig<Feature.ConferenceCalling.Config>.self,
+                    from: data
+                )
                 repository.storeConferenceCalling(.init(status: response.status, config: response.config))
             } else {
                 let response = try decoder.decode(FeatureStatus.self, from: data)
@@ -229,7 +232,10 @@ struct FeatureConfigsPayloadProcessor {
             repository.storeAppLock(.init(status: response.status, config: response.config))
 
         case .selfDeletingMessages:
-            let response = try decoder.decode(FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self, from: data)
+            let response = try decoder.decode(
+                FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self,
+                from: data
+            )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
 
         case .conversationGuestLinks:
@@ -237,7 +243,10 @@ struct FeatureConfigsPayloadProcessor {
             repository.storeConversationGuestLinks(.init(status: response.status))
 
         case .classifiedDomains:
-            let response = try decoder.decode(FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>.self, from: data)
+            let response = try decoder.decode(
+                FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>.self,
+                from: data
+            )
             repository.storeClassifiedDomains(.init(status: response.status, config: response.config))
 
         case .digitalSignature:

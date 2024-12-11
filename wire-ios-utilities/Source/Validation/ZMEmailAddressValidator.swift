@@ -18,7 +18,8 @@
 
 import UIKit
 
-@objc public final class ZMEmailAddressValidator: NSObject, ZMPropertyValidator {
+@objc
+public final class ZMEmailAddressValidator: NSObject, ZMPropertyValidator {
 
     static func normalizeEmailAddress(_ emailAddress: inout NSString?) -> Bool {
         var normalizedAddress = emailAddress?.lowercased as NSString?
@@ -30,7 +31,7 @@ import UIKit
         bracketsScanner.charactersToBeSkipped = CharacterSet()
         bracketsScanner.locale = Locale(identifier: "en_US_POSIX")
 
-        if bracketsScanner.scanUpToString("<") != nil && bracketsScanner.scanString("<") != nil {
+        if bracketsScanner.scanUpToString("<") != nil, bracketsScanner.scanString("<") != nil {
             normalizedAddress = bracketsScanner.scanUpToString(">") as NSString?
             if bracketsScanner.scanString(">") == nil {
                 // if there is no > than it's not valid email, we do not need to change input value
@@ -53,7 +54,8 @@ import UIKit
         try validateValue(&pointee)
     }
 
-    @discardableResult public static func validateValue(_ ioValue: inout Any?) throws -> Bool {
+    @discardableResult
+    public static func validateValue(_ ioValue: inout Any?) throws -> Bool {
 
         if ioValue == nil {
             return true
@@ -62,15 +64,21 @@ import UIKit
         let setInvalid = {
             let description = "The email address is invalid."
             let userInfo = [NSLocalizedDescriptionKey: description]
-            let error = NSError(domain: ZMObjectValidationErrorDomain, code: ZMManagedObjectValidationErrorCode.emailAddressIsInvalid.rawValue, userInfo: userInfo)
+            let error = NSError(
+                domain: ZMObjectValidationErrorDomain,
+                code: ZMManagedObjectValidationErrorCode.emailAddressIsInvalid.rawValue,
+                userInfo: userInfo
+            )
             throw error
         }
 
         do {
-            try StringLengthValidator.validateStringValue(&ioValue,
-                                                    minimumStringLength: 0,
-                                                    maximumStringLength: 120,
-                                                    maximumByteLength: 120)
+            try StringLengthValidator.validateStringValue(
+                &ioValue,
+                minimumStringLength: 0,
+                maximumStringLength: 120,
+                maximumByteLength: 120
+            )
         } catch {
             try setInvalid()
             return false
@@ -135,10 +143,11 @@ import UIKit
             for case let c as NSString in components {
                 if c.length < 1 || c.rangeOfCharacter(from: invalidSet, options: .literal).location != NSNotFound {
                     // Check if it's a quoted part:
-                    if c.hasPrefix("\"") && c.hasSuffix("\"") {
+                    if c.hasPrefix("\""), c.hasSuffix("\"") {
                         // Allow this regardless of what
                         let quoted = c.substring(with: NSRange(location: 1, length: c.length - 2)) as NSString
-                        if quoted.length < 1 || quoted.rangeOfCharacter(from: invalidQuotedSet, options: .literal).location != NSNotFound {
+                        if quoted.length < 1 || quoted.rangeOfCharacter(from: invalidQuotedSet, options: .literal)
+                            .location != NSNotFound {
                             try setInvalid()
                             return false
                         }

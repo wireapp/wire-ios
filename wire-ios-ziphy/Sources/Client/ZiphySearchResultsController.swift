@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * An object that controls searching for GIFs
- */
+/// An object that controls searching for GIFs
 
 public final class ZiphySearchResultsController {
 
@@ -32,15 +30,13 @@ public final class ZiphySearchResultsController {
 
     // MARK: - Initialization
 
-    /**
-     * Creates a new search results controller.
-     *
-     * - parameter client: The object providing access to the Giphy API.
-     * - parameter pageSize: The maximum number of objects to display on a single page.
-     * - parameter maxImageSize: The maximum size of result images, in megabytes. Defaults to 3 MB.
-     */
+    /// Creates a new search results controller.
+    ///
+    /// - parameter client: The object providing access to the Giphy API.
+    /// - parameter pageSize: The maximum number of objects to display on a single page.
+    /// - parameter maxImageSize: The maximum size of result images, in megabytes. Defaults to 3 MB.
 
-     public init(client: ZiphyClient, pageSize: Int, maxImageSize: Int = 3) {
+    public init(client: ZiphyClient, pageSize: Int, maxImageSize: Int = 3) {
         self.client = client
         self.pageSize = pageSize
         self.maxImageSize = maxImageSize * 1024 * 1024
@@ -49,24 +45,27 @@ public final class ZiphySearchResultsController {
     /// Asks the pagination controller to fetch more results if possible.
     /// The result block returns only the inserted images, not the current ones.
     public func fetchMoreResults(_ completion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
-        self.paginationController?.updateBlock = completion
-        return self.paginationController?.fetchNewPage()
+        paginationController?.updateBlock = completion
+        return paginationController?.fetchNewPage()
     }
 
     // MARK: - Getting Search Results
 
     /// Performs a search with the given term and returns the results.
-    public func search(withTerm searchTerm: String, _ completion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
+    public func search(
+        withTerm searchTerm: String,
+        _ completion: @escaping ZiphyListRequestCallback
+    ) -> CancelableTask? {
 
-        self.paginationController = ZiphyPaginationController()
+        paginationController = ZiphyPaginationController()
 
-        self.paginationController?.fetchBlock = { [weak self] offset in
+        paginationController?.fetchBlock = { [weak self] offset in
 
             guard let self else {
                 return nil
             }
 
-            return self.client.search(term: searchTerm, resultsLimit: self.pageSize, offset: offset) { [weak self] result in
+            return client.search(term: searchTerm, resultsLimit: pageSize, offset: offset) { [weak self] result in
                 self?.updatePagination(result)
             }
 
@@ -79,12 +78,12 @@ public final class ZiphySearchResultsController {
     public func trending(_ completion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
         paginationController = ZiphyPaginationController()
 
-        self.paginationController?.fetchBlock = { [weak self] offset in
+        paginationController?.fetchBlock = { [weak self] offset in
             guard let self else {
                 return nil
             }
 
-            return self.client.fetchTrending(resultsLimit: self.pageSize, offset: offset) { [weak self] result in
+            return client.fetchTrending(resultsLimit: pageSize, offset: offset) { [weak self] result in
                 self?.updatePagination(result)
             }
         }
@@ -95,9 +94,13 @@ public final class ZiphySearchResultsController {
     // MARK: - Fetching Data
 
     /// Attempts to fetch the data for the image of the specified type for the given GIF post.
-    public func fetchImageData(for ziph: Ziph, imageType: ZiphyImageType, completion: @escaping ZiphyImageDataCallback) {
+    public func fetchImageData(
+        for ziph: Ziph,
+        imageType: ZiphyImageType,
+        completion: @escaping ZiphyImageDataCallback
+    ) {
         guard let representation = ziph.images[imageType] else {
-            self.client.callbackQueue.async { completion(.failure(.noSuchResource)) }
+            client.callbackQueue.async { completion(.failure(.noSuchResource)) }
             return
         }
 
@@ -107,7 +110,7 @@ public final class ZiphySearchResultsController {
     // MARK: - Utilities
 
     /// Updates the pagination controller with the given result.
-    fileprivate func updatePagination(_ result: ZiphyResult<[Ziph]>) {
+    private func updatePagination(_ result: ZiphyResult<[Ziph]>) {
         paginationController?.updatePagination(result, filter: {
             guard let size = $0.images[.downsized]?.fileSize else { return false }
             return size.rawValue < self.maxImageSize

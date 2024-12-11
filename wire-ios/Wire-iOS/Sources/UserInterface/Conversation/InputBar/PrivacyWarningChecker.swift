@@ -26,8 +26,11 @@ protocol PrivacyWarningPresenter: AnyObject {
 // Checks if PrivacyWarningAlert needs to be presented before given action
 struct PrivacyWarningChecker {
     enum AlertType: Int {
-        case message, outgoingCall, incomingCall
+        case message
+        case outgoingCall
+        case incomingCall
     }
+
     var conversation: ConversationLike
     var alertType = AlertType.message
     var continueAction: () -> Void
@@ -75,9 +78,11 @@ struct PrivacyWarningChecker {
 
     // add object in charge to present e2eiPrivacyWarningAlert
     static func addPresenter(_ observer: PrivacyWarningPresenter) -> SelfUnregisteringNotificationCenterToken {
-        let token = NotificationCenter.default.addObserver(forName: .presentPrivacyWarningAlert,
-                                               object: nil,
-                                               queue: .main) { [weak observer] note in
+        let token = NotificationCenter.default.addObserver(
+            forName: .presentPrivacyWarningAlert,
+            object: nil,
+            queue: .main
+        ) { [weak observer] note in
             observer?.presentPrivacyWarningAlert(note)
         }
 

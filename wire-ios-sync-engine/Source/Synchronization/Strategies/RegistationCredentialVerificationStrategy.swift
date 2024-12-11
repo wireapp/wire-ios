@@ -17,15 +17,16 @@
 //
 
 import Foundation
+import WireLogging
 
 final class RegistationCredentialVerificationStrategy: NSObject {
     let registrationStatus: RegistrationStatusProtocol
     var codeSendingSync: ZMSingleRequestSync!
 
     init(groupQueue: GroupQueue, status: RegistrationStatusProtocol) {
-        registrationStatus = status
+        self.registrationStatus = status
         super.init()
-        codeSendingSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
+        self.codeSendingSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
     }
 }
 
@@ -39,19 +40,28 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
         switch currentStatus.phase {
         case let .sendActivationCode(unverifiedEmail):
             path = "/activate/send"
-            payload = ["email": unverifiedEmail,
-                       "locale": NSLocale.formattedLocaleIdentifier()!]
+            payload = [
+                "email": unverifiedEmail,
+                "locale": NSLocale.formattedLocaleIdentifier()!
+            ]
         case let .checkActivationCode(unverifiedEmail, code):
             path = "/activate"
-            payload = ["email": unverifiedEmail,
-                       "code": code,
-                       "dryrun": true]
+            payload = [
+                "email": unverifiedEmail,
+                "code": code,
+                "dryrun": true
+            ]
         default:
             let phaseString = currentStatus.phase.map { "\($0)" } ?? "<nil>"
             fatal("Generating request for invalid phase: \(phaseString)")
         }
 
-        return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
@@ -64,16 +74,22 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
             case .sendActivationCode:
                 let decodedError: NSError?
                 decodedError = NSError.domainBlocked(with: response) ??
-                NSError.blacklistedEmail(with: response) ??
-                NSError.emailAddressInUse(with: response) ??
-                NSError.invalidEmail(with: response)
+                    NSError.blacklistedEmail(with: response) ??
+                    NSError.emailAddressInUse(with: response) ??
+                    NSError.invalidEmail(with: response)
                 error = decodedError ?? NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             case .checkActivationCode:
                 error = NSError.invalidActivationCode(with: response) ??
                     NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             default:
+                // We can end up here because more than one request can be sent for a single action/phase.
+                // This is an issue in some other part of SyncEngine but as a quick fix we will log and abort here.
                 let phaseString = registrationStatus.phase.map { "\($0)" } ?? "<nil>"
-                fatal("Error occurs for invalid phase: \(phaseString)")
+                WireLogger.authentication.error(
+                    "Recieved unsuccessful response for invalid phase (\(phaseString))",
+                    attributes: .safePublic
+                )
+                return assertionFailure("Error occurs for invalid phase: \(phaseString)")
             }
             registrationStatus.handleError(error)
         }

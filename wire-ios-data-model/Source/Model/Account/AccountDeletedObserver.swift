@@ -24,7 +24,7 @@ public protocol AccountDeletedObserver: AnyObject {
 
 public struct AccountDeletedNotification {
     public static let notificationName = Notification.Name("AccountDeletedNotification")
-    public static var userInfoKey: String { return notificationName.rawValue }
+    public static var userInfoKey: String { notificationName.rawValue }
 
     weak var context: NSManagedObjectContext?
 
@@ -33,18 +33,27 @@ public struct AccountDeletedNotification {
     }
 
     public func post(in context: NotificationContext, object: AnyObject? = nil) {
-        NotificationInContext(name: type(of: self).notificationName, context: context, object: object, userInfo: [type(of: self).userInfoKey: self]).post()
+        NotificationInContext(
+            name: type(of: self).notificationName,
+            context: context,
+            object: object,
+            userInfo: [type(of: self).userInfoKey: self]
+        ).post()
     }
 }
 
-extension AccountDeletedNotification {
-    public static func addObserver(observer: AccountDeletedObserver,
-                                   context: NSManagedObjectContext? = nil,
-                                   queue: GroupQueue) -> Any {
-        return NotificationInContext.addUnboundedObserver(name: AccountDeletedNotification.notificationName,
-                                                          context: context?.notificationContext,
-                                                          object: nil,
-                                                          queue: .main) { [weak observer] note in
+public extension AccountDeletedNotification {
+    static func addObserver(
+        observer: AccountDeletedObserver,
+        context: NSManagedObjectContext? = nil,
+        queue: GroupQueue
+    ) -> Any {
+        NotificationInContext.addUnboundedObserver(
+            name: AccountDeletedNotification.notificationName,
+            context: context?.notificationContext,
+            object: nil,
+            queue: .main
+        ) { [weak observer] note in
             guard
                 let note = note.userInfo[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification,
                 let context = note.context,

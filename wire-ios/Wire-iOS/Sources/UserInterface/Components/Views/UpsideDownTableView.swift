@@ -26,9 +26,9 @@ final class UpsideDownTableView: UITableView {
     override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
 
-        UIView.performWithoutAnimation({
+        UIView.performWithoutAnimation {
             self.transform = CGAffineTransform(scaleX: 1, y: -1)
-        })
+        }
     }
 
     @available(*, unavailable)
@@ -43,10 +43,12 @@ final class UpsideDownTableView: UITableView {
         }
 
         set {
-            super.contentInset = UIEdgeInsets(top: newValue.bottom,
-                                                  left: newValue.left,
-                                                  bottom: newValue.top,
-                                                  right: newValue.right)
+            super.contentInset = UIEdgeInsets(
+                top: newValue.bottom,
+                left: newValue.left,
+                bottom: newValue.top,
+                right: newValue.right
+            )
         }
     }
 
@@ -54,7 +56,7 @@ final class UpsideDownTableView: UITableView {
 
     override var contentOffset: CGPoint {
         get {
-            return super.contentOffset
+            super.contentOffset
         }
 
         set {
@@ -62,9 +64,10 @@ final class UpsideDownTableView: UITableView {
             if lockContentOffset {
                 return
             }
-            /// do not set contentOffset if the user is panning on the bottom edge of pannableView (with 10 pt threshold)
+            /// do not set contentOffset if the user is panning on the bottom edge of pannableView (with 10 pt
+            /// threshold)
             if let pannableView,
-               self.panGestureRecognizer.location(in: self.superview).y >= pannableView.frame.maxY - 10 {
+               panGestureRecognizer.location(in: self.superview).y >= pannableView.frame.maxY - 10 {
                 return
             }
 
@@ -74,7 +77,7 @@ final class UpsideDownTableView: UITableView {
 
     override var tableHeaderView: UIView? {
         get {
-            return super.tableFooterView
+            super.tableFooterView
         }
 
         set(tableHeaderView) {
@@ -85,7 +88,7 @@ final class UpsideDownTableView: UITableView {
 
     override var tableFooterView: UIView? {
         get {
-            return super.tableHeaderView
+            super.tableHeaderView
         }
 
         set(tableFooterView) {
@@ -104,9 +107,11 @@ final class UpsideDownTableView: UITableView {
         super.scrollToNearestSelectedRow(at: inverseScrollPosition(scrollPosition), animated: animated)
     }
 
-    override func scrollToRow(at indexPath: IndexPath,
-                              at scrollPosition: UITableView.ScrollPosition,
-                              animated: Bool) {
+    override func scrollToRow(
+        at indexPath: IndexPath,
+        at scrollPosition: UITableView.ScrollPosition,
+        animated: Bool
+    ) {
         super.scrollToRow(at: indexPath, at: inverseScrollPosition(scrollPosition), animated: animated)
     }
 
@@ -120,11 +125,11 @@ final class UpsideDownTableView: UITableView {
 
     func inverseScrollPosition(_ scrollPosition: UITableView.ScrollPosition) -> UITableView.ScrollPosition {
         if scrollPosition == .top {
-            return .bottom
+            .bottom
         } else if scrollPosition == .bottom {
-            return .top
+            .top
         } else {
-            return scrollPosition
+            scrollPosition
         }
     }
 }

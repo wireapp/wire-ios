@@ -42,10 +42,14 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     var hidesSubtitle: Bool = false
     let avatarSpacer = UIView()
     let avatarImageView = BadgeUserImageView()
-    let titleLabel = DynamicFontLabel(fontSpec: .bodyTwoSemibold,
-                                      color: LabelColors.textDefault)
-    let subtitleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                         color: LabelColors.textCellSubtitle)
+    let titleLabel = DynamicFontLabel(
+        fontSpec: .bodyTwoSemibold,
+        color: LabelColors.textDefault
+    )
+    let subtitleLabel = DynamicFontLabel(
+        fontSpec: .mediumRegularFont,
+        color: LabelColors.textCellSubtitle
+    )
     let connectButton = IconButton()
     let accessoryIconView = UIImageView()
     let userTypeIconView = IconImageView()
@@ -251,7 +255,8 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     // MARK: - Set up constraints
 
     private func createConstraints() {
-        let avatarSpacerWidthConstraint = avatarSpacer.widthAnchor.constraint(equalToConstant: UserCell.defaultAvatarSpacing)
+        let avatarSpacerWidthConstraint = avatarSpacer.widthAnchor
+            .constraint(equalToConstant: UserCell.defaultAvatarSpacing)
         self.avatarSpacerWidthConstraint = avatarSpacerWidthConstraint
 
         NSLayoutConstraint.activate([
@@ -300,14 +305,17 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         if userStatus.isE2EICertified {
             if userIsSelfUser {
-                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesHaveValidCertificates
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants
+                    .allYourDevicesHaveValidCertificates
             } else {
-                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allDevicesHaveValidCertificates
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants
+                    .allDevicesHaveValidCertificates
             }
         }
         if userStatus.isProteusVerified {
             if userIsSelfUser {
-                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesProteusVerified
+                content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants
+                    .allYourDevicesProteusVerified
             } else {
                 content += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allDevicesProteusVerified
             }
@@ -341,7 +349,8 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         typealias CreateConversation = L10n.Accessibility.CreateConversation
 
         if !checkmarkIconView.isHidden {
-            accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser.hint
+            accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser
+                .hint
         } else if userIsServiceUser {
             accessibilityHint = ServicesList.ServiceCell.hint
         } else {
@@ -366,7 +375,8 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 extension UserCell {
 
     /// Updates the cell with the provided information.
-    /// - parameter userStatus: At the moment only the E2EI and Proteus verification statuses are considered from this value.
+    /// - parameter userStatus: At the moment only the E2EI and Proteus verification statuses are considered from this
+    /// value.
     func configure(
         userStatus: UserStatus,
         user: UserType, // ideally no UserType instance would be needed
@@ -378,13 +388,12 @@ extension UserCell {
         self.userStatus = userStatus
         self.userIsSelfUser = userIsSelfUser
         self.isSelfUserPartOfATeam = isSelfUserPartOfATeam
-        self.userIsServiceUser = user.isServiceUser
+        userIsServiceUser = user.isServiceUser
 
-        let subtitle: NSAttributedString?
-        if overrideSubtitle == nil {
-            subtitle = self.subtitle(for: user)
+        let subtitle: NSAttributedString? = if overrideSubtitle == nil {
+            self.subtitle(for: user)
         } else {
-            subtitle = overrideSubtitle
+            overrideSubtitle
         }
 
         avatarImageView.user = user

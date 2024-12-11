@@ -18,27 +18,27 @@
 
 import Foundation
 
-extension SessionManager {
+public extension SessionManager {
 
-    public enum SwitchBackendError: Swift.Error {
+    enum SwitchBackendError: Swift.Error {
         case loggedInAccounts
         case invalidBackend
     }
 
-    public typealias CompletedSwitch = (Result<BackendEnvironment, Error>) -> Void
+    typealias CompletedSwitch = (Result<BackendEnvironment, Error>) -> Void
 
-    public func canSwitchBackend() -> SwitchBackendError? {
+    func canSwitchBackend() -> SwitchBackendError? {
         guard accountManager.accounts.isEmpty else { return .loggedInAccounts }
 
         return nil
     }
 
-    public func switchBackend(to environment: BackendEnvironment) {
+    func switchBackend(to environment: BackendEnvironment) {
         self.environment = environment
         unauthenticatedSession = nil
     }
 
-    public func fetchBackendEnvironment(
+    func fetchBackendEnvironment(
         at url: URL,
         completion: @escaping (Result<BackendEnvironment, Error>) -> Void
     ) {
@@ -50,7 +50,7 @@ extension SessionManager {
         BackendEnvironment.fetchEnvironment(url: url) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let environment):
+                case let .success(environment):
                     completion(.success(environment))
                 case .failure:
                     completion(.failure(SwitchBackendError.invalidBackend))

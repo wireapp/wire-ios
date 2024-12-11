@@ -18,7 +18,9 @@
 
 import Foundation
 import WireAPI
+import WireCoreCrypto
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Decrypt the E2EE content within update events.
@@ -48,7 +50,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         userRepository: any UserRepositoryProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
-        proteusMessageDecryptor = ProteusMessageDecryptor(
+        self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsRepository: userClientsRepository,
             userRepository: userRepository
@@ -83,7 +85,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         for event in eventEnvelope.events {
             switch event {
-            case .conversation(.proteusMessageAdd(let eventData)):
+            case let .conversation(.proteusMessageAdd(eventData)):
                 WireLogger.updateEvent.info(
                     "decrypting proteus event...",
                     attributes: logAttributes
@@ -92,8 +94,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 do {
                     let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(from: eventData)
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
-
-                } catch let error as ProteusError {
+                } catch let error as ProteusService.DecryptionError {
                     WireLogger.updateEvent.error(
                         "failed to decrypt proteus event payload, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
@@ -101,7 +102,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
                     await appendFailedToDecryptProteusMessage(
                         eventData: eventData,
-                        error: error
+                        error: error.proteusError
                     )
                 } catch {
                     WireLogger.updateEvent.error(
@@ -142,7 +143,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         error: ProteusError
     ) async {
         // Do not notify the user if the error is just "duplicated".
-        if error == .outdatedMessage || error == .duplicateMessage {
+        if error == .DuplicateMessage {
             return
         }
 

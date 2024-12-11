@@ -24,12 +24,6 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
-#elseif os(OSX)
-import AppKit
-#endif
 
 import CoreLocation
 import WireDataModel
@@ -1428,20 +1422,20 @@ class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBui
 
     // MARK: - build
 
-    var build_Invocations: [Void] = []
-    var build_MockMethod: (() -> UIViewController)?
-    var build_MockValue: UIViewController?
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UIViewController)?
+    var buildMainCoordinator_MockValue: UIViewController?
 
     @MainActor
-    func build() -> UIViewController {
-        build_Invocations.append(())
+    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
+        buildMainCoordinator_Invocations.append(mainCoordinator)
 
-        if let mock = build_MockMethod {
-            return mock()
-        } else if let mock = build_MockValue {
+        if let mock = buildMainCoordinator_MockMethod {
+            return mock(mainCoordinator)
+        } else if let mock = buildMainCoordinator_MockValue {
             return mock
         } else {
-            fatalError("no mock for `build`")
+            fatalError("no mock for `buildMainCoordinator`")
         }
     }
 

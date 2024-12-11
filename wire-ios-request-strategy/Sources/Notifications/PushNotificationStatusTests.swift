@@ -65,7 +65,7 @@ final class PushNotificationStatusTests: MessagingTestBase {
 
         // when
         syncMOC.performGroupedAndWait {
-            self.sut.fetch(eventId: eventId) { }
+            self.sut.fetch(eventId: eventId) {}
         }
 
         // then
@@ -78,8 +78,8 @@ final class PushNotificationStatusTests: MessagingTestBase {
         let eventId2 = UUID.timeBasedUUID() as UUID
 
         syncMOC.performGroupedAndWait {
-            self.sut.fetch(eventId: eventId1) { }
-            self.sut.fetch(eventId: eventId2) { }
+            self.sut.fetch(eventId: eventId1) {}
+            self.sut.fetch(eventId: eventId2) {}
         }
 
         // when
@@ -95,7 +95,7 @@ final class PushNotificationStatusTests: MessagingTestBase {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
         syncMOC.performGroupedAndWait {
-            self.sut.fetch(eventId: eventId) { }
+            self.sut.fetch(eventId: eventId) {}
         }
 
         // when
@@ -111,7 +111,7 @@ final class PushNotificationStatusTests: MessagingTestBase {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
         syncMOC.performGroupedAndWait {
-            self.sut.fetch(eventId: eventId) { }
+            self.sut.fetch(eventId: eventId) {}
         }
 
         // when
@@ -127,7 +127,7 @@ final class PushNotificationStatusTests: MessagingTestBase {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
         syncMOC.performGroupedAndWait {
-            self.sut.fetch(eventId: eventId) { }
+            self.sut.fetch(eventId: eventId) {}
         }
 
         // when
@@ -143,7 +143,7 @@ final class PushNotificationStatusTests: MessagingTestBase {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
         syncMOC.performGroupedAndWait {
-            self.sut.fetch(eventId: eventId) { }
+            self.sut.fetch(eventId: eventId) {}
         }
 
         // when
@@ -176,7 +176,7 @@ final class PushNotificationStatusTests: MessagingTestBase {
     func testThatCompletionHandlerIsCalledAfterAllEventsHaveBeenFetched() {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
-        let expectation = self.customExpectation(description: "completion handler was called")
+        let expectation = customExpectation(description: "completion handler was called")
 
         // expect
         syncMOC.performGroupedAndWait {
@@ -198,7 +198,7 @@ final class PushNotificationStatusTests: MessagingTestBase {
     func testThatCompletionHandlerIsCalledEvenIfNoEventsWereDownloaded() {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
-        let expectation = self.customExpectation(description: "completion handler was called")
+        let expectation = customExpectation(description: "completion handler was called")
 
         // expect
         syncMOC.performGroupedAndWait {
@@ -221,7 +221,7 @@ final class PushNotificationStatusTests: MessagingTestBase {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
         lastEventIDRepository.storeLastEventID(eventId)
-        let expectation = self.customExpectation(description: "completion handler was called")
+        let expectation = customExpectation(description: "completion handler was called")
         syncMOC.performGroupedAndWait {
             // when
             self.sut.fetch(eventId: eventId) {

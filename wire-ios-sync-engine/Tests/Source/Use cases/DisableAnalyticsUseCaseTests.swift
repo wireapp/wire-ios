@@ -54,7 +54,7 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
 
     func testInvoke_disables_via_service() throws {
         // Mock
-        service.disableTracking_MockMethod = { }
+        service.disableTracking_MockMethod = {}
 
         // Given
         XCTAssertNotNil(analyticsEventTracker)

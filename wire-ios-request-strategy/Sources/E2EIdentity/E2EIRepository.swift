@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 public protocol E2EIRepositoryInterface {
 
@@ -86,7 +87,10 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             do {
                 try await e2eiSetupService.registerFederationCertificate(certificate)
             } catch {
-                logger.warn("failed to register certificate (error: \(String(describing: error)), certificate: \(certificate))")
+                logger
+                    .warn(
+                        "failed to register certificate (error: \(String(describing: error)), certificate: \(certificate))"
+                    )
             }
         }
     }

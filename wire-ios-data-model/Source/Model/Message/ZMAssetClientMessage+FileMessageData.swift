@@ -20,7 +20,9 @@ import Foundation
 import MobileCoreServices
 
 // MARK: - ZMFileMessageData
-@objc public protocol ZMFileMessageData: NSObjectProtocol {
+
+@objc
+public protocol ZMFileMessageData: NSObjectProtocol {
 
     /// MIME type of the file being transfered (implied from file extension)
     var mimeType: String? { get }
@@ -106,7 +108,8 @@ import MobileCoreServices
 extension ZMAssetClientMessage: ZMFileMessageData {
 
     /// Notification name for canceled file upload
-    public static let didCancelFileDownloadNotificationName = Notification.Name(rawValue: "ZMAssetClientMessageDidCancelFileDownloadNotification")
+    public static let didCancelFileDownloadNotificationName = Notification
+        .Name(rawValue: "ZMAssetClientMessageDidCancelFileDownloadNotification")
 
     // MIME type of the file being transfered (implied from file extension)
     public var mimeType: String? {
@@ -136,11 +139,11 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     /// If the asset is a rich file type, this returns its type.
     public var richAssetType: RichAssetFileType? {
-        return mimeType.flatMap(RichAssetFileType.init)
+        mimeType.flatMap(RichAssetFileType.init)
     }
 
     public var hasLocalFileData: Bool {
-        return asset?.hasDownloadedFile ?? false
+        asset?.hasDownloadedFile ?? false
     }
 
     public func temporaryURLToDecryptedFile() -> URL? {
@@ -158,8 +161,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
         if let mime = mimeType,
            let fileExtension = UTIHelper.convertToFileExtension(mime: mime),
-            richAssetType == .audio,
-            temporaryFileURL.pathExtension != fileExtension {
+           richAssetType == .audio,
+           temporaryFileURL.pathExtension != fileExtension {
             temporaryFileURL.appendPathExtension(fileExtension)
         }
 
@@ -168,7 +171,11 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         }
 
         do {
-            try FileManager.default.createDirectory(at: temporaryFileURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(
+                at: temporaryFileURL.deletingLastPathComponent(),
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
             try FileManager.default.linkItem(at: assetURL, to: temporaryFileURL)
         } catch {
             return nil
@@ -192,7 +199,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     /// File name as was sent or `nil` in case of an image asset
     public var filename: String? {
-        return underlyingMessage?.assetData?.original.name.normalizedFilename
+        underlyingMessage?.assetData?.original.name.normalizedFilename
     }
 
     public var thumbnailAssetID: String? {
@@ -200,9 +207,9 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         get {
             guard fileMessageData != nil else { return nil }
             guard let assetData = genericMessage(dataType: .thumbnail)?.assetData,
-                assetData.preview.remote.hasAssetID,
-                !assetData.preview.remote.assetID.isEmpty
-                else { return nil }
+                  assetData.preview.remote.hasAssetID,
+                  !assetData.preview.remote.assetID.isEmpty
+            else { return nil }
             return assetData.preview.remote.assetID
         }
 
@@ -226,7 +233,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
                 message.update(asset: assetData)
                 try replaceGenericMessageForThumbnail(with: message)
             } catch {
-                Logging.messageProcessing.warn("Failed to set thumbnail asset id. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to set thumbnail asset id. Reason: \(error.localizedDescription)")
             }
         }
     }
@@ -252,27 +260,27 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
 
     public var imagePreviewDataIdentifier: String? {
-        return asset?.imagePreviewDataIdentifier
+        asset?.imagePreviewDataIdentifier
     }
 
     public var isPass: Bool {
-        return richAssetType == .walletPass
+        richAssetType == .walletPass
     }
 
     public var isVideo: Bool {
-        return richAssetType == .video
+        richAssetType == .video
     }
 
     public var isAudio: Bool {
-        return richAssetType == .audio
+        richAssetType == .audio
     }
 
     public var isPDF: Bool {
-        return mimeType == "application/pdf"
+        mimeType == "application/pdf"
     }
 
     public var v3_isImage: Bool {
-        return underlyingMessage?.v3_isImage ?? false
+        underlyingMessage?.v3_isImage ?? false
     }
 
     public var videoDimensions: CGSize {
@@ -295,8 +303,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     public var normalizedLoudness: [Float]? {
         guard isAudio,
-            let assetData = underlyingMessage?.assetData,
-            assetData.original.audio.hasNormalizedLoudness else {
+              let assetData = underlyingMessage?.assetData,
+              assetData.original.audio.hasNormalizedLoudness else {
             return nil
         }
         return assetData.original.normalizedLoudnessLevels
@@ -320,14 +328,18 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             return nil
         }
 
-        let token = SignatureStatus.addObserver(observer,
-                                                context: managedObjectContext)
+        let token = SignatureStatus.addObserver(
+            observer,
+            context: managedObjectContext
+        )
 
         let asset = underlyingMessage?.assetData
         syncContext.performGroupedBlock {
-            let status = SignatureStatus(asset: asset,
-                                         data: PDFData,
-                                         managedObjectContext: syncContext)
+            let status = SignatureStatus(
+                asset: asset,
+                data: PDFData,
+                managedObjectContext: syncContext
+            )
             status.store()
             status.signDocument()
         }
@@ -359,15 +371,15 @@ extension ZMAssetClientMessage {
             updateTransferState(.uploadingCancelled, synchronize: false)
             progress = 0
         case .uploaded:
-            self.progress = 0
-            self.obtainPermanentObjectID()
-            self.managedObjectContext?.saveOrRollback()
+            progress = 0
+            obtainPermanentObjectID()
+            managedObjectContext?.saveOrRollback()
             NotificationInContext(
                 name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
-                context: self.managedObjectContext!.notificationContext,
-                object: self.objectID,
+                context: managedObjectContext!.notificationContext,
+                object: objectID,
                 userInfo: [:]
-                ).post()
+            ).post()
         default:
             break
         }
@@ -375,8 +387,8 @@ extension ZMAssetClientMessage {
 
     /// Turn temporary object ID into permanet
     private func obtainPermanentObjectID() {
-        if self.objectID.isTemporaryID {
-            try! self.managedObjectContext!.obtainPermanentIDs(for: [self])
+        if objectID.isTemporaryID {
+            try! managedObjectContext!.obtainPermanentIDs(for: [self])
         }
     }
 

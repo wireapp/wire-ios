@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSystem
 import ZipArchive
 
@@ -31,7 +32,7 @@ protocol LogFilesProviding {
     func generateLogFilesData() throws -> Data
 
     /// Generates a zip file containing all log files
-    /// 
+    ///
     /// - Returns: the log files archive URL
 
     func generateLogFilesZip() throws -> URL
@@ -95,9 +96,7 @@ struct LogFilesProvider: LogFilesProviding {
         }
 
         let logFilesURL = try generateLogFilesZip()
-        let data = try Data(contentsOf: logFilesURL)
-
-        return data
+        return try Data(contentsOf: logFilesURL)
     }
 
     func generateLogFilesZip() throws -> URL {
@@ -119,7 +118,7 @@ struct LogFilesProvider: LogFilesProviding {
         url.appendPathComponent("logs.zip")
         SSZipArchive.createZipFile(
             atPath: url.path,
-            withFilesAtPaths: filesToZip.map { $0.path }
+            withFilesAtPaths: filesToZip.map(\.path)
         )
 
         return url

@@ -43,7 +43,7 @@ extension Payload {
         }
 
         static var eventType: ZMUpdateEventType {
-            return .conversationMemberUpdate
+            .conversationMemberUpdate
         }
 
         let id: UUID?
@@ -59,18 +59,20 @@ extension Payload {
         let hiddenReference: String?
         let conversationRole: String?
 
-        init(id: UUID? = nil,
-             qualifiedID: QualifiedID? = nil,
-             target: UUID? = nil,
-             qualifiedTarget: QualifiedID? = nil,
-             service: Service? = nil,
-             mutedStatus: Int? = nil,
-             mutedReference: Date? = nil,
-             archived: Bool? = nil,
-             archivedReference: Date? = nil,
-             hidden: Bool? = nil,
-             hiddenReference: String? = nil,
-             conversationRole: String? = nil) {
+        init(
+            id: UUID? = nil,
+            qualifiedID: QualifiedID? = nil,
+            target: UUID? = nil,
+            qualifiedTarget: QualifiedID? = nil,
+            service: Service? = nil,
+            mutedStatus: Int? = nil,
+            mutedReference: Date? = nil,
+            archived: Bool? = nil,
+            archivedReference: Date? = nil,
+            hidden: Bool? = nil,
+            hiddenReference: String? = nil,
+            conversationRole: String? = nil
+        ) {
             self.id = id
             self.qualifiedID = qualifiedID
             self.target = target

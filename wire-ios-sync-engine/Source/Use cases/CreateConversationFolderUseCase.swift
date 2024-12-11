@@ -18,32 +18,40 @@
 
 import WireDataModel
 
-public struct CreateConversationFolderUseCase: CreateConversationFolderUseCaseProtocol {
+public struct CreateConversationFolderUseCase {
 
     // MARK: - Properties
 
-    private let managedObjectContext: NSManagedObjectContext
+    private let context: NSManagedObjectContext
 
     // MARK: - Initialization
 
-    public init(managedObjectContext: NSManagedObjectContext) {
-        self.managedObjectContext = managedObjectContext
+    public init(context: NSManagedObjectContext) {
+        self.context = context
     }
 
     // MARK: - Public Interface
 
-    public func invoke(with name: String) async -> LabelType? {
-        await managedObjectContext.perform {
+    public func invoke(with name: String) async throws -> LabelType? {
+        try await context.perform {
             var created = false
             let label = Label.fetchOrCreate(
                 remoteIdentifier: UUID(),
                 create: true,
-                in: managedObjectContext,
+                in: context,
                 created: &created
             )
             label?.name = name
             label?.kind = .folder
+
+            do {
+                try context.save()
+            } catch {
+                throw error
+            }
+
             return label
         }
     }
+
 }

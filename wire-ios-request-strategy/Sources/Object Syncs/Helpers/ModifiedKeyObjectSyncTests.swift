@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireTesting
 import XCTest
+@testable import WireRequestStrategy
 
 class MockModifiedKeyObjectSyncTranscoder: ModifiedKeyObjectSyncTranscoder {
 
@@ -28,7 +28,7 @@ class MockModifiedKeyObjectSyncTranscoder: ModifiedKeyObjectSyncTranscoder {
     var pendingModifications: [() -> Void] = []
 
     func completePendingModifiations() {
-        pendingModifications.forEach({ $0() })
+        pendingModifications.forEach { $0() }
         pendingModifications.removeAll()
     }
 
@@ -53,8 +53,10 @@ class ModifiedKeyObjectSyncTests: ZMTBaseTest {
 
         moc = MockModelObjectContextFactory.testContext()
         transcoder = MockModifiedKeyObjectSyncTranscoder()
-        sut = ModifiedKeyObjectSync(trackedKey: "field",
-                                    modifiedPredicate: modifiedPredicate)
+        sut = ModifiedKeyObjectSync(
+            trackedKey: "field",
+            modifiedPredicate: modifiedPredicate
+        )
         sut.transcoder = transcoder
     }
 

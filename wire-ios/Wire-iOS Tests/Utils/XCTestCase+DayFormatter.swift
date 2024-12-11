@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 extension Message {
     static func dayFormatter(date: Date) -> DateFormatter {
-        return date.olderThanOneWeekdateFormatter
+        date.olderThanOneWeekdateFormatter
     }
 }
 
@@ -29,7 +29,11 @@ extension XCTestCase {
 
     class func resetDayFormatter() {
         let locale = Locale(identifier: "en_US")
-        WRDateFormatter.thisYearFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEEdMMMM", options: 0, locale: locale)
+        WRDateFormatter.thisYearFormatter.dateFormat = DateFormatter.dateFormat(
+            fromTemplate: "EEEEdMMMM",
+            options: 0,
+            locale: locale
+        )
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .full

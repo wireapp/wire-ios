@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
@@ -44,8 +45,8 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress
     ) {
-        actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
-        actionSync = EntityActionSync(actionHandlers: [actionHandler])
+        self.actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
+        self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
         self.syncStatus = syncProgress
 
         super.init(
@@ -97,7 +98,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
                     }
                 }
 
-                self.slowSyncTask = nil
+                slowSyncTask = nil
             }
         }
 
@@ -137,7 +138,8 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             try processor.processEventPayload(
                 data: payloadData,
                 featureName: featureName,
-                repository: repository)
+                repository: repository
+            )
 
             WireLogger.featureConfigs.info("Finished processing update event \(name)")
         } catch {

@@ -20,34 +20,36 @@ import WireTransport
 
 @testable import WireSyncEngine
 
-extension MessagingTest {
+public extension MessagingTest {
 
     @discardableResult
-    func createSelfUser() -> ZMUser {
+    internal func createSelfUser() -> ZMUser {
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier = UUID()
         syncMOC.saveOrRollback()
         return selfUser
     }
 
-    func createClient(for user: ZMUser) -> UserClient {
+    internal func createClient(for user: ZMUser) -> UserClient {
         let client = UserClient.insertNewObject(in: syncMOC)
         client.user = user
         client.remoteIdentifier = UUID().transportString()
         return client
     }
 
-    public func createClientTextMessage() -> ZMClientMessage? {
-        return createClientTextMessageWith(text: self.name)
+    func createClientTextMessage() -> ZMClientMessage? {
+        createClientTextMessageWith(text: name)
     }
 
-    public func createClientTextMessageWith(text: String) -> ZMClientMessage? {
+    func createClientTextMessageWith(text: String) -> ZMClientMessage? {
         let nonce = UUID.create()
-        let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.syncMOC)
-        let textMessage = GenericMessage(content: Text(content: text,
-                                                       mentions: [],
-                                                       linkPreviews: [],
-                                                       replyingTo: nil), nonce: nonce)
+        let message = ZMClientMessage(nonce: nonce, managedObjectContext: syncMOC)
+        let textMessage = GenericMessage(content: Text(
+            content: text,
+            mentions: [],
+            linkPreviews: [],
+            replyingTo: nil
+        ), nonce: nonce)
         do {
             try message.setUnderlyingMessage(textMessage)
         } catch {
@@ -57,7 +59,7 @@ extension MessagingTest {
     }
 
     @discardableResult
-    func createMLSSelfConversation() -> ZMConversation {
+    internal func createMLSSelfConversation() -> ZMConversation {
         let selfConversation = ZMConversation.insertNewObject(in: syncMOC)
         selfConversation.conversationType = .`self`
         selfConversation.remoteIdentifier = UUID.create()
@@ -68,12 +70,14 @@ extension MessagingTest {
     }
 
     @objc
-    public func createCoreDataStack() -> CoreDataStack {
+    func createCoreDataStack() -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: sharedContainerURL,
-                                  inMemoryStore: shouldUseInMemoryStore,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            inMemoryStore: shouldUseInMemoryStore,
+            dispatchGroup: dispatchGroup
+        )
 
         stack.loadStores(completionHandler: { error in
             XCTAssertNil(error)
@@ -83,7 +87,7 @@ extension MessagingTest {
     }
 
     @objc
-    public func setBackendInfoDefaults() {
+    func setBackendInfoDefaults() {
         BackendInfo.apiVersion = .v0
         BackendInfo.domain = "example.com"
 

@@ -21,14 +21,19 @@ import WireCommonComponents
 import WireDesign
 
 extension ValidatedTextField {
-    static func createPasscodeTextField(kind: ValidatedTextField.Kind,
-                                        delegate: ValidatedTextFieldDelegate & TextFieldValidationDelegate,
-                                        setNewColors: Bool) -> ValidatedTextField {
-        let textField = ValidatedTextField(kind: kind,
-                                           leftInset: 0,
-                                           accessoryTrailingInset: 0,
-                                           cornerRadius: 16,
-                                           setNewColors: setNewColors, style: .default)
+    static func createPasscodeTextField(
+        kind: ValidatedTextField.Kind,
+        delegate: ValidatedTextFieldDelegate & TextFieldValidationDelegate,
+        setNewColors: Bool
+    ) -> ValidatedTextField {
+        let textField = ValidatedTextField(
+            kind: kind,
+            leftInset: 0,
+            accessoryTrailingInset: 0,
+            cornerRadius: 16,
+            setNewColors: setNewColors,
+            style: .default
+        )
 
         textField.overrideButtonIcon = StyleKitIcon.AppLock.reveal
         textField.validatedTextFieldDelegate = delegate

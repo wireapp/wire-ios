@@ -39,9 +39,18 @@ final class NoConversationPlaceholderViewController: UIViewController {
             imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
 
-            imageView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 3),
-            imageView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 3),
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: imageView.bottomAnchor, multiplier: 3)
+            imageView.leadingAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor,
+                multiplier: 3
+            ),
+            imageView.topAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor,
+                multiplier: 3
+            ),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingBelow: imageView.bottomAnchor,
+                multiplier: 3
+            )
         ]
         constraints[0].priority = .defaultHigh
         constraints[1].priority = .defaultHigh

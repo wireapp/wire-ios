@@ -20,32 +20,35 @@ import Foundation
 
 public extension CharacterSet {
     // http://www.unicode.org/charts/PDF/U0300.pdf
-    private static let diacriticsCombiningCodes              = CharacterSet(charactersIn: UnicodeScalar(0x0300 as UInt16)!...UnicodeScalar(0x036f as UInt16)!)
+    private static let diacriticsCombiningCodes =
+        CharacterSet(charactersIn: UnicodeScalar(0x0300 as UInt16)! ... UnicodeScalar(0x036F as UInt16)!)
     // http://www.unicode.org/charts/PDF/U1AB0.pdf
-    private static let diacriticsCombiningCodesExtended      = CharacterSet(charactersIn: UnicodeScalar(0x1ab0 as UInt16)!...UnicodeScalar(0x1aff as UInt16)!)
+    private static let diacriticsCombiningCodesExtended =
+        CharacterSet(charactersIn: UnicodeScalar(0x1AB0 as UInt16)! ... UnicodeScalar(0x1AFF as UInt16)!)
     // http://www.unicode.org/charts/PDF/U1DC0.pdf
-    private static let diacriticsCombiningCodesSupplementary = CharacterSet(charactersIn: UnicodeScalar(0x1dc0 as UInt16)!...UnicodeScalar(0x1dff as UInt16)!)
+    private static let diacriticsCombiningCodesSupplementary =
+        CharacterSet(charactersIn: UnicodeScalar(0x1DC0 as UInt16)! ... UnicodeScalar(0x1DFF as UInt16)!)
     // http://www.unicode.org/charts/PDF/U20D0.pdf
-    private static let diacriticsCombiningCodesForSymbols    = CharacterSet(charactersIn: UnicodeScalar(0x20d0 as UInt16)!...UnicodeScalar(0x20ff as UInt16)!)
+    private static let diacriticsCombiningCodesForSymbols =
+        CharacterSet(charactersIn: UnicodeScalar(0x20D0 as UInt16)! ... UnicodeScalar(0x20FF as UInt16)!)
     // http://www.unicode.org/charts/PDF/UFE20.pdf
-    private static let diacriticsCombiningCodesHalfMarks     = CharacterSet(charactersIn: UnicodeScalar(0xfe20 as UInt16)!...UnicodeScalar(0xfe2f as UInt16)!)
+    private static let diacriticsCombiningCodesHalfMarks =
+        CharacterSet(charactersIn: UnicodeScalar(0xFE20 as UInt16)! ... UnicodeScalar(0xFE2F as UInt16)!)
 
-    static var diacriticsCombining: CharacterSet = {
-        [
-            diacriticsCombiningCodes,
-            diacriticsCombiningCodesExtended,
-            diacriticsCombiningCodesSupplementary,
-            diacriticsCombiningCodesForSymbols,
-            diacriticsCombiningCodesHalfMarks
-        ].reduce(CharacterSet()) { (current: CharacterSet, new: CharacterSet) -> CharacterSet in
-            current.union(new)
-        }
-    }()
+    static var diacriticsCombining: CharacterSet = [
+        diacriticsCombiningCodes,
+        diacriticsCombiningCodesExtended,
+        diacriticsCombiningCodesSupplementary,
+        diacriticsCombiningCodesForSymbols,
+        diacriticsCombiningCodesHalfMarks
+    ].reduce(CharacterSet()) { (current: CharacterSet, new: CharacterSet) -> CharacterSet in
+        current.union(new)
+    }
 }
 
 public extension UnicodeScalar {
     var isDiacritics: Bool {
-        return CharacterSet.diacriticsCombining.contains(self)
+        CharacterSet.diacriticsCombining.contains(self)
     }
 }
 
@@ -60,13 +63,11 @@ public extension String {
     // implemented in the way that the text with valid diacritics should not be sanitized.
     var removingExtremeCombiningCharacters: String {
 
-        if self.unicodeScalars.count < extremeDiacriticsViewWindowSize {
+        if unicodeScalars.count < extremeDiacriticsViewWindowSize {
             return self
         }
 
-        let isDiacriticsMap = self.unicodeScalars.map {
-            $0.isDiacritics
-        }
+        let isDiacriticsMap = unicodeScalars.map(\.isDiacritics)
 
         var newUnicodeScalars = "".unicodeScalars
 
@@ -76,7 +77,7 @@ public extension String {
             currentWindowPosition += 1
 
             let endOfRange = min(isDiacriticsMap.endIndex, currentWindowPosition + extremeDiacriticsViewWindowSize)
-            let range = currentWindowPosition..<endOfRange
+            let range = currentWindowPosition ..< endOfRange
 
             // If the character coming into the window is not diacritic one the ratio is not affected
             // Or if the window is smaller than desired extremeDiacriticsViewMinWindowSize
@@ -91,8 +92,8 @@ public extension String {
 
             // verify current diacritics to characters ratio
             // if ratio is not satisfying (higher than @c diacriticsPerCharMaxRatio) the character has to be removed
-            if regularCharactersCount != 0 &&
-                Float(diacriticsCount) / Float(regularCharactersCount) < diacriticsPerCharMaxRatio {
+            if regularCharactersCount != 0,
+               Float(diacriticsCount) / Float(regularCharactersCount) < diacriticsPerCharMaxRatio {
                 newUnicodeScalars.append(scalar)
             }
         }
@@ -102,8 +103,7 @@ public extension String {
 }
 
 public extension NSString {
-    @objc(stringByRemovingExtremeCombiningCharacters)
-    var removingExtremeCombiningCharacters: NSString {
+    @objc(stringByRemovingExtremeCombiningCharacters) var removingExtremeCombiningCharacters: NSString {
         let selfString = (self as String)
         let result = selfString.removingExtremeCombiningCharacters
         return result as NSString

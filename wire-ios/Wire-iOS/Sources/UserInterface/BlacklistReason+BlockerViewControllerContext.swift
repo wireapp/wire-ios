@@ -23,9 +23,9 @@ extension BlacklistReason {
     var blockerViewControllerContext: BlockerViewControllerContext {
         switch self {
         case .appVersionBlacklisted, .clientAPIVersionObsolete:
-            return .blacklist
+            .blacklist
         case .backendAPIVersionObsolete:
-            return .backendNotSupported
+            .backendNotSupported
         }
     }
 }

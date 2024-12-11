@@ -196,7 +196,7 @@ final class AES256CryptoTests: XCTestCase {
         let key = try Scaffolding.randomInvalidKey()
 
         // Then
-        await XCTAssertThrowsError(AES256CryptoError.invalidKeyLength) {
+        await XCTAssertThrowsErrorAsync(AES256CryptoError.invalidKeyLength) {
             // When
             try AES256Crypto.encryptAllAtOnce(
                 plaintext: originalData,
@@ -211,7 +211,7 @@ final class AES256CryptoTests: XCTestCase {
         let key = try Scaffolding.randomInvalidKey()
 
         // Then
-        await XCTAssertThrowsError(AES256CryptoError.invalidKeyLength) {
+        await XCTAssertThrowsErrorAsync(AES256CryptoError.invalidKeyLength) {
             // When
             try AES256Crypto.decryptAllAtOnce(
                 ciphertext: originalData,

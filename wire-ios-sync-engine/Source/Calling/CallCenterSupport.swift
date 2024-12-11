@@ -43,7 +43,7 @@ public enum AVSConversationType: Int32 {
 
 }
 
- /// An object that represents a calling event.
+/// An object that represents a calling event.
 
 public struct CallEvent {
 

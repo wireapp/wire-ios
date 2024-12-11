@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Represents an animated image provided by Giphy.
- */
+/// Represents an animated image provided by Giphy.
 
 public struct ZiphyAnimatedImage: Codable {
 
@@ -31,10 +29,10 @@ public struct ZiphyAnimatedImage: Codable {
 
     public var description: String {
         let values = [
-            ("url = \(url.absoluteString)"),
-            ("width = \(width)"),
-            ("height = \(height)"),
-            ("fileSize = \(fileSize)")
+            "url = \(url.absoluteString)",
+            "width = \(width)",
+            "height = \(height)",
+            "fileSize = \(fileSize)"
         ]
 
         return "<< " + values.joined(separator: ", ") + ">>"
@@ -52,9 +50,9 @@ public struct ZiphyAnimatedImage: Codable {
     // MARK: - Codable
 
     public enum CodingKeys: String, CodingKey {
-        case url = "url"
-        case width = "width"
-        case height = "height"
+        case url
+        case width
+        case height
         case fileSize = "size"
     }
 

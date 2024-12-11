@@ -24,6 +24,7 @@ import UserNotifications
 import WireAnalytics
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireRequestStrategy
 import WireTransport
 import WireUtilities
@@ -32,11 +33,12 @@ public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
 
 public extension Bundle {
     @objc var appGroupIdentifier: String? {
-        return bundleIdentifier.map { "group." + $0 }
+        bundleIdentifier.map { "group." + $0 }
     }
 }
 
-@objc public enum CallNotificationStyle: UInt {
+@objc
+public enum CallNotificationStyle: UInt {
     case pushNotifications
     case callKit
 }
@@ -50,9 +52,11 @@ public protocol SessionActivationObserver: AnyObject {
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLogin(error: Error?)
     func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
-    func sessionManagerWillOpenAccount(_ account: Account,
-                                       from selectedAccount: Account?,
-                                       userSessionCanBeTornDown: @escaping () -> Void)
+    func sessionManagerWillOpenAccount(
+        _ account: Account,
+        from selectedAccount: Account?,
+        userSessionCanBeTornDown: @escaping () -> Void
+    )
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
@@ -93,9 +97,11 @@ public protocol SessionManagerType: AnyObject {
     ///   - conversation: the conversation to switch
     ///   - message: the message to navigate
     ///   - session: the session of the conversation
-    func showConversation(_ conversation: ZMConversation,
-                          at message: ZMConversationMessage?,
-                          in session: ZMUserSession)
+    func showConversation(
+        _ conversation: ZMConversation,
+        at message: ZMConversationMessage?,
+        in session: ZMUserSession
+    )
 
     /// Switch account and and ask UI to navigate to the conversatio list
     func showConversationList(in session: ZMUserSession)
@@ -124,25 +130,39 @@ public protocol ForegroundNotificationResponder: AnyObject {
 /// Manage the creation of `ZMUserSession` and `UnauthenticatedSession` objects and
 /// the switching between them.
 ///
-/// There are multiple things neccessary in order to store (and switch between) multiple accounts on one device, a couple of them are:
-/// 1. The folder structure in the app sandbox has to be modeled in a way in which files can be associated with a single account.
-/// 2. The login flow should not rely on any persistent state (e.g. no database has to be created on disk before being logged in).
-/// 3. There has to be a persistence layer storing information about accounts and the currently selected / active account.
+/// There are multiple things neccessary in order to store (and switch between) multiple accounts on one device, a
+/// couple of them are:
+/// 1. The folder structure in the app sandbox has to be modeled in a way in which files can be associated with a single
+/// account.
+/// 2. The login flow should not rely on any persistent state (e.g. no database has to be created on disk before being
+/// logged in).
+/// 3. There has to be a persistence layer storing information about accounts and the currently selected / active
+/// account.
 ///
-/// The wire account database and a couple of other related files are stored in the shared container in a folder named by the accounts
-/// `remoteIdentifier`. All information about different accounts on a device are stored by the `AccountManager` (see the documentation
-/// of that class for more information). The `SessionManager`s main responsibility at the moment is checking whether there is a selected
-/// `Account` or not, and creating an `UnauthenticatedSession` or `ZMUserSession` accordingly. An `UnauthenticatedSession` is used
-/// to create requests to either log in existing users or to register new users. It uses its own `UnauthenticatedOperationLoop`,
-/// which is a stripped down version of the regular `ZMOperationLoop`. This unauthenticated operation loop only uses a small subset
-/// of transcoders needed to perform the login / registration (and related phone number verification) requests. For more information
+/// The wire account database and a couple of other related files are stored in the shared container in a folder named
+/// by the accounts
+/// `remoteIdentifier`. All information about different accounts on a device are stored by the `AccountManager` (see the
+/// documentation
+/// of that class for more information). The `SessionManager`s main responsibility at the moment is checking whether
+/// there is a selected
+/// `Account` or not, and creating an `UnauthenticatedSession` or `ZMUserSession` accordingly. An
+/// `UnauthenticatedSession` is used
+/// to create requests to either log in existing users or to register new users. It uses its own
+/// `UnauthenticatedOperationLoop`,
+/// which is a stripped down version of the regular `ZMOperationLoop`. This unauthenticated operation loop only uses a
+/// small subset
+/// of transcoders needed to perform the login / registration (and related phone number verification) requests. For more
+/// information
 /// see `UnauthenticatedOperationLoop`.
 ///
-/// The result of using an `UnauthenticatedSession` is retrieving a remoteIdentifier of a logged in user, as well as a valid cookie.
-/// Once those became available, the session will notify the session manager, which in turn will create a regular `ZMUserSession`.
+/// The result of using an `UnauthenticatedSession` is retrieving a remoteIdentifier of a logged in user, as well as a
+/// valid cookie.
+/// Once those became available, the session will notify the session manager, which in turn will create a regular
+/// `ZMUserSession`.
 /// For more information about the cookie retrieval consult the documentation in `UnauthenticatedSession`.
 ///
-/// The flow creating either an `UnauthenticatedSession` or `ZMUserSession` after creating an instance of `SessionManager`
+/// The flow creating either an `UnauthenticatedSession` or `ZMUserSession` after creating an instance of
+/// `SessionManager`
 /// is depicted on a high level in the following diagram:
 ///
 ///
@@ -166,8 +186,10 @@ public protocol ForegroundNotificationResponder: AnyObject {
 ///                    v
 ///
 /// +------------------+---------------------+
-/// | Check if there is a database present   |        YES           Open the existing database, retrieve the user identifier,
-/// | in the legacy directory (not keyed by  |  +-------------->    create an account with it and select it. Migrate the existing
+/// | Check if there is a database present   |        YES           Open the existing database, retrieve the user
+/// identifier,
+/// | in the legacy directory (not keyed by  |  +-------------->    create an account with it and select it. Migrate the
+/// existing
 /// | the users remoteIdentifier)?           |                      cookie for that account and start at the top again.
 /// +----------------------------------------+
 ///
@@ -222,16 +244,21 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
         willSet {
-            self.unauthenticatedSession?.tearDown()
+            unauthenticatedSession?.tearDown()
         }
         didSet {
-            if let session = self.unauthenticatedSession {
+            if let session = unauthenticatedSession {
 
-                NotificationInContext(name: sessionManagerCreatedUnauthenticatedSessionNotificationName, context: self, object: session).post()
+                NotificationInContext(
+                    name: sessionManagerCreatedUnauthenticatedSessionNotificationName,
+                    context: self,
+                    object: session
+                ).post()
             }
         }
 
     }
+
     public weak var presentationDelegate: PresentationDelegate?
     public weak var foregroundNotificationResponder: ForegroundNotificationResponder?
     public weak var switchingDelegate: SessionManagerSwitchingDelegate?
@@ -251,7 +278,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var authenticatedSessionFactory: AuthenticatedSessionFactory
     let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
 
-    private let sessionLoadingQueue: DispatchQueue = DispatchQueue(label: "sessionLoadingQueue")
+    private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
 
     private(set) var reachability: ReachabilityWrapper
 
@@ -289,7 +316,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public var activeUnauthenticatedSession: UnauthenticatedSession {
-        return unauthenticatedSession ?? createUnauthenticatedSession()
+        unauthenticatedSession ?? createUnauthenticatedSession()
     }
 
     private static var avsLogObserver: AVSLogObserver?
@@ -337,7 +364,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
-        analyticsServiceConfiguration: AnalyticsServiceConfiguration?
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        countlyProvider: @escaping () -> CountlyProtocol
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -392,12 +420,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: minTLSVersion,
             deleteUserLogs: deleteUserLogs,
-            analyticsServiceConfiguration: analyticsServiceConfiguration
+            analyticsServiceConfiguration: analyticsServiceConfiguration,
+            countlyProvider: countlyProvider
         )
 
         configureBlacklistDownload()
 
-        memoryWarningObserver = NotificationCenter.default.addObserver(
+        self.memoryWarningObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.didReceiveMemoryWarningNotification,
             object: nil,
             queue: nil
@@ -433,28 +462,30 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     }
 
-    init(maxNumberAccounts: Int = defaultMaxNumberAccounts,
-         appVersion: String,
-         authenticatedSessionFactory: AuthenticatedSessionFactory,
-         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
-         reachability: ReachabilityWrapper,
-         delegate: SessionManagerDelegate?,
-         application: ZMApplication,
-         pushRegistry: PushRegistry,
-         dispatchGroup: ZMSDispatchGroup,
-         environment: BackendEnvironmentProvider,
-         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
-         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-         requiredPushTokenType: PushToken.TokenType,
-         pushTokenService: PushTokenServiceInterface = PushTokenService(),
-         callKitManager: CallKitManagerInterface,
-         isDeveloperModeEnabled: Bool = false,
-         proxyCredentials: ProxyCredentials?,
-         isUnauthenticatedTransportSessionReady: Bool = false,
-         sharedUserDefaults: UserDefaults,
-         minTLSVersion: String? = nil,
-         deleteUserLogs: (() -> Void)? = nil,
-         analyticsServiceConfiguration: AnalyticsServiceConfiguration?
+    init(
+        maxNumberAccounts: Int = defaultMaxNumberAccounts,
+        appVersion: String,
+        authenticatedSessionFactory: AuthenticatedSessionFactory,
+        unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
+        reachability: ReachabilityWrapper,
+        delegate: SessionManagerDelegate?,
+        application: ZMApplication,
+        pushRegistry: PushRegistry,
+        dispatchGroup: ZMSDispatchGroup,
+        environment: BackendEnvironmentProvider,
+        configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
+        detector: JailbreakDetectorProtocol = JailbreakDetector(),
+        requiredPushTokenType: PushToken.TokenType,
+        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        callKitManager: CallKitManagerInterface,
+        isDeveloperModeEnabled: Bool = false,
+        proxyCredentials: ProxyCredentials?,
+        isUnauthenticatedTransportSessionReady: Bool = false,
+        sharedUserDefaults: UserDefaults,
+        minTLSVersion: String? = nil,
+        deleteUserLogs: (() -> Void)? = nil,
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        countlyProvider: @escaping () -> CountlyProtocol
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -482,10 +513,11 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
-        if self.accountManager.accounts.count > 0 {
+        if !accountManager.accounts.isEmpty {
             WireLogger.sessionManager.debug("Known accounts:")
-            self.accountManager.accounts.forEach { account in
-                WireLogger.sessionManager.debug("\(account.userName) -- \(account.userIdentifier) -- \(account.teamName ?? "no team")")
+            accountManager.accounts.forEach { account in
+                WireLogger.sessionManager
+                    .debug("\(account.userName) -- \(account.userIdentifier) -- \(account.teamName ?? "no team")")
             }
 
             if let selectedAccount = accountManager.selectedAccount {
@@ -517,9 +549,11 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        analyticsService = AnalyticsService(
+        self.analyticsService = AnalyticsService(
             config: analyticsConfig,
-            logger: { WireLogger.analytics.debug($0) }
+            deviceModel: UIDevice.current.model,
+            deviceOS: UIDevice.current.systemVersion,
+            countlyProvider: countlyProvider
         )
 
         if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
@@ -540,30 +574,30 @@ public final class SessionManager: NSObject, SessionManagerType {
         pushTokenService.onTokenChange = { [weak self] _ in
             guard
                 let self,
-                let session = self.activeUserSession
+                let session = activeUserSession
             else {
                 return
             }
 
-            self.syncLocalTokenWithRemote(session: session)
+            syncLocalTokenWithRemote(session: session)
         }
 
-        deleteAccountToken = AccountDeletedNotification.addObserver(observer: self, queue: groupQueue)
-        callCenterObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
+        self.deleteAccountToken = AccountDeletedNotification.addObserver(observer: self, queue: groupQueue)
+        self.callCenterObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
 
         checkJailbreakIfNeeded()
     }
 
     private func configureBlacklistDownload() {
         if configuration.blacklistDownloadInterval > 0 {
-            self.blacklistVerificator?.tearDown()
-            self.blacklistVerificator = ZMBlacklistVerificator(
+            blacklistVerificator?.tearDown()
+            blacklistVerificator = ZMBlacklistVerificator(
                 checkInterval: configuration.blacklistDownloadInterval,
                 version: appVersion,
                 environment: environment,
                 proxyUsername: proxyCredentials?.username,
                 proxyPassword: proxyCredentials?.password,
-                readyForRequests: self.isUnauthenticatedTransportSessionReady,
+                readyForRequests: isUnauthenticatedTransportSessionReady,
                 working: nil,
                 application: application,
                 minTLSVersion: minTLSVersion,
@@ -571,14 +605,15 @@ public final class SessionManager: NSObject, SessionManagerType {
                     guard let self, !self.isAppVersionBlacklisted else { return }
 
                     if blacklisted {
-                        self.isAppVersionBlacklisted = true
-                        self.delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+                        isAppVersionBlacklisted = true
+                        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
                         // When the application version is blacklisted we don't want have a
                         // transition to any other state in the UI, so we won't inform it
                         // anymore by setting the delegate to nil.
-                        self.delegate = nil
+                        delegate = nil
                     }
-                })
+                }
+            )
         }
     }
 
@@ -643,7 +678,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func migrateAccount(with identifier: UUID) -> Account {
         let account = Account(userName: "", userIdentifier: identifier)
         accountManager.addAndSelect(account)
-        let migrator = ZMPersistentCookieStorageMigrator(userIdentifier: identifier, serverName: authenticatedSessionFactory.environment.backendURL.host!)
+        let migrator = ZMPersistentCookieStorageMigrator(
+            userIdentifier: identifier,
+            serverName: authenticatedSessionFactory.environment.backendURL.host!
+        )
         _ = migrator.createStoreMigratingLegacyStoreIfNeeded()
         return account
     }
@@ -672,8 +710,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                 return
             }
 
-            self.updateCurrentAccount(in: session.managedObjectContext)
-            session.application(self.application, didFinishLaunching: launchOptions)
+            updateCurrentAccount(in: session.managedObjectContext)
+            session.application(application, didFinishLaunching: launchOptions)
         }
     }
 
@@ -748,8 +786,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteAllAccounts(reason: ZMAccountDeletedReason) {
-        let inactiveAccounts = accountManager.accounts.filter({ $0 != accountManager.selectedAccount })
-        inactiveAccounts.forEach({ delete(account: $0, reason: reason) })
+        let inactiveAccounts = accountManager.accounts.filter { $0 != accountManager.selectedAccount }
+        inactiveAccounts.forEach { delete(account: $0, reason: reason) }
 
         if let activeAccount = accountManager.selectedAccount {
             delete(account: activeAccount, reason: reason)
@@ -765,15 +803,19 @@ public final class SessionManager: NSObject, SessionManagerType {
             })
         } else if accountManager.selectedAccount != account {
             // Deleted an inactive account, there's no need notify the UI
-            self.tearDownSessionAndDelete(account: account)
+            tearDownSessionAndDelete(account: account)
         } else {
             // Deleted the last account so we need to return to the logged out area
-            logoutCurrentSession(deleteCookie: true, deleteAccount: true, error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason]))
+            logoutCurrentSession(
+                deleteCookie: true,
+                deleteAccount: true,
+                error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason])
+            )
         }
     }
 
     fileprivate func tearDownSessionAndDelete(account: Account) {
-        self.tearDownBackgroundSession(for: account.userIdentifier) {
+        tearDownBackgroundSession(for: account.userIdentifier) {
             self.deleteAccountData(for: account)
         }
     }
@@ -796,10 +838,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     #if DEBUG
-    /// This method is only used in tests and should be deleted. See [WPB-10404].
-    func logoutCurrentSessionWithoutDeletingCookie() {
-        logoutCurrentSession(deleteCookie: false, deleteAccount: false, error: nil)
-    }
+        /// This method is only used in tests and should be deleted. See [WPB-10404].
+        func logoutCurrentSessionWithoutDeletingCookie() {
+            logoutCurrentSession(deleteCookie: false, deleteAccount: false, error: nil)
+        }
     #endif
 
     fileprivate func deleteTemporaryData() {
@@ -808,7 +850,11 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
         try? manager
-            .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
+            .contentsOfDirectory(
+                at: tmpDirectoryPath,
+                includingPropertiesForKeys: nil,
+                options: .skipsSubdirectoryDescendants
+            )
             .forEach { file in
                 try? manager.removeItem(atPath: file.path)
             }
@@ -828,7 +874,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         tearDownObservers(account: account.userIdentifier)
         notifyUserSessionDestroyed(account.userIdentifier)
 
-        self.createUnauthenticatedSession(accountId: deleteAccount ? nil : account.userIdentifier)
+        createUnauthenticatedSession(accountId: deleteAccount ? nil : account.userIdentifier)
 
         guard let activeUserSession else {
             WireLogger.sessionManager.critical("No active user session")
@@ -855,13 +901,11 @@ public final class SessionManager: NSObject, SessionManagerType {
         })
     }
 
-    /**
-     Loads a session for a given account
-
-     - Parameters:
-     - account: account for which to load the session
-     - completion: called when session is loaded or when session fails to load
-     */
+    /// Loads a session for a given account
+    ///
+    /// - Parameters:
+    /// - account: account for which to load the session
+    /// - completion: called when session is loaded or when session fails to load
     func loadSession(for account: Account, completion: @escaping (ZMUserSession?) -> Void) {
         guard environment.isAuthenticated(account) else {
             completion(nil)
@@ -871,8 +915,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             } else {
                 createUnauthenticatedSession(accountId: account.userIdentifier)
 
-                let error = NSError(userSessionErrorCode: .accessTokenExpired,
-                                    userInfo: account.loginCredentials?.dictionaryRepresentation)
+                let error = NSError(
+                    userSessionErrorCode: .accessTokenExpired,
+                    userInfo: account.loginCredentials?.dictionaryRepresentation
+                )
                 delegate?.sessionManagerDidFailToLogin(error: error)
             }
 
@@ -885,7 +931,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
-            WireLogger.sessionManager.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
+            WireLogger.sessionManager
+                .debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
 
             self.delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
             self.configureUserNotifications()
@@ -934,10 +981,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         perform completion: @escaping (ZMUserSession) -> Void
     ) {
         WireLogger.sessionManager.debug("Request to load session for \(account)")
-        let group = self.dispatchGroup
+        let group = dispatchGroup
 
         group.enter()
-        self.sessionLoadingQueue.serialAsync { onWorkDone in
+        sessionLoadingQueue.serialAsync { onWorkDone in
             if let session = self.backgroundUserSessions[account.userIdentifier] {
                 WireLogger.sessionManager.debug("Session for \(account) is already loaded")
                 completion(session)
@@ -957,7 +1004,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func retryStart() {
-        self.delegate?.sessionManagerAsksToRetryStart()
+        delegate?.sessionManagerAsksToRetryStart()
     }
 
     private func setupUserSession(
@@ -983,23 +1030,26 @@ public final class SessionManager: NSObject, SessionManagerType {
                     return
                 }
 
-                let userSession = self.startBackgroundSession(
+                let userSession = startBackgroundSession(
                     for: account,
                     with: coreDataStack
                 )
 
-                triggerSlowSyncIfNeeded(with: userSession)
+                triggerMigrationsNeedsActionsIfNeeded(with: userSession)
 
                 onCompletion(userSession)
             }
         )
     }
 
-    private func triggerSlowSyncIfNeeded(with userSession: ZMUserSession) {
+    /// Executes post migration slow sync or sync resources
+    private func triggerMigrationsNeedsActionsIfNeeded(with userSession: ZMUserSession) {
         let context = userSession.syncContext
         context.perform {
-            if context.readAndResetSlowSyncFlag() {
+            if context.readMigrationNeedsSlowSyncFlag() {
                 userSession.syncStatus.forceSlowSync()
+            } else if context.readMigrationNeedsSyncResourcesFlag() {
+                userSession.syncStatus.resyncResources()
             }
         }
     }
@@ -1034,10 +1084,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
 
         let accountID = account.userIdentifier
-        self.accountManager.remove(account)
+        accountManager.remove(account)
 
         do {
-            try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(accountIdentifier: accountID, applicationContainer: sharedContainerURL))
+            try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(
+                accountIdentifier: accountID,
+                applicationContainer: sharedContainerURL
+            ))
         } catch {
             WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
         }
@@ -1046,12 +1099,26 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func registerObservers(account: Account, session: ZMUserSession) {
 
         let selfUser = ZMUser.selfUser(inUserSession: session)
-        let teamObserver = TeamChangeInfo.add(observer: self, for: nil, managedObjectContext: session.managedObjectContext)
+        let teamObserver = TeamChangeInfo.add(
+            observer: self,
+            for: nil,
+            managedObjectContext: session.managedObjectContext
+        )
         let selfObserver = UserChangeInfo.add(observer: self, for: selfUser, in: session.managedObjectContext)
-        let conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.conversations(inUserSession: session)!, userSession: session)
-        let connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: session)!, userSession: session)
-        let unreadCountObserver = NotificationInContext.addObserver(name: .AccountUnreadCountDidChangeNotification,
-                                                                    context: account) { [weak self] note in
+        let conversationListObserver = ConversationListChangeInfo.add(
+            observer: self,
+            for: ConversationList.conversations(inUserSession: session)!,
+            userSession: session
+        )
+        let connectionRequestObserver = ConversationListChangeInfo.add(
+            observer: self,
+            for: ConversationList.pendingConnectionConversations(inUserSession: session)!,
+            userSession: session
+        )
+        let unreadCountObserver = NotificationInContext.addObserver(
+            name: .AccountUnreadCountDidChangeNotification,
+            context: account
+        ) { [weak self] note in
             guard let account = note.context as? Account else { return }
             self?.accountManager.addOrUpdate(account)
         }
@@ -1074,8 +1141,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     @discardableResult
     func createUnauthenticatedSession(accountId: UUID? = nil) -> UnauthenticatedSession {
         WireLogger.sessionManager.debug("Creating unauthenticated session")
-        let unauthenticatedSession = unauthenticatedSessionFactory.session(delegate: self,
-                                                                           authenticationStatusDelegate: self)
+        let unauthenticatedSession = unauthenticatedSessionFactory.session(
+            delegate: self,
+            authenticationStatusDelegate: self
+        )
         unauthenticatedSession.accountId = accountId
         self.unauthenticatedSession = unauthenticatedSession
         return unauthenticatedSession
@@ -1097,11 +1166,15 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func deleteMessagesOlderThanRetentionLimit(contextProvider: ContextProvider) {
         guard let messageRetentionInternal = configuration.messageRetentionInterval else { return }
 
-        WireLogger.sessionManager.debug("Deleting messages older than the retention limit = \(messageRetentionInternal)")
+        WireLogger.sessionManager
+            .debug("Deleting messages older than the retention limit = \(messageRetentionInternal)")
 
         contextProvider.syncContext.performGroupedBlock {
             do {
-                try ZMMessage.deleteMessagesOlderThan(Date(timeIntervalSinceNow: -messageRetentionInternal), context: contextProvider.syncContext)
+                try ZMMessage.deleteMessagesOlderThan(
+                    Date(timeIntervalSinceNow: -messageRetentionInternal),
+                    context: contextProvider.syncContext
+                )
             } catch {
                 WireLogger.sessionManager.error("Failed to delete messages older than the retention limit")
             }
@@ -1128,18 +1201,22 @@ public final class SessionManager: NSObject, SessionManagerType {
             preconditionFailure("Unable to create session for \(account)")
         }
 
-        self.configure(session: newSession, for: account)
-        self.deleteMessagesOlderThanRetentionLimit(contextProvider: coreDataStack)
-        self.updateSystemBootTimeIfNeeded()
+        configure(session: newSession, for: account)
+        deleteMessagesOlderThanRetentionLimit(contextProvider: coreDataStack)
+        updateSystemBootTimeIfNeeded()
 
-        WireLogger.sessionManager.debug("Created ZMUserSession for account \(String(describing: account.userName)) — \(account.userIdentifier)")
+        WireLogger.sessionManager
+            .debug(
+                "Created ZMUserSession for account \(String(describing: account.userName)) — \(account.userIdentifier)"
+            )
         notifyNewUserSessionCreated(newSession)
         return newSession
     }
 
-    internal func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
-        guard let userSession = self.backgroundUserSessions[accountId] else {
-            WireLogger.sessionManager.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
+    func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
+        guard let userSession = backgroundUserSessions[accountId] else {
+            WireLogger.sessionManager
+                .error("No session to tear down for \(accountId), known sessions: \(backgroundUserSessions)")
             completion?()
             return
         }
@@ -1156,7 +1233,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // Tears down and releases all background user sessions.
-    internal func tearDownAllBackgroundSessions() {
+    func tearDownAllBackgroundSessions() {
         let backgroundSessions = backgroundUserSessions.filter { _, session in
             activeUserSession != session
         }
@@ -1171,14 +1248,16 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     deinit {
-        DispatchQueue.main.async { [backgroundUserSessions, blacklistVerificator, unauthenticatedSession, reachability] in
-            backgroundUserSessions.values.forEach { session in
-                session.tearDown()
+        DispatchQueue
+            .main
+            .async { [backgroundUserSessions, blacklistVerificator, unauthenticatedSession, reachability] in
+                backgroundUserSessions.values.forEach { session in
+                    session.tearDown()
+                }
+                blacklistVerificator?.tearDown()
+                unauthenticatedSession?.tearDown()
+                reachability.tearDown()
             }
-            blacklistVerificator?.tearDown()
-            unauthenticatedSession?.tearDown()
-            reachability.tearDown()
-        }
 
         if let memoryWarningObserver {
             NotificationCenter.default.removeObserver(memoryWarningObserver)
@@ -1186,7 +1265,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public var isUserSessionActive: Bool {
-        return activeUserSession != nil
+        activeUserSession != nil
     }
 
     func updateProfileImage(imageData: Data) {
@@ -1241,11 +1320,11 @@ public final class SessionManager: NSObject, SessionManagerType {
                 deleteAllAccounts(reason: .jailbreakDetected)
             }
 
-            self.delegate?.sessionManagerDidBlacklistJailbrokenDevice()
+            delegate?.sessionManagerDidBlacklistJailbrokenDevice()
             // When the device is jailbroken we don't want have a
             // transition to any other state in the UI, so we won't inform it
             // anymore by setting the delegate to nil.
-            self.delegate = nil
+            delegate = nil
         }
     }
 
@@ -1257,12 +1336,18 @@ public final class SessionManager: NSObject, SessionManagerType {
               abs(systemBootTime.timeIntervalSince(previousSystemBootTime)) > 1.0
         else { return false }
 
-        WireLogger.sessionManager.debug("Will logout due to device reboot. Previous boot time: \(previousSystemBootTime). Current boot time: \(systemBootTime)")
+        WireLogger.sessionManager
+            .debug(
+                "Will logout due to device reboot. Previous boot time: \(previousSystemBootTime). Current boot time: \(systemBootTime)"
+            )
         return true
     }
 
     func performPostRebootLogout() {
-        let error = NSError(userSessionErrorCode: .needsAuthenticationAfterReboot, userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation)
+        let error = NSError(
+            userSessionErrorCode: .needsAuthenticationAfterReboot,
+            userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation
+        )
         logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
         WireLogger.sessionManager.debug("Logout caused by device reboot.")
     }
@@ -1356,11 +1441,12 @@ extension SessionManager: UserObserving {
 
 // MARK: - UnauthenticatedSessionDelegate
 
-extension SessionManager {
+public extension SessionManager {
 
     /// Needs to be called before we try to register another device because API requires password
-    public func update(credentials: UserCredentials) -> Bool {
-        guard let userSession = activeUserSession, let emailCredentials = credentials as? UserEmailCredentials else { return false }
+    func update(credentials: UserCredentials) -> Bool {
+        guard let userSession = activeUserSession,
+              let emailCredentials = credentials as? UserEmailCredentials else { return false }
 
         userSession.setEmailCredentials(emailCredentials)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
@@ -1373,21 +1459,21 @@ extension SessionManager: UnauthenticatedSessionDelegate {
     public func sessionIsAllowedToCreateNewAccount(
         _ session: UnauthenticatedSession
     ) -> Bool {
-        return accountManager.accounts.count < maxNumberAccounts
+        accountManager.accounts.count < maxNumberAccounts
     }
 
     public func session(
         session: UnauthenticatedSession,
         isExistingAccount account: Account
     ) -> Bool {
-        return accountManager.accounts.contains(account)
+        accountManager.accounts.contains(account)
     }
 
     public func session(
         session: UnauthenticatedSession,
         updatedCredentials credentials: UserCredentials
     ) -> Bool {
-        return update(credentials: credentials)
+        update(credentials: credentials)
     }
 
     public func session(
@@ -1414,7 +1500,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
         accountManager.addAndSelect(account)
 
-        self.activateSession(for: account) { userSession in
+        activateSession(for: account) { userSession in
             self.updateCurrentAccount(in: userSession.managedObjectContext)
 
             if let profileImageData = session.authenticationStatus.profileImageData {
@@ -1430,7 +1516,8 @@ extension SessionManager: UnauthenticatedSessionDelegate {
                 break
             }
 
-            let registered = session.authenticationStatus.completedRegistration || session.registrationStatus.completedRegistration
+            let registered = session.authenticationStatus.completedRegistration || session.registrationStatus
+                .completedRegistration
             let emailCredentials = session.authenticationStatus.emailCredentials()
 
             userSession.syncManagedObjectContext.performGroupedBlock {
@@ -1457,7 +1544,8 @@ extension SessionManager: AccountDeletedObserver {
 // MARK: - Application lifetime notifications
 
 extension SessionManager {
-    @objc fileprivate func applicationWillEnterForeground(_ note: Notification) {
+    @objc
+    private func applicationWillEnterForeground(_ note: Notification) {
 
         BackgroundActivityFactory.shared.resume()
 
@@ -1472,7 +1560,7 @@ extension SessionManager {
             // to complete the login flow, which will be handle elsewhere.
             if session.isLoggedIn {
                 session.trackAppOpenAnalyticEventWhenAppBecomesActive()
-                self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+                delegate?.sessionManagerDidReportLockChange(forSession: session)
                 Task {
                     await self.requestCertificateEnrollmentIfNeeded()
                 }
@@ -1480,11 +1568,13 @@ extension SessionManager {
         }
     }
 
-    @objc func applicationWillResignActive(_ note: Notification) {
+    @objc
+    func applicationWillResignActive(_ note: Notification) {
         activeUserSession?.appLockController.beginTimer()
     }
 
-    @objc fileprivate func applicationDidBecomeActive(_ note: Notification) {
+    @objc
+    private func applicationDidBecomeActive(_ note: Notification) {
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()
     }
@@ -1507,7 +1597,7 @@ extension SessionManager: ZMConversationListObserver {
 
     fileprivate func updateUnreadCount(for accountID: UUID) {
         guard
-            let account = self.accountManager.account(with: accountID),
+            let account = accountManager.account(with: accountID),
             let session = backgroundUserSessions[accountID]
         else {
             return
@@ -1528,19 +1618,27 @@ extension SessionManager: ZMConversationListObserver {
             account?.unreadConversationCount = unreadCount
             let totalUnreadCount = self.accountManager.totalUnreadCount
             self.application.applicationIconBadgeNumber = totalUnreadCount
-            Logging.push.safePublic("Updated badge count to \(SanitizedString(stringLiteral: String(totalUnreadCount)))")
+            Logging.push
+                .safePublic("Updated badge count to \(SanitizedString(stringLiteral: String(totalUnreadCount)))")
         }
     }
 }
 
 extension SessionManager: WireCallCenterCallStateObserver {
 
-    public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    public func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         guard let moc = conversation.managedObjectContext else { return }
 
         switch callState {
         case .answered, .outgoing:
-            for (_, session) in backgroundUserSessions where session.managedObjectContext == moc && activeUserSession != session {
+            for (_, session) in backgroundUserSessions
+                where session.managedObjectContext == moc && activeUserSession != session {
                 showConversation(conversation, at: nil, in: session)
             }
         default:
@@ -1550,16 +1648,16 @@ extension SessionManager: WireCallCenterCallStateObserver {
 
 }
 
-extension SessionManager {
+public extension SessionManager {
 
     /// The SSO code provided by the user when clicking their company link. Points to a UUID object.
-    public static var companyLoginCodeKey: String {
-        return "WireCompanyLoginCode"
+    static var companyLoginCodeKey: String {
+        "WireCompanyLoginCode"
     }
 
     /// The timestamp when the user initiated the request.
-    public static var companyLoginRequestTimestampKey: String {
-        return "WireCompanyLoginTimesta;p"
+    static var companyLoginRequestTimestampKey: String {
+        "WireCompanyLoginTimesta;p"
     }
 }
 
@@ -1588,7 +1686,8 @@ extension SessionManager {
 
 // MARK: - Session manager observer
 
-@objc public protocol SessionManagerCreatedSessionObserver: AnyObject {
+@objc
+public protocol SessionManagerCreatedSessionObserver: AnyObject {
     /// Invoked when the SessionManager creates a user session either by
     /// activating one or creating one in the background. No assumption should
     /// be made that the session is active.
@@ -1598,50 +1697,69 @@ extension SessionManager {
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession)
 }
 
-@objc public protocol SessionManagerDestroyedSessionObserver: AnyObject {
+@objc
+public protocol SessionManagerDestroyedSessionObserver: AnyObject {
     /// Invoked when the SessionManager tears down the user session associated
     /// with the accountId.
     func sessionManagerDestroyedUserSession(for accountId: UUID)
 }
 
-private let sessionManagerCreatedUnauthenticatedSessionNotificationName = Notification.Name(rawValue: "ZMSessionManagerCreatedUnauthenticatedSessionNotification")
-private let sessionManagerCreatedSessionNotificationName = Notification.Name(rawValue: "ZMSessionManagerCreatedSessionNotification")
-private let sessionManagerDestroyedSessionNotificationName = Notification.Name(rawValue: "ZMSessionManagerDestroyedSessionNotification")
+private let sessionManagerCreatedUnauthenticatedSessionNotificationName = Notification
+    .Name(rawValue: "ZMSessionManagerCreatedUnauthenticatedSessionNotification")
+private let sessionManagerCreatedSessionNotificationName = Notification
+    .Name(rawValue: "ZMSessionManagerCreatedSessionNotification")
+private let sessionManagerDestroyedSessionNotificationName = Notification
+    .Name(rawValue: "ZMSessionManagerDestroyedSessionNotification")
 
 extension SessionManager: NotificationContext {
 
-    public func addUnauthenticatedSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver) -> Any {
-        return NotificationInContext.addObserver(
+    public func addUnauthenticatedSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver)
+        -> Any {
+        NotificationInContext.addObserver(
             name: sessionManagerCreatedUnauthenticatedSessionNotificationName,
-            context: self) { [weak observer] note in observer?.sessionManagerCreated(unauthenticatedSession: note.object as! UnauthenticatedSession) }
+            context: self
+        ) { [weak observer] note in observer?
+            .sessionManagerCreated(unauthenticatedSession: note.object as! UnauthenticatedSession)
+        }
     }
 
     public func addSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver) -> Any {
-        return NotificationInContext.addObserver(
+        NotificationInContext.addObserver(
             name: sessionManagerCreatedSessionNotificationName,
-            context: self) { [weak observer] note in observer?.sessionManagerCreated(userSession: note.object as! ZMUserSession) }
+            context: self
+        ) { [weak observer] note in observer?
+            .sessionManagerCreated(userSession: note.object as! ZMUserSession)
+        }
     }
 
     public func addSessionManagerDestroyedSessionObserver(_ observer: SessionManagerDestroyedSessionObserver) -> Any {
-        return NotificationInContext.addObserver(
+        NotificationInContext.addObserver(
             name: sessionManagerDestroyedSessionNotificationName,
-            context: self) { [weak observer] note in observer?.sessionManagerDestroyedUserSession(for: note.object as! UUID) }
+            context: self
+        ) { [weak observer] note in observer?
+            .sessionManagerDestroyedUserSession(for: note.object as! UUID)
+        }
     }
 
     fileprivate func notifyNewUserSessionCreated(_ userSession: ZMUserSession) {
-        NotificationInContext(name: sessionManagerCreatedSessionNotificationName, context: self, object: userSession).post()
+        NotificationInContext(name: sessionManagerCreatedSessionNotificationName, context: self, object: userSession)
+            .post()
     }
 
     fileprivate func notifyUserSessionDestroyed(_ accountId: UUID) {
-        NotificationInContext(name: sessionManagerDestroyedSessionNotificationName, context: self, object: accountId as AnyObject).post()
+        NotificationInContext(
+            name: sessionManagerDestroyedSessionNotificationName,
+            context: self,
+            object: accountId as AnyObject
+        ).post()
     }
 }
 
-extension SessionManager {
-    public func markAllConversationsAsRead(completion: (() -> Void)?) {
+public extension SessionManager {
+    func markAllConversationsAsRead(completion: (() -> Void)?) {
         let group = DispatchGroup()
 
-        self.accountManager.accounts.forEach { account in
+        accountManager.accounts.forEach { account in
             group.enter()
             self.withSession(for: account) { userSession in
                 userSession.perform {
@@ -1658,9 +1776,9 @@ extension SessionManager {
     }
 }
 
-extension SessionManager {
+public extension SessionManager {
 
-    public func confirmSwitchingAccount(completion: @escaping (_ isConfirmed: Bool) -> Void) {
+    func confirmSwitchingAccount(completion: @escaping (_ isConfirmed: Bool) -> Void) {
         guard
             let switchingDelegate,
             let activeUserSession,
@@ -1681,13 +1799,13 @@ extension SessionManager {
 
 // MARK: - AVS Logging
 
-extension SessionManager {
+public extension SessionManager {
 
-    public static func startAVSLogging() {
+    static func startAVSLogging() {
         avsLogObserver = AVSLogObserver()
     }
 
-    public static func stopAVSLogging() {
+    static func stopAVSLogging() {
         avsLogObserver = nil
     }
 }

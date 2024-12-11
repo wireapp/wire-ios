@@ -24,7 +24,7 @@ final class SectionFooter: UICollectionReusableView {
     private let footerView = SectionFooterView()
 
     var titleLabel: UILabel {
-        return footerView.titleLabel
+        footerView.titleLabel
     }
 
     override init(frame: CGRect) {
@@ -40,6 +40,10 @@ final class SectionFooter: UICollectionReusableView {
     }
 
     static func register(collectionView: UICollectionView) {
-        collectionView.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter")
+        collectionView.register(
+            SectionFooter.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "SectionFooter"
+        )
     }
 }

@@ -46,8 +46,8 @@ final class EphemeralTimeoutFormatter {
         func string(from interval: TimeInterval) -> String? {
 
             guard let dayString = dayFormatter.string(from: interval),
-                let hourString = hourFormatter.string(from: interval) else {
-                    return nil
+                  let hourString = hourFormatter.string(from: interval) else {
+                return nil
             }
 
             guard !hourString.hasSuffix("0:00") else { return dayString }
@@ -57,19 +57,22 @@ final class EphemeralTimeoutFormatter {
             // remove the day of hourString
             do {
                 let regex = try NSRegularExpression(pattern: "[0-9]+.+ ")
-                let results = regex.matches(in: hourString, options: [], range: NSRange(location: 0, length: hourString.count))
+                let results = regex.matches(
+                    in: hourString,
+                    options: [],
+                    range: NSRange(location: 0, length: hourString.count)
+                )
 
-                if results.count > 0 {
+                if !results.isEmpty {
                     let startIndex = hourString.index(hourString.startIndex, offsetBy: results[0].range.length)
 
                     hourStringWithoutDay = String(hourString[startIndex...])
                 } else {
                     hourStringWithoutDay = hourString
                 }
-            } catch {
-            }
+            } catch {}
 
-            if hourStringWithoutDay.count > 0 {
+            if !hourStringWithoutDay.isEmpty {
                 return dayString + " ".localized + hourStringWithoutDay
             } else {
                 return dayString
@@ -102,7 +105,7 @@ final class EphemeralTimeoutFormatter {
     private let dayFormatter = DayFormatter()
 
     func string(from interval: TimeInterval) -> String? {
-        return timeString(from: interval).map {
+        timeString(from: interval).map {
             L10n.Localizable.Content.System.ephemeralTimeRemaining($0)
         }
     }

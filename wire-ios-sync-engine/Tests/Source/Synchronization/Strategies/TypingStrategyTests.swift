@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class MockTyping: WireSyncEngine.Typing {
     var didTearDown: Bool = false
@@ -42,7 +42,7 @@ class MockTyping: WireSyncEngine.Typing {
     }
 
     func isUserTyping(user: ZMUser, in conversation: ZMConversation) -> Bool {
-        guard let users = typingUsers[conversation] else {return false}
+        guard let users = typingUsers[conversation] else { return false }
         return users.contains(user)
     }
 }
@@ -50,14 +50,17 @@ class MockTyping: WireSyncEngine.Typing {
 class MockClientRegistrationDelegate: NSObject, ClientRegistrationDelegate {
     var mockReadiness = true
     var clientIsReadyForRequests: Bool {
-        return mockReadiness
+        mockReadiness
     }
 
     public func didDetectCurrentClientDeletion() {}
 }
 
 enum TestTyping {
-    case noDelay, delay, clearTranscoder, appendMessage
+    case noDelay
+    case delay
+    case clearTranscoder
+    case appendMessage
 }
 
 final class TypingStrategyTests: MessagingTest {
@@ -74,11 +77,16 @@ final class TypingStrategyTests: MessagingTest {
         originalTimeout = MockTyping.defaultTimeout
         MockTyping.defaultTimeout = 3.0
 
-        self.typing = MockTyping(uiContext: uiMOC, syncContext: syncMOC)
-        self.mockApplicationStatus = MockApplicationStatus()
-        self.mockApplicationStatus.mockSynchronizationState = .online
+        typing = MockTyping(uiContext: uiMOC, syncContext: syncMOC)
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .online
 
-        self.sut = TypingStrategy(applicationStatus: mockApplicationStatus, syncContext: syncMOC, uiContext: uiMOC, typing: typing)
+        sut = TypingStrategy(
+            applicationStatus: mockApplicationStatus,
+            syncContext: syncMOC,
+            uiContext: uiMOC,
+            typing: typing
+        )
 
         syncMOC.performGroupedAndWait {
             self.conversationA = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -90,13 +98,13 @@ final class TypingStrategyTests: MessagingTest {
     }
 
     override func tearDown() {
-        self.conversationA = nil
-        self.userA = nil
+        conversationA = nil
+        userA = nil
 
-        self.sut.tearDown()
+        sut.tearDown()
         XCTAssertTrue(typing.didTearDown)
-        self.typing = nil
-        self.sut = nil
+        typing = nil
+        sut = nil
 
         MockTyping.defaultTimeout = originalTimeout
         super.tearDown()
@@ -116,22 +124,24 @@ final class TypingStrategyTests: MessagingTest {
     }
 
     func typingEvent(isTyping: Bool) -> ZMUpdateEvent {
-        let payload = ["conversation": conversationA.remoteIdentifier!.transportString(),
-                       "data": ["status": isTyping ? "started" : "stopped"],
-                       "from": userA.remoteIdentifier!.transportString(),
-                       "time": Date().transportString(),
-                       "type": "conversation.typing"
-                       ] as [String: Any]
+        let payload = [
+            "conversation": conversationA.remoteIdentifier!.transportString(),
+            "data": ["status": isTyping ? "started" : "stopped"],
+            "from": userA.remoteIdentifier!.transportString(),
+            "time": Date().transportString(),
+            "type": "conversation.typing"
+        ] as [String: Any]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
 
     func memberLeaveEvent() -> ZMUpdateEvent {
-        let payload = ["conversation": conversationA.remoteIdentifier!.transportString(),
-                       "data": ["user_ids": [userA.remoteIdentifier!.transportString()]],
-                       "from": userA.remoteIdentifier!.transportString(),
-                       "time": Date().transportString(),
-                       "type": "conversation.member-leave"
-                       ] as [String: Any]
+        let payload = [
+            "conversation": conversationA.remoteIdentifier!.transportString(),
+            "data": ["user_ids": [userA.remoteIdentifier!.transportString()]],
+            "from": userA.remoteIdentifier!.transportString(),
+            "time": Date().transportString(),
+            "type": "conversation.member-leave"
+        ] as [String: Any]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
 
@@ -139,7 +149,7 @@ final class TypingStrategyTests: MessagingTest {
         let expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/typing"
         let expectedPayload = ["status": isTyping ? "started" : "stopped"]
 
-        if let request, (request.path == expectedPath) && (request.method == .post) {
+        if let request, request.path == expectedPath, request.method == .post {
             if let payload = request.payload as? [String: String] {
                 XCTAssertEqual(payload, expectedPayload)
             } else {
@@ -155,32 +165,40 @@ final class TypingStrategyTests: MessagingTest {
 
     func testTypingEndpointV0UsesTheRightPath() {
         let conversation = insertUIConversation()
-        internalTestTypingEndpointUsesTheRightPath(with: .v0,
-                                                   conversation: conversation,
-                                                   expectedPath: "/conversations/\(conversation.remoteIdentifier!.uuidString)/typing")
+        internalTestTypingEndpointUsesTheRightPath(
+            with: .v0,
+            conversation: conversation,
+            expectedPath: "/conversations/\(conversation.remoteIdentifier!.uuidString)/typing"
+        )
     }
 
     func testTypingEndpointV1UsesTheRightPath() {
         let conversation = insertUIConversation()
-        internalTestTypingEndpointUsesTheRightPath(with: .v1,
-                                                   conversation: conversation,
-                                                   expectedPath: "/v1/conversations/\(conversation.remoteIdentifier!.uuidString)/typing")
+        internalTestTypingEndpointUsesTheRightPath(
+            with: .v1,
+            conversation: conversation,
+            expectedPath: "/v1/conversations/\(conversation.remoteIdentifier!.uuidString)/typing"
+        )
     }
 
     func testTypingEndpointV2UsesTheRightPath() {
         let conversation = insertUIConversation()
-        internalTestTypingEndpointUsesTheRightPath(with: .v2,
-                                                   conversation: conversation,
-                                                   expectedPath: "/v2/conversations/\(conversation.remoteIdentifier!.uuidString)/typing")
+        internalTestTypingEndpointUsesTheRightPath(
+            with: .v2,
+            conversation: conversation,
+            expectedPath: "/v2/conversations/\(conversation.remoteIdentifier!.uuidString)/typing"
+        )
     }
 
     func testTypingEndpointV3UsesTheRightPath() {
         let conversation = insertUIConversation()
         let previousValue = BackendInfo.domain
         BackendInfo.domain = "example.com"
-        internalTestTypingEndpointUsesTheRightPath(with: .v3,
-                                                   conversation: conversation,
-                                                   expectedPath: "/v3/conversations/\(BackendInfo.domain!)/\(conversation.remoteIdentifier!.uuidString)/typing")
+        internalTestTypingEndpointUsesTheRightPath(
+            with: .v3,
+            conversation: conversation,
+            expectedPath: "/v3/conversations/\(BackendInfo.domain!)/\(conversation.remoteIdentifier!.uuidString)/typing"
+        )
         BackendInfo.domain = previousValue
     }
 
@@ -188,14 +206,18 @@ final class TypingStrategyTests: MessagingTest {
         let conversation = insertUIConversation()
         conversation.domain = "example.com"
         uiMOC.saveOrRollback()
-        internalTestTypingEndpointUsesTheRightPath(with: .v3,
-                                                   conversation: conversation,
-                                                   expectedPath: "/v3/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.uuidString)/typing")
+        internalTestTypingEndpointUsesTheRightPath(
+            with: .v3,
+            conversation: conversation,
+            expectedPath: "/v3/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.uuidString)/typing"
+        )
     }
 
-    func internalTestTypingEndpointUsesTheRightPath(with version: APIVersion,
-                                                    conversation: ZMConversation,
-                                                    expectedPath: String) {
+    func internalTestTypingEndpointUsesTheRightPath(
+        with version: APIVersion,
+        conversation: ZMConversation,
+        expectedPath: String
+    ) {
         // given / when
         TypingStrategy.notifyTranscoderThatUser(isTyping: true, in: conversation)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -238,11 +260,12 @@ final class TypingStrategyTests: MessagingTest {
     func testThatItDoesNotForwardsAnUnknownTypingEvent() {
         syncMOC.performAndWait {
             // given
-            let payload = ["conversation": conversationA.remoteIdentifier!.transportString(),
-                           "data": ["status": "foo"],
-                           "from": userA.remoteIdentifier!.transportString(),
-                           "time": Date().transportString(),
-                           "type": "conversation.typing"
+            let payload = [
+                "conversation": conversationA.remoteIdentifier!.transportString(),
+                "data": ["status": "foo"],
+                "from": userA.remoteIdentifier!.transportString(),
+                "time": Date().transportString(),
+                "type": "conversation.typing"
             ] as [String: Any]
             let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
 
@@ -292,7 +315,7 @@ final class TypingStrategyTests: MessagingTest {
     }
 
     func tryToForwardOTRMessageWithoutReply(with message: GenericMessage) {
-        let payload = self.payloadForOTRMessageAdd(with: message) as ZMTransportData
+        let payload = payloadForOTRMessageAdd(with: message) as ZMTransportData
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
         syncMOC.performAndWait {
             simulateTyping()
@@ -307,22 +330,24 @@ final class TypingStrategyTests: MessagingTest {
 
     func payloadForOTRMessageAdd(with message: GenericMessage) -> [String: Any] {
         let data = try? message.serializedData().base64String()
-        return ["conversation": conversationA.remoteIdentifier!.transportString(),
-                       "data": ["text": data],
-                       "from": userA.remoteIdentifier!.transportString(),
-                       "time": Date().transportString(),
-                       "type": "conversation.otr-message-add"
-                       ] as [String: Any]
+        return [
+            "conversation": conversationA.remoteIdentifier!.transportString(),
+            "data": ["text": data],
+            "from": userA.remoteIdentifier!.transportString(),
+            "time": Date().transportString(),
+            "type": "conversation.otr-message-add"
+        ] as [String: Any]
     }
 
     func testThatItDoesNotForwardOtherEventTypes() {
         syncMOC.performAndWait {
             // given
-            let payload = ["conversation": conversationA.remoteIdentifier!.transportString(),
-                           "data": [],
-                           "from": userA.remoteIdentifier!.transportString(),
-                           "time": Date().transportString(),
-                           "type": "conversation.rename"
+            let payload = [
+                "conversation": conversationA.remoteIdentifier!.transportString(),
+                "data": [],
+                "from": userA.remoteIdentifier!.transportString(),
+                "time": Date().transportString(),
+                "type": "conversation.rename"
             ] as [String: Any]
             let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
 
@@ -504,8 +529,10 @@ final class TypingStrategyTests: MessagingTest {
         let request1IsforConv2 = isExpected(request: request1, for: conversation2, isTyping: true)
         let request2IsforConv2 = isExpected(request: request2, for: conversation2, isTyping: true)
 
-        XCTAssertTrue((request1IsforConv1 && request2IsforConv2) ||
-                      (request2IsforConv1 && request1IsforConv2))
+        XCTAssertTrue(
+            (request1IsforConv1 && request2IsforConv2) ||
+                (request2IsforConv1 && request1IsforConv2)
+        )
 
     }
 
@@ -532,8 +559,10 @@ final class TypingStrategyTests: MessagingTest {
         let request1IsforConv2 = isExpected(request: request1, for: conversation2, isTyping: false)
         let request2IsforConv2 = isExpected(request: request2, for: conversation2, isTyping: false)
 
-        XCTAssertTrue((request1IsforConv1 && request2IsforConv2) ||
-            (request2IsforConv1 && request1IsforConv2))
+        XCTAssertTrue(
+            (request1IsforConv1 && request2IsforConv2) ||
+                (request2IsforConv1 && request1IsforConv2)
+        )
 
     }
 
@@ -578,13 +607,15 @@ final class TypingStrategyTests: MessagingTest {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.customExpectation(description: "Notified")
-        let token = NotificationInContext.addObserver(name: ZMConversation.clearTypingNotificationName,
-                                                      context: self.uiMOC.notificationContext,
-                                                      using: { note in
-                                                        XCTAssertEqual(note.object as? ZMConversation, conversation)
-                                                        expectation.fulfill()
-        })
+        let expectation = customExpectation(description: "Notified")
+        let token = NotificationInContext.addObserver(
+            name: ZMConversation.clearTypingNotificationName,
+            context: uiMOC.notificationContext,
+            using: { note in
+                XCTAssertEqual(note.object as? ZMConversation, conversation)
+                expectation.fulfill()
+            }
+        )
 
         // when
         try conversation.appendText(content: "foo")
@@ -614,9 +645,13 @@ final class TypingStrategyTests: MessagingTest {
 }
 
 // MARK: - Sending multiple requests
+
 extension TypingStrategyTests {
 
-    func requestsForSendingNotifications(isTyping: [Bool], delay: TestTyping) throws -> (ZMConversation, [ZMTransportRequest?]) {
+    func requestsForSendingNotifications(
+        isTyping: [Bool],
+        delay: TestTyping
+    ) throws -> (ZMConversation, [ZMTransportRequest?]) {
         var result = [ZMTransportRequest?]()
         let conversation = insertUIConversation()
 
@@ -654,33 +689,50 @@ extension TypingStrategyTests {
         XCTAssertNil(request2)
     }
 
-    func testThatItDoesReturn_Another_RequestsWhenReceiving_AnotherIdentical_TypingNotificationAfterTheFirstOneIsCleared() throws {
-        try internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(isTypingRequest1: true, isTypingRequest2: true, delay: .clearTranscoder)
+    func testThatItDoesReturn_Another_RequestsWhenReceiving_AnotherIdentical_TypingNotificationAfterTheFirstOneIsCleared(
+    ) throws {
+        try internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(
+            isTypingRequest1: true,
+            isTypingRequest2: true,
+            delay: .clearTranscoder
+        )
     }
 
-    func testThatItDoesReturn_Another_RequestsWhenReceiving_AnotherIdentical_TypingNotificationAfterAppendingAMessage() throws {
-        try internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(isTypingRequest1: true,
-                                                                                             isTypingRequest2: true,
-                                                                                             delay: .appendMessage)
+    func testThatItDoesReturn_Another_RequestsWhenReceiving_AnotherIdentical_TypingNotificationAfterAppendingAMessage(
+    ) throws {
+        try internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(
+            isTypingRequest1: true,
+            isTypingRequest2: true,
+            delay: .appendMessage
+        )
     }
 
     func testThatItDoesReturn_Two_RequestsWhenReceiving_AnotherDifferent_TypingNotification() throws {
-        try internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(isTypingRequest1: true,
-                                                                                             isTypingRequest2: false,
-                                                                                             delay: .noDelay)
+        try internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(
+            isTypingRequest1: true,
+            isTypingRequest2: false,
+            delay: .noDelay
+        )
     }
 
     func testThatItDoesReturn_Two_RequestsWhenReceiving_AnotherIdentical_TypingNotification_AfterADelay() throws {
-        try internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(isTypingRequest1: true,
-                                                                                             isTypingRequest2: true,
-                                                                                             delay: .delay)
+        try internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(
+            isTypingRequest1: true,
+            isTypingRequest2: true,
+            delay: .delay
+        )
     }
 
-    func internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(isTypingRequest1: Bool,
-                                                                                          isTypingRequest2: Bool,
-                                                                                          delay: TestTyping) throws {
+    func internalTestThatItDoesReturn_Two_RequestsWhenReceiving_AnotherTypingNotification(
+        isTypingRequest1: Bool,
+        isTypingRequest2: Bool,
+        delay: TestTyping
+    ) throws {
         // when
-        let (conversation, requests) = try requestsForSendingNotifications(isTyping: [isTypingRequest1, isTypingRequest2], delay: delay)
+        let (conversation, requests) = try requestsForSendingNotifications(
+            isTyping: [isTypingRequest1, isTypingRequest2],
+            delay: delay
+        )
 
         XCTAssertEqual(requests.count, 2)
         let request1 = try XCTUnwrap(requests.first)
@@ -696,17 +748,21 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.customExpectation(description: "Notified")
-        let token = NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
-                                                      context: self.uiMOC.notificationContext,
-                                                      using: { _ in
-                                                        expectation.fulfill()
-        })
-        _ = NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
-                                              context: self.uiMOC.notificationContext,
-                                              using: { _ in
-                                                assertionFailure()
-        })
+        let expectation = customExpectation(description: "Notified")
+        let token = NotificationInContext.addObserver(
+            name: ZMConversation.typingChangeNotificationName,
+            context: uiMOC.notificationContext,
+            using: { _ in
+                expectation.fulfill()
+            }
+        )
+        _ = NotificationInContext.addObserver(
+            name: ZMConversation.typingNotificationName,
+            context: uiMOC.notificationContext,
+            using: { _ in
+                assertionFailure()
+            }
+        )
 
         // when
         TypingStrategy.notifyTranscoderThatUser(isTyping: true, in: conversation)
@@ -722,17 +778,21 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.customExpectation(description: "Notified")
-        let token = NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
-                                                      context: self.uiMOC.notificationContext,
-                                                      using: { _ in
-                                                        expectation.fulfill()
-        })
-        _ = NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
-                                              context: self.uiMOC.notificationContext,
-                                              using: { _ in
-                                                assertionFailure()
-        })
+        let expectation = customExpectation(description: "Notified")
+        let token = NotificationInContext.addObserver(
+            name: ZMConversation.typingNotificationName,
+            context: uiMOC.notificationContext,
+            using: { _ in
+                expectation.fulfill()
+            }
+        )
+        _ = NotificationInContext.addObserver(
+            name: ZMConversation.typingChangeNotificationName,
+            context: uiMOC.notificationContext,
+            using: { _ in
+                assertionFailure()
+            }
+        )
 
         // when
         simulateTyping()
@@ -749,12 +809,14 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.customExpectation(description: "Notified")
-        let token = NotificationInContext.addObserver(name: ZMConversation.clearTypingNotificationName,
-                                                      context: self.uiMOC.notificationContext,
-                                                      using: { _ in
-                                                        expectation.fulfill()
-        })
+        let expectation = customExpectation(description: "Notified")
+        let token = NotificationInContext.addObserver(
+            name: ZMConversation.clearTypingNotificationName,
+            context: uiMOC.notificationContext,
+            using: { _ in
+                expectation.fulfill()
+            }
+        )
 
         // when
         TypingStrategy.clearTranscoderStateForTyping(in: conversation)
@@ -777,7 +839,7 @@ class TypingEventTests: MessagingTest {
     }
 
     override func tearDown() {
-        MockTyping.defaultTimeout = self.originalTimeout
+        MockTyping.defaultTimeout = originalTimeout
         super.tearDown()
     }
 
@@ -798,8 +860,16 @@ class TypingEventTests: MessagingTest {
         // when
         let eventACopy = TypingEvent.typingEvent(with: conversation.objectID, isTyping: true, ifDifferentFrom: eventA)
         let eventBCopy = TypingEvent.typingEvent(with: conversation.objectID, isTyping: false, ifDifferentFrom: eventB)
-        let eventAOpposite = TypingEvent.typingEvent(with: conversation.objectID, isTyping: false, ifDifferentFrom: eventA)
-        let eventBOpposite = TypingEvent.typingEvent(with: conversation.objectID, isTyping: true, ifDifferentFrom: eventB)
+        let eventAOpposite = TypingEvent.typingEvent(
+            with: conversation.objectID,
+            isTyping: false,
+            ifDifferentFrom: eventA
+        )
+        let eventBOpposite = TypingEvent.typingEvent(
+            with: conversation.objectID,
+            isTyping: true,
+            ifDifferentFrom: eventB
+        )
 
         // then
         XCTAssertNil(eventACopy)
@@ -819,8 +889,16 @@ class TypingEventTests: MessagingTest {
         // when
         let eventACopy = TypingEvent.typingEvent(with: conversation1.objectID, isTyping: true, ifDifferentFrom: eventA)
         let eventBCopy = TypingEvent.typingEvent(with: conversation2.objectID, isTyping: true, ifDifferentFrom: eventB)
-        let eventAOpposite = TypingEvent.typingEvent(with: conversation2.objectID, isTyping: true, ifDifferentFrom: eventA)
-        let eventBOpposite = TypingEvent.typingEvent(with: conversation1.objectID, isTyping: true, ifDifferentFrom: eventB)
+        let eventAOpposite = TypingEvent.typingEvent(
+            with: conversation2.objectID,
+            isTyping: true,
+            ifDifferentFrom: eventA
+        )
+        let eventBOpposite = TypingEvent.typingEvent(
+            with: conversation1.objectID,
+            isTyping: true,
+            ifDifferentFrom: eventB
+        )
 
         // then
         XCTAssertNil(eventACopy)
@@ -843,8 +921,16 @@ class TypingEventTests: MessagingTest {
         let interval = MockTyping.defaultTimeout + 1.0
         Thread.sleep(forTimeInterval: interval)
 
-        let eventADifferent = TypingEvent.typingEvent(with: conversation.objectID, isTyping: true, ifDifferentFrom: eventA)
-        let eventBDifferent = TypingEvent.typingEvent(with: conversation.objectID, isTyping: false, ifDifferentFrom: eventB)
+        let eventADifferent = TypingEvent.typingEvent(
+            with: conversation.objectID,
+            isTyping: true,
+            ifDifferentFrom: eventA
+        )
+        let eventBDifferent = TypingEvent.typingEvent(
+            with: conversation.objectID,
+            isTyping: false,
+            ifDifferentFrom: eventB
+        )
 
         // then
         XCTAssertNil(eventACopy)

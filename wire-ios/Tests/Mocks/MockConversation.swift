@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import WireRequestStrategy
+@testable import Wire
 
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: rename to MockConversation after objc MockConversation is retired
@@ -27,16 +27,16 @@ class SwiftMockConversation: NSObject, Conversation {
     var isMLSConversationDegraded: Bool = false
     var isProteusConversationDegraded: Bool = false
 
-	var relatedConnectionState: ZMConnectionStatus = .invalid
+    var relatedConnectionState: ZMConnectionStatus = .invalid
 
-	var sortedOtherParticipants: [UserType] = []
-	var sortedServiceUsers: [UserType] = []
+    var sortedOtherParticipants: [UserType] = []
+    var sortedServiceUsers: [UserType] = []
 
-	func verifyLegalHoldSubjects() {
-		// no-op
-	}
+    func verifyLegalHoldSubjects() {
+        // no-op
+    }
 
-	var sortedActiveParticipantsUserTypes: [UserType] = []
+    var sortedActiveParticipantsUserTypes: [UserType] = []
 
     var isSelfAnActiveMember: Bool = true
 
@@ -46,7 +46,7 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var mockLocalParticipantsContain: Bool = false
     func localParticipantsContain(user: UserType) -> Bool {
-        return mockLocalParticipantsContain
+        mockLocalParticipantsContain
     }
 
     var displayName: String? = ""

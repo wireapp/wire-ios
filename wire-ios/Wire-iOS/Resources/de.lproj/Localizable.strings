@@ -37,6 +37,7 @@
 "general.on" = "An";
 "general.loading" = "Wird geladen…";
 "general.paste" = "Einfügen";
+"general.or" = "oder";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -49,7 +50,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Nach Name oder Benutzername suchen";
 "peoplepicker.header.top_people" = "Top Kontakte";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Gruppe erstellen";
 "peoplepicker.button.add_to_conversation" = "Teilnehmer hinzufügen";
 "peoplepicker.header.conversations" = "Gruppen";
 "peoplepicker.header.team_conversations" = "%@ Gruppen";
@@ -59,8 +60,8 @@
 "peoplepicker.header.directory" = "Verbinden";
 "peoplepicker.header.federation" = "Mit einer anderen Domain verbinden";
 
-"peoplepicker.group.title.singular" = "Select Participants";
-"peoplepicker.group.title.plural" = "Select Participants (%d)";
+"peoplepicker.group.title.singular" = "Teilnehmer auswählen";
+"peoplepicker.group.title.plural" = "Teilnehmer auswählen (%d)";
 "peoplepicker.group.skip" = "Überspringen";
 "peoplepicker.group.done" = "Fertig";
 "peoplepicker.group.create" = "Erstellen";
@@ -125,18 +126,20 @@
 
 // Conversation List - Search Bar
 
-"conversation_list.search_bar.placeholder" = "Search conversations";
-"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
-"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
-"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.placeholder" = "Unterhaltung suchen";
+"conversation_list.search_bar.favoritesPlaceholder" = "Favoriten suchen";
+"conversation_list.search_bar.groupsPlaceholder" = "Gruppe suchen";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "1:1 Unterhaltung suchen";
+"conversation_list.search_bar.foldersPlaceholder" = "%@ suchen";
 
 
 // Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.all_conversations.title" = "Alle Unterhaltungen";
 "conversation_list.filter.favorites.title" = "Favoriten";
 "conversation_list.filter.groups.title" = "Gruppen";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
-"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.folders.title" = "Ordner";
+"conversation_list.filter_label.text" = "Gefiltert nach %@";
 "conversation_list.filter.remove_button.title" = "Entfernen";
 
 // Conversation List Indicator
@@ -147,13 +150,20 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Hat neue Nachrichten.";
 
 // Conversation List - Empty states
-"conversation_list.empty_placeholder.all.headline" = "Welcome";
-"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
-"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
-"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
-"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
-"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
-"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+"conversation_list.empty_placeholder.all.headline" = "Willkommen";
+"conversation_list.empty_placeholder.all.subheadline" = "Verbinden Sie sich mit anderen oder erstellen Sie eine neue Gruppe, um zu kommunizieren!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Wählen Sie Ihre Lieblingsunterhaltungen aus, und Sie werden sie hier finden 👍";
+"conversation_list.empty_placeholder.favorite.link" = "So kennzeichnen Sie Unterhaltungen als Favoriten";
+"conversation_list.empty_placeholder.group.subheadline" = "Bislang sind Sie an keiner Gruppenunterhaltung beteiligt.\nBeginnen Sie eine neue Unterhaltung!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "Sie haben noch keine Kontakte. Suchen Sie nach Personen auf {{brandName}} und treten Sie in Kontakt.";
+"conversation_list.empty_placeholder.oneonone.button" = "Mit Personen verbinden";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "Es konnten keine Unterhaltungen gefunden werden.\n\nVerbinden Sie sich mit Personen oder erstellen Sie eine neue Gruppe:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "Keine Ergebnisse gefunden.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "Neue Unterhaltung";
+"conversation_list.empty_placeholder.search.button.ipad" = "Beginnen Sie eine neue Unterhaltung";
+"conversation_list.empty_placeholder.search.connect_button" = "Mit Personen verbinden";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";
@@ -320,11 +330,10 @@
 "conversation.input_bar.message_too_long.message" = "Sie können Nachrichten mit bist zu %d Zeichen senden.";
 
 "conversation.create.group_name.title" = "Gruppe erstellen";
-"conversation.create.group_name.label" = "Group name";
+"conversation.create.group_name.label" = "Gruppenname";
 "conversation.create.guidance.empty" = "Mindestens 1 Zeichen";
 "conversation.create.guidance.toolong" = "Zu viele Zeichen";
-"conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Gäste: %@, Dienste: %@, Lesebestätigungen: %@";
+"conversation.create.options.title" = "UNTERHALTUNGSOPTIONEN";
 "conversation.create.guests.title" = "Gäste zulassen";
 "conversation.create.guests.subtitle" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams.";
 "conversation.create.services.title" = "Dienste zulassen";

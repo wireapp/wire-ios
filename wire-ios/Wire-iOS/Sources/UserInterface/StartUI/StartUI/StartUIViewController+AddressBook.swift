@@ -38,7 +38,19 @@ extension StartUIViewController {
 extension StartUIViewController: ShareContactsViewControllerDelegate {
 
     func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController) {
-        viewController.dismiss(animated: true)
+        // called once user has given its contact permission
+
+        if let navigationController = viewController.navigationController {
+            var viewControllers = navigationController.viewControllers
+            _ = viewControllers.popLast()
+            viewControllers
+                .append(ContactsViewController(isFederationUsageAllowed: userSession.isFederationUsageAllowed))
+            navigationController.setViewControllers(viewControllers, animated: true)
+        } else {
+            viewController.dismiss(animated: true) {
+                self.inviteMoreButtonTapped(nil)
+            }
+        }
     }
 
     func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController) {

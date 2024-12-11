@@ -19,9 +19,7 @@
 import avs
 import Foundation
 
-/**
- * An object that represents the member of an AVS call.
- */
+/// An object that represents the member of an AVS call.
 
 public struct AVSCallMember: Hashable {
 
@@ -39,14 +37,12 @@ public struct AVSCallMember: Hashable {
 
     // MARK: - Initialization
 
-    /**
-     * Creates the call member from its values.
-     * - parameter client: The client used in the call.
-     * - parameter audioState: The state of the audio connection. Defaults to `.connecting`.
-     * - parameter videoState: The state of video connection. Defaults to `stopped`.
-     * - parameter microphoneState: The state of microphone. Defaults to `unmuted`.
-     * - parameter networkQuality: The quality of the network connection. Defaults to `.normal`.
-     */
+    /// Creates the call member from its values.
+    /// - parameter client: The client used in the call.
+    /// - parameter audioState: The state of the audio connection. Defaults to `.connecting`.
+    /// - parameter videoState: The state of video connection. Defaults to `stopped`.
+    /// - parameter microphoneState: The state of microphone. Defaults to `unmuted`.
+    /// - parameter networkQuality: The quality of the network connection. Defaults to `.normal`.
 
     public init(
         client: AVSClient,
@@ -66,11 +62,11 @@ public struct AVSCallMember: Hashable {
     var callParticipantState: CallParticipantState {
         switch audioState {
         case .connecting:
-            return .connecting
+            .connecting
         case .established:
-            return .connected(videoState: videoState, microphoneState: microphoneState)
+            .connected(videoState: videoState, microphoneState: microphoneState)
         case .networkProblem:
-            return .unconnectedButMayConnect
+            .unconnectedButMayConnect
         }
     }
 
@@ -81,17 +77,17 @@ public struct AVSCallMember: Hashable {
     }
 
     public static func == (lhs: AVSCallMember, rhs: AVSCallMember) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        lhs.hashValue == rhs.hashValue
     }
 }
 
 extension AVSCallMember {
 
     init(member: AVSParticipantsChange.Member) {
-        client = AVSClient(member: member)
-        audioState = member.aestab
-        videoState = member.vrecv
-        microphoneState = member.muted
+        self.client = AVSClient(member: member)
+        self.audioState = member.aestab
+        self.videoState = member.vrecv
+        self.microphoneState = member.muted
     }
 }
 

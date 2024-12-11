@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
 
 private let log = WireLogger(tag: "Accounts")
@@ -40,7 +41,7 @@ public final class AccountStore: NSObject {
     /// `Account` objects will be stored in a subdirectory of the passed in url.
     /// - parameter root: The root url in which the storage will use to store its data
     public required init(root: URL) {
-        directory = root.appendingPathComponent(AccountStore.directoryName)
+        self.directory = root.appendingPathComponent(AccountStore.directoryName)
         super.init()
         try! fileManager.createAndProtectDirectory(at: directory)
     }
@@ -50,20 +51,21 @@ public final class AccountStore: NSObject {
     /// Loads all stored accounts.
     /// - returns: All accounts stored in this `AccountStore`.
     func load() -> Set<Account> {
-        return Set<Account>(loadURLs().compactMap(Account.load))
+        Set<Account>(loadURLs().compactMap(Account.load))
     }
 
     /// Tries to load a stored account with the given `UUID`.
     /// - parameter uuid: The `UUID` of the user the account belongs to.
     /// - returns: The `Account` stored for the passed in `UUID`, or `nil` otherwise.
     func load(_ uuid: UUID) -> Account? {
-        return Account.load(from: url(for: uuid))
+        Account.load(from: url(for: uuid))
     }
 
     /// Stores an `Account` in the account store.
     /// - parameter account: The account which should be saved (or updated).
     /// - returns: Whether or not the operation was successful.
-    @discardableResult func add(_ account: Account) -> Bool {
+    @discardableResult
+    func add(_ account: Account) -> Bool {
         do {
             try account.write(to: url(for: account))
             return true
@@ -78,7 +80,8 @@ public final class AccountStore: NSObject {
     /// Deletes an `Account` from the account store.
     /// - parameter account: The account which should be deleted.
     /// - returns: `false` if the account cannot be found or cannot be deleted otherwise `true`.
-    @discardableResult func remove(_ account: Account) -> Bool {
+    @discardableResult
+    func remove(_ account: Account) -> Bool {
         do {
             try fileManager.removeItem(at: url(for: account))
             return true
@@ -93,7 +96,8 @@ public final class AccountStore: NSObject {
     /// Deletes the persistence layer of an `AccountStore` from the file system.
     /// Mostly useful for cleaning up after tests or for complete account resets.
     /// - parameter root: The root url of the store that should be deleted.
-    @discardableResult static func delete(at root: URL) -> Bool {
+    @discardableResult
+    static func delete(at root: URL) -> Bool {
         do {
             try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
             return true
@@ -122,14 +126,14 @@ public final class AccountStore: NSObject {
     /// - parameter account: The account for which the url should be generated.
     /// - returns: The `URL` for the given account.
     private func url(for account: Account) -> URL {
-        return url(for: account.userIdentifier)
+        url(for: account.userIdentifier)
     }
 
     /// Create a local url for an `Account` with the given `UUID` inside this `AccountStore`.
     /// - parameter uuid: The uuid of the user for which the url should be generated.
     /// - returns: The `URL` for the given uuid.
     private func url(for uuid: UUID) -> URL {
-        return directory.appendingPathComponent(uuid.uuidString)
+        directory.appendingPathComponent(uuid.uuidString)
     }
 }
 

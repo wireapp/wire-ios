@@ -34,11 +34,14 @@ protocol SeparatorViewProtocol: AnyObject {
 
 extension SeparatorViewProtocol where Self: ViewWithContentView {
     var separatorLeadingAnchor: NSLayoutXAxisAnchor {
-        return contentView.leadingAnchor
+        contentView.leadingAnchor
     }
 
     func createSeparatorConstraints() {
-        separatorInsetConstraint = separator.leadingAnchor.constraint(equalTo: separatorLeadingAnchor, constant: separatorLeadingInset)
+        separatorInsetConstraint = separator.leadingAnchor.constraint(
+            equalTo: separatorLeadingAnchor,
+            constant: separatorLeadingInset
+        )
 
         NSLayoutConstraint.activate([
             separatorInsetConstraint,

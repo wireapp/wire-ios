@@ -53,16 +53,29 @@ private extension ReactionsCollectionView {
     }
 
     func configureObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleKeyboardPresentation),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleKeyboardPresentation),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
 
-    @objc func handleKeyboardPresentation(notification: Notification) {
+    @objc
+    func handleKeyboardPresentation(notification: Notification) {
         let keyboardHeight = UIView.keyboardFrame(in: self, forKeyboardNotification: notification).height
 
-        contentInset = UIEdgeInsets(top: 10.0,
-                                    left: 30.0,
-                                    bottom: 10.0 + keyboardHeight,
-                                    right: 30.0)
+        contentInset = UIEdgeInsets(
+            top: 10.0,
+            left: 30.0,
+            bottom: 10.0 + keyboardHeight,
+            right: 30.0
+        )
     }
 }

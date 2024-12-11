@@ -20,13 +20,13 @@ import Foundation
 import WireSyncEngine
 
 final class TextSearchViewController: NSObject {
-    let resultsView: TextSearchResultsView = TextSearchResultsView()
-    let searchBar: TextSearchInputView = TextSearchInputView()
+    let resultsView: TextSearchResultsView = .init()
+    let searchBar: TextSearchInputView = .init()
 
     weak var delegate: MessageActionResponder? = .none
     let conversation: ConversationLike
     var searchQuery: String? {
-        return searchBar.query
+        searchBar.query
     }
 
     private var textSearchQuery: TextSearchQuery?
@@ -118,7 +118,8 @@ final class TextSearchViewController: NSObject {
     }
 
     private func setupAccessibility() {
-        /// If noResultsView is not hidden, we should hide elements in the collectionView that are not currently visible.
+        /// If noResultsView is not hidden, we should hide elements in the collectionView that are not currently
+        /// visible.
         if let superview = resultsView.superview as? CollectionsView {
             superview.collectionView.accessibilityElementsHidden = !resultsView.noResultsView.isHidden
         }
@@ -152,17 +153,18 @@ extension TextSearchViewController: TextSearchInputViewDelegate {
     }
 
     func searchViewShouldReturn(_ searchView: TextSearchInputView) -> Bool {
-        return TextSearchQuery.isValid(query: searchView.query)
+        TextSearchQuery.isValid(query: searchView.query)
     }
 }
 
 extension TextSearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return results.count
+        results.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: TextSearchResultCell.reuseIdentifier) as! TextSearchResultCell
+        let cell = tableView
+            .dequeueReusableCell(withIdentifier: TextSearchResultCell.reuseIdentifier) as! TextSearchResultCell
         cell.configure(
             with: results[indexPath.row],
             queries: searchQuery?.components(

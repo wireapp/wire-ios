@@ -33,9 +33,9 @@ extension VideoGridPresentationMode {
     var accessibilityIdentifier: String {
         switch self {
         case .activeSpeakers:
-            return "speakers"
+            "speakers"
         case .allVideoStreams:
-            return "all"
+            "all"
         }
     }
 

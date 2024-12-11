@@ -17,21 +17,22 @@
 //
 
 import Combine
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
+import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class FeatureConfigRepositoryTests: XCTestCase {
 
     private var sut: FeatureConfigRepository!
     private var featureConfigsAPI: MockFeatureConfigsAPI!
+    private var featureConfigLocalStore: MockFeatureConfigLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
-
     private var subscription: AnyCancellable?
 
     private var context: NSManagedObjectContext {
@@ -39,17 +40,19 @@ final class FeatureConfigRepositoryTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        try await super.setUp()
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         featureConfigsAPI = MockFeatureConfigsAPI()
-        sut = FeatureConfigRepository(featureConfigsAPI: featureConfigsAPI,
-                                      context: context)
+        featureConfigLocalStore = MockFeatureConfigLocalStoreProtocol()
+
+        sut = FeatureConfigRepository(
+            featureConfigsAPI: featureConfigsAPI,
+            featureConfigLocalStore: featureConfigLocalStore
+        )
     }
 
     override func tearDown() async throws {
-        try await super.tearDown()
         stack = nil
         featureConfigsAPI = nil
         sut = nil
@@ -60,10 +63,25 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testPullFeatureConfigs_When_Configs_Are_Pulled_Configs_Then_Exists_Locally() async throws {
-        // Given
+    func testPullFeatureConfigs_It_Invokes_Local_Store_Methods() async throws {
+        // Mock
+
+        let feature = await context.perform { [context] in
+            Feature.updateOrCreate(
+                havingName: .conversationGuestLinks,
+                in: context
+            ) { $0.status = .enabled }
+
+            return Feature.fetch(
+                name: .conversationGuestLinks,
+                context: context
+            )
+        }
 
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+        featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
+        featureConfigLocalStore.fetchFeatureName_MockValue = feature
+        featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
 
         // When
 
@@ -71,59 +89,105 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        let features = await context.perform { [self] in
-            let allFeatures = Feature.Name.allCases.compactMap {
-                Feature.fetch(name: $0, context: context)
-            }
-
-            return allFeatures
-        }
-
-        XCTAssertEqual(features.count, Scaffolding.featureConfigs.count)
+        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 4)
+        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 4)
+        XCTAssertEqual(
+            featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
+            Scaffolding.featureConfigs.count
+        )
     }
 
-    func testNeedsToNotifyUser_When_Flag_Set_To_True_Stored_Value_Returns_True() async throws {
-        // Given
+    func testStoreNeedsToNotifyUser_It_Invokes_Local_Store_Methods() async throws {
+        // Mock
 
-        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+        let feature = await context.perform { [context] in
+            Feature.updateOrCreate(
+                havingName: .conversationGuestLinks,
+                in: context
+            ) { $0.status = .enabled }
 
-        await context.perform { [context] in
-            Feature.updateOrCreate(havingName: .conversationGuestLinks, in: context) {
+            return Feature.fetch(
+                name: .conversationGuestLinks,
+                context: context
+            )
+        }
+
+        featureConfigLocalStore.fetchFeatureName_MockValue = feature
+        featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_MockMethod = { _, _ in }
+
+        // When
+
+        try await sut.storeFeatureNeedsToNotifyUser(
+            true,
+            name: .conversationGuestLinks
+        )
+
+        // Then
+
+        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 1)
+        XCTAssertEqual(featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_Invocations.count, 1)
+    }
+
+    func testFetchFeatureConfig_It_Invokes_Local_Store_Methods_And_Retrieves_Correct_Config() async throws {
+        // Mock
+
+        let (feature, config) = try await context.perform { [context] in
+            let config = try JSONEncoder().encode(Scaffolding.featureConfig)
+
+            Feature.updateOrCreate(
+                havingName: .appLock,
+                in: context
+            ) {
                 $0.status = .enabled
+                $0.config = config
             }
+
+            let feature = Feature.fetch(
+                name: .appLock,
+                context: context
+            )
+
+            return (feature, config)
         }
 
-        // When
-
-        try await sut.storeNeedsToNotifyUser(true, forFeatureName: .conversationGuestLinks)
-
-        // Then
-
-        let result = try await sut.fetchNeedsToNotifyUser(for: .conversationGuestLinks)
-        XCTAssertEqual(result, true)
-    }
-
-    func testFetchFeatureConfig_When_Feature_Is_Stored_Locally_Feature_Is_Successfully_Retrieved() async throws {
-        // Given
-
-        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+        featureConfigLocalStore.fetchFeatureName_MockValue = feature
+        featureConfigLocalStore.featureConfigFeature_MockMethod = { _ in (.enabled, config) }
 
         // When
 
-        try await sut.pullFeatureConfigs()
+        let localFeature = try await sut.fetchFeatureConfig(
+            name: .appLock,
+            type: Feature.AppLock.Config.self
+        )
 
         // Then
 
-        let feature = try await sut.fetchFeatureConfig(with: .appLock, type: Feature.AppLock.Config.self)
-        XCTAssertEqual(feature.status == .enabled, true)
-        XCTAssertEqual(feature.config?.enforceAppLock, true)
-        XCTAssertEqual(feature.config?.inactivityTimeoutSecs, 2_147_483_647)
+        XCTAssertEqual(featureConfigLocalStore.featureConfigFeature_Invocations.count, 1)
+        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 1)
+        XCTAssertEqual(localFeature.status, .enabled)
+        XCTAssertEqual(localFeature.config, Scaffolding.featureConfig)
     }
 
-    func testObserveFeatureChanges() async throws {
+    func testObserveFeatureChanges_It_Invokes_Local_Store_Methods_And_Values_Are_Correctly_Emitted() async throws {
         // Given
 
-        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+        let feature = try await context.perform { [context] in
+            let config = try JSONEncoder().encode(Scaffolding.featureConfig)
+
+            Feature.updateOrCreate(
+                havingName: .appLock,
+                in: context
+            ) {
+                $0.status = .enabled
+                $0.config = config
+            }
+
+            return Feature.fetch(
+                name: .appLock,
+                context: context
+            )
+        }
+
         let expectation = XCTestExpectation()
         var featureStates: [FeatureState] = []
 
@@ -137,59 +201,81 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 }
             }
 
+        // Mock
+
+        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+        featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
+        featureConfigLocalStore.fetchFeatureName_MockValue = feature
+        featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
+
         // When
+
         _ = try await sut.pullFeatureConfigs()
 
         await fulfillment(of: [expectation], timeout: 5.0)
 
         // Then
-        XCTAssertEqual(featureStates.count, Scaffolding.featureConfigs.count)
 
-        for featureState in featureStates {
-            await context.perform {
-                let feature = Feature.fetch(name: featureState.name, context: self.context)
-                XCTAssertNotNil(feature)
-                XCTAssertEqual(featureState.status, .enabled)
-                XCTAssertEqual(featureState.shouldNotifyUser, false)
-            }
-        }
+        XCTAssertEqual(featureConfigsAPI.getFeatureConfigs_Invocations.count, 1)
+        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 4)
+        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 4)
+        XCTAssertEqual(
+            featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
+            Scaffolding.featureConfigs.count
+        )
     }
 
     private enum Scaffolding {
+
+        nonisolated(unsafe) static let featureConfig = Feature.AppLock.Config(
+            enforceAppLock: true,
+            inactivityTimeoutSecs: .min
+        )
+
         static let featureConfigs: [FeatureConfig] = [
-            .appLock(.init(
-                status: .enabled,
-                isMandatory: true,
-                inactivityTimeoutInSeconds: 2_147_483_647
-            )
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
             ),
-            .classifiedDomains(.init(
-                status: .enabled,
-                domains: ["example.com"]
-            )
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
             ),
-            .conferenceCalling(.init(
-                status: .enabled,
-                useSFTForOneToOneCalls: false
-            )
+            .conferenceCalling(
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: false
+                )
             ),
-            .conversationGuestLinks(.init(
-                status: .enabled)
+            .conversationGuestLinks(
+                .init(
+                    status: .enabled
+                )
             ),
-            .digitalSignature(.init(
-                status: .enabled)
+            .digitalSignature(
+                .init(
+                    status: .enabled
+                )
             ),
-            .fileSharing(.init(
-                status: .enabled)
+            .fileSharing(
+                .init(
+                    status: .enabled
+                )
             ),
-            .selfDeletingMessages(.init(
-                status: .enabled,
-                enforcedTimeoutSeconds: 2_147_483_647
-            )
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
             ),
             .mls(.init(
                 status: .enabled,
-                protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
+                protocolToggleUsers: [.mockID1],
                 defaultProtocol: .proteus,
                 allowedCipherSuites: [
                     .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
@@ -199,14 +285,18 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
             )),
-            .mlsMigration(.init(status: .enabled,
-                                startTime: nil,
-                                finaliseRegardlessAfter: nil)),
-            .endToEndIdentity(.init(status: .enabled,
-                                    acmeDiscoveryURL: "https://example.com",
-                                    verificationExpiration: 9_223_372_036_854_776_000,
-                                    crlProxy: "https://example.com",
-                                    useProxyOnMobile: true))
+            .mlsMigration(.init(
+                status: .enabled,
+                startTime: nil,
+                finaliseRegardlessAfter: nil
+            )),
+            .endToEndIdentity(.init(
+                status: .enabled,
+                acmeDiscoveryURL: "https://example.com",
+                verificationExpiration: 9_223_372_036_854_776_000,
+                crlProxy: "https://example.com",
+                useProxyOnMobile: true
+            ))
         ]
 
     }

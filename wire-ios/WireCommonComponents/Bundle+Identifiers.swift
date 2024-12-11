@@ -18,12 +18,13 @@
 
 import Foundation
 
-extension Bundle {
-    public var applicationGroupIdentifier: String? {
+public extension Bundle {
+    var applicationGroupIdentifier: String? {
         guard let groupId = infoDictionary?["WireGroupId"] as? String else { return nil }
         return "group.\(groupId)"
     }
-    public var hostBundleIdentifier: String? {
-        return infoDictionary?["HostBundleIdentifier"] as? String
+
+    var hostBundleIdentifier: String? {
+        infoDictionary?["HostBundleIdentifier"] as? String
     }
 }

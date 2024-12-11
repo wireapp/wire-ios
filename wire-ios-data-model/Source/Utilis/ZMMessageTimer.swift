@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension ZMMessageTimer {
+public extension ZMMessageTimer {
     /// Starts a new timer if there is no existing one
     /// - Parameters:
     ///   - message: message passed to the timer's fireMethod
@@ -26,7 +26,7 @@ extension ZMMessageTimer {
     ///   - userInfo: Additional info that should be added to the timer
     /// - Returns: True if timer was started, false otherwise
     @discardableResult
-    public func startTimerIfNeeded(for message: ZMMessage, fireDate: Date, userInfo: [String: Any]) -> Bool {
+    func startTimerIfNeeded(for message: ZMMessage, fireDate: Date, userInfo: [String: Any]) -> Bool {
         guard !isTimerRunning(for: message) else { return false }
 
         startTimer(for: message, fireDate: fireDate, userInfo: userInfo)

@@ -36,21 +36,25 @@ struct HTTPRequestSnapshotHelper {
     func verifyRequest(
         request: HTTPRequest,
         resourceName: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         function: String = #function,
         line: UInt = #line
     ) {
-        let errorMessage = verifySnapshot(
-            of: request,
-            as: .dump,
-            named: resourceName,
-            file: file,
-            testName: function,
-            line: line
-        )
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
+        withSnapshotTesting(record: recordEnabled) {
+            let errorMessage = verifySnapshot(
+                of: request,
+                as: .dump,
+                named: resourceName,
+                file: file,
+                testName: function,
+                line: line
+            )
 
-        if let errorMessage {
-            XCTFail(errorMessage, file: file, line: line)
+            if let errorMessage {
+                XCTFail(errorMessage, file: file, line: line)
+            }
         }
     }
 
@@ -68,22 +72,26 @@ struct HTTPRequestSnapshotHelper {
         request: URLRequest,
         resourceName: String? = nil,
         record: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         function: String = #function,
         line: UInt = #line
     ) {
-        let errorMessage = verifySnapshot(
-            of: request,
-            as: .curl,
-            named: resourceName,
-            record: record,
-            file: file,
-            testName: function,
-            line: line
-        )
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
+        withSnapshotTesting(record: recordEnabled) {
+            let errorMessage = verifySnapshot(
+                of: request,
+                as: .curl,
+                named: resourceName,
+                record: record,
+                file: file,
+                testName: function,
+                line: line
+            )
 
-        if let errorMessage {
-            XCTFail(errorMessage, file: file, line: line)
+            if let errorMessage {
+                XCTFail(errorMessage, file: file, line: line)
+            }
         }
     }
 

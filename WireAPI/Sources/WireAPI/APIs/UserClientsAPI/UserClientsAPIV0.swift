@@ -53,7 +53,9 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
     }
 
     func getClients(for userIDs: Set<UserID>) async throws -> [OtherUserClients] {
-        let components = URLComponents(string: "/users/list-clients/v2") // v2 suffix required for api version v0 and v1, suffix removed from next versions
+        let components =
+            URLComponents(string: "/users/list-clients/v2") // v2 suffix required for api version v0 and v1, suffix
+        // removed from next versions
 
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
@@ -183,7 +185,7 @@ struct OtherUserClientsV0: Decodable, ToAPIModelConvertible {
     }
 
     func toAPIModel() -> [OtherUserClients] {
-        let userClients = qualifiedUserMap.reduce(into: [OtherUserClients]()) { partialResult, dictionary in
+        qualifiedUserMap.reduce(into: [OtherUserClients]()) { partialResult, dictionary in
             let domain = dictionary.key
 
             for (userID, userClients) in dictionary.value {
@@ -195,8 +197,6 @@ struct OtherUserClientsV0: Decodable, ToAPIModelConvertible {
                 partialResult.append(userClients)
             }
         }
-
-        return userClients
     }
 
 }

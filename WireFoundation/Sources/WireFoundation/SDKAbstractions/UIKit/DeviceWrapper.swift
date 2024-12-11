@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+public import UIKit
 
 /// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
 public struct DeviceWrapper {

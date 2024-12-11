@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireRequestStrategy
 import WireUtilities
 
@@ -136,7 +137,7 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func requestToCalculateBadgeCount() async {
-        await self.syncContext.perform {
+        await syncContext.perform {
             self.syncContext.saveOrRollback()
             NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
         }
@@ -172,13 +173,17 @@ actor EventProcessor: UpdateEventProcessor {
             with: privateKeys,
             callEventsOnly: callEventsOnly
         ) { [weak self] decryptedUpdateEvents in
-            WireLogger.updateEvent.info("retrieved \(decryptedUpdateEvents.count) events from the database", attributes: .safePublic)
+            WireLogger.updateEvent.info(
+                "retrieved \(decryptedUpdateEvents.count) events from the database",
+                attributes: .safePublic
+            )
 
             guard let self else { return }
 
             let date = Date()
             let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)
-            let prefetchResult = await syncContext.perform { self.syncContext.executeFetchRequestBatchOrAssert(fetchRequest) }
+            let prefetchResult = await syncContext
+                .perform { self.syncContext.executeFetchRequestBatchOrAssert(fetchRequest) }
 
             let eventDescriptions = decryptedUpdateEvents.map {
                 ZMUpdateEvent.eventTypeString(for: $0.type) ?? "unknown"
@@ -186,7 +191,10 @@ actor EventProcessor: UpdateEventProcessor {
 
             WireLogger.updateEvent.info("consuming events: \(eventDescriptions)", attributes: .safePublic)
 
-            WireLogger.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
+            WireLogger.eventProcessing
+                .info(
+                    "Consuming: [\n\(decryptedUpdateEvents.map { "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }.joined(separator: "\n"))\n]"
+                )
 
             for event in decryptedUpdateEvents {
                 WireLogger.updateEvent.info("process decrypted event", attributes: event.logAttributes)
@@ -195,7 +203,7 @@ actor EventProcessor: UpdateEventProcessor {
                 // and processed, then before it could be deleted, a second pass refetched
                 // the same event and processed it again. It's not known why this happens,
                 // but in the meantime we will avoid processing an event more than once.
-                guard await !self.processedEventList.containsEvent(event) else {
+                guard await !processedEventList.containsEvent(event) else {
                     WireLogger.updateEvent.warn(
                         "event already processed, skipping...",
                         attributes: event.logAttributes
@@ -209,11 +217,11 @@ actor EventProcessor: UpdateEventProcessor {
                     }
                 }
 
-                for eventConsumer in self.eventAsyncConsumers {
+                for eventConsumer in eventAsyncConsumers {
                     await eventConsumer.processEvents([event])
                 }
 
-                await self.processedEventList.addEvent(event)
+                await processedEventList.addEvent(event)
             }
 
             await syncContext.perform {
@@ -222,7 +230,8 @@ actor EventProcessor: UpdateEventProcessor {
                 self.syncContext.saveOrRollback()
             }
 
-            WireLogger.updateEvent.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker.debugDescription)")
+            WireLogger.updateEvent
+                .debug("Events processed in \(-date.timeIntervalSinceNow): \(eventProcessingTracker.debugDescription)")
         }
     }
 
@@ -236,7 +245,8 @@ actor EventProcessor: UpdateEventProcessor {
                 messageNounces.formUnion(messageNoncesToPrefetch)
             }
 
-            if let conversationRemoteIdentifiersToPrefetch = eventConsumer.conversationRemoteIdentifiersToPrefetch?(toProcessEvents: updateEvents) {
+            if let conversationRemoteIdentifiersToPrefetch = eventConsumer
+                .conversationRemoteIdentifiersToPrefetch?(toProcessEvents: updateEvents) {
                 conversationNounces.formUnion(conversationRemoteIdentifiersToPrefetch)
             }
         }

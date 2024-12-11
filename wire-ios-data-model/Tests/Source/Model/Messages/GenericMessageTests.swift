@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class GenericMessageTests: XCTestCase {
 
@@ -34,7 +34,10 @@ class GenericMessageTests: XCTestCase {
 
     func testThatItConsidersLastReadMessageTypeAsKnownMessage() {
         let conversationID = QualifiedID(uuid: UUID.create(), domain: "")
-        let lastReadMessageType = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: Date()))
+        let lastReadMessageType = GenericMessage(content: LastRead(
+            conversationID: conversationID,
+            lastReadTimestamp: Date()
+        ))
         XCTAssertTrue(lastReadMessageType.knownMessage)
     }
 
@@ -62,12 +65,19 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersAssetMessageTypeAsKnownMessage() {
-        let assetMessageType = GenericMessage(content: WireProtos.Asset(imageSize: .zero, mimeType: "image/jpeg", size: 0))
+        let assetMessageType = GenericMessage(content: WireProtos.Asset(
+            imageSize: .zero,
+            mimeType: "image/jpeg",
+            size: 0
+        ))
         XCTAssertTrue(assetMessageType.knownMessage)
     }
 
     func testThatItConsidersHidingMessageTypeAsKnownMessage() {
-        let hideMessageType = GenericMessage(content: MessageHide(conversationId: UUID.create(), messageId: UUID.create()))
+        let hideMessageType = GenericMessage(content: MessageHide(
+            conversationId: UUID.create(),
+            messageId: UUID.create()
+        ))
         XCTAssertTrue(hideMessageType.knownMessage)
     }
 
@@ -82,7 +92,10 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersCreatingReactionMessageTypeAsKnownMessage() {
-        let creatingReactionMessageType = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["❤️"], messageID: UUID.create()))
+        let creatingReactionMessageType = GenericMessage(content: WireProtos.Reaction.createReaction(
+            emojis: ["❤️"],
+            messageID: UUID.create()
+        ))
         XCTAssertTrue(creatingReactionMessageType.knownMessage)
     }
 

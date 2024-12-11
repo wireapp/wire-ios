@@ -26,7 +26,10 @@ import WireSyncEngine
 protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didGeneratePassword password: String)
     func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel)
-    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String)
+    func viewModel(
+        _ viewModel: CreateSecureConversationGuestLinkViewModel,
+        didFailToValidatePasswordWithReason reason: String
+    )
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String)
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToCreateLinkWithError error: Error)
 }
@@ -80,7 +83,11 @@ final class CreateSecureConversationGuestLinkViewModel {
         return true
     }
 
-    func createSecuredGuestLinkIfValid(conversation: ZMConversation, passwordField: ValidatedTextField, confirmPasswordField: ValidatedTextField) {
+    func createSecuredGuestLinkIfValid(
+        conversation: ZMConversation,
+        passwordField: ValidatedTextField,
+        confirmPasswordField: ValidatedTextField
+    ) {
         guard validatePassword(for: passwordField, against: confirmPasswordField) else {
             delegate?.viewModel(self, didFailToValidatePasswordWithReason: "Password validation failed.")
             return
@@ -96,8 +103,8 @@ final class CreateSecureConversationGuestLinkViewModel {
             guard let self else { return }
 
             switch result {
-            case .success(let link?):
-                self.delegate?.viewModel(self, didCreateLink: link)
+            case let .success(link?):
+                delegate?.viewModel(self, didCreateLink: link)
                 NotificationCenter.default.post(
                     name: ConversationGuestLink.didCreateSecureGuestLinkNotification,
                     object: nil,
@@ -105,9 +112,10 @@ final class CreateSecureConversationGuestLinkViewModel {
                 )
 
             case .success(nil):
-                self.delegate?.viewModel(self, didFailToCreateLinkWithError: LinkCreationError.underfinedLink)
-            case .failure(let error):
-                self.delegate?.viewModel(self, didFailToCreateLinkWithError: error)
+                delegate?.viewModel(self, didFailToCreateLinkWithError: LinkCreationError.underfinedLink)
+
+            case let .failure(error):
+                delegate?.viewModel(self, didFailToCreateLinkWithError: error)
             }
         }
 
@@ -117,7 +125,7 @@ final class CreateSecureConversationGuestLinkViewModel {
     func generateRandomPassword() -> String {
         let minLength = 15
         let maxLength = 20
-        let selectedLength = Int.random(in: minLength...maxLength)
+        let selectedLength = Int.random(in: minLength ... maxLength)
 
         let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
         let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -131,7 +139,7 @@ final class CreateSecureConversationGuestLinkViewModel {
         characters.append(numbers.randomElement()!)
         characters.append(specialCharacters.randomElement()!)
 
-        for _ in 0..<(selectedLength - characters.count) {
+        for _ in 0 ..< (selectedLength - characters.count) {
             characters.append(allCharacters.randomElement()!)
         }
 

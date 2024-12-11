@@ -17,17 +17,18 @@
 //
 
 import Foundation
+import WireLogging
 
 private let NSManagedObjectContextFileAssetCacheKey = "zm_fileAssetCache"
 
-extension NSManagedObjectContext {
-    @objc public var zm_fileAssetCache: FileAssetCache! {
+public extension NSManagedObjectContext {
+    @objc var zm_fileAssetCache: FileAssetCache! {
         get {
-            return self.userInfo[NSManagedObjectContextFileAssetCacheKey] as? FileAssetCache
+            userInfo[NSManagedObjectContextFileAssetCacheKey] as? FileAssetCache
         }
 
         set {
-            self.userInfo[NSManagedObjectContextFileAssetCacheKey] = newValue
+            userInfo[NSManagedObjectContextFileAssetCacheKey] = newValue
         }
     }
 }
@@ -48,15 +49,15 @@ public final class FileAssetCache: NSObject {
     private let tempCache: FileCache
 
     var cache: Cache {
-        return fileCache
+        fileCache
     }
 
     /// Creates an asset cache.
 
     public init(location: URL) {
         let tempLocation = location.appendingPathComponent("temp")
-        fileCache = FileCache(location: location)
-        tempCache = FileCache(location: tempLocation)
+        self.fileCache = FileCache(location: location)
+        self.tempCache = FileCache(location: tempLocation)
         super.init()
     }
 
@@ -251,7 +252,7 @@ public final class FileAssetCache: NSObject {
     // MARK: - Encrypted images
 
     public func encryptMediumImage(for message: ZMConversationMessage) -> ZMImageAssetEncryptionKeys? {
-        return encryptImageAndComputeSHA256Digest(
+        encryptImageAndComputeSHA256Digest(
             message,
             format: .medium
         )
@@ -728,21 +729,21 @@ public final class FileAssetCache: NSObject {
     // MARK: - Asset data
 
     public func assetData(_ key: String) -> Data? {
-        return cache.assetData(key)
+        cache.assetData(key)
     }
 
     // MARK: - Conversation message
 
     @objc(hasImageDataForMessage:)
     public func hasImageData(for message: ZMConversationMessage) -> Bool {
-        return hasOriginalImageData(for: message)
-        || hasMediumImageData(for: message)
-        || hasEncryptedMediumImageData(for: message)
+        hasOriginalImageData(for: message)
+            || hasMediumImageData(for: message)
+            || hasEncryptedMediumImageData(for: message)
     }
 
     @objc(hasFileDataForMessage:)
     public func hasFileData(for message: ZMConversationMessage) -> Bool {
-        return hasOriginalFileData(for: message) || hasEncryptedFileData(for: message)
+        hasOriginalFileData(for: message) || hasEncryptedFileData(for: message)
     }
 
     /// Returns the asset URL for a given message.
@@ -812,7 +813,7 @@ public final class FileAssetCache: NSObject {
         format: ZMImageFormat,
         encrypted: Bool = false
     ) -> String? {
-        return cacheKeyForAsset(
+        cacheKeyForAsset(
             message,
             identifier: format.stringValue,
             encrypted: encrypted
@@ -858,8 +859,8 @@ public extension FileAssetCache {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?) -> [FileAttributeKey: Any]? {
-	guard let input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
+    guard let input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
 }
 
 /// A file cache
@@ -875,7 +876,7 @@ private struct FileCache: Cache {
     /// - parameter location: where cache is persisted on disk.
 
     init(location: URL) {
-        cacheFolderURL = location
+        self.cacheFolderURL = location
         try! FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
     }
 
@@ -910,9 +911,19 @@ private struct FileCache: Cache {
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: url, options: NSFileCoordinator.WritingOptions.forReplacing, error: &error) { url in
-            FileManager.default.createFile(atPath: url.path, contents: data, attributes: [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
-                                                                                          .creationDate: creationDate])
+        coordinator.coordinate(
+            writingItemAt: url,
+            options: NSFileCoordinator.WritingOptions.forReplacing,
+            error: &error
+        ) { url in
+            FileManager.default.createFile(
+                atPath: url.path,
+                contents: data,
+                attributes: [
+                    .protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
+                    .creationDate: creationDate
+                ]
+            )
         }
 
         if let error {
@@ -931,8 +942,13 @@ private struct FileCache: Cache {
         coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { url in
             do {
                 try FileManager.default.copyItem(at: fromUrl, to: url)
-                try FileManager.default.setAttributes([.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
-                                                       .creationDate: creationDate], ofItemAtPath: url.path)
+                try FileManager.default.setAttributes(
+                    [
+                        .protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
+                        .creationDate: creationDate
+                    ],
+                    ofItemAtPath: url.path
+                )
             } catch {
                 fatal("Failed to copy from \(url) to \(url), \(error)")
             }
@@ -971,12 +987,12 @@ private struct FileCache: Cache {
     }
 
     func hasDataForKey(_ key: String) -> Bool {
-        return assetURL(key) != nil
+        assetURL(key) != nil
     }
 
     /// Returns the expected URL of a cache entry
     fileprivate func URLForKey(_ key: String) -> URL {
-        guard key != "." && key != ".." else { fatal("Can't use \(key) as cache key") }
+        guard key != ".", key != ".." else { fatal("Can't use \(key) as cache key") }
         var safeKey = key
         for c in ":\\/%\"" { // see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
             safeKey = safeKey.replacingOccurrences(of: "\(c)", with: "_")
@@ -1008,7 +1024,11 @@ private struct FileCache: Cache {
     /// Returns assets created earlier than the given date
     func assetsOlderThan(_ date: Date) throws -> [URL] {
         let fileManager = FileManager.default
-        let files = try fileManager.contentsOfDirectory(at: cacheFolderURL, includingPropertiesForKeys: [.creationDateKey], options: [.skipsSubdirectoryDescendants])
+        let files = try fileManager.contentsOfDirectory(
+            at: cacheFolderURL,
+            includingPropertiesForKeys: [.creationDateKey],
+            options: [.skipsSubdirectoryDescendants]
+        )
 
         return try files.filter { file -> Bool in
             let attributes = try fileManager.attributesOfItem(atPath: file.path)

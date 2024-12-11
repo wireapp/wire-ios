@@ -20,9 +20,11 @@ import UIKit
 
 extension ConversationViewController: UIPopoverPresentationControllerDelegate {
 
-    func createAndPresentParticipantsPopoverController(with rect: CGRect,
-                                                       from view: UIView,
-                                                       contentViewController controller: UIViewController) {
+    func createAndPresentParticipantsPopoverController(
+        with rect: CGRect,
+        from view: UIView,
+        contentViewController controller: UIViewController
+    ) {
         self.view.window?.endEditing(true)
 
         controller.presentationController?.delegate = self
@@ -37,11 +39,5 @@ extension ConversationViewController: UIAdaptivePresentationControllerDelegate {
         }
 
         return .formSheet
-    }
-}
-
-extension ConversationViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        dismiss(animated: true, completion: completion)
     }
 }

@@ -20,7 +20,8 @@ import AddressBook
 import Contacts
 import Foundation
 
-@objcMembers public class AddressBookEntry: ZMManagedObject {
+@objcMembers
+public class AddressBookEntry: ZMManagedObject {
 
     public enum Fields: String {
         case localIdentifier
@@ -33,27 +34,31 @@ import Foundation
     @NSManaged public var cachedName: String?
 
     public override func keysTrackedForLocalModifications() -> Set<String> {
-        return []
+        []
     }
 
     public override static func entityName() -> String {
-        return "AddressBookEntry"
+        "AddressBookEntry"
     }
 
     public override static func sortKey() -> String? {
-        return Fields.localIdentifier.rawValue
+        Fields.localIdentifier.rawValue
     }
 
     public override static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
 }
 
-extension AddressBookEntry {
+public extension AddressBookEntry {
 
     @objc(createFromContact:managedObjectContext:user:)
-    static public func create(from contact: CNContact, managedObjectContext: NSManagedObjectContext, user: ZMUser? = nil) -> AddressBookEntry {
+    static func create(
+        from contact: CNContact,
+        managedObjectContext: NSManagedObjectContext,
+        user: ZMUser? = nil
+    ) -> AddressBookEntry {
         let entry = AddressBookEntry.insertNewObject(in: managedObjectContext)
         entry.localIdentifier = contact.identifier
         entry.cachedName = CNContactFormatter.string(from: contact, style: .fullName)

@@ -20,6 +20,7 @@ import AVFoundation
 import Foundation
 import MobileCoreServices
 import WireDataModel
+import WireLogging
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -52,10 +53,19 @@ public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
         if let uniformType = url.uniformType, AVURLAsset.wr_isAudioVisualUniformType(uniformType) {
             let asset = AVURLAsset(url: url)
             if let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first {
-                return ZMVideoMetadata(fileURL: url, duration: asset.duration.seconds, dimensions: videoTrack.naturalSize, thumbnail: thumbnail)
+                return ZMVideoMetadata(
+                    fileURL: url,
+                    duration: asset.duration.seconds,
+                    dimensions: videoTrack.naturalSize,
+                    thumbnail: thumbnail
+                )
             } else {
                 let loudness = asset.audioSamplesFromAsset(maxSamples: 100)
-                return ZMAudioMetadata(fileURL: url, duration: asset.duration.seconds, normalizedLoudness: loudness ?? [])
+                return ZMAudioMetadata(
+                    fileURL: url,
+                    duration: asset.duration.seconds,
+                    normalizedLoudness: loudness ?? []
+                )
             }
 
         } else {
@@ -75,9 +85,9 @@ extension AVURLAsset {
     }
 }
 
-extension AVAsset {
+private extension AVAsset {
 
-    fileprivate func audioSamplesFromAsset(maxSamples: UInt64) -> [Float]? {
+    func audioSamplesFromAsset(maxSamples: UInt64) -> [Float]? {
         guard let assetTrack: AVAssetTrack = tracks(withMediaType: AVMediaType.audio).first else {
             return .none
         }
@@ -90,38 +100,46 @@ extension AVAsset {
             return .none
         }
 
-        let outputSettings: [String: Any] = [AVFormatIDKey: NSNumber(value: kAudioFormatLinearPCM),
-                                             AVLinearPCMBitDepthKey: 16,
-                                             AVLinearPCMIsBigEndianKey: false,
-                                             AVLinearPCMIsFloatKey: false,
-                                             AVLinearPCMIsNonInterleaved: false]
+        let outputSettings: [String: Any] = [
+            AVFormatIDKey: NSNumber(value: kAudioFormatLinearPCM),
+            AVLinearPCMBitDepthKey: 16,
+            AVLinearPCMIsBigEndianKey: false,
+            AVLinearPCMIsFloatKey: false,
+            AVLinearPCMIsNonInterleaved: false
+        ]
 
-        let output: AVAssetReaderTrackOutput = AVAssetReaderTrackOutput(track: assetTrack,
-                                              outputSettings: outputSettings)
+        let output = AVAssetReaderTrackOutput(
+            track: assetTrack,
+            outputSettings: outputSettings
+        )
         output.alwaysCopiesSampleData = false
         reader.add(output)
         var sampleCount: UInt64 = 0
 
-        let ratio: Float64 = Float64(duration.value) / Float64(duration.timescale)
+        let ratio = Float64(duration.value) / Float64(duration.timescale)
 
         assetTrack.formatDescriptions.forEach { item in
             let formatDescription: CMFormatDescription = item as! CMFormatDescription
-            if let mSampleRate: Float64 = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription)?.pointee.mSampleRate {
+            if let mSampleRate: Float64 = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription)?.pointee
+                .mSampleRate {
                 sampleCount = UInt64(mSampleRate * ratio)
             }
         }
 
-        let stride: Int = Int(max(sampleCount / maxSamples, 1))
+        let stride = Int(max(sampleCount / maxSamples, 1))
         var sampleData: [Float] = []
-        var sampleSkipCounter: Int = 0
+        var sampleSkipCounter = 0
 
         reader.startReading()
 
         while reader.status == .reading {
             if let sampleBuffer: CMSampleBuffer = output.copyNextSampleBuffer() {
-                var audioBufferList = AudioBufferList(mNumberBuffers: 1, mBuffers: AudioBuffer(mNumberChannels: 0, mDataByteSize: 0, mData: nil))
+                var audioBufferList = AudioBufferList(
+                    mNumberBuffers: 1,
+                    mBuffers: AudioBuffer(mNumberChannels: 0, mDataByteSize: 0, mData: nil)
+                )
                 var buffer: CMBlockBuffer?
-                var bufferSize: Int = 0
+                var bufferSize = 0
                 CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(
                     sampleBuffer,
                     bufferListSizeNeededOut: &bufferSize,
@@ -130,16 +148,19 @@ extension AVAsset {
                     blockBufferAllocator: nil,
                     blockBufferMemoryAllocator: nil,
                     flags: 0,
-                    blockBufferOut: nil)
+                    blockBufferOut: nil
+                )
 
-                CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer,
-                                                                        bufferListSizeNeededOut: nil,
-                                                                        bufferListOut: &audioBufferList,
-                                                                        bufferListSize: bufferSize,
-                                                                        blockBufferAllocator: nil,
-                                                                        blockBufferMemoryAllocator: nil,
-                                                                        flags: kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment,
-                                                                        blockBufferOut: &buffer)
+                CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(
+                    sampleBuffer,
+                    bufferListSizeNeededOut: nil,
+                    bufferListOut: &audioBufferList,
+                    bufferListSize: bufferSize,
+                    blockBufferAllocator: nil,
+                    blockBufferMemoryAllocator: nil,
+                    flags: kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment,
+                    blockBufferOut: &buffer
+                )
 
                 let abl = UnsafeMutableAudioBufferListPointer(&audioBufferList)
                 var maxAmplitude: Int16 = 0
@@ -149,7 +170,10 @@ extension AVAsset {
                         continue
                     }
 
-                    let i16bufptr = UnsafeBufferPointer(start: data.assumingMemoryBound(to: Int16.self), count: Int(buffer.mDataByteSize) / Int(MemoryLayout<Int16>.size))
+                    let i16bufptr = UnsafeBufferPointer(
+                        start: data.assumingMemoryBound(to: Int16.self),
+                        count: Int(buffer.mDataByteSize) / Int(MemoryLayout<Int16>.size)
+                    )
 
                     for sample in Array(i16bufptr) {
                         sampleSkipCounter += 1

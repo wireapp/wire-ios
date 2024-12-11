@@ -34,13 +34,9 @@ protocol ConversationListViewModelDelegate: AnyObject {
 
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: Int, animated: Bool)
 
-    func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool)
-
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int)
-
     func reload<C>(
-    using stagedChangeset: StagedChangeset<C>,
-    interrupt: ((Changeset<C>) -> Bool)?,
-    setData: (C?) -> Void
+        using stagedChangeset: StagedChangeset<C>,
+        interrupt: ((Changeset<C>) -> Bool)?,
+        setData: (C?) -> Void
     )
 }

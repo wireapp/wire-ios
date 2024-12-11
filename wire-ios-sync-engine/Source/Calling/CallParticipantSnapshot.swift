@@ -53,7 +53,7 @@ final class CallParticipantsSnapshot {
 
             userVerifiedMap[zmuser] = userIsVerified
 
-            if userWasVerified && !userIsVerified {
+            if userWasVerified, !userIsVerified {
                 guard let selfUser else { return }
                 let degradedUser = selfUser.isTrusted ? zmuser : selfUser
                 callCenter.callDidDegrade(conversationId: conversationId, degradedUser: degradedUser)
@@ -86,7 +86,7 @@ final class CallParticipantsSnapshot {
     /// Returns the member matching the given userId and clientId.
 
     private func findMember(with client: AVSClient) -> AVSCallMember? {
-        return members.array.first { $0.client == client }
+        members.array.first { $0.client == client }
     }
 
     /// Notifies observers of a potential change in the participants set.

@@ -53,20 +53,24 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        observers.append(NotificationInContext.addObserver(
-            name: .searchUserDidRequestPreviewAsset,
-            context: managedObjectContext.notificationContext,
-            using: { [weak self] in
-                self?.requestAsset(with: $0)
-            })
+        observers.append(
+            NotificationInContext.addObserver(
+                name: .searchUserDidRequestPreviewAsset,
+                context: managedObjectContext.notificationContext,
+                using: { [weak self] in
+                    self?.requestAsset(with: $0)
+                }
+            )
         )
 
-        observers.append(NotificationInContext.addObserver(
-            name: .searchUserDidRequestCompleteAsset,
-            context: managedObjectContext.notificationContext,
-            using: { [weak self] in
-                self?.requestAsset(with: $0)
-            })
+        observers.append(
+            NotificationInContext.addObserver(
+                name: .searchUserDidRequestCompleteAsset,
+                context: managedObjectContext.notificationContext,
+                using: { [weak self] in
+                    self?.requestAsset(with: $0)
+                }
+            )
         )
     }
 
@@ -101,13 +105,20 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
 
     func fetchAssetRequest(apiVersion: APIVersion) -> ZMTransportRequest? {
         let previewAssetRequest = requestedPreviewAssets.first(where: {
-            !(self.requestedPreviewAssetsInProgress.contains($0.key) ||
-                $0.value == nil)
+            !(
+                self.requestedPreviewAssetsInProgress.contains($0.key) ||
+                    $0.value == nil
+            )
         })
 
         if let previewAssetRequest,
            let assetKeys = previewAssetRequest.value,
-           let request = request(for: assetKeys, size: .preview, user: previewAssetRequest.key, apiVersion: apiVersion) {
+           let request = request(
+               for: assetKeys,
+               size: .preview,
+               user: previewAssetRequest.key,
+               apiVersion: apiVersion
+           ) {
             requestedPreviewAssetsInProgress.insert(previewAssetRequest.key)
 
             request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] response in
@@ -118,13 +129,20 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
         }
 
         let completeAssetRequest = requestedCompleteAssets.first(where: {
-            !(self.requestedCompleteAssetsInProgress.contains($0.key) ||
-                $0.value == nil)
+            !(
+                self.requestedCompleteAssetsInProgress.contains($0.key) ||
+                    $0.value == nil
+            )
         })
 
         if let completeAssetRequest,
            let assetKeys = completeAssetRequest.value,
-           let request = request(for: assetKeys, size: .complete, user: completeAssetRequest.key, apiVersion: apiVersion) {
+           let request = request(
+               for: assetKeys,
+               size: .complete,
+               user: completeAssetRequest.key,
+               apiVersion: apiVersion
+           ) {
             requestedCompleteAssetsInProgress.insert(completeAssetRequest.key)
 
             request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] response in
@@ -137,7 +155,12 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
         return nil
     }
 
-    func request(for assetKeys: SearchUserAssetKeys, size: ProfileImageSize, user: UUID, apiVersion: APIVersion) -> ZMTransportRequest? {
+    func request(
+        for assetKeys: SearchUserAssetKeys,
+        size: ProfileImageSize,
+        user: UUID,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         if let key = size == .preview ? assetKeys.preview : assetKeys.complete {
             let path: String
             switch apiVersion {
@@ -146,13 +169,15 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
                 path = "/assets/v3/\(key)"
 
             case .v1:
-                let domain = requestedUserDomain[user]?.isEmpty == false ? requestedUserDomain[user]! : BackendInfo.domain
+                let domain = requestedUserDomain[user]?.isEmpty == false ? requestedUserDomain[user]! : BackendInfo
+                    .domain
                 guard let domain else { return nil }
 
                 path = "/assets/v4/\(domain)/\(key)"
 
-            case .v2, .v3, .v4, .v5, .v6:
-                let domain = requestedUserDomain[user]?.isEmpty == false ? requestedUserDomain[user]! : BackendInfo.domain
+            case .v2, .v3, .v4, .v5, .v6, .v7:
+                let domain = requestedUserDomain[user]?.isEmpty == false ? requestedUserDomain[user]! : BackendInfo
+                    .domain
                 guard let domain else { return nil }
 
                 path = "/assets/\(domain)/\(key)"

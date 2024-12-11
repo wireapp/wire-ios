@@ -28,7 +28,7 @@ final class DeepLinksViewModel: ObservableObject {
         var errorDescription: String? {
             switch self {
             case .invalidLink:
-                return "The deeplink you have entered is invalid."
+                "The deeplink you have entered is invalid."
             }
         }
 
@@ -37,11 +37,9 @@ final class DeepLinksViewModel: ObservableObject {
     let router: AppRootRouter?
     let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
-    @Published
-    var isShowingAlert = false
+    @Published var isShowingAlert = false
 
-    @Published
-    var error: Error?
+    @Published var error: Error?
 
     // MARK: - Life cycle
 
@@ -57,7 +55,7 @@ final class DeepLinksViewModel: ObservableObject {
 
     func openLink(urlString: String) {
         guard
-            let url = URL(string: urlString),
+            let url = URL(string: urlString.trim()),
             (try? URLAction(url: url)) != nil
         else {
             error = .invalidLink

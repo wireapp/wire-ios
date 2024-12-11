@@ -19,6 +19,7 @@
 import Foundation
 import UniformTypeIdentifiers
 import WireDataModel
+import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -49,13 +50,13 @@ final class BackupRestoreController: NSObject {
 
     // MARK: - Initialization
 
-        init(
-            target: UIViewController,
-            temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
-        ) {
+    init(
+        target: UIViewController,
+        temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
+    ) {
         self.target = target
         self.temporaryFilesService = temporaryFilesService
-        activityIndicator = .init(view: target.view)
+        self.activityIndicator = .init(view: target.view)
         super.init()
     }
 
@@ -123,18 +124,19 @@ final class BackupRestoreController: NSObject {
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                self.showWrongPasswordAlert { _ in
+                showWrongPasswordAlert { _ in
                     self.restore(with: url)
                 }
-            case .failure(let error):
+
+            case let .failure(error):
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
-                self.showRestoreError(error)
+                showRestoreError(error)
                 Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
 
             case .success:
-                self.temporaryFilesService.removeTemporaryData()
-                self.delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: true)
+                temporaryFilesService.removeTemporaryData()
+                delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: true)
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             }
         }
@@ -158,8 +160,8 @@ final class BackupRestoreController: NSObject {
     private func showRestoreError(_ error: Error) {
         let controller = restoreBackupFailed(
             error: error,
-            onTryAgain: { [unowned self] in self.showFilePicker() },
-            onCancel: { [unowned self] in self.delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: false) }
+            onTryAgain: { [unowned self] in showFilePicker() },
+            onCancel: { [unowned self] in delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: false) }
         )
 
         target.present(controller, animated: true)
@@ -173,6 +175,6 @@ extension BackupRestoreController: UIDocumentPickerDelegate {
     ) {
         WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
 
-        self.restore(with: url)
+        restore(with: url)
     }
 }

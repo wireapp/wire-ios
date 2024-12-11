@@ -24,16 +24,16 @@ final class ZMConversationTests_Creation: ZMConversationTestsBase {
     func testThatItCreatesParticipantsWithTheGivenRoleForAllParticipants() {
 
         // given
-        let team = Team.insertNewObject(in: self.uiMOC)
+        let team = Team.insertNewObject(in: uiMOC)
         let role1 = Role.create(managedObjectContext: uiMOC, name: "role1", team: team)
-        let user1 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
         user1.name = "user1"
-        let user2 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
         user2.name = "user2"
 
         // when
         let conversation = ZMConversation.insertGroupConversation(
-            moc: self.uiMOC,
+            moc: uiMOC,
             participants: [user1, user2],
             name: "Foo",
             team: team,
@@ -41,30 +41,30 @@ final class ZMConversationTests_Creation: ZMConversationTestsBase {
         )!
 
         // then
-        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role }, [role1, role1, role1])
+        XCTAssertEqual(conversation.participantRoles.compactMap(\.role), [role1, role1, role1])
     }
 
     func testThatItCreatesConversationAndIncludesSelfUser() {
 
         // given
-        let team = Team.insertNewObject(in: self.uiMOC)
+        let team = Team.insertNewObject(in: uiMOC)
         let role1 = Role.create(managedObjectContext: uiMOC, name: "role1", team: team)
-        let user1 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
         user1.name = "user1"
-        let user2 = ZMUser.insertNewObject(in: self.uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
         user2.name = "user2"
 
         // when
         let conversation = ZMConversation.insertGroupConversation(
-            moc: self.uiMOC,
+            moc: uiMOC,
             participants: [user1, user2],
             name: "Foo",
             team: team,
             participantsRole: role1
-            )!
+        )!
 
         // then
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         XCTAssertEqual(conversation.localParticipants, Set([selfUser, user1, user2]))
     }
 

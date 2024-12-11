@@ -18,23 +18,21 @@
 
 import UIKit
 
-// swiftlint:disable opening_brace
-
 /// Manages the main navigation and the layout changes of the application after a successful login.
 ///
 /// The MainCoordinator class is the central controller for the app's navigation and layout management.
 /// It receives references to ``MainTabBarControllerProtocol`` and ``MainSplitViewControllerProtocol``
-/// conforming instances and is responsible for managing transitions between different split layout states (collapsed and expanded)
+/// conforming instances and is responsible for managing transitions between different split layout states (collapsed
+/// and expanded)
 /// as well as handling navigation logic.
 ///
 /// Both, the split view controller as well as the tab view controller actually install `UINavigationController`
 /// instances and then put or remove the content view controllers into/from `viewControllers` array.
 
 @MainActor
-public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate
-    where Dependencies: MainCoordinatorDependenciesProtocol
-{
-    // swiftlint:enable opening_brace
+public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate,
+    UITabBarControllerDelegate
+    where Dependencies: MainCoordinatorDependenciesProtocol {
 
     // MARK: - Private Properties
 
@@ -81,8 +79,8 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         conversationUIBuilder: Dependencies.ConversationUIBuilder,
         settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder
     ) {
-        splitViewController = mainSplitViewController
-        tabBarController = mainTabBarController
+        self.splitViewController = mainSplitViewController
+        self.tabBarController = mainTabBarController
         self.conversationUIBuilder = conversationUIBuilder
         self.settingsContentUIBuilder = settingsContentUIBuilder
 
@@ -125,6 +123,10 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             }
         }
 
+        applyConversationFilter(conversationFilter)
+    }
+
+    public func applyConversationFilter(_ conversationFilter: ConversationFilter?) {
         // apply the filter to the conversation list
         let conversationFilter = conversationFilter.map { ConversationFilter(mappingFrom: $0) }
         conversationListUI.conversationFilter = conversationFilter
@@ -229,7 +231,10 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             tabBarController.conversationUI = conversationUI
         }
 
-        let contentViewController = settingsContentUIBuilder.build(topLevelMenuItem: topLevelMenuItem, mainCoordinator: self)
+        let contentViewController = settingsContentUIBuilder.build(
+            topLevelMenuItem: topLevelMenuItem,
+            mainCoordinator: self
+        )
         switch mainSplitViewState {
         case .collapsed:
             let animated = tabBarController.settingsContentUI == nil
@@ -452,6 +457,8 @@ private extension MainSidebarMenuItem {
             self = .groups
         case .oneOnOne:
             self = .oneOnOne
+        case .folder:
+            self = .folders
         }
     }
 }

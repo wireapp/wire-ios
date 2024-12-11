@@ -38,26 +38,26 @@ final class ConversationReplyContentView: UIView {
         var showDetails: Bool {
             guard let message = quotedMessage,
                   message.isText
-                    || message.isLocation
-                    || message.isAudio
-                    || message.isImage
-                    || message.isVideo
-                    || message.isFile else {
+                  || message.isLocation
+                  || message.isAudio
+                  || message.isImage
+                  || message.isVideo
+                  || message.isFile else {
                 return false
             }
             return true
         }
 
         var isEdited: Bool {
-            return quotedMessage?.updatedAt != nil
+            quotedMessage?.updatedAt != nil
         }
 
         var senderName: String? {
-            return quotedMessage?.senderName
+            quotedMessage?.senderName
         }
 
         var timestamp: String? {
-            return quotedMessage?.formattedOriginalReceivedDate()
+            quotedMessage?.formattedOriginalReceivedDate()
         }
 
         var showRestriction: Bool {
@@ -88,7 +88,7 @@ final class ConversationReplyContentView: UIView {
         }
 
         var content: Content {
-            return setupContent()
+            setupContent()
         }
 
         var contentType: String {
@@ -100,8 +100,10 @@ final class ConversationReplyContentView: UIView {
 
         private func setupContent() -> Content {
             typealias LabelColors = SemanticColors.Label
-            let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.smallSemiboldFont,
-                                                             .foregroundColor: LabelColors.textDefault]
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.smallSemiboldFont,
+                .foregroundColor: LabelColors.textDefault
+            ]
             switch quotedMessage {
             case let message? where message.isText:
                 let data = message.textMessageData!
@@ -110,17 +112,20 @@ final class ConversationReplyContentView: UIView {
             case let message? where message.isLocation:
                 let location = message.locationMessageData!
                 let imageIcon = NSTextAttachment.textAttachment(for: .locationPin, with: LabelColors.textDefault)
-                let initialString = NSAttributedString(attachment: imageIcon) + "  " + (location.name ?? MessagePreview.location).localizedUppercase
+                let initialString = NSAttributedString(attachment: imageIcon) + "  " +
+                    (location.name ?? MessagePreview.location).localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isAudio:
                 let imageIcon = NSTextAttachment.textAttachment(for: .microphone, with: LabelColors.textDefault)
-                let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.audio.localizedUppercase
+                let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.audio
+                    .localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isImage && !message.canBeShared:
                 let imageIcon = NSTextAttachment.textAttachment(for: .photo, with: LabelColors.textDefault)
-                let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.image.localizedUppercase
+                let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.image
+                    .localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isImage:
@@ -128,7 +133,8 @@ final class ConversationReplyContentView: UIView {
 
             case let message? where message.isVideo && !message.canBeShared:
                 let imageIcon = NSTextAttachment.textAttachment(for: .camera, with: LabelColors.textDefault)
-                let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.video.localizedUppercase
+                let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.video
+                    .localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isVideo:
@@ -137,14 +143,20 @@ final class ConversationReplyContentView: UIView {
             case let message? where message.isFile:
                 let fileData = message.fileMessageData!
                 let imageIcon = NSTextAttachment.textAttachment(for: .document, with: LabelColors.textDefault)
-                let initialString = NSAttributedString(attachment: imageIcon) + "  " + (fileData.filename ?? MessagePreview.file).localizedUppercase
+                let initialString = NSAttributedString(attachment: imageIcon) + "  " +
+                    (fileData.filename ?? MessagePreview.file).localizedUppercase
                 return .text(initialString && attributes)
 
             default:
-                let attributes: [NSAttributedString.Key: AnyObject] = [.font: UIFont.mediumFont.italic,
-                                                                       .foregroundColor: LabelColors.textCollectionSecondary]
-                return .text(NSAttributedString(string: L10n.Localizable.Content.Message.Reply.brokenMessage,
-                                                attributes: attributes))
+                let attributes: [NSAttributedString.Key: AnyObject] = [
+                    .font: UIFont.mediumFont.italic,
+                    .foregroundColor: LabelColors
+                        .textCollectionSecondary
+                ]
+                return .text(NSAttributedString(
+                    string: L10n.Localizable.Content.Message.Reply.brokenMessage,
+                    attributes: attributes
+                ))
             }
         }
     }
@@ -232,23 +244,27 @@ final class ConversationReplyContentView: UIView {
         restrictionLabel.isHidden = !object.showRestriction
 
         senderComponent.senderName = object.senderName
-        senderComponent.indicatorIcon = object.isEdited ? StyleKitIcon.pencil.makeImage(size: 8, color: SemanticColors.Icon.foregroundDefault) : nil
+        senderComponent.indicatorIcon = object.isEdited ? StyleKitIcon.pencil.makeImage(
+            size: 8,
+            color: SemanticColors.Icon.foregroundDefault
+        ) : nil
         senderComponent.indicatorLabel = object.isEdited ? L10n.Localizable.Content.Message.Reply.editedMessage : nil
         timestampLabel.text = object.timestamp
         restrictionLabel.text = object.restrictionDescription?.localizedUppercase
 
         switch object.content {
-        case .text(let attributedContent):
+        case let .text(attributedContent):
             let mutableAttributedContent = NSMutableAttributedString(attributedString: attributedContent)
             // Trim the string to first four lines to prevent last line narrower spacing issue
             mutableAttributedContent.paragraphTailTruncated()
-            contentTextView.attributedText = mutableAttributedContent.trimmedToNumberOfLines(numberOfLinesLimit: numberOfLinesLimit)
+            contentTextView.attributedText = mutableAttributedContent
+                .trimmedToNumberOfLines(numberOfLinesLimit: numberOfLinesLimit)
             contentTextView.isHidden = false
             contentTextView.accessibilityIdentifier = object.contentType
             contentTextView.isAccessibilityElement = true
             assetThumbnail.isHidden = true
             assetThumbnail.isAccessibilityElement = false
-        case .imagePreview(let resource, let isVideo):
+        case let .imagePreview(resource, isVideo):
             assetThumbnail.setResource(resource, isVideoPreview: isVideo)
             assetThumbnail.isHidden = false
             assetThumbnail.accessibilityIdentifier = object.contentType
@@ -271,8 +287,8 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     weak var message: ZMConversationMessage?
 
     override init(frame: CGRect) {
-        contentView = ConversationReplyContentView()
-        container = ReplyRoundCornersView(containedView: contentView)
+        self.contentView = ConversationReplyContentView()
+        self.container = ReplyRoundCornersView(containedView: contentView)
         super.init(frame: frame)
         configureSubviews()
         configureConstraints()
@@ -297,7 +313,8 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
         contentView.configure(with: object)
     }
 
-    @objc func onTap() {
+    @objc
+    func onTap() {
         delegate?.perform(action: .openQuote, for: message!, view: self)
     }
 
@@ -321,26 +338,26 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     let accessibilityIdentifier: String? = "ReplyCell"
 
     init(quotedMessage: ZMConversationMessage?) {
-       configuration = View.Configuration(quotedMessage: quotedMessage)
+        self.configuration = View.Configuration(quotedMessage: quotedMessage)
     }
 }
 
 private extension ZMConversationMessage {
     var typeString: String {
         if isText {
-            return "text"
+            "text"
         } else if isLocation {
-            return "location"
+            "location"
         } else if isAudio {
-            return "audio"
+            "audio"
         } else if isImage {
-            return "image"
+            "image"
         } else if isVideo {
-            return "video"
+            "video"
         } else if isFile {
-            return "file"
+            "file"
         } else {
-            return "unavailable"
+            "unavailable"
         }
     }
 }

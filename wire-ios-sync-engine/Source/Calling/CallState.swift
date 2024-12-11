@@ -21,9 +21,7 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
-/**
- * A participant in the call.
- */
+/// A participant in the call.
 
 public struct CallParticipant: Hashable {
 
@@ -38,10 +36,12 @@ public struct CallParticipant: Hashable {
     ///   - user: the call participant ZMUser
     ///   - clientId: the call participant's client
     ///   - state: the call participant's state
-    public init(user: ZMUser,
-                clientId: String,
-                state: CallParticipantState,
-                activeSpeakerState: ActiveSpeakerState) {
+    public init(
+        user: ZMUser,
+        clientId: String,
+        state: CallParticipantState,
+        activeSpeakerState: ActiveSpeakerState
+    ) {
         self.user = user
         self.clientId = clientId
         self.userId = user.avsIdentifier
@@ -55,11 +55,13 @@ public struct CallParticipant: Hashable {
     ///   - userId: the call participant user's id
     ///   - clientId: the call participant's client
     ///   - state: the call participant's state
-    public init(user: UserType,
-                userId: AVSIdentifier,
-                clientId: String,
-                state: CallParticipantState,
-                activeSpeakerState: ActiveSpeakerState) {
+    public init(
+        user: UserType,
+        userId: AVSIdentifier,
+        clientId: String,
+        state: CallParticipantState,
+        activeSpeakerState: ActiveSpeakerState
+    ) {
         self.user = user
         self.clientId = clientId
         self.userId = userId
@@ -74,19 +76,21 @@ public struct CallParticipant: Hashable {
             return nil
         }
 
-        self.init(user: user,
-                  userId: userId,
-                  clientId: member.client.clientId,
-                  state: member.callParticipantState,
-                  activeSpeakerState: activeSpeakerState)
+        self.init(
+            user: user,
+            userId: userId,
+            clientId: member.client.clientId,
+            state: member.callParticipantState,
+            activeSpeakerState: activeSpeakerState
+        )
     }
 
     // MARK: - Hashable
 
     public static func == (lhs: CallParticipant, rhs: CallParticipant) -> Bool {
-        return lhs.userId == rhs.userId &&
-               lhs.clientId == rhs.clientId &&
-               lhs.state == rhs.state
+        lhs.userId == rhs.userId &&
+            lhs.clientId == rhs.clientId &&
+            lhs.state == rhs.state
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -96,9 +100,7 @@ public struct CallParticipant: Hashable {
 
 }
 
-/**
- * The state of a participant in a call.
- */
+/// The state of a participant in a call.
 
 public enum CallParticipantState: Equatable, Hashable {
     /// Participant is not in the call
@@ -111,9 +113,7 @@ public enum CallParticipantState: Equatable, Hashable {
     case connected(videoState: VideoState, microphoneState: MicrophoneState)
 }
 
-/**
- * The audio state of a participant in a call.
- */
+/// The audio state of a participant in a call.
 
 public enum AudioState: Int32, Codable {
     /// Audio is in the process of connecting.
@@ -124,9 +124,7 @@ public enum AudioState: Int32, Codable {
     case networkProblem = 2
 }
 
-/**
- * The state of video in the call.
- */
+/// The state of video in the call.
 
 public enum VideoState: Int32, Codable {
     /// Sender is not sending video
@@ -141,9 +139,7 @@ public enum VideoState: Int32, Codable {
     case screenSharing = 4
 }
 
-/**
- * The state of microphone in the call
- */
+/// The state of microphone in the call
 
 public enum MicrophoneState: Int32, Codable {
     /// Sender is unmuted
@@ -152,9 +148,7 @@ public enum MicrophoneState: Int32, Codable {
     case muted = 1
 }
 
-/**
- * The speaking activity state of a participant in the call.
- */
+/// The speaking activity state of a participant in the call.
 
 public enum ActiveSpeakerState: Hashable {
     /// Participant is an active speaker
@@ -163,9 +157,7 @@ public enum ActiveSpeakerState: Hashable {
     case inactive
 }
 
-/**
- * The current state of a call.
- */
+/// The current state of a call.
 
 public enum CallState: Equatable {
 
@@ -188,23 +180,21 @@ public enum CallState: Equatable {
     /// Unknown call state
     case unknown
 
-    /**
-     * Logs the current state to the calling logs.
-     */
+    /// Logs the current state to the calling logs.
 
     func logState() {
         switch self {
-        case .answered(degraded: let degraded):
+        case let .answered(degraded: degraded):
             zmLog.debug("answered call, degraded: \(degraded)")
-        case .incoming(video: let isVideo, shouldRing: let shouldRing, degraded: let degraded):
+        case let .incoming(video: isVideo, shouldRing: shouldRing, degraded: degraded):
             zmLog.debug("incoming call, isVideo: \(isVideo), shouldRing: \(shouldRing), degraded: \(degraded)")
         case .establishedDataChannel:
             zmLog.debug("established data channel")
         case .established:
             zmLog.debug("established call")
-        case .outgoing(degraded: let degraded):
+        case let .outgoing(degraded: degraded):
             zmLog.debug("outgoing call, , degraded: \(degraded)")
-        case .terminating(reason: let reason):
+        case let .terminating(reason: reason):
             zmLog.debug("terminating call reason: \(reason)")
         case .mediaStopped:
             zmLog.debug("media stopped")
@@ -215,22 +205,20 @@ public enum CallState: Equatable {
         }
     }
 
-    /**
-     * Updates the state of the call when the security level changes.
-     * - parameter isConversationDegraded: Has conversation been degraded?
-     * - returns: The current status, updated with the appropriate degradation information.
-     */
+    /// Updates the state of the call when the security level changes.
+    /// - parameter isConversationDegraded: Has conversation been degraded?
+    /// - returns: The current status, updated with the appropriate degradation information.
 
     func update(isConversationDegraded: Bool) -> CallState {
         switch self {
         case .incoming(video: let video, shouldRing: let shouldRing, degraded: _):
-            return .incoming(video: video, shouldRing: shouldRing, degraded: isConversationDegraded)
+            .incoming(video: video, shouldRing: shouldRing, degraded: isConversationDegraded)
         case .outgoing:
-            return .outgoing(degraded: isConversationDegraded)
+            .outgoing(degraded: isConversationDegraded)
         case .answered:
-            return .answered(degraded: isConversationDegraded)
+            .answered(degraded: isConversationDegraded)
         default:
-            return self
+            self
         }
     }
 }

@@ -29,4 +29,4 @@ public protocol MediaManagerType: AnyObject {
 
 }
 
-extension AVSMediaManager: MediaManagerType { }
+extension AVSMediaManager: MediaManagerType {}

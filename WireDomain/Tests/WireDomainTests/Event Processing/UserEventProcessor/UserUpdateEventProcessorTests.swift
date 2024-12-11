@@ -18,9 +18,9 @@
 
 import WireAPI
 import WireAPISupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class UserUpdateEventProcessorTests: XCTestCase {
 

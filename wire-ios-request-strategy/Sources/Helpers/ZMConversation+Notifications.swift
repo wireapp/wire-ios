@@ -17,10 +17,10 @@
 //
 import Foundation
 
-@objc extension ZMConversation {
+@objc
+public extension ZMConversation {
 
-    public static let failedToDecryptMessageNotificationName = Notification.Name(rawValue: "ZMConversationFailedToDecryptMessageNotificationName")
-
-    public static let failedToSendMessageNotificationName = Notification.Name(rawValue: "ZMConversationFailedToSendMessageNotificationName")
+    static let failedToSendMessageNotificationName = Notification
+        .Name(rawValue: "ZMConversationFailedToSendMessageNotificationName")
 
 }

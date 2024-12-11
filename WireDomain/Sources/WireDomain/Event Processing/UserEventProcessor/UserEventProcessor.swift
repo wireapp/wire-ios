@@ -50,41 +50,41 @@ struct UserEventProcessor {
 
     func processEvent(_ event: UserEvent) async throws {
         switch event {
-        case .clientAdd(let event):
+        case let .clientAdd(event):
             try await clientAddEventProcessor.processEvent(event)
 
-        case .clientRemove(let event):
+        case let .clientRemove(event):
             try await clientRemoveEventProcessor.processEvent(event)
 
-        case .connection(let event):
+        case let .connection(event):
             try await connectionEventProcessor.processEvent(event)
 
-        case .contactJoin(let event):
+        case .contactJoin:
             /// This event is not processed, we only show a notification to the user.
             break
 
-        case .delete(let event):
+        case let .delete(event):
             try await deleteEventProcessor.processEvent(event)
 
-        case .legalholdDisable(let event):
+        case let .legalholdDisable(event):
             try await legalholdDisableEventProcessor.processEvent(event)
 
-        case .legalholdEnable(let event):
+        case let .legalholdEnable(event):
             try await legalholdEnableEventProcessor.processEvent(event)
 
-        case .legalholdRequest(let event):
+        case let .legalholdRequest(event):
             try await legalholdRequestEventProcessor.processEvent(event)
 
-        case .propertiesSet(let event):
+        case let .propertiesSet(event):
             try await propertiesSetEventProcessor.processEvent(event)
 
-        case .propertiesDelete(let event):
-            try await propertiesDeleteEventProcessor.processEvent(event)
+        case let .propertiesDelete(event):
+            await propertiesDeleteEventProcessor.processEvent(event)
 
         case .pushRemove:
             pushRemoveEventProcessor.processEvent()
 
-        case .update(let event):
+        case let .update(event):
             try await updateEventProcessor.processEvent(event)
         }
     }

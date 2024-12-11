@@ -32,13 +32,12 @@ final class PinnableThumbnailViewController: UIViewController {
     private var hasDoneInitialLayout = false
     private var hasEnabledPinningBehavior = false
 
-    private lazy var pinningBehavior: ThumbnailCornerPinningBehavior = {
-        return ThumbnailCornerPinningBehavior(item: self.thumbnailView, edgeInsets: self.edgeInsets)
-    }()
+    private lazy var pinningBehavior: ThumbnailCornerPinningBehavior = .init(
+        item: self.thumbnailView,
+        edgeInsets: self.edgeInsets
+    )
 
-    private lazy var animator: UIDynamicAnimator = {
-        return UIDynamicAnimator(referenceView: self.thumbnailContainerView)
-    }()
+    private lazy var animator: UIDynamicAnimator = .init(referenceView: self.thumbnailContainerView)
 
     // MARK: - Changing the Previewed Content
 
@@ -56,13 +55,13 @@ final class PinnableThumbnailViewController: UIViewController {
         thumbnailView.accessibilityIdentifier = "ThumbnailView"
         self.contentView = contentView
 
-        self.thumbnailContentSize = contentSize
+        thumbnailContentSize = contentSize
         updateThumbnailFrame(animated: false, parentSize: thumbnailContainerView.frame.size)
         pinningBehavior.updateFields(in: thumbnailContainerView.bounds)
     }
 
     func updateThumbnailContentSize(_ newSize: CGSize, animated: Bool) {
-        self.thumbnailContentSize = newSize
+        thumbnailContentSize = newSize
         updateThumbnailFrame(animated: false, parentSize: thumbnailContainerView.frame.size)
     }
 
@@ -81,7 +80,12 @@ final class PinnableThumbnailViewController: UIViewController {
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
         thumbnailView.addGestureRecognizer(panGestureRecognizer)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(orientationDidChange),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -100,7 +104,7 @@ final class PinnableThumbnailViewController: UIViewController {
         super.viewDidAppear(animated)
 
         if !hasEnabledPinningBehavior {
-            animator.addBehavior(self.pinningBehavior)
+            animator.addBehavior(pinningBehavior)
             hasEnabledPinningBehavior = true
         }
     }
@@ -125,14 +129,16 @@ final class PinnableThumbnailViewController: UIViewController {
         thumbnailContainerView.translatesAutoresizingMaskIntoConstraints = false
 
         thumbnailContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
-        thumbnailContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        thumbnailContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+            .isActive = true
         thumbnailContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         thumbnailContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     }
 
     // MARK: - Orientation
 
-    @objc func orientationDidChange() {
+    @objc
+    func orientationDidChange() {
         contentView?.layoutForOrientation()
     }
 
@@ -147,8 +153,10 @@ final class PinnableThumbnailViewController: UIViewController {
 
         let insets = view.safeAreaInsets
 
-        let safeSize = CGSize(width: size.width - insets.left - insets.right,
-                              height: size.height - insets.top - insets.bottom)
+        let safeSize = CGSize(
+            width: size.width - insets.left - insets.right,
+            height: size.height - insets.top - insets.bottom
+        )
 
         let bounds = CGRect(origin: CGPoint.zero, size: safeSize)
         pinningBehavior.updateFields(in: bounds)
@@ -205,13 +213,15 @@ final class PinnableThumbnailViewController: UIViewController {
             return center
         }
 
-        let frame: CGRect
-
-        if UIApplication.isLeftToRightLayout {
-            frame = CGRect(x: parentSize.width - size.width - edgeInsets.x, y: edgeInsets.y,
-                           width: size.width, height: size.height)
+        let frame = if UIApplication.isLeftToRightLayout {
+            CGRect(
+                x: parentSize.width - size.width - edgeInsets.x,
+                y: edgeInsets.y,
+                width: size.width,
+                height: size.height
+            )
         } else {
-            frame = CGRect(x: edgeInsets.x, y: edgeInsets.y, width: size.width, height: size.height)
+            CGRect(x: edgeInsets.x, y: edgeInsets.y, width: size.width, height: size.height)
         }
 
         return CGPoint(x: frame.midX, y: frame.midY)
@@ -219,7 +229,8 @@ final class PinnableThumbnailViewController: UIViewController {
 
     // MARK: - Panning
 
-    @objc private func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
+    @objc
+    private func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .began:
             // Disable the pinning while the user moves the thumbnail
@@ -269,7 +280,7 @@ final class PinnableThumbnailViewController: UIViewController {
         case .cancelled, .ended:
 
             // Snap the thumbnail to the closest edge
-            let velocity = recognizer.velocity(in: self.thumbnailContainerView)
+            let velocity = recognizer.velocity(in: thumbnailContainerView)
             pinningBehavior.isEnabled = true
             pinningBehavior.addLinearVelocity(velocity)
 

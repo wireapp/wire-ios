@@ -26,9 +26,11 @@ protocol WipeDatabaseUserInterface: AnyObject {
 
 extension WipeDatabaseViewController: WipeDatabaseUserInterface {
     func presentConfirmAlert() {
-        let confirmController = RequestPasswordController(context: .wiping,
-                                                          callback: presenter?.confirmAlertCallback() ?? { _ in },
-                                                          inputValidation: presenter?.confirmAlertInputValidation())
+        let confirmController = RequestPasswordController(
+            context: .wiping,
+            callback: presenter?.confirmAlertCallback() ?? { _ in },
+            inputValidation: presenter?.confirmAlertInputValidation()
+        )
 
         self.confirmController = confirmController
         present(confirmController.alertController, animated: true)
@@ -42,7 +44,7 @@ final class WipeDatabaseViewController: UIViewController {
 
     var confirmController: RequestPasswordController?
 
-    private let stackView: UIStackView = UIStackView.verticalStackView()
+    private let stackView: UIStackView = .verticalStackView()
 
     typealias WipeDatabase = L10n.Localizable.WipeDatabase
 
@@ -64,14 +66,15 @@ final class WipeDatabaseViewController: UIViewController {
 
         let baseAttributes: [NSAttributedString.Key: Any] = [
             .paragraphStyle: paragraphStyle,
-            .foregroundColor: textColor]
+            .foregroundColor: textColor
+        ]
 
         let headingText = NSAttributedString(string: WipeDatabase.infoLabel) &&
-                                UIFont.normalRegularFont &&
-                                baseAttributes
+            UIFont.normalRegularFont &&
+            baseAttributes
         let highlightText = NSAttributedString(string: WipeDatabase.InfoLabel.highlighted) &&
-                                FontSpec.normalBoldFont.font! &&
-                                baseAttributes
+            FontSpec.normalBoldFont.font! &&
+            baseAttributes
 
         label.text = " "
         label.attributedText = headingText + highlightText
@@ -136,10 +139,23 @@ final class WipeDatabaseViewController: UIViewController {
 
             // confirmButton
             confirmButton.heightAnchor.constraint(equalToConstant: CGFloat.PasscodeUnlock.buttonHeight),
-            confirmButton.topAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: CGFloat.PasscodeUnlock.buttonPadding),
-            confirmButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding),
-            confirmButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: CGFloat.PasscodeUnlock.buttonPadding),
-            confirmButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding)])
+            confirmButton.topAnchor.constraint(
+                greaterThanOrEqualTo: stackView.bottomAnchor,
+                constant: CGFloat.PasscodeUnlock.buttonPadding
+            ),
+            confirmButton.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -CGFloat.PasscodeUnlock.buttonPadding
+            ),
+            confirmButton.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: CGFloat.PasscodeUnlock.buttonPadding
+            ),
+            confirmButton.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -CGFloat.PasscodeUnlock.buttonPadding
+            )
+        ])
     }
 
 }

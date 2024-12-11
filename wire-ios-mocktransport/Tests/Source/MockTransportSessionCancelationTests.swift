@@ -27,7 +27,7 @@ class MockTransportSessionCancellationTests: MockTransportSessionTests {
         // GIVEN
         let request = ZMTransportRequest(getFromPath: "Foo", apiVersion: APIVersion.v0.rawValue)
         var identifier: ZMTaskIdentifier?
-        request.add(ZMTaskCreatedHandler(on: self.fakeSyncContext) {
+        request.add(ZMTaskCreatedHandler(on: fakeSyncContext) {
             identifier = $0
         })
 
@@ -48,14 +48,14 @@ class MockTransportSessionCancellationTests: MockTransportSessionTests {
         var requestCompleted = false
         var identifier: ZMTaskIdentifier?
 
-        request.add(ZMCompletionHandler(on: self.fakeSyncContext) { response in
+        request.add(ZMCompletionHandler(on: fakeSyncContext) { response in
             XCTAssertEqual(response.httpStatus, 0)
             XCTAssertTrue((response.transportSessionError! as NSError).isTryAgainLaterError)
             requestCompleted = true
-            })
-        request.add(ZMTaskCreatedHandler(on: self.fakeSyncContext) {
+        })
+        request.add(ZMTaskCreatedHandler(on: fakeSyncContext) {
             identifier = $0
-            })
+        })
 
         sut.responseGeneratorBlock = { (_: ZMTransportRequest?) -> ZMTransportResponse in
             return ResponseGenerator.ResponseNotCompleted
@@ -86,14 +86,14 @@ class MockTransportSessionCancellationTests: MockTransportSessionTests {
         var requestCompletedCount = 0
         var identifier: ZMTaskIdentifier?
 
-        request.add(ZMCompletionHandler(on: self.fakeSyncContext) { response in
+        request.add(ZMCompletionHandler(on: fakeSyncContext) { response in
             XCTAssertEqual(requestCompletedCount, 0)
             XCTAssertEqual(response.httpStatus, 404)
             requestCompletedCount += 1
-            })
-        request.add(ZMTaskCreatedHandler(on: self.fakeSyncContext) {
+        })
+        request.add(ZMTaskCreatedHandler(on: fakeSyncContext) {
             identifier = $0
-            })
+        })
 
         // WHEN
         sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest? in

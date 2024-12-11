@@ -25,6 +25,7 @@ extension SettingsCellDescriptorFactory {
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
+
     func advancedGroup(userSession: UserSession) -> any SettingsCellDescriptorType {
         let items = [
             troubleshootingSection(userSession: userSession),
@@ -43,13 +44,17 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Sections
+
     private func troubleshootingSection(userSession: UserSession) -> SettingsSectionDescriptor {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
                 let router = SettingsDebugReportRouter()
                 let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
-                let fetchShareableConversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider)
+                let fetchShareableConversations = FetchShareableConversationsUseCase(
+                    contextProvider: userSession
+                        .contextProvider
+                )
                 let viewModel = SettingsDebugReportViewModel(
                     router: router,
                     shareFile: shareFile,
@@ -59,7 +64,8 @@ extension SettingsCellDescriptorFactory {
                 let viewController = SettingsDebugReportViewController(viewModel: viewModel)
                 router.viewController = viewController
                 return viewController
-        })
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [submitDebugButton],
@@ -76,15 +82,17 @@ extension SettingsCellDescriptorFactory {
             presentationAction: { () -> (UIViewController?) in
                 ZMUserSession.shared()?.validatePushToken()
                 return self.pushButtonAlertController
-        })
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [pushButton],
             header: .none,
             footer: SelfSettingsAdvancedLocale.ResetPushToken.subtitle,
             visibilityAction: { _ in
-                return true
-        })
+                true
+            }
+        )
     }
 
     private var debuggingToolsSection: SettingsSectionDescriptor {
@@ -116,6 +124,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Helpers
+
     private var pushButtonAlertController: UIAlertController {
         let alert = UIAlertController(
             title: SelfSettingsAdvancedLocale.ResetPushTokenAlert.title,

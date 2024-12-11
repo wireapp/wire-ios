@@ -26,7 +26,7 @@ extension IconButton {
     static let height: CGFloat = 64
 
     static func acceptCall() -> IconButton {
-        return .init(
+        .init(
             icon: .phone,
             accessibilityId: "AcceptButton",
             backgroundColor: [UIControl.State.normal.rawValue: SemanticColors.Button.backgroundPickUp],
@@ -36,7 +36,7 @@ extension IconButton {
     }
 
     static func endCall() -> IconButton {
-        return .init(
+        .init(
             icon: .endCall,
             size: .small,
             accessibilityId: "LeaveCallButton",
@@ -50,21 +50,23 @@ extension IconButton {
 
         let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
 
-        let sendButton = IconButton(
+        return IconButton(
             icon: .send,
             accessibilityId: "sendButton",
-            backgroundColor: [UIControl.State.normal.rawValue: UIColor.accent(),
-                              UIControl.State.highlighted.rawValue: UIColor.accentDarken,
-                              UIControl.State.disabled.rawValue: SemanticColors.Button.backgroundSendDisabled],
-            iconColor: [UIControl.State.normal.rawValue: sendButtonIconColor,
-                        UIControl.State.highlighted.rawValue: sendButtonIconColor,
-                        UIControl.State.disabled.rawValue: sendButtonIconColor]
+            backgroundColor: [
+                UIControl.State.normal.rawValue: UIColor.accent(),
+                UIControl.State.highlighted.rawValue: UIColor.accentDarken,
+                UIControl.State.disabled.rawValue: SemanticColors.Button.backgroundSendDisabled
+            ],
+            iconColor: [
+                UIControl.State.normal.rawValue: sendButtonIconColor,
+                UIControl.State.highlighted.rawValue: sendButtonIconColor,
+                UIControl.State.disabled.rawValue: sendButtonIconColor
+            ]
         )
-
-        return sendButton
     }
 
-    fileprivate convenience init(
+    private convenience init(
         icon: StyleKitIcon,
         size: StyleKitIcon.Size = .tiny,
         accessibilityId: String,

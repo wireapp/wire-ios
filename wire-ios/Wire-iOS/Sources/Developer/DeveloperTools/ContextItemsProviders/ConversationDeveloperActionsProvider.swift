@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireUtilities
 
 struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider {
@@ -33,9 +34,11 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
     }
 
     func getActionItems() -> [DeveloperToolsViewModel.Item] {
-        var items = [makeConversationIdItem(),
-                     makeConversationTypeItem(),
-                     makeConversationMessageProtocolItem()]
+        var items = [
+            makeConversationIdItem(),
+            makeConversationTypeItem(),
+            makeConversationMessageProtocolItem()
+        ]
 
         if DeveloperFlag.debugDuplicateObjects.isOn {
             items.append(makeDuplicateConversationItem())
@@ -77,12 +80,12 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
     }
 
     private func makeToggleReadItem() -> DeveloperToolsViewModel.Item? {
-        if conversation.unreadMessages.count > 0 {
+        if !conversation.unreadMessages.isEmpty {
             return .button(ButtonItem(
                 title: "Mark as read",
                 action: { Task { await markAsRead() } }
             ))
-        } else if conversation.unreadMessages.count == 0 && conversation.canMarkAsUnread() {
+        } else if conversation.unreadMessages.isEmpty, conversation.canMarkAsUnread() {
             return .button(ButtonItem(
                 title: "Mark as unread",
                 action: { Task { await markAsUnread() } }
@@ -142,7 +145,8 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
 
             context.saveOrRollback()
 
-            WireLogger.conversation.debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
+            WireLogger.conversation
+                .debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
         }
     }
 

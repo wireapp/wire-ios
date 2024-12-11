@@ -31,27 +31,32 @@ public enum ContextType: String {
 extension NSManagedObjectContext {
 
     var type: ContextType {
-        if self.zm_isSyncContext {
+        if zm_isSyncContext {
             return .Sync
         }
-        if self.zm_isUserInterfaceContext {
+        if zm_isUserInterfaceContext {
             return .UI
         }
-        if self.zm_isSearchContext {
+        if zm_isSearchContext {
             return .Search
         }
         return .Other
     }
 }
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
-    public typealias SaveFailureCallback = (_ metadata: [String: Any], _ type: ContextType, _ error: NSError, _ userInfo: [String: Any]) -> Void
+    typealias SaveFailureCallback = (
+        _ metadata: [String: Any],
+        _ type: ContextType,
+        _ error: NSError,
+        _ userInfo: [String: Any]
+    ) -> Void
 
     /// Register a handle for monitoring when one of the manage object contexts fails
     /// to save and is rolled back. The call is invoked on the context queue, so it might not be on the main thread
-    public func registerForSaveFailure(handler: @escaping SaveFailureCallback) {
-        self.managedObjectContext.errorOnSaveCallback = { context, error in
+    func registerForSaveFailure(handler: @escaping SaveFailureCallback) {
+        managedObjectContext.errorOnSaveCallback = { context, error in
             let type = context.type
 
             guard
@@ -66,7 +71,7 @@ extension ZMUserSession {
             handler(metadata, type, error, userInfo)
         }
 
-        self.syncManagedObjectContext.performGroupedBlock {
+        syncManagedObjectContext.performGroupedBlock {
             self.syncManagedObjectContext.errorOnSaveCallback = { context, error in
                 let type = context.type
 

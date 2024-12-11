@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireLogging
 
 // MARK: Conversation Changes
 
@@ -44,18 +45,21 @@ extension WireCallCenterV3: ZMConversationObserver {
             return closeCall(conversationId: conversationId, reason: .securityDegraded)
         }
 
-        let updatedCallState = previousSnapshot.callState.update(isConversationDegraded: changeInfo.conversation.isDegraded)
+        let updatedCallState = previousSnapshot.callState
+            .update(isConversationDegraded: changeInfo.conversation.isDegraded)
 
         if updatedCallState != previousSnapshot.callState {
             callSnapshots[conversationId] = previousSnapshot.update(with: updatedCallState)
 
             if let context = uiMOC, let callerId = initiatorForCall(conversationId: conversationId) {
-                let notification = WireCallCenterCallStateNotification(context: context,
-                                                                       callState: updatedCallState,
-                                                                       conversationId: conversationId,
-                                                                       callerId: callerId,
-                                                                       messageTime: Date(),
-                                                                       previousCallState: previousSnapshot.callState)
+                let notification = WireCallCenterCallStateNotification(
+                    context: context,
+                    callState: updatedCallState,
+                    conversationId: conversationId,
+                    callerId: callerId,
+                    messageTime: Date(),
+                    previousCallState: previousSnapshot.callState
+                )
                 notification.post(in: context.notificationContext)
             }
         }
@@ -95,7 +99,7 @@ extension WireCallCenterV3: ZMConversationObserver {
     private func endCallIfNeeded(_ changeInfo: ConversationChangeInfo) {
         guard let conversationId = changeInfo.conversation.avsIdentifier else { return }
 
-        if changeInfo.isDeletedChanged && changeInfo.conversation.isDeletedRemotely {
+        if changeInfo.isDeletedChanged, changeInfo.conversation.isDeletedRemotely {
             Self.logger.info("closing call because conversation was deleted")
             closeCall(conversationId: conversationId)
 
@@ -114,7 +118,7 @@ extension WireCallCenterV3 {
     private func handleEvent(_ description: String, _ handlerBlock: @escaping () -> Void) {
         Self.logger.info("handle avs event: \(description)")
 
-        guard let context = self.uiMOC else {
+        guard let context = uiMOC else {
             Self.logger.error("Cannot handle event '\(description)' because the UI context is not available.")
             return
         }
@@ -124,8 +128,11 @@ extension WireCallCenterV3 {
         }
     }
 
-    private func handleEventInContext(_ description: String, _ handlerBlock: @escaping (NSManagedObjectContext) -> Void) {
-        guard let context = self.uiMOC else {
+    private func handleEventInContext(
+        _ description: String,
+        _ handlerBlock: @escaping (NSManagedObjectContext) -> Void
+    ) {
+        guard let context = uiMOC else {
             Self.logger.error("Cannot handle event '\(description)' because the UI context is not available.")
             return
         }
@@ -136,13 +143,27 @@ extension WireCallCenterV3 {
     }
 
     /// Handles incoming calls.
-    func handleIncomingCall(conversationId: AVSIdentifier, messageTime: Date, client: AVSClient, isVideoCall: Bool, shouldRing: Bool, conversationType: AVSConversationType) {
+    func handleIncomingCall(
+        conversationId: AVSIdentifier,
+        messageTime: Date,
+        client: AVSClient,
+        isVideoCall: Bool,
+        shouldRing: Bool,
+        conversationType: AVSConversationType
+    ) {
         handleEvent("incoming-call") {
             let isDegraded = self.isDegraded(conversationId: conversationId)
             let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
             let members = [AVSCallMember(client: client)]
 
-            self.createSnapshot(callState: callState, members: members, callStarter: client.avsIdentifier, video: isVideoCall, for: conversationId, conversationType: conversationType)
+            self.createSnapshot(
+                callState: callState,
+                members: members,
+                callStarter: client.avsIdentifier,
+                video: isVideoCall,
+                for: conversationId,
+                conversationType: conversationType
+            )
             self.handle(callState: callState, conversationId: conversationId)
         }
     }
@@ -150,7 +171,12 @@ extension WireCallCenterV3 {
     /// Handles missed calls.
     func handleMissedCall(conversationId: AVSIdentifier, messageTime: Date, userId: AVSIdentifier, isVideoCall: Bool) {
         handleEvent("missed-call") {
-            self.missed(conversationId: conversationId, userId: userId, timestamp: messageTime, isVideoCall: isVideoCall)
+            self.missed(
+                conversationId: conversationId,
+                userId: userId,
+                timestamp: messageTime,
+                isVideoCall: isVideoCall
+            )
         }
     }
 
@@ -189,21 +215,29 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Handles ended calls
-     * If the user answers on the different device, we receive a `WCALL_REASON_ANSWERED_ELSEWHERE` followed by a
-     * `WCALL_REASON_NORMAL` once the call ends.
-     *
-     * If the user leaves an ongoing group conversation or an incoming group call times out, we receive a
-     * `WCALL_REASON_STILL_ONGOING` followed by a `WCALL_REASON_NORMAL` once the call ends.
-     *
-     * If messageTime is set to 0, the event wasn't caused by a message therefore we don't have a serverTimestamp.
-     */
+    /// Handles ended calls
+    /// If the user answers on the different device, we receive a `WCALL_REASON_ANSWERED_ELSEWHERE` followed by a
+    /// `WCALL_REASON_NORMAL` once the call ends.
+    ///
+    /// If the user leaves an ongoing group conversation or an incoming group call times out, we receive a
+    /// `WCALL_REASON_STILL_ONGOING` followed by a `WCALL_REASON_NORMAL` once the call ends.
+    ///
+    /// If messageTime is set to 0, the event wasn't caused by a message therefore we don't have a serverTimestamp.
 
-    func handleCallEnd(reason: CallClosedReason, conversationId: AVSIdentifier, messageTime: Date?, userId: AVSIdentifier) {
+    func handleCallEnd(
+        reason: CallClosedReason,
+        conversationId: AVSIdentifier,
+        messageTime: Date?,
+        userId: AVSIdentifier
+    ) {
         guard isEnabled else { return }
         handleEvent("closed-call") {
-            self.handle(callState: .terminating(reason: reason), conversationId: conversationId, messageTime: messageTime, userId: userId)
+            self.handle(
+                callState: .terminating(reason: reason),
+                conversationId: conversationId,
+                messageTime: messageTime,
+                userId: userId
+            )
         }
     }
 
@@ -221,13 +255,15 @@ extension WireCallCenterV3 {
     }
 
     /// Handles sending call messages
-    internal func handleCallMessageRequest(token: WireCallMessageToken,
-                                           conversationId: AVSIdentifier,
-                                           senderUserId: AVSIdentifier,
-                                           senderClientId: String,
-                                           targets: AVSClientList?,
-                                           data: Data,
-                                           overMLSSelfConversation: Bool = false) {
+    func handleCallMessageRequest(
+        token: WireCallMessageToken,
+        conversationId: AVSIdentifier,
+        senderUserId: AVSIdentifier,
+        senderClientId: String,
+        targets: AVSClientList?,
+        data: Data,
+        overMLSSelfConversation: Bool = false
+    ) {
 
         guard isEnabled else { return }
 
@@ -285,7 +321,10 @@ extension WireCallCenterV3 {
             do {
                 let change = try self.decoder.decode(AVSParticipantsChange.self, from: data)
                 let members = change.members.map(AVSCallMember.init)
-                self.callParticipantsChanged(conversationId: AVSIdentifier.from(string: change.convid), participants: members)
+                self.callParticipantsChanged(
+                    conversationId: AVSIdentifier.from(string: change.convid),
+                    participants: members
+                )
             } catch {
                 let change = String(decoding: data, as: UTF8.self)
                 Self.logger.info("Cannot decode participant change JSON: \(change)", attributes: .safePublic)
@@ -315,10 +354,10 @@ extension WireCallCenterV3 {
     }
 
     /// This handler is called for 1:1 and conference calls.
-    /// 
+    ///
     /// In 1:1 calls, `userId` and `clientId` are the ids of the remote user
     /// In conference calls, since there is multiple remote users, the ids will be "SFT" and should be ignored
-    /// 
+    ///
     /// - Parameters:
     ///   - conversationId: the AVSIdentifier of the conversation
     ///   - userId: the remote user's ID for 1:1 calls, defaults to "SFT" for conference calls
@@ -373,7 +412,7 @@ extension WireCallCenterV3 {
     }
 
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
-        // TODO [WPB-9604]: - refactor to avoid processing call data on the UI context 
+        // TODO: [WPB-9604]: - refactor to avoid processing call data on the UI context
         handleEventInContext("active-speakers-change") {
 
             guard let data = data.data(using: .utf8) else {

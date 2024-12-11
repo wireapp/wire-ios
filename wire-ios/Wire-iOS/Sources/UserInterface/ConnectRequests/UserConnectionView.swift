@@ -27,13 +27,11 @@ final class UserConnectionView: UIView, Copyable {
         self.init(user: instance.user)
     }
 
-    static private var correlationFormatter: AddressBookCorrelationFormatter = {
-        return AddressBookCorrelationFormatter(
-            lightFont: FontSpec(.small, .light),
-            boldFont: FontSpec(.small, .medium),
-            color: SemanticColors.Label.textDefault
-        )
-    }()
+    private static var correlationFormatter: AddressBookCorrelationFormatter = .init(
+        lightFont: FontSpec(.small, .light),
+        boldFont: FontSpec(.small, .medium),
+        color: SemanticColors.Label.textDefault
+    )
 
     private let firstLabel = UILabel()
     private let secondLabel = UILabel()
@@ -64,7 +62,7 @@ final class UserConnectionView: UIView, Copyable {
 
     private func setup() {
         labelContainer.spacing = 0.0
-        self.backgroundColor = SemanticColors.View.backgroundConversationView
+        backgroundColor = SemanticColors.View.backgroundConversationView
         [firstLabel, secondLabel].forEach {
             $0.numberOfLines = 0
             $0.textAlignment = .center
@@ -111,9 +109,9 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private var correlationLabelText: NSAttributedString? {
-        return type(of: self).correlationFormatter.correlationText(
+        type(of: self).correlationFormatter.correlationText(
             for: user,
-               addressBookName: (user as? ZMUser)?.addressBookEntry?.cachedName
+            addressBookName: (user as? ZMUser)?.addressBookEntry?.cachedName
         )
     }
 

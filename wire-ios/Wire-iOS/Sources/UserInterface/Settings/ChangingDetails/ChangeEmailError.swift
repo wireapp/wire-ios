@@ -25,7 +25,7 @@ enum ChangeEmailError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidEmail:
-            return L10n.Localizable.Error.Email.invalid
+            L10n.Localizable.Error.Email.invalid
         }
     }
 }

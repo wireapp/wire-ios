@@ -41,8 +41,8 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? SemanticColors.View.backgroundUserCellHightLighted
-            : SemanticColors.View.backgroundUserCell
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
         }
     }
 

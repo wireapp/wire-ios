@@ -17,11 +17,11 @@
 //
 
 import Foundation
+import XCTest
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-import XCTest
 
 final class CertificateRevocationListsCheckerTests: XCTestCase {
     private var coreDataHelper: CoreDataStackHelper!
@@ -227,12 +227,12 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
             Set([dp2])
         )
         XCTAssertEqual(
-            mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.map({
+            mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.map {
                 String(reflecting: $0.expirationDate)
-            }),
-            [Date.distantFuture].map({
+            },
+            [Date.distantFuture].map {
                 String(reflecting: $0)
-            })
+            }
         )
 
         // It updates conversations verification statuses for dp1
@@ -260,24 +260,24 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
     private func mockDummies() {
         // Mock getting the CRL from distribution point
         mockCRLAPI.getRevocationListFrom_MockMethod = { _ in
-            return .random()
+            .random()
         }
 
         // Mock storing the expiration date
         mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_MockMethod = { _, _ in }
 
         // Mock updating the conversation verification status
-        mockMLSGroupVerification.updateAllConversations_MockMethod = { }
+        mockMLSGroupVerification.updateAllConversations_MockMethod = {}
 
         // Mock getting a certificate for a self client
-        mockSelfClientCertificateProvider.getCertificate_MockMethod = { return nil }
+        mockSelfClientCertificateProvider.getCertificate_MockMethod = { nil }
     }
 
     private func mockCRLExpirationDateExists(for distributionPoints: [String]) {
         // Mock wether or not there is an expiraiton date for the CRL associated to a given distribution point
         // If there is no expiration date, the distribution point is considered to be unknown/new
         mockCRLExpirationDatesRepository.crlExpirationDateExistsFor_MockMethod = { distributionPoint in
-            return distributionPoints.contains(distributionPoint.absoluteString)
+            distributionPoints.contains(distributionPoint.absoluteString)
         }
     }
 

@@ -30,27 +30,25 @@ open class ZMFileMetadata: NSObject {
     public let thumbnail: Data?
     public let filename: String
 
-    required public init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
+    public required init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
         self.fileURL = fileURL
-        self.thumbnail = {
-            if let thumbnail, !thumbnail.isEmpty {
-                return thumbnail
-            } else {
-                return nil
-            }
-        }()
+        self.thumbnail = if let thumbnail, !thumbnail.isEmpty {
+            thumbnail
+        } else {
+            nil
+        }
         let endName = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" : fileURL.lastPathComponent)
 
         self.filename = endName.removingExtremeCombiningCharacters
         super.init()
     }
 
-    convenience public init(fileURL: URL, thumbnail: Data? = nil) {
+    public convenience init(fileURL: URL, thumbnail: Data? = nil) {
         self.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
 
     var asset: WireProtos.Asset {
-        return WireProtos.Asset(self)
+        WireProtos.Asset(self)
     }
 }
 
@@ -59,21 +57,26 @@ open class ZMAudioMetadata: ZMFileMetadata {
     public let duration: TimeInterval
     public let normalizedLoudness: [Float]
 
-    required public init(fileURL: URL, duration: TimeInterval, normalizedLoudness: [Float] = [], thumbnail: Data? = nil) {
+    public required init(
+        fileURL: URL,
+        duration: TimeInterval,
+        normalizedLoudness: [Float] = [],
+        thumbnail: Data? = nil
+    ) {
         self.duration = duration
         self.normalizedLoudness = normalizedLoudness
 
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
 
-    required public init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
+    public required init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
         self.duration = 0
         self.normalizedLoudness = []
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
 
     override var asset: WireProtos.Asset {
-        return WireProtos.Asset(self)
+        WireProtos.Asset(self)
     }
 
 }
@@ -83,14 +86,14 @@ open class ZMVideoMetadata: ZMFileMetadata {
     public let duration: TimeInterval
     public let dimensions: CGSize
 
-    required public init(fileURL: URL, duration: TimeInterval, dimensions: CGSize, thumbnail: Data? = nil) {
+    public required init(fileURL: URL, duration: TimeInterval, dimensions: CGSize, thumbnail: Data? = nil) {
         self.duration = duration
         self.dimensions = dimensions
 
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
 
-    required public init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
+    public required init(fileURL: URL, thumbnail: Data?, name: String? = nil) {
         self.duration = 0
         self.dimensions = CGSize.zero
 
@@ -98,7 +101,7 @@ open class ZMVideoMetadata: ZMFileMetadata {
     }
 
     override var asset: WireProtos.Asset {
-        return WireProtos.Asset(self)
+        WireProtos.Asset(self)
     }
 
 }
@@ -106,7 +109,7 @@ open class ZMVideoMetadata: ZMFileMetadata {
 public extension ZMFileMetadata {
 
     var mimeType: String {
-        return UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"
+        UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"
     }
 
     var size: UInt64 {

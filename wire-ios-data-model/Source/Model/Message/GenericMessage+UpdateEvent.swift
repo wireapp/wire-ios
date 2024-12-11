@@ -35,7 +35,7 @@ extension GenericMessage {
 
         var message = GenericMessage(withBase64String: base64Content)
 
-        if case .some(.external(let external)) = message?.content {
+        if case let .some(.external(external)) = message?.content {
             message = GenericMessage(from: updateEvent, withExternal: external)
         }
 

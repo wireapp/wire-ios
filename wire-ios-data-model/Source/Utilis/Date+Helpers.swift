@@ -38,13 +38,13 @@ public extension Date {
     /// Whether the date is after the current instant.
 
     var isInTheFuture: Bool {
-        return !isInThePast
+        !isInThePast
     }
 
     /// Whether the date is before the current instant.
 
     var isInThePast: Bool {
-        return compare(Date()) != .orderedDescending
+        compare(Date()) != .orderedDescending
     }
 
 }

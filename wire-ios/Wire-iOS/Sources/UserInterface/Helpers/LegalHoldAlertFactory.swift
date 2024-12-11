@@ -124,15 +124,16 @@ enum LegalHoldAlertFactory {
             suggestedStateChangeHandler?(.none)
         }
 
-        let request = user.makeLegalHoldInputRequest(with: fingerprint, cancellationHandler: cancellationHandler) { password in
+        let request = user
+            .makeLegalHoldInputRequest(with: fingerprint, cancellationHandler: cancellationHandler) { password in
 
-            suggestedStateChangeHandler?(.acceptingRequest)
+                suggestedStateChangeHandler?(.acceptingRequest)
 
-            ZMUserSession.shared()?.accept(legalHoldRequest: legalHoldRequest, password: password) { error in
-                handleLegalHoldActivationResult(error)
+                ZMUserSession.shared()?.accept(legalHoldRequest: legalHoldRequest, password: password) { error in
+                    handleLegalHoldActivationResult(error)
+                }
+
             }
-
-        }
         return UIAlertController(inputRequest: request)
     }
 
@@ -140,9 +141,9 @@ enum LegalHoldAlertFactory {
 
 // MARK: - SelfLegalHoldSubject + Accepting Alert
 
-extension SelfLegalHoldSubject {
+private extension SelfLegalHoldSubject {
 
-    fileprivate func acceptLegalHoldChangeAlert() {
+    func acceptLegalHoldChangeAlert() {
         ZMUserSession.shared()?.perform {
             self.acknowledgeLegalHoldStatus()
         }

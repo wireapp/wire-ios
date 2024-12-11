@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireTransport
 import WireUtilities
 
@@ -51,7 +52,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         enum CannotStartMigrationReason {
             case unsupportedAPIVersion
             case mlsProtocolIsNotSupported
-            case clientDoesntSupportMLS
+            case mlsIsNotEnabled
             case backendDoesntSupportMLS
             case mlsMigrationIsNotEnabled
             case startTimeHasNotBeenReached
@@ -122,7 +123,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             logger.info("starting proteus-to-mls migration")
             try await mlsService.startProteusToMLSMigration()
             storage.migrationStatus = .started
-        case .cannotStart(reason: let reason):
+        case let .cannotStart(reason: reason):
             logger.info("proteus-to-mls migration can't start (reason: \(reason))")
         }
     }
@@ -146,7 +147,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             do {
                 try await joinMLSGroupIfNeeded(groupID, mlsService: mlsService)
 
-                let allParticipantsSupportMLS = await context.perform { self.allParticipantsSupportMLS(in: conversation) }
+                let allParticipantsSupportMLS = await context
+                    .perform { self.allParticipantsSupportMLS(in: conversation) }
 
                 guard migrationFinalisationTimeHasArrived || allParticipantsSupportMLS else {
                     continue
@@ -154,7 +156,10 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
                 try await updateConversationProtocolToMLS(for: conversation)
             } catch {
-                logger.warn("failed to migrate conversation (groupID:\(groupID.safeForLoggingDescription), error: \(String(describing: error))")
+                logger
+                    .warn(
+                        "failed to migrate conversation (groupID:\(groupID.safeForLoggingDescription), error: \(String(describing: error))"
+                    )
                 continue
             }
         }
@@ -167,15 +172,15 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
 
-        if !DeveloperFlag.enableMLSSupport.isOn {
-            return .cannotStart(reason: .clientDoesntSupportMLS)
-        }
-
         if await !isMLSEnabledOnBackend() {
             return .cannotStart(reason: .backendDoesntSupportMLS)
         }
 
         let features = await fetchFeatures()
+
+        if features.mls.status == .disabled {
+            return .cannotStart(reason: .mlsIsNotEnabled)
+        }
 
         if !features.mls.config.supportedProtocols.contains(.mls) {
             return .cannotStart(reason: .mlsProtocolIsNotSupported)
@@ -219,21 +224,19 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private typealias GroupIDConversationTuple = (groupID: MLSGroupID, conversation: ZMConversation)
 
     private func fetchMixedConversations() async throws -> [GroupIDConversationTuple] {
-        return try await context.perform { [self] in
+        try await context.perform { [self] in
 
             let conversations = try ZMConversation.fetchAllTeamGroupConversations(
                 messageProtocol: .mixed,
                 in: context
             )
 
-            let tuples: [(MLSGroupID, ZMConversation)] = conversations.compactMap {
+            return conversations.compactMap {
                 guard let groupID = $0.mlsGroupID else {
                     return nil
                 }
                 return (groupID: groupID, conversation: $0)
             }
-
-            return tuples
         }
     }
 
@@ -252,7 +255,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
         let qualifiedIDs = try await context.perform { [context] in
             let users = try context.fetch(fetchRequest) as? [ZMUser]
-            return users?.compactMap { $0.qualifiedID }
+            return users?.compactMap(\.qualifiedID)
         }
 
         guard let qualifiedIDs else { return }

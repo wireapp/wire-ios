@@ -20,10 +20,8 @@ import CoreGraphics
 
 public extension StyleKitIcon {
 
-    /**
-     * Represents the target size of an icon. You can either use standard values,
-     * or use a raw CGFloat value, without needing to add another case.
-     */
+    /// Represents the target size of an icon. You can either use standard values,
+    /// or use a raw CGFloat value, without needing to add another case.
 
     enum Size: ExpressibleByIntegerLiteral, RawRepresentable {
 
@@ -64,7 +62,7 @@ public extension StyleKitIcon {
             case .small: 20
             case .medium: 24
             case .large: 48
-            case .custom(let value): value
+            case let .custom(value): value
             }
         }
 

@@ -50,13 +50,17 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
 
     fileprivate weak var teamInvitationStatus: TeamInvitationStatus?
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, teamInvitationStatus: TeamInvitationStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        teamInvitationStatus: TeamInvitationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.teamInvitationStatus = teamInvitationStatus
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let teamId = ZMUser.selfUser(in: managedObjectContext).team?.remoteIdentifier,
               let email = teamInvitationStatus?.nextEmail() else { return nil }
 
@@ -65,7 +69,12 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
             "inviter_name": ZMUser.selfUser(in: managedObjectContext).name
         ]
 
-        let request = ZMTransportRequest(path: "/teams/\(teamId.transportString())/invitations", method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/teams/\(teamId.transportString())/invitations",
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
 
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
             self?.processResponse(response, for: email)

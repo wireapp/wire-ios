@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol FeatureRepositoryInterface {
@@ -219,7 +220,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
             case (.disabled, _):
                 notifyChange(.selfDeletingMessagesIsDisabled)
 
-            case (.enabled, let enforcedTimeout) where enforcedTimeout > 0:
+            case let (.enabled, enforcedTimeout) where enforcedTimeout > 0:
                 notifyChange(.selfDeletingMessagesIsEnabled(enforcedTimeout: enforcedTimeout))
 
             case (.enabled, _):
@@ -486,14 +487,14 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
 }
 
-extension FeatureRepository {
+public extension FeatureRepository {
 
     /// A type that represents the possible changes to feature configs.
     ///
     /// These can be used by the ui layer to determine what kind of alert
     /// it needs to display to inform the user of changes.
 
-    public enum FeatureChange: Equatable {
+    enum FeatureChange: Equatable {
 
         case conferenceCallingIsAvailable
         case selfDeletingMessagesIsDisabled
@@ -507,17 +508,17 @@ extension FeatureRepository {
         public var hasFurtherActions: Bool {
             switch self {
             case .e2eIEnabled:
-                return true
+                true
             default:
-                return false
+                false
             }
         }
     }
 
 }
 
-extension Notification.Name {
+public extension Notification.Name {
 
-    public static let featureDidChangeNotification = Notification.Name("FeatureDidChangeNotification")
+    static let featureDidChangeNotification = Notification.Name("FeatureDidChangeNotification")
 
 }

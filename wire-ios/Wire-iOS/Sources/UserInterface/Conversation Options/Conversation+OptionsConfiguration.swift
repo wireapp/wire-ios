@@ -25,7 +25,8 @@ enum GuestLinkFeatureStatus {
 }
 
 extension ZMConversation {
-    final class OptionsConfigurationContainer: NSObject, ConversationGuestOptionsViewModelConfiguration, ConversationServicesOptionsViewModelConfiguration, ZMConversationObserver {
+    final class OptionsConfigurationContainer: NSObject, ConversationGuestOptionsViewModelConfiguration,
+        ConversationServicesOptionsViewModelConfiguration, ZMConversationObserver {
 
         private var conversation: ZMConversation
         private var token: NSObjectProtocol?
@@ -38,7 +39,7 @@ extension ZMConversation {
             self.conversation = conversation
             self.userSession = userSession
             super.init()
-            token = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: self, for: conversation)
 
             conversation.canGenerateGuestLink(in: userSession) { [weak self] result in
                 switch result {
@@ -60,11 +61,11 @@ extension ZMConversation {
         }
 
         var allowGuests: Bool {
-            return conversation.allowGuests
+            conversation.allowGuests
         }
 
         var allowServices: Bool {
-            return conversation.allowServices
+            conversation.allowServices
         }
 
         var guestLinkFeatureStatus: GuestLinkFeatureStatus = .unknown {
@@ -74,15 +75,15 @@ extension ZMConversation {
         }
 
         var isCodeEnabled: Bool {
-            return conversation.accessMode?.contains(.code) ?? false
+            conversation.accessMode?.contains(.code) ?? false
         }
 
         var areGuestPresent: Bool {
-            return conversation.areGuestsPresent
+            conversation.areGuestsPresent
         }
 
         var areServicePresent: Bool {
-            return conversation.areServicesPresent
+            conversation.areServicesPresent
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -95,7 +96,7 @@ extension ZMConversation {
                 switch result {
                 case .success:
                     completion(.success(()))
-                case .failure(let error):
+                case let .failure(error):
                     completion(.failure(error))
                 }
             }
@@ -112,7 +113,7 @@ extension ZMConversation {
                 switch result {
                 case .success:
                     completion(.success(()))
-                case .failure(let error):
+                case let .failure(error):
                     completion(.failure(error))
                 }
             }

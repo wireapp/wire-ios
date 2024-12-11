@@ -39,7 +39,7 @@ final class SectionHeaderView: UIView {
     }
 
     private func setupViews() {
-        self.backgroundColor = SemanticColors.View.backgroundDefault
+        backgroundColor = SemanticColors.View.backgroundDefault
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 0
         titleLabel.accessibilityTraits.insert(.header)
@@ -61,7 +61,7 @@ final class SectionHeader: UICollectionReusableView {
     let headerView = SectionHeaderView()
 
     var titleLabel: UILabel {
-        return headerView.titleLabel
+        headerView.titleLabel
     }
 
     override init(frame: CGRect) {
@@ -91,7 +91,7 @@ final class SectionTableHeader: UITableViewHeaderFooterView {
     let headerView = SectionHeaderView()
 
     var titleLabel: UILabel {
-        return headerView.titleLabel
+        headerView.titleLabel
     }
 
     override init(reuseIdentifier: String?) {

@@ -26,17 +26,20 @@ private let zmLog = ZMSLog(tag: "UI")
 extension ContactsViewController {
 
     private var canInviteByEmail: Bool {
-        return ZMAddressBookContact.canInviteLocallyWithEmail()
+        ZMAddressBookContact.canInviteLocallyWithEmail()
     }
 
     private var canInviteByPhone: Bool {
-        return ZMAddressBookContact.canInviteLocallyWithPhoneNumber()
+        ZMAddressBookContact.canInviteLocallyWithPhoneNumber()
     }
 
     @objc
     func sendIndirectInvite(_ sender: UIButton) {
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
-        let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
+        let activityController = UIActivityViewController(
+            activityItems: [shareItemProvider],
+            applicationActivities: nil
+        )
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
         if let popoverPresentationController = activityController.popoverPresentationController {
             let margin = 2 * fmin(sender.frame.origin.x, sender.frame.origin.y)
@@ -50,7 +53,7 @@ extension ContactsViewController {
         guard
             user.isConnected,
             let conversation = user.oneToOneConversation
-            else { return }
+        else { return }
 
         let showConversation: Completion = {
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
@@ -67,7 +70,7 @@ extension ContactsViewController {
         do {
             guard let contact = (user as? ZMSearchUser)?.contact else { throw InvitationError.noContactInformation }
             try invite(contact: contact, from: view)
-        } catch InvitationError.canNotSend(let client) {
+        } catch let InvitationError.canNotSend(client) {
             present(unableToSendController(client: client), animated: true)
         } catch {
             zmLog.error("Could not invite contact: \(error.localizedDescription)")
@@ -129,9 +132,13 @@ extension ContactsViewController {
             })
         }
 
-        actions.append(UIAlertAction(title: L10n.Localizable.ContactsUi.InviteSheet.cancelButtonTitle, style: .cancel) { _ in
-            chooseContactDetailController.dismiss(animated: true)
-        })
+        actions
+            .append(UIAlertAction(
+                title: L10n.Localizable.ContactsUi.InviteSheet.cancelButtonTitle,
+                style: .cancel
+            ) { _ in
+                chooseContactDetailController.dismiss(animated: true)
+            })
 
         actions.forEach(chooseContactDetailController.addAction)
         return chooseContactDetailController
@@ -155,14 +162,16 @@ extension ContactsViewController {
 
         enum MessageType {
 
-            case email, sms, any
+            case email
+            case sms
+            case any
 
             var messageKey: String {
                 switch self {
                 case .email, .any:
-                    return L10n.Localizable.Error.Invite.noEmailProvider
+                    L10n.Localizable.Error.Invite.noEmailProvider
                 case .sms:
-                    return L10n.Localizable.Error.Invite.noMessagingProvider
+                    L10n.Localizable.Error.Invite.noMessagingProvider
                 }
             }
         }

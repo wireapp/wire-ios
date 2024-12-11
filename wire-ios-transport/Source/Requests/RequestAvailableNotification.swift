@@ -24,7 +24,8 @@ public extension NSNotification.Name {
 
 }
 
-@objc(ZMRequestAvailableObserver) public protocol RequestAvailableObserver: NSObjectProtocol {
+@objc(ZMRequestAvailableObserver)
+public protocol RequestAvailableObserver: NSObjectProtocol {
 
     func newRequestsAvailable()
 
@@ -35,8 +36,7 @@ public extension NSNotification.Name {
 @objc(ZMRequestAvailableNotification)
 public final class RequestAvailableNotification: NSObject {
 
-    @objc
-    public static let name = NSNotification.Name(rawValue: "RequestAvailableNotification")
+    @objc public static let name = NSNotification.Name(rawValue: "RequestAvailableNotification")
 
     @objc
     public static func notifyNewRequestsAvailable(_ sender: NSObjectProtocol?) {

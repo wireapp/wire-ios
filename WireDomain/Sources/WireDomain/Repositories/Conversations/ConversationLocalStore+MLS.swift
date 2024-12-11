@@ -26,24 +26,24 @@ extension ConversationLocalStore {
     // MARK: - Update message protocols
 
     func assignMessageProtocol(
-        from remoteConversation: WireAPI.Conversation,
+        from conversation: Conversation,
         for localConversation: ZMConversation
     ) {
-        guard let newMessageProtocol = remoteConversation.messageProtocol else {
+        guard let newMessageProtocol = conversation.messageProtocol else {
             eventProcessingLogger.warn(
                 "message protocol is missing"
             )
             return
         }
 
-        localConversation.messageProtocol = newMessageProtocol.toDomainModel()
+        localConversation.messageProtocol = newMessageProtocol
     }
 
     func updateMessageProtocol(
-        from remoteConversation: WireAPI.Conversation,
+        from conversation: Conversation,
         for localConversation: ZMConversation
     ) {
-        guard let newMessageProtocol = remoteConversation.messageProtocol else {
+        guard let newMessageProtocol = conversation.messageProtocol else {
             eventProcessingLogger.warn(
                 "message protocol is missing"
             )
@@ -59,12 +59,16 @@ extension ConversationLocalStore {
                 break /// no update, ignore
             case .mixed:
                 localConversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
-                localConversation.messageProtocol = newMessageProtocol.toDomainModel()
+                localConversation.messageProtocol = newMessageProtocol
 
             case .mls:
                 let date = localConversation.lastModifiedDate ?? .now
-                localConversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
-                localConversation.messageProtocol = newMessageProtocol.toDomainModel()
+
+                localConversation.appendMLSMigrationPotentialGapSystemMessage(
+                    sender: sender, at: date
+                )
+
+                localConversation.messageProtocol = newMessageProtocol
             }
 
         case .mixed:
@@ -78,7 +82,7 @@ extension ConversationLocalStore {
                 break /// no update, ignore
             case .mls:
                 localConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
-                localConversation.messageProtocol = newMessageProtocol.toDomainModel()
+                localConversation.messageProtocol = newMessageProtocol
             }
 
         case .mls:
@@ -119,8 +123,14 @@ extension ConversationLocalStore {
         )
 
         if await context.perform({ localConversation.epoch <= 0 }) {
-            let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
-            await context.perform { localConversation.ciphersuite = ciphersuite }
+            let ciphersuite = try await mlsService.createSelfGroup(
+                for: groupID
+            )
+
+            await context.perform {
+                localConversation.ciphersuite = ciphersuite
+            }
+
         } else if try await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }

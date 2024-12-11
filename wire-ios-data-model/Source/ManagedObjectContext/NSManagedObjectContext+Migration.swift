@@ -20,30 +20,34 @@ import Foundation
 
 // This contains some methods to pass the information through the persistence store metadata
 // that we need a slow sync after
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
     private var migrationsNeedToSlowSyncKey: String {
         "migrationsNeedToSlowSync"
     }
 
-    enum MigrationNeedsSlowSyncError: Error {
+    internal enum MigrationNeedsSlowSyncError: Error {
         case couldNotPersistMetadata
     }
 
     /// use to trigger slow sync after some CoreData migrations
-    public func setMigrationNeedsSlowSync() throws {
-        self.setPersistentStoreMetadata(1, key: migrationsNeedToSlowSyncKey)
-        if !self.makeMetadataPersistent() {
+    func setMigrationNeedsSlowSync() throws {
+        setPersistentStoreMetadata(1, key: migrationsNeedToSlowSyncKey)
+        if !makeMetadataPersistent() {
             throw MigrationNeedsSlowSyncError.couldNotPersistMetadata
         }
     }
 
     /// checks if we need a slowSync after migrations
-    /// - Note: this cleans up after reading the value
-    public func readAndResetSlowSyncFlag() -> Bool {
-        let value = (self.persistentStoreMetadata(forKey: migrationsNeedToSlowSyncKey) as? Int) ?? 0
-        self.setPersistentStoreMetadata(Int?.none, key: migrationsNeedToSlowSyncKey)
+    func readMigrationNeedsSlowSyncFlag() -> Bool {
+        let value = (persistentStoreMetadata(forKey: migrationsNeedToSlowSyncKey) as? Int) ?? 0
         return value == 1
     }
 
+    /// Reset migration needs slow sync flag
+    func resetMigrationNeedsSlowSyncFlagIfNeeded() {
+        if readMigrationNeedsSlowSyncFlag() {
+            setPersistentStoreMetadata(Int?.none, key: migrationsNeedToSlowSyncKey)
+        }
+    }
 }

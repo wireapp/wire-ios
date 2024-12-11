@@ -26,18 +26,18 @@ public enum AffectedKeys: Equatable {
     func combinedWith(_ other: AffectedKeys) -> AffectedKeys {
         switch (self, other) {
         case let (.some(k1), .some(k2)):
-            return .some(k1.union(k2))
+            .some(k1.union(k2))
         default:
-            return .all
+            .all
         }
     }
 
     func containsKey(_ key: StringKeyPath) -> Bool {
         switch self {
         case let .some(keySet):
-            return keySet.contains(key)
+            keySet.contains(key)
         case .all:
-            return true
+            true
         }
     }
 }
@@ -45,11 +45,11 @@ public enum AffectedKeys: Equatable {
 public func == (lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
     switch (lhs, rhs) {
     case let (.some(lk), .some(rk)):
-        return lk == rk
+        lk == rk
     case (.all, .all):
-        return true
+        true
     default:
-        return false
+        false
     }
 }
 
@@ -59,7 +59,7 @@ public struct KeySet: Sequence {
     fileprivate let backing: Set<StringKeyPath>
 
     public init() {
-        backing = Set()
+        self.backing = Set()
     }
 
     public init(_ set: NSSet) {
@@ -71,13 +71,14 @@ public struct KeySet: Sequence {
                 fatal("\(type(of: s)) is not a string")
             }
         }
-        backing = Set(a)
-    }
-    public init (_ set: Set<Key>) {
-        backing = set
+        self.backing = Set(a)
     }
 
-    public init (_ keys: Set<String>) {
+    public init(_ set: Set<Key>) {
+        self.backing = set
+    }
+
+    public init(_ keys: Set<String>) {
         self.init(Array(keys))
     }
 
@@ -86,35 +87,43 @@ public struct KeySet: Sequence {
         for s in a {
             aa.append(StringKeyPath.keyPathForString(s))
         }
-        backing = Set<StringKeyPath>(aa)
+        self.backing = Set<StringKeyPath>(aa)
     }
+
     public init(key: StringKeyPath) {
         self.init(Set([key]))
     }
+
     public init(keyPaths: [StringKeyPath]) {
         self.init(Set(keyPaths))
     }
+
     public init(key: String) {
         self.init(Set([StringKeyPath.keyPathForString(key)]))
     }
+
     public init(arrayLiteral elements: String...) {
         self.init(elements)
     }
+
     init<S: Sequence>(_ seq: S) where S.Iterator.Element == Key {
-        backing = Set<Key>(seq)
+        self.backing = Set<Key>(seq)
     }
+
     public func contains(_ i: StringKeyPath) -> Bool {
-        return backing.contains(i)
+        backing.contains(i)
     }
+
     public func contains(_ i: String) -> Bool {
-        return backing.contains(StringKeyPath.keyPathForString(i))
+        backing.contains(StringKeyPath.keyPathForString(i))
     }
+
     public func makeIterator() -> Set<StringKeyPath>.Iterator {
-        return backing.makeIterator()
+        backing.makeIterator()
     }
 
     public var count: Int {
-        return backing.count
+        backing.count
     }
 }
 
@@ -125,32 +134,35 @@ extension KeySet: Hashable {
 }
 
 public func == (lhs: KeySet, rhs: KeySet) -> Bool {
-    return lhs.backing == rhs.backing
+    lhs.backing == rhs.backing
 }
 
 extension KeySet {
     func union(_ set: KeySet) -> KeySet {
-        return KeySet(backing.union(set.backing))
+        KeySet(backing.union(set.backing))
     }
+
     func subtract(_ set: KeySet) -> KeySet {
-        return KeySet(backing.subtracting(set.backing))
+        KeySet(backing.subtracting(set.backing))
     }
+
     public var isEmpty: Bool {
-        return backing.isEmpty
+        backing.isEmpty
     }
+
     func filter(_ match: (StringKeyPath) -> Bool) -> KeySet {
-        return KeySet(backing.filter { match($0) })
+        KeySet(backing.filter { match($0) })
     }
 }
 
 extension KeySet: CustomDebugStringConvertible {
     public var description: String {
         let a = [StringKeyPath](backing)
-        let ss = a.map { $0.rawValue }.sorted { lhs, rhs in lhs < rhs }
+        let ss = a.map(\.rawValue).sorted { lhs, rhs in lhs < rhs }
         return "KeySet {" + ss.joined(separator: " ") + "}"
     }
 
     public var debugDescription: String {
-        return description
+        description
     }
 }

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
 @testable import Wire
 @testable import WireSyncEngineSupport
-import XCTest
 
 final class ProfileActionsFactoryTests: XCTestCase {
 
@@ -652,7 +652,11 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_GuestToTeam_Connected() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", domain: domain, inTeam: selfUserTeam)
+        let otherUser = MockUserType.createConnectedUser(
+            name: "Catherine Jackson",
+            domain: domain,
+            inTeam: selfUserTeam
+        )
 
         let guest = MockUserType.createConnectedUser(name: "Bob the Guest", inTeam: nil)
         guest.isGuestInConversation = true
@@ -670,7 +674,11 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_GuestToTeam_NotConnected() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", domain: domain, inTeam: selfUserTeam)
+        let otherUser = MockUserType.createConnectedUser(
+            name: "Catherine Jackson",
+            domain: domain,
+            inTeam: selfUserTeam
+        )
         otherUser.isConnected = false
         otherUser.canBeConnected = true
 
@@ -689,7 +697,11 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_GuestToPartner_Connected() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", domain: domain, inTeam: selfUserTeam)
+        let otherUser = MockUserType.createConnectedUser(
+            name: "Catherine Jackson",
+            domain: domain,
+            inTeam: selfUserTeam
+        )
         otherUser.teamRole = .partner
 
         let guest = MockUserType.createConnectedUser(name: "Bob the Guest", inTeam: nil)
@@ -849,7 +861,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         conversation: MockConversation?,
         expectedActions: [ProfileAction],
         context: ProfileViewControllerContext = .oneToOneConversation,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let factory = ProfileActionsFactory(

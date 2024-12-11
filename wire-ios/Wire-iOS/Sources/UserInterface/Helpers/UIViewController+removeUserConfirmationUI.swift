@@ -28,21 +28,18 @@ extension UIViewController {
     /// - Parameters:
     ///   - participant: user to remove
     ///   - conversation: the current converation contains that user
-    ///   - viewControllerDismiser: a ViewControllerDismisser to call when this UIViewController is dismissed
     func presentRemoveDialogue(
         for participant: UserType,
         from conversation: ZMConversation,
-        sender: UIView,
-        dismisser: ViewControllerDismisser? = nil
+        sender: UIView
     ) {
-
         let alertController = UIAlertController.remove(participant) { [weak self] remove in
             guard let self, remove else { return }
 
             conversation.removeOrShowError(participant: participant) { result in
                 switch result {
                 case .success:
-                    dismisser?.dismiss(viewController: self, completion: nil)
+                    self.navigationController?.popViewController(animated: true)
                 case .failure:
                     break
                 }

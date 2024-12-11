@@ -93,20 +93,26 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCrypto.proteusLastErrorCode_MockMethod = {
-            return 209
+            209
         }
 
         mockCoreCrypto.proteusDecryptSessionIdCiphertext_MockMethod = { _, _ in
-            throw MockError()
+            throw CoreCryptoError.Proteus(.DuplicateMessage)
         }
 
         // Then
-        await assertItThrows(error: ProteusService.DecryptionError.failedToDecryptData(.duplicateMessage)) {
+        await assertItThrows {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
                 forSession: sessionID
             )
+        } errorHandler: { error in
+            // Then
+            guard case ProteusService.DecryptionError.failedToDecryptData(.DuplicateMessage) = error else {
+                XCTFail("Unexpected error: \(error)")
+                return
+            }
         }
     }
 
@@ -150,20 +156,26 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCrypto.proteusLastErrorCode_MockMethod = {
-            return 209
+            209
         }
 
         mockCoreCrypto.proteusSessionFromMessageSessionIdEnvelope_MockMethod = { _, _ in
-            throw MockError()
+            throw CoreCryptoError.Proteus(.DuplicateMessage)
         }
 
-        // Then
-        await assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.duplicateMessage)) {
+        await assertItThrows {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
                 forSession: sessionID
             )
+        } errorHandler: { error in
+            // Then
+            guard case ProteusService.DecryptionError
+                .failedToEstablishSessionFromMessage(.DuplicateMessage) = error else {
+                XCTFail("Unexpected error: \(error)")
+                return
+            }
         }
     }
 

@@ -19,7 +19,8 @@
 import CoreData
 import Foundation
 
-@objc public final class MockRole: NSManagedObject, EntityNamedProtocol {
+@objc
+public final class MockRole: NSManagedObject, EntityNamedProtocol {
     public static let nameKey = #keyPath(MockRole.name)
     public static let teamKey = #keyPath(MockRole.team)
     public static let conversationKey = #keyPath(MockRole.conversation)
@@ -47,21 +48,29 @@ extension MockRole {
     }
 
     var payloadValues: [String: Any?] {
-        return [
+        [
             "conversation_role": name,
-            "actions": actions.map({ $0.payload })
+            "actions": actions.map(\.payload)
         ]
     }
 
     var payload: ZMTransportData {
-        return payloadValues as NSDictionary
+        payloadValues as NSDictionary
     }
 }
 
-extension MockRole {
+public extension MockRole {
     @objc
-    public static func createConversationRoles (context: NSManagedObjectContext) {
-        adminRole = MockRole.insert(in: context, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: context))
-        memberRole = MockRole.insert(in: context, name: MockConversation.member, actions: MockTeam.createMemberActions(context: context))
+    static func createConversationRoles(context: NSManagedObjectContext) {
+        adminRole = MockRole.insert(
+            in: context,
+            name: MockConversation.admin,
+            actions: MockTeam.createAdminActions(context: context)
+        )
+        memberRole = MockRole.insert(
+            in: context,
+            name: MockConversation.member,
+            actions: MockTeam.createMemberActions(context: context)
+        )
     }
 }

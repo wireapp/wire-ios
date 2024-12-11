@@ -17,9 +17,9 @@
 //
 
 import WireAPI
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class UserLegalholdRequestEventProcessorTests: XCTestCase {
 
@@ -61,7 +61,7 @@ final class UserLegalholdRequestEventProcessorTests: XCTestCase {
             userID: UUID(),
             clientID: UUID().uuidString,
             lastPrekey: Prekey(
-                id: 2_932,
+                id: 2932,
                 base64EncodedKey: "foo"
             )
         )

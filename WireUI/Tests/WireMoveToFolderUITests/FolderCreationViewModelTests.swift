@@ -25,13 +25,13 @@ final class FolderCreationViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var sut: FolderCreationViewModel!
-    private var mockUseCase: MockFolderCreationUseCaseType!
+    private var sut: CreateFolderViewModel!
+    private var mockUseCase: MockCreateConversationFolderUseCase!
 
     // MARK: - setUp
 
     override func setUp() {
-        mockUseCase = MockFolderCreationUseCaseType()
+        mockUseCase = MockCreateConversationFolderUseCase()
     }
 
     // MARK: - tearDown
@@ -43,6 +43,7 @@ final class FolderCreationViewModelTests: XCTestCase {
 
     // MARK: - Creation State
 
+    @MainActor
     func test_init_canCreateIsFalse() {
         // GIVEN & WHEN
         createSUT()
@@ -51,6 +52,7 @@ final class FolderCreationViewModelTests: XCTestCase {
         XCTAssertFalse(sut.canCreate)
     }
 
+    @MainActor
     func test_setEmptyName_canCreateIsFalse() {
         // GIVEN
         createSUT()
@@ -62,6 +64,7 @@ final class FolderCreationViewModelTests: XCTestCase {
         XCTAssertFalse(sut.canCreate)
     }
 
+    @MainActor
     func test_setWhitespaceName_canCreateIsFalse() {
         // GIVEN
         createSUT()
@@ -73,6 +76,7 @@ final class FolderCreationViewModelTests: XCTestCase {
         XCTAssertFalse(sut.canCreate)
     }
 
+    @MainActor
     func test_setValidName_canCreateIsTrue() {
         // GIVEN
         createSUT()
@@ -86,6 +90,7 @@ final class FolderCreationViewModelTests: XCTestCase {
 
     // MARK: - Folder Creation
 
+    @MainActor
     func test_createFolder_withEmptyName_throwsError() async {
         // GIVEN
         createSUT()
@@ -100,6 +105,7 @@ final class FolderCreationViewModelTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_createFolder_withWhitespaceName_throwsError() async {
         // GIVEN
         createSUT()
@@ -114,6 +120,7 @@ final class FolderCreationViewModelTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_createFolder_withValidName_callsUseCase() async throws {
         // GIVEN
         createSUT()
@@ -130,6 +137,7 @@ final class FolderCreationViewModelTests: XCTestCase {
         XCTAssertEqual(folder, expectedFolder)
     }
 
+    @MainActor
     func test_createFolder_whenUseCaseThrows_propagatesError() async {
         // GIVEN
         createSUT()
@@ -150,7 +158,8 @@ final class FolderCreationViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func createSUT() {
-        sut = FolderCreationViewModel(useCase: mockUseCase)
+        sut = CreateFolderViewModel(useCase: mockUseCase)
     }
 }

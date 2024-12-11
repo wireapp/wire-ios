@@ -17,34 +17,41 @@
 //
 
 import Foundation
+import WireLogging
 
 extension ZMMessage {
-    @objc public func prepareToSend() {
+    @objc
+    public func prepareToSend() {
         expireAndNotifyIfInsertingIntoDegradedConversation()
     }
 
     /// If we are adding the message to a degraded conversation we want to expire it immediately
     /// and fire a notification on conversation security level change so that UI could act accordingly
-    fileprivate func expireAndNotifyIfInsertingIntoDegradedConversation() {
-        guard let conversation = self.conversation else { return }
-        guard let currentMoc = self.managedObjectContext else { return }
+    private func expireAndNotifyIfInsertingIntoDegradedConversation() {
+        guard let conversation else { return }
+        guard let currentMoc = managedObjectContext else { return }
         guard let syncMoc = currentMoc.zm_sync else { return }
         guard let uiMoc = currentMoc.zm_userInterface else { return }
-        if conversation.isDegraded && self.deliveryState == .pending {
+        if conversation.isDegraded, deliveryState == .pending {
             let verificationStatusKey = verificationStatusKey(for: conversation.messageProtocol)
 
             currentMoc.saveOrRollback()
             syncMoc.performGroupedBlock {
                 guard let message = (try? syncMoc.existingObject(with: self.objectID)) as? ZMOTRMessage else { return }
                 message.causedSecurityLevelDegradation = true
-                WireLogger.messaging.warn("expiring message because inserting into degraded conversation " + String(describing: message.nonce?.transportString().readableHash))
+                WireLogger.messaging
+                    .warn(
+                        "expiring message because inserting into degraded conversation " +
+                            String(describing: message.nonce?.transportString().readableHash)
+                    )
                 message.expire(withReason: .other)
 
                 syncMoc.saveOrRollback()
                 NotificationDispatcher.notifyNonCoreDataChanges(
                     objectID: conversation.objectID,
                     changedKeys: [verificationStatusKey],
-                    uiContext: uiMoc)
+                    uiContext: uiMoc
+                )
             }
         }
     }
@@ -52,9 +59,9 @@ extension ZMMessage {
     private func verificationStatusKey(for messageProtocol: MessageProtocol) -> String {
         switch messageProtocol {
         case .proteus:
-            return #keyPath(ZMConversation.securityLevel)
+            #keyPath(ZMConversation.securityLevel)
         case .mls, .mixed:
-            return ZMConversation.mlsVerificationStatusKey
+            ZMConversation.mlsVerificationStatusKey
         }
     }
 }

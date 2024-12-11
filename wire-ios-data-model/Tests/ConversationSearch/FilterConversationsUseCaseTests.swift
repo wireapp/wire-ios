@@ -93,7 +93,10 @@ final class FilterConversationsUseCaseTests: XCTestCase {
         // - the "Announcements" conversation, because the conversation name contains "o"
         // - the "Pipaluk Bróðir" conversation, because the conversation name contains "o"
         // - the "Guests" conversation, because at least one participant's name contains "o"
-        XCTAssertEqual(filtered, [[groupConversations[0], groupConversations[1]], [oneOnOneConversations[0]], [otherGroupConversations[0]]])
+        XCTAssertEqual(
+            filtered,
+            [[groupConversations[0], groupConversations[1]], [oneOnOneConversations[0]], [otherGroupConversations[0]]]
+        )
     }
 
     func testSpecialCharacter_ß_MatchesConversationNameWith_ss() {
@@ -139,7 +142,15 @@ final class FilterConversationsUseCaseTests: XCTestCase {
     private let groupConversations = [
         MockConversation(
             name: "Wire Team",
-            otherParticipants: ["Petrŭ", "Mariele", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir", "Liselot Þórgrímr", "Völund Gustavo"]
+            otherParticipants: [
+                "Petrŭ",
+                "Mariele",
+                "Mneme Tiedemann",
+                "Sasho Gréta",
+                "Pipaluk Bróðir",
+                "Liselot Þórgrímr",
+                "Völund Gustavo"
+            ]
         ),
         MockConversation(
             name: "Announcements",
@@ -161,7 +172,8 @@ final class FilterConversationsUseCaseTests: XCTestCase {
 
 // MARK: - Mock Conversation, Mock Container
 
-private struct MockContainer: MutableConversationContainer, CustomDebugStringConvertible, Equatable, ExpressibleByArrayLiteral {
+private struct MockContainer: MutableConversationContainer, CustomDebugStringConvertible, Equatable,
+    ExpressibleByArrayLiteral {
 
     private(set) var conversations: [MockConversation]
 
@@ -193,13 +205,14 @@ private struct MockConversation: FilterableConversation, CustomDebugStringConver
     }
 }
 
-private struct MockParticipant: FilterableConversationParticipant, CustomDebugStringConvertible, Equatable, ExpressibleByStringLiteral {
+private struct MockParticipant: FilterableConversationParticipant, CustomDebugStringConvertible, Equatable,
+    ExpressibleByStringLiteral {
 
     private(set) var name: String
 
     var debugDescription: String { name }
 
     init(stringLiteral value: String) {
-        name = value
+        self.name = value
     }
 }

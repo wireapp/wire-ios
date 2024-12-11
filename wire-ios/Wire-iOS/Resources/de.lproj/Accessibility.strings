@@ -203,7 +203,7 @@
 "contactsList.memberIcon.description" = "Mitglied";
 "contactsList.userCell.hint" = "Doppeltippen, um Unterhaltung zu öffnen";
 "contactsList.pendingConnection.hint" = "Doppeltippen, um Profil zu öffnen";
-"contactsList.cancelButton.description" = "Close contact list";
+"contactsList.cancelButton.description" = "Kontaktliste schließen";
 
 "servicesList.serviceCell.hint" = "Doppeltippen, um Dienstdetails zu öffnen";
 
@@ -226,20 +226,22 @@
 "conversationsList.connectionRequest.description" = "Ausstehende Genehmigung der Kontaktanfrage";
 "conversationsList.connectionRequest.hint" = "Doppeltippen, um Profil zu öffnen";
 
-"conversationList.startConversationButton.description" = "Create group or search for people";
-"conversationsList.filterButton.description" = "Filter conversations";
+"conversationList.startConversationButton.description" = "Gruppe erstellen oder nach Personen suchen";
+"conversationsList.filterButton.description" = "Unterhaltungen filtern";
 
-"conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
+"conversationsList.filter_menu_options.allConversations.description" = "Alle Unterhaltungen anzeigen";
+"conversationsList.filter_menu_options.favorites.description" = "Alle Lieblingsunterhaltungen anzeigen";
+"conversationsList.filter_menu_options.groups.description" = "Alle Gruppenunterhaltungen anzeigen";
+"conversationsList.filter_menu_options.oneOnOne.description" = "Alle eins zu eins Unterhaltungen anzeigen";
+"conversationsList.filter_menu_options.folders.description" = "Ordner";
 
-"conversationsList.filter_menu_options.allConversations.selected.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.selected.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.selected.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Show all one on one conversations";
+"conversationsList.filter_menu_options.allConversations.selected.description" = "Alle Unterhaltungen, ausgewählt";
+"conversationsList.filter_menu_options.favorites.selected.description" = "Favoriten, ausgewählt";
+"conversationsList.filter_menu_options.groups.selected.description" = "Gruppen, ausgewählt";
+"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Ein-zu-eins-Unterhaltungen, ausgewählt";
+"conversationsList.filter_menu_options.folders.selected.description" = "Ordner, ausgewählt";
 
-"conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
+"conversationsList.filter_view.removeButton.descritpion" = "Unterhaltungsfilter entfernen";
 
 "conversationAnnouncement.text.description" = "Textnachricht von %@ erhalten";
 "conversationAnnouncement.picture.description" = "Bild von %@ erhalten";
@@ -296,7 +298,7 @@
 
 // MARK: - Create Secure Guest Link with Password
 
-"createSecureGuestLink.closeButton.description" = "Close Secure guest link";
+"createSecureGuestLink.closeButton.description" = "Sicheren Gäste-Link schließen";
 
 "createSecureGuestLink.GeneratePasswordButton.description" = "Passwort generieren";
 "createSecureGuestLink.GeneratePasswordButton.hint" = "Tippen, um ein zufälliges Passwort zu generieren";

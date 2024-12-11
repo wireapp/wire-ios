@@ -17,9 +17,9 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireTesting
 import XCTest
+@testable import WireDataModel
 
 class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
@@ -48,7 +48,7 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         let conversation = createConversation()
 
         // WHEN
-        try (0...40).forEach { i in
+        try (0 ... 40).forEach { i in
             let message = try conversation.appendText(content: "\(i)") as? ZMClientMessage
             message?.updateServerTimestamp(with: Double(i))
         }
@@ -62,7 +62,7 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         let conversation = createConversation()
 
         // WHEN
-        try (0...40).forEach { i in
+        try (0 ... 40).forEach { i in
             let message = try conversation.appendText(content: "\(i)") as? ZMClientMessage
             message?.updateServerTimestamp(with: Double(i))
         }
@@ -79,7 +79,7 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         let conversation = createConversation()
 
         // WHEN
-        try (0...40).forEach { i in
+        try (0 ... 40).forEach { i in
             let message = try conversation.appendText(content: "\(i)") as? ZMClientMessage
             message?.updateServerTimestamp(with: Double(i))
         }
@@ -97,12 +97,12 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         let otherConversation = createConversation()
 
         // WHEN
-        try (1...10).forEach { i in
+        try (1 ... 10).forEach { i in
             let message = try conversation.appendText(content: "\(i)") as? ZMClientMessage
             message?.updateServerTimestamp(with: Double(i))
         }
 
-        try (1...10).forEach { i in
+        try (1 ... 10).forEach { i in
             let message = try otherConversation.appendText(content: "Other \(i)") as? ZMClientMessage
             message?.updateServerTimestamp(with: Double(i))
         }
@@ -119,11 +119,11 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
     func testThatItReturnsMessageIfLastMessageIsEditedTextAndSentBySelfUser() throws {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // when
         let message = try conversation.appendText(content: "Test Message") as! ZMMessage
-        message.sender = ZMUser.selfUser(in: self.uiMOC)
+        message.sender = ZMUser.selfUser(in: uiMOC)
         message.markAsSent()
         message.textMessageData?.editText("Edited Test Message", mentions: [], fetchLinkPreview: true)
 

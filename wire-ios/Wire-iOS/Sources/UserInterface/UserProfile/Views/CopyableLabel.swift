@@ -36,30 +36,37 @@ final class CopyableLabel: UILabel {
     }
 
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return action == #selector(copy(_:))
+        action == #selector(copy(_:))
     }
 
     override func copy(_ sender: Any?) {
         UIPasteboard.general.string = text
     }
 
-    @objc private func longPressed(_ recognizer: UILongPressGestureRecognizer) {
+    @objc
+    private func longPressed(_ recognizer: UILongPressGestureRecognizer) {
         guard recognizer.state == .began,
-            let view = recognizer.view,
-            let superview = view.superview,
-            view == self,
-            becomeFirstResponder() else { return }
+              let view = recognizer.view,
+              let superview = view.superview,
+              view == self,
+              becomeFirstResponder() else { return }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(menuDidHide), name: UIMenuController.didHideMenuNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(menuDidHide),
+            name: UIMenuController.didHideMenuNotification,
+            object: nil
+        )
         UIMenuController.shared.showMenu(from: superview, rect: view.frame)
         fade(dimmed: true)
     }
 
-    @objc private func menuDidHide(_ note: Notification) {
+    @objc
+    private func menuDidHide(_ note: Notification) {
         NotificationCenter.default.removeObserver(self, name: UIMenuController.didHideMenuNotification, object: nil)
         fade(dimmed: false)
     }

@@ -81,7 +81,7 @@ final class ChangeHandleViewControllerTests: XCTestCase {
         newHandle: String?,
         availability: HandleChangeState.HandleAvailability,
         federationEnabled: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -101,7 +101,7 @@ final class ChangeHandleViewControllerTests: XCTestCase {
     }
 }
 
-fileprivate extension UIViewController {
+private extension UIViewController {
 
     func prepareForSettingsSnapshots() -> UIView {
         let navigationController = wrapInNavigationController()

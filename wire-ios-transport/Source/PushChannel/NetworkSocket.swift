@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public protocol NetworkSocketDelegate {
+@objc
+public protocol NetworkSocketDelegate {
     @objc(networkSocketDidOpen:)
     func didOpen(socket: NetworkSocket)
 
@@ -33,10 +34,10 @@ import Foundation
 
 @objcMembers
 public final class DataBuffer: NSObject {
-    fileprivate var data: DispatchData = DispatchData.empty
+    fileprivate var data: DispatchData = .empty
 
     public var objcData: __DispatchData {
-        return data as __DispatchData
+        data as __DispatchData
     }
 
     fileprivate func append(data: DispatchData) {
@@ -51,17 +52,19 @@ public final class DataBuffer: NSObject {
     func clear(until offset: Int) {
         let dataOffset = data.index(data.startIndex, offsetBy: offset)
 
-        data = data.subdata(in: dataOffset..<data.endIndex)
+        data = data.subdata(in: dataOffset ..< data.endIndex)
     }
 
     func isEmpty() -> Bool {
-        return data.isEmpty
+        data.isEmpty
     }
 }
 
-@objcMembers public final class NetworkSocket: NSObject {
+@objcMembers
+public final class NetworkSocket: NSObject {
 
     // MARK: - Public API
+
     public let url: URL
     public let trustProvider: BackendTrustProvider
     public let queue: DispatchQueue
@@ -72,7 +75,14 @@ public final class DataBuffer: NSObject {
 
     private let queueMarkerKey = DispatchSpecificKey<Void>()
 
-    public init(url: URL, trustProvider: BackendTrustProvider, delegate: NetworkSocketDelegate?, queue: DispatchQueue, callbackQueue: DispatchQueue, group: ZMSDispatchGroup) {
+    public init(
+        url: URL,
+        trustProvider: BackendTrustProvider,
+        delegate: NetworkSocketDelegate?,
+        queue: DispatchQueue,
+        callbackQueue: DispatchQueue,
+        group: ZMSDispatchGroup
+    ) {
         self.url = url
         self.trustProvider = trustProvider
         self.delegate = delegate
@@ -114,7 +124,7 @@ public final class DataBuffer: NSObject {
         inputStream = inStream
         outputStream = outStream
 
-        guard let inputStream = self.inputStream, let outputStream = self.outputStream else {
+        guard let inputStream, let outputStream else {
             fatal("Missing streams")
         }
 
@@ -124,29 +134,35 @@ public final class DataBuffer: NSObject {
         CFReadStreamSetDispatchQueue(inputStream, queue)
         CFWriteStreamSetDispatchQueue(outputStream, queue)
 
-        let sslSettings: [AnyHashable: Any] = [kCFStreamSSLPeerName: hostName,
-                                               kCFStreamSSLValidatesCertificateChain: false]
+        let sslSettings: [AnyHashable: Any] = [
+            kCFStreamSSLPeerName: hostName,
+            kCFStreamSSLValidatesCertificateChain: false
+        ]
 
         inputStream.setProperty(sslSettings, forKey: Stream.PropertyKey(kCFStreamPropertySSLSettings as String))
 
-        inputStream.setProperty(StreamSocketSecurityLevel.tlSv1,
-                                 forKey: Stream.PropertyKey.socketSecurityLevelKey)
+        inputStream.setProperty(
+            StreamSocketSecurityLevel.tlSv1,
+            forKey: Stream.PropertyKey.socketSecurityLevelKey
+        )
 
-        inputStream.setProperty(StreamNetworkServiceTypeValue.background,
-                                 forKey: Stream.PropertyKey.networkServiceType)
+        inputStream.setProperty(
+            StreamNetworkServiceTypeValue.background,
+            forKey: Stream.PropertyKey.networkServiceType
+        )
 
         inputStream.open()
         outputStream.open()
     }
 
     public func close() {
-        self.close(syncDelegate: false)
+        close(syncDelegate: false)
     }
 
     private func close(syncDelegate: Bool) {
         preconditionQueue()
 
-        guard self.state != .stopped else {
+        guard state != .stopped else {
             return
         }
 
@@ -158,7 +174,7 @@ public final class DataBuffer: NSObject {
         outputStream?.delegate = nil
         outputStream?.close()
 
-        self.withDelegate({ delegate in
+        withDelegate({ delegate in
             delegate.didClose(socket: self)
         }, sync: syncDelegate)
 
@@ -166,14 +182,14 @@ public final class DataBuffer: NSObject {
     }
 
     fileprivate func withDelegate(_ perform: @escaping (NetworkSocketDelegate) -> Void, sync: Bool = false) {
-        guard let delegate = self.delegate else {
+        guard let delegate else {
             return
         }
 
         if sync {
             perform(delegate)
         } else {
-            self.group.async(on: callbackQueue) {
+            group.async(on: callbackQueue) {
                 perform(delegate)
             }
         }
@@ -193,8 +209,8 @@ public final class DataBuffer: NSObject {
             return
         }
 
-        guard let outputStream = self.outputStream, outputStream.streamStatus != .error else {
-            self.close()
+        guard let outputStream, outputStream.streamStatus != .error else {
+            close()
             return
         }
 
@@ -204,6 +220,7 @@ public final class DataBuffer: NSObject {
     }
 
     // MARK: - Internals
+
     fileprivate enum State {
         case readyToConnect
         case connecting
@@ -221,32 +238,33 @@ public final class DataBuffer: NSObject {
 
     fileprivate let dataBuffer = DataBuffer()
 
-    @inline(__always) fileprivate func preconditionQueue() {
+    @inline(__always)
+    fileprivate func preconditionQueue() {
         dispatchPrecondition(condition: .onQueue(queue))
     }
 
     fileprivate func isOnQueue() -> Bool {
-        return DispatchQueue.getSpecific(key: queueMarkerKey) != nil
+        DispatchQueue.getSpecific(key: queueMarkerKey) != nil
     }
 
     fileprivate func checkTrust(for stream: Stream) -> Bool {
-        if self.didCheckTrust {
-            return self.trusted
+        if didCheckTrust {
+            return trusted
         }
-        self.didCheckTrust = true
+        didCheckTrust = true
 
         guard let peerTrustValue = stream.property(forKey: kCFStreamPropertySSLPeerTrust as Stream.PropertyKey) else {
-            self.trusted = false
+            trusted = false
             return false
         }
 
         let peerTrust = peerTrustValue as! SecTrust
 
-        self.trusted = self.trustProvider.verifyServerTrust(trust: peerTrust, host: url.host)
-        if !self.trusted {
-            self.close()
+        trusted = trustProvider.verifyServerTrust(trust: peerTrust, host: url.host)
+        if !trusted {
+            close()
         }
-        return self.trusted
+        return trusted
     }
 
     fileprivate func onBytesAvailable() {
@@ -256,7 +274,7 @@ public final class DataBuffer: NSObject {
         }
 
         // Check if we have the output stream
-        guard let inputStream = self.inputStream else {
+        guard let inputStream else {
             fatal("Input stream is missing")
         }
 
@@ -273,7 +291,7 @@ public final class DataBuffer: NSObject {
         }
 
         inputBuffer.removeLast(inputBufferCount - bytesRead)
-        self.withDelegate({ delegate in
+        withDelegate({ delegate in
             delegate.didReceive(data: inputBuffer, on: self)
         }, sync: false)
     }
@@ -285,21 +303,24 @@ public final class DataBuffer: NSObject {
         }
 
         // Check if we have the output stream
-        guard let outputStream = self.outputStream else {
+        guard let outputStream else {
             fatal("Output stream is missing")
         }
 
         // Check if we are already writing to the stream
-        assert(outputStream.streamStatus != .writing, "Error: Trying to write into output stream, but stream is already writing. Threading issue?")
+        assert(
+            outputStream.streamStatus != .writing,
+            "Error: Trying to write into output stream, but stream is already writing. Threading issue?"
+        )
 
         // Check if the stream is errored
         guard outputStream.streamStatus != .error else {
-            self.close()
+            close()
             return
         }
 
         // Check if there is a data to write
-        guard dataBuffer.data.count != 0 else {
+        guard !dataBuffer.data.isEmpty else {
             return
         }
 
@@ -308,7 +329,7 @@ public final class DataBuffer: NSObject {
 
     fileprivate func writeDataIfPossible() {
         // Check if we have the output stream
-        guard let outputStream = self.outputStream else {
+        guard let outputStream else {
             fatal("Output stream is missing")
         }
 
@@ -332,11 +353,11 @@ extension NetworkSocket: StreamDelegate {
     public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         preconditionQueue()
 
-        switch (self.state, eventCode) {
+        switch (state, eventCode) {
         case (.connecting, .openCompleted):
             if aStream == outputStream {
-                self.state = .connected
-                self.withDelegate({ delegate in
+                state = .connected
+                withDelegate({ delegate in
                     delegate.didOpen(socket: self)
                 }, sync: false)
             }
@@ -344,16 +365,16 @@ extension NetworkSocket: StreamDelegate {
             guard aStream == inputStream, checkTrust(for: aStream) else {
                 return
             }
-            self.onBytesAvailable()
+            onBytesAvailable()
         case (.connected, .hasSpaceAvailable):
             guard aStream == outputStream, checkTrust(for: aStream) else {
                 return
             }
-            self.onHasSpaceAvailable()
+            onHasSpaceAvailable()
         case (_, .errorOccurred):
             fallthrough
         case (_, .endEncountered):
-            self.close()
+            close()
         default:
             return
         }

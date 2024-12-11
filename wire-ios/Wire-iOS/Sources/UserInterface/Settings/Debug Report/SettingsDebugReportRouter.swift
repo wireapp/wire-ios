@@ -25,14 +25,15 @@ protocol SettingsDebugReportRouterProtocol {
 
     /// Presents the mail composer with the debug report
 
-    @MainActor func presentMailComposer()
+    @MainActor
+    func presentMailComposer()
 
     /// Presents the fallback alert
 
     func presentFallbackAlert(sender: UIView)
 
     /// Presents the share view controller
-    /// 
+    ///
     /// - Parameters:
     ///   - destinations: list of conversations to choose from to send the report
     ///   - debugReport: the debug report to share

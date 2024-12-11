@@ -21,8 +21,7 @@ import WireSystem
 
 extension NSManagedObjectContext: GroupQueue {
 
-    @objc
-    public var dispatchGroup: ZMSDispatchGroup? {
+    @objc public var dispatchGroup: ZMSDispatchGroup? {
         dispatchGroupContext?.groups.first
     }
 
@@ -38,31 +37,39 @@ extension NSManagedObjectContext: GroupQueue {
     }
 }
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
-    @objc
-    public var pendingSaveCounter: Int {
+    @objc var pendingSaveCounter: Int {
         get { objc_getAssociatedObject(self, &AssociatedPendingSaveCountKey) as? Int ?? 0 }
-        set { objc_setAssociatedObject(self, &AssociatedPendingSaveCountKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        set { objc_setAssociatedObject(
+            self,
+            &AssociatedPendingSaveCountKey,
+            newValue,
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        ) }
     }
 
-    @objc
-    public var dispatchGroupContext: DispatchGroupContext? {
+    @objc var dispatchGroupContext: DispatchGroupContext? {
         get { objc_getAssociatedObject(self, &AssociatedDispatchGroupContextKey) as? DispatchGroupContext }
-        set { objc_setAssociatedObject(self, &AssociatedDispatchGroupContextKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        set { objc_setAssociatedObject(
+            self,
+            &AssociatedDispatchGroupContextKey,
+            newValue,
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        ) }
     }
 
     /// List of all groups associated with this context
-    @objc
-    public var allGroups: [ZMSDispatchGroup] {
+    @objc var allGroups: [ZMSDispatchGroup] {
         dispatchGroupContext?.groups ?? []
     }
 
     @objc
-    public func createDispatchGroups() {
+    func createDispatchGroups() {
         let groups = [
             ZMSDispatchGroup(label: "ZMSGroupQueue first"),
-            // The secondary group gets -performGroupedBlock: added to it, but is not affected by -notifyWhenGroupIsEmpty: -- that method needs to add extra blocks to the firstGroup, though.
+            // The secondary group gets -performGroupedBlock: added to it, but is not affected by
+            // -notifyWhenGroupIsEmpty: -- that method needs to add extra blocks to the firstGroup, though.
             ZMSDispatchGroup(label: "ZMSGroupQueue second")
         ]
         dispatchGroupContext = DispatchGroupContext(groups: groups)
@@ -74,7 +81,7 @@ extension NSManagedObjectContext {
     /// will be retained, otherwise it will eventually be released.
     /// @attention: Be *very careful* not to create deadlocks.
     @objc
-    public func performGroupedBlockAndWait(_ block: @escaping () -> Void) {
+    func performGroupedBlockAndWait(_ block: @escaping () -> Void) {
         let groups = dispatchGroupContext?.enterAll() ?? []
         let timePoint = TimePoint(interval: PerformWarningTimeout)
         performAndWait {
@@ -96,7 +103,7 @@ extension NSManagedObjectContext {
     ///
     /// @sa  dispatch_group_notify()
     @objc
-    public func notifyWhenGroupIsEmpty(_ block: @escaping () -> Void) {
+    func notifyWhenGroupIsEmpty(_ block: @escaping () -> Void) {
         // We need to enter & leave all but the first group to make sure that any work added by
         // this method is stil being tracked by the other groups.
         let firstGroup = dispatchGroup
@@ -120,17 +127,17 @@ extension NSManagedObjectContext {
     ///
     /// This is used for testing. It is not thread safe.
     @objc
-    public func addGroup(_ dispatchGroup: ZMSDispatchGroup) {
+    func addGroup(_ dispatchGroup: ZMSDispatchGroup) {
         dispatchGroupContext?.add(dispatchGroup)
     }
 
     @objc
-    public func enterAllGroups() -> [ZMSDispatchGroup] {
+    func enterAllGroups() -> [ZMSDispatchGroup] {
         dispatchGroupContext?.enterAll() ?? []
     }
 
     @objc
-    public func leaveAllGroups(_ groups: [ZMSDispatchGroup]) {
+    func leaveAllGroups(_ groups: [ZMSDispatchGroup]) {
         dispatchGroupContext?.leave(groups)
     }
 }

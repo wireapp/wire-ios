@@ -30,16 +30,14 @@ final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
 
     static var sharedHelper: AddressBookHelperProtocol = MockAddressBookHelper()
 
-    func persistCurrentAccessStatus() {
-
-    }
+    func persistCurrentAccessStatus() {}
 
     var isAddressBookAccessGranted: Bool {
-        return false
+        false
     }
 
     var isAddressBookAccessUnknown: Bool {
-        return true
+        true
     }
 
     func requestPermissions(_ callback: ((Bool) -> Void)?) {
@@ -72,6 +70,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock()
+        accentColor = .blue
     }
 
     // MARK: - tearDown

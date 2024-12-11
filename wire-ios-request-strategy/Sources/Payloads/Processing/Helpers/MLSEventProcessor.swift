@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MLSEventProcessing {
@@ -29,7 +30,7 @@ public protocol MLSEventProcessing {
     ///   - fallbackGroupID: The groupd ID of the conversation found in the event payload.
     ///   - context: The sync context.
     ///
-    /// This method will update the conversation's `mlsStatus` to `.ready` if the underlying 
+    /// This method will update the conversation's `mlsStatus` to `.ready` if the underlying
     /// MLS group already exists in core crypto's local storage.
     /// Otherwise, it will update it to `.pendingJoin`.
 
@@ -46,9 +47,9 @@ public protocol MLSEventProcessing {
     ///   - conversationID: The qualified ID of the conversation.
     ///   - context: The sync context.
     ///
-    /// This method will notify the stale key material detector about the keying material update 
+    /// This method will notify the stale key material detector about the keying material update
     /// and upload key packages if needed.
-    /// It will also sync the conversation if it's missing. 
+    /// It will also sync the conversation if it's missing.
     /// And if the conversation is a one to one conversation, it will be resolved.
     ///
     /// **Note:** The welcome message itself is not being processed in this method, but rather in the ``EventDecoder``.
@@ -126,7 +127,10 @@ public class MLSEventProcessor: MLSEventProcessing {
         await context.perform {
             if conversation.mlsGroupID == nil {
                 conversation.mlsGroupID = mlsGroupID
-                WireLogger.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID.safeForLoggingDescription)) for conversation: (\(String(describing: conversation.qualifiedID))")
+                WireLogger.mls
+                    .info(
+                        "MLS event processor set the group ID to value: (\(mlsGroupID.safeForLoggingDescription)) for conversation: (\(String(describing: conversation.qualifiedID))"
+                    )
             }
         }
 
@@ -138,7 +142,8 @@ public class MLSEventProcessor: MLSEventProcessing {
         do {
             conversationExists = try await mlsService.conversationExists(groupID: mlsGroupID)
         } catch {
-            WireLogger.mls.error("failed to check if conversation \(mlsGroupID.safeForLoggingDescription) exists: \(error)")
+            WireLogger.mls
+                .error("failed to check if conversation \(mlsGroupID.safeForLoggingDescription) exists: \(error)")
             conversationExists = false
         }
         let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
@@ -151,7 +156,10 @@ public class MLSEventProcessor: MLSEventProcessing {
             Flow.createGroup.checkpoint(description: "saved ZMConversation for MLS")
 
             if newStatus != previousStatus {
-                WireLogger.mls.debug("conversation \(String(describing: conversation.qualifiedID)) status changed: \(String(describing: previousStatus)) -> \(newStatus))")
+                WireLogger.mls
+                    .debug(
+                        "conversation \(String(describing: conversation.qualifiedID)) status changed: \(String(describing: previousStatus)) -> \(newStatus))"
+                    )
             }
         }
     }
@@ -167,13 +175,14 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
         let migrator = OneOnOneMigrator(mlsService: mlsService)
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
 
         await process(
             welcomeMessage: welcomeMessage,
             conversationID: conversationID,
             in: context,
             mlsService: mlsService,
-            oneOnOneResolver: OneOnOneResolver(migrator: migrator)
+            oneOnOneResolver: OneOnOneResolver(migrator: migrator, isMLSEnabled: mlsFeature.isEnabled)
         )
     }
 
@@ -254,7 +263,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         WireLogger.mls.info("MLS event processor is wiping conversation")
 
         let (messageProtocol, groupID, mlsService) = await context.perform {
-            return (
+            (
                 conversation.messageProtocol,
                 conversation.mlsGroupID,
                 context.mlsService
@@ -276,7 +285,10 @@ public class MLSEventProcessor: MLSEventProcessing {
         do {
             try await mlsService.wipeGroup(groupID)
         } catch {
-            WireLogger.mls.error("mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))")
+            WireLogger.mls
+                .error(
+                    "mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))"
+                )
         }
     }
 
@@ -305,13 +317,13 @@ public class MLSEventProcessor: MLSEventProcessing {
         var stringValue: String {
             switch self {
             case .conversationNotMLSCapable:
-                return "conversation is not MLS capable"
+                "conversation is not MLS capable"
             case .missingGroupID:
-                return "missing group ID"
+                "missing group ID"
             case .missingMLSService:
-                return "missing mlsService"
-            case .other(reason: let reason):
-                return reason
+                "missing mlsService"
+            case let .other(reason: reason):
+                reason
             }
         }
     }

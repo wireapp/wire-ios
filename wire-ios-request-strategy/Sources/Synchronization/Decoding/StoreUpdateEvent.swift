@@ -18,6 +18,7 @@
 
 import CoreData
 import Foundation
+import WireLogging
 
 @objc(StoredUpdateEvent)
 public final class StoredUpdateEvent: NSManagedObject {
@@ -31,33 +32,23 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     // MARK: - Properties
 
-    @NSManaged
-    /// hash Value of payload and eventId combined
-    var eventHash: Int64
+    @NSManaged var eventHash: Int64
 
-    @NSManaged
-    var uuidString: String?
+    @NSManaged var uuidString: String?
 
-    @NSManaged
-    var debugInformation: String?
+    @NSManaged var debugInformation: String?
 
-    @NSManaged
-    var isTransient: Bool
+    @NSManaged var isTransient: Bool
 
-    @NSManaged
-    var payload: NSDictionary?
+    @NSManaged var payload: NSDictionary?
 
-    @NSManaged
-    var isEncrypted: Bool
+    @NSManaged var isEncrypted: Bool
 
-    @NSManaged
-    var isCallEvent: Bool
+    @NSManaged var isCallEvent: Bool
 
-    @NSManaged
-    var source: Int16
+    @NSManaged var source: Int16
 
-    @NSManaged
-    var sortIndex: Int64
+    @NSManaged var sortIndex: Int64
 
     // MARK: - Creation
 
@@ -66,7 +57,8 @@ public final class StoredUpdateEvent: NSManagedObject {
     /// - Parameters:
     ///   - event: received events
     ///   - managedObjectContext: current managedObjectContext
-    ///   - index: the passed in `index` is used to enumerate events to be able to fetch and sort them later on in the order they were received
+    ///   - index: the passed in `index` is used to enumerate events to be able to fetch and sort them later on in the
+    /// order they were received
     ///   - publicKey: the publicKey which will be used to encrypt update events
     ///
     /// - Returns: storedEvent which will be persisted in a database
@@ -88,11 +80,13 @@ public final class StoredUpdateEvent: NSManagedObject {
             return nil
         }
 
-        guard let storedEvent = StoredUpdateEvent.create(from: event,
-                                                         eventId: eventId,
-                                                         eventHash: eventHash,
-                                                         index: index,
-                                                         context: context) else {
+        guard let storedEvent = StoredUpdateEvent.create(
+            from: event,
+            eventId: eventId,
+            eventHash: eventHash,
+            index: index,
+            context: context
+        ) else {
             WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
             return nil
         }
@@ -105,11 +99,13 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
-    static func create(from event: ZMUpdateEvent,
-                       eventId: String,
-                       eventHash: Int,
-                       index: Int64,
-                       context: NSManagedObjectContext) -> StoredUpdateEvent? {
+    static func create(
+        from event: ZMUpdateEvent,
+        eventId: String,
+        eventHash: Int,
+        index: Int64,
+        context: NSManagedObjectContext
+    ) -> StoredUpdateEvent? {
         let storedEvent = StoredUpdateEvent.insertNewObject(context)
 
         storedEvent?.debugInformation = event.debugInformation
@@ -125,8 +121,12 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
-    static private func storedEventExists(for eventId: String, eventHash: Int, in context: NSManagedObjectContext) -> Bool {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+    private static func storedEventExists(
+        for eventId: String,
+        eventHash: Int,
+        in context: NSManagedObjectContext
+    ) -> Bool {
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         let eventIdPredicate = NSPredicate(format: "%K = %@", #keyPath(StoredUpdateEvent.uuidString), eventId)
 
         let eventHash = NSPredicate(format: "%K = %lld", #keyPath(StoredUpdateEvent.eventHash), Int64(eventHash))
@@ -134,7 +134,10 @@ public final class StoredUpdateEvent: NSManagedObject {
 
         let eventHashOrPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [eventHash, defaultEventHash])
 
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [eventIdPredicate, eventHashOrPredicate])
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            eventIdPredicate,
+            eventHashOrPredicate
+        ])
 
         let result = context.countOrAssert(request: fetchRequest)
         return result > 0
@@ -166,8 +169,8 @@ public final class StoredUpdateEvent: NSManagedObject {
     }
 
     static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
-        return NSEntityDescription.insertNewObject(
-            forEntityName: self.entityName,
+        NSEntityDescription.insertNewObject(
+            forEntityName: entityName,
             into: context
         ) as? StoredUpdateEvent
     }
@@ -182,7 +185,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         batchSize: Int,
         callEventsOnly: Bool
     ) -> [StoredUpdateEvent] {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: true)]
         fetchRequest.fetchLimit = batchSize
         fetchRequest.returnsObjectsAsFaults = false
@@ -191,14 +194,13 @@ public final class StoredUpdateEvent: NSManagedObject {
             fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(StoredUpdateEvent.isCallEvent))
         }
 
-        let result = context.fetchOrAssert(request: fetchRequest)
-        return result
+        return context.fetchOrAssert(request: fetchRequest)
     }
 
     /// Returns the highest index of all stored events
 
     public static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: false)]
         fetchRequest.fetchBatchSize = 1
         let result = context.fetchOrAssert(request: fetchRequest)
@@ -229,7 +231,7 @@ public final class StoredUpdateEvent: NSManagedObject {
                 from: storedEvent,
                 privateKeys: privateKeys
             ) {
-            case .success(let updateEvent):
+            case let .success(updateEvent):
                 result.eventsToProcess.append(updateEvent)
                 result.eventsToDelete.append(storedEvent)
 
@@ -381,8 +383,8 @@ public final class StoredUpdateEvent: NSManagedObject {
         }
 
         guard let decryptedPayload = try? JSONSerialization.jsonObject(
-          with: decryptedData as Data,
-          options: []
+            with: decryptedData as Data,
+            options: []
         ) as? NSDictionary else {
             throw DecryptionFailure.serializationError
         }

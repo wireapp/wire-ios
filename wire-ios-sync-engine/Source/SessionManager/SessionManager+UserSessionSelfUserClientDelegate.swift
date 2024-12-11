@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 protocol UserSessionSelfUserClientDelegate: AnyObject {
     /// Invoked when a client is successfully registered
@@ -33,7 +34,7 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
     public func clientRegistrationDidSucceed(accountId: UUID) {
         WireLogger.sessionManager.debug("Client registration was successful")
 
-        if self.configuration.encryptionAtRestEnabledByDefault {
+        if configuration.encryptionAtRestEnabledByDefault {
             do {
                 try activeUserSession?.setEncryptionAtRest(enabled: true, skipMigration: true)
             } catch {

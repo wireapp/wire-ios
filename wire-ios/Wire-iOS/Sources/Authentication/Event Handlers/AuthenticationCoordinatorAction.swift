@@ -57,9 +57,9 @@ enum AuthenticationCoordinatorAction {
     var retainsModal: Bool {
         switch self {
         case .openURL:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
@@ -87,8 +87,15 @@ struct AuthenticationCoordinatorAlertAction {
 }
 
 extension AuthenticationCoordinatorAlertAction {
-    static let ok: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.ok, coordinatorActions: [])
-    static let cancel: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.cancel, coordinatorActions: [], style: .cancel)
+    static let ok: AuthenticationCoordinatorAlertAction = .init(
+        title: L10n.Localizable.General.ok,
+        coordinatorActions: []
+    )
+    static let cancel: AuthenticationCoordinatorAlertAction = .init(
+        title: L10n.Localizable.General.cancel,
+        coordinatorActions: [],
+        style: .cancel
+    )
 }
 
 /// A customizable alert to display inside the coordinator's presenter.

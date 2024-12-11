@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireLogging
 
 public final class AppLockController: AppLockType {
 
@@ -32,7 +33,7 @@ public final class AppLockController: AppLockType {
 
     public var isActive: Bool {
         get {
-            return isForced || selfUser.isAppLockActive
+            isForced || selfUser.isAppLockActive
         }
 
         set {
@@ -42,11 +43,11 @@ public final class AppLockController: AppLockType {
     }
 
     public var isForced: Bool {
-        return legacyConfig?.isForced ?? config.isForced
+        legacyConfig?.isForced ?? config.isForced
     }
 
     public var timeout: UInt {
-        return legacyConfig?.timeout ?? config.timeout
+        legacyConfig?.timeout ?? config.timeout
     }
 
     public var isLocked: Bool {
@@ -66,11 +67,11 @@ public final class AppLockController: AppLockType {
     }
 
     public var requireCustomPasscode: Bool {
-        return legacyConfig?.requireCustomPasscode ?? false
+        legacyConfig?.requireCustomPasscode ?? false
     }
 
     public var isCustomPasscodeSet: Bool {
-        return fetchPasscode() != nil
+        fetchPasscode() != nil
     }
 
     public var needsToNotifyUser: Bool {
@@ -95,7 +96,7 @@ public final class AppLockController: AppLockType {
 
     private var isTimeoutExceeded: Bool {
         let timeSinceAuth = -lastCheckpoint.timeIntervalSinceNow
-        let timeoutWindow = 0..<Double(timeout)
+        let timeoutWindow = 0 ..< Double(timeout)
         return !timeoutWindow.contains(timeSinceAuth)
     }
 
@@ -108,9 +109,11 @@ public final class AppLockController: AppLockType {
     private var config: Config {
         let appLock = featureRepository.fetchAppLock()
 
-        return Config(isAvailable: appLock.status == .enabled,
-                      isForced: appLock.config.enforceAppLock,
-                      timeout: appLock.config.inactivityTimeoutSecs)
+        return Config(
+            isAvailable: appLock.status == .enabled,
+            isForced: appLock.config.enforceAppLock,
+            timeout: appLock.config.inactivityTimeoutSecs
+        )
     }
 
     // MARK: - Life cycle
@@ -129,7 +132,7 @@ public final class AppLockController: AppLockType {
         self.legacyConfig = legacyConfig
         self.authenticationContext = authenticationContext
 
-        featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
+        self.featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
     }
 
     // MARK: - Methods
@@ -169,14 +172,14 @@ public final class AppLockController: AppLockType {
         // Changing biometrics in device settings is protected by the device passcode, but if
         // the device passcode isn't considered secure enough, then ask for the custom passcode
         // to accept the new biometrics state.
-        if biometricsState.biometricsChanged(in: context) && !passcodePreference.allowsDevicePasscode {
+        if biometricsState.biometricsChanged(in: context), !passcodePreference.allowsDevicePasscode {
             WireLogger.appLock.info("need custom passcode because biometrics changed")
             callback(.needCustomPasscode)
             return
         }
 
         // No device authentication possible, but can fall back to the custom passcode.
-        if !canEvaluatePolicy && passcodePreference.allowsCustomPasscode {
+        if !canEvaluatePolicy, passcodePreference.allowsCustomPasscode {
             WireLogger.appLock.info("need custom passcode because device auth is not possible")
             callback(.needCustomPasscode)
             return
@@ -234,7 +237,7 @@ public final class AppLockController: AppLockType {
     }
 
     func fetchPasscode() -> Data? {
-        return try? Keychain.fetchItem(keychainItem)
+        try? Keychain.fetchItem(keychainItem)
     }
 
 }

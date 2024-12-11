@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class CompanyLoginRequesterTests: XCTestCase {
 
     func testThatItGeneratesLoginURLForToken() {
         // GIVEN
         let defaults = UserDefaults(suiteName: name)!
-        let requester: CompanyLoginRequester = CompanyLoginRequester(
+        let requester = CompanyLoginRequester(
             callbackScheme: "wire",
             defaults: defaults
         )
@@ -44,21 +44,31 @@ final class CompanyLoginRequesterTests: XCTestCase {
         requester.requestIdentity(host: "localhost", token: userID)
         waitForExpectations(timeout: 1, handler: nil)
 
-        guard let validationToken = CompanyLoginVerificationToken.current(in: defaults) else { return XCTFail("no token") }
+        guard let validationToken = CompanyLoginVerificationToken.current(in: defaults)
+        else { return XCTFail("no token") }
         let validationIdentifier = validationToken.uuid.transportString()
-        let expectedURL = URL(string: "https://localhost/sso/initiate-login/\(userID)?success_redirect=wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(validationIdentifier)&error_redirect=wire://login/failure?label=$label&validation_token=\(validationIdentifier)")!
+        let expectedURL =
+            URL(
+                string: "https://localhost/sso/initiate-login/\(userID)?success_redirect=wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(validationIdentifier)&error_redirect=wire://login/failure?label=$label&validation_token=\(validationIdentifier)"
+            )!
 
         // THEN
         guard let validationURL = url else {
-           return XCTFail("The requester did not call the delegate.")
+            return XCTFail("The requester did not call the delegate.")
         }
 
         guard let components = URLComponents(url: validationURL, resolvingAgainstBaseURL: false) else {
             return XCTFail("The requester did not request to open a valid URL.")
         }
 
-        XCTAssertEqual(components.query(for: "success_redirect"), "wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(validationIdentifier)")
-        XCTAssertEqual(components.query(for: "error_redirect"), "wire://login/failure?label=$label&validation_token=\(validationIdentifier)")
+        XCTAssertEqual(
+            components.query(for: "success_redirect"),
+            "wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(validationIdentifier)"
+        )
+        XCTAssertEqual(
+            components.query(for: "error_redirect"),
+            "wire://login/failure?label=$label&validation_token=\(validationIdentifier)"
+        )
         XCTAssertEqual(validationURL.absoluteString.removingPercentEncoding, expectedURL.absoluteString)
     }
 
@@ -204,7 +214,10 @@ private final class MockSession: NSObject, URLSessionProtocol {
         super.init()
     }
 
-    func dataTask(with request: URLRequest, completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+    func dataTask(
+        with request: URLRequest,
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
+    ) -> URLSessionDataTask {
         let (data, response, error) = handler(request)
         completionHandler(data, response, error)
         return MockURLSessionDataTask()

@@ -24,7 +24,7 @@ protocol SecondaryViewDescription {
 }
 
 extension SecondaryViewDescription {
-    func display(on error: Error) -> ViewDescriptor? { return nil }
+    func display(on error: Error) -> ViewDescriptor? { nil }
 }
 
 protocol FooterViewDescription {
@@ -33,5 +33,5 @@ protocol FooterViewDescription {
 }
 
 extension FooterViewDescription {
-    func display(on error: Error) -> ViewDescriptor? { return nil }
+    func display(on error: Error) -> ViewDescriptor? { nil }
 }

@@ -18,10 +18,16 @@
 
 import WireAPI
 import WireDataModel
+import WireLogging
 import WireSystem
 
+// sourcery: AutoMockable
 /// Calculates and pushes the supported protocols to the backend
-public struct PushSupportedProtocolsUseCase {
+public protocol PushSupportedProtocolsUseCaseProtocol {
+    func invoke() async throws
+}
+
+public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtocol {
 
     private enum ProteusToMLSMigrationState: String {
         case disabled
@@ -91,12 +97,14 @@ public struct PushSupportedProtocolsUseCase {
 
     private func remotelySupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
         let mlsFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            with: .mls,
+            name: .mls,
             type: Feature.MLS.Config.self
         )
 
-        let mls = (status: mlsFeature?.status ?? .disabled,
-                   config: mlsFeature?.config ?? Feature.MLS.Config())
+        let mls = (
+            status: mlsFeature?.status ?? .disabled,
+            config: mlsFeature?.config ?? Feature.MLS.Config()
+        )
 
         guard mls.status == .enabled else {
             /// If there is no MLS then there can only be proteus.
@@ -118,12 +126,14 @@ public struct PushSupportedProtocolsUseCase {
 
     private func currentMigrationState() async -> ProteusToMLSMigrationState {
         let mlsMigrationFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            with: .mlsMigration,
+            name: .mlsMigration,
             type: Feature.MLSMigration.Config.self
         )
 
-        let mlsMigration = (status: mlsMigrationFeature?.status ?? .disabled,
-                            config: mlsMigrationFeature?.config ?? Feature.MLSMigration.Config())
+        let mlsMigration = (
+            status: mlsMigrationFeature?.status ?? .disabled,
+            config: mlsMigrationFeature?.config ?? Feature.MLSMigration.Config()
+        )
 
         guard mlsMigration.status == .enabled else {
             return .disabled

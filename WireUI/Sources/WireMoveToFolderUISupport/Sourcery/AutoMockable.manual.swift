@@ -30,7 +30,7 @@ public class MockFolderDirectoryTypeProtocol: FolderDirectoryTypeProtocol {
     public var allFolders: [Folder] = []
 }
 
-public class MockMoveConversationToFolderUseCaseType: @unchecked Sendable, MoveConversationToFolderUseCaseType {
+public class MockUpdateConversationFolderUseCase: @unchecked Sendable, UpdateConversationFolderUseCaseProtocol {
 
     // MARK: - Life cycle
 
@@ -38,26 +38,26 @@ public class MockMoveConversationToFolderUseCaseType: @unchecked Sendable, MoveC
 
     // MARK: - invoke
 
-    public var invokeFolderConversation_Invocations: [(folder: Folder, conversation: Conversation)] = []
-    public var invokeFolderConversation_MockError: (any Error)?
-    public var invokeFolderConversation_MockMethod: ((Folder, Conversation) async throws -> Void)?
+    public var invoke_Invocations: [(conversationID: UUID, folderID: UUID)] = []
+    public var invoke_MockError: (any Error)?
+    public var invoke_MockMethod: ((UUID, UUID) async throws -> Void)?
 
-    public func invoke(folder: Folder, conversation: Conversation) async throws {
-        invokeFolderConversation_Invocations.append((folder: folder, conversation: conversation))
+    public func invoke(conversationID: UUID, folderID: UUID) async throws {
+        invoke_Invocations.append((conversationID: conversationID, folderID: folderID))
 
-        if let error = invokeFolderConversation_MockError {
+        if let error = invoke_MockError {
             throw error
         }
 
-        guard let mock = invokeFolderConversation_MockMethod else {
-            fatalError("no mock for `invokeFolderConversation`")
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
         }
 
-        try await mock(folder, conversation)
+        try await mock(conversationID, folderID)
     }
 }
 
-public class MockFolderCreationUseCaseType: @unchecked Sendable, FolderCreationUseCaseType {
+public class MockCreateConversationFolderUseCase: @unchecked Sendable, CreateConversationFolderUseCaseProtocol {
 
     // MARK: - Life cycle
 

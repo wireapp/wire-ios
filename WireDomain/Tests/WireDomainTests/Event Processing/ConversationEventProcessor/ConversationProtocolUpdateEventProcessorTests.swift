@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class ConversationProtocolUpdateEventProcessorTests: XCTestCase {
 

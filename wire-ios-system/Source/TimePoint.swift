@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 /// Records the passage of time since its creation. It also stores the callstack at creation time.
 @objc(ZMSTimePoint) @objcMembers
@@ -44,9 +45,9 @@ public final class TimePoint: NSObject {
 
     /// Creates a time point and records the callstack with a label used to identify the timepoint
     public init(interval: TimeInterval, label: String) {
-        warnInterval = interval
+        self.warnInterval = interval
         self.label = label
-        timePoint = .now
+        self.timePoint = .now
     }
 
     /// Resets the creation time, but not the callstack

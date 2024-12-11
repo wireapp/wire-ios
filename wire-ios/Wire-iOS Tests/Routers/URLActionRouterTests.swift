@@ -136,9 +136,9 @@ final class URLActionRouterTests: XCTestCase {
 
 final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
 
-    func updateActiveCallPresentationState() { }
+    func updateActiveCallPresentationState() {}
 
-    func minimizeCallOverlay(animated: Bool, completion: Completion?) { }
+    func minimizeCallOverlay(animated: Bool, completion: Completion?) {}
 
     var didNavigateToDestination: NavigationDestination?
     func navigate(to destination: NavigationDestination) {
@@ -155,7 +155,7 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
 
     var canDisplayAlerts: Bool = true
     func urlActionRouterCanDisplayAlerts() -> Bool {
-        return canDisplayAlerts
+        canDisplayAlerts
     }
 
 }

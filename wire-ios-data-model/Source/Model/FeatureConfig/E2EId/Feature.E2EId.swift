@@ -53,14 +53,15 @@ public extension Feature {
 
             public init(
                 acmeDiscoveryUrl: String? = nil,
-                verificationExpiration: UInt = 86400,
+                verificationExpiration: UInt = 86_400,
                 crlProxy: String? = nil,
-                useProxyOnMobile: Bool? = nil) {
-                    self.acmeDiscoveryUrl = acmeDiscoveryUrl
-                    self.verificationExpiration = verificationExpiration
-                    self.crlProxy = crlProxy
-                    self.useProxyOnMobile = useProxyOnMobile
-                }
+                useProxyOnMobile: Bool? = nil
+            ) {
+                self.acmeDiscoveryUrl = acmeDiscoveryUrl
+                self.verificationExpiration = verificationExpiration
+                self.crlProxy = crlProxy
+                self.useProxyOnMobile = useProxyOnMobile
+            }
 
         }
 
@@ -71,7 +72,7 @@ public extension Feature {
 public extension Feature.E2EI {
 
     var isEnabled: Bool {
-        return status == .enabled
+        status == .enabled
     }
 
 }

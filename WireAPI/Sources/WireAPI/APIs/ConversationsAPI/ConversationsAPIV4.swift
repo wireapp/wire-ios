@@ -16,6 +16,64 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 class ConversationsAPIV4: ConversationsAPIV3 {
     override var apiVersion: APIVersion { .v4 }
+
+    override func getConversationGuestLink(
+        conversationID: String
+    ) async throws -> String? {
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/\(conversationID)/code")
+
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationCodeV4.self) // New change in v4
+            .failure(
+                code: .badRequest,
+                label: "cnv",
+                error: ConversationsAPIError.invalidConversationID
+            ) // Dedicated error code in v4
+            .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+            .failure(
+                code: .notFound,
+                label: "no-conversation-code",
+                error: ConversationsAPIError.conversationCodeNotFound
+            )
+            .failure(code: .conflict, label: "guest-links-disabled", error: ConversationsAPIError.guestLinksDisabled)
+            .parse(code: response.statusCode, data: data)
+    }
+}
+
+struct ConversationCodeV4: Decodable, ToAPIModelConvertible {
+
+    let code: String
+    let hasPassword: Bool // Introduced in v4
+    let key: String
+    let uri: String?
+
+    enum CodingKeys: String, CodingKey {
+        case code
+        case hasPassword = "has_password"
+        case key
+        case uri
+    }
+
+    func toAPIModel() -> String? {
+        uri
+    }
 }

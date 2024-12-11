@@ -47,8 +47,11 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             return nil
         }
 
+        let path = apiVersion >= .v7
+            ? "/one2one-conversations/\(domain)/\(userID)"
+            : "/conversations/one2one/\(domain)/\(userID)"
         return ZMTransportRequest(
-            getFromPath: "/conversations/one2one/\(domain)/\(userID)",
+            getFromPath: path,
             apiVersion: apiVersion.rawValue
         )
     }
@@ -86,9 +89,10 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                 }
                 updateOrCreateConversation(
                     action: action,
-                    payload: payload)
+                    payload: payload
+                )
 
-            case .v6:
+            case .v6, .v7:
                 guard
                     let result = Payload.ConversationWithRemovalKeys(data, decoder: decoder),
                     let payload = result.conversation
@@ -100,7 +104,8 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                 updateOrCreateConversation(
                     action: action,
                     payload: payload,
-                    publicKeys: publicKeys)
+                    publicKeys: publicKeys
+                )
             }
 
         case (400, "mls-not-enabled"):
@@ -211,12 +216,16 @@ private extension Payload.ExternalSenderKeys {
             .flatMap(\.base64DecodedBytes)
             .map(\.data)
 
-        return BackendMLSPublicKeys(removal:
-                .init(ed25519: ed25519RemovalKey,
-                      ed448: ed448RemovalKey,
-                      p256: p256RemovalKey,
-                      p384: p384RemovalKey,
-                      p521: p521RemovalKey))
+        return BackendMLSPublicKeys(
+            removal:
+            .init(
+                ed25519: ed25519RemovalKey,
+                ed448: ed448RemovalKey,
+                p256: p256RemovalKey,
+                p384: p384RemovalKey,
+                p521: p521RemovalKey
+            )
+        )
     }
 
 }

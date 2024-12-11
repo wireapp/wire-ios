@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// User review for call quality.
 
@@ -38,21 +38,21 @@ public enum CallQualitySurveyReview {
 
     var segmentation: Set<SegmentationEntry> {
         switch self {
-        case .notDisplayed(let reason, let duration):
+        case let .notDisplayed(reason, duration):
             [
                 .callLabel("not-displayed"),
                 .callDuration(duration),
                 .callIgnoreReason(reason.rawValue)
             ]
 
-        case .answered(let score, let duration):
+        case let .answered(score, duration):
             [
                 .callLabel("answered"),
                 .callScore(score),
                 .callDuration(duration)
             ]
 
-        case .dismissed(let duration):
+        case let .dismissed(duration):
             [
                 .callLabel("dismissed"),
                 .callDuration(duration)

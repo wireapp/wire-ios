@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLogging
 import WireSystem
 
 enum NetworkStatusViewState {
@@ -29,13 +30,15 @@ enum NetworkStatusViewState {
 // sourcery: AutoMockable
 protocol NetworkStatusViewDelegate: AnyObject {
 
-    /// Set this var to true after viewDidAppear. This flag prevents first layout animation when the UIViewController is created but not yet appear, if didChangeHeight called with animated = true.
+    /// Set this var to true after viewDidAppear. This flag prevents first layout animation when the UIViewController is
+    /// created but not yet appear, if didChangeHeight called with animated = true.
     var shouldAnimateNetworkStatusView: Bool { get set }
 
     /// bottom margin to the neighbour view
     var bottomMargin: CGFloat { get }
 
-    /// When the networkStatusView changes its height, this delegate method is called. The delegate should refresh its layout in the method.
+    /// When the networkStatusView changes its height, this delegate method is called. The delegate should refresh its
+    /// layout in the method.
     ///
     /// - Parameters:
     ///   - networkStatusView: the delegate caller
@@ -53,11 +56,15 @@ extension NetworkStatusViewDelegate where Self: UIViewController {
         guard shouldAnimateNetworkStatusView else { return }
 
         if animated {
-            UIView.animate(withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState]) {
+            UIView.animate(
+                withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime,
+                delay: 0,
+                options: [.curveEaseInOut, .beginFromCurrentState]
+            ) {
                 self.view.layoutIfNeeded()
             }
         } else {
-            self.view.layoutIfNeeded()
+            view.layoutIfNeeded()
         }
     }
 }
@@ -80,8 +87,10 @@ final class NetworkStatusView: UIView {
     weak var delegate: NetworkStatusViewDelegate?
 
     private lazy var offlineViewTopMargin: NSLayoutConstraint = offlineView.topAnchor.constraint(equalTo: topAnchor)
-    private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor.constraint(equalTo: bottomAnchor)
-    private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor.constraint(equalTo: bottomAnchor)
+    private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor
+        .constraint(equalTo: bottomAnchor)
+    private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor
+        .constraint(equalTo: bottomAnchor)
 
     var state: NetworkStatusViewState {
         get { _state }
@@ -96,9 +105,9 @@ final class NetworkStatusView: UIView {
     }
 
     override init(frame: CGRect) {
-        connectingView = BreathLoadingBar.withDefaultAnimationDuration()
+        self.connectingView = BreathLoadingBar.withDefaultAnimationDuration()
         connectingView.accessibilityIdentifier = "LoadBar"
-        offlineView = OfflineBar()
+        self.offlineView = OfflineBar()
 
         super.init(frame: frame)
 
@@ -109,8 +118,8 @@ final class NetworkStatusView: UIView {
             subview.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        state = .online
-        backgroundColor = SemanticColors.View.backgroundDefault
+        self.state = .online
+        backgroundColor = ColorTheme.Backgrounds.surface
         createConstraints()
     }
 
@@ -123,7 +132,10 @@ final class NetworkStatusView: UIView {
         [offlineView, connectingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
-            offlineView.rightAnchor.constraint(equalTo: rightAnchor, constant: -CGFloat.NetworkStatusBar.horizontalMargin),
+            offlineView.rightAnchor.constraint(
+                equalTo: rightAnchor,
+                constant: -CGFloat.NetworkStatusBar.horizontalMargin
+            ),
             offlineViewTopMargin,
             offlineViewBottomMargin,
 
@@ -147,9 +159,9 @@ final class NetworkStatusView: UIView {
         }
 
         if animated {
-            self.connectingView.animating = false
+            connectingView.animating = false
             if state == .offlineExpanded {
-                self.offlineView.isHidden = false
+                offlineView.isHidden = false
             }
 
             UIView.animate(
@@ -201,26 +213,28 @@ final class NetworkStatusView: UIView {
         log(networkStatus: state)
         var networkStatusViewState = state
 
-        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
-        if let activationState = window?.windowScene?.activationState, ![.foregroundActive, .foregroundInactive].contains(activationState) {
+        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a
+        // blink" visual artifact.
+        if let activationState = window?.windowScene?.activationState,
+           ![.foregroundActive, .foregroundInactive].contains(activationState) {
             networkStatusViewState = .online
         }
 
         updateConstraints(networkStatusViewState: networkStatusViewState)
 
-        self.offlineView.state = networkStatusViewState
-        self.connectingView.state = networkStatusViewState
+        offlineView.state = networkStatusViewState
+        connectingView.state = networkStatusViewState
 
-        self.layoutIfNeeded()
+        layoutIfNeeded()
     }
 
     func updateUICompletion(offlineViewHidden: Bool) {
-        self.offlineView.isHidden = offlineViewHidden
+        offlineView.isHidden = offlineViewHidden
     }
 
     // Detects when the view can be touchable
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        return state == .offlineExpanded
+        state == .offlineExpanded
     }
 
     // MARK: - Helper Logging

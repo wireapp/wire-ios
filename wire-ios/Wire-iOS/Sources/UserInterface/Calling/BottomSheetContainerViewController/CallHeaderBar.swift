@@ -23,7 +23,10 @@ final class CallHeaderBar: UIView {
     private let verticalStackView = UIStackView(axis: .vertical)
     private let titleLabel = DynamicFontLabel(fontSpec: .normalSemiboldFont, color: SemanticColors.Label.textDefault)
     private let timeLabel = DynamicFontLabel(fontSpec: .smallRegularFont, color: SemanticColors.Label.textDefault)
-    private let bitrateLabel = BitRateLabel(fontSpec: .smallRegularFont, color: SemanticColors.Label.textCollectionSecondary)
+    private let bitrateLabel = BitRateLabel(
+        fontSpec: .smallRegularFont,
+        color: SemanticColors.Label.textCollectionSecondary
+    )
     let minimalizeButton = UIButton()
 
     init() {
@@ -32,6 +35,7 @@ final class CallHeaderBar: UIView {
         setupConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -65,7 +69,10 @@ final class CallHeaderBar: UIView {
             minimalizeButton.centerYAnchor.constraint(equalTo: centerYAnchor),
             minimalizeButton.widthAnchor.constraint(equalToConstant: 32.0),
             minimalizeButton.heightAnchor.constraint(equalToConstant: 32.0),
-            verticalStackView.leadingAnchor.constraint(greaterThanOrEqualTo: minimalizeButton.trailingAnchor, constant: 6.0),
+            verticalStackView.leadingAnchor.constraint(
+                greaterThanOrEqualTo: minimalizeButton.trailingAnchor,
+                constant: 6.0
+            ),
             verticalStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32.0)
         ])
     }

@@ -23,11 +23,11 @@ extension TeamRole {
     var analyticsValue: String {
         switch self {
         case .partner:
-          return "external"
+            "external"
         case .member, .admin, .owner:
-          return "member"
+            "member"
         case .none:
-          return "wireless"
+            "wireless"
         }
-      }
+    }
 }

@@ -25,7 +25,7 @@ extension MockUser {
     /// - Parameter suffix: a mocking input
     /// - Returns: a mocking output
     func filename(suffix: String? = nil) -> String {
-        return "dummy.txt"
+        "dummy.txt"
     }
 
 }

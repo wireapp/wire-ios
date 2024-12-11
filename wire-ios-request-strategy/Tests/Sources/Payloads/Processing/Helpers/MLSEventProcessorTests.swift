@@ -43,7 +43,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
         mlsServiceMock = .init()
         mlsServiceMock.wipeGroup_MockMethod = { _ in }
         mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = .random()
-        mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = { }
+        mlsServiceMock.uploadKeyPackagesIfNeeded_MockMethod = {}
 
         oneOnOneResolverMock = .init()
         oneOnOneResolverMock.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in .noAction }
@@ -234,7 +234,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
     func internalTest_wipeMLSGroupWithProtocol(
         _ messageProtocol: MessageProtocol,
         shouldWipe: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         // Given
@@ -279,9 +279,9 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
         // When
         await sut.updateConversationIfNeeded(
-            conversation: self.conversation,
+            conversation: conversation,
             fallbackGroupID: .init(base64Encoded: groupIdString),
-            context: self.syncMOC
+            context: syncMOC
         )
 
         await syncMOC.perform {

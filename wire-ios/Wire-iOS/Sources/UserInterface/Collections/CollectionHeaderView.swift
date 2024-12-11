@@ -107,19 +107,19 @@ final class CollectionHeaderView: UICollectionReusableView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-          iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-          iconImageView.widthAnchor.constraint(equalToConstant: 16),
-          iconImageView.heightAnchor.constraint(equalToConstant: 16),
+            iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: 16),
+            iconImageView.heightAnchor.constraint(equalToConstant: 16),
 
-          titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 8),
-          titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-          titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 8),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-          actionButton.leadingAnchor.constraint(equalTo: leadingAnchor),
-          actionButton.topAnchor.constraint(equalTo: topAnchor),
-          actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-          actionButton.bottomAnchor.constraint(equalTo: bottomAnchor)
+            actionButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+            actionButton.topAnchor.constraint(equalTo: topAnchor),
+            actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            actionButton.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 
@@ -127,10 +127,11 @@ final class CollectionHeaderView: UICollectionReusableView {
     var desiredHeight: CGFloat = 0
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: desiredWidth, height: desiredHeight)
+        CGSize(width: desiredWidth, height: desiredHeight)
     }
 
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes)
+        -> UICollectionViewLayoutAttributes {
         var newFrame = layoutAttributes.frame
         newFrame.size.width = intrinsicContentSize.width
         newFrame.size.height = intrinsicContentSize.height
@@ -138,7 +139,8 @@ final class CollectionHeaderView: UICollectionReusableView {
         return layoutAttributes
     }
 
-    @objc func didSelect(_ button: UIButton!) {
+    @objc
+    func didSelect(_ button: UIButton!) {
         selectionAction?(section)
     }
 }

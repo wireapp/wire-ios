@@ -39,9 +39,11 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
     fileprivate var collectionView: CallParticipantsListView!
     let showParticipants: Bool
 
-    init(participants: CallParticipantsList,
-         showParticipants: Bool,
-         selfUser: UserType) {
+    init(
+        participants: CallParticipantsList,
+        showParticipants: Bool,
+        selfUser: UserType
+    ) {
         self.participants = participants
         self.showParticipants = showParticipants
         self.selfUser = selfUser
@@ -52,9 +54,11 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
         scrollableWithConfiguration configuration: CallInfoViewControllerInput,
         selfUser: UserType
     ) {
-        self.init(participants: configuration.accessoryType.participants,
-                  showParticipants: true,
-                  selfUser: selfUser)
+        self.init(
+            participants: configuration.accessoryType.participants,
+            showParticipants: true,
+            selfUser: selfUser
+        )
         view.backgroundColor = configuration.overlayBackgroundColor
     }
 
@@ -117,12 +121,16 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
 
     private func updateRows() {
         collectionView?.rows = showParticipants
-        ? participants
-        : [.showAll(totalCount: participants.count)]
+            ? participants
+            : [.showAll(totalCount: participants.count)]
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: cellHeight)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: cellHeight)
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {

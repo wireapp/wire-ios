@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 enum ConversationCellType: Int {
     case text
@@ -69,7 +69,7 @@ final class DeleteMessageTests: XCTestCase {
     }
 
     func actionController(for conversationType: ConversationCellType) -> ConversationMessageActionController {
-        let message = self.message(for: conversationType)!
+        let message = message(for: conversationType)!
         return ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
     }
 

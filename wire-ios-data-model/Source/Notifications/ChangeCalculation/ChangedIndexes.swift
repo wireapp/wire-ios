@@ -18,9 +18,9 @@
 
 import Foundation
 
-extension NSOrderedSet {
+public extension NSOrderedSet {
 
-    public func toOrderedSetState<T: Hashable>() -> OrderedSetState<T> {
+    func toOrderedSetState<T: Hashable>() -> OrderedSetState<T> {
         guard let objects = array as? [T] else {
             fatal("Could not cast contents of NSOrderedSet \(type(of: self)) to expected type \(T.self)")
         }
@@ -28,10 +28,10 @@ extension NSOrderedSet {
     }
 }
 
-extension Array where Element: Hashable {
+public extension Array where Element: Hashable {
 
-    public func toOrderedSetState() -> OrderedSetState<Element> {
-        return OrderedSetState(array: self)
+    func toOrderedSetState() -> OrderedSetState<Element> {
+        OrderedSetState(array: self)
     }
 }
 
@@ -65,17 +65,18 @@ public struct OrderedSetState<T: Hashable>: Equatable {
         return oldIndex
     }
 
-    static public func == (lhs: OrderedSetState<T>, rhs: OrderedSetState<T>) -> Bool {
-        return lhs.array as [T] == rhs.array as [T]
+    public static func == (lhs: OrderedSetState<T>, rhs: OrderedSetState<T>) -> Bool {
+        lhs.array as [T] == rhs.array as [T]
     }
 
     public func map<U>(_ transform: (T) throws -> U) rethrows -> [U] {
-        return try array.map(transform)
+        try array.map(transform)
     }
 }
 
 public enum SetChangeMoveType {
-    case uiTableView, uiCollectionView
+    case uiTableView
+    case uiCollectionView
 }
 
 public struct MovedIndex: Equatable {
@@ -83,7 +84,7 @@ public struct MovedIndex: Equatable {
     public let to: Int
 
     public static func == (lhs: MovedIndex, rhs: MovedIndex) -> Bool {
-        return lhs.from == rhs.from && lhs.to == rhs.to
+        lhs.from == rhs.from && lhs.to == rhs.to
     }
 }
 
@@ -99,11 +100,12 @@ public struct ChangedIndexes<T: Hashable> {
     /// insertedIndexes refer to the indexes after deleting deletedIndexes
     public let insertedIndexes: IndexSet
 
-    /// updatedIndexes refer to the position of the item after the move 
+    /// updatedIndexes refer to the position of the item after the move
     /// Reloads using these indexes must be performed AFTER inserts / deletes and moves have COMPLETED
     public let updatedIndexes: IndexSet
 
-    /// Depending on the moveType, the `from` index either refers to the position of the item in the original set (uiCollectionView) or to the position in the intermediate set as moves are iteratively applied (uiTableView)
+    /// Depending on the moveType, the `from` index either refers to the position of the item in the original set
+    /// (uiCollectionView) or to the position in the intermediate set as moves are iteratively applied (uiTableView)
     public let movedIndexes: [MovedIndex]
 
     public let moveType: SetChangeMoveType
@@ -116,14 +118,24 @@ public struct ChangedIndexes<T: Hashable> {
     /// @param endState: State after the updates
     /// @param updatedObjects: Objects that need to be reloaded
     /// @param moveType: depending on viewController, default is uiCollectionView
-    public init(start: OrderedSetState<T>, end: OrderedSetState<T>, updated: Set<T>, moveType: SetChangeMoveType = .uiCollectionView) {
+    public init(
+        start: OrderedSetState<T>,
+        end: OrderedSetState<T>,
+        updated: Set<T>,
+        moveType: SetChangeMoveType = .uiCollectionView
+    ) {
         self.startState = start
         self.endState = end
         self.updatedObjects = updated
         self.moveType = moveType
 
         let result = type(of: self).calculateDeletesInsertsUpdates(start: start, end: end, updated: updated)
-        let movedIndexes = type(of: self).calculateMoves(start: start, end: end, afterDeletesAndInserts: result.intermediateState, moveType: moveType)
+        let movedIndexes = type(of: self).calculateMoves(
+            start: start,
+            end: end,
+            afterDeletesAndInserts: result.intermediateState,
+            moveType: moveType
+        )
         self.movedIndexes = movedIndexes
 
         self.updatedIndexes = result.updatedIndexes
@@ -161,7 +173,12 @@ public struct ChangedIndexes<T: Hashable> {
         return (insertedObjects, deletedObjects, updatedIndexes, intermediateState)
     }
 
-    static func calculateMoves(start: OrderedSetState<T>, end: OrderedSetState<T>, afterDeletesAndInserts: [T], moveType: SetChangeMoveType) -> [MovedIndex] {
+    static func calculateMoves(
+        start: OrderedSetState<T>,
+        end: OrderedSetState<T>,
+        afterDeletesAndInserts: [T],
+        moveType: SetChangeMoveType
+    ) -> [MovedIndex] {
         var intermediateState = afterDeletesAndInserts
         var movedIndexes = [MovedIndex]()
 
@@ -173,7 +190,7 @@ public struct ChangedIndexes<T: Hashable> {
             // (1) add a move from the index in the startState to the index in endState
             // (2) search for the position of the endValue in the intermediate state, move the item to the current index
             // (3) continue at next index
-            for idx in (0..<intermediateState.endIndex) {
+            for idx in 0 ..< intermediateState.endIndex {
                 let intermediateValue = intermediateState[idx]
                 let endValue = end.array[idx]
                 if intermediateValue != endValue {
@@ -195,7 +212,7 @@ public struct ChangedIndexes<T: Hashable> {
             // (2) add a move from the index in the intermediate state to the index in endState
             // (3) continue at next index
 
-            for idx in (0..<intermediateState.endIndex) {
+            for idx in 0 ..< intermediateState.endIndex {
                 let intermediateValue = intermediateState[idx]
                 let endValue = end.array[idx]
                 if intermediateValue != endValue {

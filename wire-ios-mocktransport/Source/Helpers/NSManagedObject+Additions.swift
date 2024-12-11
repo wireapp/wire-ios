@@ -23,14 +23,17 @@ public protocol EntityNamedProtocol: NSObjectProtocol {
     init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?)
 }
 
-extension NSManagedObject {
-    public static func insert<A: EntityNamedProtocol>(in context: NSManagedObjectContext) -> A {
+public extension NSManagedObject {
+    static func insert<A: EntityNamedProtocol>(in context: NSManagedObjectContext) -> A {
         let entity = NSEntityDescription.entity(forEntityName: A.entityName, in: context)!
-        let item = A(entity: entity, insertInto: context)
-        return item
+        return A(entity: entity, insertInto: context)
     }
 
-    public static func fetchAll<A: EntityNamedProtocol>(in context: NSManagedObjectContext, withPredicate predicate: NSPredicate? = nil, sortBy sortDescriptors: [NSSortDescriptor] = []) -> [A] {
+    static func fetchAll<A: EntityNamedProtocol>(
+        in context: NSManagedObjectContext,
+        withPredicate predicate: NSPredicate? = nil,
+        sortBy sortDescriptors: [NSSortDescriptor] = []
+    ) -> [A] {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: A.entityName)
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = sortDescriptors
@@ -39,7 +42,10 @@ extension NSManagedObject {
         return teams ?? []
     }
 
-    public static func fetch<A: EntityNamedProtocol>(in context: NSManagedObjectContext, withPredicate predicate: NSPredicate) -> A? {
+    static func fetch<A: EntityNamedProtocol>(
+        in context: NSManagedObjectContext,
+        withPredicate predicate: NSPredicate
+    ) -> A? {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: A.entityName)
         fetchRequest.predicate = predicate
         let results = try? context.fetch(fetchRequest)

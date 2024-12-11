@@ -17,9 +17,9 @@
 //
 
 import WireAPI
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class TeamMemberUpdateEventProcessorTests: XCTestCase {
 
@@ -58,7 +58,10 @@ final class TeamMemberUpdateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_Invocations, [Scaffolding.membershipID])
+        XCTAssertEqual(
+            teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_Invocations,
+            [Scaffolding.membershipID]
+        )
         XCTAssertEqual(teamRepository.storeTeamMemberNeedsBackendUpdateMembershipID_Invocations.count, 1)
     }
 

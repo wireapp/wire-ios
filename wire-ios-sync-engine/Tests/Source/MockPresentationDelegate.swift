@@ -20,7 +20,7 @@ import Foundation
 
 class MockPresentationDelegate: PresentationDelegate {
 
-    var completedURLActionCallsCompletion: () -> Void = { }
+    var completedURLActionCallsCompletion: () -> Void = {}
     var showConversationCalls: [ZMConversation] = []
     var showConversationListCalls: Int = 0
     var showUserProfileCalls: [UserType] = []
@@ -39,7 +39,11 @@ class MockPresentationDelegate: PresentationDelegate {
         decisionHandler(isPerformingActions)
     }
 
-    func shouldPerformActionWithMessage(_ message: String, action: URLAction, decisionHandler: @escaping (Bool) -> Void) {
+    func shouldPerformActionWithMessage(
+        _ message: String,
+        action: URLAction,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
         shouldPerformActionCalls.append(action)
         decisionHandler(isPerformingActions)
     }

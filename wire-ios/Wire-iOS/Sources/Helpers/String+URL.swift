@@ -21,18 +21,17 @@ import Foundation
 extension String {
 
     var containsURL: Bool {
-        return URLMatchesInString.count > 0
+        !URLMatchesInString.isEmpty
     }
 
     var URLsInString: [URL?] {
-        return URLMatchesInString.map(\.url)
+        URLMatchesInString.map(\.url)
     }
 
     private var URLMatchesInString: [NSTextCheckingResult] {
         do {
             let urlDetector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-            let matches = urlDetector.matches(in: self, options: [], range: NSRange(location: 0, length: self.count))
-            return matches
+            return urlDetector.matches(in: self, options: [], range: NSRange(location: 0, length: count))
         } catch _ as NSError {
             return []
         }

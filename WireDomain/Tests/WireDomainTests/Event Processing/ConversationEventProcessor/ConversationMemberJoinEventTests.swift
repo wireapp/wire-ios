@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class ConversationMemberJoinEventProcessorTests: XCTestCase {
 
@@ -92,7 +92,8 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
             return (conversation, sender, addedUser, role)
         }
 
-        conversationRepository.addParticipantsSenderDateConversationIDConversationDomain_MockMethod = { _, _, _, _, _ in }
+        conversationRepository
+            .addParticipantsSenderDateConversationIDConversationDomain_MockMethod = { _, _, _, _, _ in }
 
         // When
 
@@ -100,7 +101,10 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationRepository.addParticipantsSenderDateConversationIDConversationDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationRepository.addParticipantsSenderDateConversationIDConversationDomain_Invocations.count,
+            1
+        )
     }
 
     private enum Scaffolding {

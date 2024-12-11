@@ -42,9 +42,9 @@ struct PDFFilePreviewGenerator: FilePreviewGenerator {
         contextRef.setAllowsAntialiasing(true)
         let cropBox = pageRef.getBoxRect(CGPDFBox.cropBox)
         guard cropBox.size.width != 0,
-              cropBox.size.width < 16384,
+              cropBox.size.width < 16_384,
               cropBox.size.height != 0,
-              cropBox.size.height < 16384
+              cropBox.size.height < 16_384
         else { throw Error.failedToCreatePreview }
 
         let xScale = thumbnailSize.width / cropBox.size.width

@@ -18,10 +18,8 @@
 
 import Foundation
 
-/**
- * An integer used in the context of the Giphy API, which encodes numbers
- * as strings.
- */
+/// An integer used in the context of the Giphy API, which encodes numbers
+/// as strings.
 
 public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
 
@@ -29,7 +27,7 @@ public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
     public let rawValue: Int
 
     public var description: String {
-        return rawValue.description
+        rawValue.description
     }
 
     public init(rawValue: Int) {
@@ -46,7 +44,13 @@ public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
         let stringValue = try decoder.singleValueContainer().decode(String.self)
 
         guard let rawValue = Int(stringValue) else {
-            throw DecodingError.typeMismatch(Int.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Expected an integer convertible string, got \"\(stringValue)\""))
+            throw DecodingError.typeMismatch(
+                Int.self,
+                DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Expected an integer convertible string, got \"\(stringValue)\""
+                )
+            )
         }
 
         self.rawValue = rawValue

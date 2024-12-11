@@ -26,6 +26,7 @@ extension URL {
         static let startSSO = "start-sso"
         static let accessBackend = "access" // Used for connecting to custom backend
     }
+
     enum Path {
         static let success = "success"
         static let failure = "failure"
@@ -38,9 +39,11 @@ extension URLQueryItem {
             static let service = "service"
             static let provider = "provider"
         }
+
         enum AccessBackend {
             static let config = "config"
         }
+
         static let successRedirect = "success_redirect"
         static let errorRedirect = "error_redirect"
         static let cookie = "cookie"
@@ -57,7 +60,10 @@ extension URLQueryItem {
 }
 
 public protocol URLSessionProtocol: AnyObject {
-    func dataTask(with request: URLRequest, completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
+    func dataTask(
+        with request: URLRequest,
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
+    ) -> URLSessionDataTask
 }
 
 extension URLSession: URLSessionProtocol {}
@@ -72,7 +78,7 @@ public enum ValidationError: Equatable {
     init?(response: HTTPURLResponse?, error: Error?) {
         switch (response?.statusCode, error) {
         case (404?, _): self = .invalidCode
-        case ((400...599)?, _): self = .invalidStatus(response!.statusCode)
+        case ((400 ... 599)?, _): self = .invalidStatus(response!.statusCode)
         case (_, .some), (.none, _): self = .unknown
         default: return nil
         }
@@ -81,20 +87,16 @@ public enum ValidationError: Equatable {
 
 public protocol CompanyLoginRequesterDelegate: AnyObject {
 
-    /**
-     * The login requester asks the user to verify their identity on the given website.
-     *
-     * - parameter requester: The requester asking for validation.
-     * - parameter url: The URL where the user should be taken to perform validation.
-     */
+    /// The login requester asks the user to verify their identity on the given website.
+    ///
+    /// - parameter requester: The requester asking for validation.
+    /// - parameter url: The URL where the user should be taken to perform validation.
 
     func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL)
 
 }
 
-/**
- * An object that validates the identity of the user and creates a session using company login.
- */
+/// An object that validates the identity of the user and creates a session using company login.
 
 public class CompanyLoginRequester {
 
@@ -112,7 +114,7 @@ public class CompanyLoginRequester {
         callbackScheme: String,
         defaults: UserDefaults = .shared(),
         session: URLSessionProtocol? = nil
-        ) {
+    ) {
         self.callbackScheme = callbackScheme
         self.defaults = defaults
         self.session = session ?? URLSession(configuration: .ephemeral)
@@ -120,17 +122,15 @@ public class CompanyLoginRequester {
 
     // MARK: - Token Validation
 
-    /**
-     * Validated a company login token.
-     *
-     * This method will verify a company login token with the backend.
-     * The requester provided by the `enqueueProvider` passed to `init` will
-     * be used to perform the request.
-     *
-     * - parameter host: The backend to validate SSO code against.
-     * - parameter token: The user login token.
-     * - parameter completion: The completion closure called with the validation result.
-     */
+    /// Validated a company login token.
+    ///
+    /// This method will verify a company login token with the backend.
+    /// The requester provided by the `enqueueProvider` passed to `init` will
+    /// be used to perform the request.
+    ///
+    /// - parameter host: The backend to validate SSO code against.
+    /// - parameter token: The user login token.
+    /// - parameter completion: The completion closure called with the validation result.
 
     public func validate(host: String, token: UUID, completion: @escaping (ValidationError?) -> Void) {
         guard let url = urlComponents(host: host, token: token).url else { fatalError("Invalid company login url.") }
@@ -148,22 +148,23 @@ public class CompanyLoginRequester {
 
     // MARK: - Identity Request
 
-    /**
-     * Starts the company login flow for the user with the given login token.
-     *
-     * This method constructs the login URL, and calls the `delegate`, that will
-     * handle opening the URL. Typically, this initiates the login flow, which will
-     * open Safari. The `SessionManager` will handle the callback URL.
-     *
-     * - parameter token: The user login token, constructed from the request code.
-     */
+    /// Starts the company login flow for the user with the given login token.
+    ///
+    /// This method constructs the login URL, and calls the `delegate`, that will
+    /// handle opening the URL. Typically, this initiates the login flow, which will
+    /// open Safari. The `SessionManager` will handle the callback URL.
+    ///
+    /// - parameter token: The user login token, constructed from the request code.
 
     public func requestIdentity(host: String, token: UUID) {
         let validationToken = CompanyLoginVerificationToken()
         var components = urlComponents(host: host, token: token)
 
         components.queryItems = [
-            URLQueryItem(name: URLQueryItem.Key.successRedirect, value: makeSuccessCallbackString(using: validationToken)),
+            URLQueryItem(
+                name: URLQueryItem.Key.successRedirect,
+                value: makeSuccessCallbackString(using: validationToken)
+            ),
             URLQueryItem(name: URLQueryItem.Key.errorRedirect, value: makeFailureCallbackString(using: validationToken))
         ]
 

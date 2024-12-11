@@ -21,13 +21,12 @@ import WireDesign
 
 final class ContactsViewController: UIViewController {
 
-    let dataSource = ContactsDataSource()
-
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
     typealias ContactsUI  = L10n.Localizable.ContactsUi
     typealias LabelColors = SemanticColors.Label
     typealias ViewColors = SemanticColors.View
 
+    let dataSource: ContactsDataSource
     let bottomContainerView = UIView()
     let bottomContainerSeparatorView = UIView()
     let noContactsLabel = DynamicFontLabel(
@@ -49,12 +48,10 @@ final class ContactsViewController: UIViewController {
         color: LabelColors.textSettingsPasswordPlaceholder
     )
 
-    var bottomEdgeConstraint: NSLayoutConstraint?
-    var bottomContainerBottomConstraint: NSLayoutConstraint?
-
     // MARK: - Life Cycle
 
-    init() {
+    init(isFederationUsageAllowed: Bool) {
+        self.dataSource = ContactsDataSource(isFederationUsageAllowed: isFederationUsageAllowed)
         super.init(nibName: nil, bundle: nil)
 
         dataSource.delegate = self
@@ -71,7 +68,6 @@ final class ContactsViewController: UIViewController {
         setupViews()
         setupLayout()
         setupStyle()
-        observeKeyboardFrame()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -142,10 +138,9 @@ final class ContactsViewController: UIViewController {
     }
 
     private func setupStyle() {
+        view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        view.backgroundColor = .clear
-
-        tableView.backgroundColor = .clear
+        tableView.backgroundColor = SemanticColors.View.backgroundDefault
         tableView.separatorStyle = .none
         tableView.sectionIndexBackgroundColor = .clear
         tableView.sectionIndexColor = .accent()
@@ -174,46 +169,12 @@ final class ContactsViewController: UIViewController {
             self.tableView.isHidden = !hidden
         }
 
-        UIView.animate(withDuration: 0.25,
-                       delay: 0,
-                       options: .beginFromCurrentState,
-                       animations: { self.emptyResultsLabel.alpha = hidden ? 0 : 1 },
-                       completion: completion)
-    }
-
-    // MARK: - Keyboard Observation
-
-    private func observeKeyboardFrame() {
-        // Subscribing to the notification may cause "zero frame" animations to occur before the initial layout
-        // of the view. We can avoid this by laying out the view first.
-        view.layoutIfNeeded()
-
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameWillChange),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
-    }
-
-    @objc
-    func keyboardFrameWillChange(_ notification: Notification) {
-        guard
-            let userInfo = notification.userInfo,
-            let beginFrame = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect,
-            let endFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-        else { return }
-
-        let willAppear = (beginFrame.minY - endFrame.minY) > 0
-        let padding: CGFloat = 12
-
-        UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrame in
-            guard let self else { return }
-
-            let safeAreaBottomInset = view.safeAreaInsets.bottom
-
-            bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
-            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : safeAreaBottomInset)
-
-            view.layoutIfNeeded()
-        })
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 0,
+            options: .beginFromCurrentState,
+            animations: { self.emptyResultsLabel.alpha = hidden ? 0 : 1 },
+            completion: completion
+        )
     }
 }

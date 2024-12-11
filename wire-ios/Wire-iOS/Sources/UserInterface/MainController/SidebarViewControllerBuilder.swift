@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireAccountImageUI
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 import WireSidebarUI
 
 struct SidebarViewControllerBuilder {
@@ -28,18 +30,27 @@ struct SidebarViewControllerBuilder {
 
         let accountImageViewDesign = AccountImageViewDesign()
         let availabilityIndicatorDesign = accountImageViewDesign.availabilityIndicator
-        let sidebarViewController = SidebarViewController { accountImage, availability in
-            AccountImageViewRepresentable(
-                source: accountImage.mapToAccountImageSource(),
-                availability: availability?.mapToAccountImageAvailability()
-            )
-            .accountImageBorderWidth(accountImageViewDesign.borderWidth)
-            .accountImageViewBorderColor(accountImageViewDesign.borderColor)
-            .availabilityIndicatorAvailableColor(availabilityIndicatorDesign.availableColor)
-            .availabilityIndicatorAwayColor(availabilityIndicatorDesign.awayColor)
-            .availabilityIndicatorBusyColor(availabilityIndicatorDesign.busyColor)
-            .availabilityIndicatorBackgroundViewColor(availabilityIndicatorDesign.backgroundViewColor)
-        }
+
+        let legalHoldIndicatorViewDesign = LegalHoldIndicatorViewDesign()
+
+        let sidebarViewController = SidebarViewController(
+            accountImageView: { accountImage, availability in
+                AccountImageViewRepresentable(
+                    source: accountImage.mapToAccountImageSource(),
+                    availability: availability?.mapToAccountImageAvailability()
+                )
+                .accountImageBorderWidth(accountImageViewDesign.borderWidth)
+                .accountImageViewBorderColor(accountImageViewDesign.borderColor)
+                .availabilityIndicatorAvailableColor(availabilityIndicatorDesign.availableColor)
+                .availabilityIndicatorAwayColor(availabilityIndicatorDesign.awayColor)
+                .availabilityIndicatorBusyColor(availabilityIndicatorDesign.busyColor)
+                .availabilityIndicatorBackgroundViewColor(availabilityIndicatorDesign.backgroundViewColor)
+            },
+            legalHoldIndicatorView: {
+                LegalHoldIndicatorView()
+                    .legalHoldIndicatorColor(Color(uiColor: legalHoldIndicatorViewDesign.foregroundColor))
+            }
+        )
         sidebarViewController.wireTextStyleMapping = .init()
         sidebarViewController.wireAccentColorMapping = WireAccentColorMapping()
 
@@ -49,7 +60,8 @@ struct SidebarViewControllerBuilder {
         sidebarViewController.sidebarAccountInfoViewUsernameColor = sidebarDesign.accountInfoViewUsernameColor
         sidebarViewController.sidebarMenuItemTitleForegroundColor = sidebarDesign.menuItemTitleForegroundColor
         sidebarViewController.sidebarMenuItemLinkIconForegroundColor = sidebarDesign.menuItemLinkIconForegroundColor
-        sidebarViewController.sidebarMenuItemIsSelectedTitleForegroundColor = sidebarDesign.menuItemIsSelectedTitleForegroundColor
+        sidebarViewController.sidebarMenuItemIsSelectedTitleForegroundColor = sidebarDesign
+            .menuItemIsSelectedTitleForegroundColor
 
         return sidebarViewController
     }

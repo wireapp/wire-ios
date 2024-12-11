@@ -31,7 +31,7 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
     }
 
     var showSeparator: Bool {
-        get { return !separator.isHidden }
+        get { !separator.isHidden }
         set { separator.isHidden = !newValue }
     }
 
@@ -50,8 +50,8 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? SemanticColors.View.backgroundUserCellHightLighted
-            : SemanticColors.View.backgroundUserCell
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
         }
     }
 

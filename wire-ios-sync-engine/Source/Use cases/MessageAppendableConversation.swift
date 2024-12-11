@@ -47,4 +47,4 @@ public protocol MessageAppendableConversation {
     ) throws -> ZMConversationMessage
 }
 
-extension ZMConversation: MessageAppendableConversation { }
+extension ZMConversation: MessageAppendableConversation {}

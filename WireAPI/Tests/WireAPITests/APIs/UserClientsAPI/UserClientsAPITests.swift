@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
-import XCTest
 
 final class UserClientsAPITests: XCTestCase {
 
@@ -51,9 +51,9 @@ final class UserClientsAPITests: XCTestCase {
 
     // MARK: - V0
 
-    func testGetSelfUserClients_SuccessResponse_200_V0_And_Next_Versions() async throws {
+    func testGetSelfUserClients_SuccessResponse_200_V0_to_V6() async throws {
         try await withThrowingTaskGroup(of: [SelfUserClient].self) { taskGroup in
-            let testedVersions = APIVersion.v0.andNextVersions
+            let testedVersions = [APIVersion.v0, .v1, .v2, .v3, .v4, .v5, .v6]
 
             for version in testedVersions {
                 // Given
@@ -85,7 +85,7 @@ final class UserClientsAPITests: XCTestCase {
             for version in testedVersions {
                 // Given
                 let apiService = MockAPIServiceProtocol.withResponses([
-                    (.ok, "GetClientsSuccessResponseV0")
+                    (.ok, "GetOtherUserClientsSuccessResponseV0")
                 ])
 
                 let sut = version.buildAPI(apiService: apiService)
@@ -105,6 +105,37 @@ final class UserClientsAPITests: XCTestCase {
             }
         }
     }
+
+    // MARK: - V7
+
+    func testGetSelfUserClients_SuccessResponse_200_V7_And_Next_Versions() async throws {
+        try await withThrowingTaskGroup(of: [SelfUserClient].self) { taskGroup in
+            let testedVersions = APIVersion.v7.andNextVersions
+
+            for version in testedVersions {
+                // Given
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.ok, "GetSelfClientsSuccessResponseV7")
+                ])
+
+                let sut = version.buildAPI(apiService: apiService)
+
+                taskGroup.addTask {
+                    // When
+                    try await sut.getSelfClients()
+                }
+
+                for try await value in taskGroup {
+                    for item in value {
+                        // Then
+                        XCTAssertEqual(item, Scaffolding.userClient)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: -
 
     enum Scaffolding {
         static let userClient = SelfUserClient(

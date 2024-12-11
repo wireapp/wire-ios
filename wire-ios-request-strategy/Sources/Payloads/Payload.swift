@@ -103,13 +103,15 @@ public enum Payload {
         let deviceClass: String?
         let deviceModel: String?
 
-        init(id: String,
-             deviceClass: String? = nil,
-             type: String? = nil,
-             creationDate: Date? = nil,
-             label: String? = nil,
-             location: Location? = nil,
-             deviceModel: String? = nil) {
+        init(
+            id: String,
+            deviceClass: String? = nil,
+            type: String? = nil,
+            creationDate: Date? = nil,
+            label: String? = nil,
+            location: Location? = nil,
+            deviceModel: String? = nil
+        ) {
             self.id = id
             self.type = type
             self.creationDate = creationDate
@@ -226,23 +228,25 @@ public enum Payload {
         /// contain a field from when it sets the field to nil.
         let updatedKeys: Set<CodingKeys>
 
-        init(id: UUID? = nil,
-             qualifiedID: QualifiedID? = nil,
-             teamID: UUID? = nil,
-             serviceID: ServiceID? = nil,
-             SSOID: SSOID? = nil,
-             name: String? = nil,
-             handle: String? = nil,
-             phone: String? = nil,
-             email: String? = nil,
-             assets: [Asset] = [],
-             managedBy: String? = nil,
-             accentColor: Int? = nil,
-             isDeleted: Bool? = nil,
-             expiresAt: Date? = nil,
-             legalholdStatus: LegalholdStatus? = nil,
-             supportedProtocols: Set<MessageProtocol>? = nil,
-             updatedKeys: Set<CodingKeys>? = nil) {
+        init(
+            id: UUID? = nil,
+            qualifiedID: QualifiedID? = nil,
+            teamID: UUID? = nil,
+            serviceID: ServiceID? = nil,
+            SSOID: SSOID? = nil,
+            name: String? = nil,
+            handle: String? = nil,
+            phone: String? = nil,
+            email: String? = nil,
+            assets: [Asset] = [],
+            managedBy: String? = nil,
+            accentColor: Int? = nil,
+            isDeleted: Bool? = nil,
+            expiresAt: Date? = nil,
+            legalholdStatus: LegalholdStatus? = nil,
+            supportedProtocols: Set<MessageProtocol>? = nil,
+            updatedKeys: Set<CodingKeys>? = nil
+        ) {
 
             self.id = id
             self.qualifiedID = qualifiedID
@@ -280,7 +284,10 @@ public enum Payload {
             self.isDeleted = try container.decodeIfPresent(Bool.self, forKey: .isDeleted)
             self.expiresAt = try container.decodeIfPresent(Date.self, forKey: .expiresAt)
             self.legalholdStatus = try container.decodeIfPresent(LegalholdStatus.self, forKey: .legalholdStatus)
-            self.supportedProtocols = try container.decodeIfPresent(Set<MessageProtocol>.self, forKey: .supportedProtocols)
+            self.supportedProtocols = try container.decodeIfPresent(
+                Set<MessageProtocol>.self,
+                forKey: .supportedProtocols
+            )
             self.updatedKeys = Set(container.allKeys)
         }
     }
@@ -333,7 +340,7 @@ public enum Payload {
 
             public func encode(to encoder: Encoder) throws {
                 var container = encoder.singleValueContainer()
-                try container.encode(self.rawValue)
+                try container.encode(rawValue)
             }
         }
 

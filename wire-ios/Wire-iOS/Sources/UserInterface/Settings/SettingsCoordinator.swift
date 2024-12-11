@@ -25,7 +25,7 @@ final class SettingsCoordinator: SettingsCoordinatorProtocol {
     let _showSettingsContent: (SettingsTopLevelMenuItem) -> Void
 
     init(mainCoordinator: some MainCoordinatorProtocol) {
-        _showSettingsContent = { content in
+        self._showSettingsContent = { content in
             mainCoordinator.showSettingsContent(.init(content.mapToMainSettingsContent()))
         }
     }

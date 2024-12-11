@@ -21,10 +21,10 @@ import Foundation
 
 class CoreDataStackTests_ClearStorage: ZMTBaseTest {
 
-    let account: Account = Account(userName: "", userIdentifier: UUID())
+    let account: Account = .init(userName: "", userIdentifier: UUID())
 
     var applicationContainer: URL {
-        return FileManager.default
+        FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)
             .first!
             .appendingPathComponent("CoreDataStackTests")
@@ -35,15 +35,19 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
         let existingFiles = createStoreFilesInLegacyLocations()
 
         // when
-        _ = CoreDataStack(account: account,
-                          applicationContainer: applicationContainer,
-                          inMemoryStore: false,
-                          dispatchGroup: dispatchGroup)
+        _ = CoreDataStack(
+            account: account,
+            applicationContainer: applicationContainer,
+            inMemoryStore: false,
+            dispatchGroup: dispatchGroup
+        )
 
         // then
         for file in existingFiles {
-            XCTAssertFalse(FileManager.default.fileExists(atPath: file.path),
-                           "\(file.path) should have been deleted")
+            XCTAssertFalse(
+                FileManager.default.fileExists(atPath: file.path),
+                "\(file.path) should have been deleted"
+            )
         }
     }
 
@@ -52,15 +56,19 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
         let existingFiles = createSessionFilesInLegacyLocations()
 
         // when
-        _ = CoreDataStack(account: account,
-                          applicationContainer: applicationContainer,
-                          inMemoryStore: false,
-                          dispatchGroup: dispatchGroup)
+        _ = CoreDataStack(
+            account: account,
+            applicationContainer: applicationContainer,
+            inMemoryStore: false,
+            dispatchGroup: dispatchGroup
+        )
 
         // then
         for file in existingFiles {
-            XCTAssertFalse(FileManager.default.fileExists(atPath: file.path),
-                           "\(file.path) should have been deleted")
+            XCTAssertFalse(
+                FileManager.default.fileExists(atPath: file.path),
+                "\(file.path) should have been deleted"
+            )
         }
     }
 
@@ -69,15 +77,19 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
         createAccountDirectory()
 
         // when
-        _ = CoreDataStack(account: account,
-                          applicationContainer: applicationContainer,
-                          inMemoryStore: false,
-                          dispatchGroup: dispatchGroup)
+        _ = CoreDataStack(
+            account: account,
+            applicationContainer: applicationContainer,
+            inMemoryStore: false,
+            dispatchGroup: dispatchGroup
+        )
 
         // then
         let accountsDirectory = applicationContainer.appendingPathComponent("Accounts")
-        XCTAssertTrue(FileManager.default.fileExists(atPath: accountsDirectory.path),
-                       "\(accountsDirectory.path) should not have been deleted")
+        XCTAssertTrue(
+            FileManager.default.fileExists(atPath: accountsDirectory.path),
+            "\(accountsDirectory.path) should not have been deleted"
+        )
     }
 
     func testThatStorageIsNotCleared_WhenUpgradingFromSupportedInstallation() throws {
@@ -86,27 +98,35 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
         try createAccountDataDirectory()
 
         // when
-        _ = CoreDataStack(account: account,
-                          applicationContainer: applicationContainer,
-                          inMemoryStore: false,
-                          dispatchGroup: dispatchGroup)
+        _ = CoreDataStack(
+            account: account,
+            applicationContainer: applicationContainer,
+            inMemoryStore: false,
+            dispatchGroup: dispatchGroup
+        )
 
         // then
         for file in existingFiles {
-            XCTAssertTrue(FileManager.default.fileExists(atPath: file.path),
-                           "\(file.path) should not have been deleted")
+            XCTAssertTrue(
+                FileManager.default.fileExists(atPath: file.path),
+                "\(file.path) should not have been deleted"
+            )
         }
     }
 
     // MARK: Helpers
 
     func createAccountDataDirectory() throws {
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: account.userIdentifier,
-                                                            applicationContainer: applicationContainer)
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: account.userIdentifier,
+            applicationContainer: applicationContainer
+        )
 
-        try FileManager.default.createDirectory(at: accountFolder,
-                                                withIntermediateDirectories: true,
-                                                attributes: nil)
+        try FileManager.default.createDirectory(
+            at: accountFolder,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
     }
 
     func createAccountDirectory() {
@@ -115,14 +135,17 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
     }
 
     func createStoreFilesInLegacyLocations() -> [URL] {
-        return previousStorageLocations.flatMap { location -> [URL] in
+        previousStorageLocations.flatMap { location -> [URL] in
             let fileManager = FileManager.default
-            try? fileManager.createDirectory(at: location,
-                                            withIntermediateDirectories: true,
-                                            attributes: nil)
+            try? fileManager.createDirectory(
+                at: location,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
 
-            let messageStoreFiles = CoreDataStack.storeFileExtensions.map { location.appendingStoreFile().appendingSuffixToLastPathComponent(suffix: $0)
-            }
+            let messageStoreFiles = CoreDataStack.storeFileExtensions
+                .map { location.appendingStoreFile().appendingSuffixToLastPathComponent(suffix: $0)
+                }
 
             let eventStoreFiles = CoreDataStack.storeFileExtensions.map {
                 location.appendingEventStoreFile().appendingSuffixToLastPathComponent(suffix: $0)
@@ -131,9 +154,11 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             let storeFiles = messageStoreFiles + eventStoreFiles
 
             for storeFile in storeFiles {
-                let success = fileManager.createFile(atPath: storeFile.path,
-                                                     contents: Data("hello".utf8),
-                                                     attributes: nil)
+                let success = fileManager.createFile(
+                    atPath: storeFile.path,
+                    contents: Data("hello".utf8),
+                    attributes: nil
+                )
 
                 XCTAssertTrue(success)
 
@@ -144,12 +169,14 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
     }
 
     func createSessionFilesInLegacyLocations() -> [URL] {
-        return previousStorageLocations.map { location -> URL in
+        previousStorageLocations.map { location -> URL in
             let fileManager = FileManager.default
             let sessionDirectory = location.appendingPathComponent("otr")
-            try! fileManager.createDirectory(at: sessionDirectory,
-                                            withIntermediateDirectories: true,
-                                            attributes: nil)
+            try! fileManager.createDirectory(
+                at: sessionDirectory,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
             return sessionDirectory
         }
     }
@@ -165,7 +192,8 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             applicationContainer,
             applicationContainer.appendingPathComponent(bundleID),
             applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID),
-            applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID).appendingPathComponent("store")
+            applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID)
+                .appendingPathComponent("store")
         ]
     }
 

@@ -25,30 +25,38 @@ var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 typealias ProfileImageCompletion = (_ image: UIImage?, _ cacheHit: Bool) -> Void
 
 extension UserType {
-    func fetchProfileImage(session: UserSession,
-                           imageCache: ImageCache<UIImage>,
-                           sizeLimit: Int?,
-                           isDesaturated: Bool,
-                           completion: @escaping ProfileImageCompletion) {
+    func fetchProfileImage(
+        session: UserSession,
+        imageCache: ImageCache<UIImage>,
+        sizeLimit: Int?,
+        isDesaturated: Bool,
+        completion: @escaping ProfileImageCompletion
+    ) {
 
         let imageSize = profileImageSize(with: sizeLimit)
 
-        guard let cacheKey = buildCachedImageKey(for: imageSize,
-                                                 sizeLimit: sizeLimit,
-                                                 isDesaturated: isDesaturated) else {
+        guard let cacheKey = buildCachedImageKey(
+            for: imageSize,
+            sizeLimit: sizeLimit,
+            isDesaturated: isDesaturated
+        ) else {
             completion(nil, false)
             return
         }
 
-        guard let cachedImage = cachedImage(imageCache: imageCache,
-                                            cacheKey: cacheKey) else {
+        guard let cachedImage = cachedImage(
+            imageCache: imageCache,
+            cacheKey: cacheKey
+        ) else {
             downloadProfileImage(for: imageSize)
-            processDownloadedProfileImage(for: imageSize,
-                                          sizeLimit: sizeLimit,
-                                          isDesaturated: isDesaturated,
-                                          imageCache: imageCache,
-                                          cacheKey: cacheKey,
-                                          completion: completion)
+            processDownloadedProfileImage(
+                for: imageSize,
+                sizeLimit: sizeLimit,
+                isDesaturated: isDesaturated,
+                imageCache: imageCache,
+                cacheKey: cacheKey,
+                completion: completion
+            )
             return
         }
 
@@ -74,9 +82,11 @@ extension UserType {
         return cachedImage
     }
 
-    private func buildCachedImageKey(for imageSize: ProfileImageSize,
-                                     sizeLimit: Int?,
-                                     isDesaturated: Bool) -> String? {
+    private func buildCachedImageKey(
+        for imageSize: ProfileImageSize,
+        sizeLimit: Int?,
+        isDesaturated: Bool
+    ) -> String? {
         guard let baseKey = imageSize == .preview ? smallProfileImageCacheKey : mediumProfileImageCacheKey else {
             return nil
         }
@@ -107,12 +117,14 @@ extension UserType {
 
     // MARK: Dowload Image Helper
 
-    private func processDownloadedProfileImage(for imageSize: ProfileImageSize,
-                                               sizeLimit: Int?,
-                                               isDesaturated: Bool,
-                                               imageCache: ImageCache<UIImage>,
-                                               cacheKey: String,
-                                               completion: @escaping ProfileImageCompletion) {
+    private func processDownloadedProfileImage(
+        for imageSize: ProfileImageSize,
+        sizeLimit: Int?,
+        isDesaturated: Bool,
+        imageCache: ImageCache<UIImage>,
+        cacheKey: String,
+        completion: @escaping ProfileImageCompletion
+    ) {
         imageData(for: imageSize, queue: imageCache.processingQueue) { imageData in
             guard let imageData else {
                 return DispatchQueue.main.async {
@@ -120,11 +132,10 @@ extension UserType {
                 }
             }
 
-            var image: UIImage?
-            if let sizeLimit {
-                image = UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * UIScreen.main.scale)
+            var image: UIImage? = if let sizeLimit {
+                UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * UIScreen.main.scale)
             } else {
-                image = UIImage(data: imageData)?.decoded
+                UIImage(data: imageData)?.decoded
             }
 
             if isDesaturated, image != nil {

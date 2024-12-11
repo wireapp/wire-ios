@@ -18,10 +18,8 @@
 
 import Foundation
 
-/**
- * A list of images, sorted by their type. When decoding from JSON, only
- * valid images will be included.
- */
+/// A list of images, sorted by their type. When decoding from JSON, only
+/// valid images will be included.
 
 public struct ZiphyAnimatedImageList: Codable {
 
@@ -62,15 +60,15 @@ extension ZiphyAnimatedImageList: Sequence {
 
     /// Returns the image for the specified type.
     public subscript(type: ZiphyImageType) -> ZiphyAnimatedImage? {
-        return images[type]
+        images[type]
     }
 
     public var count: Int {
-        return images.count
+        images.count
     }
 
     public func makeIterator() -> RawValue.Iterator {
-        return images.makeIterator()
+        images.makeIterator()
     }
 
 }

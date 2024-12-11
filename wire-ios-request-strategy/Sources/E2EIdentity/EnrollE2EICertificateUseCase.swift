@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public struct OAuthParameters {
 
@@ -34,10 +35,11 @@ public struct OAuthResponse {
 
     public init(
         idToken: String,
-        refreshToken: String?) {
-            self.idToken = idToken
-            self.refreshToken = refreshToken
-        }
+        refreshToken: String?
+    ) {
+        self.idToken = idToken
+        self.refreshToken = refreshToken
+    }
 
 }
 
@@ -113,7 +115,8 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
 
         let authorizations = try await enrollment.getAuthorizations(
             prevNonce: newOrder.nonce,
-            authorizationsEndpoints: newOrder.acmeOrder.authorizations)
+            authorizationsEndpoints: newOrder.acmeOrder.authorizations
+        )
         let oidcAuthorization = authorizations.oidcAuthorization
         let dPopAuthorization = authorizations.dpopAuthorization
 
@@ -144,37 +147,44 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             identityProvider: idP,
             clientID: clientId,
             keyauth: keyauth,
-            acmeAudience: acmeAudience)
+            acmeAudience: acmeAudience
+        )
         let oAuthResponse = try await authenticate(parameters)
 
         let wireNonce = try await enrollment.getWireNonce(clientId: selfClientId)
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
         let wireAccessToken = try await enrollment.getWireAccessToken(
             clientId: selfClientId,
-            dpopToken: dpopToken)
+            dpopToken: dpopToken
+        )
 
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(
             accessToken: wireAccessToken.token,
             prevNonce: authorizations.nonce,
-            acmeChallenge: dPopAuthorization.challenge)
+            acmeChallenge: dPopAuthorization.challenge
+        )
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(
             idToken: oAuthResponse.idToken,
             refreshToken: oAuthResponse.refreshToken ?? " ",
             prevNonce: dpopChallengeResponse.nonce,
-            acmeChallenge: oidcAuthorization.challenge)
+            acmeChallenge: oidcAuthorization.challenge
+        )
 
         let orderResponse = try await enrollment.checkOrderRequest(
             location: newOrder.location,
-            prevNonce: oidcChallengeResponse.nonce)
+            prevNonce: oidcChallengeResponse.nonce
+        )
 
         let finalizeResponse = try await enrollment.finalize(
             location: orderResponse.location,
-            prevNonce: orderResponse.acmeResponse.nonce)
+            prevNonce: orderResponse.acmeResponse.nonce
+        )
 
         let certificateRequest = try await enrollment.certificateRequest(
             location: finalizeResponse.location,
-            prevNonce: finalizeResponse.acmeResponse.nonce)
+            prevNonce: finalizeResponse.acmeResponse.nonce
+        )
 
         guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
             throw Failure.failedToDecodeCertificate
@@ -184,7 +194,8 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             try await rollingOutCertificate(
                 isUpgradingMLSClient: isUpgradingMLSClient,
                 enrollment: enrollment,
-                certificateChain: certificateChain)
+                certificateChain: certificateChain
+            )
             notifyE2EICertificateChange()
 
             return certificateChain
@@ -196,13 +207,14 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
     private func rollingOutCertificate(
         isUpgradingMLSClient: Bool,
         enrollment: E2EIEnrollmentInterface,
-        certificateChain: String) async throws {
-            if isUpgradingMLSClient {
-                try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
-            } else {
-                try await enrollment.createMLSClient(certificateChain: certificateChain)
-            }
+        certificateChain: String
+    ) async throws {
+        if isUpgradingMLSClient {
+            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+        } else {
+            try await enrollment.createMLSClient(certificateChain: certificateChain)
         }
+    }
 
     private func extractClientId(from path: String) -> String? {
         guard let urlComponents = URLComponents(string: path),

@@ -25,7 +25,12 @@ public class MockAVSWrapper: AVSWrapperType {
 
     public var isMuted: Bool = false
 
-    public var startCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, conversationType: AVSConversationType, useCBR: Bool)?
+    public var startCallArguments: (
+        uuid: AVSIdentifier,
+        callType: AVSCallType,
+        conversationType: AVSConversationType,
+        useCBR: Bool
+    )?
     public var answerCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, useCBR: Bool)?
     public var setVideoStateArguments: (uuid: AVSIdentifier, videoState: VideoState)?
     public var requestVideoStreamsArguments: (uuid: AVSIdentifier, videoStreams: AVSVideoStreams)?
@@ -45,7 +50,12 @@ public class MockAVSWrapper: AVSWrapperType {
         // do nothing
     }
 
-    public func startCall(conversationId: AVSIdentifier, callType: AVSCallType, conversationType: AVSConversationType, useCBR: Bool) -> Bool {
+    public func startCall(
+        conversationId: AVSIdentifier,
+        callType: AVSCallType,
+        conversationType: AVSConversationType,
+        useCBR: Bool
+    ) -> Bool {
         startCallArguments = (conversationId, callType, conversationType, useCBR)
         return !startCallShouldFail
     }
@@ -112,9 +122,23 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
 
     public let mockAVSWrapper: MockAVSWrapper
 
-    public required init(userId: AVSIdentifier, clientId: String, avsWrapper: AVSWrapperType? = nil, uiMOC: NSManagedObjectContext, flowManager: FlowManagerType, transport: WireCallCenterTransport) {
-        mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
-        super.init(userId: userId, clientId: clientId, avsWrapper: mockAVSWrapper, uiMOC: uiMOC, flowManager: flowManager, transport: transport)
+    public required init(
+        userId: AVSIdentifier,
+        clientId: String,
+        avsWrapper: AVSWrapperType? = nil,
+        uiMOC: NSManagedObjectContext,
+        flowManager: FlowManagerType,
+        transport: WireCallCenterTransport
+    ) {
+        self.mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
+        super.init(
+            userId: userId,
+            clientId: clientId,
+            avsWrapper: mockAVSWrapper,
+            uiMOC: uiMOC,
+            flowManager: flowManager,
+            transport: transport
+        )
     }
 
 }
@@ -126,7 +150,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     var mockMembers: [AVSCallMember] {
         get {
-            return mockAVSWrapper.mockMembers
+            mockAVSWrapper.mockMembers
         }
         set {
             mockAVSWrapper.mockMembers = newValue
@@ -135,9 +159,23 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     // MARK: Initialization
 
-    public required init(userId: AVSIdentifier, clientId: String, avsWrapper: AVSWrapperType? = nil, uiMOC: NSManagedObjectContext, flowManager: FlowManagerType, transport: WireCallCenterTransport) {
-        mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
-        super.init(userId: userId, clientId: clientId, avsWrapper: mockAVSWrapper, uiMOC: uiMOC, flowManager: flowManager, transport: transport)
+    public required init(
+        userId: AVSIdentifier,
+        clientId: String,
+        avsWrapper: AVSWrapperType? = nil,
+        uiMOC: NSManagedObjectContext,
+        flowManager: FlowManagerType,
+        transport: WireCallCenterTransport
+    ) {
+        self.mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
+        super.init(
+            userId: userId,
+            clientId: clientId,
+            avsWrapper: mockAVSWrapper,
+            uiMOC: uiMOC,
+            flowManager: flowManager,
+            transport: transport
+        )
     }
 
     // MARK: AVS Integration
@@ -147,6 +185,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
             (avsWrapper as! MockAVSWrapper).startCallShouldFail = startCallShouldFail
         }
     }
+
     public var answerCallShouldFail: Bool = false {
         didSet {
             (avsWrapper as! MockAVSWrapper).answerCallShouldFail = answerCallShouldFail
@@ -154,22 +193,29 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
     }
 
     public var didCallStartCall: Bool {
-        return (avsWrapper as! MockAVSWrapper).startCallArguments != nil
+        (avsWrapper as! MockAVSWrapper).startCallArguments != nil
     }
 
     public var didCallAnswerCall: Bool {
-        return (avsWrapper as! MockAVSWrapper).answerCallArguments != nil
+        (avsWrapper as! MockAVSWrapper).answerCallArguments != nil
     }
 
     public var didCallRejectCall: Bool {
-        return (avsWrapper as! MockAVSWrapper).didCallRejectCall
+        (avsWrapper as! MockAVSWrapper).didCallRejectCall
     }
 
     // MARK: Mock Call State
 
     func setMockCallState(_ state: CallState, conversationId: AVSIdentifier, callerId: AVSIdentifier, isVideo: Bool) {
         clearSnapshot(conversationId: conversationId)
-        createSnapshot(callState: state, members: [], callStarter: callerId, video: isVideo, for: conversationId, conversationType: .oneToOne)
+        createSnapshot(
+            callState: state,
+            members: [],
+            callStarter: callerId,
+            video: isVideo,
+            for: conversationId,
+            conversationType: .oneToOne
+        )
     }
 
     func removeMockActiveCalls() {
@@ -178,14 +224,28 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     func update(callState: CallState, conversationId: AVSIdentifier, callerId: AVSIdentifier, isVideo: Bool) {
         setMockCallState(callState, conversationId: conversationId, callerId: callerId, isVideo: isVideo)
-        WireCallCenterCallStateNotification(context: uiMOC!, callState: callState, conversationId: conversationId, callerId: callerId, messageTime: nil, previousCallState: nil).post(in: uiMOC!.notificationContext)
+        WireCallCenterCallStateNotification(
+            context: uiMOC!,
+            callState: callState,
+            conversationId: conversationId,
+            callerId: callerId,
+            messageTime: nil,
+            previousCallState: nil
+        ).post(in: uiMOC!.notificationContext)
     }
 
     // MARK: Call Initiator
 
     func setMockCallInitiator(callerId: AVSIdentifier, conversationId: AVSIdentifier) {
         clearSnapshot(conversationId: conversationId)
-        createSnapshot(callState: .established, members: [], callStarter: callerId, video: false, for: conversationId, conversationType: .oneToOne)
+        createSnapshot(
+            callState: .established,
+            members: [],
+            callStarter: callerId,
+            video: false,
+            for: conversationId,
+            conversationType: .oneToOne
+        )
     }
 
 }

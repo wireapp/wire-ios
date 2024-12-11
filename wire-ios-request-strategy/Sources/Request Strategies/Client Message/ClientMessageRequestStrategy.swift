@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
@@ -44,7 +45,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         applicationStatus: ApplicationStatus,
         messageSender: MessageSenderInterface
     ) {
-        insertedObjectSync = InsertedObjectSync(
+        self.insertedObjectSync = InsertedObjectSync(
             insertPredicate: Self.shouldBeSentPredicate(context: context)
         )
 
@@ -52,13 +53,13 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         self.messageSender = messageSender
         self.localNotificationDispatcher = localNotificationDispatcher
 
-        messageExpirationTimer = MessageExpirationTimer(
+        self.messageExpirationTimer = MessageExpirationTimer(
             moc: context,
             entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()],
             localNotificationDispatcher: localNotificationDispatcher
         )
 
-        linkAttachmentsPreprocessor = LinkAttachmentsPreprocessor(
+        self.linkAttachmentsPreprocessor = LinkAttachmentsPreprocessor(
             linkAttachmentDetector: LinkAttachmentDetectorHelper.defaultDetector(),
             managedObjectContext: context
         )
@@ -75,7 +76,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     // MARK: - Methods
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [
+        [
             insertedObjectSync,
             messageExpirationTimer,
             linkAttachmentsPreprocessor
@@ -117,7 +118,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                     object.expire(withReason: .other)
                     self.localNotificationDispatcher.didFailToSend(object)
 
-                    if case NetworkError.invalidRequestError(let responseFailure, _) = error,
+                    if case let NetworkError.invalidRequestError(responseFailure, _) = error,
                        responseFailure.label == .missingLegalholdConsent {
                         self.context.zm_userInterface.performGroupedBlock {
                             NotificationInContext(
@@ -171,24 +172,26 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
     }
 
     public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
-        return Set(events.compactMap {
+        Set(events.compactMap {
             switch $0.type {
             case .conversationClientMessageAdd,
                  .conversationOtrMessageAdd,
                  .conversationOtrAssetAdd,
                  .conversationMLSMessageAdd:
-                return $0.messageNonce
+                $0.messageNonce
 
             default:
-                return nil
+                nil
             }
         })
     }
 
     func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
         switch event.type {
-        case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationMLSMessageAdd:
-            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult) else {
+        case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd,
+             .conversationMLSMessageAdd:
+            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult)
+            else {
                 return
             }
             message.markAsSent()

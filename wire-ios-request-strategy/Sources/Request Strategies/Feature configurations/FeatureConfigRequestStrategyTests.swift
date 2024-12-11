@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
+@testable import WireRequestStrategy
 
 final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
@@ -188,7 +188,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {
@@ -219,7 +219,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {
@@ -250,7 +250,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {
@@ -303,7 +303,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             let mls = Feature.MLS(status: .disabled, config: .init())
             self.featureRepository.storeMLS(mls)
 
-            let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: MockJSON.mlsWithDefaultProtocolProteus) as? NSDictionary)
+            let payload = try XCTUnwrap(
+                JSONSerialization
+                    .jsonObject(with: MockJSON.mlsWithDefaultProtocolProteus) as? NSDictionary
+            )
             let event = try XCTUnwrap(ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil))
 
             // When
@@ -323,7 +326,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(mls.config.allowedCipherSuites, [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519])
             XCTAssertEqual(mls.config.defaultCipherSuite, .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
             XCTAssertEqual(mls.config.defaultProtocol, .proteus)
-            XCTAssertEqual(mls.config.protocolToggleUsers, [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")])
+            XCTAssertEqual(
+                mls.config.protocolToggleUsers,
+                [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")]
+            )
             XCTAssertEqual(mls.config.supportedProtocols, [.proteus, .mls, .mixed])
         }
 
@@ -336,7 +342,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             let mls = Feature.MLS(status: .disabled, config: .init())
             self.featureRepository.storeMLS(mls)
 
-            let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: MockJSON.mlsWithDefaultProtocolMLS) as? NSDictionary)
+            let payload = try XCTUnwrap(
+                JSONSerialization
+                    .jsonObject(with: MockJSON.mlsWithDefaultProtocolMLS) as? NSDictionary
+            )
             let event = try XCTUnwrap(ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil))
 
             // When
@@ -356,7 +365,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(mls.config.allowedCipherSuites, [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519])
             XCTAssertEqual(mls.config.defaultCipherSuite, .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
             XCTAssertEqual(mls.config.defaultProtocol, .mls)
-            XCTAssertEqual(mls.config.protocolToggleUsers, [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")])
+            XCTAssertEqual(
+                mls.config.protocolToggleUsers,
+                [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")]
+            )
             XCTAssertEqual(mls.config.supportedProtocols, [.proteus, .mls, .mixed])
         }
 
@@ -412,52 +424,52 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
 private enum MockJSON {
     static let mlsWithDefaultProtocolProteus = Data("""
-        {
-            "type": "feature-config.update",
-            "name": "mls",
-            "data": {
-                "status": "enabled",
-                "config": {
-                    "allowedCipherSuites": [
-                        1
-                    ],
-                    "defaultCipherSuite": 1,
-                    "defaultProtocol": "proteus",
-                    "protocolToggleUsers": [
-                        "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
-                    ],
-                    "supportedProtocols": [
-                        "proteus",
-                        "mls",
-                        "mixed"
-                    ]
-                }
+    {
+        "type": "feature-config.update",
+        "name": "mls",
+        "data": {
+            "status": "enabled",
+            "config": {
+                "allowedCipherSuites": [
+                    1
+                ],
+                "defaultCipherSuite": 1,
+                "defaultProtocol": "proteus",
+                "protocolToggleUsers": [
+                    "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
+                ],
+                "supportedProtocols": [
+                    "proteus",
+                    "mls",
+                    "mixed"
+                ]
             }
         }
-        """.utf8)
+    }
+    """.utf8)
 
     static let mlsWithDefaultProtocolMLS = Data("""
-        {
-            "type": "feature-config.update",
-            "name": "mls",
-            "data": {
-                "status": "enabled",
-                "config": {
-                    "allowedCipherSuites": [
-                        1
-                    ],
-                    "defaultCipherSuite": 1,
-                    "defaultProtocol": "mls",
-                    "protocolToggleUsers": [
-                        "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
-                    ],
-                    "supportedProtocols": [
-                        "proteus",
-                        "mls",
-                        "mixed"
-                    ]
-                }
+    {
+        "type": "feature-config.update",
+        "name": "mls",
+        "data": {
+            "status": "enabled",
+            "config": {
+                "allowedCipherSuites": [
+                    1
+                ],
+                "defaultCipherSuite": 1,
+                "defaultProtocol": "mls",
+                "protocolToggleUsers": [
+                    "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
+                ],
+                "supportedProtocols": [
+                    "proteus",
+                    "mls",
+                    "mixed"
+                ]
             }
         }
-        """.utf8)
+    }
+    """.utf8)
 }

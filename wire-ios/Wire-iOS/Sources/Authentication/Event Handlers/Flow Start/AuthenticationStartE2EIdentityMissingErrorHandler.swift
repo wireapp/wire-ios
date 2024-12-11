@@ -18,15 +18,16 @@
 
 import Foundation
 
-/**
- * Handles client registration errors related to the lack of a e2e identity enrollment on launch
- */
+/// Handles client registration errors related to the lack of a e2e identity enrollment on launch
 
 final class AuthenticationStartE2EIdentityMissingErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle errors on start
@@ -40,7 +41,7 @@ final class AuthenticationStartE2EIdentityMissingErrorHandler: AuthenticationEve
         }
 
         // Verify the state
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

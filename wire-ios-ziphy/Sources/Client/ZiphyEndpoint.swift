@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The endpoints of the Giphy V1 REST API.
- */
+/// The endpoints of the Giphy V1 REST API.
 
 enum ZiphyEndpoint: String {
 
@@ -32,18 +30,18 @@ enum ZiphyEndpoint: String {
     var resourcePath: String {
         switch self {
         case .gifs:
-            return gifsEndpoint
+            gifsEndpoint
         default:
-            return gifsEndpoint + "/" + rawValue
+            gifsEndpoint + "/" + rawValue
         }
     }
 
     private var gifsEndpoint: String {
-        return "/gifs"
+        "/gifs"
     }
 
     static var version: String {
-        return "v1"
+        "v1"
     }
 
 }

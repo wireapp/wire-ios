@@ -30,7 +30,12 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             let bob = self.createUser(onMoc: self.syncMOC)
             bob.name = "bob"
 
-            let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [alice, bob], name: nil, team: nil)
+            let conversation = ZMConversation.insertGroupConversation(
+                moc: self.syncMOC,
+                participants: [alice, bob],
+                name: nil,
+                team: nil
+            )
             let systemMessage = conversation?.lastMessage as? ZMSystemMessage
 
             XCTAssertNotNil(systemMessage)
@@ -52,7 +57,12 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
 
             let name = "Crypto"
 
-            let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [alice, bob], name: name, team: nil)
+            let conversation = ZMConversation.insertGroupConversation(
+                moc: self.syncMOC,
+                participants: [alice, bob],
+                name: name,
+                team: nil
+            )
             let systemMessage = conversation?.lastMessage as? ZMSystemMessage
 
             XCTAssertNotNil(systemMessage)
@@ -69,7 +79,12 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             let name = "Crypto"
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
 
-            let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [], name: name, team: nil)
+            let conversation = ZMConversation.insertGroupConversation(
+                moc: self.syncMOC,
+                participants: [],
+                name: name,
+                team: nil
+            )
             let nameMessage = conversation?.lastMessage as? ZMSystemMessage
 
             XCTAssertNotNil(nameMessage)
@@ -94,7 +109,12 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             self.createTeamMember(in: self.syncMOC, for: team)
 
             // when
-            let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user1], name: self.name, team: team)
+            let conversation = ZMConversation.insertGroupConversation(
+                moc: self.syncMOC,
+                participants: [user1],
+                name: self.name,
+                team: team
+            )
             guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
 
             XCTAssertNotNil(nameMessage)
@@ -118,7 +138,12 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             let user2 = self.createTeamMember(in: self.syncMOC, for: team)
 
             // when
-            let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user1, user2], name: self.name, team: team)
+            let conversation = ZMConversation.insertGroupConversation(
+                moc: self.syncMOC,
+                participants: [user1, user2],
+                name: self.name,
+                team: team
+            )
             guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
 
             XCTAssertNotNil(nameMessage)
@@ -148,7 +173,8 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
                 moc: self.syncMOC,
                 participants: [user1, user2, guest1, guest2],
                 name: self.name,
-                team: team)
+                team: team
+            )
             guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
 
             XCTAssertNotNil(nameMessage)
@@ -174,7 +200,12 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             let guest2 = self.createUser(onMoc: self.syncMOC)
 
             // when
-            let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user1, guest1, guest2], name: self.name, team: team)
+            let conversation = ZMConversation.insertGroupConversation(
+                moc: self.syncMOC,
+                participants: [user1, guest1, guest2],
+                name: self.name,
+                team: team
+            )
             guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
 
             XCTAssertNotNil(nameMessage)

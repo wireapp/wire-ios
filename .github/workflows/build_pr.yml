@@ -24,6 +24,7 @@ jobs:
       ) && github.event.pull_request.draft == false
     uses: ./.github/workflows/_reusable_app_release_without_changelog.yml
     with:
+      countly_enabled: false
       datadog_enabled: false
       fastlane_action: development_pr
       is_cloud_build: true

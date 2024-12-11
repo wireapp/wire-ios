@@ -18,17 +18,19 @@
 
 import Foundation
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
     /// Whether the applock feature is enabled.
 
-    internal(set) public var isAppLockEnabled: Bool {
+    internal(set) var isAppLockEnabled: Bool {
         get {
             (persistentStoreMetadata(forKey: PersistentMetadataKey.appLock.rawValue) as? NSNumber)?.boolValue ?? false
         }
         set {
-            setPersistentStoreMetadata(NSNumber(value: newValue),
-                                       key: PersistentMetadataKey.appLock.rawValue)
+            setPersistentStoreMetadata(
+                NSNumber(value: newValue),
+                key: PersistentMetadataKey.appLock.rawValue
+            )
         }
     }
 }

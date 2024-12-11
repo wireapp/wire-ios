@@ -89,10 +89,10 @@ extension ConversationInputBarViewController {
 
                 guard let self else { return }
 
-                self.impactFeedbackGenerator.impactOccurred()
+                impactFeedbackGenerator.impactOccurred()
 
                 do {
-                    let useCase = self.userSession.makeAppendFileMessageUseCase()
+                    let useCase = userSession.makeAppendFileMessageUseCase()
                     try useCase.invoke(with: metadata, in: conversation)
                 } catch {
                     Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")

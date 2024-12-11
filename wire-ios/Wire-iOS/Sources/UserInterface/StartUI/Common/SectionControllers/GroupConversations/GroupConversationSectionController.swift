@@ -26,28 +26,37 @@ final class GroupConversationsSectionController: SearchSectionController {
     weak var delegate: SearchSectionControllerDelegate?
 
     override var isHidden: Bool {
-        return groupConversations.isEmpty
+        groupConversations.isEmpty
     }
 
     override var sectionTitle: String {
-        return title
+        title
     }
 
     override var sectionAccessibilityIdentifier: String {
-        return "label.search.group_conversation"
+        "label.search.group_conversation"
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
-        collectionView?.register(GroupConversationCell.self, forCellWithReuseIdentifier: GroupConversationCell.zm_reuseIdentifier)
+        collectionView?.register(
+            GroupConversationCell.self,
+            forCellWithReuseIdentifier: GroupConversationCell.zm_reuseIdentifier
+        )
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return groupConversations.count
+        groupConversations.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let conversation = groupConversations[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GroupConversationCell.zm_reuseIdentifier, for: indexPath) as! GroupConversationCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: GroupConversationCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! GroupConversationCell
 
         cell.configure(conversation: conversation)
         cell.separator.isHidden = (groupConversations.count - 1) == indexPath.row

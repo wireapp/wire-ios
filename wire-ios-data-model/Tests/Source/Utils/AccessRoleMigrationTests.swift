@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class AccessRoleMigrationTests: DiskDatabaseTest {
 
@@ -53,7 +53,7 @@ class AccessRoleMigrationTests: DiskDatabaseTest {
         oneToOneConvo.userDefinedName = "OneToOne"
         oneToOneConvo.needsToBeUpdatedFromBackend = false
 
-        self.moc.saveOrRollback()
+        moc.saveOrRollback()
 
         // WHEN
         WireDataModel.ZMConversation.forceToFetchConversationAccessRoles(in: moc)

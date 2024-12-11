@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ConversationFileMessageTests: ConversationMessageSnapshotTestCase {
 
@@ -67,7 +67,9 @@ final class ConversationFileMessageTests: ConversationMessageSnapshotTestCase {
         message.senderUser = SwiftMockLoader.mockUsers().first!
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
-        message.backingFileMessageData.filename = "Etiam lacus elit, tempor at blandit sit amet, faucibus in erat. Mauris faucibus scelerisque mattis.pdf"
+        message.backingFileMessageData
+            .filename =
+            "Etiam lacus elit, tempor at blandit sit amet, faucibus in erat. Mauris faucibus scelerisque mattis.pdf"
 
         verify(message: message)
     }

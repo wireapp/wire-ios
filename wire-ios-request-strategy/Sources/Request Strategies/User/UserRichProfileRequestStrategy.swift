@@ -25,24 +25,33 @@ public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
 
     var modifiedSync: ZMDownstreamObjectSync!
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                         applicationStatus: ApplicationStatus) {
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        self.modifiedSync = ZMDownstreamObjectSync(transcoder: self,
-                                                         entityName: ZMUser.entityName(),
-                                                         predicateForObjectsToDownload: ZMUser.predicateForUsersToUpdateRichProfile(),
-                                                         managedObjectContext: managedObjectContext)
+        self.modifiedSync = ZMDownstreamObjectSync(
+            transcoder: self,
+            entityName: ZMUser.entityName(),
+            predicateForObjectsToDownload: ZMUser
+                .predicateForUsersToUpdateRichProfile(),
+            managedObjectContext: managedObjectContext
+        )
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return modifiedSync.nextRequest(for: apiVersion)
+        modifiedSync.nextRequest(for: apiVersion)
     }
 }
 
 extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
         guard let user = object as? ZMUser else { fatal("Object \(object.classForCoder) is not ZMUser") }
         guard let remoteIdentifier = user.remoteIdentifier else { fatal("User does not have remote identifier") }
         let path = "/users/\(remoteIdentifier)/rich-info"
@@ -60,6 +69,7 @@ extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
                 var type: String
                 var value: String
             }
+
             var fields: [Field]
         }
 
@@ -77,6 +87,6 @@ extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
 
 extension UserRichProfileRequestStrategy: ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedSync]
+        [modifiedSync]
     }
 }

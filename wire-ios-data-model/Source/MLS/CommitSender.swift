@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol CommitSending {
@@ -51,7 +52,7 @@ public protocol CommitSending {
     /// - Throws: `ExternalCommitError` if the operation fails.
     ///
     /// If the commit is sent successfully, the pending group will be merged.
-    /// 
+    ///
     /// If the commit fails to send, the error will contain a recovery strategy to handle the failure.
     /// If the recovery strategy is to give up, then the pending group will be cleared.
 
@@ -163,15 +164,15 @@ public actor CommitSender: CommitSending {
         }
     }
 
-    nonisolated
-    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        return onEpochChangedSubject.eraseToAnyPublisher()
+    public nonisolated
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        onEpochChangedSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Helpers
 
     private func sendCommitBundle(_ bundle: CommitBundle) async throws -> [ZMUpdateEvent] {
-        return try await actionsProvider.sendCommitBundle(
+        try await actionsProvider.sendCommitBundle(
             bundle.transportData(),
             in: notificationContext
         )

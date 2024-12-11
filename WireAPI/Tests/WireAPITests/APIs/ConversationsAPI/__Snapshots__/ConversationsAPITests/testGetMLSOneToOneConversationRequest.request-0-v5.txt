@@ -1,4 +1,2 @@
-- HTTPRequest
-  - path: "/v5/conversations/one2one/domain.com/99db9768-04e3-4b5d-9268-831b6a25c4ab"
-  - method: get
-  - body: none
+curl \
+	"/v5/conversations/one2one/domain.com/99db9768-04e3-4b5d-9268-831b6a25c4ab"

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 class RemoveDuplicatePreAction: CoreDataMigrationAction {
 
@@ -44,9 +45,15 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
             for object in objectsWithNil {
                 context.delete(object)
             }
-            WireLogger.localStorage.info("Deleted \(objectsWithNil.count) \(entityName) objects with no remoteIdentifierData", attributes: .safePublic)
+            WireLogger.localStorage.info(
+                "Deleted \(objectsWithNil.count) \(entityName) objects with no remoteIdentifierData",
+                attributes: .safePublic
+            )
         } catch {
-            WireLogger.localStorage.error("error fetching object \(entityName) with no remoteIdentifierData \(error.localizedDescription)", attributes: .safePublic)
+            WireLogger.localStorage.error(
+                "error fetching object \(entityName) with no remoteIdentifierData \(error.localizedDescription)",
+                attributes: .safePublic
+            )
         }
     }
 
@@ -69,13 +76,19 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
             }
         }
 
-        WireLogger.localStorage.info("found \(duplicates.count) different duplicate(s) of \(entityName)", attributes: .safePublic)
+        WireLogger.localStorage.info(
+            "found \(duplicates.count) different duplicate(s) of \(entityName)",
+            attributes: .safePublic
+        )
 
         var needsSlowSync = false
 
         duplicates.forEach { (key, objects: [NSManagedObject]) in
             guard objects.count > 1 else {
-                WireLogger.localStorage.info("skipping object with different domain if any: \(key)", attributes: .safePublic)
+                WireLogger.localStorage.info(
+                    "skipping object with different domain if any: \(key)",
+                    attributes: .safePublic
+                )
                 return
             }
             WireLogger.localStorage.debug("processing \(key)", attributes: .safePublic)
@@ -84,7 +97,10 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
             objects.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             objects.dropFirst().forEach(context.delete)
 
-            WireLogger.localStorage.warn("removed \(objects.count - 1) occurence of duplicate \(entityName) for key \(key)", attributes: .safePublic)
+            WireLogger.localStorage.warn(
+                "removed \(objects.count - 1) occurence of duplicate \(entityName) for key \(key)",
+                attributes: .safePublic
+            )
 
             if !needsSlowSync {
                 needsSlowSync = true
@@ -92,8 +108,10 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
         }
 
         if needsSlowSync {
-            markNeedsSlowSync(context: context,
-                              forEntityName: entityName)
+            markNeedsSlowSync(
+                context: context,
+                forEntityName: entityName
+            )
         }
     }
 
@@ -101,7 +119,10 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
         do {
             try context.setMigrationNeedsSlowSync()
         } catch {
-            WireLogger.localStorage.error("Failed to trigger slow sync on migration \(entityName): \(error.localizedDescription)", attributes: .safePublic)
+            WireLogger.localStorage.error(
+                "Failed to trigger slow sync on migration \(entityName): \(error.localizedDescription)",
+                attributes: .safePublic
+            )
         }
     }
 }

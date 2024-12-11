@@ -42,7 +42,7 @@ struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
         try await connectionsRepository.updateConnection(connection)
 
         if connection.status == .accepted {
-            try await oneOnOneResolver.invoke()
+            try await oneOnOneResolver.resolveAllOneOnOneConversations()
         }
     }
 }

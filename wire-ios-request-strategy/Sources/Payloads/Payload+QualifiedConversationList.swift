@@ -21,9 +21,9 @@ import Foundation
 extension Payload {
     struct QualifiedConversationList: Codable {
         enum CodingKeys: String, CodingKey {
-            case found = "found"
+            case found
             case notFound = "not_found"
-            case failed = "failed"
+            case failed
         }
 
         let found: [Conversation]

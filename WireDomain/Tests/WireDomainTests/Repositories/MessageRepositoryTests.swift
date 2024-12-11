@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+@testable import WireDomain
 
 final class MessageRepositoryTests: XCTestCase {
 
@@ -76,14 +74,15 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(localStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            1
+        )
     }
 
     private enum Scaffolding {
-
-        static let conversationID = UUID()
-        static let domain = "domain.com"
-
+        static let conversationID = UUID.mockID1
+        static let conversationDomain = "domain.com"
     }
 
 }

@@ -68,7 +68,7 @@ final class BarController: UIViewController {
                 $0.removeFromSuperview()
             }
 
-            self.bars.map { $0.view }.forEach(self.stackView.addArrangedSubview)
+            self.bars.map(\.view).forEach(self.stackView.addArrangedSubview)
         }
     }
 
@@ -83,10 +83,10 @@ final class BarController: UIViewController {
 
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          stackView.topAnchor.constraint(equalTo: view.topAnchor),
-          stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          stackView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          stackView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            stackView.topAnchor.constraint(equalTo: view.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            stackView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            stackView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
 }

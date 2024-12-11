@@ -18,6 +18,7 @@
 
 import MessageUI
 import UIKit
+import WireLogging
 import WireSyncEngine
 
 enum BlockerViewControllerContext {
@@ -215,13 +216,18 @@ final class BlockerViewController: LaunchImageViewController {
             style: .default,
             handler: { [weak self] _ in
                 self?.showDatabaseFailureMessage()
-            })
+            }
+        )
 
         deleteDatabaseConfirmationAlert.addAction(cancelAction)
         present(deleteDatabaseConfirmationAlert, animated: true)
     }
 
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
         // shown after sending report logs, we should show other choices again
         // in order not to be stuck on black screen
         controller.presentingViewController?.dismiss(animated: true) {
@@ -231,6 +237,7 @@ final class BlockerViewController: LaunchImageViewController {
 }
 
 // MARK: - Application state observing
+
 extension BlockerViewController: ApplicationStateObserving {
     func addObserverToken(_ token: NSObjectProtocol) {
         observerTokens.append(token)
@@ -283,7 +290,7 @@ extension BlockerViewController {
         successEnrollmentViewController.onOkTapped = { viewController in
             viewController.dismiss(animated: true)
         }
-        successEnrollmentViewController.presentTopmost()
+        successEnrollmentViewController.presentOverAll()
     }
 
 }

@@ -60,7 +60,7 @@ public enum DarwinNotification: String {
     case shareExtDidSaveNote = "darwin-notification.share-ext-did-save-note"
 
     var name: CFNotificationName {
-        return CFNotificationName(rawValue: self.rawValue as CFString)
+        CFNotificationName(rawValue: rawValue as CFString)
     }
 
     func observe(using block: @escaping CFNotificationCallback) {

@@ -29,9 +29,11 @@ final class ConversationImagesViewController: UIViewController {
 
     let collection: AssetCollectionWrapper
 
-    var pageViewController: UIPageViewController = UIPageViewController(transitionStyle: .scroll,
-                                                                        navigationOrientation: .horizontal,
-                                                                        options: [:])
+    var pageViewController: UIPageViewController = .init(
+        transitionStyle: .scroll,
+        navigationOrientation: .horizontal,
+        options: [:]
+    )
     var buttonsBar: InputBarButtonsView!
     lazy var deleteButton = iconButton(messageAction: .delete)
     let overlay = FeedbackOverlayView()
@@ -57,9 +59,9 @@ final class ConversationImagesViewController: UIViewController {
 
     var currentMessage: ZMConversationMessage {
         didSet {
-            self.updateButtonsForMessage()
-            self.createNavigationTitle()
-            self.updateActionControllerForMessage()
+            updateButtonsForMessage()
+            createNavigationTitle()
+            updateActionControllerForMessage()
         }
     }
 
@@ -71,8 +73,8 @@ final class ConversationImagesViewController: UIViewController {
 
     var swipeToDismiss: Bool = false {
         didSet {
-            if let currentController = self.currentController {
-                currentController.swipeToDismiss = self.swipeToDismiss
+            if let currentController {
+                currentController.swipeToDismiss = swipeToDismiss
             }
         }
     }
@@ -83,8 +85,8 @@ final class ConversationImagesViewController: UIViewController {
 
     var dismissAction: DismissAction? = .none {
         didSet {
-            if let currentController = self.currentController {
-                currentController.dismissAction = self.dismissAction
+            if let currentController {
+                currentController.dismissAction = dismissAction
             }
         }
     }
@@ -133,17 +135,17 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     override var prefersStatusBarHidden: Bool {
-        return navigationController?.isNavigationBarHidden ?? false
+        navigationController?.isNavigationBarHidden ?? false
     }
 
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return .fade
+        .fade
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        self.buttonsBar.buttons = createControlsBarButtons()
+        buttonsBar.buttons = createControlsBarButtons()
         setupExpandRowButton()
     }
 
@@ -163,10 +165,12 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [pageViewController.view,
-         buttonsBar,
-         overlay,
-         separator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            pageViewController.view,
+            buttonsBar,
+            overlay,
+            separator
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         pageViewController.view.fitIn(view: view)
         NSLayoutConstraint.activate([
@@ -189,19 +193,21 @@ final class ConversationImagesViewController: UIViewController {
     private func createPageController() {
         pageViewController.delegate = self
         pageViewController.dataSource = self
-        pageViewController.setViewControllers([self.imageController(for: self.currentMessage)],
-                                              direction: .forward,
-                                              animated: false,
-                                              completion: .none)
+        pageViewController.setViewControllers(
+            [imageController(for: currentMessage)],
+            direction: .forward,
+            animated: false,
+            completion: .none
+        )
 
         addToSelf(pageViewController)
     }
 
     private func logicalPreviousIndex(for index: Int) -> Int? {
-        if self.inverse {
-            return self.nextIndex(for: index)
+        if inverse {
+            nextIndex(for: index)
         } else {
-            return self.previousIndex(for: index)
+            previousIndex(for: index)
         }
     }
 
@@ -216,16 +222,16 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func logicalNextIndex(for index: Int) -> Int? {
-        if self.inverse {
-            return self.previousIndex(for: index)
+        if inverse {
+            previousIndex(for: index)
         } else {
-            return self.nextIndex(for: index)
+            nextIndex(for: index)
         }
     }
 
     private func nextIndex(for index: Int) -> Int? {
         let nextIndex = index + 1
-        guard self.imageMessages.count > nextIndex else {
+        guard imageMessages.count > nextIndex else {
             return .none
         }
 
@@ -237,19 +243,19 @@ final class ConversationImagesViewController: UIViewController {
     private func selector(for action: MessageAction) -> Selector? {
         switch action {
         case .copy:
-            return #selector(copyCurrent(_:))
+            #selector(copyCurrent(_:))
         case .save:
-            return #selector(saveCurrent(_:))
+            #selector(saveCurrent(_:))
         case .sketchDraw:
-            return #selector(sketchCurrent(_:))
+            #selector(sketchCurrent(_:))
         case .sketchEmoji:
-            return #selector(sketchCurrentEmoji(_:))
+            #selector(sketchCurrentEmoji(_:))
         case .showInConversation:
-            return #selector(revealCurrent(_:))
+            #selector(revealCurrent(_:))
         case .delete:
-            return #selector(deleteCurrent)
+            #selector(deleteCurrent)
         default:
-            return nil
+            nil
         }
     }
 
@@ -319,11 +325,17 @@ final class ConversationImagesViewController: UIViewController {
         buttonsBar.expandRowButton.setBorderColor(ButtonColors.borderInputBarItemEnabled, for: .normal)
 
         buttonsBar.expandRowButton.setIconColor(ButtonColors.textInputBarItemHighlighted, for: .highlighted)
-        buttonsBar.expandRowButton.setBackgroundImageColor(ButtonColors.backgroundInputBarItemHighlighted, for: .highlighted)
+        buttonsBar.expandRowButton.setBackgroundImageColor(
+            ButtonColors.backgroundInputBarItemHighlighted,
+            for: .highlighted
+        )
         buttonsBar.expandRowButton.setBorderColor(ButtonColors.borderInputBarItemHighlighted, for: .highlighted)
 
         buttonsBar.expandRowButton.setIconColor(ButtonColors.textInputBarItemHighlighted, for: .selected)
-        buttonsBar.expandRowButton.setBackgroundImageColor(ButtonColors.backgroundInputBarItemHighlighted, for: .selected)
+        buttonsBar.expandRowButton.setBackgroundImageColor(
+            ButtonColors.backgroundInputBarItemHighlighted,
+            for: .selected
+        )
         buttonsBar.expandRowButton.setBorderColor(ButtonColors.borderInputBarItemHighlighted, for: .selected)
     }
 
@@ -331,12 +343,12 @@ final class ConversationImagesViewController: UIViewController {
         let buttons = createControlsBarButtons()
 
         buttonsBar = InputBarButtonsView(buttons: buttons)
-        self.buttonsBar.clipsToBounds = true
+        buttonsBar.clipsToBounds = true
         setupExpandRowButton()
-        self.buttonsBar.backgroundColor = SemanticColors.View.backgroundDefaultWhite
-        self.view.addSubview(self.buttonsBar)
+        buttonsBar.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+        view.addSubview(buttonsBar)
 
-        self.updateButtonsForMessage()
+        updateButtonsForMessage()
     }
 
     private func updateBarsForPreview() {
@@ -352,15 +364,15 @@ final class ConversationImagesViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         imageViewController.delegate = self
-        imageViewController.swipeToDismiss = self.swipeToDismiss
+        imageViewController.swipeToDismiss = swipeToDismiss
         imageViewController.showCloseButton = false
-        imageViewController.dismissAction = self.dismissAction
+        imageViewController.dismissAction = dismissAction
 
         return imageViewController
     }
 
     private func indexOf(message messageToFind: ZMConversationMessage) -> Int? {
-        return self.imageMessages.firstIndex(where: { (message: ZMConversationMessage) -> (Bool) in
+        imageMessages.firstIndex(where: { (message: ZMConversationMessage) -> (Bool) in
             return message == messageToFind
         })
     }
@@ -373,37 +385,44 @@ final class ConversationImagesViewController: UIViewController {
 
         let titleView = TwoLineTitleView(
             first: (sender.name ?? "").attributedString,
-            second: serverTimestamp.formattedDate.attributedString)
+            second: serverTimestamp.formattedDate.attributedString
+        )
 
         titleView.addInteraction(UILargeContentViewerInteraction())
         navigationItem.titleView = titleView
     }
 
     private func updateButtonsForMessage() {
-        self.deleteButton.isHidden = !currentMessage.canBeDeleted
+        deleteButton.isHidden = !currentMessage.canBeDeleted
     }
 
     private func updateActionControllerForMessage() {
-        currentActionController = ConversationMessageActionController(responder: messageActionDelegate,
-                                                                      message: currentMessage,
-                                                                      context: .collection,
-                                                                      view: view)
+        currentActionController = ConversationMessageActionController(
+            responder: messageActionDelegate,
+            message: currentMessage,
+            context: .collection,
+            view: view
+        )
     }
 
     var currentController: FullscreenImageViewController? {
-        guard let imageController = self.pageViewController.viewControllers?.first as? FullscreenImageViewController else {
+        guard let imageController = pageViewController.viewControllers?.first as? FullscreenImageViewController else {
             return .none
         }
 
         return imageController
     }
 
-    private func perform(action: MessageAction,
-                         for message: ZMConversationMessage? = nil,
-                         sender: AnyObject?) {
-        messageActionDelegate?.perform(action: action,
-                                       for: message ?? currentMessage,
-                                       view: sender as? UIView ?? view)
+    private func perform(
+        action: MessageAction,
+        for message: ZMConversationMessage? = nil,
+        sender: AnyObject?
+    ) {
+        messageActionDelegate?.perform(
+            action: action,
+            for: message ?? currentMessage,
+            view: sender as? UIView ?? view
+        )
     }
 
     // MARK: icon button actions
@@ -428,7 +447,8 @@ final class ConversationImagesViewController: UIViewController {
         perform(action: .delete, sender: sender)
     }
 
-    @objc func revealCurrent(_ sender: AnyObject!) {
+    @objc
+    func revealCurrent(_ sender: AnyObject!) {
         perform(action: .showInConversation, sender: sender)
     }
 
@@ -446,18 +466,22 @@ final class ConversationImagesViewController: UIViewController {
 
 extension ConversationImagesViewController: ScreenshotProvider {
     func backgroundScreenshot(for fullscreenController: FullscreenImageViewController) -> UIView? {
-        return self.snapshotBackgroundView
+        snapshotBackgroundView
     }
 }
 
 extension ConversationImagesViewController: AssetCollectionDelegate {
-    func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool) {
+    func assetCollectionDidFetch(
+        collection: ZMCollection,
+        messages: [CategoryMatch: [ZMConversationMessage]],
+        hasMore: Bool
+    ) {
 
         for messageCategory in messages {
             let conversationMessages = messageCategory.value as [ZMConversationMessage]
 
             if messageCategory.key.including.contains(.image) {
-                self.imageMessages.append(contentsOf: conversationMessages)
+                imageMessages.append(contentsOf: conversationMessages)
             }
         }
     }
@@ -469,51 +493,64 @@ extension ConversationImagesViewController: AssetCollectionDelegate {
 
 extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
 
-    func pageViewControllerPreferredInterfaceOrientationForPresentation(_ pageViewController: UIPageViewController) -> UIInterfaceOrientation {
-        return .portrait
+    func pageViewControllerPreferredInterfaceOrientationForPresentation(_ pageViewController: UIPageViewController)
+        -> UIInterfaceOrientation {
+        .portrait
     }
 
-    func pageViewControllerSupportedInterfaceOrientations(_ pageViewController: UIPageViewController) -> UIInterfaceOrientationMask {
-        return self.traitCollection.horizontalSizeClass == .compact ? .portrait : .all
+    func pageViewControllerSupportedInterfaceOrientations(_ pageViewController: UIPageViewController)
+        -> UIInterfaceOrientationMask {
+        traitCollection.horizontalSizeClass == .compact ? .portrait : .all
     }
 
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
-        return self.imageMessages.count
+        imageMessages.count
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerAfter viewController: UIViewController
+    ) -> UIViewController? {
         guard let imageController = viewController as? FullscreenImageViewController else {
             fatal("Unknown controller \(viewController)")
         }
 
-        guard let messageIndex = self.indexOf(message: imageController.message),
-              let nextIndex = self.logicalNextIndex(for: messageIndex) else {
+        guard let messageIndex = indexOf(message: imageController.message),
+              let nextIndex = logicalNextIndex(for: messageIndex) else {
             return .none
         }
 
-        return self.imageController(for: self.imageMessages[nextIndex])
+        return self.imageController(for: imageMessages[nextIndex])
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerBefore viewController: UIViewController
+    ) -> UIViewController? {
         guard let imageController = viewController as? FullscreenImageViewController else {
             fatal("Unknown controller \(viewController)")
         }
 
-        guard let messageIndex = self.indexOf(message: imageController.message),
-              let previousIndex = self.logicalPreviousIndex(for: messageIndex) else {
+        guard let messageIndex = indexOf(message: imageController.message),
+              let previousIndex = logicalPreviousIndex(for: messageIndex) else {
             return .none
         }
 
-        return self.imageController(for: self.imageMessages[previousIndex])
+        return self.imageController(for: imageMessages[previousIndex])
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        if let currentController = self.currentController,
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        didFinishAnimating finished: Bool,
+        previousViewControllers: [UIViewController],
+        transitionCompleted completed: Bool
+    ) {
+        if let currentController,
            finished,
            completed {
 
-            self.currentMessage = currentController.message
-            self.buttonsBar.buttons = createControlsBarButtons()
+            currentMessage = currentController.message
+            buttonsBar.buttons = createControlsBarButtons()
         }
     }
 }
@@ -521,7 +558,7 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
 extension ConversationImagesViewController: MenuVisibilityController {
 
     var menuVisible: Bool {
-        return buttonsBar.isHidden && separator.isHidden
+        buttonsBar.isHidden && separator.isHidden
     }
 
     func fadeAndHideMenu(_ hidden: Bool) {
@@ -545,9 +582,14 @@ extension ConversationImagesViewController: MenuVisibilityController {
 
 extension ConversationImagesViewController {
 
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     override var previewActionItems: [UIPreviewActionItem] {
-        return currentActionController?.previewActionItems ?? []
+        currentActionController?.previewActionItems ?? []
     }
 
 }
@@ -556,7 +598,11 @@ extension ConversationImagesViewController {
 
 extension UIView {
 
-    func fadeAndHide(_ hide: Bool, duration: TimeInterval = 0.2, options: UIView.AnimationOptions = UIView.AnimationOptions()) {
+    func fadeAndHide(
+        _ hide: Bool,
+        duration: TimeInterval = 0.2,
+        options: UIView.AnimationOptions = UIView.AnimationOptions()
+    ) {
         if !hide {
             alpha = 0
             isHidden = false
@@ -564,7 +610,13 @@ extension UIView {
 
         let animations = { self.alpha = hide ? 0 : 1 }
         let completion: (Bool) -> Void = { _ in self.isHidden = hide }
-        UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions(), animations: animations, completion: completion)
+        UIView.animate(
+            withDuration: duration,
+            delay: 0,
+            options: UIView.AnimationOptions(),
+            animations: animations,
+            completion: completion
+        )
     }
 
 }

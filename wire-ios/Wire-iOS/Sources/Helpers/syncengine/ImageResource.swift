@@ -25,11 +25,15 @@ import WireSyncEngine
 extension ZMConversationMessage {
 
     var linkAttachmentImage: WireImageResource? {
-        guard let attachment = self.linkAttachments?.first, let textMessage = self.textMessageData else {
+        guard let attachment = linkAttachments?.first, let textMessage = textMessageData else {
             return nil
         }
 
-        return LinkAttachmentImageResourceAdaptor(attachment: attachment, textMessageData: textMessage, urlSession: URLSession.shared)
+        return LinkAttachmentImageResourceAdaptor(
+            attachment: attachment,
+            textMessageData: textMessage,
+            urlSession: URLSession.shared
+        )
     }
 
 }
@@ -37,7 +41,7 @@ extension ZMConversationMessage {
 extension TextMessageData {
 
     var linkPreviewImage: WireImageResource {
-        return LinkPreviewImageResourceAdaptor(textMessageData: self)
+        LinkPreviewImageResourceAdaptor(textMessageData: self)
     }
 
 }
@@ -45,7 +49,7 @@ extension TextMessageData {
 extension ZMFileMessageData {
 
     var thumbnailImage: PreviewableImageResource {
-        return FileMessageImageResourceAdaptor(fileMesssageData: self)
+        FileMessageImageResourceAdaptor(fileMesssageData: self)
     }
 
 }
@@ -53,7 +57,7 @@ extension ZMFileMessageData {
 extension ZMImageMessageData {
 
     var image: PreviewableImageResource {
-        return ImageMessageImageResourceAdaptor(imageMessageData: self)
+        ImageMessageImageResourceAdaptor(imageMessageData: self)
     }
 
 }
@@ -63,11 +67,11 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
     let textMessageData: TextMessageData
 
     var cacheIdentifier: String? {
-        return textMessageData.linkPreviewImageCacheKey?.appending("-link")
+        textMessageData.linkPreviewImageCacheKey?.appending("-link")
     }
 
     var isAnimatedGIF: Bool {
-        return false
+        false
     }
 
     func requestImageDownload() {
@@ -87,11 +91,11 @@ struct LinkAttachmentImageResourceAdaptor: WireImageResource {
     let urlSession: URLSessionProtocol
 
     var cacheIdentifier: String? {
-        return textMessageData.linkPreviewImageCacheKey?.appending("-linkattachment")
+        textMessageData.linkPreviewImageCacheKey?.appending("-linkattachment")
     }
 
     var isAnimatedGIF: Bool {
-        return false
+        false
     }
 
     init(attachment: LinkAttachment, textMessageData: TextMessageData, urlSession: URLSessionProtocol) {
@@ -133,19 +137,19 @@ struct FileMessageImageResourceAdaptor: PreviewableImageResource {
     let fileMesssageData: ZMFileMessageData
 
     var cacheIdentifier: String? {
-        return fileMesssageData.imagePreviewDataIdentifier?.appending("-file")
+        fileMesssageData.imagePreviewDataIdentifier?.appending("-file")
     }
 
     var contentMode: UIView.ContentMode {
-        return .scaleAspectFill
+        .scaleAspectFill
     }
 
     var contentSize: CGSize {
-        return CGSize(width: 250, height: 140)
+        CGSize(width: 250, height: 140)
     }
 
     var isAnimatedGIF: Bool {
-        return false
+        false
     }
 
     func requestImageDownload() {
@@ -163,19 +167,19 @@ struct ImageMessageImageResourceAdaptor: PreviewableImageResource {
     let imageMessageData: ZMImageMessageData
 
     var cacheIdentifier: String? {
-        return imageMessageData.imageDataIdentifier?.appending("-image")
+        imageMessageData.imageDataIdentifier?.appending("-image")
     }
 
     var isAnimatedGIF: Bool {
-        return imageMessageData.isAnimatedGIF
+        imageMessageData.isAnimatedGIF
     }
 
     var contentMode: UIView.ContentMode {
-        return .scaleAspectFit
+        .scaleAspectFit
     }
 
     var contentSize: CGSize {
-        return imageMessageData.originalSize
+        imageMessageData.originalSize
     }
 
     func requestImageDownload() {
@@ -215,13 +219,13 @@ extension ImageSizeLimit {
     var cacheKeyExtension: String {
         switch self {
         case .none:
-            return "default"
+            "default"
         case .deviceOptimized:
-            return "device"
-        case .maxDimension(let size):
-            return "max_\(String(Int(size)))"
-        case .maxDimensionForShortSide(let size):
-            return "maxshort_\(String(Int(size)))"
+            "device"
+        case let .maxDimension(size):
+            "max_\(String(Int(size)))"
+        case let .maxDimensionForShortSide(size):
+            "maxshort_\(String(Int(size)))"
         }
     }
 }
@@ -229,15 +233,17 @@ extension ImageSizeLimit {
 extension WireImageResource {
 
     /// Fetch image data and calls the completion handler when it is available on the main queue.
-    func fetchImage(cache: ImageCache<AnyObject> = MediaAssetCache.defaultImageCache,
-                    sizeLimit: ImageSizeLimit = .deviceOptimized,
-                    completion: @escaping (_ image: MediaAsset?, _ cacheHit: Bool) -> Void) {
+    func fetchImage(
+        cache: ImageCache<AnyObject> = MediaAssetCache.defaultImageCache,
+        sizeLimit: ImageSizeLimit = .deviceOptimized,
+        completion: @escaping (_ image: MediaAsset?, _ cacheHit: Bool) -> Void
+    ) {
 
-        guard let cacheIdentifier = self.cacheIdentifier else {
+        guard let cacheIdentifier else {
             return completion(nil, false)
         }
 
-        let isAnimatedGIF = self.isAnimatedGIF
+        let isAnimatedGIF = isAnimatedGIF
         var sizeLimit = sizeLimit
 
         if isAnimatedGIF {
@@ -277,9 +283,9 @@ extension WireImageResource {
                     image = UIImage(data: imageData)?.decoded
                 case .deviceOptimized:
                     image = UIImage.deviceOptimizedImage(from: imageData)
-                case .maxDimension(let limit):
+                case let .maxDimension(limit):
                     image = UIImage(from: imageData, withMaxSize: limit)
-                case .maxDimensionForShortSide(let limit):
+                case let .maxDimensionForShortSide(limit):
                     image = UIImage(from: imageData, withShorterSideLength: limit)
                 }
             }

@@ -18,13 +18,10 @@
 
 import SwiftUI
 
-// swiftlint:disable opening_brace
-
-public final class MainSplitViewController<Sidebar, TabController>: UISplitViewController, MainSplitViewControllerProtocol where
+public final class MainSplitViewController<Sidebar, TabController>: UISplitViewController,
+    MainSplitViewControllerProtocol where
     Sidebar: MainSidebarProtocol,
-    TabController: MainTabBarControllerProtocol
-{
-    // swiftlint:enable opening_brace
+    TabController: MainTabBarControllerProtocol {
 
     private let secondaryColumnMinWidth: CGFloat = 360
 
@@ -124,12 +121,15 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         fatalError("init(coder:) is not supported")
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setPreferredSplitBehaviorAndDisplayMode(basedOn: view.frame.size.width)
     }
 
-    override public func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+    public override func viewWillTransition(
+        to size: CGSize,
+        with coordinator: any UIViewControllerTransitionCoordinator
+    ) {
         super.viewWillTransition(to: size, with: coordinator)
         setPreferredSplitBehaviorAndDisplayMode(basedOn: size.width)
     }

@@ -30,18 +30,21 @@ extension SelfProfileViewController {
         }
         let clientsRequiringUserAttention = Array(selfUser.clientsRequiringUserAttention)
 
-        if clientsRequiringUserAttention.count > 0 {
-            self.presentNewLoginAlertController(clientsRequiringUserAttention)
+        if !clientsRequiringUserAttention.isEmpty {
+            presentNewLoginAlertController(clientsRequiringUserAttention)
             return true
         } else {
             return false
         }
     }
 
-    fileprivate func presentNewLoginAlertController(_ clients: [UserClientType]) {
+    private func presentNewLoginAlertController(_ clients: [UserClientType]) {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
-        let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { [weak self] _ in
+        let actionManageDevices = UIAlertAction(
+            title: L10n.Localizable.Self.NewDeviceAlert.manageDevices,
+            style: .default
+        ) { [weak self] _ in
             Task {
                 await self?.mainCoordinator.showSettings()
                 self?.mainCoordinator.showSettingsContent(.init(.devices))
@@ -50,7 +53,10 @@ extension SelfProfileViewController {
 
         newLoginAlertController.addAction(actionManageDevices)
 
-        let actionTrustDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.trustDevices, style: .default) { [weak self] _ in
+        let actionTrustDevices = UIAlertAction(
+            title: L10n.Localizable.Self.NewDeviceAlert.trustDevices,
+            style: .default
+        ) { [weak self] _ in
             self?.presentUserSettingChangeControllerIfNeeded()
         }
 
@@ -72,19 +78,16 @@ extension UIAlertController {
         var deviceNamesAndDates: [String] = []
 
         for userClient in clients {
-            let deviceName: String
-
-            if let model = userClient.model, !model.isEmpty {
-                deviceName = model
+            let deviceName: String = if let model = userClient.model, !model.isEmpty {
+                model
             } else {
-                deviceName = userClient.type.rawValue
+                userClient.type.rawValue
             }
 
-            let formattedDate: String
-            if let activationDate = userClient.activationDate {
-                formattedDate = activationDate.formattedDate
+            let formattedDate: String = if let activationDate = userClient.activationDate {
+                activationDate.formattedDate
             } else {
-                formattedDate = ""
+                ""
             }
 
             let deviceActivationDate = L10n.Localizable.Registration.Devices.activated(formattedDate)
@@ -96,12 +99,10 @@ extension UIAlertController {
 
         let messageBody = deviceNamesAndDates.joined(separator: "\n\n")
 
-        let messageFormat: String
-
-        if clients.count > 1 {
-            messageFormat = L10n.Localizable.Self.NewDeviceAlert.messagePlural(messageBody)
+        let messageFormat: String = if clients.count > 1 {
+            L10n.Localizable.Self.NewDeviceAlert.messagePlural(messageBody)
         } else {
-            messageFormat = L10n.Localizable.Self.NewDeviceAlert.message(messageBody)
+            L10n.Localizable.Self.NewDeviceAlert.message(messageBody)
         }
 
         self.init(title: title, message: messageFormat, preferredStyle: .alert)

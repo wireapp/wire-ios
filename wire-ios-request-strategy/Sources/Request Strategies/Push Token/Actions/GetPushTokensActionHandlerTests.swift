@@ -27,7 +27,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
     typealias Token = GetPushTokensActionHandler.Token
 
     func token(clientID: String, data: Data, type: String) -> Token {
-        return Token(app: "app", client: clientID, token: data.zmHexEncodedString(), transport: type)
+        Token(app: "app", client: clientID, token: data.zmHexEncodedString(), transport: type)
     }
 
     func response(payload: GetPushTokensActionHandler.ResponsePayload, status: Int) -> ZMTransportResponse {
@@ -37,7 +37,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
     }
 
     func response(payload: ZMTransportData?, status: Int) -> ZMTransportResponse {
-        return ZMTransportResponse(
+        ZMTransportResponse(
             payload: payload,
             httpStatus: status,
             transportSessionError: nil,
@@ -72,7 +72,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         var receivedTokens = [PushToken]()
 
         action.onResult { result in
-            guard case .success(let tokens) = result else { return }
+            guard case let .success(tokens) = result else { return }
             receivedTokens = tokens
             didSucceed.fulfill()
         }
@@ -92,10 +92,20 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         // Then
         guard receivedTokens.count == 2 else { return XCTFail("receivedTokens.count != 2") }
 
-        let apns = PushToken(deviceToken: Data([0x01, 0x01, 0x01]), appIdentifier: "app", transportType: "APNS", tokenType: .standard)
+        let apns = PushToken(
+            deviceToken: Data([0x01, 0x01, 0x01]),
+            appIdentifier: "app",
+            transportType: "APNS",
+            tokenType: .standard
+        )
         XCTAssertEqual(receivedTokens[0], apns)
 
-        let voIP = PushToken(deviceToken: Data([0x03, 0x3, 0x03]), appIdentifier: "app", transportType: "APNS_VOIP", tokenType: .voip)
+        let voIP = PushToken(
+            deviceToken: Data([0x03, 0x3, 0x03]),
+            appIdentifier: "app",
+            transportType: "APNS_VOIP",
+            tokenType: .voip
+        )
         XCTAssertEqual(receivedTokens[1], voIP)
     }
 

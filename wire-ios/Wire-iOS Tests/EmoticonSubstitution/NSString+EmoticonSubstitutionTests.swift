@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 extension String {
-    func resolvingEmoticonShortcuts(configuration: EmoticonSubstitutionConfiguration = EmoticonSubstitutionConfiguration.sharedInstance) -> String {
+    func resolvingEmoticonShortcuts(
+        configuration: EmoticonSubstitutionConfiguration = EmoticonSubstitutionConfiguration
+            .sharedInstance
+    ) -> String {
         let mutableString = NSMutableString(string: self)
 
         mutableString.resolveEmoticonShortcuts(in: NSRange(location: 0, length: count), configuration: configuration)
@@ -28,8 +31,11 @@ extension String {
         return String(mutableString)
     }
 
-    mutating func resolveEmoticonShortcuts(in range: NSRange,
-                                           configuration: EmoticonSubstitutionConfiguration = EmoticonSubstitutionConfiguration.sharedInstance) {
+    mutating func resolveEmoticonShortcuts(
+        in range: NSRange,
+        configuration: EmoticonSubstitutionConfiguration =
+            EmoticonSubstitutionConfiguration.sharedInstance
+    ) {
         let mutableString = NSMutableString(string: self)
 
         mutableString.resolveEmoticonShortcuts(in: range, configuration: configuration)
@@ -50,7 +56,8 @@ final class NSString_EmoticonSubstitutionTests: XCTestCase {
     func testThatAllEmoticonSubstitutionForNonMockedConfigurationWorks() {
         // Given
         let targetString = "😊😊😄😄😀😀😎😎😎😞😞😉😉😉😉😕😛😛😛😛😜😜😜😜😮😮😇😇😇😇😏😠😠😡😈😈😈😈😢😢😢😂😂😘😘😘😐😐😳😶😶😶😶🙌❤💔"
-        let string = ":):-):D:-D:d:-dB-)b-)8-):(:-(;);-);-];]:-/:P:-P:p:-p;P;-P;p;-p:o:-oO:)O:-)o:)o:-);^):-||:@>:(}:-)}:)3:-)3:):'-(:'(;(:'-):'):*:^*:-*:-|:|:$:-X:X:-#:#\\o/<3</3"
+        let string =
+            ":):-):D:-D:d:-dB-)b-)8-):(:-(;);-);-];]:-/:P:-P:p:-p;P;-P;p;-p:o:-oO:)O:-)o:)o:-);^):-||:@>:(}:-)}:)3:-)3:):'-(:'(;(:'-):'):*:^*:-*:-|:|:$:-X:X:-#:#\\o/<3</3"
 
         // When
         let resolvedString = string.resolvingEmoticonShortcuts()

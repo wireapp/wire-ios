@@ -21,11 +21,11 @@ import Foundation
 public extension UUID {
 
     func create() -> UUID {
-        return UUID.create()
+        UUID.create()
     }
 
     static func create() -> UUID {
-        return NSUUID.create() as UUID
+        NSUUID.create() as UUID
     }
 
     static func reseed(testName: String) {

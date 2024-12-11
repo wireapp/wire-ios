@@ -18,10 +18,10 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Returns true if this conversation was created within the same team as the self user
-    public var isTeamConversation: Bool {
+    var isTeamConversation: Bool {
         guard
             let teamRemoteIdentifier,
             let managedObjectContext

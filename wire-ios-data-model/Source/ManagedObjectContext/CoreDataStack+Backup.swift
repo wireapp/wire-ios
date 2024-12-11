@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import WireLogging
 import WireUtilities
 
 private let log = ZMSLog(tag: "Backup")
 
-extension CoreDataStack {
+public extension CoreDataStack {
 
     private static let metadataFilename = "export.json"
     private static let databaseDirectoryName = "data"
@@ -30,7 +31,7 @@ extension CoreDataStack {
 
     // Each backup for any account will be created in a unique subdirectory inside.
     // Calling `clearBackupDirectory` will remove this directory and all backups.
-    public static var backupsDirectory: URL {
+    static var backupsDirectory: URL {
         let tempURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         return tempURL.appendingPathComponent("backups")
     }
@@ -38,31 +39,31 @@ extension CoreDataStack {
     // Directory in which unzipped backups should be places.
     // This directory is located inside of `backupsDirectory`.
     // Calling `clearBackupDirectory` will remove this directory.
-    public static var importsDirectory: URL {
+    static var importsDirectory: URL {
         let tempURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         return tempURL.appendingPathComponent("imports")
     }
 
-    public enum BackupImportError: Error {
-           case incompatibleBackup(Error)
-           case failedToCopy(Error)
-           case missingModelVersion(String)
-       }
+    enum BackupImportError: Error {
+        case incompatibleBackup(Error)
+        case failedToCopy(Error)
+        case missingModelVersion(String)
+    }
 
-    public enum BackupError: Error {
+    enum BackupError: Error {
         case failedToRead
         case failedToWrite(Error)
         case missingEAREncryptionKey
     }
 
-    public struct BackupInfo {
+    struct BackupInfo {
         public let url: URL
         public let metadata: BackupMetadata
     }
 
     // Calling this method will delete all backups stored inside `backupsDirectory`
     // as well as inside `importsDirectory` if there are any.
-    public static func clearBackupDirectory(dispatchGroup: ZMSDispatchGroup) {
+    static func clearBackupDirectory(dispatchGroup: ZMSDispatchGroup) {
         func remove(at url: URL) {
             do {
                 guard fileManager.fileExists(atPath: url.path) else { return }
@@ -87,7 +88,7 @@ extension CoreDataStack {
     ///   - dispatchGroup: group for testing
     ///   - databaseKey: EAR database key
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
-    public static func backupLocalStorage(
+    static func backupLocalStorage(
         accountIdentifier: UUID,
         clientIdentifier: String,
         applicationContainer: URL,
@@ -102,7 +103,10 @@ extension CoreDataStack {
             }
         }
 
-        let accountDirectory = Self.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
+        let accountDirectory = Self.accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: applicationContainer
+        )
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
         guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.failedToRead) }
@@ -117,7 +121,11 @@ extension CoreDataStack {
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
                 // Create target directory
-                try fileManager.createDirectory(at: databaseDirectory, withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(
+                    at: databaseDirectory,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
                 let backupLocation = databaseDirectory.appendingStoreFile()
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
@@ -162,7 +170,7 @@ extension CoreDataStack {
     ///   - applicationContainer: shared application container
     ///   - dispatchGroup: group for testing
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
-    public static func importLocalStorage(
+    static func importLocalStorage(
         accountIdentifier: UUID,
         from backupDirectory: URL,
         applicationContainer: URL,
@@ -170,7 +178,8 @@ extension CoreDataStack {
         completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "import backup") else {
-            WireLogger.localStorage.error("backup: error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
+            WireLogger.localStorage
+                .error("backup: error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
             log.debug("error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
             completion(.failure(CoreDataStackError.noDatabaseActivity))
             return
@@ -188,7 +197,7 @@ extension CoreDataStack {
         )
     }
 
-    static func importLocalStorage(
+    internal static func importLocalStorage(
         accountIdentifier: UUID,
         from backupDirectory: URL,
         applicationContainer: URL,
@@ -203,7 +212,10 @@ extension CoreDataStack {
             }
         }
 
-        let accountDirectory = accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
+        let accountDirectory = accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: applicationContainer
+        )
         let accountStoreFile = accountDirectory.appendingPersistentStoreLocation()
         let backupStoreFile = backupDirectory.appendingPathComponent(databaseDirectoryName).appendingStoreFile()
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
@@ -217,28 +229,42 @@ extension CoreDataStack {
                     return fail(.missingModelVersion(metadata.modelVersion))
                 }
 
-                if let verificationError = metadata.verify(using: accountIdentifier, modelVersionProvider: currentModel) {
+                if let verificationError = metadata.verify(
+                    using: accountIdentifier,
+                    modelVersionProvider: currentModel
+                ) {
                     return fail(.incompatibleBackup(verificationError))
                 }
 
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: backupModel)
 
                 // Create target directory
-                try fileManager.createDirectory(at: accountStoreFile.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(
+                    at: accountStoreFile.deletingLastPathComponent(),
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
                 WireLogger.localStorage.debug("backup: import prepare", attributes: .safePublic)
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
 
                 let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage.debug("backup: migrate database \(metadata.modelVersion) to \(currentModel.version)")
+                WireLogger.localStorage
+                    .debug("backup: migrate database \(metadata.modelVersion) to \(currentModel.version)")
                 try messagingMigrator.migrateStore(at: backupStoreFile, toVersion: .current)
                 if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info("time spent in migration only: \(tp.elapsedTime)", attributes: .safePublic)
+                    WireLogger.localStorage.info(
+                        "time spent in migration only: \(tp.elapsedTime)",
+                        attributes: .safePublic
+                    )
                 }
 
                 // Import the persistent store to the account data directory
-                WireLogger.localStorage.debug("backup: import the persistent store to the account data directory", attributes: .safePublic)
+                WireLogger.localStorage.debug(
+                    "backup: import the persistent store to the account data directory",
+                    attributes: .safePublic
+                )
                 try coordinator.replacePersistentStore(
                     at: accountStoreFile,
                     destinationOptions: options,
@@ -247,7 +273,10 @@ extension CoreDataStack {
                     ofType: NSSQLiteStoreType
                 )
 
-                WireLogger.localStorage.info("successfully imported backup with metadata: \(metadata)", attributes: .safePublic)
+                WireLogger.localStorage.info(
+                    "successfully imported backup with metadata: \(metadata)",
+                    attributes: .safePublic
+                )
 
                 DispatchQueue.main.async(group: dispatchGroup) {
                     completion(.success(accountDirectory))
@@ -279,7 +308,12 @@ extension CoreDataStack {
         databaseKey: VolatileData? = nil
     ) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
-        let store = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: location, options: options)
+        let store = try coordinator.addPersistentStore(
+            type: .sqlite,
+            configuration: nil,
+            at: location,
+            options: options
+        )
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
 
@@ -297,9 +331,18 @@ extension CoreDataStack {
         try coordinator.remove(store)
     }
 
-    private static func prepareStoreForBackupImport(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any]) throws {
+    private static func prepareStoreForBackupImport(
+        coordinator: NSPersistentStoreCoordinator,
+        location: URL,
+        options: [String: Any]
+    ) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
-        let store = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: location, options: options)
+        let store = try coordinator.addPersistentStore(
+            type: .sqlite,
+            configuration: nil,
+            at: location,
+            options: options
+        )
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
 

@@ -18,10 +18,10 @@
 
 import Foundation
 
-extension Account: NotificationContext { }
+extension Account: NotificationContext {}
 
-extension Notification.Name {
-    public static let AccountUnreadCountDidChangeNotification = Notification.Name("AccountUnreadCountDidChangeNotification")
+public extension Notification.Name {
+    static let AccountUnreadCountDidChangeNotification = Notification.Name("AccountUnreadCountDidChangeNotification")
 }
 
 /// An `Account` holds information related to a single account,
@@ -38,7 +38,7 @@ public final class Account: NSObject, Codable {
 
     public var unreadConversationCount: Int = 0 {
         didSet {
-            if oldValue != self.unreadConversationCount {
+            if oldValue != unreadConversationCount {
                 NotificationInContext(name: .AccountUnreadCountDidChangeNotification, context: self).post()
             }
         }
@@ -50,17 +50,19 @@ public final class Account: NSObject, Codable {
         case userIdentifier = "identifier"
         case imageData = "image"
         case teamImageData = "teamImage"
-        case unreadConversationCount = "unreadConversationCount"
-        case loginCredentials = "loginCredentials"
+        case unreadConversationCount
+        case loginCredentials
     }
 
-    public required init(userName: String,
-                         userIdentifier: UUID,
-                         teamName: String? = nil,
-                         imageData: Data? = nil,
-                         teamImageData: Data? = nil,
-                         unreadConversationCount: Int = 0,
-                         loginCredentials: LoginCredentials? = nil) {
+    public required init(
+        userName: String,
+        userIdentifier: UUID,
+        teamName: String? = nil,
+        imageData: Data? = nil,
+        teamImageData: Data? = nil,
+        unreadConversationCount: Int = 0,
+        loginCredentials: LoginCredentials? = nil
+    ) {
         self.userName = userName
         self.userIdentifier = userIdentifier
         self.teamName = teamName
@@ -76,12 +78,12 @@ public final class Account: NSObject, Codable {
     /// from the account store.
     ///
     public func updateWith(_ account: Account) {
-        guard self.userIdentifier == account.userIdentifier else { return }
-        self.userName = account.userName
-        self.teamName = account.teamName
-        self.imageData = account.imageData
-        self.teamImageData = account.teamImageData
-        self.loginCredentials = account.loginCredentials
+        guard userIdentifier == account.userIdentifier else { return }
+        userName = account.userName
+        teamName = account.teamName
+        imageData = account.imageData
+        teamImageData = account.teamImageData
+        loginCredentials = account.loginCredentials
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -90,11 +92,11 @@ public final class Account: NSObject, Codable {
     }
 
     public override var hash: Int {
-        return userIdentifier.hashValue
+        userIdentifier.hashValue
     }
 
     public override var debugDescription: String {
-        return "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tcredentials:\n\t\(String(describing: loginCredentials?.debugDescription))\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
+        "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tcredentials:\n\t\(String(describing: loginCredentials?.debugDescription))\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
     }
 
 }

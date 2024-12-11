@@ -23,7 +23,10 @@ import WireDataModel
 
 extension Message {
     class func openInMaps(_ messageData: LocationMessageData) {
-        messageData.openInMaps(with: MKCoordinateSpan(zoomLevel: Int(messageData.zoomLevel), viewSize: Float(UIScreen.main.bounds.height)))
+        messageData.openInMaps(with: MKCoordinateSpan(
+            zoomLevel: Int(messageData.zoomLevel),
+            viewSize: Float(UIScreen.main.bounds.height)
+        ))
     }
 }
 

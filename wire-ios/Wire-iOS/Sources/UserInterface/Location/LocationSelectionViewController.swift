@@ -23,7 +23,10 @@ import WireDataModel
 import WireDesign
 
 protocol LocationSelectionViewControllerDelegate: AnyObject {
-    func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData)
+    func locationSelectionViewController(
+        _ viewController: LocationSelectionViewController,
+        didSelectLocationWithData locationData: LocationData
+    )
     func locationSelectionViewControllerDidCancel(_ viewController: LocationSelectionViewController)
 }
 
@@ -149,8 +152,14 @@ final class LocationSelectionViewController: UIViewController {
             sendController.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             sendController.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             sendController.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            locationButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.locationButtonLeadingOffset),
-            locationButton.bottomAnchor.constraint(equalTo: sendController.topAnchor, constant: LayoutConstants.locationButtonBottomOffset),
+            locationButton.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: LayoutConstants.locationButtonLeadingOffset
+            ),
+            locationButton.bottomAnchor.constraint(
+                equalTo: sendController.topAnchor,
+                constant: LayoutConstants.locationButtonBottomOffset
+            ),
             locationButton.widthAnchor.constraint(equalToConstant: LayoutConstants.locationButtonWidth),
             locationButton.heightAnchor.constraint(equalToConstant: LayoutConstants.locationButtonHeight)
         ])
@@ -165,7 +174,7 @@ final class LocationSelectionViewController: UIViewController {
     // MARK: - Helpers
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private func presentUnauthorizedAlert() {
@@ -195,14 +204,18 @@ final class LocationSelectionViewController: UIViewController {
 
     private func formatAndUpdateAddress() {
         guard mapDidRender else { return }
-        geocoder.reverseGeocodeLocation(mapViewController.mapView.centerCoordinate.location) { [weak self] placemarks, error in
-            guard error == nil, let placemark = placemarks?.first else { return }
-            if let address = placemark.formattedAddress(false), !address.isEmpty {
-                self?.sendViewController.address = address
-            } else {
-                self?.sendViewController.address = nil
+        geocoder
+            .reverseGeocodeLocation(
+                mapViewController.mapView.centerCoordinate
+                    .location
+            ) { [weak self] placemarks, error in
+                guard error == nil, let placemark = placemarks?.first else { return }
+                if let address = placemark.formattedAddress(false), !address.isEmpty {
+                    self?.sendViewController.address = address
+                } else {
+                    self?.sendViewController.address = nil
+                }
             }
-        }
     }
 }
 
@@ -259,7 +272,12 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
 
         if !userShowedInitially {
             userShowedInitially = true
-            mapViewController.setRegion(to: newLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50, animated: true)
+            mapViewController.setRegion(
+                to: newLocation.coordinate,
+                latitudinalMeters: 50,
+                longitudinalMeters: 50,
+                animated: true
+            )
         }
     }
 

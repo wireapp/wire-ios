@@ -21,7 +21,10 @@ import UIKit
 final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
 
     enum Corner: Int {
-        case topLeft, topRight, bottomLeft, bottomRight
+        case topLeft
+        case topRight
+        case bottomLeft
+        case bottomRight
     }
 
     // MARK: - Properties
@@ -43,15 +46,15 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
         // Detect collisions
 
         self.collisionBehavior = UICollisionBehavior(items: [item])
-        self.collisionBehavior.translatesReferenceBoundsIntoBoundary = true
+        collisionBehavior.translatesReferenceBoundsIntoBoundary = true
 
         // Alter the properties of the item
 
         self.itemTransformBehavior = UIDynamicItemBehavior(items: [item])
-        self.itemTransformBehavior.density = 0.01
-        self.itemTransformBehavior.resistance = 7
-        self.itemTransformBehavior.friction = 0.1
-        self.itemTransformBehavior.allowsRotation = false
+        itemTransformBehavior.density = 0.01
+        itemTransformBehavior.resistance = 7
+        itemTransformBehavior.friction = 0.1
+        itemTransformBehavior.allowsRotation = false
         super.init()
 
         // Add child behaviors
@@ -103,9 +106,7 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
 
             if fieldBehavior.region.contains(location) {
                 // Force unwrap the result because we know we have an actual corner at this point.
-                let corner = Corner(rawValue: i)!
-
-                return corner
+                return Corner(rawValue: i)!
             }
         }
 
@@ -124,7 +125,7 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
 
     func updateFields(in bounds: CGRect) {
 
-        guard (bounds != .zero) && (bounds != .null) else {
+        guard bounds != .zero, bounds != .null else {
             return
         }
 
@@ -150,8 +151,10 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
         func updateFieldRegion(at corner: Corner, point: CGPoint) {
             let field = fieldBehaviors[corner.rawValue]
             field.position = point
-            field.region = UIRegion(size: CGSize(width: maxX - (horizontalPosition * 2),
-                                                 height: maxY - (verticalPosition * 2)))
+            field.region = UIRegion(size: CGSize(
+                width: maxX - (horizontalPosition * 2),
+                height: maxY - (verticalPosition * 2)
+            ))
         }
 
         updateFieldRegion(at: .topLeft, point: topLeft)
@@ -168,11 +171,11 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
     }
 
     func position(for corner: Corner) -> CGPoint {
-        return fieldBehaviors[corner.rawValue].position
+        fieldBehaviors[corner.rawValue].position
     }
 
     func positionForCurrentCorner() -> CGPoint? {
-        return currentCorner.flatMap(position)
+        currentCorner.flatMap(position)
     }
 
 }

@@ -24,7 +24,7 @@ extension AuthenticationCoordinator: BackupRestoreControllerDelegate {
         _ controller: BackupRestoreController,
         didSucceed: Bool
     ) {
-        self.executeActions([
+        executeActions([
             .configureNotifications,
             .completeBackupStep(didSucceed: didSucceed)
         ])

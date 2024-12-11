@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 
+@available(*, deprecated, message: "should use WireDesign's WireButtonStyle instead")
 struct ButtonStyle {
 
     typealias ButtonColors = SemanticColors.Button
@@ -109,11 +110,13 @@ struct ButtonStyle {
         normalStateColors: (
             background: .clear,
             title: ButtonColors.textEmptyEnabled,
-            border: nil),
+            border: nil
+        ),
         highlightedStateColors: (
             background: .clear,
             title: ButtonColors.textEmptyEnabled,
-            border: nil)
+            border: nil
+        )
     )
 
     static let iconButtonStyle = ButtonStyle(

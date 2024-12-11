@@ -58,6 +58,7 @@ final class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
                     XCTAssertFalse(conversation2.isPendingInitialFetch)
                 }
             },
-            for: self)
+            for: self
+        )
     }
 }

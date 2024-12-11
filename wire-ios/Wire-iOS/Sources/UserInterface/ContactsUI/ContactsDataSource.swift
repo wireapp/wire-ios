@@ -22,7 +22,8 @@ import WireSyncEngine
 
 protocol ContactsDataSourceDelegate: AnyObject {
 
-    func dataSource(_ dataSource: ContactsDataSource, cellFor user: UserType, at indexPath: IndexPath) -> UITableViewCell
+    func dataSource(_ dataSource: ContactsDataSource, cellFor user: UserType, at indexPath: IndexPath)
+        -> UITableViewCell
     func dataSource(_ dataSource: ContactsDataSource, didReceiveSearchResult newUser: [UserType])
 
 }
@@ -33,15 +34,17 @@ final class ContactsDataSource: NSObject {
 
     weak var delegate: ContactsDataSourceDelegate?
 
+    private let isFederationUsageAllowed: Bool
     private(set) var searchDirectory: SearchDirectory?
     private var sections = [[UserType]]()
-    private var collation: UILocalizedIndexedCollation { return .current() }
+    private var collation: UILocalizedIndexedCollation { .current() }
 
     // MARK: - Life Cycle
 
-    override init() {
+    init(isFederationUsageAllowed: Bool) {
+        self.isFederationUsageAllowed = isFederationUsageAllowed
         super.init()
-        searchDirectory = ZMUserSession.shared().map(SearchDirectory.init)
+        self.searchDirectory = ZMUserSession.shared().map(SearchDirectory.init)
         performSearch()
     }
 
@@ -64,7 +67,7 @@ final class ContactsDataSource: NSObject {
     }
 
     var shouldShowSectionIndex: Bool {
-        return ungroupedSearchResults.count >= type(of: self).MinimumNumberOfContactsToDisplaySections
+        ungroupedSearchResults.count >= type(of: self).MinimumNumberOfContactsToDisplaySections
     }
 
     // MARK: - Methods
@@ -72,31 +75,40 @@ final class ContactsDataSource: NSObject {
     private func performSearch() {
         guard let searchDirectory else { return }
 
-        let request = SearchRequest(query: searchQuery, searchOptions: [.contacts, .addressBook])
+        let selfUserDomain = SelfUser.provider?.providedSelfUser.domain
+        let searchDomain = isFederationUsageAllowed ? nil : selfUserDomain
+        let request = SearchRequest(
+            query: searchQuery,
+            searchDomain: searchDomain,
+            searchOptions: [.contacts, .addressBook]
+        )
         let task = searchDirectory.perform(request)
 
         task.addResultHandler { [weak self] searchResult, _ in
             guard let self else { return }
-            self.ungroupedSearchResults = searchResult.addressBook
-            self.delegate?.dataSource(self, didReceiveSearchResult: searchResult.addressBook)
+            ungroupedSearchResults = searchResult.addressBook
+            delegate?.dataSource(self, didReceiveSearchResult: searchResult.addressBook)
         }
 
         task.start()
     }
 
     func user(at indexPath: IndexPath) -> UserType {
-        return section(at: indexPath.section)[indexPath.row]
+        section(at: indexPath.section)[indexPath.row]
     }
 
     private func section(at index: Int) -> [UserType] {
-        return sections[index]
+        sections[index]
     }
 
     private func recalculateSections() {
         let nameSelector = #selector(getter: UserType.name)
 
         guard shouldShowSectionIndex else {
-            let sortedResults = collation.sortedArray(from: ungroupedSearchResults, collationStringSelector: nameSelector)
+            let sortedResults = collation.sortedArray(
+                from: ungroupedSearchResults,
+                collationStringSelector: nameSelector
+            )
             sections = [sortedResults] as? [[UserType]] ?? []
             return
         }
@@ -120,38 +132,38 @@ final class ContactsDataSource: NSObject {
 extension ContactsDataSource: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+        sections.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.section(at: section).count
+        self.section(at: section).count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return delegate?.dataSource(self, cellFor: user(at: indexPath), at: indexPath) ?? UITableViewCell()
+        delegate?.dataSource(self, cellFor: user(at: indexPath), at: indexPath) ?? UITableViewCell()
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard shouldShowSectionIndex && !self.section(at: section).isEmpty else { return nil }
+        guard shouldShowSectionIndex, !self.section(at: section).isEmpty else { return nil }
         return collation.sectionTitles[section]
     }
 
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return collation.sectionIndexTitles
+        collation.sectionIndexTitles
     }
 
     func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
-        return collation.section(forSectionIndexTitle: index)
+        collation.section(forSectionIndexTitle: index)
     }
 }
 
 extension ContactsDataSource: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 }
