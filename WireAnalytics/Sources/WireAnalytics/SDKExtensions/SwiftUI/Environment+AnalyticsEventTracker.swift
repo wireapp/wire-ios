@@ -18,19 +18,24 @@
 
 public import SwiftUI
 
-private struct WireAccentColorKey: EnvironmentKey {
-    static var defaultValue: AccentColor { .default }
-}
-
 public extension EnvironmentValues {
-    var wireAccentColor: WireAccentColor {
-        get { self[WireAccentColorKey.self] }
-        set { self[WireAccentColorKey.self] = newValue }
-    }
+    @Entry var analyticsEventTracker: (any AnalyticsEventTracker)? = .none
 }
 
-public extension View {
-    func wireAccentColor(_ accentColor: WireAccentColor) -> some View {
-        environment(\.wireAccentColor, accentColor)
-    }
-}
+// TODO: remove commented code
+//private struct AnalyticsEventTrackerKey: EnvironmentKey {
+//    static let defaultValue: (any AnalyticsEventTracker)? = .none
+//}
+//
+//public extension EnvironmentValues {
+//    var analyticsEventTracker: (any AnalyticsEventTracker)? {
+//        get { self[AnalyticsEventTrackerKey.self] }
+//        set { self[AnalyticsEventTrackerKey.self] = newValue }
+//    }
+//}
+//
+//public extension View {
+//    func analyticsEventTracker(_ analyticsEventTracker: (any AnalyticsEventTracker)?) -> some View {
+//        environment(\.analyticsEventTracker, analyticsEventTracker)
+//    }
+//}

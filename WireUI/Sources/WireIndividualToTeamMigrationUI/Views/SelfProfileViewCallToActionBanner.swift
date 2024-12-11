@@ -28,6 +28,8 @@ public struct SelfProfileViewCallToActionBanner: View {
         case createWireTeam
     }
 
+    @Environment(\.analyticsEventTracker) private var analyticsEventTracker // TODO: make sure it's injected
+
     let actionCallback: @Sendable (Action) -> Void
 
     public init(actionCallback: @escaping @Sendable (Action) -> Void) {
@@ -39,36 +41,33 @@ public struct SelfProfileViewCallToActionBanner: View {
             .padding(8)
             .bannerBackground()
     }
-}
 
-@MainActor
-@ViewBuilder
-private func contentView(
-    actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void
-) -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-        Label(title: {
-            Text(String.localized(key: "individualToTeam.banner.title", bundle: .module))
-                .wireTextStyle(.h5)
-        }, icon: {
-            Image.info
-        })
-        .fontWeight(.bold)
-        Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
-            .wireTextStyle(.subline1)
-            .lineLimit(nil)
-
-        Button(
-            action: {
-                // TODO: trigger `AnalyticsEvent.UI.clickedPersonalMigrationCTA`
-                actionCallback(.createWireTeam)
-            },
-            label: {
-                Text(String.localized(key: "individualToTeam.banner.button", bundle: .module))
+    @ViewBuilder
+    private func contentView(
+        actionCallback: @escaping @Sendable (Action) -> Void
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label {
+                Text(String.localized(key: "individualToTeam.banner.title", bundle: .module))
+                    .wireTextStyle(.h5)
+            } icon: {
+                Image.info
             }
-        )
-        .wireButtonStyle(.secondary)
-        .fixedSize()
+            .fontWeight(.bold)
+
+            Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
+                .wireTextStyle(.subline1)
+                .lineLimit(nil)
+
+            Button {
+                analyticsEventTracker?.trackEvent(.UI.clickedPersonalMigrationCTA)
+                actionCallback(.createWireTeam)
+            } label: {
+                Text("individualToTeam.banner.button", bundle: .module)
+            }
+            .wireButtonStyle(.secondary)
+            .fixedSize()
+        }
     }
 }
 
