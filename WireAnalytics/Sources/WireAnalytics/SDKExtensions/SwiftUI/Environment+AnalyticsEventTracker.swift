@@ -23,19 +23,19 @@ public extension EnvironmentValues {
 }
 
 // TODO: remove commented code
-//private struct AnalyticsEventTrackerKey: EnvironmentKey {
+// private struct AnalyticsEventTrackerKey: EnvironmentKey {
 //    static let defaultValue: (any AnalyticsEventTracker)? = .none
-//}
+// }
 //
-//public extension EnvironmentValues {
+// public extension EnvironmentValues {
 //    var analyticsEventTracker: (any AnalyticsEventTracker)? {
 //        get { self[AnalyticsEventTrackerKey.self] }
 //        set { self[AnalyticsEventTrackerKey.self] = newValue }
 //    }
-//}
+// }
 //
-//public extension View {
+// public extension View {
 //    func analyticsEventTracker(_ analyticsEventTracker: (any AnalyticsEventTracker)?) -> some View {
 //        environment(\.analyticsEventTracker, analyticsEventTracker)
 //    }
-//}
+// }

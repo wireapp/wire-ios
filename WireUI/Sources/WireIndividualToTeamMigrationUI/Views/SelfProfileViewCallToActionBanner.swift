@@ -17,10 +17,10 @@
 //
 
 import SwiftUI
+import WireAnalytics
 import WireDesign
 import WireFoundation
 import WireReusableUIComponents
-import WireAnalytics
 
 public struct SelfProfileViewCallToActionBanner: View {
 
