@@ -183,7 +183,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As the team owner you can invite and remove team members and  manage team settings"
+            "value" : "This change is permanent and irrevocable"
           }
         }
       }
@@ -193,7 +193,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This change is permanent and irrevocable"
+            "value" : "As the team owner you can invite and remove team members and  manage team settings"
           }
         }
       }
