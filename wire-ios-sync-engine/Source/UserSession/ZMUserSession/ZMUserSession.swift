@@ -925,10 +925,26 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: notificationContext
         ).post()
 
-        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-        if selfClient?.hasRegisteredMLSClient == true {
+        WaitingGroupTask(context: syncContext) { [self] in
+            await fetchBackendMLSPublicKeys()
+            await fetchAndStoreFeatureConfig()
 
-            WaitingGroupTask(context: syncContext) { [self] in
+            let selfClient = await syncContext.perform {
+                return ZMUser.selfUser(in: self.syncContext).selfClient()
+            }
+
+            // If we discover that
+            // the MLS feature is enabled, there are MLS public keys on the backend and there is no registered MLS client,
+            // we should create one.
+            if let selfClient, ZMClientRegistrationStatus.needsToRegisterMLSClient(in: syncContext) {
+                await createMLSClient(client: selfClient)
+            }
+
+            let hasRegisteredMLSClient = await syncContext.perform {
+                return selfClient?.hasRegisteredMLSClient == true
+            }
+
+            if hasRegisteredMLSClient {
                 // these operations are not dependent and should not be executed in same do/catch
                 do {
                     // rework implementation of following method - WPB-6053
@@ -946,7 +962,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         WaitingGroupTask(context: syncContext) { [self] in
-            await fetchAndStoreFeatureConfig()
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
         }
@@ -1011,6 +1026,28 @@ extension ZMUserSession: ZMSyncStateDelegate {
             try await getFeatureConfigAction.perform(in: notificationContext)
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
+        }
+    }
+
+    private func fetchBackendMLSPublicKeys() async {
+        do {
+            var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
+            let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
+            let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+            BackendInfo.isMLSEnabled = hasValidKeys
+        } catch {
+            WireLogger.mls.error("Backend doesn't have MLS public keys: \(String(reflecting: error))")
+        }
+    }
+
+    private func createMLSClient(client: UserClient) async {
+        guard let mlsClientID = MLSClientID(userClient: client) else {
+            fatalError("Needs to register MLS client but can't retrieve qualified client ID")
+        }
+        do {
+            try await self.coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
+        } catch {
+            WireLogger.mls.error("Failed to initialise mls client: \(error)")
         }
     }
 
