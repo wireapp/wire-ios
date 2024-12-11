@@ -18,6 +18,8 @@
 
 import WireAnalytics
 
+// TODO: add segmentations
+
 public extension AnalyticsEvent.UI {
 
     /// Tap on the Notification dot to see the CTA.
@@ -40,10 +42,9 @@ public extension AnalyticsEvent.User {
     ///
     /// Segmentation: app_name; app_version
 
-    static let personalTeamCreationFlowStarted =
-        AnalyticsEvent(name: "user.personal-team-creation-flow-started") // TODO: implement
+    static let personalTeamCreationFlowStarted = AnalyticsEvent(name: "user.personal-team-creation-flow-started")
 
-    /// Count of user dropping for at each modal step (Step 1 through 3)
+    /// Count of user dropping at each modal step (Step 1 through 3)
     ///
     /// Segmentation: app_name; app_version; modal_disclaimers; modal_team-name; modal_confirmation
 
