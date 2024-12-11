@@ -123,7 +123,25 @@ extension ConversationListViewController {
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
+        
+        var didViewSelfProfile: Bool {
+            get {
+                let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
+                let value = userDefaults.object(forKey: .didViewSelfProfile)
+                
+                if value == nil {
+                    userDefaults.set(false, forKey: .didViewSelfProfile)
+                }
 
+                return (value as? Bool) == true
+            }
+            
+            set {
+                let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
+                userDefaults.set(newValue, forKey: .didViewSelfProfile)
+            }
+        }
+        
         public var showProfileNotificationsBadge: Bool {
             if userSession.selfUser.isTeamMember {
                 return false
@@ -133,14 +151,7 @@ extension ConversationListViewController {
                 return false
             }
 
-            let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
-            let value = userDefaults.object(forKey: .didViewSelfProfile)
-
-            if value == nil {
-                userDefaults.set(false, forKey: .didViewSelfProfile)
-            }
-
-            return (value as? Bool) == false ? true : false
+            return !didViewSelfProfile
         }
 
         init(
@@ -248,8 +259,7 @@ extension ConversationListViewController.ViewModel {
             queue: .main
         ) { [weak self] _ in
             guard let self else { return }
-            let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
-            userDefaults.set(true, forKey: .didViewSelfProfile)
+            didViewSelfProfile = true
             Task { [weak self] in
                 await self?.viewController?.refreshAccountImageViewNotificationBadge()
             }
