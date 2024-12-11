@@ -123,7 +123,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         }
 
         // WHEN
-        _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { _, _ in
+        _ = await sut.decryptProteusEventAndAddClient(event, in: syncMOC) { _, _ in
             throw ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.SessionNotFound)
         }
 
