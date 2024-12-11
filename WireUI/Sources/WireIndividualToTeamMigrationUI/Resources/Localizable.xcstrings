@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    " *" : {
+
+    },
+    "•" : {
+
+    },
     "individualToTeam.banner.body" : {
       "localizations" : {
         "en" : {
@@ -162,13 +168,32 @@
         }
       }
     },
-    "individualToTeam.confirmation.body" : {
-      "extractionState" : "manual",
+    "individualToTeam.confirmation.body.createTeam" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• You create a team and transfer your personal account into a team account\n• As the team owner you can invite and remove team members and  manage team settings\n• This change is permanent and irrevocable"
+            "value" : "You create a team and transfer your personal account into a team account"
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.body.permanent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As the team owner you can invite and remove team members and  manage team settings"
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.body.teamOwner" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This change is permanent and irrevocable"
           }
         }
       }
@@ -412,17 +437,6 @@
         }
       }
     },
-    "individualToTeam.plansURL" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "https://wire.com/en/pricing"
-          }
-        }
-      }
-    },
     "individualToTeam.progressCount" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -461,7 +475,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your team"
+            "value" : "Your Team"
           }
         }
       }
@@ -472,7 +486,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Team name *"
+            "value" : "Team name"
           }
         }
       }

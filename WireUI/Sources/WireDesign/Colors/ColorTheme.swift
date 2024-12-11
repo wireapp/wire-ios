@@ -44,6 +44,8 @@ public enum ColorTheme {
         public static let onHighlight = UIColor(light: .black, dark: .black)
 
         public static let secondaryText = UIColor(light: .gray70, dark: .gray60)
+
+        public static let requiredField = UIColor(light: .red500Light, dark: .red500Dark)
     }
 
     public enum Backgrounds {

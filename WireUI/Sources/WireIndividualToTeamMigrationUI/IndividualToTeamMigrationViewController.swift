@@ -26,6 +26,7 @@ import WireReusableUIComponents
 public class IndividualToTeamMigrationViewController: UIViewController {
     public enum Action: Sendable {
         case cancel
+        case toLearnMoreAboutPlans
         case completionGoToApp
         case completionGoToTeamManagement
     }
@@ -87,6 +88,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     enum Transition: Sendable {
         case toCancellationAlert
         case toPlans
+        case toLearnMoreAboutPlans
         case toTeamName
         case toConfirmation(teamName: String)
         case toTeamCreation(teamName: String)
@@ -167,6 +169,9 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: false)
+
+        case .toLearnMoreAboutPlans:
+            actionCallback(.toLearnMoreAboutPlans)
         case .toTeamName:
             let vc = hostedView(
                 for: .teamName,
@@ -298,7 +303,7 @@ private func viewFor(
         TeamPlanSelectionView(features: features) { action in
             switch action {
             case .goToPlans:
-                transitionCallback(.toPlans)
+                transitionCallback(.toLearnMoreAboutPlans)
             case .continue:
                 transitionCallback(.toTeamName)
             }

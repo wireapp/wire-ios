@@ -32,8 +32,21 @@ struct ConfirmationView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 56) {
-            Text(String.localized(key: "individualToTeam.confirmation.body", bundle: .module))
-                .wireTextStyle(.body1)
+            VStack(alignment: .leading) {
+                HStack(alignment: .top, spacing: 4) {
+                    Text("•")
+                    Text(String.localized(key: "individualToTeam.confirmation.body.createTeam", bundle: .module))
+                }
+                HStack(spacing: 4) {
+                    Text("•")
+                    Text(String.localized(key: "individualToTeam.confirmation.body.teamOwner", bundle: .module))
+                }
+                HStack(spacing: 4) {
+                    Text("•")
+                    Text(String.localized(key: "individualToTeam.confirmation.body.permanent", bundle: .module))
+                }
+            }
+            .wireTextStyle(.body1)
             VStack(alignment: .leading, spacing: 16) {
                 Checkbox(
                     isChecked: $migrationConfirmed,
