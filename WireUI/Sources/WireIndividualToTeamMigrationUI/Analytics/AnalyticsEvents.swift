@@ -26,14 +26,17 @@ public extension AnalyticsEvent.UI {
     ///
     /// Segmentation: app_name; app_version; migration_dot_active;
 
-    static let clickedProfile = AnalyticsEvent(name: "ui.clicked-profile") // TODO: implement
+    static func clickedProfile(isMigrationDotActive: Bool) -> AnalyticsEvent { // TODO: implement
+        .init(name: "ui.clicked-profile") // TODO: segmentation
+    }
 
     /// Tap on the create a team CTA
     ///
     /// Segmentation: app_name; app_version; clicked_create_team; clicked_dismiss_cta
 
-    static let clickedPersonalMigrationCTA = AnalyticsEvent(name: "ui.clicked-personal-migration-cta")
-
+    static func clickedPersonalMigrationCTA(todo_segmentation: Void) -> AnalyticsEvent {
+        .init(name: "ui.clicked-personal-migration-cta") // TODO: segmentation
+    }
 }
 
 public extension AnalyticsEvent.User {
@@ -55,22 +58,21 @@ public extension AnalyticsEvent.User {
     ///
     /// Segmentation: app_name; app_version; modal_disclaimers; modal_team-name; modal_confirmation
 
-    static let personalTeamCreationFlowStopped =
-        AnalyticsEvent(name: "user.personal-team-creation-flow-stopped") // TODO: implement
+    static let personalTeamCreationFlowStopped = AnalyticsEvent(name: "user.personal-team-creation-flow-stopped") // TODO: implement
 
     /// Count of user reaching the cancellation modal
     ///
     /// Segmentation: app_name; app_version; modal_continue-clicked; modal_leave-clicked
 
-    static let personalTeamCreationFlowCancelled =
-        AnalyticsEvent(name: "user.personal-team-creation-flow-cancelled") // TODO: implement
+    static let personalTeamCreationFlowCancelled = AnalyticsEvent(name: "user.personal-team-creation-flow-cancelled") // TODO: implement
 
     /// Count of user reach the final stage (Step 4)
     ///
     /// Segmentation: app_name; app_version; modal_back-to-wire-clicked; modal_open-tm-clicked
 
-    static let personalTeamCreationFlowCompleted =
-        AnalyticsEvent(name: "user.personal-team-creation-flow-completed") // TODO: implement
+    static func personalTeamCreationFlowCompleted(todo_segmentation: Void) -> AnalyticsEvent {
+        .init(name: "user.personal-team-creation-flow-completed") // TODO: segmentation
+    }
 
     // TODO: Count of user click on the "Open Team Management" button on the final stage
     // (see event and segmentation “user.personal-team-creation-flow-completed”)

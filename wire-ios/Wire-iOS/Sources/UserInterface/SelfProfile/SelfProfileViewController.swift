@@ -266,6 +266,7 @@ final class SelfProfileViewController: UIViewController {
         let vc = IndividualToTeamMigrationViewController(
             useCase: useCase,
             userProfileName: userName,
+            analyticsEventTracker: analyticsEventTracker,
             actionCallback: { [weak self] action in
                 Task { [weak self] in
                     await MainActor.run { [weak self] in

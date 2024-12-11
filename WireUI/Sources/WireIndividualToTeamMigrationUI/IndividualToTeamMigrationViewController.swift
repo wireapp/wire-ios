@@ -216,8 +216,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                fatalError("TODO")
-                //analyticsEventTracker?.trackEvent(step.flowStartedAnalyticsEvent) // TODO: completed event
+                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(todo_segmentation: ()))
             }
         case .toApp:
             actionCallback(.completionGoToApp)

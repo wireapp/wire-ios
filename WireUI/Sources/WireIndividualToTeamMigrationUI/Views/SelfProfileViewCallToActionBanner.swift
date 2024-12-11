@@ -60,7 +60,7 @@ public struct SelfProfileViewCallToActionBanner: View {
                 .lineLimit(nil)
 
             Button {
-                analyticsEventTracker?.trackEvent(.UI.clickedPersonalMigrationCTA)
+                analyticsEventTracker?.trackEvent(.UI.clickedPersonalMigrationCTA(todo_segmentation: ()))
                 actionCallback(.createWireTeam)
             } label: {
                 Text("individualToTeam.banner.button", bundle: .module)
@@ -107,5 +107,5 @@ public class SelfProfileViewCallToActionBannerHostingController: UIHostingContro
 
 @available(iOS 17.0, *)
 #Preview {
-    SelfProfileViewCallToActionBanner(actionCallback: { _ in })
+    SelfProfileViewCallToActionBanner { _ in }
 }

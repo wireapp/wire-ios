@@ -18,18 +18,18 @@
 
 import WireAnalytics
 
-extension IndividualToTeamMigrationViewController.Step {
+extension IndividualToTeamMigrationViewController.Step { // TODO: actually it's better to pass the step into the event
 
-    var flowStartedAnalyticsEvent: AnalyticsEvent {
+    var flowStartedAnalyticsEvent: AnalyticsEvent! {
         switch self {
-        case .teamPlanSelection(let features):
+        case .teamPlanSelection:
             .User.personalTeamCreationFlowStarted(step: 1)
         case .teamName:
             .User.personalTeamCreationFlowStarted(step: 2)
-        case .confirmation(let teamName):
-            .User.personalTeamCreationFlowStarted(step: 1)
-        case .completion(let profileName, let teamName):
-            fatalError("TODO")
+        case .confirmation:
+            .User.personalTeamCreationFlowStarted(step: 3)
+        case .completion:
+            .none
         }
     }
 }
