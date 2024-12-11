@@ -16,9 +16,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:WireFoundation",
-        "identifier" : "WireLoggingTests",
-        "name" : "WireLoggingTests"
+        "containerPath" : "container:..\/WireFoundation",
+        "identifier" : "WireCryptoTests",
+        "name" : "WireCryptoTests"
       }
     },
     {
