@@ -86,7 +86,6 @@ public class IndividualToTeamMigrationViewController: UIViewController {
 
     enum Transition: Sendable {
         case toCancellationAlert
-        case dismissCancellationAlert
         case toPlans
         case toTeamName
         case toConfirmation(teamName: String)
@@ -157,13 +156,9 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             let alert = cancellationSheetFactory(
                 onLeave: { [weak self] in
                     self?.actionCallback(.cancel)
-                }, onContinue: { [weak self] in
-                    self?.transition(to: .dismissCancellationAlert)
-                }
+                }, onContinue: { }
             )
             childController.present(alert, animated: true)
-        case .dismissCancellationAlert:
-            childController.dismiss(animated: true)
         case .toPlans:
             let vc = hostedView(
                 for: .teamPlanSelection(features: features),
