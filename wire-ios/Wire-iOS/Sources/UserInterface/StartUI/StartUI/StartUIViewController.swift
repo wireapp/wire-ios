@@ -265,4 +265,5 @@ extension StartUIViewController: UISearchResultsUpdating, UISearchBarDelegate {
         searchBar.text = ""
         performSearch()
     }
+
 }
