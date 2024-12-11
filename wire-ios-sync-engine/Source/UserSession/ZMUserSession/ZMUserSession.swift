@@ -51,6 +51,7 @@ public final class ZMUserSession: NSObject {
         }
         return apiServiceFactory(clientId, userId)
     }
+
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType

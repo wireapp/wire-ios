@@ -158,7 +158,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             let alert = cancellationSheetFactory(
                 onLeave: { [weak self] in
                     self?.actionCallback(.cancel)
-                }, onContinue: { }
+                }, onContinue: {}
             )
             childController.present(alert, animated: true)
         case .toPlans:
@@ -169,7 +169,6 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: false)
-
         case .toLearnMoreAboutPlans:
             actionCallback(.toLearnMoreAboutPlans)
         case .toTeamName:
