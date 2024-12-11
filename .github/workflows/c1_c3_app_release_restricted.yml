@@ -10,6 +10,7 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_1_restricted
+      countly_enabled: false
       skip_security_tests: false
     secrets: inherit
 
@@ -17,5 +18,6 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_3_restricted
+      countly_enabled: false
       skip_security_tests: false
     secrets: inherit
