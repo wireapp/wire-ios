@@ -340,38 +340,42 @@ struct AccountImageView_Previews: PreviewProvider {
         _ availability: Availability?
     ) -> some View {
         NavigationStack {
-            AccountImageViewRepresentable(source: source,
-                                          availability: availability,
-                                          showNotificationsBadge: true)
-                // slightly differnet colors so that we can verify that the view modifiers work
-                .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
-                .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
-                .availabilityIndicatorAwayColor(.init(red: 0.7, green: 0.15, blue: 0.07, alpha: 1))
-                .availabilityIndicatorBusyColor(.init(red: 0.42, green: 0.19, blue: 0.1, alpha: 1))
-                .availabilityIndicatorBackgroundViewColor(.init(red: 0.83, green: 0.81, blue: 0.8, alpha: 1))
-                // set a frame in order check that it scales,
-                // ensure it scales with "aspectFit" content mode
-                .frame(width: 32, height: 50)
-                // make the frame visible in order to be able
-                // to check the alignment and size
-                .background(Color(UIColor.systemGray2))
-                .center()
-                // scale in order to better see it, keeping the
-                // ratio between the border width and total size
-                .scaleEffect(6)
-                .navigationTitle(Text(verbatim: "Conversations"))
-                .navigationBarTitleDisplayMode(.inline)
-                .background(Color(UIColor.systemGray3))
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {} label: {
-                            AccountImageViewRepresentable(source: source,
-                                                          availability: availability,
-                                                          showNotificationsBadge: true)
-                                .padding(.horizontal)
-                        }
+            AccountImageViewRepresentable(
+                source: source,
+                availability: availability,
+                showNotificationsBadge: true
+            )
+            // slightly differnet colors so that we can verify that the view modifiers work
+            .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
+            .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
+            .availabilityIndicatorAwayColor(.init(red: 0.7, green: 0.15, blue: 0.07, alpha: 1))
+            .availabilityIndicatorBusyColor(.init(red: 0.42, green: 0.19, blue: 0.1, alpha: 1))
+            .availabilityIndicatorBackgroundViewColor(.init(red: 0.83, green: 0.81, blue: 0.8, alpha: 1))
+            // set a frame in order check that it scales,
+            // ensure it scales with "aspectFit" content mode
+            .frame(width: 32, height: 50)
+            // make the frame visible in order to be able
+            // to check the alignment and size
+            .background(Color(UIColor.systemGray2))
+            .center()
+            // scale in order to better see it, keeping the
+            // ratio between the border width and total size
+            .scaleEffect(6)
+            .navigationTitle(Text(verbatim: "Conversations"))
+            .navigationBarTitleDisplayMode(.inline)
+            .background(Color(UIColor.systemGray3))
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {} label: {
+                        AccountImageViewRepresentable(
+                            source: source,
+                            availability: availability,
+                            showNotificationsBadge: true
+                        )
+                        .padding(.horizontal)
                     }
                 }
+            }
         }
     }
 }

@@ -123,25 +123,25 @@ extension ConversationListViewController {
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
-        
+
         var didViewSelfProfile: Bool {
             get {
                 let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
                 let value = userDefaults.object(forKey: .didViewSelfProfile)
-                
+
                 if value == nil {
                     userDefaults.set(false, forKey: .didViewSelfProfile)
                 }
 
                 return (value as? Bool) == true
             }
-            
+
             set {
                 let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
                 userDefaults.set(newValue, forKey: .didViewSelfProfile)
             }
         }
-        
+
         public var showProfileNotificationsBadge: Bool {
             if userSession.selfUser.isTeamMember {
                 return false
