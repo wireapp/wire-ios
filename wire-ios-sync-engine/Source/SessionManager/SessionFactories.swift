@@ -62,7 +62,7 @@ open class AuthenticatedSessionFactory {
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
 
-        let apiServiceFactory: APIServiceFactory = { [environment, minTLSVersion] clientID, userID in
+        let apiServiceFactory: APIServiceFactory = { [weak self, environment, minTLSVersion] clientID, userID in
             let wireAssembly = WireAPI.Assembly(
                 userID: userID,
                 clientID: clientID,
@@ -81,7 +81,8 @@ open class AuthenticatedSessionFactory {
                                 }
                             }
                         )
-                    }
+                    },
+                    proxySettings: self?.proxySettings
                 ),
                 minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
                 cookieEncryptionKey: UserDefaults.cookiesKey()
@@ -150,6 +151,21 @@ open class AuthenticatedSessionFactory {
 
     private(set) var proxyUsername: String?
     private(set) var proxyPassword: String?
+
+    private var proxySettings: ProxySettings? {
+        guard let proxy = environment.proxy else { return nil }
+
+        if proxy.needsAuthentication {
+            guard let proxyUsername, let proxyPassword else {
+                fatalInternal("Proxy needs authentication but credentials are missing")
+                return nil
+            }
+
+            return .authenticated(host: proxy.host, port: proxy.port, username: proxyUsername, password: proxyPassword)
+        } else {
+            return .unauthenticated(host: proxy.host, port: proxy.port)
+        }
+    }
 }
 
 // MARK: -
