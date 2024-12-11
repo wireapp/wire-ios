@@ -53,6 +53,7 @@ playground.xcworkspace
 # Ignore Package.resolved files in packages and projects, only track the one in the workspace.
 **/Package.resolved
 !wire-ios-mono.xcworkspace/xcshareddata/swiftpm/Package.resolved
+**/*-Package.xcscheme
 
 # CocoaPods
 #
