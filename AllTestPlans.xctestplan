@@ -1,0 +1,266 @@
+{
+  "configurations" : [
+    {
+      "id" : "C29A93D3-25D1-4888-95A9-CE94B0170156",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireAPI",
+      "identifier" : "WireAPITests",
+      "name" : "WireAPITests"
+    },
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireMainNavigationUITests",
+        "name" : "WireMainNavigationUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-transport\/WireTransport.xcodeproj",
+        "identifier" : "3E88BCB11B1F35DF00232589",
+        "name" : "WireTransport-ios-tests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-sync-engine\/WireSyncEngine.xcodeproj",
+        "identifier" : "3E1860C2191A649D000FE027",
+        "name" : "UnitTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireDomain\/Project\/WireDomain Project.xcodeproj",
+        "identifier" : "01D0DCAF2C1C8C880076CB1C",
+        "name" : "WireDomainTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-request-strategy\/WireRequestStrategy.xcodeproj",
+        "identifier" : "166901731D707509000FE4AF",
+        "name" : "WireRequestStrategyTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireSidebarUITests",
+        "name" : "WireSidebarUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-images\/WireImages.xcodeproj",
+        "identifier" : "096960151B663E7C006DF53B",
+        "name" : "WireImages-iosTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireFoundation",
+        "identifier" : "WireFoundationTests",
+        "name" : "WireFoundationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-protos\/WireProtos.xcodeproj",
+        "identifier" : "090838081B872DBF00629095",
+        "name" : "WireProtosTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireIndividualToTeamMigrationUITests",
+        "name" : "WireIndividualToTeamMigrationUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-cryptobox\/WireCryptobox.xcodeproj",
+        "identifier" : "BA7EF9681B7109B600204A8E",
+        "name" : "WireCryptoboxTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-system\/WireSystem.xcodeproj",
+        "identifier" : "54A3272B1B99A3190004EB95",
+        "name" : "WireSystem Tests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-notification-engine\/WireNotificationEngine.xcodeproj",
+        "identifier" : "EE761664299E60C9005DB75F",
+        "name" : "WireNotificationEngineTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireAccountImageUITests",
+        "name" : "WireAccountImageUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-testing\/WireTesting.xcodeproj",
+        "identifier" : "096AD7C51B68D41D00E007A8",
+        "name" : "WireTesting-Tests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-canvas\/WireCanvas.xcodeproj",
+        "identifier" : "01E9445F2D01805B006921E4",
+        "name" : "WireCanvasTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireSettingsUITests",
+        "name" : "WireSettingsUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireAPI",
+        "identifier" : "WireAPITests",
+        "name" : "WireAPITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-mocktransport\/WireMockTransport.xcodeproj",
+        "identifier" : "54C9023D1B7532DD007162A8",
+        "name" : "WireMockTransportTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-link-preview\/WireLinkPreview.xcodeproj",
+        "identifier" : "BFF057931D25434E004A2C29",
+        "name" : "WireLinkPreviewTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireLogging",
+        "identifier" : "WireLoggingTests",
+        "name" : "WireLoggingTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireConversationListUITests",
+        "name" : "WireConversationListUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-ziphy\/Ziphy.xcodeproj",
+        "identifier" : "DBF380631B15C0B800369FB7",
+        "name" : "ZiphyTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-utilities\/WireUtilities.xcodeproj",
+        "identifier" : "3E88BD421B1F3EA300232589",
+        "name" : "WireUtilities-Tests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios\/Wire-iOS.xcodeproj",
+        "identifier" : "E6579E352AFF9B30004E7FD8",
+        "name" : "Wire-iOS UnitTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireMoveToFolderUITests",
+        "name" : "WireMoveToFolderUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-share-engine\/WireShareEngine.xcodeproj",
+        "identifier" : "5470D3F11D76E1B000FDE440",
+        "name" : "WireShareEngineTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireDomain",
+        "identifier" : "WireDomainPkgTests",
+        "name" : "WireDomainPkgTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios\/Wire-iOS.xcodeproj",
+        "identifier" : "BACB88501AF7C48900DDCDB0",
+        "name" : "Wire-iOS-Tests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireAnalytics",
+        "identifier" : "WireAnalyticsTests",
+        "name" : "WireAnalyticsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:scripts",
+        "identifier" : "TrimStringCatalogsTests",
+        "name" : "TrimStringCatalogsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:wire-ios-data-model\/WireDataModel.xcodeproj",
+        "identifier" : "F9C9A5051CAD5DF10039E10C",
+        "name" : "WireDataModelTests"
+      }
+    }
+  ],
+  "version" : 1
+}

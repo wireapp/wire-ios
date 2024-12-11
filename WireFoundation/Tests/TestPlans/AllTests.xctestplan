@@ -9,6 +9,12 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
     "testExecutionOrdering" : "random"
@@ -16,14 +22,7 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:WireFoundation",
-        "identifier" : "WireLoggingTests",
-        "name" : "WireLoggingTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireFoundation",
+        "containerPath" : "container:",
         "identifier" : "WireFoundationTests",
         "name" : "WireFoundationTests"
       }

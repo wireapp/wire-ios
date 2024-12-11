@@ -19,6 +19,10 @@
         "enabled" : false,
         "key" : "LIBDISPATCH_COOPERATIVE_POOL_STRICT",
         "value" : "1"
+      },
+      {
+        "key" : "CI",
+        "value" : "${CI}"
       }
     ],
     "language" : "en",

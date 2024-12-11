@@ -21,9 +21,14 @@ import XCTest
 
 import struct WireAPI.HTTPRequest
 
+
+
 /// Provides convenience to snapshot `HTTPRequest` objects.
 struct HTTPRequestSnapshotHelper {
 
+    // change to nil, when developing locally
+    private let defaultRecordMode: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo.environment["CI"] != nil ? .never : nil
+    
     /// Snapshot test a given request
     /// - Parameters:
     ///   - request: httpRequest to verify
@@ -40,9 +45,7 @@ struct HTTPRequestSnapshotHelper {
         function: String = #function,
         line: UInt = #line
     ) {
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             let errorMessage = verifySnapshot(
                 of: request,
                 as: .dump,
@@ -76,9 +79,7 @@ struct HTTPRequestSnapshotHelper {
         function: String = #function,
         line: UInt = #line
     ) {
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             let errorMessage = verifySnapshot(
                 of: request,
                 as: .curl,

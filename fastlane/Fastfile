@@ -491,6 +491,8 @@ platform :ios do
             raise e # Stops execution immediately if the build fails
         end
 
+        ci_args = is_running_on_ci ? "CI=1" : nil
+        
         begin
             UI.message "🧪 Running tests for scheme: #{scheme}"
             run_tests(
@@ -511,6 +513,7 @@ platform :ios do
                 skip_package_dependencies_resolution: true,
                 number_of_retries: 2,
                 test_without_building: true,
+                xcargs: ci_args
             )
         rescue => e
             puts "⚠️ Tests failed for scheme: #{scheme}, but continuing..."

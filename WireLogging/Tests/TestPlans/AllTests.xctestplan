@@ -10,6 +10,12 @@
   ],
   "defaultOptions" : {
     "codeCoverage" : false,
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en"
   },
   "testTargets" : [

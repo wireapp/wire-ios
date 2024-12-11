@@ -9,6 +9,12 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [

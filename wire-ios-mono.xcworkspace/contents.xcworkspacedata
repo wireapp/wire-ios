@@ -25,6 +25,9 @@
    <FileRef
       location = "group:setup.sh">
    </FileRef>
+   <FileRef
+      location = "group:AllTestPlans.xctestplan">
+   </FileRef>
    <Group
       location = "group:fastlane"
       name = "fastlane">
