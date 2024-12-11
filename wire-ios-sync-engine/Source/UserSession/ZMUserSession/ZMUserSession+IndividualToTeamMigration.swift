@@ -16,36 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents the backend API versions implemented by the client.
+import Foundation
+import WireAPI
+import WireDomain
+import WireDomainAPI
 
-@objc
-public enum APIVersion: Int32 {
-    case v0
-    case v1
-    case v2
-    case v3
-    case v4
-    case v5
-    case v6
-    case v7
-}
-
-// MARK: - CaseIterable
-
-extension APIVersion: CaseIterable {}
-
-// MARK: - Comparable
-
-extension APIVersion: Comparable {
-
-    public static func < (lhs: Self, rhs: Self) -> Bool {
-        lhs.rawValue < rhs.rawValue
-    }
-
-}
-
-public extension APIVersion {
-    var useQualifiedIds: Bool {
-        self != .v0
+public extension ZMUserSession {
+    func createIndividualToTeamMigrationUseCase(apiVersion: WireAPI.APIVersion) -> IndividualToTeamMigrationUseCase? {
+        guard let apiService else {
+            assertionFailure("apiService is nil")
+            return nil
+        }
+        return IndividualToTeamMigrationUseCaseImplementation(
+            apiService: apiService,
+            apiVersion: apiVersion
+        )
     }
 }
