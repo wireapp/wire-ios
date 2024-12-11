@@ -21,7 +21,7 @@ public import WireAnalytics
 
 public typealias CountlyWrapper = CountlyDummy
 
-public struct CountlyDummy: CountlyAbstraction {
+public struct CountlyDummy: CountlyProtocol {
 
     public init() {}
 

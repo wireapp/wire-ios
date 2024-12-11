@@ -24,7 +24,7 @@ import XCTest
 class AnalyticsServiceTests: XCTestCase {
 
     private var sut: AnalyticsService!
-    private var countlyMock: MockCountlyAbstraction!
+    private var countlyMock: MockCountlyProtocol!
 
     override func setUpWithError() throws {
         countlyMock = .init()

@@ -20,7 +20,7 @@ public import Foundation
 
 // sourcery: AutoMockable
 /// Mirrors the API of `Countly`.
-public protocol CountlyAbstraction {
+public protocol CountlyProtocol {
 
     func resetInstance()
 
