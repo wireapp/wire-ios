@@ -18,7 +18,7 @@
 
 import WireAnalytics
 
-extension AnalyticsEvent.UI {
+public extension AnalyticsEvent.UI {
 
     /// Tap on the Notification dot to see the CTA.
     ///
@@ -34,7 +34,7 @@ extension AnalyticsEvent.UI {
 
 }
 
-extension AnalyticsEvent.User {
+public extension AnalyticsEvent.User {
 
     /// Count of user reaching for each modal step (Step 1 through 3)
     ///

@@ -17,10 +17,10 @@
 //
 
 import SwiftUI
-import UIKit
 import WireDesign
 import WireFoundation
 import WireReusableUIComponents
+import WireAnalytics
 
 public struct SelfProfileViewCallToActionBanner: View {
 
@@ -59,7 +59,10 @@ private func contentView(
             .lineLimit(nil)
 
         Button(
-            action: { actionCallback(.createWireTeam) },
+            action: {
+                // TODO: trigger `AnalyticsEvent.UI.clickedPersonalMigrationCTA`
+                actionCallback(.createWireTeam)
+            },
             label: {
                 Text(String.localized(key: "individualToTeam.banner.button", bundle: .module))
             }
