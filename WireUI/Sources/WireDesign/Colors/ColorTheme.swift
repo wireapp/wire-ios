@@ -126,8 +126,8 @@ public enum ColorTheme {
     }
 
     public enum Checkbox {
-        public static let enabled = UIColor(light: .blue500Light, dark: .blue500Dark)
-        public static let disabled = UIColor(light: .gray50, dark: .gray80)
+        public static let enabled = UIColor(light: .gray50, dark: .gray80)
+        public static let selected = UIColor(light: .blue500Light, dark: .blue500Dark)
     }
 
     public enum Strokes {
