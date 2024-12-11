@@ -21,10 +21,13 @@ import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
+import Combine
 
 // sourcery: AutoMockable
 /// Access update events.
 protocol UpdateEventsRepositoryProtocol {
+    
+    func observePendingEvents() -> AnyPublisher<[UpdateEvent], Never>
 
     /// Pull pending events from the server, decrypt if needed, and store locally.
     ///
@@ -77,6 +80,12 @@ protocol UpdateEventsRepositoryProtocol {
     /// - Parameter id: The id to store.
 
     func storeLastEventEnvelopeID(_ id: UUID)
+    
+    /// Fetches the last event envelope id.
+    ///
+    /// - Returns: The last envelope id if any.
+    
+    func fetchLastEventEnvelopeID() -> UUID?
 
     /// Pulls the last event envelope id and stores it locally.
 
@@ -96,6 +105,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let updateEventsLocalStore: any UpdateEventsLocalStoreProtocol
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
+    private let onDecryptedEvents = PassthroughSubject<[UpdateEvent], Never>()
 
     // MARK: - Object lifecycle
 
@@ -116,6 +126,10 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
     // MARK: - Pull pending events
+    
+    func observePendingEvents() -> AnyPublisher<[UpdateEvent], Never> {
+        onDecryptedEvents.eraseToAnyPublisher()
+    }
 
     func pullPendingEvents() async throws {
         WireLogger.sync.debug("pulling pending events")
@@ -149,7 +163,8 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
                 // We can only decrypt once so store the decrypted events for later retrieval.
                 var decryptedEnvelope = envelope
-                decryptedEnvelope.events = try await updateEventDecryptor.decryptEvents(in: envelope)
+                let decryptedEvents = try await updateEventDecryptor.decryptEvents(in: envelope)
+                decryptedEnvelope.events = decryptedEvents
 
                 WireLogger.sync.debug(
                     "persisting envelope (\(count) of \(batchCount)",
@@ -162,6 +177,8 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                     decryptedEnvelopeData,
                     index: currentIndex
                 )
+                
+                onDecryptedEvents.send(decryptedEvents)
 
                 currentIndex += 1
 
@@ -229,6 +246,10 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
     func stopReceivingLiveEvents() async {
         pushChannel.close()
+    }
+    
+    func fetchLastEventEnvelopeID() -> UUID? {
+        updateEventsLocalStore.lastEventID()
     }
 
     func storeLastEventEnvelopeID(_ id: UUID) {

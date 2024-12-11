@@ -127,6 +127,11 @@ public protocol UserLocalStoreProtocol {
     /// - returns: A list of users' qualified IDs.
 
     func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+    
+    /// Fetches self user info : user ID and client ID.
+    /// - returns: the user ID and the client ID.
+
+    func selfUserInfo() async -> (id: UUID, clientId: String?)
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -376,6 +381,17 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             user.supportedProtocols = userUpdateInfo.supportedProtocols ?? [.proteus]
 
             user.isPendingMetadataRefresh = false
+        }
+    }
+    
+    public func selfUserInfo() async -> (id: UUID, clientId: String?) {
+        let selfUser = await fetchSelfUser()
+
+        return await context.perform {
+            (
+                id: selfUser.remoteIdentifier,
+                clientId: selfUser.selfClient()?.remoteIdentifier
+            )
         }
     }
 }

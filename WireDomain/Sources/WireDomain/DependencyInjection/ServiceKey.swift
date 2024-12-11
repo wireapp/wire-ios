@@ -18,20 +18,18 @@
 
 import Foundation
 
-/// An event concerning teams.
+struct ServiceKey {
+    let serviceType: Any.Type
+    let argumentsType: Any.Type
+}
 
-public enum TeamEvent: Equatable, Codable, Sendable {
-
-    /// The self team was deleted.
-
-    case delete
-
-    /// A user has left a team.
-
-    case memberLeave(TeamMemberLeaveEvent)
-
-    /// A user's team membership was updated.
-
-    case memberUpdate(TeamMemberUpdateEvent)
-
+extension ServiceKey: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        ObjectIdentifier(serviceType).hash(into: &hasher)
+        ObjectIdentifier(argumentsType).hash(into: &hasher)
+    }
+    
+    static func == (lhs: ServiceKey, rhs: ServiceKey) -> Bool {
+        return lhs.serviceType == rhs.serviceType && lhs.argumentsType == rhs.argumentsType
+    }
 }

@@ -20,7 +20,7 @@ import Foundation
 
 /// An event concerning users.
 
-public enum UserEvent: Equatable, Codable {
+public enum UserEvent: Equatable, Codable, Sendable {
 
     /// The self user has added a new client.
 

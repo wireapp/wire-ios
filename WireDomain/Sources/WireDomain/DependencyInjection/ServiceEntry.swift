@@ -18,20 +18,26 @@
 
 import Foundation
 
-/// An event concerning teams.
+typealias FunctionType = Any
 
-public enum TeamEvent: Equatable, Codable, Sendable {
+protocol ServiceEntryProtocol: AnyObject {
+    var factory: FunctionType { get }
+    var serviceType: Any.Type { get }
+}
 
-    /// The self team was deleted.
-
-    case delete
-
-    /// A user has left a team.
-
-    case memberLeave(TeamMemberLeaveEvent)
-
-    /// A user's team membership was updated.
-
-    case memberUpdate(TeamMemberUpdateEvent)
-
+final class ServiceEntry<Service>: ServiceEntryProtocol {
+    
+    // MARK: - Properties
+    
+    let serviceType: Any.Type
+    let argumentsType: Any.Type
+    let factory: FunctionType
+    
+    // MARK: - Object lifecycle
+    
+    init(serviceType: Service.Type, argumentsType: Any.Type, factory: FunctionType) {
+        self.serviceType = serviceType
+        self.argumentsType = argumentsType
+        self.factory = factory
+    }
 }

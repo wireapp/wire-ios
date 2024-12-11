@@ -158,6 +158,11 @@ public protocol UserRepositoryProtocol {
     /// - returns: A list of users' qualified IDs.
 
     func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+    
+    /// Fetches self user info : user ID and client ID.
+    /// - returns: the user ID and the client ID.
+
+    func selfUserInfo() async -> (id: UUID, clientId: String?)
 
 }
 
@@ -365,5 +370,9 @@ public final class UserRepository: UserRepositoryProtocol {
         )
 
         return isSelfUser
+    }
+    
+    public func selfUserInfo() async -> (id: UUID, clientId: String?) {
+        await userLocalStore.selfUserInfo()
     }
 }

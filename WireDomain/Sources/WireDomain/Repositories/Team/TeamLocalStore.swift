@@ -306,14 +306,7 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
     }
 
     public func selfUserInfo() async -> (id: UUID, clientId: String?) {
-        let selfUser = await userLocalStore.fetchSelfUser()
-
-        return await context.perform {
-            (
-                id: selfUser.remoteIdentifier,
-                clientId: selfUser.selfClient()?.remoteIdentifier
-            )
-        }
+        await userLocalStore.selfUserInfo()
     }
 
 }
