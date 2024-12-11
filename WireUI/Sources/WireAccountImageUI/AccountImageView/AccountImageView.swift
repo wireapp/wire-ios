@@ -241,12 +241,15 @@ public final class AccountImageView: UIView {
         addSubview(notificationBadgeView)
         NSLayoutConstraint.activate([
             notificationBadgeView.widthAnchor.constraint(
-                equalToConstant: 14),
+                equalToConstant: 14
+            ),
             notificationBadgeView.heightAnchor.constraint(equalToConstant: 14),
             notificationBadgeView.centerYAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: 3.5),
-            notificationBadgeView.centerXAnchor.constraint(equalTo: accountImageViewWrapper.trailingAnchor, constant: -3.5)
+            notificationBadgeView.centerXAnchor.constraint(
+                equalTo: accountImageViewWrapper.trailingAnchor,
+                constant: -3.5
+            )
         ])
-
 
         updateAccountImage()
         updateShape()

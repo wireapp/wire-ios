@@ -24,6 +24,7 @@ import WireDesign
 final class NotificationBadgeView: UIView {
 
     // MARK: - Constants
+
     enum Sizes {
         static let backgroundBorderWidth: CGFloat = 1
     }
@@ -127,7 +128,10 @@ final class NotificationBadgeView: UIView {
         }
 
         backgroundView.isHidden = false
-        backgroundView.frame = shapeView.frame.insetBy(dx: -Sizes.backgroundBorderWidth, dy: -Sizes.backgroundBorderWidth)
+        backgroundView.frame = shapeView.frame.insetBy(
+            dx: -Sizes.backgroundBorderWidth,
+            dy: -Sizes.backgroundBorderWidth
+        )
         backgroundView.layer.cornerRadius = backgroundView.frame.width / 2
     }
 }
@@ -155,7 +159,6 @@ extension NotificationBadgeView {
     }
     .background(Color(UIColor.systemGray2))
 }
-
 
 private struct NotificationsBadgeViewRepresentable: UIViewRepresentable {
     @State private(set) var showNotifications: Bool
