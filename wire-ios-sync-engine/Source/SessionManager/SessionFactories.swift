@@ -27,7 +27,7 @@ open class AuthenticatedSessionFactory {
     let flowManager: FlowManagerType
     let application: ZMApplication
 
-    var environment: BackendEnvironmentProvider
+    var environment: WireTransport.BackendEnvironment
     var reachability: Reachability
 
     let minTLSVersion: String?
@@ -37,7 +37,7 @@ open class AuthenticatedSessionFactory {
         application: ZMApplication,
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
-        environment: BackendEnvironmentProvider,
+        environment: WireTransport.BackendEnvironment,
         proxyUsername: String?,
         proxyPassword: String?,
         reachability: Reachability,
@@ -66,8 +66,23 @@ open class AuthenticatedSessionFactory {
             let wireAssembly = WireAPI.Assembly(
                 userID: userID,
                 clientID: clientID,
-                backendURL: environment.backendURL,
-                backendWebSocketURL: environment.backendWSURL,
+                backendEnvironment: BackendEnvironment(
+                    url: environment.backendURL,
+                    webSocketURL: environment.backendWSURL,
+                    pinnedKeys: environment.trustData.map { trustData in
+                        PinnedKey(
+                            key: trustData.certificateKey,
+                            hosts: trustData.hosts.map { host in
+                                switch host.rule {
+                                case .equals:
+                                    .equals(host.value)
+                                case .endsWith:
+                                    .endsWith(host.value)
+                                }
+                            }
+                        )
+                    }
+                ),
                 minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
                 cookieEncryptionKey: UserDefaults.cookiesKey()
             )
