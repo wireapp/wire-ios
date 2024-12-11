@@ -17,6 +17,7 @@
 //
 
 import CommonCrypto
+import WireTestingPackage
 import XCTest
 
 @testable import WireCrypto
