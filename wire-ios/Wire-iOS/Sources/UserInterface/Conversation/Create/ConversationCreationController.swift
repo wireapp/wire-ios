@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
@@ -494,20 +495,4 @@ extension ConversationCreationController {
 
         return alert
     }
-}
-
-extension UserSession {
-
-    var defaultProtocol: MessageProtocol {
-        guard mlsFeature.isEnabled else {
-            return .proteus
-        }
-        switch mlsFeature.config.defaultProtocol {
-        case .proteus, .mixed:
-            return .proteus
-        case .mls:
-            return .mls
-        }
-    }
-
 }

@@ -34,7 +34,7 @@ final class PinnedKeyTests: XCTestCase {
         }
     }
 
-    func testMatches() throws {
+    func testMatchesHost() throws {
         // GIVEN
         let sut = try PinnedKey(
             key: try PublicKeys.wire,

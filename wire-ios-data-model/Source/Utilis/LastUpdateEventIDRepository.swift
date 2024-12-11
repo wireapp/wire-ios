@@ -17,6 +17,7 @@
 //
 
 import WireFoundation
+import WireLogging
 
 // sourcery: AutoMockable
 @objc

@@ -19,7 +19,7 @@
 import Foundation
 import WireFoundation
 
-final class Assembly {
+public final class Assembly {
 
     let userID: UUID
     let clientID: String
@@ -27,7 +27,7 @@ final class Assembly {
     let minTLSVersion: TLSVersion
     let cookieEncryptionKey: Data
 
-    init(
+    public init(
         userID: UUID,
         clientID: String,
         backendEnvironment: BackendEnvironment,
@@ -52,7 +52,7 @@ final class Assembly {
         authenticationManager: authenticationManager
     )
 
-    private lazy var apiNetworkService: NetworkService = {
+    public lazy var apiNetworkService: NetworkService = {
         let service = NetworkService(baseURL: backendEnvironment.url, serverTrustValidator: serverTrustValidator)
         let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
         let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
@@ -76,7 +76,7 @@ final class Assembly {
         return service
     }()
 
-    private lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
+    public lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
         clientID: clientID,
         cookieStorage: cookieStorage,
         networkService: apiNetworkService

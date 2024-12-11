@@ -23,14 +23,6 @@ import XCTest
 
 final class ServerTrustValidatorTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func testValidate_whenNoMatchingHosts() async throws {
         let sut = ServerTrustValidator(
             pinnedKeys: [
@@ -69,58 +61,6 @@ final class ServerTrustValidatorTests: XCTestCase {
             ServerTrustValidator.Failure.noMatchingPublicKey,
             when: { try await sut.validate(trust: .other, host: "example.com") }
         )
-    }
-
-}
-
-// MARK: - Test Data
-
-private extension SecTrust {
-
-    enum Failure: Error {
-        case failedToCreateCertificate
-        case failedToCreateTrust
-    }
-
-    static var wire: SecTrust {
-        get throws { try make(data: Certificates.load().wire) }
-    }
-
-    static var other: SecTrust {
-        get throws { try make(data: Certificates.load().other) }
-    }
-
-    static var invalid: SecTrust {
-        get throws { try make(data: Certificates.load().invalid) }
-    }
-
-    static func make(data: [Data]) throws -> SecTrust {
-        let policy = SecPolicyCreateBasicX509()
-
-        let certificates: [SecCertificate] = try data.compactMap {
-            guard let cert = SecCertificateCreateWithData(nil, $0 as CFData) else {
-                throw Failure.failedToCreateCertificate
-            }
-            return cert
-        }
-        var trust: SecTrust?
-        guard SecTrustCreateWithCertificates(certificates as CFTypeRef, policy, &trust) == 0, let result = trust else {
-            throw Failure.failedToCreateTrust
-        }
-
-        return result
-    }
-
-}
-
-private struct Certificates: Decodable {
-
-    let wire: [Data]
-    let other: [Data]
-    let invalid: [Data]
-
-    static func load() throws -> Certificates {
-        try Certificates.loadJSON(fileName: "certificates")
     }
 
 }

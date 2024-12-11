@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class NetworkService: NSObject {
+public final class NetworkService: NSObject {
 
     private let baseURL: URL
     private let serverTrustValidator: ServerTrustValidator

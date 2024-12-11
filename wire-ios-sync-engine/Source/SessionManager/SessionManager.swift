@@ -24,6 +24,7 @@ import UserNotifications
 import WireAnalytics
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireRequestStrategy
 import WireTransport
 import WireUtilities
@@ -281,7 +282,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private(set) var reachability: ReachabilityWrapper
 
-    public internal(set) var environment: BackendEnvironmentProvider {
+    public internal(set) var environment: BackendEnvironment {
         didSet {
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
@@ -352,7 +353,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        environment: BackendEnvironmentProvider,
+        environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         requiredPushTokenType: PushToken.TokenType,
@@ -469,7 +470,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         application: ZMApplication,
         pushRegistry: PushRegistry,
         dispatchGroup: ZMSDispatchGroup,
-        environment: BackendEnvironmentProvider,
+        environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         requiredPushTokenType: PushToken.TokenType,
@@ -547,7 +548,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
-            logger: { WireLogger.analytics.debug($0) }
+            deviceModel: UIDevice.current.model,
+            deviceOS: UIDevice.current.systemVersion
         )
 
         if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {

@@ -20,7 +20,7 @@ import Foundation
 import WireFoundation
 
 // sourcery: AutoMockable
-protocol AuthenticationManagerProtocol {
+public protocol AuthenticationManagerProtocol {
 
     func getValidAccessToken() async throws -> AccessToken
     func refreshAccessToken() async throws -> AccessToken

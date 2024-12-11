@@ -21,13 +21,12 @@ import WireDesign
 
 final class ContactsViewController: UIViewController {
 
-    let dataSource = ContactsDataSource()
-
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
     typealias ContactsUI  = L10n.Localizable.ContactsUi
     typealias LabelColors = SemanticColors.Label
     typealias ViewColors = SemanticColors.View
 
+    let dataSource: ContactsDataSource
     let bottomContainerView = UIView()
     let bottomContainerSeparatorView = UIView()
     let noContactsLabel = DynamicFontLabel(
@@ -51,7 +50,8 @@ final class ContactsViewController: UIViewController {
 
     // MARK: - Life Cycle
 
-    init() {
+    init(isFederationUsageAllowed: Bool) {
+        self.dataSource = ContactsDataSource(isFederationUsageAllowed: isFederationUsageAllowed)
         super.init(nibName: nil, bundle: nil)
 
         dataSource.delegate = self

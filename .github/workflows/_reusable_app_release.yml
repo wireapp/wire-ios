@@ -91,7 +91,7 @@ jobs:
       WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
       WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
       APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
-      APPCENTER_OWNER_NAME: ${{ secrets.APPCENTER_OWNER_NAME }}
+      APPCENTER_OWNER_NAME: "Wire"
       S3_BUCKET: "z-lohika"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
@@ -186,7 +186,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: build-logs
+          name: build-logs (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
@@ -196,7 +196,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: post-build-env-${{ inputs.fastlane_action }}
+          name: post-build-env-${{ inputs.fastlane_action }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             **/.post_build/*.env
       - name: Load .env file

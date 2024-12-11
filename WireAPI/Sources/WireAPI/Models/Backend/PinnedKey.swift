@@ -35,6 +35,11 @@ public struct PinnedKey: Sendable {
     let key: SecKey
     let hosts: [Host]
 
+    public init(key: SecKey, hosts: [Host]) {
+        self.key = key
+        self.hosts = hosts
+    }
+
     public init(key: Data, hosts: [Host]) throws(Failure) {
         self.key = try Self.key(for: key)
         self.hosts = hosts
