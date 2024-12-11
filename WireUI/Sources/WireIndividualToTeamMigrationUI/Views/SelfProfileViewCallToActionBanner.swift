@@ -28,7 +28,7 @@ public struct SelfProfileViewCallToActionBanner: View {
         case createWireTeam
     }
 
-    @Environment(\.analyticsEventTracker) private var analyticsEventTracker // TODO: make sure it's injected
+    @Environment(\.analyticsEventTracker) private var analyticsEventTracker
 
     let actionCallback: @Sendable (Action) -> Void
 
@@ -87,9 +87,15 @@ private extension View {
     }
 }
 
-public class SelfProfileViewCallToActionBannerHostingController: UIHostingController<SelfProfileViewCallToActionBanner> {
-    public init(actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void) {
-        super.init(rootView: SelfProfileViewCallToActionBanner(actionCallback: actionCallback))
+public class SelfProfileViewCallToActionBannerHostingController: UIHostingController<AnyView> {
+
+    public init(
+        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void
+    ) {
+        let bannerView = SelfProfileViewCallToActionBanner(actionCallback: actionCallback)
+            .environment(\.analyticsEventTracker, analyticsEventTracker)
+        super.init(rootView: AnyView(bannerView))
         view.backgroundColor = .clear
     }
 

@@ -84,7 +84,7 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    public private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
     private var pendingAnalyticsEvents = [AnalyticsEvent]()
 
     public internal(set) var appLockController: AppLockType

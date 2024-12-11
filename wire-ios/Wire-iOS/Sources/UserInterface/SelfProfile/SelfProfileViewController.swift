@@ -16,13 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-11951] when opening self profile ensure these alerts are shown and also don't block each other
-// - alert that new devices have been added
-// - alert about read receipts enabled
-
 import SwiftUI
-import UIKit
 import WireAPI
+import WireAnalytics
 import WireCommonComponents
 import WireDesign
 import WireDomainAPI
@@ -51,6 +47,7 @@ final class SelfProfileViewController: UIViewController {
 
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
+    private let analyticsEventTracker: (any AnalyticsEventTracker)?
 
     // MARK: - Configuration
 
@@ -65,11 +62,13 @@ final class SelfProfileViewController: UIViewController {
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
+        mainCoordinator: AnyMainCoordinator,
         trackingManager: TrackingManager?,
-        mainCoordinator: AnyMainCoordinator
+        analyticsEventTracker: (any AnalyticsEventTracker)?
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
+        self.analyticsEventTracker = analyticsEventTracker
 
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(
@@ -118,6 +117,7 @@ final class SelfProfileViewController: UIViewController {
             let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
             self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
+                analyticsEventTracker: analyticsEventTracker,
                 actionCallback: { [weak self] action in
                     self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
                 }

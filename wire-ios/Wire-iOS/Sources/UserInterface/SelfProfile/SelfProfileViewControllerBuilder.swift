@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireAnalytics
 import WireCommonComponents
 import WireMainNavigationUI
 import WireSyncEngine
@@ -27,18 +28,21 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
     var accountSelector: AccountSelector?
-    var trackingManager: TrackingManager?
+    var trackingManager: TrackingManager? // TODO: is this needed?
+    var analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     init(
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
-        accountSelector: AccountSelector?
+        accountSelector: AccountSelector?,
+        analyticsEventTracker: @escaping @autoclosure () -> (any AnalyticsEventTracker)?
     ) {
         self.selfUser = selfUser
         self.userRightInterfaceType = userRightInterfaceType
         self.userSession = userSession
         self.accountSelector = accountSelector
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
@@ -47,8 +51,9 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
             accountSelector: accountSelector,
+            mainCoordinator: mainCoordinator,
             trackingManager: trackingManager,
-            mainCoordinator: mainCoordinator
+            analyticsEventTracker: analyticsEventTracker()
         )
     }
 }

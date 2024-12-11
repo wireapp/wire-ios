@@ -115,7 +115,8 @@ final class ZClientViewController: UIViewController {
         selfUser: userSession.editableSelfUser,
         userRightInterfaceType: UserRight.self,
         userSession: userSession,
-        accountSelector: SessionManager.shared
+        accountSelector: SessionManager.shared,
+        analyticsEventTracker: self.userSession.analyticsEventTracker
     )
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(
