@@ -4449,14 +4449,10 @@ internal enum L10n {
       internal static let hideSearchResult = L10n.tr("Localizable", "peoplepicker.hide_search_result", fallback: "Hide")
       /// Hiding…
       internal static let hideSearchResultProgress = L10n.tr("Localizable", "peoplepicker.hide_search_result_progress", fallback: "Hiding…")
-      /// Invite more people
-      internal static let inviteMorePeople = L10n.tr("Localizable", "peoplepicker.invite_more_people", fallback: "Invite more people")
       /// Invite people to join the team
       internal static let inviteTeamMembers = L10n.tr("Localizable", "peoplepicker.invite_team_members", fallback: "Invite people to join the team")
       /// No Contacts.
       internal static let noContactsTitle = L10n.tr("Localizable", "peoplepicker.no_contacts_title", fallback: "No Contacts.")
-      /// No results.
-      internal static let noMatchingResultsAfterAddressBookUploadTitle = L10n.tr("Localizable", "peoplepicker.no_matching_results_after_address_book_upload_title", fallback: "No results.")
       /// No matching results. Try entering a different name.
       internal static let noSearchResults = L10n.tr("Localizable", "peoplepicker.no_search_results", fallback: "No matching results. Try entering a different name.")
       /// Search by name or username
@@ -4823,24 +4819,6 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "registration.add_email_password.hero.title", fallback: "Add your email and password")
         }
       }
-      internal enum AddressBookAccessDenied {
-        internal enum Hero {
-          /// Wire helps find your friends if you share your contacts.
-          internal static let paragraph1 = L10n.tr("Localizable", "registration.address_book_access_denied.hero.paragraph1", fallback: "Wire helps find your friends if you share your contacts.")
-          /// To enable access tap Settings and turn on Contacts.
-          internal static let paragraph2 = L10n.tr("Localizable", "registration.address_book_access_denied.hero.paragraph2", fallback: "To enable access tap Settings and turn on Contacts.")
-          /// Wire does not have access to your contacts.
-          internal static let title = L10n.tr("Localizable", "registration.address_book_access_denied.hero.title", fallback: "Wire does not have access to your contacts.")
-        }
-        internal enum MaybeLaterButton {
-          /// Maybe later
-          internal static let title = L10n.tr("Localizable", "registration.address_book_access_denied.maybe_later_button.title", fallback: "Maybe later")
-        }
-        internal enum SettingsButton {
-          /// Settings
-          internal static let title = L10n.tr("Localizable", "registration.address_book_access_denied.settings_button.title", fallback: "Settings")
-        }
-      }
       internal enum Alert {
         /// Register with Another Email
         internal static let changeEmailAction = L10n.tr("Localizable", "registration.alert.change_email_action", fallback: "Register with Another Email")
@@ -5042,22 +5020,6 @@ internal enum L10n {
           internal static let subtitle = L10n.tr("Localizable", "registration.select_handle.takeover.subtitle", fallback: "Claim your unique name on Wire.")
           /// Learn more
           internal static let subtitleLink = L10n.tr("Localizable", "registration.select_handle.takeover.subtitle_link", fallback: "Learn more")
-        }
-      }
-      internal enum ShareContacts {
-        internal enum FindFriendsButton {
-          /// Share contacts
-          internal static let title = L10n.tr("Localizable", "registration.share_contacts.find_friends_button.title", fallback: "Share contacts")
-        }
-        internal enum Hero {
-          /// Share your contacts so we can connect you with others. We anonymize all information and do not share it with anyone else.
-          internal static let paragraph = L10n.tr("Localizable", "registration.share_contacts.hero.paragraph", fallback: "Share your contacts so we can connect you with others. We anonymize all information and do not share it with anyone else.")
-          /// Find people on Wire
-          internal static let title = L10n.tr("Localizable", "registration.share_contacts.hero.title", fallback: "Find people on Wire")
-        }
-        internal enum SkipButton {
-          /// Not now
-          internal static let title = L10n.tr("Localizable", "registration.share_contacts.skip_button.title", fallback: "Not now")
         }
       }
       internal enum Signin {
