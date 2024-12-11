@@ -19,7 +19,7 @@
 import CommonCrypto
 import XCTest
 
-@testable import WireFoundation
+@testable import WireCrypto
 
 final class AES256CryptoTests: XCTestCase {
 
