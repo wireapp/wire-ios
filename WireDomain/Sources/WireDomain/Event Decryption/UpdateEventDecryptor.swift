@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAPI
+import WireCoreCrypto
 import WireDataModel
 import WireLogging
 
@@ -77,8 +78,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 do {
                     let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(from: eventData)
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
-
-                } catch let error as ProteusError {
+                } catch let error as ProteusService.DecryptionError {
                     WireLogger.updateEvent.error(
                         "failed to decrypt proteus event payload, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
@@ -86,7 +86,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
                     await appendFailedToDecryptProteusMessage(
                         eventData: eventData,
-                        error: error
+                        error: error.proteusError
                     )
                 } catch {
                     WireLogger.updateEvent.error(
@@ -109,7 +109,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         error: ProteusError
     ) async {
         // Do not notify the user if the error is just "duplicated".
-        if error == .outdatedMessage || error == .duplicateMessage {
+        if error == .DuplicateMessage {
             return
         }
 
@@ -136,7 +136,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 at: eventData.timestamp,
                 sender: sender,
                 client: senderClient,
-                errorCode: error.rawValue
+                error: error
             )
         }
     }
