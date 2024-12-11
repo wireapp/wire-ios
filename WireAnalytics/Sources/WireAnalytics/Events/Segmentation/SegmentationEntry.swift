@@ -24,7 +24,11 @@
 
 public struct SegmentationEntry: Hashable, Sendable {
 
-    let key: String
-    let value: String
+    public var key: String
+    public var value: String
 
+    public init(key: String, value: String) {
+        self.key = key
+        self.value = value
+    }
 }

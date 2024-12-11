@@ -42,7 +42,14 @@ public extension AnalyticsEvent.User {
     ///
     /// Segmentation: app_name; app_version
 
-    static let personalTeamCreationFlowStarted = AnalyticsEvent(name: "user.personal-team-creation-flow-started")
+    static func personalTeamCreationFlowStarted(step: Int) -> AnalyticsEvent {
+        AnalyticsEvent(
+            name: "user.personal-team-creation-flow-started",
+            segmentation: [
+                SegmentationEntry(key: "step_modalcreateteam", value: "\(step)") // TODO: ensure the value is correct (0...3)?
+            ]
+        )
+    }
 
     /// Count of user dropping at each modal step (Step 1 through 3)
     ///
