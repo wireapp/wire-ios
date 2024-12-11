@@ -23,8 +23,6 @@ public struct SearchResult {
     public var contacts: [ZMSearchUser]
     /// Users from the team.
     public var teamMembers: [ZMSearchUser]
-    /// Legacy, not used anymore.
-    public var addressBook: [ZMSearchUser]
     /// Non-connected users.
     public var directory: [ZMSearchUser]
     /// Group conversations.
@@ -62,7 +60,6 @@ extension SearchResult {
         )
 
         self.contacts = []
-        self.addressBook = []
         self.directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
         self.conversations = []
         self.services = []
@@ -94,7 +91,6 @@ extension SearchResult {
 
         self.contacts = []
         self.teamMembers = []
-        self.addressBook = []
         self.directory = []
         self.conversations = []
         self.services = searchUsersServices
@@ -121,7 +117,6 @@ extension SearchResult {
 
         self.contacts = []
         self.teamMembers = []
-        self.addressBook = []
         self.directory = [searchUser]
         self.conversations = []
         self.services = []
@@ -164,7 +159,6 @@ extension SearchResult {
         return SearchResult(
             contacts: contacts,
             teamMembers: teamMembers,
-            addressBook: addressBook,
             directory: directory,
             conversations: copiedConversations,
             services: services,
@@ -176,7 +170,6 @@ extension SearchResult {
         SearchResult(
             contacts: result.contacts,
             teamMembers: result.teamMembers,
-            addressBook: result.addressBook,
             directory: directory,
             conversations: result.conversations,
             services: services,
@@ -188,7 +181,6 @@ extension SearchResult {
         SearchResult(
             contacts: contacts,
             teamMembers: teamMembers,
-            addressBook: addressBook,
             directory: directory,
             conversations: conversations,
             services: result.services,
@@ -200,7 +192,6 @@ extension SearchResult {
         SearchResult(
             contacts: contacts,
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
-            addressBook: addressBook,
             directory: result.directory,
             conversations: conversations,
             services: services,
