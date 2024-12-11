@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Countly
-
-public typealias WireCountly = Countly
-public typealias WireCountlyConfig = CountlyConfig
+// A signle empty file needed for the `WarningPrevention` target.
+// The target is not to be referenced, its purpose is only to not trigger
+// warnings about unused dependencies when Countly or Datadog are not
+// enabled via environment variables.

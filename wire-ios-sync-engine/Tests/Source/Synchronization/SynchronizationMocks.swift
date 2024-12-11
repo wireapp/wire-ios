@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import AddressBook
 import avs
 import Foundation
 import WireCryptobox
