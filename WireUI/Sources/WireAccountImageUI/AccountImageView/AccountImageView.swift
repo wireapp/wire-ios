@@ -93,7 +93,7 @@ public final class AccountImageView: UIView {
         set { availabilityIndicatorView.backgroundViewColor = newValue }
     }
 
-    public var showProfileNotificationsBadge: Bool = false {
+    public var hideProfileNotificationsBadge: Bool = false {
         didSet { updateNotificationBadge() }
     }
 
@@ -102,7 +102,7 @@ public final class AccountImageView: UIView {
     private let accountImageView = UIImageView()
     private let initialsLabel = UILabel()
     let availabilityIndicatorView = AvailabilityIndicatorView()
-    let notificationBadgeView = NotificationBadgeView()
+    let notificationBadgeView = createNotificationBadgeView()
     public override var intrinsicContentSize: CGSize {
         .init(
             width: imageBorderWidth * 2 + accountImageHeight,
@@ -237,7 +237,7 @@ public final class AccountImageView: UIView {
         ])
 
         // view which renders the notification badge
-        notificationBadgeView.showNotificationsBadge = true
+        notificationBadgeView.isHidden = true
         notificationBadgeView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(notificationBadgeView)
         NSLayoutConstraint.activate([
@@ -306,8 +306,8 @@ public final class AccountImageView: UIView {
     }
 
     private func updateNotificationBadge() {
-        if notificationBadgeView.showNotificationsBadge != showProfileNotificationsBadge {
-            notificationBadgeView.showNotificationsBadge = showProfileNotificationsBadge
+        if notificationBadgeView.isHidden != hideProfileNotificationsBadge {
+            notificationBadgeView.isHidden = hideProfileNotificationsBadge
         }
     }
 }

@@ -51,7 +51,7 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
     public func updateUIView(_ view: AccountImageView, context: Context) {
         view.source = source
         view.availability = availability
-        view.showProfileNotificationsBadge = showNotificationsBadge
+        view.hideProfileNotificationsBadge = !showNotificationsBadge
 
         view.imageBorderWidth = accountImageBorderWidth
         view.imageBorderColor = accountImageBorderColor

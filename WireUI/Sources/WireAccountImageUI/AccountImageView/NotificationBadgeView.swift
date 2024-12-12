@@ -19,50 +19,10 @@
 import SwiftUI
 import WireDesign
 
-// MARK: -
-
-
-final class NotificationBadgeView: UIImageView {
-
-    init() {
-        super.init(image: .notificationBadgeInfo)
-    }
-
-    var showNotificationsBadge: Bool {
-        get { !isHidden }
-        set { isHidden = !newValue }
-    }
-
-    // MARK: - Life Cycle
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        image = .notificationBadgeInfo
-        contentMode = .scaleAspectFit
-        backgroundColor = .clear
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-}
-
-// MARK: - Previews
-
-@available(iOS 17, *)
-#Preview {
-    VStack {
-        NotificationsBadgeViewRepresentable(showNotifications: false)
-        NotificationsBadgeViewRepresentable(showNotifications: true)
-    }
-    .background(Color(UIColor.systemGray2))
-}
-
-private struct NotificationsBadgeViewRepresentable: UIViewRepresentable {
-    @State private(set) var showNotifications: Bool
-    func makeUIView(context: Context) -> NotificationBadgeView { .init() }
-    func updateUIView(_ view: NotificationBadgeView, context: Context) {
-        view.isHidden = !showNotifications
-    }
+@MainActor
+func createNotificationBadgeView() -> UIImageView {
+    let imageView = UIImageView(image: .notificationBadgeInfo)
+    imageView.contentMode = .scaleAspectFit
+    imageView.backgroundColor = .clear
+    return imageView
 }
