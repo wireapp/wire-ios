@@ -81,7 +81,7 @@ public protocol UserSession: AnyObject {
 
     var needsToNotifyUserOfAppLockConfiguration: Bool { get set }
 
-    /// This property will be set or cleared whenever the user gives or removes the consent for analytics tracking.
+    /// This property will be set or cleared depending on the user giving or removing consent for analytics tracking.
 
     var analyticsEventTracker: AnalyticsEventTracker? { get }
 

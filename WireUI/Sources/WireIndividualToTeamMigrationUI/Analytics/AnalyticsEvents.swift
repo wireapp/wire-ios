@@ -57,18 +57,6 @@ public extension AnalyticsEvent.User {
         }
     }
 
-    /*
-
-     it is unclear from the ticket description if this is needed [WPB-11319], [WPB-11318]
-
-     /// Count of user dropping at each modal step (Step 1 through 3)
-    ///
-    /// Segmentation: app_name; app_version; modal_disclaimers; modal_team-name; modal_confirmation
-
-    static let personalTeamCreationFlowStopped = AnalyticsEvent(name: "user.personal-team-creation-flow-stopped") // TODO: implement
-
-     */
-
     /// Count of user reaching the cancellation modal
     ///
     /// Segmentation: app_name; app_version; modal_continue-clicked; modal_leave-clicked

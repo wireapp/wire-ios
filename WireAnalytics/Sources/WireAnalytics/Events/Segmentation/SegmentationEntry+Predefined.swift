@@ -46,7 +46,7 @@ extension SegmentationEntry {
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
     static func isSelfTeamMember(_ value: Bool) -> Self {
-        .init(key: "is_team_member", value: value.analyticsValue)
+        .init("is_team_member", value)
     }
 
     /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
@@ -55,7 +55,7 @@ extension SegmentationEntry {
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
     static func isVideoCall(_ value: Bool) -> Self {
-        .init(key: "is_video_call", value: value.analyticsValue)
+        .init("is_video_call", value)
     }
 
     /// Creates a `SegmentationEntry` for the type of group in a conversation.

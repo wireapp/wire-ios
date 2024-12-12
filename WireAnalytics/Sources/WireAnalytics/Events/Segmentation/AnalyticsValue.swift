@@ -28,14 +28,6 @@ public protocol AnalyticsValue {
 
 }
 
-extension Bool: AnalyticsValue {
-
-    @available(*, deprecated, message: "Use SegmentationEntry.init instead!")
-    public var analyticsValue: String {
-        SegmentationEntry("", self).value
-    }
-}
-
 extension UInt: AnalyticsValue {
 
     public var analyticsValue: String {
