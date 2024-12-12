@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
@@ -78,10 +78,13 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         }
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
+        conversationLocalStore
+            .updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
-        protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod = { _, _, _, _, _, _, _, _ in }
+        protobufMessageProcessor
+            .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
+            { _, _, _, _, _, _, _, _ in }
 
         // When
 
@@ -91,9 +94,21 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations.count, 1)
+        XCTAssertEqual(
+            protobufMessageProcessor
+                .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations.count,
+            1
+        )
     }
 
     private enum Scaffolding {
@@ -103,7 +118,10 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
             subconversation: "",
             message: "",
             timestamp: .now,
-            decryptedMessages: [.init(message: Scaffolding.base64EncodedString, senderClientID: UUID.mockID1.uuidString)]
+            decryptedMessages: [.init(
+                message: Scaffolding.base64EncodedString,
+                senderClientID: UUID.mockID1.uuidString
+            )]
         )
 
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="

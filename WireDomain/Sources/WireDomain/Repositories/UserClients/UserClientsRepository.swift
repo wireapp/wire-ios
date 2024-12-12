@@ -107,11 +107,11 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
     }
 
     // MARK: - Public
-    
+
     public func fetchSelfClient() async -> WireDataModel.UserClient? {
         await userClientsLocalStore.fetchSelfClient()
     }
-    
+
     public func fetchClient(
         id: String,
         forUser user: ZMUser,

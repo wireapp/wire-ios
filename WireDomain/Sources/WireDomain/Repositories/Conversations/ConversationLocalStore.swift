@@ -272,12 +272,13 @@ public protocol ConversationLocalStoreProtocol {
         isDeletedRemotely: Bool,
         conversation: ZMConversation
     ) async
-    
+
     /// Fetches the MLS conversation info (given conversation is MLS one)
     /// - parameter conversation: The conversation to fetch the the MLS info for.
     /// - returns: The MLS conversation group ID (if conversation is MLS) and whether the conversation is MLS ready.
     ///
-    /// MLS conversations should always have a group ID hence this method returns nil if conversation doesn't have a MLS group ID.
+    /// MLS conversations should always have a group ID hence this method returns nil if conversation doesn't have a MLS
+    /// group ID.
 
     func mlsConversationInfo(
         conversation: ZMConversation
@@ -306,7 +307,7 @@ public protocol ConversationLocalStoreProtocol {
         in conversation: ZMConversation,
         date: Date
     ) async
-    
+
     /// Updates last read message timestamp.
     /// - Parameters:
     ///     - lastReadMessage: The last read message protobuf object.
@@ -428,7 +429,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
-    
+
     public func updateLastReadMessageTimestamp(
         _ lastReadMessage: LastRead,
         in conversation: ZMConversation
@@ -460,11 +461,11 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-    
+
     public func mlsConversationInfo(
         conversation: ZMConversation
     ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)? {
-        
+
         await context.perform {
             guard let mlsGroupID = conversation.mlsGroupID else {
                 return nil
@@ -472,7 +473,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             return (mlsGroupID, conversation.mlsStatus == .ready)
         }
-        
+
     }
 
     public func storeMLSConversationEstablished(

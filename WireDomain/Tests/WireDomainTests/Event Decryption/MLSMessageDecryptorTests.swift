@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
+import XCTest
+@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
-import XCTest
 
 final class MLSMessageDecryptorTests: XCTestCase {
 
@@ -70,13 +70,11 @@ final class MLSMessageDecryptorTests: XCTestCase {
         // Mock
 
         let conversation = await context.perform { [self] in
-            let conversation = modelHelper.createMLSConversation(
+            return modelHelper.createMLSConversation(
                 id: Scaffolding.conversationID.uuid,
                 mlsGroupID: Scaffolding.mlsGroupID,
                 in: context
             )
-
-            return conversation
         }
 
         let encryptedMessage = try XCTUnwrap("!?@".base64EncodedString)

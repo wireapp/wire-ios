@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
 import WireAPI
 import WireDataModel
+import WireLogging
 
 /// Process conversation proteus message add events.
 
@@ -133,8 +133,8 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         var genericMessage = GenericMessage(withBase64String: base64Message)
 
         if let externalData,
-           case .some(.external(let external)) = genericMessage?.content {
-            
+           case let .some(.external(external)) = genericMessage?.content {
+
             /// Content message is external, we decrypt the external payload
             /// and turns it back into a generic non-external content message.
             if let decryptedGenericMessage = decryptExternalMessage(
@@ -153,20 +153,23 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
 
         return (genericMessage, content)
     }
-    
+
     private func decryptExternalMessage(
         externalData: String,
         external: External
     ) -> GenericMessage? {
-        /// If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular message.
+        /// If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular
+        /// message.
         /// See `External` section from https://github.com/wireapp/generic-message-proto
-        /// See `External messages` section from https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
-    
+        /// See `External messages` section from
+        /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
+
         let externalData = Data(base64Encoded: externalData)
         let externalSha256 = externalData?.zmSHA256Digest()
 
         guard externalSha256 == external.sha256 else {
-            WireLogger.eventProcessing.error("Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256)")
+            WireLogger.eventProcessing
+                .error("Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256)")
             return nil
         }
 

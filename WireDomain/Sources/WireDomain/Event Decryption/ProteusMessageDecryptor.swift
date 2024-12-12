@@ -47,7 +47,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         senderClient: WireDataModel.UserClient,
         proteusSessionID: ProteusSessionID
     )
-    
+
     private let maxCiphertextSize = Int(12_000 * 1.5)
 
     init(

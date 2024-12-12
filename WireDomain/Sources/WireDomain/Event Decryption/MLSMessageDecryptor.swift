@@ -53,7 +53,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         ) else {
             throw MLSMessageDecryptorError.conversationNotFound
         }
-        
+
         guard let (mlsGroupID, isMLSReady) = await conversationLocalStore.mlsConversationInfo(
             conversation: mlsConversation
         ) else {
@@ -129,7 +129,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
         for result in results {
             switch result {
-            case .message(let decryptedData, let senderClientID):
+            case let .message(decryptedData, senderClientID):
                 let mlsDecryptedMessage = decryptedData.base64EncodedString()
                 decryptedMessages.append(
                     .init(
@@ -138,7 +138,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                     )
                 )
 
-            case .proposal(let commitDelay):
+            case let .proposal(commitDelay):
                 await conversationLocalStore.commitPendingProposals(
                     conversation: mlsConversation,
                     date: date ?? .now,

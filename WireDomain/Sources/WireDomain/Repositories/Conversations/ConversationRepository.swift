@@ -475,7 +475,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let mlsConversationInfo = await conversationsLocalStore.mlsConversationInfo(
             conversation: conversation
         )
-        
+
         let mlsGroupID = mlsConversationInfo?.mlsGroupID
 
         if let mlsGroupID {
@@ -602,11 +602,11 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let mlsService = mlsProvider.service
 
         if isMLSEnabled {
-            
+
             let mlsConversationInfo = await conversationsLocalStore.mlsConversationInfo(
                 conversation: conversation
             )
-            
+
             let mlsGroupID = mlsConversationInfo?.mlsGroupID
 
             if isSelfUserRemoved, let mlsGroupID,
@@ -634,7 +634,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Private
-    
+
     private func addSystemMessage(
         conversationID: UUID,
         conversationDomain: String?,

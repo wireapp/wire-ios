@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class ConversationProtobufMessageProcessorTests: XCTestCase {
 
@@ -73,12 +73,15 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         let (conversation, clientMessage) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(in: context)
             let clientMessage = ZMClientMessage(context: context)
-            
+
             return (conversation, clientMessage)
         }
 
         messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDate_MockValue = (clientMessage, isNew: true)
-        messageLocalStore.addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod = { _, _, _, _, _, _ in }
+        messageLocalStore
+            .addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod =
+            { _, _, _, _, _, _ in
+            }
 
         let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
         let content = try XCTUnwrap(genericMessage.content) // .text
@@ -95,9 +98,13 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             date: .now,
             eventMessage: ""
         )
-        
+
         XCTAssertEqual(messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDate_Invocations.count, 1)
-        XCTAssertEqual(messageLocalStore.addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            messageLocalStore.addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_Invocations
+                .count,
+            1
+        )
     }
 
     private enum Scaffolding {

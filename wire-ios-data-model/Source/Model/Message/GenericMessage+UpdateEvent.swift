@@ -18,8 +18,8 @@
 
 import Foundation
 
-extension GenericMessage {
-    public init?(from updateEvent: ZMUpdateEvent) {
+public extension GenericMessage {
+    init?(from updateEvent: ZMUpdateEvent) {
         let base64Content: String?
 
         switch updateEvent.type {
@@ -43,7 +43,7 @@ extension GenericMessage {
         self = unwrappedMessage
     }
 
-    public static func entityClass(for genericMessage: GenericMessage) -> AnyClass {
+    static func entityClass(for genericMessage: GenericMessage) -> AnyClass {
         if genericMessage.imageAssetData != nil || genericMessage.assetData != nil {
             return ZMAssetClientMessage.self
         }

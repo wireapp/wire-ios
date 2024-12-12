@@ -18,8 +18,8 @@
 
 import WireAPI
 import WireDataModel
-import WireSystem
 import WireLogging
+import WireSystem
 
 /// Process conversation mls message add events.
 
@@ -34,7 +34,7 @@ protocol ConversationMLSMessageAddEventProcessorProtocol {
 }
 
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
-    
+
     enum Failure: Error {
         case mlsConversationNotFound
     }
@@ -49,7 +49,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         let senderID = event.senderID
         let date = event.timestamp
         let decryptedMessages = event.decryptedMessages
-        
+
         guard !decryptedMessages.isEmpty else {
             return WireLogger.proteus.warn(
                 "failed to add MLS message: there are no decrypted messages to process"

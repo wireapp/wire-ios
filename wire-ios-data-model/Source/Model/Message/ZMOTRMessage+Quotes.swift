@@ -19,9 +19,9 @@
 import Foundation
 import WireLogging
 
-extension ZMOTRMessage {
+public extension ZMOTRMessage {
 
-    public func establishRelationshipsForInsertedQuote(_ quote: Quote) {
+    func establishRelationshipsForInsertedQuote(_ quote: Quote) {
 
         guard let managedObjectContext,
               let conversation,

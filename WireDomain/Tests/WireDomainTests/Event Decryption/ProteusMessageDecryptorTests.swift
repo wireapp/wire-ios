@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
+import XCTest
+@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
-import XCTest
 
 final class ProteusMessageDecryptorTests: XCTestCase {
 
@@ -74,7 +74,10 @@ final class ProteusMessageDecryptorTests: XCTestCase {
             userClientsLocalStore.fetchClientIdForUserCreateIfNeeded_MockValue = selfClient
             userClientsLocalStore.storeClientDiscoveryDateClient_MockMethod = { _, _ in }
             userClientsLocalStore.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
-            userClientsLocalStore.proteusSessionIDFor_MockValue = .init(userID: Scaffolding.selfUserID.uuid.uuidString, clientID: Scaffolding.selfClientID)
+            userClientsLocalStore.proteusSessionIDFor_MockValue = .init(
+                userID: Scaffolding.selfUserID.uuid.uuidString,
+                clientID: Scaffolding.selfClientID
+            )
 
             selfClient.numberOfKeysRemaining = Scaffolding.selfClientNumberOfKeys
 
@@ -122,7 +125,8 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 
     func testDecryptedEventData_It_Throws_When_Sender_Failed_To_Encrypt() async throws {
         // Given a special payload
-        let invalidEvent = Scaffolding.makeEvent(content: .init(encryptedMessage: ZMFailedToCreateEncryptedMessagePayloadString))
+        let invalidEvent = Scaffolding
+            .makeEvent(content: .init(encryptedMessage: ZMFailedToCreateEncryptedMessagePayloadString))
 
         // When
         do {
@@ -199,7 +203,13 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         let decryptedEvent = try await sut.decryptedEventData(from: encryptedEvent)
 
         // Then the event was decrypted
-        XCTAssertEqual(decryptedEvent, Scaffolding.makeEvent(content: .init(encryptedMessage: encryptedMessage, decryptedMessage: decryptedMessage)))
+        XCTAssertEqual(
+            decryptedEvent,
+            Scaffolding.makeEvent(content: .init(
+                encryptedMessage: encryptedMessage,
+                decryptedMessage: decryptedMessage
+            ))
+        )
 
         let decryptInvocations = proteusService.decryptDataForSession_Invocations
         XCTAssertEqual(decryptInvocations.count, 1)

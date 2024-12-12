@@ -56,7 +56,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             userRepository: userRepository
         )
 
-        mlsMessageDecryptor = MLSMessageDecryptor(
+        self.mlsMessageDecryptor = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
@@ -111,7 +111,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     )
                 }
 
-            case .conversation(.mlsMessageAdd(let eventData)):
+            case let .conversation(.mlsMessageAdd(eventData)):
 
                 WireLogger.updateEvent.info(
                     "decrypting MLS event...",

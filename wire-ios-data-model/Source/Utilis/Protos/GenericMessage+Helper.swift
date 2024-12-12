@@ -859,15 +859,15 @@ public extension ImageAsset {
 
 // MARK: - DataTransfer
 
-extension DataTransfer {
+public extension DataTransfer {
 
-    public init(trackingIdentifier: UUID) {
+    init(trackingIdentifier: UUID) {
         self = DataTransfer.with {
             $0.trackingIdentifier = TrackingIdentifier(trackingIdentifier)
         }
     }
 
-    public var trackingIdentifierData: String? {
+    var trackingIdentifierData: String? {
         guard
             hasTrackingIdentifier,
             trackingIdentifier.hasIdentifier

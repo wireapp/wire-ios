@@ -18,13 +18,14 @@
 
 import WireAPI
 import WireDataModel
-import WireProtos
 import WireLogging
+import WireProtos
 
 // sourcery: AutoMockable
 /// A common processor for processing MLS / Proteus protobuf message.
 /// Used by `ConversationMLSMessageAddEventProcessor` and `ConversationProteusMessageAddEventProcessor`
-/// The message content is encoded using protocol buffers. There is a common protocol buffer definition adopted by all Wire client.
+/// The message content is encoded using protocol buffers. There is a common protocol buffer definition adopted by all
+/// Wire client.
 public protocol ConversationProtobufMessageProcessorProtocol {
 
     func processProtobufMessage(
@@ -56,7 +57,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
         date: Date,
         eventMessage: String
     ) async throws {
-        
+
         let logAttributes: LogAttributes = [
             .messageType: eventMessage,
             .conversationId: conversationID.uuid.safeForLoggingDescription,
@@ -67,28 +68,28 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
 
         // Message content types: https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
         switch content {
-        case .lastRead(let lastRead):
+        case let .lastRead(lastRead):
 
             await conversationLocalStore.updateLastReadMessageTimestamp(
                 lastRead,
                 in: conversation
             )
 
-        case .cleared(let cleared):
+        case let .cleared(cleared):
 
             await conversationLocalStore.updateClearedMessageTimestamp(
                 cleared,
                 in: conversation
             )
 
-        case .hidden(let hidden):
+        case let .hidden(hidden):
 
             await messageLocalStore.deleteMessageForSelf(
                 hidden,
                 in: conversation
             )
 
-        case .dataTransfer(let dataTransfer):
+        case let .dataTransfer(dataTransfer):
             guard let trackingIdentifier = dataTransfer.trackingIdentifierData else {
                 break
             }
@@ -98,7 +99,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 conversation: conversation
             )
 
-        case .deleted(let deleted):
+        case let .deleted(deleted):
 
             await messageLocalStore.deleteMessageForEveryone(
                 deleted,
@@ -106,7 +107,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 senderID: senderID.uuid
             )
 
-        case .reaction(let reaction):
+        case let .reaction(reaction):
 
             await messageLocalStore.addMessageReaction(
                 reaction,
@@ -120,14 +121,14 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             // Some logic was done here but it seems unnecessary - see legacy `ZMOTRMessage+UpdateEvent`
             break
 
-        case .buttonActionConfirmation(let buttonActionConfirmation):
+        case let .buttonActionConfirmation(buttonActionConfirmation):
 
             await messageLocalStore.updateButtonStates(
                 buttonActionConfirmation,
                 in: conversation
             )
 
-        case .edited(let edited):
+        case let .edited(edited):
 
             await messageLocalStore.editMessage(
                 edited,
@@ -162,14 +163,14 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
 
             // cases not handled
             break
-            
+
         case .inCallEmoji:
-            
+
             // Not supported yet, just discard.
             break
-            
+
         case .image, .asset:
-            
+
             try await processAssetMessageContent(
                 message: message,
                 conversation: conversation,
@@ -177,11 +178,11 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 date: date,
                 logAttributes: logAttributes
             )
-            
-        case .ephemeral(let data):
+
+        case let .ephemeral(data):
             switch data.content {
             case .image, .asset:
-                
+
                 try await processAssetMessageContent(
                     message: message,
                     conversation: conversation,
@@ -189,7 +190,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                     date: date,
                     logAttributes: logAttributes
                 )
-                
+
             default:
                 try await processMessageContent(
                     message: message,
@@ -201,7 +202,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             }
 
         case .text, .knock, .location, .composite, .buttonAction:
-            
+
             try await processMessageContent(
                 message: message,
                 conversation: conversation,
@@ -209,15 +210,16 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 date: date,
                 logAttributes: logAttributes
             )
-            
+
         case .external:
             // Previously handled in `ConversationProteusMessageAddEventProcessor`.
-            // If message content is external, it decrypts the external payload and turns it back into a generic non-external content message.
+            // If message content is external, it decrypts the external payload and turns it back into a generic
+            // non-external content message.
             // Consequently, we should never fall into that case.
             break
         }
     }
-    
+
     private func processAssetMessageContent(
         message: GenericMessage,
         conversation: ZMConversation,
@@ -231,7 +233,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             sender: (sender.id, sender.domain, sender.clientID),
             date: date
         )
-        
+
         await messageLocalStore.addAssetClientMessage(
             assetClientMessage,
             isNewMessage: isNew,
@@ -241,7 +243,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             senderDomain: sender.domain
         )
     }
-    
+
     private func processMessageContent(
         message: GenericMessage,
         conversation: ZMConversation,
@@ -255,7 +257,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             sender: (sender.id, sender.domain, sender.clientID),
             date: date
         )
-        
+
         await messageLocalStore.addClientMessage(
             clientMessage,
             isNewMessage: isNew,

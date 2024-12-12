@@ -20,9 +20,9 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "ZMMessage")
 
-extension ZMMessage {
+public extension ZMMessage {
 
-    func removePendingDeliveryReceipts() {
+    internal func removePendingDeliveryReceipts() {
         // Pending receipt can exist only in new inserted messages since it is deleted locally after it is sent to the
         // backend
         guard let predicate = ZMClientMessage.predicateForObjectsThatNeedToBeInsertedUpstream() else {
@@ -51,7 +51,7 @@ extension ZMMessage {
         }
     }
 
-    public static func remove(remotelyHiddenMessage hiddenMessage: MessageHide, inContext moc: NSManagedObjectContext) {
+    static func remove(remotelyHiddenMessage hiddenMessage: MessageHide, inContext moc: NSManagedObjectContext) {
         guard
             let conversationID = UUID(uuidString: hiddenMessage.conversationID),
             let messageID = UUID(uuidString: hiddenMessage.messageID),
@@ -66,7 +66,7 @@ extension ZMMessage {
         moc.delete(message)
     }
 
-    public static func remove(
+    static func remove(
         remotelyDeletedMessage deletedMessage: MessageDelete,
         inConversation conversation: ZMConversation,
         senderID: UUID,

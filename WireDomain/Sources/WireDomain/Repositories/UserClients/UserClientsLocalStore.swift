@@ -64,7 +64,7 @@ public protocol UserClientsLocalStoreProtocol {
     /// - returns: A flag indicating whether all self user clients are active MLS clients.
 
     func allSelfUserClientsAreActiveMLSClients() async -> Bool
-    
+
     /// Stores user client discovery date locally.
     /// - Parameters:
     ///     - discoveryDate: The date the client was discovered.
@@ -102,12 +102,12 @@ public protocol UserClientsLocalStoreProtocol {
         selfClient: WireDataModel.UserClient,
         newClient: WireDataModel.UserClient
     ) async
-    
+
     /// Fetches self client locally.
     /// - returns: The self client if any
 
     func fetchSelfClient() async -> WireDataModel.UserClient?
-    
+
     /// Fetches a client locally.
     /// - Parameters:
     ///     - id: The client id.
@@ -138,15 +138,15 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
         self.context = context
         self.userLocalStore = userLocalStore
     }
-    
+
     public func fetchSelfClient() async -> UserClient? {
         let selfUser = await userLocalStore.fetchSelfUser()
-        
+
         return await context.perform {
             selfUser.selfClient()
         }
     }
-    
+
     public func fetchClient(
         id: String,
         forUser user: ZMUser,
@@ -303,33 +303,33 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             }
         }
     }
-    
-     public func storeClient(
-         discoveryDate: Date,
-         client: WireDataModel.UserClient
-     ) async {
-         await context.perform {
-             client.discoveryDate = discoveryDate
-         }
-     }
 
-     public func addNewClientToIgnored(
-         selfClient: WireDataModel.UserClient,
-         newClient: WireDataModel.UserClient
-     ) async {
-         await context.perform {
-             selfClient.addNewClientToIgnored(newClient)
-         }
-     }
+    public func storeClient(
+        discoveryDate: Date,
+        client: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            client.discoveryDate = discoveryDate
+        }
+    }
 
-     public func proteusSessionID(
-         for client: WireDataModel.UserClient
-     ) async -> ProteusSessionID? {
-         await context.perform {
-             client.proteusSessionID
-         }
-     }
-    
+    public func addNewClientToIgnored(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            selfClient.addNewClientToIgnored(newClient)
+        }
+    }
+
+    public func proteusSessionID(
+        for client: WireDataModel.UserClient
+    ) async -> ProteusSessionID? {
+        await context.perform {
+            client.proteusSessionID
+        }
+    }
+
     public func clientSessionCreated(
         selfClient: WireDataModel.UserClient,
         newClient: WireDataModel.UserClient

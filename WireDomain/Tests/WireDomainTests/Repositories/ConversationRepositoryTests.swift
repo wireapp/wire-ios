@@ -329,7 +329,10 @@ final class ConversationRepositoryTests: XCTestCase {
             )
         }
 
-        conversationsLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)), true)
+        conversationsLocalStore.mlsConversationInfoConversation_MockValue = (
+            try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)),
+            true
+        )
         conversationsLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationsLocalStore.wipeMLSGroupGroupID_MockMethod = { _ in }
         conversationsLocalStore.deleteConversation_MockMethod = { _ in }
@@ -360,7 +363,10 @@ final class ConversationRepositoryTests: XCTestCase {
         }
 
         conversationsLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationsLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)), false)
+        conversationsLocalStore.mlsConversationInfoConversation_MockValue = (
+            try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)),
+            false
+        )
         conversationsLocalStore.deleteConversation_MockMethod = { _ in }
         conversationsLocalStore.wipeMLSGroupGroupID_MockMethod = { _ in }
 
@@ -425,7 +431,10 @@ final class ConversationRepositoryTests: XCTestCase {
         conversationsLocalStore.localParticipantsIn_MockValue = [selfUser, senderUser, removedUser]
         conversationsLocalStore
             .removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser_MockMethod = { _, _, _ in }
-        conversationsLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)), true)
+        conversationsLocalStore.mlsConversationInfoConversation_MockValue = (
+            try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)),
+            true
+        )
         userRepository.fetchOrCreateUserIdDomain_MockValue = removedUser
         userRepository.fetchUserIdDomain_MockValue = senderUser
         userRepository.isSelfUserIdDomain_MockValue = true

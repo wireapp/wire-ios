@@ -37,7 +37,6 @@ public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
         }
     }
 
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

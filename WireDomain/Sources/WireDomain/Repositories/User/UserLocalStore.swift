@@ -123,7 +123,7 @@ public protocol UserLocalStoreProtocol {
         analyticsID: String,
         conversation: ZMConversation
     ) async
-    
+
     // TODO: [WPB-10727] Merge these two methods into a single method
     func persistUser(userInfo: NewUserInfo) async
     func updateUser(userUpdateInfo: UserUpdateInfo) async

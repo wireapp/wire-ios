@@ -77,7 +77,7 @@ final class MessageLocalStoreTests: XCTestCase {
             )
 
             let user = modelHelper.createUser(in: context)
-            
+
             let clientMessage = ZMClientMessage(context: context)
 
             return (clientMessage, conversation, selfUser, user)
@@ -247,10 +247,19 @@ final class MessageLocalStoreTests: XCTestCase {
             .teamMemberRemoved(member: (id: userID, domain: domain1), date: date),
             .receiptModeIsOn(date: date),
             .newConversationCreated(date: date),
-            .participantsRemoved(participants: [(id: userID, domain: domain1)], sender: (id: otherUserID, domain: domain1), date: date),
+            .participantsRemoved(
+                participants: [(id: userID, domain: domain1)],
+                sender: (id: otherUserID, domain: domain1),
+                date: date
+            ),
             .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date),
             .invalid(sender: (id: userID, domain: domain1), date: date),
-            .decryptionFailed(sender: (id: userID, domain: domain1), senderClientID: otherUserID.uuidString, remoteIdentityChanged: true, date: date),
+            .decryptionFailed(
+                sender: (id: userID, domain: domain1),
+                senderClientID: otherUserID.uuidString,
+                remoteIdentityChanged: true,
+                date: date
+            ),
             .sessionReset(sender: (id: userID, domain: domain), senderClientID: otherUserID.uuidString, date: date),
             .participantsAdded(
                 participants: [(id: userID, domain: domain1)],
