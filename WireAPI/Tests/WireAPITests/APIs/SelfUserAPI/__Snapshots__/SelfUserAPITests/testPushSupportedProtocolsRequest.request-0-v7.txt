@@ -1,4 +1,0 @@
-- HTTPRequest
-  - path: "/v7/self/supported-protocols"
-  - method: put
-  - body: {"supported_protocols":["mls"]}
