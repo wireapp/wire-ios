@@ -147,9 +147,7 @@ public struct SnapshotHelper {
 
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI2"] != nil ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
                 as: .image(

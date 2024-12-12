@@ -24,8 +24,8 @@ import struct WireAPI.HTTPRequest
 /// Provides convenience to snapshot `HTTPRequest` objects.
 struct HTTPRequestSnapshotHelper {
 
-    private var defaultRecordMode: SnapshotTestingConfiguration.Record? { ProcessInfo.processInfo
-            .environment["CI"] != nil ? .never : nil
+    private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
+        ProcessInfo.processInfo.environment["CI"] != nil ? .never : nil
     }
 
     /// Snapshot test a given request
@@ -64,7 +64,8 @@ struct HTTPRequestSnapshotHelper {
     /// - Parameters:
     ///   - request: url request to verify
     ///   - resourceName: name of the file containing the expected request description
-    ///   - record: if true, a new snapshot will be recorded, overwriting an existing snapshot.
+    ///   - record: if true, a new snapshot will be recorded, overwriting an existing snapshot. If false it record only
+    /// if missing. If nil, it fallbacks to defaultRecordMode
     ///   - file: The file invoking the test.
     ///   - function: The method invoking the test.
     ///   - line: The line invoking the test.
@@ -73,7 +74,7 @@ struct HTTPRequestSnapshotHelper {
     func verifyRequest(
         request: URLRequest,
         resourceName: String? = nil,
-        record: Bool = false,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         function: String = #function,
         line: UInt = #line
