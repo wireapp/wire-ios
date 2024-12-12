@@ -122,16 +122,16 @@ extension ConversationListViewController {
 
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
 
-        public var showProfileNotificationsBadge: Bool {
+        public var hideProfileNotificationsBadge: Bool {
             if userSession.selfUser.isTeamMember {
-                return false
+                return true
             }
             guard let apiVersion = BackendInfo.apiVersion,
                   apiVersion >= .v7 else {
-                return false
+                return true
             }
 
-            return !selfProfileViewsMonitor.didViewSelfProfile
+            return selfProfileViewsMonitor.didViewSelfProfile
         }
 
         init(
