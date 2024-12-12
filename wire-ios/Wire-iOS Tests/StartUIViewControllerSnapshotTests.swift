@@ -22,30 +22,6 @@ import XCTest
 
 @testable import Wire
 
-final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
-
-    var isAddressBookAccessDisabled: Bool = false
-
-    var accessStatusDidChangeToGranted: Bool = true
-
-    static var sharedHelper: AddressBookHelperProtocol = MockAddressBookHelper()
-
-    func persistCurrentAccessStatus() {}
-
-    var isAddressBookAccessGranted: Bool {
-        false
-    }
-
-    var isAddressBookAccessUnknown: Bool {
-        true
-    }
-
-    func requestPermissions(_ callback: ((Bool) -> Void)?) {
-        // no-op
-        callback?(false)
-    }
-}
-
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
@@ -53,7 +29,6 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     private var snapshotHelper: SnapshotHelper!
     private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: StartUIViewController!
-    private var mockAddressBookHelper: MockAddressBookHelper!
     private var userSession: UserSessionMock!
 
     // MARK: - setUp
@@ -67,9 +42,9 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock()
+        accentColor = .blue
     }
 
     // MARK: - tearDown
@@ -77,7 +52,6 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        mockAddressBookHelper = nil
         SelfUser.provider = nil
         userSession = nil
         mockMainCoordinator = nil
@@ -89,7 +63,6 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func setupSut() {
         sut = StartUIViewController(
-            addressBookHelperType: MockAddressBookHelper.self,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),

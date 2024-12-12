@@ -18,19 +18,19 @@
 
 import Foundation
 
-struct TrustData: Decodable {
-    struct Host: Decodable {
-        enum Rule: String, Decodable {
+public struct TrustData: Decodable {
+    public struct Host: Decodable {
+        public enum Rule: String, Decodable {
             case endsWith = "ends_with"
             case equals
         }
 
-        let rule: Rule
-        let value: String
+        public let rule: Rule
+        public let value: String
     }
 
-    let certificateKey: SecKey
-    let hosts: [Host]
+    public let certificateKey: SecKey
+    public let hosts: [Host]
 
     enum CodingKeys: String, CodingKey {
         case certificateKey

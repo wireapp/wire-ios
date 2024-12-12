@@ -69,7 +69,7 @@ class SignatureRequestStrategyTests: MessagingTest {
             XCTAssertEqual(payload?["hash"] as? String, syncMOC.signatureStatus?.encodedHash)
         }
         XCTAssertEqual(request?.path, "/signature/request")
-        XCTAssertEqual(request?.method, ZMTransportRequestMethod.post)
+        XCTAssertEqual(request?.method, .post)
     }
 
     func testThatItGeneratesCorrectRequestIfStateIsWaitingForSignature() {
@@ -96,7 +96,7 @@ class SignatureRequestStrategyTests: MessagingTest {
         // then
         XCTAssertNotNil(request)
         XCTAssertEqual(request?.path, "/signature/pending/\(responseId)")
-        XCTAssertEqual(request?.method, ZMTransportRequestMethod.get)
+        XCTAssertEqual(request?.method, .get)
     }
 
     func testThatItNotifiesSignatureStatusAfterSuccessfulResponseToReceiveConsentURL() {
