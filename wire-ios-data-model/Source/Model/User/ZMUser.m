@@ -33,7 +33,6 @@
 #import <CommonCrypto/CommonKeyDerivation.h>
 #import <CommonCrypto/CommonCryptoError.h>
 #import "NSPredicate+ZMSearch.h"
-#import "ZMAddressBookContact.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 
 
