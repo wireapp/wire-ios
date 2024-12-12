@@ -259,6 +259,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
         if keys.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
             do {
+                // what are these: signaling keys? what is it for?
                 return try requestsFactory.updateClientSignalingKeysRequest(
                     userClient,
                     apiVersion: apiVersion
