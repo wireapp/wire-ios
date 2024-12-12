@@ -16,7 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol ShareContactsViewControllerDelegate: AnyObject {
-    func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController)
-    func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController)
+import Foundation
+
+struct PublicKeys: Decodable {
+    let wire: Data
+    let some: Data
+
+    static var wire: Data {
+        get throws { try loadJSON(fileName: "public-keys").wire }
+    }
+
+    static var some: Data {
+        get throws { try loadJSON(fileName: "public-keys").some }
+    }
 }

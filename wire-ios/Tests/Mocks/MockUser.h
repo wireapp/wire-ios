@@ -88,7 +88,6 @@
 
 @property (nonatomic) NSSet <id<UserClientType>> * clients;
 @property (nonatomic) ZMConnection *connection;
-@property (nonatomic) ZMAddressBookContact *contact;
 @property (nonatomic) AddressBookEntry *addressBookEntry;
 @property (nonatomic, copy) NSUUID *remoteIdentifier;
 @property (nonatomic, readwrite) ZMAvailability availability;

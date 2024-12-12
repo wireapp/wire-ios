@@ -16,16 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ContactsViewController: SearchHeaderViewControllerDelegate {
+import Foundation
 
-    func searchHeaderViewController(
-        _ searchHeaderViewController: SearchHeaderViewController,
-        updatedSearchQuery query: String
-    ) {
-        dataSource.searchQuery = query
-    }
+final class MockURLProtectionSpace: URLProtectionSpace, @unchecked Sendable {
 
-    func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
-        // No op
+    var mockServerTrust: SecTrust?
+
+    override var serverTrust: SecTrust? {
+        mockServerTrust
     }
 }

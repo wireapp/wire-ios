@@ -57,7 +57,6 @@
                                                                  domain:nil
                                                          teamIdentifier:nil
                                                                    user:nil
-                                                                contact:nil
                                                        searchUsersCache:nil];
 
     // (1)
@@ -69,7 +68,6 @@
                                                                  domain:nil
                                                          teamIdentifier:nil
                                                                    user:nil
-                                                                contact:nil
                                                        searchUsersCache:nil];
 
     XCTAssertEqualObjects(user1, user2);
@@ -84,36 +82,8 @@
                                                                  domain:nil
                                                          teamIdentifier:nil
                                                                    user:nil
-                                                                contact:nil
                                                        searchUsersCache:nil];
 
-    XCTAssertNotEqualObjects(user1, user3);
-}
-
-- (void)testThatItComparesEqualBasedOnContactWhenRemoteIDIsNil
-{
-    // Given
-    ZMAddressBookContact *contact1 = [[ZMAddressBookContact alloc] init];
-    contact1.firstName = @"A";
-    
-    ZMAddressBookContact *contact2  =[[ZMAddressBookContact alloc] init];
-    contact2.firstName = @"B";
-    
-    ZMSearchUser *user1 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
-                                                                contact:contact1
-                                                                   user:nil
-                                                       searchUsersCache:nil];
-    ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack 
-                                                                contact:contact1
-                                                                   user:nil
-                                                       searchUsersCache:nil];
-    ZMSearchUser *user3 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
-                                                                contact:contact2 
-                                                                   user:nil
-                                                       searchUsersCache:nil];
-
-    // Then
-    XCTAssertEqualObjects(user1, user2);
     XCTAssertNotEqualObjects(user1, user3);
 }
 
@@ -133,7 +103,6 @@
                                                                       domain:nil
                                                               teamIdentifier:nil
                                                                         user:nil
-                                                                     contact:nil
                                                             searchUsersCache:nil];
 
     
@@ -173,7 +142,6 @@
                                                                       domain:nil
                                                               teamIdentifier:nil
                                                                         user:user
-                                                                     contact:nil
                                                             searchUsersCache:nil];
 
     // then
@@ -202,7 +170,6 @@
                                                                       domain:nil
                                                               teamIdentifier:nil
                                                                         user:nil
-                                                                     contact:nil
                                                             searchUsersCache:nil];
 
     
@@ -222,7 +189,6 @@
                                                                       domain:nil
                                                               teamIdentifier:nil
                                                                         user:nil
-                                                                     contact:nil
                                                             searchUsersCache:nil];
 
     // then
