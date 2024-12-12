@@ -55,10 +55,10 @@ extension AnalyticsEvent: CustomDebugStringConvertible {
 
 // MARK: - SegmentationEntry @resultBuilder
 
-extension AnalyticsEvent {
+public extension AnalyticsEvent {
 
     @resultBuilder
-    public struct SegmentationEntryBuilder {
+    struct SegmentationEntryBuilder {
         public static func buildBlock(_ components: SegmentationEntry...) -> [SegmentationEntry] {
             components
         }
@@ -70,7 +70,7 @@ extension AnalyticsEvent {
     ///   - name: A unique name.
     ///   - segmentation: Additional metadata.
 
-    public init(
+    init(
         _ name: String,
         @SegmentationEntryBuilder segmentation: () -> [SegmentationEntry]
     ) {

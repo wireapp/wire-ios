@@ -57,6 +57,18 @@ public extension AnalyticsEvent.User {
         }
     }
 
+    /// Count of user dropping at each modal step (Step 1 through 3)
+    ///
+    /// Segmentation: app_name; app_version; modal_disclaimers; modal_team-name; modal_confirmation
+
+    static func personalTeamCreationFlowStopped( // TODO: implement
+        teamName: String,
+        todo_modal_disclaimers: Void,
+        todo_modal_confirmation: Void
+    ) -> AnalyticsEvent { // TODO: implement
+        fatalError("user.personal-team-creation-flow-stopped")
+    }
+
     /// Count of user reaching the cancellation modal
     ///
     /// Segmentation: app_name; app_version; modal_continue-clicked; modal_leave-clicked

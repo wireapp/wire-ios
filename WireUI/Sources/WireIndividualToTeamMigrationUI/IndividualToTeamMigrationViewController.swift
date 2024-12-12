@@ -18,11 +18,11 @@
 
 import SwiftUI
 import UIKit
+import WireAnalytics
 import WireDesign
 import WireDomainAPI
 import WireFoundation
 import WireReusableUIComponents
-import WireAnalytics
 
 public class IndividualToTeamMigrationViewController: UIViewController {
     public enum Action: Sendable {
@@ -104,7 +104,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         accessibilityAnnouncement: .localizedAccessibilityLabel(key: "individualToTeam.loading", bundle: .module)
     )
     let childController: UINavigationController
-    //var currentStep: Step // TODO: why is this never read?
+    // var currentStep: Step // TODO: why is this never read?
     let features: [TeamPlanFeature]
     let useCase: any IndividualToTeamMigrationUseCase
     let userProfileName: String
@@ -119,7 +119,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     ) {
         self.analyticsEventTracker = analyticsEventTracker
         self.actionCallback = actionCallback
-        //self.currentStep = .teamPlanSelection(features: features)
+        // self.currentStep = .teamPlanSelection(features: features)
         self.childController = UINavigationController()
         self.features = features
         self.useCase = useCase
