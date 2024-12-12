@@ -119,7 +119,7 @@ final class SelfProfileViewController: UIViewController {
             apiVersion >= .v7 {
             self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
                 actionCallback: { [weak self] action in
-                    self?.onTeamCreationBannerInteraction(action, apiVersion: .v7)
+                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
                 }
             )
         }
