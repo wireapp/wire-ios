@@ -930,7 +930,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             await fetchAndStoreFeatureConfig()
 
             let (selfClient, hasRegisteredMLSClient) = await syncContext.perform {
-                let selfClient =  ZMUser.selfUser(in: self.syncContext).selfClient()
+                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
                 let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
                 return (selfClient, hasRegisteredMLSClient)
             }
