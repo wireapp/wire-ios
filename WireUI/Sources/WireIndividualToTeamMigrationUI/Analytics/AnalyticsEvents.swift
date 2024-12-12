@@ -18,8 +18,6 @@
 
 import WireAnalytics
 
-// TODO: add segmentations
-
 public extension AnalyticsEvent.UI {
 
     /// Tap on the Notification dot to see the CTA.
@@ -27,7 +25,9 @@ public extension AnalyticsEvent.UI {
     /// Segmentation: app_name; app_version; migration_dot_active;
 
     static func clickedProfile(isMigrationDotActive: Bool) -> AnalyticsEvent { // TODO: implement
-        .init(name: "ui.clicked-profile") // TODO: segmentation
+        AnalyticsEvent("ui.clicked-profile") {
+            SegmentationEntry("migration_dot_active", isMigrationDotActive)
+        }
     }
 
     /// Tap on the create a team CTA
@@ -52,34 +52,52 @@ public extension AnalyticsEvent.User {
     /// Segmentation: app_name; app_version
 
     static func personalTeamCreationFlowStarted(step: Int) -> AnalyticsEvent {
-        AnalyticsEvent(
-            name: "user.personal-team-creation-flow-started",
-            segmentation: [
-                SegmentationEntry(key: "step_modalcreateteam", value: "\(step)")
-            ]
-        )
+        AnalyticsEvent("user.personal-team-creation-flow-started") {
+            SegmentationEntry("step_modalcreateteam", step)
+        }
     }
 
-    /// Count of user dropping at each modal step (Step 1 through 3)
+    /*
+
+     it is unclear from the ticket description if this is needed [WPB-11319], [WPB-11318]
+
+     /// Count of user dropping at each modal step (Step 1 through 3)
     ///
     /// Segmentation: app_name; app_version; modal_disclaimers; modal_team-name; modal_confirmation
 
     static let personalTeamCreationFlowStopped = AnalyticsEvent(name: "user.personal-team-creation-flow-stopped") // TODO: implement
 
+     */
+
     /// Count of user reaching the cancellation modal
     ///
     /// Segmentation: app_name; app_version; modal_continue-clicked; modal_leave-clicked
 
-    static let personalTeamCreationFlowCancelled = AnalyticsEvent(name: "user.personal-team-creation-flow-cancelled") // TODO: implement
+    static func personalTeamCreationFlowCancelled( // TODO: implement
+        teamName: String,
+        modalLeaveClicked: Bool,
+        modalContinueClicked: Bool // TODO: rename arguments properly
+    ) -> AnalyticsEvent {
+        AnalyticsEvent("user.personal-team-creation-flow-cancelled") {
+            SegmentationEntry("modal_team-name", teamName)
+            SegmentationEntry("modal_leave-clicked", modalLeaveClicked)
+            SegmentationEntry("modal_continue-clicked", modalContinueClicked)
+        }
+    }
 
     /// Count of user reach the final stage (Step 4)
     ///
     /// Segmentation: app_name; app_version; modal_back-to-wire-clicked; modal_open-tm-clicked
 
-    static func personalTeamCreationFlowCompleted(todo_segmentation: Void) -> AnalyticsEvent {
-        .init(name: "user.personal-team-creation-flow-completed") // TODO: segmentation
+    static func personalTeamCreationFlowCompleted(
+        teamName: String,
+        modalOpenTeamManagementButtonClicked: Bool, // TODO: rename arguments properly
+        backToWireButtonClicked: Bool
+    ) -> AnalyticsEvent {
+        AnalyticsEvent("user.personal-team-creation-flow-completed") {
+            SegmentationEntry("modal_team-name", teamName)
+            SegmentationEntry("modal_open-tm-clicked", modalOpenTeamManagementButtonClicked)
+            SegmentationEntry("modal_back-to-wire-clicked", backToWireButtonClicked)
+        }
     }
-
-    // TODO: Count of user click on the "Open Team Management" button on the final stage
-    // (see event and segmentation “user.personal-team-creation-flow-completed”)
 }

@@ -20,7 +20,6 @@ import math_h
 
 /// A value that can be tracked.
 
-@available(*, deprecated, message: "Use SegmentationEntry.init instead!")
 public protocol AnalyticsValue {
 
     /// A representation suitable for tracking.
@@ -31,6 +30,7 @@ public protocol AnalyticsValue {
 
 extension Bool: AnalyticsValue {
 
+    @available(*, deprecated, message: "Use SegmentationEntry.init instead!")
     public var analyticsValue: String {
         SegmentationEntry("", self).value
     }

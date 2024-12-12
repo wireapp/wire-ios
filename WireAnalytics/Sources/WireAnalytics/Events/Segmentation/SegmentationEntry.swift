@@ -32,6 +32,16 @@ public struct SegmentationEntry: Hashable, Sendable {
         self.value = value
     }
 
+    public init(_ key: String, _ value: String) {
+        self.key = key
+        self.value = value
+    }
+
+    public init(_ key: String, _ value: Int) {
+        self.key = key
+        self.value = "\(value)"
+    }
+
     public init(_ key: String, _ value: Bool) {
         self.key = key
         self.value = value ? "True" : "False"

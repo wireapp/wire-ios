@@ -216,7 +216,13 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(todo_segmentation: ()))
+                analyticsEventTracker?.trackEvent(
+                    .User.personalTeamCreationFlowCompleted(
+                        teamName: "", // TODO: fix argument values
+                        modalOpenTeamManagementButtonClicked: false,
+                        backToWireButtonClicked: false
+                    )
+                )
             }
         case .toApp:
             actionCallback(.completionGoToApp)
