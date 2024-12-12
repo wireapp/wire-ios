@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 // MARK: - Stylable Protocol
 
 /// Objects conforming to this protocol opt in to apply a certain style to UI elements

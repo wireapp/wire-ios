@@ -37,6 +37,8 @@ jobs:
         id: filter
         with:
           filters: |
+            fastlane:
+              - 'fastlane/**'
             wire-ios:
               - 'wire-ios/**'
             WireUI:

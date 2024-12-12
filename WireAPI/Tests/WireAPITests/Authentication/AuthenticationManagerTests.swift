@@ -30,7 +30,10 @@ final class AuthenticationManagerTests: XCTestCase {
     override func setUpWithError() throws {
         cookieStorage = MockCookieStorageProtocol()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
-        let networkService = NetworkService(baseURL: backendURL)
+        let networkService = NetworkService(
+            baseURL: backendURL,
+            serverTrustValidator: ServerTrustValidator(pinnedKeys: [])
+        )
         networkService.configure(with: .mockURLSession())
 
         sut = AuthenticationManager(
