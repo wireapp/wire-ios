@@ -132,8 +132,8 @@ extension ConversationListViewController {
                 if value == nil {
                     userDefaults.set(false, forKey: .didViewSelfProfile)
                 }
-
-                return (value as? Bool) == true
+                
+                return (value as? Bool) ?? false
             }
 
             set {
@@ -147,7 +147,7 @@ extension ConversationListViewController {
                 return false
             }
             guard let apiVersion = BackendInfo.apiVersion,
-                  apiVersion > .v6 else {
+                  apiVersion >= .v7 else {
                 return false
             }
 
