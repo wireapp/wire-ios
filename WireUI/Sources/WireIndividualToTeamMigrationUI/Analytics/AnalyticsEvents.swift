@@ -18,13 +18,14 @@
 
 import WireAnalytics
 
-public extension AnalyticsEvent.UI {
+public // TODO: move out of `WireIndividiualToTeamMigrationUI` and remove `public`
+extension AnalyticsEvent.UI {
 
     /// Tap on the Notification dot to see the CTA.
     ///
     /// Segmentation: app_name; app_version; migration_dot_active;
 
-    static func clickedProfile(isMigrationDotActive: Bool) -> AnalyticsEvent { // TODO: implement
+    static func triggerOpenProfile(isMigrationDotActive: Bool) -> AnalyticsEvent { // TODO: implement
         AnalyticsEvent("ui.clicked-profile") {
             SegmentationEntry("migration_dot_active", isMigrationDotActive)
         }
@@ -36,7 +37,7 @@ public extension AnalyticsEvent.UI {
 
     static func triggeredPersonalMigrationCTA(
         isCreateTeamButtonUsed: Bool,
-        isDismissCTAButtonUsed: Bool
+        isDismissCTAButtonUsed: Bool // TODO: implement correctly
     ) -> AnalyticsEvent {
         AnalyticsEvent("ui.clicked-personal-migration-cta") {
             SegmentationEntry("clicked_create_team", isCreateTeamButtonUsed)
@@ -45,15 +46,30 @@ public extension AnalyticsEvent.UI {
     }
 }
 
-public extension AnalyticsEvent.User {
+extension AnalyticsEvent.User {
 
     /// Count of user reaching for each modal step (Step 1 through 3)
     ///
     /// Segmentation: app_name; app_version
 
-    static func personalTeamCreationFlowStarted(step: Int) -> AnalyticsEvent {
-        AnalyticsEvent("user.personal-team-creation-flow-started") {
-            SegmentationEntry("step_modalcreateteam", step)
+    static func personalTeamCreationFlowStarted(
+        step: IndividualToTeamMigrationViewController.Step
+    ) -> AnalyticsEvent! {
+
+        let index: Int
+        switch step {
+        case .teamPlanSelection:
+            index = 1
+        case .teamName:
+            index = 2
+        case .confirmation:
+            index = 3
+        case .completion:
+            return .none
+        }
+
+        return AnalyticsEvent("user.personal-team-creation-flow-started") {
+            SegmentationEntry("step_modalcreateteam", index)
         }
     }
 

@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireAnalytics
+import UIKit
 import WireDesign
 import WireFoundation
 import WireReusableUIComponents
@@ -27,8 +27,6 @@ public struct SelfProfileViewCallToActionBanner: View {
     public enum Action: Sendable {
         case createWireTeam
     }
-
-    @Environment(\.analyticsEventTracker) private var analyticsEventTracker
 
     let actionCallback: @Sendable (Action) -> Void
 
@@ -41,39 +39,33 @@ public struct SelfProfileViewCallToActionBanner: View {
             .padding(8)
             .bannerBackground()
     }
+}
 
-    @ViewBuilder
-    private func contentView(
-        actionCallback: @escaping @Sendable (Action) -> Void
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label {
-                Text(String.localized(key: "individualToTeam.banner.title", bundle: .module))
-                    .wireTextStyle(.h5)
-            } icon: {
-                Image.info
+@MainActor
+@ViewBuilder
+private func contentView(
+    actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void
+) -> some View {
+    VStack(alignment: .leading, spacing: 12) {
+        Label(title: {
+            Text(String.localized(key: "individualToTeam.banner.title", bundle: .module))
+                .wireTextStyle(.h5)
+        }, icon: {
+            Image.info
+        })
+        .fontWeight(.bold)
+        Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
+            .wireTextStyle(.subline1)
+            .lineLimit(nil)
+
+        Button(
+            action: { actionCallback(.createWireTeam) },
+            label: {
+                Text(String.localized(key: "individualToTeam.banner.button", bundle: .module))
             }
-            .fontWeight(.bold)
-
-            Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
-                .wireTextStyle(.subline1)
-                .lineLimit(nil)
-
-            Button {
-                fatalError("TODO: fix bool values")
-                analyticsEventTracker?.trackEvent(
-                    .UI.triggeredPersonalMigrationCTA(
-                        isCreateTeamButtonUsed: false,
-                        isDismissCTAButtonUsed: false
-                    )
-                )
-                actionCallback(.createWireTeam)
-            } label: {
-                Text("individualToTeam.banner.button", bundle: .module)
-            }
-            .wireButtonStyle(.secondary)
-            .fixedSize()
-        }
+        )
+        .wireButtonStyle(.secondary)
+        .fixedSize()
     }
 }
 
@@ -93,15 +85,9 @@ private extension View {
     }
 }
 
-public class SelfProfileViewCallToActionBannerHostingController: UIHostingController<AnyView> {
-
-    public init(
-        analyticsEventTracker: (any AnalyticsEventTracker)?,
-        actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void
-    ) {
-        let bannerView = SelfProfileViewCallToActionBanner(actionCallback: actionCallback)
-            .environment(\.analyticsEventTracker, analyticsEventTracker)
-        super.init(rootView: AnyView(bannerView))
+public class SelfProfileViewCallToActionBannerHostingController: UIHostingController<SelfProfileViewCallToActionBanner> {
+    public init(actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void) {
+        super.init(rootView: SelfProfileViewCallToActionBanner(actionCallback: actionCallback))
         view.backgroundColor = .clear
     }
 
@@ -113,5 +99,5 @@ public class SelfProfileViewCallToActionBannerHostingController: UIHostingContro
 
 @available(iOS 17.0, *)
 #Preview {
-    SelfProfileViewCallToActionBanner { _ in }
+    SelfProfileViewCallToActionBanner(actionCallback: { _ in })
 }

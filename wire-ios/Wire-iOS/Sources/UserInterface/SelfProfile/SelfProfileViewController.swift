@@ -117,7 +117,6 @@ final class SelfProfileViewController: UIViewController {
             let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
             self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
-                analyticsEventTracker: analyticsEventTracker,
                 actionCallback: { [weak self] action in
                     self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
                 }
@@ -263,6 +262,14 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
+
+        analyticsEventTracker?.trackEvent(
+            .UI.triggeredPersonalMigrationCTA(
+                isCreateTeamButtonUsed: false, // TODO: pass correct values
+                isDismissCTAButtonUsed: false
+            )
+        )
+
         let vc = IndividualToTeamMigrationViewController(
             useCase: useCase,
             userProfileName: userName,

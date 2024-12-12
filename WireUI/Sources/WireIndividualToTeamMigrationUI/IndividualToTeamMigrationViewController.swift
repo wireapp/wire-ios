@@ -179,7 +179,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: false) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(step.flowStartedAnalyticsEvent)
+                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(step: step))
             }
         case .toTeamName:
             let step = Step.teamName
@@ -190,7 +190,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(step.flowStartedAnalyticsEvent)
+                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(step: step))
             }
         case let .toConfirmation(teamName):
             let step = Step.confirmation(teamName: teamName)
@@ -201,7 +201,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(step.flowStartedAnalyticsEvent)
+                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(step: step))
             }
         case let .toTeamCreation(teamName: teamName):
             createTeam(named: teamName)
