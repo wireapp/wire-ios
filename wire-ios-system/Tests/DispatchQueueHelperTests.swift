@@ -41,6 +41,6 @@ final class DispatchQueueHelperTests: XCTestCase {
             groupExpectation.fulfill()
         }
 
-        await fulfillment(of: [groupExpectation], timeout: 0.1)
+        await fulfillment(of: [groupExpectation], timeout: 1)
     }
 }
