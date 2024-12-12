@@ -33,7 +33,8 @@ public struct SnapshotHelper {
     private var snapshotReferenceDirectory = ""
 
     private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
-        ProcessInfo.processInfo.environment["CI"] != nil ? .never : nil
+        let ci = ProcessInfo.processInfo.environment["CI"]
+        return ci?.isEmpty == true ? .missing : .never
     }
 
     public init() {}
