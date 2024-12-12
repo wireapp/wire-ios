@@ -97,8 +97,8 @@ final class NotificationBadgeView: UIView {
         NSLayoutConstraint.activate([
             iconView.centerXAnchor.constraint(equalTo: centerXAnchor),
             iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            iconView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.6),
-            iconView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.6)
+            iconView.widthAnchor.constraint(equalTo: widthAnchor),
+            iconView.heightAnchor.constraint(equalTo: heightAnchor)
         ])
 
         setNeedsLayout()

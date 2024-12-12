@@ -72,10 +72,6 @@ extension ConversationListViewController {
 
     final class ViewModel: NSObject {
 
-        private enum UserDefaultsKey: String, DefaultsKey {
-            case didViewSelfProfile
-        }
-
         weak var viewController: ConversationListContainerViewModelDelegate? {
             didSet {
                 guard viewController != nil else { return }
@@ -125,20 +121,16 @@ extension ConversationListViewController {
 
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
 
-        var didViewSelfProfile: Bool {
-            SelfProfileViewsMonitor.shared.didViewSelfProfile
-        }
-
         public var showProfileNotificationsBadge: Bool {
-            if userSession.selfUser.isTeamMember {
-                return false
-            }
-            guard let apiVersion = BackendInfo.apiVersion,
-                  apiVersion >= .v7 else {
-                return false
-            }
+           if userSession.selfUser.isTeamMember {
+               return false
+           }
+           guard let apiVersion = BackendInfo.apiVersion,
+                 apiVersion >= .v7 else {
+               return false
+           }
 
-            return !didViewSelfProfile
+           return !SelfProfileViewsMonitor.shared.didViewSelfProfile
         }
 
         init(
