@@ -105,7 +105,7 @@ final class SavableImageTests: XCTestCase {
                 savableImage = nil
             }
 
-            self.waitForExpectations(timeout: 2, handler: nil)
+            self.waitForExpectations(timeout: 2)
 
         }
 
@@ -140,7 +140,7 @@ final class SavableImageTests: XCTestCase {
                 mockOwner = nil
             }
 
-            self.waitForExpectations(timeout: 2, handler: nil)
+            self.waitForExpectations(timeout: 2)
         }
 
         // THEN
@@ -166,7 +166,7 @@ final class SavableImageTests: XCTestCase {
                 savableImage = nil
             }
 
-            self.waitForExpectations(timeout: 2, handler: nil)
+            self.waitForExpectations(timeout: 2)
 
         }
 
@@ -209,7 +209,7 @@ final class SavableImageTests: XCTestCase {
                 mockOwner = nil
             }
 
-            self.waitForExpectations(timeout: 2, handler: nil)
+            self.waitForExpectations(timeout: 2)
         }
 
         // THEN

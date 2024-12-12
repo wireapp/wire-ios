@@ -66,7 +66,7 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 0.2)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 0)
         XCTAssertEqual(result, [])
     }
@@ -96,7 +96,7 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 0.2)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 1)
         XCTAssertEqual(
             previewDownloader.requestOpenGraphDataURLs,
@@ -120,7 +120,7 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 0.2)
 
         guard let attachment = result.first else { return XCTFail("Wrong preview type") }
         XCTAssertEqual(attachment.type, .youTubeVideo)
@@ -144,7 +144,7 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 0.2)
 
         guard let attachment = result.first else { return XCTFail("Wrong preview type") }
         XCTAssertEqual(attachment.type, .youTubeVideo)
@@ -181,7 +181,7 @@ class LinkAttachmentDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 0.2)
     }
 
 }

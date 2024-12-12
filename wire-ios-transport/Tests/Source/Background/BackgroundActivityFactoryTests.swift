@@ -117,7 +117,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         activityManager.triggerExpiration()
 
         // THEN
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: 0.5)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
@@ -137,7 +137,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         activityManager.triggerExpiration()
 
         // THEN
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: 0.5)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
@@ -156,7 +156,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         factory.endBackgroundActivity(activity)
 
         // THEN
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: 0.5)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
@@ -192,7 +192,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         simulateApplicationDidEnterBackground()
 
         // THEN
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 3)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
