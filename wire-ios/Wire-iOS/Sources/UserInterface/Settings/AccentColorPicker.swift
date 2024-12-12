@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Inject
 import SwiftUI
 import WireCommonComponents
 import WireDesign
@@ -28,19 +27,17 @@ struct AccentColorPicker: View {
     @State var selectedColor: AccentColor
     private let colorViewSize: CGFloat = 28
 
-    @ObserveInjection var inject
-
     let onColorSelect: ((AccentColor) -> Void)?
 
     var body: some View {
         accentColorList
-            .enableInjection()
     }
 
     @ViewBuilder private var accentColorList: some View {
         List(AccentColor.allCases, id: \.self) { color in
             cell(for: color)
                 .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
+                .contentShape(Rectangle())
                 .onTapGesture {
                     selectedColor = color
                     onColorSelect?(color)

@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireLogging
 import WireSystem
 
 // sourcery: AutoMockable
@@ -188,7 +189,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             }
 
             return results
-        } catch let CoreCryptoError.CryptoError(error) {
+        } catch let CoreCryptoError.Mls(error) {
             WireLogger.mls
                 .error(
                     "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAPI
 import WireDataModel
 import WireRequestStrategy
 import WireUtilities
@@ -25,6 +26,7 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
+    private var apiServiceFactory: APIServiceFactory?
     private var appVersion: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
@@ -55,6 +57,7 @@ struct ZMUserSessionBuilder {
 
     func build() -> ZMUserSession {
         guard
+            let apiServiceFactory,
             let appVersion,
             let appLock,
             let application,
@@ -85,6 +88,7 @@ struct ZMUserSessionBuilder {
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
+            apiServiceFactory: apiServiceFactory,
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,
@@ -108,6 +112,7 @@ struct ZMUserSessionBuilder {
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
+        apiServiceFactory: @escaping APIServiceFactory,
         appVersion: String,
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
@@ -195,6 +200,7 @@ struct ZMUserSessionBuilder {
 
         // setup builder
 
+        self.apiServiceFactory = apiServiceFactory
         self.appVersion = appVersion
         self.appLock = appLock
         self.application = application

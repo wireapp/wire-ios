@@ -31,7 +31,10 @@ final class APIServiceTests: XCTestCase {
     override func setUp() async throws {
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         authenticationManager = MockAuthenticationManagerProtocol()
-        let networkService = NetworkService(baseURL: backendURL)
+        let networkService = NetworkService(
+            baseURL: backendURL,
+            serverTrustValidator: ServerTrustValidator(pinnedKeys: [])
+        )
         networkService.configure(with: .mockURLSession())
         sut = APIService(
             networkService: networkService,

@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireDataModel
 
 /// Process conversation message timer update events.
 
@@ -26,15 +27,49 @@ protocol ConversationMessageTimerUpdateEventProcessorProtocol {
     ///
     /// - Parameter event: A conversation message timer update event.
 
-    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async throws
+    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async
 
 }
 
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
 
-    func processEvent(_: ConversationMessageTimerUpdateEvent) async throws {
-        // TODO: [WPB-10171]
-        assertionFailure("not implemented yet")
+    let conversationLocalStore: any ConversationLocalStoreProtocol
+    let messageLocalStore: any MessageLocalStoreProtocol
+
+    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async {
+        let userID = event.senderID
+        let conversationID = event.conversationID
+        let timerInMilliseconds = Double(event.newTimer ?? 0)
+        let timestamp = event.timestamp
+
+        let conversation = await conversationLocalStore.fetchOrCreateConversation(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        let timeoutValue = timerInMilliseconds / 1000
+        let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
+        let currentTimeout = await conversationLocalStore.conversationMessageDestructionTimeout(conversation)
+
+        if currentTimeout != timeout {
+
+            let messageType: MessageType = .messageTimerUpdate(
+                sender: (userID.uuid, userID.domain),
+                date: timestamp,
+                timeoutValue: timeoutValue
+            )
+
+            await messageLocalStore.addSystemMessageToConversation(
+                messageType: messageType,
+                conversationID: conversationID.uuid,
+                conversationDomain: conversationID.domain
+            )
+        }
+
+        await conversationLocalStore.storeConversation(
+            timeoutValue: timeoutValue,
+            for: conversation
+        )
     }
 
 }

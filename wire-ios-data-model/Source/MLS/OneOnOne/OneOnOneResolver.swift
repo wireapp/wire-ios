@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
@@ -37,15 +38,18 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let migrator: OneOnOneMigratorInterface?
+    private let isMLSEnabled: Bool
 
     // MARK: - Initializer
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        migrator: OneOnOneMigratorInterface?
+        migrator: OneOnOneMigratorInterface?,
+        isMLSEnabled: Bool
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
+        self.isMLSEnabled = isMLSEnabled
     }
 
     // MARK: - Resolve
@@ -76,12 +80,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
-        let mlsEnabled = DeveloperFlag.enableMLSSupport.isOn
-
         switch messageProtocol {
-        case .none where mlsEnabled:
+        case .none where isMLSEnabled:
             return await resolveCommonUserProtocolNone(with: userID, in: context)
-        case .mls where mlsEnabled:
+        case .mls where isMLSEnabled:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
             return await resolveCommonUserProtocolProteus(with: userID, in: context)

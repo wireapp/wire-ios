@@ -20,6 +20,7 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireTestingPackage
 import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -29,6 +30,7 @@ final class TeamRepositoryTests: XCTestCase {
     private var sut: TeamRepository!
     private var userRespository: MockUserRepositoryProtocol!
     private var teamsAPI: MockTeamsAPI!
+    private var teamLocalStore: MockTeamLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -38,31 +40,22 @@ final class TeamRepositoryTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        try await super.setUp()
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         userRespository = MockUserRepositoryProtocol()
         teamsAPI = MockTeamsAPI()
+        teamLocalStore = MockTeamLocalStoreProtocol()
+
         sut = TeamRepository(
             selfTeamID: Scaffolding.selfTeamID,
             userRepository: userRespository,
-            teamsAPI: teamsAPI,
-            context: context
+            teamLocalStore: teamLocalStore,
+            teamsAPI: teamsAPI
         )
-
-        let selfUser = await context.perform { [context, modelHelper] in
-            modelHelper?.createSelfUser(
-                id: Scaffolding.selfUserID,
-                in: context
-            )
-        }
-
-        userRespository.fetchSelfUser_MockValue = selfUser
     }
 
     override func tearDown() async throws {
-        try await super.tearDown()
         stack = nil
         modelHelper = nil
         userRespository = nil
@@ -74,14 +67,9 @@ final class TeamRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testPullSelfTeam() async throws {
-        // Given
-        await context.perform { [context] in
-            // There is no team in the database.
-            XCTAssertNil(Team.fetch(with: Scaffolding.selfTeamID, in: context))
-        }
-
+    func testPullSelfTeam_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
+
         teamsAPI.getTeamFor_MockValue = WireAPI.Team(
             id: Scaffolding.selfTeamID,
             name: Scaffolding.teamName,
@@ -91,38 +79,21 @@ final class TeamRepositoryTests: XCTestCase {
             splashScreenID: Scaffolding.splashScreenID
         )
 
+        teamLocalStore.storeTeamIdNameCreatorIDLogoIDLogoKey_MockMethod = { _, _, _, _, _ in }
+
         // When
+
         try await sut.pullSelfTeam()
 
         // Then
-        try await context.perform { [context] in
-            // There is a team in the database.
-            let team = try XCTUnwrap(Team.fetch(with: Scaffolding.selfTeamID, in: context))
-            XCTAssertEqual(team.remoteIdentifier, Scaffolding.selfTeamID)
-            XCTAssertEqual(team.name, Scaffolding.teamName)
-            XCTAssertEqual(team.creator?.remoteIdentifier, Scaffolding.teamCreatorID)
-            XCTAssertEqual(team.pictureAssetId, Scaffolding.logoID)
-            XCTAssertEqual(team.pictureAssetKey, Scaffolding.logoKey)
-            XCTAssertFalse(team.needsToBeUpdatedFromBackend)
-        }
+
+        XCTAssertEqual(teamsAPI.getTeamFor_Invocations.count, 1)
+        XCTAssertEqual(teamLocalStore.storeTeamIdNameCreatorIDLogoIDLogoKey_Invocations.count, 1)
     }
 
-    func testPullSelfTeamRoles() async throws {
-        // Given
-        let team = try await context.perform { [context, modelHelper] in
-            // Make sure we have no roles to begin with.
-            let request = Role.fetchRequest()
-            let roles = try context.fetch(request)
-            XCTAssertTrue(roles.isEmpty)
-
-            // A team is needed to store new roles.
-            return modelHelper!.createTeam(
-                id: Scaffolding.selfTeamID,
-                in: context
-            )
-        }
-
+    func testPullSelfTeamRoles_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
+
         teamsAPI.getTeamRolesFor_MockValue = [
             ConversationRole(
                 name: "admin",
@@ -139,54 +110,21 @@ final class TeamRepositoryTests: XCTestCase {
             )
         ]
 
+        teamLocalStore.storeTeamRolesSelfTeamIDTeamRolesInfo_MockMethod = { _, _ in }
+
         // When
+
         try await sut.pullSelfTeamRoles()
 
         // Then
-        try await context.perform { [context] in
-            XCTAssertFalse(team.needsToDownloadRoles)
 
-            // There are two roles.
-            let request = NSFetchRequest<Role>(entityName: Role.entityName())
-            request.sortDescriptors = [NSSortDescriptor(key: Role.nameKey, ascending: true)]
-            let roles = try context.fetch(request)
-            guard roles.count == 2 else { return XCTFail("roles.count != 2") }
-
-            // One is for the admin.
-            let firstRole = try XCTUnwrap(roles[0])
-            XCTAssertEqual(firstRole.name, "admin")
-            XCTAssertEqual(firstRole.team?.remoteIdentifier, Scaffolding.selfTeamID)
-            XCTAssertNil(firstRole.conversation)
-            XCTAssertEqual(
-                Set(firstRole.actions.map(\.name)),
-                [
-                    "add_conversation_member",
-                    "delete_conversation"
-                ]
-            )
-
-            // One is for the member.
-            let secondRole = try XCTUnwrap(roles[1])
-            XCTAssertEqual(secondRole.name, "member")
-            XCTAssertEqual(secondRole.team?.remoteIdentifier, Scaffolding.selfTeamID)
-            XCTAssertNil(secondRole.conversation)
-            XCTAssertEqual(Set(secondRole.actions.map(\.name)), ["add_conversation_member"])
-        }
+        XCTAssertEqual(teamsAPI.getTeamRolesFor_Invocations.count, 1)
+        XCTAssertEqual(teamLocalStore.storeTeamRolesSelfTeamIDTeamRolesInfo_Invocations.count, 1)
     }
 
-    func testPullSelfTeamMembers() async throws {
-        // Given
-        let team = await context.perform { [context, modelHelper] in
-            let team = modelHelper!.createTeam(
-                id: Scaffolding.selfTeamID,
-                in: context
-            )
-
-            XCTAssertTrue(team.members.isEmpty)
-            return team
-        }
-
+    func testPullSelfTeamMembers_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
+
         teamsAPI.getTeamMembersForMaxResults_MockValue = [
             TeamMember(
                 userID: Scaffolding.member1ID,
@@ -210,48 +148,40 @@ final class TeamRepositoryTests: XCTestCase {
             )
         ]
 
+        teamLocalStore.storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod = { _, _ in }
+
         // When
+
         try await sut.pullSelfTeamMembers()
 
         // Then
-        try await context.perform {
-            XCTAssertEqual(team.members.count, 2)
 
-            let member1 = try XCTUnwrap(team.members.first(where: {
-                $0.remoteIdentifier == Scaffolding.member1ID
-            }))
-
-            XCTAssertEqual(member1.createdAt, Scaffolding.member1CreationDate)
-            XCTAssertEqual(member1.createdBy?.remoteIdentifier, Scaffolding.member1CreatorID)
-            XCTAssertEqual(member1.permissions.rawValue, Scaffolding.member1Permissions)
-            XCTAssertFalse(member1.needsToBeUpdatedFromBackend)
-
-            let member2 = try XCTUnwrap(team.members.first(where: {
-                $0.remoteIdentifier == Scaffolding.member2ID
-            }))
-
-            XCTAssertEqual(member2.createdAt, Scaffolding.member2CreationDate)
-            XCTAssertEqual(member2.createdBy?.remoteIdentifier, Scaffolding.member2CreatorID)
-            XCTAssertEqual(member2.permissions.rawValue, Scaffolding.member2Permissions)
-            XCTAssertFalse(member2.needsToBeUpdatedFromBackend)
-        }
+        XCTAssertEqual(teamsAPI.getTeamMembersForMaxResults_Invocations.count, 1)
+        XCTAssertEqual(teamLocalStore.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations.count, 1)
     }
 
-    func testFetchSelfLegalholdStatus() async throws {
+    func testFetchSelfLegalholdStatus_It_Invokes_Local_Store_And_Teams_API_Methods_And_Legal_Hold_Status_Is_Pending(
+    ) async throws {
         // Mock
-        teamsAPI.getLegalholdStatusForUserID_MockValue = .pending
+
+        teamsAPI.getLegalholdInfoForUserID_MockValue = Scaffolding.teamMemberLegalhold
+        teamLocalStore.selfUserID_MockValue = UUID()
 
         // When
+
         let result = try await sut.fetchSelfLegalholdStatus()
 
         // Then
+
+        XCTAssertEqual(teamLocalStore.selfUserID_Invocations.count, 1)
+        XCTAssertEqual(teamsAPI.getLegalholdInfoForUserID_Invocations.count, 1)
         XCTAssertEqual(result, .pending)
     }
 
-    func testDeleteTeamMembership_It_Deletes_Member_From_Team() async throws {
-        // Given
+    func testDeleteTeamMembership_It_Invokes_Local_Store_And_User_Repo_Methods() async throws {
+        // Mock
 
-        let user = try await context.perform { [self] in
+        let (user, member) = try await context.perform { [self] in
             let (team, users, _) = modelHelper.createTeam(
                 id: Scaffolding.teamID,
                 withMembers: [Scaffolding.userID],
@@ -262,60 +192,57 @@ final class TeamRepositoryTests: XCTestCase {
             let member = try XCTUnwrap(team.members.first)
             XCTAssertEqual(user.membership, member)
 
-            return user
+            return (user, member)
         }
-
-        // Mock
 
         userRespository.deleteUserAccountIdDomainAt_MockMethod = { _, _, _ in }
         userRespository.fetchUserIdDomain_MockValue = user
+        teamLocalStore.userMembershipUser_MockValue = member
+        teamLocalStore.userDomainUser_MockValue = Scaffolding.domain
+        teamLocalStore.deleteMember_MockMethod = { _ in }
 
         // When
 
         try await sut.deleteMembership(
-            for: Scaffolding.userID,
+            userID: Scaffolding.userID,
             domain: nil,
-            at: Scaffolding.date(from: Scaffolding.time)
+            date: .distantPast
         )
 
         // Then
 
-        try await context.perform { [context] in
-            /// users won't be deleted as we might be in other (non-team) conversations with them
-            XCTAssertNotNil(ZMUser.fetch(with: Scaffolding.userID, in: context))
-
-            let team = try XCTUnwrap(Team.fetch(with: Scaffolding.teamID, in: context), "No team")
-
-            XCTAssertEqual(team.members, [])
-        }
+        XCTAssertEqual(userRespository.deleteUserAccountIdDomainAt_Invocations.count, 1)
+        XCTAssertEqual(userRespository.fetchUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(teamLocalStore.userMembershipUser_Invocations.count, 1)
+        XCTAssertEqual(teamLocalStore.userDomainUser_Invocations.count, 1)
+        XCTAssertEqual(teamLocalStore.deleteMember_Invocations.count, 1)
     }
 
-    func testStoreTeamMemberNeedsBackendUpdate_It_Updates_Flag() async throws {
-        // Given
+    func testStoreTeamMemberNeedsBackendUpdate_It_Invokes_Local_Store_Methods() async throws {
+        // Mock
 
-        try await context.perform { [context, modelHelper] in
+        let member = await context.perform { [self] in
 
-            let team = modelHelper!.createTeam(
+            let team = modelHelper.createTeam(
                 id: Scaffolding.teamID,
                 in: context
             )
 
-            let user = modelHelper!.createUser(
+            let user = modelHelper.createUser(
                 id: Scaffolding.membershipID,
                 domain: Scaffolding.domain,
                 in: context
             )
 
-            let member = modelHelper!.addUser(
+            return modelHelper.addUser(
                 user,
                 to: team,
                 in: context
             )
-
-            XCTAssertEqual(member.needsToBeUpdatedFromBackend, false)
-
-            try context.save()
         }
+
+        teamLocalStore.fetchMemberId_MockValue = member
+        teamLocalStore.storeMemberNeedsBackendUpdateMember_MockMethod = { _, _ in }
 
         // When
 
@@ -323,68 +250,59 @@ final class TeamRepositoryTests: XCTestCase {
             membershipID: Scaffolding.membershipID
         )
 
-        await context.perform { [context] in
-            let user = ZMUser.fetch(with: Scaffolding.membershipID, in: context)
-            let team = Team.fetch(with: Scaffolding.teamID, in: context)
+        // Then
 
-            guard let user, let team, let member = user.membership else {
-                return XCTFail()
-            }
-
-            // Then
-
-            XCTAssertEqual(member.needsToBeUpdatedFromBackend, true)
-            XCTAssertEqual(member.team, team)
-        }
+        XCTAssertEqual(teamLocalStore.fetchMemberId_Invocations.count, 1)
+        XCTAssertEqual(teamLocalStore.storeMemberNeedsBackendUpdateMember_Invocations.count, 1)
     }
 
     func testStoreTeamMemberNeedsBackendUpdate_It_Throws_Error_When_Member_Was_Not_Found() async throws {
+        // Mock
+
+        teamLocalStore.fetchMemberId_MockMethod = { _ in nil }
+
         // Then
+
         await XCTAssertThrowsErrorAsync { [self] in
             // When
-            try await sut.storeTeamMemberNeedsBackendUpdate(membershipID: Scaffolding.membershipID)
+
+            try await sut.storeTeamMemberNeedsBackendUpdate(
+                membershipID: Scaffolding.membershipID
+            )
         }
     }
 
     private enum Scaffolding {
-        static let userID = UUID()
-        static let selfUserID = UUID()
-        static let teamID = UUID()
-        static let selfTeamID = UUID()
+        static let userID = UUID.mockID1
+        static let selfUserID = UUID.mockID2
+        static let teamID = UUID.mockID3
+        static let selfTeamID = UUID.mockID4
         static let domain = "example.com"
-        static let membershipID = UUID()
-        static let teamCreatorID = UUID()
+        static let membershipID = UUID.mockID5
+        static let teamCreatorID = UUID.mockID6
         static let teamName = "Team Foo"
-        static let logoID = UUID().uuidString
-        static let logoKey = UUID().uuidString
-        static let splashScreenID = UUID().uuidString
-        static let time = "2021-05-12T10:52:02.671Z"
-        static let teamConversationID = UUID()
-        static let anotherTeamConversationID = UUID()
+        static let logoID = UUID.mockID1.uuidString
+        static let logoKey = UUID.mockID2.uuidString
+        static let splashScreenID = UUID.mockID3.uuidString
         static let conversationID = UUID()
 
-        static func date(from string: String) -> Date {
-            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
-        }
-
-        static let member1ID = UUID()
+        static let member1ID = UUID.mockID4
         static let member1CreationDate = Date()
-        static let member1CreatorID = UUID()
+        static let member1CreatorID = UUID.mockID2
         static let member1legalholdStatus = LegalholdStatus.enabled
         static let member1Permissions = Permissions.admin.rawValue
 
-        static let member2ID = UUID()
+        static let member2ID = UUID.mockID2
         static let member2CreationDate = Date()
-        static let member2CreatorID = UUID()
+        static let member2CreatorID = UUID.mockID4
         static let member2legalholdStatus = LegalholdStatus.pending
         static let member2Permissions = Permissions.member.rawValue
-    }
-}
 
-private extension ISO8601DateFormatter {
-    nonisolated(unsafe) static let fractionalInternetDateTime = {
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return dateFormatter
-    }()
+        static let teamMemberLegalhold = TeamMemberLegalholdInfo(
+            status: .pending,
+            prekey: prekey
+        )
+
+        static let prekey = LegalholdPrekey(id: 2330, base64EncodedKey: "foo")
+    }
 }

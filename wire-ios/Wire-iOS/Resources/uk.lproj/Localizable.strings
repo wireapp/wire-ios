@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Не менше 1 символу";
 "conversation.create.guidance.toolong" = "Занадто багато символів";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Гості: %@, Сервіси: %@, Звіти про перегляд: %@";
 "conversation.create.guests.title" = "Дозволити присутність гостей";
 "conversation.create.guests.subtitle" = "Зробити цю розмову доступною для людей поза межами вашої команди.";
 "conversation.create.services.title" = "Дозволити сервіси";

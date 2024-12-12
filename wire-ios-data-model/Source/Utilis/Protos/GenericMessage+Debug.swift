@@ -170,6 +170,9 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
 
         case .dataTransfer:
             "dataTransfer"
+
+        case .inCallHandRaise:
+            "inCallHandRaise"
         }
     }
 

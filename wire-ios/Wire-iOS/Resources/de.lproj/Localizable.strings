@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Mindestens 1 Zeichen";
 "conversation.create.guidance.toolong" = "Zu viele Zeichen";
 "conversation.create.options.title" = "UNTERHALTUNGSOPTIONEN";
-"conversation.create.options.subtitle" = "Gäste: %@, Dienste: %@, Lesebestätigungen: %@";
 "conversation.create.guests.title" = "Gäste zulassen";
 "conversation.create.guests.subtitle" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams.";
 "conversation.create.services.title" = "Dienste zulassen";

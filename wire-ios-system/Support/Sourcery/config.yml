@@ -1,9 +1,9 @@
 sources:
-  - ../../../WireFoundation/Sources/WireSystem
+  - ../../Source
 templates:
   - ./AutoMockable.stencil
 output:
   ./generated
 args:
+  autoMockableImports: ["Foundation"]
   autoMockableTestableImports: ["WireSystem"]
-  autoMockableImports: []

@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 // sourcery: AutoMockable
 /// An object that tracks analytic events.
 public protocol AnalyticsEventTracker: AnyObject {

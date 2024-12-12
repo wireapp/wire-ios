@@ -111,6 +111,8 @@ public extension EnvironmentType {
 
 public final class BackendEnvironment: NSObject {
     public let title: String
+    public let trustData: [TrustData]
+
     let endpoints: BackendEndpointsProvider
     let proxySettings: ProxySettingsProvider?
     let certificateTrust: BackendTrustProvider
@@ -118,6 +120,7 @@ public final class BackendEnvironment: NSObject {
 
     init(
         title: String,
+        trustData: [TrustData],
         environmentType: EnvironmentType,
         endpoints: BackendEndpointsProvider,
         proxySettings: ProxySettingsProvider?,
@@ -128,6 +131,7 @@ public final class BackendEnvironment: NSObject {
         self.endpoints = endpoints
         self.proxySettings = proxySettings
         self.certificateTrust = certificateTrust
+        self.trustData = trustData
     }
 
     convenience init?(environmentType: EnvironmentType, data: Data) {
@@ -146,6 +150,7 @@ public final class BackendEnvironment: NSObject {
             let certificateTrust = ServerCertificateTrust(trustData: pinnedKeys)
             self.init(
                 title: backendData.title,
+                trustData: pinnedKeys,
                 environmentType: environmentType,
                 endpoints: backendData.endpoints,
                 proxySettings: backendData.apiProxy,

@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "60F32381-89AF-4E10-9CF0-9931E43BC441",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "E2ETests"
+      ],
+      "target" : {
+        "containerPath" : "container:WireLinkPreview.xcodeproj",
+        "identifier" : "BFF057931D25434E004A2C29",
+        "name" : "WireLinkPreviewTests"
+      }
+    }
+  ],
+  "version" : 1
+}

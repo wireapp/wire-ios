@@ -454,7 +454,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
         // GIVEN
-        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
+        syncMOC.performAndWait {
+            let mls = Feature.MLS(status: .enabled, config: .init())
+            self.sut.featureRepository.storeMLS(mls)
+        }
         mockMLSService.performPendingJoins_MockMethod = {}
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}

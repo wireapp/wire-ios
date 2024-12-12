@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 final class OtherUserClientsListViewController: UIViewController,
@@ -280,8 +281,12 @@ extension Array where Element: UserClientType {
             if !certificates.isEmpty {
                 for client in userClients {
                     let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
-                    client.e2eIdentityCertificate = certificates.first(where: { $0.clientId == mlsClientIdRawValue })
-                    client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
+                    if let e2eiCertificate = certificates.first(where: { $0.clientId == mlsClientIdRawValue }) {
+                        if userSession.e2eiFeature.isEnabled {
+                            client.e2eIdentityCertificate = e2eiCertificate
+                        }
+                        client.mlsThumbPrint = e2eiCertificate.mlsThumbprint
+                    }
                     updatedUserClients.append(client)
                 }
                 return updatedUserClients

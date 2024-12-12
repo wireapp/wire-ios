@@ -332,6 +332,10 @@ final class ConversationListViewController: UIViewController {
         filterContainerStackView.addArrangedSubview(filterLabel)
         filterContainerStackView.addArrangedSubview(removeButton)
 
+        NSLayoutConstraint.activate([
+            filterContainerView.heightAnchor.constraint(equalTo: filterLabel.heightAnchor, constant: 16)
+        ])
+
         // Initially hide the filter container view
         filterContainerView.isHidden = true
     }

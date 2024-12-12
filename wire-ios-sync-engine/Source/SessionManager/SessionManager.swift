@@ -24,6 +24,7 @@ import UserNotifications
 import WireAnalytics
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireRequestStrategy
 import WireTransport
 import WireUtilities
@@ -281,7 +282,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private(set) var reachability: ReachabilityWrapper
 
-    public internal(set) var environment: BackendEnvironmentProvider {
+    public internal(set) var environment: BackendEnvironment {
         didSet {
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
@@ -352,7 +353,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        environment: BackendEnvironmentProvider,
+        environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         requiredPushTokenType: PushToken.TokenType,
@@ -363,7 +364,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
-        analyticsServiceConfiguration: AnalyticsServiceConfiguration?
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        countlyProvider: @escaping () -> CountlyProtocol
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -418,7 +420,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: minTLSVersion,
             deleteUserLogs: deleteUserLogs,
-            analyticsServiceConfiguration: analyticsServiceConfiguration
+            analyticsServiceConfiguration: analyticsServiceConfiguration,
+            countlyProvider: countlyProvider
         )
 
         configureBlacklistDownload()
@@ -469,7 +472,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         application: ZMApplication,
         pushRegistry: PushRegistry,
         dispatchGroup: ZMSDispatchGroup,
-        environment: BackendEnvironmentProvider,
+        environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         requiredPushTokenType: PushToken.TokenType,
@@ -481,7 +484,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String? = nil,
         deleteUserLogs: (() -> Void)? = nil,
-        analyticsServiceConfiguration: AnalyticsServiceConfiguration?
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        countlyProvider: @escaping () -> CountlyProtocol
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -547,7 +551,9 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
-            logger: { WireLogger.analytics.debug($0) }
+            deviceModel: UIDevice.current.model,
+            deviceOS: UIDevice.current.systemVersion,
+            countlyProvider: countlyProvider
         )
 
         if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
@@ -1029,18 +1035,21 @@ public final class SessionManager: NSObject, SessionManagerType {
                     with: coreDataStack
                 )
 
-                triggerSlowSyncIfNeeded(with: userSession)
+                triggerMigrationsNeedsActionsIfNeeded(with: userSession)
 
                 onCompletion(userSession)
             }
         )
     }
 
-    private func triggerSlowSyncIfNeeded(with userSession: ZMUserSession) {
+    /// Executes post migration slow sync or sync resources
+    private func triggerMigrationsNeedsActionsIfNeeded(with userSession: ZMUserSession) {
         let context = userSession.syncContext
         context.perform {
-            if context.readAndResetSlowSyncFlag() {
+            if context.readMigrationNeedsSlowSyncFlag() {
                 userSession.syncStatus.forceSlowSync()
+            } else if context.readMigrationNeedsSyncResourcesFlag() {
+                userSession.syncStatus.resyncResources()
             }
         }
     }

@@ -47,7 +47,12 @@ final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandl
 
 }
 
-struct EmailPasswordInput {
+struct EmailPasswordInput: CustomStringConvertible {
+
     var email: String
     var password: String
+
+    var description: String {
+        String(describing: Self.self)
+    }
 }

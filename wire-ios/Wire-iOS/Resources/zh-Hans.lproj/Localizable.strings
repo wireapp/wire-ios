@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "至少1个字符";
 "conversation.create.guidance.toolong" = "超出字符限制";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "允许访客";
 "conversation.create.guests.subtitle" = "开放这个对话与团队以外的访客。";
 "conversation.create.services.title" = "Allow services";

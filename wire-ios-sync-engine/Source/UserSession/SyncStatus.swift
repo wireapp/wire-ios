@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
+
 private let zmLog = ZMSLog(tag: "SyncStatus")
 
 public extension Notification.Name {
@@ -120,16 +122,20 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
         // Reset the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         log("slow sync")
         syncStateDelegate?.didStartSlowSync()
     }
 
     /// Sync the resources: Teams, Users, Conversations...
-    func resyncResources() {
+    public func resyncResources() {
         // Refetch user settings.
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-        // Set the status.
-        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
+        // If we don't have a last event id, we need to get that first, otherwise the quick sync will fetch all events
+        // in the notification queue.
+        currentSyncPhase = hasPersistedLastEventID ? SyncPhase.fetchingLastUpdateEventID
+            .nextPhase : .fetchingLastUpdateEventID
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         log("resyncResources")
         syncStateDelegate?.didStartSlowSync()
     }

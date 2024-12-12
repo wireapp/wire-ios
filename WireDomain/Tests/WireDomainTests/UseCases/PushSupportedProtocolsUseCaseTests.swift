@@ -21,6 +21,7 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireDomainSupport
 
@@ -52,7 +53,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         sut = PushSupportedProtocolsUseCase(
             featureConfigRepository: FeatureConfigRepository(
                 featureConfigsAPI: MockFeatureConfigsAPI(),
-                context: context
+                featureConfigLocalStore: FeatureConfigLocalStore(context: context)
             ),
             userRepository: UserRepository(
                 usersAPI: MockUsersAPI(),

@@ -20,9 +20,13 @@
 // - alert that new devices have been added
 // - alert about read receipts enabled
 
+import SwiftUI
 import UIKit
+import WireAPI
 import WireCommonComponents
 import WireDesign
+import WireDomainAPI
+import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSettingsUI
@@ -38,9 +42,12 @@ final class SelfProfileViewController: UIViewController {
 
     private let settingsController: SettingsTableViewController
     private weak var accountSelectorView: AccountSelectorView?
-    private let profileContainerView = UIView()
+    private let profileLayoutGuide = UILayoutGuide()
+    private var profileLayoutGuideViewTopConstraint = NSLayoutConstraint()
+    private var profileLayoutGuideBannerTopConstraint = NSLayoutConstraint()
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
+    private var teamMigrationBanner: UIViewController?
 
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
@@ -106,6 +113,15 @@ final class SelfProfileViewController: UIViewController {
             userSession.enqueue {
                 selfUser.refreshTeamData()
             }
+        } else if
+            let backendInfoApiVersion = BackendInfo.apiVersion,
+            let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+            apiVersion >= .v7 {
+            self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
+                actionCallback: { [weak self] action in
+                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
+                }
+            )
         }
     }
 
@@ -123,8 +139,8 @@ final class SelfProfileViewController: UIViewController {
         profileHeaderViewController.imageView.addGestureRecognizer(tapGestureRecognizer)
 
         addChild(profileHeaderViewController)
-        profileContainerView.addSubview(profileHeaderViewController.view)
-        view.addSubview(profileContainerView)
+        view.addLayoutGuide(profileLayoutGuide)
+        view.addSubview(profileHeaderViewController.view)
         profileHeaderViewController.didMove(toParent: self)
 
         addChild(settingsController)
@@ -133,10 +149,15 @@ final class SelfProfileViewController: UIViewController {
 
         settingsController.tableView.isScrollEnabled = false
 
+        if let teamMigrationBanner {
+            addChild(teamMigrationBanner)
+            view.addSubview(teamMigrationBanner.view)
+            teamMigrationBanner.didMove(toParent: self)
+        }
+
         createConstraints()
         setupAccessibility()
         view.backgroundColor = SemanticColors.View.backgroundDefault
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -146,6 +167,7 @@ final class SelfProfileViewController: UIViewController {
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -170,26 +192,45 @@ final class SelfProfileViewController: UIViewController {
 
     private func createConstraints() {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        profileContainerView.translatesAutoresizingMaskIntoConstraints = false
         settingsController.view.translatesAutoresizingMaskIntoConstraints = false
 
+        profileLayoutGuideViewTopConstraint = profileLayoutGuide.topAnchor
+            .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+
+        if let teamMigrationBanner {
+            teamMigrationBanner.view.translatesAutoresizingMaskIntoConstraints = false
+            profileLayoutGuideBannerTopConstraint = profileLayoutGuide.topAnchor
+                .constraint(equalTo: teamMigrationBanner.view.bottomAnchor)
+            NSLayoutConstraint.activate([
+
+                // teamMigrationBanner
+                teamMigrationBanner.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+                teamMigrationBanner.view.topAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.topAnchor,
+                    constant: 20
+                ),
+                teamMigrationBanner.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+                profileLayoutGuideBannerTopConstraint
+            ])
+        } else {
+            profileLayoutGuideViewTopConstraint.isActive = true
+        }
+
         NSLayoutConstraint.activate([
-            // profileContainerView
-            profileContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            profileContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            profileContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            // profileLayoutGuide
+            profileLayoutGuide.bottomAnchor.constraint(equalTo: settingsController.view.topAnchor),
 
             // profileView
-            profileHeaderViewController.view.leadingAnchor.constraint(equalTo: profileContainerView.leadingAnchor),
-            profileHeaderViewController.view.topAnchor.constraint(greaterThanOrEqualTo: profileContainerView.topAnchor),
-            profileHeaderViewController.view.trailingAnchor.constraint(equalTo: profileContainerView.trailingAnchor),
+            profileHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            profileHeaderViewController.view.topAnchor.constraint(greaterThanOrEqualTo: profileLayoutGuide.topAnchor),
+            profileHeaderViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             profileHeaderViewController.view.bottomAnchor
-                .constraint(lessThanOrEqualTo: profileContainerView.bottomAnchor),
-            profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileContainerView.centerYAnchor),
+                .constraint(lessThanOrEqualTo: profileLayoutGuide.bottomAnchor),
+            profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileLayoutGuide.centerYAnchor),
 
             // settingsControllerView
             settingsController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            settingsController.view.topAnchor.constraint(equalTo: profileContainerView.bottomAnchor),
             settingsController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             settingsController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
@@ -204,17 +245,73 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Events
 
+    private func onTeamCreationBannerInteraction(
+        _ action: SelfProfileViewCallToActionBanner.Action,
+        apiVersion: WireAPI.APIVersion
+    ) {
+        switch action {
+        case .createWireTeam:
+            let sessionContextProvider = userSession.contextProvider
+            let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
+            guard let userName = user.normalizedName,
+                  let useCase = SessionManager.shared?.activeUserSession?
+                  .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
+                return
+            }
+            userDidTapCreateTeam(useCase: useCase, userName: userName)
+        }
+    }
+
+    private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
+        let vc = IndividualToTeamMigrationViewController(
+            useCase: useCase,
+            userProfileName: userName,
+            actionCallback: { [weak self] action in
+                Task { [weak self] in
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        switch action {
+                        case .cancel:
+                            presentedViewController?.dismiss(animated: true)
+                        case .completionGoToApp:
+                            dismissIndividualToTeamMigrationBanner()
+                            presentedViewController?.dismiss(animated: true)
+                        case .completionGoToTeamManagement:
+                            dismissIndividualToTeamMigrationBanner()
+                            presentedViewController?.dismiss(animated: true, completion: { [weak self] in
+                                self?.navigateToTeam()
+                            })
+                        }
+                    }
+                }
+            }
+        )
+        present(vc, animated: true)
+    }
+
+    private func dismissIndividualToTeamMigrationBanner() {
+        teamMigrationBanner?.willMove(toParent: nil)
+        teamMigrationBanner?.view.removeFromSuperview()
+        teamMigrationBanner?.removeFromParent()
+        teamMigrationBanner = nil
+        profileLayoutGuideBannerTopConstraint.isActive = false
+        profileLayoutGuideViewTopConstraint.isActive = true
+    }
+
+    private func navigateToTeam() {
+        // TODO: [WPB-11968] navigate to team
+    }
+
     @objc
     private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
-        let alertController = profileImagePicker.selectProfileImage()
+        let imageView = profileHeaderViewController.imageView
+        let alertController = profileImagePicker.selectProfileImage(
+            popoverConfiguration: .sourceView(sourceView: imageView, sourceRect: .null)
+        )
         if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = profileHeaderViewController.imageView.superview!
-            popoverPresentationController.sourceRect = profileHeaderViewController.imageView.frame.insetBy(
-                dx: -4,
-                dy: -4
-            )
+            popoverPresentationController.sourceView = imageView
         }
         present(alertController, animated: true)
     }

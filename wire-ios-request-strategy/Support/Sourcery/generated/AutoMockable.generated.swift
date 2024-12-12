@@ -24,15 +24,9 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-public import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-public import UIKit
-#elseif os(OSX)
-public import AppKit
-#endif
 
-public import WireCoreCrypto
-public import Combine
+import WireCoreCrypto
+import Combine
 
 @testable import WireRequestStrategy
 

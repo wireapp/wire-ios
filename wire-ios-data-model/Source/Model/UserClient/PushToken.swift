@@ -18,11 +18,11 @@
 
 import Foundation
 
-public struct PushToken: Equatable {
+public struct PushToken: Equatable, Sendable {
 
     // MARK: - Types
 
-    public enum TokenType: Int, Codable {
+    public enum TokenType: Int, Codable, Sendable {
 
         case standard
         case voip

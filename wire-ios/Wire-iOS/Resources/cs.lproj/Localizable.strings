@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Alespoň jeden znak";
 "conversation.create.guidance.toolong" = "Příliš mnoho znaků";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Povolit hosty";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";
 "conversation.create.services.title" = "Allow services";

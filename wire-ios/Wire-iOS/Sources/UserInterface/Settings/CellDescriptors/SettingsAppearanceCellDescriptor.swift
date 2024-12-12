@@ -21,14 +21,14 @@ import UIKit
 import WireSettingsUI
 import WireSyncEngine
 
-class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
+class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, SettingsCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsAppearanceCell.self
 
     private var text: String
     private let presentationStyle: PresentationStyle
 
     weak var viewController: UIViewController?
-    let presentationAction: () -> (UIViewController?)
+    let presentationAction: (_ sender: UIView) -> UIViewController?
 
     var identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
@@ -48,7 +48,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
         text: String,
         previewGenerator: PreviewGeneratorType? = .none,
         presentationStyle: PresentationStyle,
-        presentationAction: @escaping () -> (UIViewController?),
+        presentationAction: @escaping (_ sender: UIView) -> UIViewController?,
         settingsCoordinator: AnySettingsCoordinator
     ) {
         self.text = text
@@ -81,7 +81,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
     // MARK: - SettingsCellDescriptorType
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
-        guard let controllerToShow = generateViewController() else { return }
+        guard let controllerToShow = generateViewController(sender: sender)  else { return }
 
         switch presentationStyle {
         case .alert:
@@ -97,7 +97,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
         }
     }
 
-    func generateViewController() -> UIViewController? {
-        presentationAction()
+    private func generateViewController(sender: UIView) -> UIViewController? {
+        presentationAction(sender)
     }
 }

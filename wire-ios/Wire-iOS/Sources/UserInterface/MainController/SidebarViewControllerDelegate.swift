@@ -42,7 +42,9 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
         Task {
-            let selfProfileUI = UINavigationController(rootViewController: selfProfileUIBuilder.build())
+            let selfProfileUI = UINavigationController(
+                rootViewController: selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            )
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }
@@ -51,7 +53,10 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     @MainActor
     func sidebarViewController(_ viewController: SidebarViewController, didTapFoldersMenuItem frame: CGRect) {
         Task {
-            let folderPicker = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            let folderPicker = folderPickerViewControllerBuilder.build(
+                mainCoordinator: mainCoordinator,
+                showCloseButton: false
+            )
             folderPicker.modalPresentationStyle = .popover
 
             if let popover = folderPicker.popoverPresentationController,

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireReusableUIComponents
 
 final class BackupViewController: UIViewController {
@@ -48,7 +49,7 @@ final class BackupViewController: UIViewController {
     }
 
     private func setupViews() {
-        view.backgroundColor = .clear
+        view.backgroundColor = ColorTheme.Backgrounds.background
 
         tableView.isScrollEnabled = false
         tableView.rowHeight = UITableView.automaticDimension
