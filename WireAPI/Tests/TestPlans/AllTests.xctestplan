@@ -17,6 +17,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireAPI",
+      "identifier" : "WireAPITests",
+      "name" : "WireAPITests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
