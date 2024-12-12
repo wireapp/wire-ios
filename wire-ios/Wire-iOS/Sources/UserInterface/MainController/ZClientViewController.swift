@@ -37,6 +37,7 @@ final class ZClientViewController: UIViewController {
     let account: Account
     let userSession: UserSession
     let trackingManager: TrackingManager?
+    private let selfProfileViewsMonitor: SelfProfileViewsMonitor
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
     }
@@ -181,7 +182,7 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
-
+        self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
         self.proximityMonitorManager = ProximityMonitorManager()
@@ -793,7 +794,7 @@ final class ZClientViewController: UIViewController {
     }
 
     private var hasSeenSelfProfile: Bool {
-        SelfProfileViewsMonitor.shared.didViewSelfProfile
+        selfProfileViewsMonitor.didViewSelfProfile
     }
 
     private func conversationFilter() -> ConversationFilter? {

@@ -20,4 +20,5 @@ import SwiftUI
 
 public extension Image {
     static let info = Image(.info)
+    static let notificationBadgeInfo = Image(.notificationBadgeInfo)
 }

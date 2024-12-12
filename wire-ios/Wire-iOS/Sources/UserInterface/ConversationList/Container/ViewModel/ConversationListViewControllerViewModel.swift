@@ -98,6 +98,8 @@ extension ConversationListViewController {
 
         var selectedConversation: ZMConversation?
 
+        private let selfProfileViewsMonitor: SelfProfileViewsMonitor
+
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var accountUpdatedNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
@@ -129,7 +131,7 @@ extension ConversationListViewController {
                 return false
             }
 
-            return !SelfProfileViewsMonitor.shared.didViewSelfProfile
+            return !selfProfileViewsMonitor.didViewSelfProfile
         }
 
         init(
@@ -151,6 +153,7 @@ extension ConversationListViewController {
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
             self.getUserAccountImageSourceUseCase = getUserAccountImageSourceUseCase
+            self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
             super.init()
 
             updateE2EICertifiedStatus()

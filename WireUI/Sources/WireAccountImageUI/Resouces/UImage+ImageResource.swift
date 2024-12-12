@@ -20,5 +20,5 @@ import UIKit
 
 public extension UIImage {
     static let close = UIImage(resource: .info)
-    static let info = UIImage(resource: .infoCircle)
+    static let notificationBadgeInfo = UIImage(resource: .notificationBadgeInfo)
 }

@@ -51,6 +51,7 @@ final class SelfProfileViewController: UIViewController {
 
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
+    private let selfProfileViewsMonitor: SelfProfileViewsMonitor
 
     // MARK: - Configuration
 
@@ -106,7 +107,7 @@ final class SelfProfileViewController: UIViewController {
 
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
-
+        self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
         if selfUser.isTeamMember {
@@ -162,7 +163,7 @@ final class SelfProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        SelfProfileViewsMonitor.shared.onDidViewSelfProfile()
+        selfProfileViewsMonitor.onDidViewSelfProfile()
         configureAccountTitle()
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)

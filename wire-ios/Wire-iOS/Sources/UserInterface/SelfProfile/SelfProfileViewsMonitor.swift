@@ -19,18 +19,23 @@
 import WireFoundation
 import WireSyncEngine
 
-class SelfProfileViewsMonitor {
+
+protocol SelfProfileViewsMonitor {
+    var didViewSelfProfile: Bool { get }
+
+    func onDidViewSelfProfile()
+}
+
+class SelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor  {
     private enum UserDefaultsKey: String, DefaultsKey {
         case didViewSelfProfile
     }
-
-    static let shared = SelfProfileViewsMonitor()
 
     private var userSession: UserSession? {
         SessionManager.shared?.activeUserSession
     }
 
-    private init() {}
+    init() {}
 
     var didViewSelfProfile: Bool {
         get {
