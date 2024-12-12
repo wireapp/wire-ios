@@ -121,7 +121,8 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             conversationID: conversationID,
             senderID: senderID,
             senderClientID: messageSenderClientID,
-            date: date
+            date: date,
+            eventMessage: "conversation.otr-message-add"
         )
     }
 

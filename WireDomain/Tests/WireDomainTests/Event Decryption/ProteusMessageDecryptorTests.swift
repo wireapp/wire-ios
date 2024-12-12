@@ -27,7 +27,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 
     private var sut: ProteusMessageDecryptor!
     private var proteusService: MockProteusServiceInterface!
-    private var userClientsRepository: MockUserClientsRepositoryProtocol!
+    private var userClientsLocalStore: MockUserClientsLocalStoreProtocol!
     private var userRepository: MockUserRepositoryProtocol!
 
     private var stack: CoreDataStack!
@@ -43,12 +43,12 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         proteusService = MockProteusServiceInterface()
-        userClientsRepository = MockUserClientsRepositoryProtocol()
+        userClientsLocalStore = MockUserClientsLocalStoreProtocol()
         userRepository = MockUserRepositoryProtocol()
 
         sut = ProteusMessageDecryptor(
             proteusService: proteusService,
-            userClientsRepository: userClientsRepository,
+            userClientsLocalStore: userClientsLocalStore,
             userRepository: userRepository
         )
 
@@ -71,10 +71,10 @@ final class ProteusMessageDecryptorTests: XCTestCase {
             )
 
             userRepository.fetchOrCreateUserIdDomain_MockValue = selfUser
-            userClientsRepository.fetchClientIdForUserCreateIfNeeded_MockValue = selfClient
-            userClientsRepository.storeClientDiscoveryDateClient_MockMethod = { _, _ in }
-            userClientsRepository.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
-            userClientsRepository.proteusSessionIDFor_MockValue = .init(userID: Scaffolding.selfUserID.uuid.uuidString, clientID: Scaffolding.selfClientID)
+            userClientsLocalStore.fetchClientIdForUserCreateIfNeeded_MockValue = selfClient
+            userClientsLocalStore.storeClientDiscoveryDateClient_MockMethod = { _, _ in }
+            userClientsLocalStore.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
+            userClientsLocalStore.proteusSessionIDFor_MockValue = .init(userID: Scaffolding.selfUserID.uuid.uuidString, clientID: Scaffolding.selfClientID)
 
             selfClient.numberOfKeysRemaining = Scaffolding.selfClientNumberOfKeys
 
@@ -112,7 +112,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         proteusService = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        userClientsRepository = nil
+        userClientsLocalStore = nil
         userRepository = nil
         modelHelper = nil
         coreDataStackHelper = nil
@@ -146,25 +146,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
             _ = try await sut.decryptedEventData(from: invalidEvent)
             XCTFail("expected an error but none was thrown")
             return
-        } catch ProteusError.decodeError {
-            // Then we got the right error
-        } catch {
-            XCTFail("unexpected error: \(error)")
-        }
-    }
-
-    func testDecryptedEventData_It_Throws_When_External_Ciphertext_Is_Too_Big() async throws {
-        // Given an external message that exceeds the max ciphertext size
-        var invalidEvent = Scaffolding.makeEvent(content: .init(encryptedMessage: "valid message"))
-        let longMessage = String(repeating: "!", count: 20_000)
-        invalidEvent.externalData = .init(encryptedMessage: longMessage)
-
-        // When
-        do {
-            _ = try await sut.decryptedEventData(from: invalidEvent)
-            XCTFail("expected an error but none was thrown")
-            return
-        } catch ProteusError.decodeError {
+        } catch ProteusMessageDecryptorError.invalidCiphertext {
             // Then we got the right error
         } catch {
             XCTFail("unexpected error: \(error)")
@@ -192,12 +174,12 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 
         // Mock
 
-        userClientsRepository.fetchSelfClient_MockValue = selfClient
-        userClientsRepository.fetchClientIdForUserCreateIfNeeded_MockValue = senderClient
-        userClientsRepository.storeClientDiscoveryDateClient_MockMethod = { _, _ in }
-        userClientsRepository.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
-        userClientsRepository.proteusSessionIDFor_MockValue = Scaffolding.proteusSessionID
-        userClientsRepository.clientSessionCreatedSelfClientNewClient_MockMethod = { _, _ in }
+        userClientsLocalStore.fetchSelfClient_MockValue = selfClient
+        userClientsLocalStore.fetchClientIdForUserCreateIfNeeded_MockValue = senderClient
+        userClientsLocalStore.storeClientDiscoveryDateClient_MockMethod = { _, _ in }
+        userClientsLocalStore.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
+        userClientsLocalStore.proteusSessionIDFor_MockValue = Scaffolding.proteusSessionID
+        userClientsLocalStore.clientSessionCreatedSelfClientNewClient_MockMethod = { _, _ in }
         userRepository.fetchOrCreateUserIdDomain_MockValue = user
 
         // Given an encrypted event
@@ -223,12 +205,12 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         XCTAssertEqual(decryptInvocations.count, 1)
         XCTAssertEqual(decryptInvocations.first?.data, encryptedMessageData)
         XCTAssertEqual(decryptInvocations.first?.id, Scaffolding.proteusSessionID)
-        XCTAssertEqual(userClientsRepository.fetchSelfClient_Invocations.count, 1)
-        XCTAssertEqual(userClientsRepository.fetchClientIdForUserCreateIfNeeded_Invocations.count, 1)
-        XCTAssertEqual(userClientsRepository.storeClientDiscoveryDateClient_Invocations.count, 1)
-        XCTAssertEqual(userClientsRepository.addNewClientToIgnoredSelfClientNewClient_Invocations.count, 1)
-        XCTAssertEqual(userClientsRepository.proteusSessionIDFor_Invocations.count, 1)
-        XCTAssertEqual(userClientsRepository.clientSessionCreatedSelfClientNewClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsLocalStore.fetchSelfClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsLocalStore.fetchClientIdForUserCreateIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(userClientsLocalStore.storeClientDiscoveryDateClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsLocalStore.addNewClientToIgnoredSelfClientNewClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsLocalStore.proteusSessionIDFor_Invocations.count, 1)
+        XCTAssertEqual(userClientsLocalStore.clientSessionCreatedSelfClientNewClient_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
     }
 

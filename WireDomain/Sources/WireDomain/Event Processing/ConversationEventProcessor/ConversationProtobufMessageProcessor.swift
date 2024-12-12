@@ -34,7 +34,8 @@ public protocol ConversationProtobufMessageProcessorProtocol {
         conversationID: ConversationID,
         senderID: UserID,
         senderClientID: String?,
-        date: Date
+        date: Date,
+        eventMessage: String
     ) async throws
 
 }
@@ -44,7 +45,6 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
     let messageLocalStore: any MessageLocalStoreProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
-    let logAttributes: LogAttributes
 
     func processProtobufMessage(
         _ message: GenericMessage,
@@ -53,11 +53,16 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
         conversationID: ConversationID,
         senderID: UserID,
         senderClientID: String?,
-        date: Date
+        date: Date,
+        eventMessage: String
     ) async throws {
-        var logAttributes = logAttributes
+        
+        let logAttributes: LogAttributes = [
+            .messageType: eventMessage,
+            .conversationId: conversationID.uuid.safeForLoggingDescription,
+            .nonce: UUID(uuidString: message.messageID) ?? "<nil>"
+        ]
         WireLogger.eventProcessing.debug("Processing:\n\(message)")
-        logAttributes[.nonce] = UUID(uuidString: message.messageID) ?? "<nil>"
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
 
         // Message content types: https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages

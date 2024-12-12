@@ -329,9 +329,8 @@ final class ConversationRepositoryTests: XCTestCase {
             )
         }
 
-        conversationsLocalStore.isMLSConversation_MockValue = true
+        conversationsLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)), true)
         conversationsLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationsLocalStore.mlsGroupIDFor_MockValue = MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)
         conversationsLocalStore.wipeMLSGroupGroupID_MockMethod = { _ in }
         conversationsLocalStore.deleteConversation_MockMethod = { _ in }
 
@@ -344,9 +343,8 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationsLocalStore.isMLSConversation_Invocations.count, 1)
+        XCTAssertEqual(conversationsLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationsLocalStore.mlsGroupIDFor_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.wipeMLSGroupGroupID_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.deleteConversation_Invocations.count, 1)
     }
@@ -362,8 +360,9 @@ final class ConversationRepositoryTests: XCTestCase {
         }
 
         conversationsLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationsLocalStore.isMLSConversation_MockValue = false
+        conversationsLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)), false)
         conversationsLocalStore.deleteConversation_MockMethod = { _ in }
+        conversationsLocalStore.wipeMLSGroupGroupID_MockMethod = { _ in }
 
         // When
 
@@ -375,8 +374,9 @@ final class ConversationRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(conversationsLocalStore.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationsLocalStore.isMLSConversation_Invocations.count, 1)
+        XCTAssertEqual(conversationsLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.deleteConversation_Invocations.count, 1)
+        XCTAssertEqual(conversationsLocalStore.wipeMLSGroupGroupID_Invocations.count, 1)
     }
 
     func testStoreConversation_It_Invokes_Local_Store_Method() async {
@@ -420,18 +420,18 @@ final class ConversationRepositoryTests: XCTestCase {
 
         conversationsLocalStore.messageProtocolFor_MockValue = .mls
         messageRepository
-            .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
         conversationsLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationsLocalStore.localParticipantsIn_MockValue = [selfUser, senderUser, removedUser]
         conversationsLocalStore
             .removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser_MockMethod = { _, _, _ in }
-        conversationsLocalStore.mlsGroupIDFor_MockValue = MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)
+        conversationsLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)), true)
         userRepository.fetchOrCreateUserIdDomain_MockValue = removedUser
         userRepository.fetchUserIdDomain_MockValue = senderUser
         userRepository.isSelfUserIdDomain_MockValue = true
         mlsService.wipeGroup_MockMethod = { _ in }
         messageRepository
-            .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
         teamRepository.deleteMembershipUserIDDomainDate_MockMethod = { _, _, _ in }
 
         // When
@@ -448,7 +448,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         XCTAssertEqual(conversationsLocalStore.messageProtocolFor_Invocations.count, 1)
         XCTAssertEqual(
-            messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            messageRepository.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
             1
         )
         XCTAssertEqual(conversationsLocalStore.fetchOrCreateConversationIdDomain_Invocations.count, 1)
@@ -458,7 +458,7 @@ final class ConversationRepositoryTests: XCTestCase {
                 .removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser_Invocations.count,
             1
         )
-        XCTAssertEqual(conversationsLocalStore.mlsGroupIDFor_Invocations.count, 1)
+        XCTAssertEqual(conversationsLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
         XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)

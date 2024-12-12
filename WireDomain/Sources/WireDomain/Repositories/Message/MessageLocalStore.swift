@@ -43,7 +43,6 @@ public protocol MessageLocalStoreProtocol {
     ///     - conversation: The conversation the message is related to.
     ///     - sender: The message sender info.
     ///     - date: The date the message was received.
-    ///     - logAttributes: Log informations.
 
     func fetchOrCreateClientMessage(
         id: String,
@@ -58,7 +57,6 @@ public protocol MessageLocalStoreProtocol {
     ///     - conversation: The conversation the message is related to.
     ///     - sender: The message sender info.
     ///     - date: The date the message was received.
-    ///     - logAttributes: Log informations.
     
     func fetchOrCreateAssetClientMessage(
         id: String,
@@ -207,20 +205,17 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     let context: NSManagedObjectContext
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
-    let logAttributes: LogAttributes
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        userLocalStore: any UserLocalStoreProtocol,
-        logAttributes: LogAttributes
+        userLocalStore: any UserLocalStoreProtocol
     ) {
         self.context = context
         self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
-        self.logAttributes = logAttributes
     }
 
     // MARK: - Public

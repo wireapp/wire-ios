@@ -81,7 +81,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
-        protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod = { _, _, _, _, _, _, _, _ in }
+        protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod = { _, _, _, _, _, _, _, _ in }
 
         // When
 
@@ -91,7 +91,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.count, 1)
+        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations.count, 1)
     }

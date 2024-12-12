@@ -149,7 +149,7 @@ final class MessageLocalStoreTests: XCTestCase {
 
             // Then
 
-            await internalTest_assertConversationLastMessages(
+            await internalTest_assertConversationLastSystemMessages(
                 messageType: messageType,
                 conversation: conversation
             )
@@ -235,7 +235,6 @@ final class MessageLocalStoreTests: XCTestCase {
         static let date = Date.now
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
         static let domain = "domain.com"
-        static let mlsGroupID = MLSGroupID(base64Encoded: base64EncodedString)
         static let senderClientID = UUID()
 
         static let allSystemMessageTypes: [SystemMessageType] = [
@@ -248,11 +247,11 @@ final class MessageLocalStoreTests: XCTestCase {
             .teamMemberRemoved(member: (id: userID, domain: domain1), date: date),
             .receiptModeIsOn(date: date),
             .newConversationCreated(date: date),
-            .participantRemoved(participant: (id: userID, domain: domain1), sender: (id: otherUserID, domain: domain1), date: date),
+            .participantsRemoved(participants: [(id: userID, domain: domain1)], sender: (id: otherUserID, domain: domain1), date: date),
             .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date),
             .invalid(sender: (id: userID, domain: domain1), date: date),
-            .decryptionFailed(sender: (id: userID, domain: domain1), senderClientID: otherUserID.uuidString, errorCode: 4, date: date),
-            .sessionReset(sender: (id: userID, domain: domain), senderClientID: otherUserID.uuidString, date: date)
+            .decryptionFailed(sender: (id: userID, domain: domain1), senderClientID: otherUserID.uuidString, remoteIdentityChanged: true, date: date),
+            .sessionReset(sender: (id: userID, domain: domain), senderClientID: otherUserID.uuidString, date: date),
             .participantsAdded(
                 participants: [(id: userID, domain: domain1)],
                 sender: (id: userID, domain: domain1),

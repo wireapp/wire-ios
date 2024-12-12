@@ -26,18 +26,8 @@ final class MessageRepositoryTests: XCTestCase {
     private var sut: MessageRepository!
     private var localStore: MockMessageLocalStoreProtocol!
     private var conversationRepository: MockConversationRepositoryProtocol!
-    private var stack: CoreDataStack!
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var modelHelper: ModelHelper!
-
-    private var context: NSManagedObjectContext {
-        stack.syncContext
-    }
 
     override func setUp() async throws {
-        coreDataStackHelper = CoreDataStackHelper()
-        modelHelper = ModelHelper()
-        stack = try await coreDataStackHelper.createStack()
         localStore = MockMessageLocalStoreProtocol()
         conversationRepository = MockConversationRepositoryProtocol()
 
@@ -48,10 +38,6 @@ final class MessageRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
-        stack = nil
-        try coreDataStackHelper.cleanupDirectory()
-        coreDataStackHelper = nil
-        modelHelper = nil
         sut = nil
         localStore = nil
         conversationRepository = nil
@@ -69,13 +55,13 @@ final class MessageRepositoryTests: XCTestCase {
         await sut.addSystemMessage(
             messageType: .mlsMigrationMLSNotSupportedForSelfUser,
             conversationID: Scaffolding.conversationID,
-            conversationDomain: Scaffolding.domain
+            conversationDomain: Scaffolding.conversationDomain
         )
 
         // Then
 
         XCTAssertEqual(
-            localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            localStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
             1
         )
     }

@@ -237,6 +237,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01D0DCBD2C1C8C880076CB1C /* Build configuration list for PBXNativeTarget "WireDomainTests" */;
 			buildPhases = (
+				01D0DCAC2C1C8C880076CB1C /* Sources */,
 				01D0DCAD2C1C8C880076CB1C /* Frameworks */,
 				01D0DCAE2C1C8C880076CB1C /* Resources */,
 			);
@@ -360,6 +361,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01D0DCAC2C1C8C880076CB1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -81,7 +81,7 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
-        protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod = { _, _, _, _, _, _, _, _ in }
+        protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod = { _, _, _, _, _, _, _, _ in }
 
         // When
 
@@ -93,9 +93,9 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.count, 1)
+        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count, 1)
 
-        let processProtobufMessageInvocation = try XCTUnwrap(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.first)
+        let processProtobufMessageInvocation = try XCTUnwrap(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.first)
 
         // Ensuring large message payload has been correctly processed by protobuf processor.
         switch processProtobufMessageInvocation.content {
@@ -117,7 +117,7 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
-        protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod = { _, _, _, _, _, _, _, _ in }
+        protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod = { _, _, _, _, _, _, _, _ in }
 
         // When
 
@@ -129,9 +129,9 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.count, 1)
+        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count, 1)
 
-        let processProtobufMessageInvocation = try XCTUnwrap(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.first)
+        let processProtobufMessageInvocation = try XCTUnwrap(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.first)
 
         // Ensuring regular message payload has been correctly processed by protobuf processor.
         switch processProtobufMessageInvocation.content {

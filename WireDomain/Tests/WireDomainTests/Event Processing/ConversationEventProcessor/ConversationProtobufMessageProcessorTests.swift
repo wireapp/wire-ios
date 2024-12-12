@@ -77,7 +77,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             return (conversation, clientMessage)
         }
 
-        messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockValue = (clientMessage, isNew: true)
+        messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDate_MockValue = (clientMessage, isNew: true)
         messageLocalStore.addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod = { _, _, _, _, _, _ in }
 
         let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
@@ -92,11 +92,11 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
             senderClientID: "",
-            logAttributes: LogAttributes(),
-            date: .now
+            date: .now,
+            eventMessage: ""
         )
         
-        XCTAssertEqual(messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_Invocations.count, 1)
+        XCTAssertEqual(messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDate_Invocations.count, 1)
         XCTAssertEqual(messageLocalStore.addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_Invocations.count, 1)
     }
 

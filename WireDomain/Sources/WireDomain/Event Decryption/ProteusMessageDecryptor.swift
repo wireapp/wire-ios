@@ -67,11 +67,6 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
         let ciphertext = eventData.message.encryptedMessage
         let ciphertextData = try validateCiphertext(ciphertext)
-
-        if let externalCiphertext = eventData.externalData?.encryptedMessage {
-            try validateExternalCiphertext(externalCiphertext)
-        }
-
         let context = try await extractContext(from: eventData)
 
         let (didCreateSession, plaintextData) = try await proteusService.decrypt(
@@ -90,15 +85,6 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         decryptedEvent.message.decryptedMessage = plaintextData.base64String()
 
         return decryptedEvent
-    }
-    
-    private func validateExternalCiphertext(_ ciphertext: String) throws {
-        // External messages aren't encrypted via Proteus, instead they are symmetrically
-        // encrypted with a key that is E2EE via Proteus. Decryption of external messages
-        // happens during event processing, here we just want to validate it.
-        guard ciphertext.count <= maxCiphertextSize else {
-            throw ProteusMessageDecryptorError.decodeError
-        }
     }
 
     private func validateCiphertext(_ ciphertext: String) throws -> Data {

@@ -136,7 +136,8 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             conversationID: conversationID,
             senderID: senderID,
             senderClientID: decryptedMessage.senderClientID,
-            date: date ?? .now
+            date: date ?? .now,
+            eventMessage: "conversation.mls-message-add"
         )
     }
 
