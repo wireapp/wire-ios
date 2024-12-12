@@ -203,8 +203,10 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             childController.pushViewController(vc, animated: true)
         case let .toTeamCreation(teamName: teamName):
             createTeam(named: teamName)
-        case let .toError(error):
+        case let .toError(error as IndividualToTeamMigrationError):
             displayError(error)
+        case let .toError(error):
+            displayGenericError(error)
         case let .toCompletion(teamName):
             let vc = hostedView(
                 for: .completion(profileName: userProfileName, teamName: teamName),
@@ -243,11 +245,11 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 action: .localized(key: "individualToTeam.error.alreadyPartOfTeam.action", bundle: .module)
             )
         case let .generic(error):
-            displayError(error)
+            displayGenericError(error)
         }
     }
 
-    private func displayError(_ error: some Error) {
+    private func displayGenericError(_ error: some Error) {
         displayError(
             title: .localized(key: "individualToTeam.error.generic.title", bundle: .module),
             body: .localized(key: "individualToTeam.error.generic.body", bundle: .module),
