@@ -17,6 +17,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireTesting.xcodeproj",
+      "identifier" : "096AD7C51B68D41D00E007A8",
+      "name" : "WireTesting-Tests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

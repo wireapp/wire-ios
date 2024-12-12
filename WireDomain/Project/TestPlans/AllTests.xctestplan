@@ -22,6 +22,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireDomain Project.xcodeproj",
+      "identifier" : "01D0DCAF2C1C8C880076CB1C",
+      "name" : "WireDomainTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

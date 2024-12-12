@@ -17,6 +17,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireTransport.xcodeproj",
+      "identifier" : "3E88BCB11B1F35DF00232589",
+      "name" : "WireTransport-ios-tests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

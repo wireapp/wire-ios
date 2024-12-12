@@ -22,6 +22,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireMockTransport.xcodeproj",
+      "identifier" : "54C9023D1B7532DD007162A8",
+      "name" : "WireMockTransportTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

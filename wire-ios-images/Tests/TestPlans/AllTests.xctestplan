@@ -17,6 +17,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireImages.xcodeproj",
+      "identifier" : "096960151B663E7C006DF53B",
+      "name" : "WireImages-iosTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

@@ -17,6 +17,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireLinkPreview.xcodeproj",
+      "identifier" : "BFF057931D25434E004A2C29",
+      "name" : "WireLinkPreviewTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

@@ -17,6 +17,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireAnalytics",
+      "identifier" : "WireAnalyticsTests",
+      "name" : "WireAnalyticsTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

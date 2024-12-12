@@ -16,7 +16,12 @@
         "value" : "${CI}"
       }
     ],
-    "language" : "en"
+    "language" : "en",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireLogging",
+      "identifier" : "WireLoggingTests",
+      "name" : "WireLoggingTests"
+    }
   },
   "testTargets" : [
     {

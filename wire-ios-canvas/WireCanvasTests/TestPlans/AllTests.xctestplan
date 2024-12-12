@@ -15,6 +15,11 @@
         "value" : "${CI}"
       }
     ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireCanvas.xcodeproj",
+      "identifier" : "01E9445F2D01805B006921E4",
+      "name" : "WireCanvasTests"
+    },
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [

@@ -17,6 +17,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireProtos.xcodeproj",
+      "identifier" : "090838081B872DBF00629095",
+      "name" : "WireProtosTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

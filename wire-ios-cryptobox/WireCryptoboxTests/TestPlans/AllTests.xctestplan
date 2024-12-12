@@ -17,6 +17,11 @@
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireCryptobox.xcodeproj",
+      "identifier" : "BA7EF9681B7109B600204A8E",
+      "name" : "WireCryptoboxTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
