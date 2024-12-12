@@ -38,7 +38,6 @@ struct SidebarViewControllerBuilder {
                 AccountImageViewRepresentable(
                     source: accountImage.mapToAccountImageSource(),
                     availability: availability?.mapToAccountImageAvailability(),
-                    // TODO: [WPB-11968] Use the actual value based on team membership, available API version & UserDefaults,
                     showNotificationsBadge: showNotificationsBadge
                 )
                 .accountImageBorderWidth(accountImageViewDesign.borderWidth)
