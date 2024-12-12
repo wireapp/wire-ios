@@ -34,12 +34,12 @@ struct SidebarViewControllerBuilder {
         let legalHoldIndicatorViewDesign = LegalHoldIndicatorViewDesign()
 
         let sidebarViewController = SidebarViewController(
-            accountImageView: { accountImage, availability in
+            accountImageView: { accountImage, availability, showNotificationsBadge in
                 AccountImageViewRepresentable(
                     source: accountImage.mapToAccountImageSource(),
                     availability: availability?.mapToAccountImageAvailability(),
                     // TODO: [WPB-11968] Use the actual value based on team membership, available API version & UserDefaults,
-                    showNotificationsBadge: false
+                    showNotificationsBadge: showNotificationsBadge
                 )
                 .accountImageBorderWidth(accountImageViewDesign.borderWidth)
                 .accountImageViewBorderColor(accountImageViewDesign.borderColor)

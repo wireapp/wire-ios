@@ -107,6 +107,7 @@ extension ConversationListViewController {
         private var e2eiCertificateChangedToken: NSObjectProtocol?
         private var initialSyncObserverToken: (any NSObjectProtocol)?
 
+
         private var userObservationToken: NSObjectProtocol?
         private var teamObservationToken: NSObjectProtocol?
 
@@ -125,21 +126,7 @@ extension ConversationListViewController {
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
 
         var didViewSelfProfile: Bool {
-            get {
-                let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
-                let value = userDefaults.object(forKey: .didViewSelfProfile)
-
-                if value == nil {
-                    userDefaults.set(false, forKey: .didViewSelfProfile)
-                }
-                
-                return (value as? Bool) ?? false
-            }
-
-            set {
-                let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
-                userDefaults.set(newValue, forKey: .didViewSelfProfile)
-            }
+            SelfProfileViewsMonitor.shared.didViewSelfProfile
         }
 
         public var showProfileNotificationsBadge: Bool {
@@ -259,7 +246,6 @@ extension ConversationListViewController.ViewModel {
             queue: .main
         ) { [weak self] _ in
             guard let self else { return }
-            didViewSelfProfile = true
             Task { [weak self] in
                 await self?.viewController?.refreshAccountImageViewNotificationBadge()
             }

@@ -162,7 +162,7 @@ final class SelfProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.post(name: .userDidViewSelfProfile, object: nil)
+        SelfProfileViewsMonitor.shared.onDidViewSelfProfile()
         configureAccountTitle()
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
