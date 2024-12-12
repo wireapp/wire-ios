@@ -217,6 +217,9 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             // non-external content message.
             // Consequently, we should never fall into that case.
             break
+
+        case .inCallHandRaise:
+            break // Not handled yet
         }
     }
 

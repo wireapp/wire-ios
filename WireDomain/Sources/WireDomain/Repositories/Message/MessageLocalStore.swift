@@ -552,7 +552,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         senderID: UUID,
         senderDomain: String,
         conversation: ZMConversation
-    )  {
+    ) {
         let sender = ZMUser.fetchOrCreate(
             with: senderID,
             domain: senderDomain,
