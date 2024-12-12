@@ -24,9 +24,9 @@ import struct WireAPI.HTTPRequest
 /// Provides convenience to snapshot `HTTPRequest` objects.
 struct HTTPRequestSnapshotHelper {
 
-    // change to nil, when developing locally
-    private let defaultRecordMode: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-        .environment["CI"] != nil ? .never : nil
+    private var defaultRecordMode: SnapshotTestingConfiguration.Record? { ProcessInfo.processInfo
+            .environment["CI"] != nil ? .never : nil
+    }
 
     /// Snapshot test a given request
     /// - Parameters:

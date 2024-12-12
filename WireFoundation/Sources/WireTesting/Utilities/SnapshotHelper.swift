@@ -32,9 +32,9 @@ public struct SnapshotHelper {
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
     private var snapshotReferenceDirectory = ""
 
-    // change to nil, when developing locally
-    private let defaultRecordMode: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-        .environment["CI"] != nil ? .never : nil
+    private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
+        ProcessInfo.processInfo.environment["CI"] != nil ? .never : nil
+    }
 
     public init() {}
 
