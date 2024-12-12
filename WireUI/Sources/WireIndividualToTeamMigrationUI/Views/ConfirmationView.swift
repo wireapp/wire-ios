@@ -36,15 +36,15 @@ struct ConfirmationView: View {
         VStack(alignment: .leading, spacing: 56) {
             VStack(alignment: .leading) {
                 HStack(alignment: .top, spacing: 8) {
-                    Text("•")
+                    Text(verbatim: "•")
                     Text(String.localized(key: "individualToTeam.confirmation.body.createTeam", bundle: .module))
                 }
                 HStack(alignment: .top, spacing: 8) {
-                    Text("•")
+                    Text(verbatim: "•")
                     Text(String.localized(key: "individualToTeam.confirmation.body.teamOwner", bundle: .module))
                 }
                 HStack(alignment: .top, spacing: 8) {
-                    Text("•")
+                    Text(verbatim: "•")
                     Text(String.localized(key: "individualToTeam.confirmation.body.permanent", bundle: .module))
                 }
             }
