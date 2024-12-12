@@ -66,7 +66,7 @@ platform :ios do
         if options[:all]
             schemas = Framework.all.values.map { |f| f.scheme }
         else
-            if (options[:folders] == nil || options[:folders].empty?) && !is_running_on_ci
+            if (options[:folders].nil? || options[:folders].empty?) && !is_running_on_ci
                 schemas = select_frameworks()
             else 
                 schemas = generate_framework_schemes(folders: options[:folders])
@@ -74,22 +74,21 @@ platform :ios do
         end
        
        UI.message "🤖 No schemes to test" if schemas.empty?
-       
-       # hardcoded values that are required - not meaningful for testing
-       options[:build_type] = "Development"
-       options[:build_number] = 1
-       build = Build.new(options: options)
-       
-       
-       UI.message "🤖 Testing schemas:  #{schemas.join(', ')}"
-       
-       testplan = options[:testplan] || "AllTests"
-       schemas.each do |scheme|
-           UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
-           test_plan(build, scheme, testplan)
-       end
+
+       run_tests_frameworks(schemas, options)
     end
 
+    desc "Test one framework only"
+    lane :select_framework do |options|
+        frameworks = Framework.all.values
+        framework_options = frameworks.map { |f| f.scheme }
+    
+        selected_choice = UI.select("Select a framework for testing:", framework_options)
+        framework = frameworks.find { |framework| framework.scheme == selected_choice }
+
+        run_tests_frameworks([framework.scheme], options)
+    end
+    
     lane :select_frameworks do |options|
         frameworks = Framework.all.values
         select_all = "All"  
@@ -261,10 +260,28 @@ platform :ios do
         build_and_upload_app(options)
     end
 
+    def run_tests_frameworks(schemas, options)        
+        # hardcoded values that are required - not meaningful for testing
+        options[:build_type] = "Development"
+        options[:build_number] = 1
+        build = Build.new(options: options)
+        
+        UI.message "🤖 Testing schemas: #{schemas.join(', ')}"
+        
+        testplan = options[:testplan] || "AllTests"
+
+        schemas.each do |scheme|
+            UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
+            test_plan(build, scheme, testplan)
+        end
+    end
+
+ 
     def build_and_upload_app(options)
         options[:build_number] = generate_build_number
         prepare_for_release(options)
         build = Build.new(options: options)
+        write_build_info_to_summary(build)
         if !build.skip_security_tests
             UI.message "🤖 Run security tests"
             create_simulator_if_needed
@@ -357,6 +374,22 @@ platform :ios do
         build_number
     end
 
+    def write_build_info_to_summary(build)
+        summary_file = ENV['GITHUB_STEP_SUMMARY']
+
+        if summary_file.nil? || summary_file.empty?
+          UI.error("GITHUB_STEP_SUMMARY is not set. Are you running in GitHub Actions?")
+          return
+        end
+
+        File.open(summary_file, "a") do |file|
+          file.puts "## Fastlane Summary"
+          file.puts "- 🛠️ Version: '#{build.extra_info}'"
+        end
+      
+        UI.message("Successfully wrote to GITHUB_STEP_SUMMARY.")
+    end
+
     # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
         xcode_version = options[:xcode_version]
@@ -401,15 +434,19 @@ platform :ios do
                 sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
+            enable_countly_args = [
+                "COUNTLY_APP_KEY=#{build.countly_api_key}",
+            ]
+
             # DataDog values needs to go through WireCommonComponents
             enable_datadog_args = [
-            "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
-            "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
+                "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
+                "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
             ]
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
-            xcargs += ["COUNTLY_APP_KEY=#{build.countly_api_key}"] if build.countly_enabled
+            xcargs += enable_countly_args if build.enable_countly
 
             sh "echo $HAS_PACKAGES_CACHE_HIT"
             build_app(
@@ -450,26 +487,56 @@ platform :ios do
             UI.user_error! "missing id for tests"
         end
 
-        run_tests(
-            testplan: testplan,
-            scheme: scheme,
-            skip_detect_devices: true,
-            configuration: "Debug",
-            # test_without_building: true,
-            sdk:"iphonesimulator",
-            destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
-            # code_coverage: true,
-            derived_data_path: "DerivedData",
-            buildlog_path: build.build_path,
-            result_bundle: true,
-            output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
-            output_types: "junit",
-            cloned_source_packages_path: ENV['PACKAGES_DIR'],
-            disable_package_automatic_updates: true,
-            skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"],
-            number_of_retries: 2
-        )
+        begin
+            UI.message "🔨 Building scheme: #{scheme}"
+            
+            run_tests(
+                testplan: testplan,
+                scheme: scheme,
+                skip_detect_devices: true,
+                configuration: "Debug",
+                sdk:"iphonesimulator",
+                destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
+                # code_coverage: true,
+                derived_data_path: "DerivedData",
+                buildlog_path: build.build_path,
+                result_bundle: true,
+                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
+                output_types: "junit",
+                cloned_source_packages_path: ENV['PACKAGES_DIR'],
+                number_of_retries: 2,
+                build_for_testing: true
+            )
+        rescue => e
+            UI.error "❌ Build failed for scheme: #{scheme}: #{e.to_s}"
+            raise e # Stops execution immediately if the build fails
+        end
 
+        begin
+            UI.message "🧪 Running tests for scheme: #{scheme}"
+            run_tests(
+                testplan: testplan,
+                scheme: scheme,
+                skip_detect_devices: true,
+                configuration: "Debug",
+                sdk:"iphonesimulator",
+                destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
+                # code_coverage: true,
+                derived_data_path: "DerivedData",
+                buildlog_path: build.build_path,
+                result_bundle: true,
+                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
+                output_types: "junit",
+                cloned_source_packages_path: ENV['PACKAGES_DIR'],
+                disable_package_automatic_updates: true,
+                skip_package_dependencies_resolution: true,
+                number_of_retries: 2,
+                test_without_building: true,
+            )
+        rescue => e
+            puts "⚠️ Tests failed for scheme: #{scheme}, but continuing..."
+            # Continue to the next scheme despite test failures
+        end
     end
 
     def create_simulator_if_needed
@@ -652,6 +719,7 @@ class Build
     # send to non-default external distribution list
     attr_reader :send_to_externals
     attr_reader :countly_api_key
+    attr_reader :enable_countly
 
     def initialize(options:)
         build_number = options[:build_number]
@@ -672,6 +740,7 @@ class Build
         end
 
         @countly_api_key = options[:countly_api_key]
+        @enable_countly = ENV['ENABLE_COUNTLY'] == "true" || ENV['ENABLE_COUNTLY'] == "1"
         @send_to_externals = ENV['SEND_TO_EXTERNALS'] == "true" || ENV['SEND_TO_EXTERNALS'] == "1"
         @enable_datadog = ENV['ENABLE_DATADOG'] == "true" || ENV['ENABLE_DATADOG'] == "1"
         @skip_security_tests = ENV['SKIP_SECURITY_TESTS'] == "true" || ENV['SKIP_SECURITY_TESTS'] == "1"
@@ -696,10 +765,6 @@ class Build
 
     def pr_build?
         !ENV['PR_S3_SUBFOLDER'].nil? 
-    end
-
-    def countly_enabled
-        !@countly_api_key.nil? && !@countly_api_key.empty?
     end
 
     def playground_build
@@ -815,7 +880,7 @@ class Build
             height = Integer(image_height) / 4.0
 
             # Add build number to the icon
-            %x( convert -background '#0008' -fill white -gravity center -size #{width}x#{height} caption:"#{extra_info}" "#{image}" +swap -gravity south -composite "#{image}" )
+            %x( magick -background '#0008' -fill white -gravity center -size #{width}x#{height} caption:"#{extra_info}" "#{image}" +swap -gravity south -composite "#{image}" )
             processed += 1
         end
         UI.important("Processed #{processed} icons in #{iconset_location} by adding '#{extra_info}'")

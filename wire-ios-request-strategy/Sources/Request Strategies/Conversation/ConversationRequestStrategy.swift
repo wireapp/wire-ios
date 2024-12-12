@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource,
     ZMContextChangeTrackerSource {
@@ -184,7 +185,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v0:
             conversationByIDSync.sync(identifiers: conversations.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             } else if let domain = BackendInfo.domain {
@@ -217,7 +218,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 }
             }
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
             conversationQualifiedIDsSync.fetch { [weak self] result in
                 switch result {
                 case let .success(qualifiedConversationIDList):
@@ -268,7 +269,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
             guard let identifier = object.remoteIdentifier else { return }
             synchronize(unqualifiedID: identifier)
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
             if let qualifiedID = object.qualifiedID {
                 synchronize(qualifiedID: qualifiedID)
             } else if let identifier = object.remoteIdentifier, let domain = BackendInfo.domain {
@@ -439,7 +440,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                     apiVersion: apiVersion.rawValue
                 )
 
-            case .v1, .v2, .v3, .v4, .v5, .v6:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
                 guard let domain else { return nil }
 
@@ -481,7 +482,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                     apiVersion: apiVersion.rawValue
                 )
 
-            case .v1, .v2, .v3, .v4, .v5, .v6:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
                 guard let domain else { return nil }
 

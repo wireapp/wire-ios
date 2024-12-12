@@ -78,6 +78,10 @@ class E2eIAPIV6: E2eIAPIV5 {
     }
 }
 
+final class E2eIAPIV7: E2eIAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
+}
+
 private enum Constant {
     static let pathClients = "clients"
     static let pathNonce = "nonce"

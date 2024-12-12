@@ -638,6 +638,36 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - updateTypingUsers
+
+    public var updateTypingUsersConversationIDUsersID_Invocations: [(conversationID: NSManagedObjectID, usersID: Set<NSManagedObjectID>)] = []
+    public var updateTypingUsersConversationIDUsersID_MockMethod: ((NSManagedObjectID, Set<NSManagedObjectID>) async -> Void)?
+
+    public func updateTypingUsers(conversationID: NSManagedObjectID, usersID: Set<NSManagedObjectID>) async {
+        updateTypingUsersConversationIDUsersID_Invocations.append((conversationID: conversationID, usersID: usersID))
+
+        guard let mock = updateTypingUsersConversationIDUsersID_MockMethod else {
+            fatalError("no mock for `updateTypingUsersConversationIDUsersID`")
+        }
+
+        await mock(conversationID, usersID)
+    }
+
+    // MARK: - obtainPermanentIDs
+
+    public var obtainPermanentIDsUserConversation_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
+    public var obtainPermanentIDsUserConversation_MockMethod: ((ZMUser, ZMConversation) -> Void)?
+
+    public func obtainPermanentIDs(user: ZMUser, conversation: ZMConversation) {
+        obtainPermanentIDsUserConversation_Invocations.append((user: user, conversation: conversation))
+
+        guard let mock = obtainPermanentIDsUserConversation_MockMethod else {
+            fatalError("no mock for `obtainPermanentIDsUserConversation`")
+        }
+
+        mock(user, conversation)
+    }
+
     // MARK: - conversationName
 
     public var conversationNameConversation_Invocations: [ZMConversation] = []
@@ -669,6 +699,54 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
 
         await mock(newName, conversation)
+    }
+
+    // MARK: - updateOrCreateMLSGroup
+
+    public var updateOrCreateMLSGroupGroupID_Invocations: [MLSGroupID] = []
+    public var updateOrCreateMLSGroupGroupID_MockMethod: ((MLSGroupID) async -> Void)?
+
+    public func updateOrCreateMLSGroup(groupID: MLSGroupID) async {
+        updateOrCreateMLSGroupGroupID_Invocations.append(groupID)
+
+        guard let mock = updateOrCreateMLSGroupGroupID_MockMethod else {
+            fatalError("no mock for `updateOrCreateMLSGroupGroupID`")
+        }
+
+        await mock(groupID)
+    }
+
+    // MARK: - storeMLSConversationEstablished
+
+    public var storeMLSConversationEstablishedMlsGroupIDConversation_Invocations: [(mlsGroupID: MLSGroupID, conversation: ZMConversation)] = []
+    public var storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod: ((MLSGroupID, ZMConversation) async -> Void)?
+
+    public func storeMLSConversationEstablished(mlsGroupID: MLSGroupID, conversation: ZMConversation) async {
+        storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.append((mlsGroupID: mlsGroupID, conversation: conversation))
+
+        guard let mock = storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod else {
+            fatalError("no mock for `storeMLSConversationEstablishedMlsGroupIDConversation`")
+        }
+
+        await mock(mlsGroupID, conversation)
+    }
+
+    // MARK: - fetchOtherUserIDInOneOnOneConversation
+
+    public var fetchOtherUserIDInOneOnOneConversationConversation_Invocations: [ZMConversation] = []
+    public var fetchOtherUserIDInOneOnOneConversationConversation_MockMethod: ((ZMConversation) async -> WireDataModel.QualifiedID?)?
+    public var fetchOtherUserIDInOneOnOneConversationConversation_MockValue: WireDataModel.QualifiedID??
+
+    public func fetchOtherUserIDInOneOnOneConversation(conversation: ZMConversation) async -> WireDataModel.QualifiedID? {
+        fetchOtherUserIDInOneOnOneConversationConversation_Invocations.append(conversation)
+
+        if let mock = fetchOtherUserIDInOneOnOneConversationConversation_MockMethod {
+            return await mock(conversation)
+        } else if let mock = fetchOtherUserIDInOneOnOneConversationConversation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOtherUserIDInOneOnOneConversationConversation`")
+        }
     }
 
 }
@@ -922,6 +1000,21 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         await mock(newName, conversationID, conversationDomain, senderID, senderDomain, date)
     }
 
+    // MARK: - updateTypingUsers
+
+    public var updateTypingUsers_Invocations: [[ConversationTypingUsersInfo]] = []
+    public var updateTypingUsers_MockMethod: (([ConversationTypingUsersInfo]) async -> Void)?
+
+    public func updateTypingUsers(_ typingUsersInfo: [ConversationTypingUsersInfo]) async {
+        updateTypingUsers_Invocations.append(typingUsersInfo)
+
+        guard let mock = updateTypingUsers_MockMethod else {
+            fatalError("no mock for `updateTypingUsers`")
+        }
+
+        await mock(typingUsersInfo)
+    }
+
     // MARK: - fetchConversationGuestLink
 
     public var fetchConversationGuestLinkConversationID_Invocations: [String] = []
@@ -1001,6 +1094,26 @@ public class MockOneOnOneResolverProtocol: OneOnOneResolverProtocol {
 
     public init() {}
 
+
+    // MARK: - resolveOneOnOneConversation
+
+    public var resolveOneOnOneConversationWith_Invocations: [WireDataModel.QualifiedID] = []
+    public var resolveOneOnOneConversationWith_MockError: Error?
+    public var resolveOneOnOneConversationWith_MockMethod: ((WireDataModel.QualifiedID) async throws -> Void)?
+
+    public func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws {
+        resolveOneOnOneConversationWith_Invocations.append(userID)
+
+        if let error = resolveOneOnOneConversationWith_MockError {
+            throw error
+        }
+
+        guard let mock = resolveOneOnOneConversationWith_MockMethod else {
+            fatalError("no mock for `resolveOneOnOneConversationWith`")
+        }
+
+        try await mock(userID)
+    }
 
     // MARK: - resolveAllOneOnOneConversations
 

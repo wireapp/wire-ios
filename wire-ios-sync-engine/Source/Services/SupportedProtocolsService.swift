@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDomain
+import WireLogging
 import WireRequestStrategy
 
 // sourcery: AutoMockable

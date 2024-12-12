@@ -53,6 +53,8 @@ public struct ConnectionsAPIBuilder {
             ConnectionsAPIV5(httpClient: httpClient)
         case .v6:
             ConnectionsAPIV6(httpClient: httpClient)
+        case .v7:
+            ConnectionsAPIV7(httpClient: httpClient)
         }
     }
 

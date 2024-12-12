@@ -50,6 +50,8 @@ struct LoginAPIBuilder {
             LoginAPIV5(networkService: networkService)
         case .v6:
             LoginAPIV6(networkService: networkService)
+        case .v7:
+            LoginAPIV7(networkService: networkService)
         }
     }
 

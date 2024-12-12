@@ -50,3 +50,16 @@ extension PermissionDeniedViewController {
         return vc
     }
 }
+
+private extension String {
+    func withCustomParagraphSpacing() -> NSMutableAttributedString {
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.paragraphSpacing = 10
+
+        return .init(
+            string: self,
+            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
+        )
+    }
+}
