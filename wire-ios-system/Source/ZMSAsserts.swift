@@ -80,6 +80,15 @@ public enum AppBuild: UInt8 {
     }
 }
 
+/// Reports an error and terminates the application if the current build is an internal build
+public func fatalInternal(
+    _ message: String,
+    file: StaticString = #fileID,
+    line: UInt = #line
+) {
+    requireInternal(false, message, file: file, line: line)
+}
+
 /// Terminates the application if the condition is `false` and the current build is not an AppStore build
 public func requireInternal(
     _ condition: Bool,

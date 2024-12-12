@@ -49,7 +49,8 @@ let package = Package(
                 .process("APIs/SelfUserAPI/Resources"),
                 .process("APIs/UserClientsAPI/Resources"),
                 .process("Network/PushChannel/Resources"),
-                .process("Authentication/Resources")
+                .process("Authentication/Resources"),
+                .process("Backend/Resources")
             ]
         )
     ]
