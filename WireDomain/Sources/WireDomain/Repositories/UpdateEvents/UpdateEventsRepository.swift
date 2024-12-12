@@ -23,10 +23,12 @@ import WireFoundation
 import WireLogging
 import Combine
 
-// sourcery: AutoMockable
 /// Access update events.
 protocol UpdateEventsRepositoryProtocol {
     
+    /// Observe a pending events stream.
+    /// - Returns: A publisher of update events.
+
     func observePendingEvents() -> AnyPublisher<[UpdateEvent], Never>
 
     /// Pull pending events from the server, decrypt if needed, and store locally.

@@ -53,7 +53,7 @@ public final class Assembly {
         self.pushChannel = pushChannel
         self.cookieStorage = cookieStorage
         
-        self.registerDomainDependencies()
+        self.registerNotificationServiceDependencies()
     }
     
     // MARK: - API Init
@@ -69,8 +69,6 @@ public final class Assembly {
     
     // MARK: - Repositories and local stores Init
     
-    // TODO: [WPB-14606] when related PR merged, initialize and expose Domain components required by SyncManager (`UpdateEventsRepository`, `TeamRepository` etc), and register the dependencies.
-    
     private lazy var userLocalStore = UserLocalStore(context: context)
     
     private lazy var updateEventsLocalStore = UpdateEventsLocalStore(
@@ -83,34 +81,31 @@ public final class Assembly {
 
 extension Assembly {
     
-    /// Register domain dependencies so they can automatically be resolved later on.
-    ///
-    /// - warning: Only meant to be used internally by WireDomain components.
+    /// Register some domain dependencies to be resolved by the `NotificationService`.
+    /// Since `NotificationService` is not initializable, the injector provides a lightweight dependency injection mechanism to retrieve some already initialized dependencies that the notification service requires.
 
-    private func registerDomainDependencies() {
-        let injector = Injector.shared
-        
-        injector.register(ProteusServiceInterface.self) {
-            self.proteusService
-        }
-        
-        injector.register(UserLocalStoreProtocol.self) {
+    private func registerNotificationServiceDependencies() {
+        Injector.register(UserLocalStoreProtocol.self) {
             self.userLocalStore
         }
         
-        injector.register(UpdateEventsAPI.self) {
+        Injector.register(UpdateEventsAPI.self) {
             self.updateEventsAPI
         }
         
-        injector.register(UpdateEventDecryptorProtocol.self) {
+        Injector.register(PushChannelProtocol.self) {
+            self.pushChannel
+        }
+        
+        Injector.register(UpdateEventDecryptorProtocol.self) {
             self.updateEventDecryptor
         }
         
-        injector.register(UpdateEventsLocalStoreProtocol.self) {
+        Injector.register(UpdateEventsLocalStoreProtocol.self) {
             self.updateEventsLocalStore
         }
         
-        injector.register(ZMPersistentCookieStorage.self) {
+        Injector.register(ZMPersistentCookieStorage.self) {
             self.cookieStorage
         }
     }

@@ -20,6 +20,7 @@ import UserNotifications
 import WireDataModel
 import WireLogging
 
+/// Receives push notifications, process them and generate new notifications from the pending events.
 final class NotificationService: UNNotificationServiceExtension {
     
     // MARK: - Failure
@@ -30,10 +31,10 @@ final class NotificationService: UNNotificationServiceExtension {
     
     // MARK: - Properties
     
-    private let injector = Injector.shared
     private let logger = WireLogger.notifications
     private var notificationSession: NotificationSession?
     private var contentHandler: ((UNNotificationContent) -> Void)?
+    private var ongoingTask: Task<Void, Never>?
     
     // MARK: - Object lifecycle
     
@@ -48,7 +49,8 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        let cookieStorage: ZMPersistentCookieStorage = injector.resolve()
+        ongoingTask?.cancel()
+        let cookieStorage: ZMPersistentCookieStorage = Injector.resolve()
         let isAuthenticated = cookieStorage.isAuthenticated
         
         guard isAuthenticated else {
@@ -61,7 +63,7 @@ final class NotificationService: UNNotificationServiceExtension {
         
         self.contentHandler = contentHandler
         
-        Task {
+        ongoingTask = Task {
             do {
                 let notificationUserInfo = request.content.userInfo
                 
@@ -71,7 +73,7 @@ final class NotificationService: UNNotificationServiceExtension {
                 
                 notificationSession = try await createNotificationSession(
                     userID: notification.userID
-                )
+                ) 
                 
                 try await notificationSession?.processPushNotification(
                     eventID: notification.eventID
@@ -92,7 +94,7 @@ final class NotificationService: UNNotificationServiceExtension {
     private func createNotificationSession(
         userID: UUID
     ) async throws -> NotificationSession {
-        let userLocalStore: UserLocalStoreProtocol = injector.resolve()
+        let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
         let selfUserInfo = await userLocalStore.selfUserInfo()
         
         guard let selfClientID = selfUserInfo.clientId else {
@@ -102,18 +104,23 @@ final class NotificationService: UNNotificationServiceExtension {
         let updateEventsRepository = UpdateEventsRepository(
             userID: userID,
             selfClientID: selfClientID,
-            updateEventsAPI: injector.resolve(),
-            pushChannel: injector.resolve(),
-            updateEventDecryptor: injector.resolve(),
-            updateEventsLocalStore: injector.resolve()
+            updateEventsAPI: Injector.resolve(), // these were already initialized in the assembly, resolving them
+            pushChannel: Injector.resolve(),
+            updateEventDecryptor: Injector.resolve(),
+            updateEventsLocalStore: Injector.resolve()
         )
         
         let notificationSession = NotificationSession(
-            userID: userID,
             updateEventsRepository: updateEventsRepository
-        )
+        ) { [weak self] notificationContent in
+            self?.finishWithNotification(content: notificationContent)
+        }
         
         return notificationSession
+    }
+    
+    private func finishWithNotification(content: UNNotificationContent) {
+        // TODO: [WPB-11175]
     }
     
     private func finishWithEmptyNotification() {
@@ -165,5 +172,6 @@ final class NotificationService: UNNotificationServiceExtension {
         // Content handler should only be consumed once.
         contentHandler = nil
         notificationSession = nil
+        ongoingTask = nil
     }
 }

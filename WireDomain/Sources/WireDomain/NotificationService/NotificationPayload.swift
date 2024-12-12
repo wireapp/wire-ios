@@ -18,6 +18,7 @@
 
 import Foundation
 
+/// Push notification payload
 struct NotificationPayload {
     let userID: UUID
     let eventID: UUID

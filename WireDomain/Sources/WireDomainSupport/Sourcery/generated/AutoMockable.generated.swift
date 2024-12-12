@@ -1746,150 +1746,6 @@ class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol {
 
 }
 
-class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - pullPendingEvents
-
-    var pullPendingEvents_Invocations: [Void] = []
-    var pullPendingEvents_MockError: Error?
-    var pullPendingEvents_MockMethod: (() async throws -> Void)?
-
-    func pullPendingEvents() async throws {
-        pullPendingEvents_Invocations.append(())
-
-        if let error = pullPendingEvents_MockError {
-            throw error
-        }
-
-        guard let mock = pullPendingEvents_MockMethod else {
-            fatalError("no mock for `pullPendingEvents`")
-        }
-
-        try await mock()
-    }
-
-    // MARK: - fetchNextPendingEvents
-
-    var fetchNextPendingEventsLimit_Invocations: [UInt] = []
-    var fetchNextPendingEventsLimit_MockError: Error?
-    var fetchNextPendingEventsLimit_MockMethod: ((UInt) async throws -> [UpdateEventEnvelope])?
-    var fetchNextPendingEventsLimit_MockValue: [UpdateEventEnvelope]?
-
-    func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope] {
-        fetchNextPendingEventsLimit_Invocations.append(limit)
-
-        if let error = fetchNextPendingEventsLimit_MockError {
-            throw error
-        }
-
-        if let mock = fetchNextPendingEventsLimit_MockMethod {
-            return try await mock(limit)
-        } else if let mock = fetchNextPendingEventsLimit_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchNextPendingEventsLimit`")
-        }
-    }
-
-    // MARK: - deleteNextPendingEvents
-
-    var deleteNextPendingEventsLimit_Invocations: [UInt] = []
-    var deleteNextPendingEventsLimit_MockError: Error?
-    var deleteNextPendingEventsLimit_MockMethod: ((UInt) async throws -> Void)?
-
-    func deleteNextPendingEvents(limit: UInt) async throws {
-        deleteNextPendingEventsLimit_Invocations.append(limit)
-
-        if let error = deleteNextPendingEventsLimit_MockError {
-            throw error
-        }
-
-        guard let mock = deleteNextPendingEventsLimit_MockMethod else {
-            fatalError("no mock for `deleteNextPendingEventsLimit`")
-        }
-
-        try await mock(limit)
-    }
-
-    // MARK: - startBufferingLiveEvents
-
-    var startBufferingLiveEvents_Invocations: [Void] = []
-    var startBufferingLiveEvents_MockError: Error?
-    var startBufferingLiveEvents_MockMethod: (() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error>)?
-    var startBufferingLiveEvents_MockValue: AsyncThrowingStream<UpdateEventEnvelope, Error>?
-
-    func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
-        startBufferingLiveEvents_Invocations.append(())
-
-        if let error = startBufferingLiveEvents_MockError {
-            throw error
-        }
-
-        if let mock = startBufferingLiveEvents_MockMethod {
-            return try await mock()
-        } else if let mock = startBufferingLiveEvents_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `startBufferingLiveEvents`")
-        }
-    }
-
-    // MARK: - stopReceivingLiveEvents
-
-    var stopReceivingLiveEvents_Invocations: [Void] = []
-    var stopReceivingLiveEvents_MockMethod: (() async -> Void)?
-
-    func stopReceivingLiveEvents() async {
-        stopReceivingLiveEvents_Invocations.append(())
-
-        guard let mock = stopReceivingLiveEvents_MockMethod else {
-            fatalError("no mock for `stopReceivingLiveEvents`")
-        }
-
-        await mock()
-    }
-
-    // MARK: - storeLastEventEnvelopeID
-
-    var storeLastEventEnvelopeID_Invocations: [UUID] = []
-    var storeLastEventEnvelopeID_MockMethod: ((UUID) -> Void)?
-
-    func storeLastEventEnvelopeID(_ id: UUID) {
-        storeLastEventEnvelopeID_Invocations.append(id)
-
-        guard let mock = storeLastEventEnvelopeID_MockMethod else {
-            fatalError("no mock for `storeLastEventEnvelopeID`")
-        }
-
-        mock(id)
-    }
-
-    // MARK: - pullLastEventID
-
-    var pullLastEventID_Invocations: [Void] = []
-    var pullLastEventID_MockError: Error?
-    var pullLastEventID_MockMethod: (() async throws -> Void)?
-
-    func pullLastEventID() async throws {
-        pullLastEventID_Invocations.append(())
-
-        if let error = pullLastEventID_MockError {
-            throw error
-        }
-
-        guard let mock = pullLastEventID_MockMethod else {
-            fatalError("no mock for `pullLastEventID`")
-        }
-
-        try await mock()
-    }
-
-}
-
 public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -2361,6 +2217,24 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         }
     }
 
+    // MARK: - selfUserInfo
+
+    public var selfUserInfo_Invocations: [Void] = []
+    public var selfUserInfo_MockMethod: (() async -> (id: UUID, clientId: String?))?
+    public var selfUserInfo_MockValue: (id: UUID, clientId: String?)?
+
+    public func selfUserInfo() async -> (id: UUID, clientId: String?) {
+        selfUserInfo_Invocations.append(())
+
+        if let mock = selfUserInfo_MockMethod {
+            return await mock()
+        } else if let mock = selfUserInfo_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `selfUserInfo`")
+        }
+    }
+
 }
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {
@@ -2667,6 +2541,24 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchAllUserIDsWithOneOnOneConversation`")
+        }
+    }
+
+    // MARK: - selfUserInfo
+
+    public var selfUserInfo_Invocations: [Void] = []
+    public var selfUserInfo_MockMethod: (() async -> (id: UUID, clientId: String?))?
+    public var selfUserInfo_MockValue: (id: UUID, clientId: String?)?
+
+    public func selfUserInfo() async -> (id: UUID, clientId: String?) {
+        selfUserInfo_Invocations.append(())
+
+        if let mock = selfUserInfo_MockMethod {
+            return await mock()
+        } else if let mock = selfUserInfo_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `selfUserInfo`")
         }
     }
 

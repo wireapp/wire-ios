@@ -31,26 +31,22 @@ final class NotificationSession {
     // MARK: - Properties
     
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
-    private let userID: UUID
     private var subscription: AnyCancellable?
     
     // MARK: - Object lifecycle
     
     init(
-        userID: UUID,
-        updateEventsRepository: any UpdateEventsRepositoryProtocol
+        updateEventsRepository: any UpdateEventsRepositoryProtocol,
+        onNotificationContent: @escaping (UNNotificationContent) -> Void
     ) {
         self.updateEventsRepository = updateEventsRepository
-        self.userID = userID
-        
-        // Generate notification for current pending events as we receive them.
-        subscription = updateEventsRepository.observePendingEvents()
-            .sink { [weak self] updateEvents in
-                self?.generateNotification(for: updateEvents)
-            }
+        self.subscription = self.updateEventsRepository.observePendingEvents()
+            .map(generateNotificationContent)
+            .sink(receiveValue: onNotificationContent)
     }
     
     deinit {
+        subscription?.cancel()
         subscription = nil
     }
     
@@ -73,7 +69,9 @@ final class NotificationSession {
         }
     }
     
-    private func generateNotification(for events: [UpdateEvent]) {
+    private func generateNotificationContent(
+        for events: [UpdateEvent]
+    ) -> UNNotificationContent {
         // TODO: [WPB-11175] - Generate UNNotificationContent from update events
         for event in events {
             switch event {
@@ -91,5 +89,7 @@ final class NotificationSession {
                 break
             }
         }
+        
+        return UNNotificationContent()
     }
 }
