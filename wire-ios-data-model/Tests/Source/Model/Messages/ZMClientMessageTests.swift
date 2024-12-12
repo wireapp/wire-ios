@@ -98,7 +98,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertEqual(messageData, contentData)
     }
 
-    // Delete this when we add support for call reactions.
+    // TODO: [WPB-11770] Delete this when we add support for call reactions.
     func testThatItIgnoresInCallEmojiMessages() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -106,6 +106,31 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         let nonce = UUID.create()
         let message = GenericMessage(content: InCallEmoji(), nonce: nonce)
+        let contentData = try XCTUnwrap(message.serializedData())
+        let data = contentData.base64String()
+
+        let payload = payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: data)
+        let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+        XCTAssertNotNil(event)
+
+        // when
+        var sut: ZMClientMessage?
+        performPretendingUiMocIsSyncMoc {
+            sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
+        }
+
+        // then
+        XCTAssertNil(sut)
+    }
+
+    // TODO: [WPB-11769] Delete this when we add support for call hand raise.
+    func testThatItIgnoresInCallHandRaiseMessages() throws {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+
+        let nonce = UUID.create()
+        let message = GenericMessage(content: InCallHandRaise(handUp: true), nonce: nonce)
         let contentData = try XCTUnwrap(message.serializedData())
         let data = contentData.base64String()
 

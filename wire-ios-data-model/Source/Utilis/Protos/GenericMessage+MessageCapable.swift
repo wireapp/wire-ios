@@ -140,6 +140,12 @@ extension InCallEmoji: MessageCapable {
     }
 }
 
+extension InCallHandRaise: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.inCallHandRaise = self
+    }
+}
+
 extension WireProtos.MessageEdit: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.edited = self
