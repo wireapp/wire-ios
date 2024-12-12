@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import math_h
 
 /// A value that can be tracked.
 
+@available(*, deprecated, message: "Use SegmentationEntry.init instead!")
 public protocol AnalyticsValue {
 
     /// A representation suitable for tracking.
@@ -31,9 +32,8 @@ public protocol AnalyticsValue {
 extension Bool: AnalyticsValue {
 
     public var analyticsValue: String {
-        self ? "True" : "False"
+        SegmentationEntry("", self).value
     }
-
 }
 
 extension UInt: AnalyticsValue {

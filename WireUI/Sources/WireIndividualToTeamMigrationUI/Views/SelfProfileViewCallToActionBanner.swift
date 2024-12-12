@@ -60,7 +60,13 @@ public struct SelfProfileViewCallToActionBanner: View {
                 .lineLimit(nil)
 
             Button {
-                analyticsEventTracker?.trackEvent(.UI.clickedPersonalMigrationCTA(todo_segmentation: ()))
+                fatalError("TODO: fix bool values")
+                analyticsEventTracker?.trackEvent(
+                    .UI.triggeredPersonalMigrationCTA(
+                        isCreateTeamButtonUsed: false,
+                        isDismissCTAButtonUsed: false
+                    )
+                )
                 actionCallback(.createWireTeam)
             } label: {
                 Text("individualToTeam.banner.button", bundle: .module)

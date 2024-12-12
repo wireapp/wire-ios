@@ -34,8 +34,14 @@ public extension AnalyticsEvent.UI {
     ///
     /// Segmentation: app_name; app_version; clicked_create_team; clicked_dismiss_cta
 
-    static func clickedPersonalMigrationCTA(todo_segmentation: Void) -> AnalyticsEvent {
-        .init(name: "ui.clicked-personal-migration-cta") // TODO: segmentation
+    static func triggeredPersonalMigrationCTA(
+        isCreateTeamButtonUsed: Bool,
+        isDismissCTAButtonUsed: Bool
+    ) -> AnalyticsEvent {
+        AnalyticsEvent("ui.clicked-personal-migration-cta") {
+            SegmentationEntry("clicked_create_team", isCreateTeamButtonUsed)
+            SegmentationEntry("clicked_dismiss_cta", isDismissCTAButtonUsed)
+        }
     }
 }
 

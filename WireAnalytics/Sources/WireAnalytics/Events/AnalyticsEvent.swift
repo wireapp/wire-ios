@@ -36,14 +36,13 @@ public struct AnalyticsEvent: Equatable, Identifiable, Sendable {
     ///   - name: A unique name.
     ///   - segmentation: Additional metadata.
 
-    public init(
+    public init<Collection>(
         name: String,
-        segmentation: Set<SegmentationEntry> = []
-    ) {
+        segmentation: Collection = []
+    ) where Collection: Swift.Collection, Collection.Element == SegmentationEntry {
         self.name = name
-        self.segmentation = segmentation
+        self.segmentation = Set(segmentation)
     }
-
 }
 
 extension AnalyticsEvent: CustomDebugStringConvertible {
@@ -52,4 +51,32 @@ extension AnalyticsEvent: CustomDebugStringConvertible {
         "event: \(name), segmentation: \(segmentation)"
     }
 
+}
+
+// MARK: - SegmentationEntry @resultBuilder
+
+extension AnalyticsEvent {
+
+    @resultBuilder
+    public struct SegmentationEntryBuilder {
+        public static func buildBlock(_ components: SegmentationEntry...) -> [SegmentationEntry] {
+            components
+        }
+    }
+
+    /// Create a new `AnalyticsEvent`.
+    ///
+    /// - Parameters:
+    ///   - name: A unique name.
+    ///   - segmentation: Additional metadata.
+
+    public init(
+        _ name: String,
+        @SegmentationEntryBuilder segmentation: () -> [SegmentationEntry]
+    ) {
+        self.init(
+            name: name,
+            segmentation: segmentation()
+        )
+    }
 }
