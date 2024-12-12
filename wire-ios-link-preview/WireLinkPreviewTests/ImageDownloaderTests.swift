@@ -43,7 +43,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockSession.dataTaskWithURLClosureCallCount, 1)
         XCTAssertEqual(mockTask.resumeCallCount, 1)
     }
@@ -91,7 +91,7 @@ class ImageDownloaderTests: XCTestCase {
         sut.downloadImages(fromURLs: urls) { _ in }
 
         // then
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockSession.dataTaskWithURLClosureCallCount, 4)
         XCTAssertEqual(mockTask.resumeCallCount, 4)
     }

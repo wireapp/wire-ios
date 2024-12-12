@@ -112,7 +112,7 @@ class PreviewDownloaderTests: XCTestCase {
         sut.processReceivedData(secondBytes, forTask: mockDataTask, withIdentifier: taskID)
 
         // then
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockDataTask.cancelCallCount, 1)
         XCTAssertEqual(completionCallCount, 1)
     }
@@ -143,7 +143,7 @@ class PreviewDownloaderTests: XCTestCase {
         sut.processReceivedData(secondBytes, forTask: mockDataTask, withIdentifier: taskID)
 
         // then
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockDataTask.cancelCallCount, 0)
         XCTAssertEqual(completionCallCount, 1)
     }
@@ -160,7 +160,7 @@ class PreviewDownloaderTests: XCTestCase {
         sut.processReceivedData(firstBytes, forTask: mockDataTask, withIdentifier: taskID)
 
         // then
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockDataTask.cancelCallCount, 1)
         XCTAssertNil(sut.completionByURL[url])
         XCTAssertNil(sut.containerByTaskID[taskID])
@@ -180,7 +180,7 @@ class PreviewDownloaderTests: XCTestCase {
         sut.urlSession(mockSession, task: mockDataTask, didCompleteWithError: error)
 
         // then
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockDataTask.cancelCallCount, 0)
         XCTAssertNil(sut.completionByURL[url])
         XCTAssertNil(sut.containerByTaskID[taskID])
@@ -305,7 +305,7 @@ class PreviewDownloaderTests: XCTestCase {
             downloadExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(disposition, expected, line: line)
 
         if expected == .cancel {

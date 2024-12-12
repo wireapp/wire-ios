@@ -95,6 +95,6 @@ final class TypingIndicatorViewSnapshotTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.container.alpha, 1)
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
     }
 }

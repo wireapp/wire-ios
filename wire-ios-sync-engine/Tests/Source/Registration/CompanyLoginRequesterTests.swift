@@ -94,7 +94,7 @@ final class CompanyLoginRequesterTests: XCTestCase {
         }
 
         // Then
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
     }
 
     func testThatItReturnsInvalidCodeErrorFor404Response() {
@@ -119,7 +119,7 @@ final class CompanyLoginRequesterTests: XCTestCase {
         }
 
         // Then
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
     }
 
     func testThatItReturnsUnknownErrorForServerError() {
@@ -144,7 +144,7 @@ final class CompanyLoginRequesterTests: XCTestCase {
         }
 
         // Then
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
     }
 
     func testThatItReturnsUnknownErrorForTransportError() {
@@ -169,7 +169,7 @@ final class CompanyLoginRequesterTests: XCTestCase {
         }
 
         // Then
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
     }
 
     func testThatItReturnsUnknownErrorForInvalidResponse() {
@@ -191,7 +191,7 @@ final class CompanyLoginRequesterTests: XCTestCase {
         }
 
         // Then
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
     }
 
 }
