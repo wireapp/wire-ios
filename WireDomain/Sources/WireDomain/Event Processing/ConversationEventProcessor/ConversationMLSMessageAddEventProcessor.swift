@@ -136,7 +136,6 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             conversationID: conversationID,
             senderID: senderID,
             senderClientID: decryptedMessage.senderClientID,
-            logAttributes: logAttributes,
             date: date ?? .now
         )
     }

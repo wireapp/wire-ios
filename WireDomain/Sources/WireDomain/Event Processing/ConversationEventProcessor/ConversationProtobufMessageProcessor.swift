@@ -34,7 +34,6 @@ public protocol ConversationProtobufMessageProcessorProtocol {
         conversationID: ConversationID,
         senderID: UserID,
         senderClientID: String?,
-        logAttributes: LogAttributes,
         date: Date
     ) async throws
 
@@ -45,6 +44,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
     let messageLocalStore: any MessageLocalStoreProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
+    let logAttributes: LogAttributes
 
     func processProtobufMessage(
         _ message: GenericMessage,
@@ -53,7 +53,6 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
         conversationID: ConversationID,
         senderID: UserID,
         senderClientID: String?,
-        logAttributes: LogAttributes,
         date: Date
     ) async throws {
         var logAttributes = logAttributes
@@ -225,8 +224,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             id: message.messageID,
             conversation: conversation,
             sender: (sender.id, sender.domain, sender.clientID),
-            date: date,
-            logAttributes: logAttributes
+            date: date
         )
         
         await messageLocalStore.addAssetClientMessage(
@@ -250,8 +248,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             id: message.messageID,
             conversation: conversation,
             sender: (sender.id, sender.domain, sender.clientID),
-            date: date,
-            logAttributes: logAttributes
+            date: date
         )
         
         await messageLocalStore.addClientMessage(

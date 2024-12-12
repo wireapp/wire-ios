@@ -835,22 +835,22 @@ public class MockConversationProtobufMessageProcessorProtocol: ConversationProto
 
     // MARK: - processProtobufMessage
 
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations: [(message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, logAttributes: LogAttributes, date: Date)] = []
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockError: Error?
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod: ((GenericMessage, GenericMessage.OneOf_Content, ZMConversation, ConversationID, UserID, String?, LogAttributes, Date) async throws -> Void)?
+    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDate_Invocations: [(message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, date: Date)] = []
+    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDate_MockError: Error?
+    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDate_MockMethod: ((GenericMessage, GenericMessage.OneOf_Content, ZMConversation, ConversationID, UserID, String?, Date) async throws -> Void)?
 
-    public func processProtobufMessage(_ message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, logAttributes: LogAttributes, date: Date) async throws {
-        processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.append((message: message, content: content, conversation: conversation, conversationID: conversationID, senderID: senderID, senderClientID: senderClientID, logAttributes: logAttributes, date: date))
+    public func processProtobufMessage(_ message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, date: Date) async throws {
+        processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDate_Invocations.append((message: message, content: content, conversation: conversation, conversationID: conversationID, senderID: senderID, senderClientID: senderClientID, date: date))
 
-        if let error = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockError {
+        if let error = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDate_MockError {
             throw error
         }
 
-        guard let mock = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod else {
-            fatalError("no mock for `processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate`")
+        guard let mock = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDate_MockMethod else {
+            fatalError("no mock for `processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDate`")
         }
 
-        try await mock(message, content, conversation, conversationID, senderID, senderClientID, logAttributes, date)
+        try await mock(message, content, conversation, conversationID, senderID, senderClientID, date)
     }
 
 }
@@ -1199,47 +1199,47 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - fetchOrCreateClientMessage
 
-    public var fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date, logAttributes: LogAttributes)] = []
-    public var fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockError: Error?
-    public var fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockMethod: ((String, ZMConversation, (id: UUID, domain: String, clientID: String?), Date, LogAttributes) async throws -> (ZMClientMessage, isNew: Bool))?
-    public var fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockValue: (ZMClientMessage, isNew: Bool)?
+    public var fetchOrCreateClientMessageIdConversationSenderDate_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date)] = []
+    public var fetchOrCreateClientMessageIdConversationSenderDate_MockError: Error?
+    public var fetchOrCreateClientMessageIdConversationSenderDate_MockMethod: ((String, ZMConversation, (id: UUID, domain: String, clientID: String?), Date) async throws -> (ZMClientMessage, isNew: Bool))?
+    public var fetchOrCreateClientMessageIdConversationSenderDate_MockValue: (ZMClientMessage, isNew: Bool)?
 
-    public func fetchOrCreateClientMessage(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date, logAttributes: LogAttributes) async throws -> (ZMClientMessage, isNew: Bool) {
-        fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_Invocations.append((id: id, conversation: conversation, sender: sender, date: date, logAttributes: logAttributes))
+    public func fetchOrCreateClientMessage(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date) async throws -> (ZMClientMessage, isNew: Bool) {
+        fetchOrCreateClientMessageIdConversationSenderDate_Invocations.append((id: id, conversation: conversation, sender: sender, date: date))
 
-        if let error = fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockError {
+        if let error = fetchOrCreateClientMessageIdConversationSenderDate_MockError {
             throw error
         }
 
-        if let mock = fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockMethod {
-            return try await mock(id, conversation, sender, date, logAttributes)
-        } else if let mock = fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockValue {
+        if let mock = fetchOrCreateClientMessageIdConversationSenderDate_MockMethod {
+            return try await mock(id, conversation, sender, date)
+        } else if let mock = fetchOrCreateClientMessageIdConversationSenderDate_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchOrCreateClientMessageIdConversationSenderDateLogAttributes`")
+            fatalError("no mock for `fetchOrCreateClientMessageIdConversationSenderDate`")
         }
     }
 
     // MARK: - fetchOrCreateAssetClientMessage
 
-    public var fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date, logAttributes: LogAttributes)] = []
-    public var fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockError: Error?
-    public var fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockMethod: ((String, ZMConversation, (id: UUID, domain: String, clientID: String?), Date, LogAttributes) async throws -> (ZMAssetClientMessage, isNew: Bool))?
-    public var fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockValue: (ZMAssetClientMessage, isNew: Bool)?
+    public var fetchOrCreateAssetClientMessageIdConversationSenderDate_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date)] = []
+    public var fetchOrCreateAssetClientMessageIdConversationSenderDate_MockError: Error?
+    public var fetchOrCreateAssetClientMessageIdConversationSenderDate_MockMethod: ((String, ZMConversation, (id: UUID, domain: String, clientID: String?), Date) async throws -> (ZMAssetClientMessage, isNew: Bool))?
+    public var fetchOrCreateAssetClientMessageIdConversationSenderDate_MockValue: (ZMAssetClientMessage, isNew: Bool)?
 
-    public func fetchOrCreateAssetClientMessage(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date, logAttributes: LogAttributes) async throws -> (ZMAssetClientMessage, isNew: Bool) {
-        fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_Invocations.append((id: id, conversation: conversation, sender: sender, date: date, logAttributes: logAttributes))
+    public func fetchOrCreateAssetClientMessage(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date) async throws -> (ZMAssetClientMessage, isNew: Bool) {
+        fetchOrCreateAssetClientMessageIdConversationSenderDate_Invocations.append((id: id, conversation: conversation, sender: sender, date: date))
 
-        if let error = fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockError {
+        if let error = fetchOrCreateAssetClientMessageIdConversationSenderDate_MockError {
             throw error
         }
 
-        if let mock = fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockMethod {
-            return try await mock(id, conversation, sender, date, logAttributes)
-        } else if let mock = fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockValue {
+        if let mock = fetchOrCreateAssetClientMessageIdConversationSenderDate_MockMethod {
+            return try await mock(id, conversation, sender, date)
+        } else if let mock = fetchOrCreateAssetClientMessageIdConversationSenderDate_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes`")
+            fatalError("no mock for `fetchOrCreateAssetClientMessageIdConversationSenderDate`")
         }
     }
 

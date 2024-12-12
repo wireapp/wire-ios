@@ -121,7 +121,6 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             conversationID: conversationID,
             senderID: senderID,
             senderClientID: messageSenderClientID,
-            logAttributes: logAttributes,
             date: date
         )
     }

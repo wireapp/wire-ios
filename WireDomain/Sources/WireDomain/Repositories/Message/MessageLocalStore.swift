@@ -49,8 +49,7 @@ public protocol MessageLocalStoreProtocol {
         id: String,
         conversation: ZMConversation,
         sender: (id: UUID, domain: String, clientID: String?),
-        date: Date,
-        logAttributes: LogAttributes
+        date: Date
     ) async throws -> (ZMClientMessage, isNew: Bool)
     
     /// Fetches or creates a `ZMAssetClientMessage` locally.
@@ -65,8 +64,7 @@ public protocol MessageLocalStoreProtocol {
         id: String,
         conversation: ZMConversation,
         sender: (id: UUID, domain: String, clientID: String?),
-        date: Date,
-        logAttributes: LogAttributes
+        date: Date
     ) async throws -> (ZMAssetClientMessage, isNew: Bool)
     
     /// Adds a `ZMClientMessage` to a given conversation.
@@ -209,17 +207,20 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     let context: NSManagedObjectContext
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
+    let logAttributes: LogAttributes
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        userLocalStore: any UserLocalStoreProtocol
+        userLocalStore: any UserLocalStoreProtocol,
+        logAttributes: LogAttributes
     ) {
         self.context = context
         self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
+        self.logAttributes = logAttributes
     }
 
     // MARK: - Public
@@ -261,8 +262,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         id: String,
         conversation: ZMConversation,
         sender: (id: UUID, domain: String, clientID: String?),
-        date: Date,
-        logAttributes: LogAttributes
+        date: Date
     ) async throws -> (ZMClientMessage, isNew: Bool) {
         
         try await fetchOrCreateClientMessage(
@@ -270,8 +270,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             messageType: .default,
             conversation: conversation,
             sender: sender,
-            date: date,
-            logAttributes: logAttributes
+            date: date
         ) as! (ZMClientMessage, Bool)
         
     }
@@ -280,8 +279,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         id: String,
         conversation: ZMConversation,
         sender: (id: UUID, domain: String, clientID: String?),
-        date: Date,
-        logAttributes: LogAttributes
+        date: Date
     ) async throws -> (ZMAssetClientMessage, isNew: Bool) {
         
         try await fetchOrCreateClientMessage(
@@ -289,8 +287,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             messageType: .asset,
             conversation: conversation,
             sender: sender,
-            date: date,
-            logAttributes: logAttributes
+            date: date
         ) as! (ZMAssetClientMessage, Bool)
         
     }
@@ -486,8 +483,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         messageType: ClientMessageType,
         conversation: ZMConversation,
         sender: (id: UUID, domain: String, clientID: String?),
-        date: Date,
-        logAttributes: LogAttributes
+        date: Date
     ) async throws -> (ZMOTRMessage, isNew: Bool) {
         try await context.perform { [self] in
             guard let clearedTime = conversation.clearedTimeStamp,
