@@ -929,19 +929,18 @@ extension ZMUserSession: ZMSyncStateDelegate {
             await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
 
-            let selfClient = await syncContext.perform {
-                return ZMUser.selfUser(in: self.syncContext).selfClient()
+            let (selfClient, hasRegisteredMLSClient) = await syncContext.perform {
+                let selfClient =  ZMUser.selfUser(in: self.syncContext).selfClient()
+                let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
+                return (selfClient, hasRegisteredMLSClient)
             }
 
             // If we discover that
             // the MLS feature is enabled, there are MLS public keys on the backend and there is no registered MLS client,
             // we should create one.
-            if let selfClient, ZMClientRegistrationStatus.needsToRegisterMLSClient(in: syncContext) {
+            let needsToRegisterMLSClient = BackendInfo.isMLSEnabled && mlsFeature.isEnabled && !hasRegisteredMLSClient
+            if let selfClient, needsToRegisterMLSClient {
                 await createMLSClient(client: selfClient)
-            }
-
-            let hasRegisteredMLSClient = await syncContext.perform {
-                return selfClient?.hasRegisteredMLSClient == true
             }
 
             if hasRegisteredMLSClient {
@@ -1041,7 +1040,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func createMLSClient(client: UserClient) async {
-        guard let mlsClientID = MLSClientID(userClient: client) else {
+        let mlsClientID = await syncContext.perform {
+            return MLSClientID(userClient: client)
+        }
+        guard let mlsClientID else {
             fatalError("Needs to register MLS client but can't retrieve qualified client ID")
         }
         do {
