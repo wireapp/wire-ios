@@ -103,7 +103,6 @@ extension ConversationListViewController {
         private var e2eiCertificateChangedToken: NSObjectProtocol?
         private var initialSyncObserverToken: (any NSObjectProtocol)?
 
-
         private var userObservationToken: NSObjectProtocol?
         private var teamObservationToken: NSObjectProtocol?
 
@@ -122,15 +121,15 @@ extension ConversationListViewController {
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
 
         public var showProfileNotificationsBadge: Bool {
-           if userSession.selfUser.isTeamMember {
-               return false
-           }
-           guard let apiVersion = BackendInfo.apiVersion,
-                 apiVersion >= .v7 else {
-               return false
-           }
+            if userSession.selfUser.isTeamMember {
+                return false
+            }
+            guard let apiVersion = BackendInfo.apiVersion,
+                  apiVersion >= .v7 else {
+                return false
+            }
 
-           return !SelfProfileViewsMonitor.shared.didViewSelfProfile
+            return !SelfProfileViewsMonitor.shared.didViewSelfProfile
         }
 
         init(

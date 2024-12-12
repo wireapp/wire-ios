@@ -106,7 +106,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 isE2EICertified: accountInfo.isE2EICertified,
                 isVerified: accountInfo.isVerified,
                 isLegalHoldIndicatorVisible: accountInfo.isLegalHoldEnabled,
-                accountImageView: { accountImageView(accountInfo.accountImageSource, accountInfo.availability, accountInfo.showNotificationsBadge) },
+                accountImageView: { accountImageView(
+                    accountInfo.accountImageSource,
+                    accountInfo.availability,
+                    accountInfo.showNotificationsBadge
+                ) },
                 legalHoldIndicatorView: { legalHoldIndicatorView() }
             )
         }

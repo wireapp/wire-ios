@@ -24,13 +24,13 @@ class SelfProfileViewsMonitor {
         case didViewSelfProfile
     }
 
-    static let shared  = SelfProfileViewsMonitor()
+    static let shared = SelfProfileViewsMonitor()
 
     private var userSession: UserSession? {
         SessionManager.shared?.activeUserSession
     }
 
-    private init() { }
+    private init() {}
 
     var didViewSelfProfile: Bool {
         get {
@@ -59,7 +59,7 @@ class SelfProfileViewsMonitor {
     }
 
     func onDidViewSelfProfile() {
-        self.didViewSelfProfile = true
+        didViewSelfProfile = true
         NotificationCenter.default.post(name: .userDidViewSelfProfile, object: nil)
     }
 }

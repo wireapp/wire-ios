@@ -810,7 +810,8 @@ extension ZClientViewController: UserObserving {
 
             var sidebarUpdateNeeded = false
 
-            if changeInfo.nameChanged || changeInfo.availabilityChanged || changeInfo.trustLevelChanged || changeInfo.teamsChanged {
+            if changeInfo.nameChanged || changeInfo.availabilityChanged || changeInfo.trustLevelChanged || changeInfo
+                .teamsChanged {
                 sidebarUpdateNeeded = true
             }
 
@@ -841,7 +842,11 @@ extension ZClientViewController: UserObserving {
 
 extension ZClientViewController {
     func setupDidViewSelfProfileObserver() {
-        userDidViewSelfProfileToken = NotificationCenter.default.addObserver(forName: .userDidViewSelfProfile, object: nil, queue: .main) { [weak self] _ in
+        userDidViewSelfProfileToken = NotificationCenter.default.addObserver(
+            forName: .userDidViewSelfProfile,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             Task { [weak self] in
                 await self?.updateCachedAccountInfo()
             }
