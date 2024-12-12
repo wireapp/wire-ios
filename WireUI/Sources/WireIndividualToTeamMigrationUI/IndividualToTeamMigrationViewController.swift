@@ -157,7 +157,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         addChild(childController)
         view.addSubview(childController.view)
         childController.didMove(toParent: self)
-        childController.navigationBar.tintColor = .darkText
+        childController.navigationBar.tintColor = ColorTheme.Backgrounds.onBackground
         transition(to: .toPlans)
     }
 
@@ -299,6 +299,7 @@ private func hostedView(
     // Hide navigation bar title
     vc.navigationItem.titleView = UIView()
     vc.navigationItem.rightBarButtonItem?.tintColor = ColorTheme.Backgrounds.onBackground
+    vc.navigationItem.leftBarButtonItem?.tintColor = ColorTheme.Backgrounds.onBackground
     return vc
 }
 
