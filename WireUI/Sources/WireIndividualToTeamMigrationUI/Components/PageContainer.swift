@@ -54,7 +54,7 @@ struct PageContainer<Content: View>: View {
                     content
                 }
                 .frame(
-                    height: proxy.size.height - 24
+                    minHeight: proxy.size.height - 24
                 )
             }
             .padding(.horizontal, 16)
