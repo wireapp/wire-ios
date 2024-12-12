@@ -106,6 +106,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         let trust = MockCertificateTrust()
         let environment = BackendEnvironment(
             title: name,
+            trustData: [],
             environmentType: .production,
             endpoints: endpoints,
             proxySettings: nil,
