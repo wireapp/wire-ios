@@ -173,7 +173,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private func configureProteusClient(coreCrypto: SafeCoreCrypto) async throws {
         // here we don't need to lock the context or restoreFromDisk()
         // it fixes `Mls(WireCoreCrypto.MlsError.Other("Proteus client hasn\'t been initialized"))`
-        // Empty transaction was committed, this could be an indication of a programming error - [core_crypto_context: {}]
+        // Empty transaction was committed, this could be an indication of a programming error - [core_crypto_context:
+        // {}]
         try await coreCrypto.unsafePerform { try await $0.proteusInit() }
     }
 

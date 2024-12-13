@@ -75,7 +75,6 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         try await block(coreCrypto)
     }
 
-    
     private func restoreFromDisk() async {
         do {
             try await coreCrypto.restoreFromDisk()
