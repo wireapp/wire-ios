@@ -28,7 +28,6 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
     var accountSelector: AccountSelector?
-    var trackingManager: TrackingManager? // TODO: is this needed?
     var analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     init(
@@ -52,7 +51,6 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
             userSession: userSession,
             accountSelector: accountSelector,
             mainCoordinator: mainCoordinator,
-            trackingManager: trackingManager,
             analyticsEventTracker: analyticsEventTracker()
         )
     }

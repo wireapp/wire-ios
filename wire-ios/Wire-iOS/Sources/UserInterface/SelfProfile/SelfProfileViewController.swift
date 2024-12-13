@@ -64,7 +64,6 @@ final class SelfProfileViewController: UIViewController {
         userSession: UserSession,
         accountSelector: AccountSelector?,
         mainCoordinator: AnyMainCoordinator,
-        trackingManager: TrackingManager?,
         analyticsEventTracker: (any AnalyticsEventTracker)?
     ) {
         self.accountSelector = accountSelector
@@ -75,7 +74,7 @@ final class SelfProfileViewController: UIViewController {
         let settingsPropertyFactory = SettingsPropertyFactory(
             userSession: userSession,
             selfUser: selfUser,
-            trackingManager: trackingManager
+            trackingManager: nil
         )
 
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
