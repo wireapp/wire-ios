@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import math_h
+import Foundation
 
 /// A value that can be tracked.
 

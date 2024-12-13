@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-
-public extension EnvironmentValues {
-    @Entry var analyticsEventTracker: (any AnalyticsEventTracker)? = .none
+public extension AnalyticsEvent {
+    enum UI {}
+    enum User {}
 }
