@@ -146,6 +146,10 @@ public enum ColorTheme {
     public enum Backdrop {
         public static let background = UIColor.black.withAlphaComponent(0.55)
     }
+
+    public enum NotificationBadge {
+        public static let fill = ColorTheme.Base.error
+    }
 }
 
 private extension UIColor {
