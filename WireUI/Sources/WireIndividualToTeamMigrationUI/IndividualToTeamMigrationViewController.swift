@@ -214,7 +214,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
-            childController.pushViewController(vc, animated: true)
+            childController.setViewControllers([vc], animated: true)
         case .toApp:
             actionCallback(.completionGoToApp)
         case .toTeamManagement:
