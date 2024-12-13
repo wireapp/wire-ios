@@ -1,8 +1,8 @@
 {
   "configurations" : [
     {
-      "id" : "CCB02EA6-05CA-4923-B7E1-D3AB9673703B",
-      "name" : "Configuration 1",
+      "id" : "7033D903-8E68-415D-B18A-F1C2AACBC584",
+      "name" : "Test Scheme Action",
       "options" : {
 
       }
@@ -16,16 +16,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:WireFoundation",
-        "identifier" : "WireLoggingTests",
-        "name" : "WireLoggingTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireFoundation",
-        "identifier" : "WireFoundationTests",
-        "name" : "WireFoundationTests"
+        "containerPath" : "container:",
+        "identifier" : "WireDeveloperToolsUITests",
+        "name" : "WireDeveloperToolsUITests"
       }
     }
   ],

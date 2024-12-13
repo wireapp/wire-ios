@@ -18,12 +18,14 @@
 
 public import SwiftUI
 
-@MainActor
+import WireDeveloperToolsUI
+
 public struct WireDeveloperToolsAssembly {
 
-    public init?() {}
+    public init() {}
 
+    @MainActor
     public func makeRootView() -> some View {
-        fatalError("TODO")
+        RootView()
     }
 }

@@ -18,7 +18,7 @@
                BlueprintIdentifier = "WireDeveloperTools"
                BuildableName = "WireDeveloperTools"
                BlueprintName = "WireDeveloperTools"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireDeveloperTools">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -27,8 +27,13 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:Tests/TestPlans/AllTests.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -37,7 +42,7 @@
                BlueprintIdentifier = "WireDeveloperToolsTests"
                BuildableName = "WireDeveloperToolsTests"
                BlueprintName = "WireDeveloperToolsTests"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireDeveloperTools">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -65,7 +70,7 @@
             BlueprintIdentifier = "WireDeveloperTools"
             BuildableName = "WireDeveloperTools"
             BlueprintName = "WireDeveloperTools"
-            ReferencedContainer = "container:">
+            ReferencedContainer = "container:WireDeveloperTools">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

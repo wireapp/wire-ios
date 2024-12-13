@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+import SwiftUI
 
-@MainActor
-public struct WireDeveloperToolsAssembly {
+package struct RootView: View {
 
-    public init?() { nil }
+    package init() {}
 
-    public func makeRootView() -> some View {
-        fatalError()
+    var body: some View {
+        Text(verbatim: "hello world")
     }
 }
