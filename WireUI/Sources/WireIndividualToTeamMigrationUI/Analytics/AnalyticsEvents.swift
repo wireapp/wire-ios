@@ -45,16 +45,41 @@ extension AnalyticsEvent.User {
         }
     }
 
+    static func personalToTeamMigrationFlowStopped( // TODO: implement
+        at step: IndividualToTeamMigrationViewController.Step
+    ) -> AnalyticsEvent! {
+        switch step {
+        case .teamPlanSelection:
+            personalTeamCreationFlowStopped(atDisclaimersStep: true, atTeamNameStep: false, atConfirmationStep: false)
+        case .teamName:
+            personalTeamCreationFlowStopped(atDisclaimersStep: false, atTeamNameStep: true, atConfirmationStep: false)
+        case .confirmation:
+            personalTeamCreationFlowStopped(atDisclaimersStep: false, atTeamNameStep: false, atConfirmationStep: true)
+        case .completion:
+            .none
+        }
+    }
+
     /// Count of user dropping at each modal step (Step 1 through 3)
     ///
     /// Segmentation: app_name; app_version; modal_disclaimers; modal_team-name; modal_confirmation
 
-    static func personalTeamCreationFlowStopped( // TODO: implement
-        todo_modal_disclaimers: Void,
-        teamName: Bool,
-        todo_modal_confirmation: Void
-    ) -> AnalyticsEvent { // TODO: implement
-        fatalError("user.personal-team-creation-flow-stopped")
+    private static func personalTeamCreationFlowStopped(
+        atDisclaimersStep: Bool,
+        atTeamNameStep: Bool,
+        atConfirmationStep: Bool
+    ) -> AnalyticsEvent {
+        AnalyticsEvent("user.personal-team-creation-flow-stopped") {
+            if atDisclaimersStep {
+                SegmentationEntry("modal_disclaimers", true)
+            }
+            if atTeamNameStep {
+                SegmentationEntry("modal_team-name", true)
+            }
+            if atConfirmationStep {
+                SegmentationEntry("modal_confirmation", true)
+            }
+        }
     }
 
     /// Count of user reaching the cancellation modal
@@ -63,7 +88,7 @@ extension AnalyticsEvent.User {
 
     static func personalTeamCreationFlowCancelled( // TODO: implement
         modalLeaveClicked: Bool,
-        modalContinueClicked: Bool // TODO: rename arguments properly
+        modalContinueClicked: Bool // TODO: rename arguments properly using if {}
     ) -> AnalyticsEvent {
         AnalyticsEvent("user.personal-team-creation-flow-cancelled") {
 //            SegmentationEntry("modal_team-name", teamName)

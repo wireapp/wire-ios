@@ -26,7 +26,9 @@ extension AnalyticsEvent.UI {
 
     static func triggerOpenProfile(isMigrationDotActive: Bool) -> AnalyticsEvent {
         AnalyticsEvent("ui.clicked-profile") {
-            SegmentationEntry("migration_dot_active", isMigrationDotActive)
+            if isMigrationDotActive {
+                SegmentationEntry("migration_dot_active", true)
+            }
         }
     }
 
@@ -55,8 +57,12 @@ extension AnalyticsEvent.UI {
         isDismissCTAButtonUsed: Bool
     ) -> AnalyticsEvent {
         AnalyticsEvent("ui.clicked-personal-migration-cta") {
-            SegmentationEntry("clicked_create_team", isCreateTeamButtonUsed)
-            SegmentationEntry("clicked_dismiss_cta", isDismissCTAButtonUsed)
+            if isCreateTeamButtonUsed {
+                SegmentationEntry("clicked_create_team", true)
+            }
+            if isDismissCTAButtonUsed {
+                SegmentationEntry("clicked_dismiss_cta", true)
+            }
         }
     }
 }
