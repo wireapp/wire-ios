@@ -102,13 +102,16 @@ extension AnalyticsEvent.User {
     /// Segmentation: app_name; app_version; modal_back-to-wire-clicked; modal_open-tm-clicked
 
     static func personalTeamCreationFlowCompleted(
-        modalOpenTeamManagementButtonClicked: Bool, // TODO: rename arguments properly
-        backToWireButtonClicked: Bool
+        usingBackToWireButton: Bool,
+        usingGoToTeamManagementButton: Bool
     ) -> AnalyticsEvent {
         AnalyticsEvent("user.personal-team-creation-flow-completed") {
-//            SegmentationEntry("modal_team-name", teamName)
-            SegmentationEntry("modal_open-tm-clicked", modalOpenTeamManagementButtonClicked)
-            SegmentationEntry("modal_back-to-wire-clicked", backToWireButtonClicked)
+            if usingBackToWireButton {
+                SegmentationEntry("modal_back-to-wire-clicked", true)
+            }
+            if usingGoToTeamManagementButton {
+                SegmentationEntry("modal_open-tm-clicked", true)
+            }
         }
     }
 }
