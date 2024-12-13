@@ -20,7 +20,7 @@ import UserNotifications
 import WireDataModel
 import WireLogging
 
-/// Receives push notifications, process them and generate new notifications from the pending events.
+/// Receives push notifications, process the pending events through the `NotificationSession` to generate a notification content based on these events.
 final class NotificationService: UNNotificationServiceExtension {
     
     // MARK: - Failure
@@ -104,7 +104,8 @@ final class NotificationService: UNNotificationServiceExtension {
         let updateEventsRepository = UpdateEventsRepository(
             userID: userID,
             selfClientID: selfClientID,
-            updateEventsAPI: Injector.resolve(), // these were already initialized in the assembly, resolving them
+            // these were already initialized, resolving them
+            updateEventsAPI: Injector.resolve(),
             pushChannel: Injector.resolve(),
             updateEventDecryptor: Injector.resolve(),
             updateEventsLocalStore: Injector.resolve()

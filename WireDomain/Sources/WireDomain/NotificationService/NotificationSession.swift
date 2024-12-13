@@ -20,6 +20,7 @@ import WireAPI
 import WireDataModel
 import Combine
 
+/// Observes pending events, process them and generates new notifications content.
 final class NotificationSession {
     
     // MARK: - Failure
@@ -37,10 +38,10 @@ final class NotificationSession {
     
     init(
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
-        onNotificationContent: @escaping (UNNotificationContent) -> Void
+        onNotificationContent: @escaping (UNMutableNotificationContent) -> Void
     ) {
         self.updateEventsRepository = updateEventsRepository
-        self.subscription = self.updateEventsRepository.observePendingEvents()
+        self.subscription = updateEventsRepository.observePendingEvents()
             .map(generateNotificationContent)
             .sink(receiveValue: onNotificationContent)
     }
@@ -71,7 +72,7 @@ final class NotificationSession {
     
     private func generateNotificationContent(
         for events: [UpdateEvent]
-    ) -> UNNotificationContent {
+    ) -> UNMutableNotificationContent {
         // TODO: [WPB-11175] - Generate UNNotificationContent from update events
         for event in events {
             switch event {
@@ -90,6 +91,6 @@ final class NotificationSession {
             }
         }
         
-        return UNNotificationContent()
+        return UNMutableNotificationContent()
     }
 }
