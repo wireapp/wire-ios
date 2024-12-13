@@ -173,8 +173,11 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .toCancellationAlert:
             let alert = cancellationSheetFactory(
                 onLeave: { [weak self] in
+                    self?.analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(tappedContinueButton: false, tappedLeaveButton: true))
                     self?.actionCallback(.cancel)
-                }, onContinue: {}
+                }, onContinue: { [weak analyticsEventTracker] in
+                    analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(tappedContinueButton: true, tappedLeaveButton: false))
+                }
             )
             childController.present(alert, animated: true)
         case .toPlans:

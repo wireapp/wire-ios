@@ -86,14 +86,17 @@ extension AnalyticsEvent.User {
     ///
     /// Segmentation: app_name; app_version; modal_continue-clicked; modal_leave-clicked
 
-    static func personalTeamCreationFlowCancelled( // TODO: implement
-        modalLeaveClicked: Bool,
-        modalContinueClicked: Bool // TODO: rename arguments properly using if {}
+    static func personalTeamCreationFlowCancel(
+        tappedContinueButton: Bool,
+        tappedLeaveButton: Bool
     ) -> AnalyticsEvent {
         AnalyticsEvent("user.personal-team-creation-flow-cancelled") {
-//            SegmentationEntry("modal_team-name", teamName)
-            SegmentationEntry("modal_leave-clicked", modalLeaveClicked)
-            SegmentationEntry("modal_continue-clicked", modalContinueClicked)
+            if tappedContinueButton {
+                SegmentationEntry("modal_continue-clicked", true)
+            }
+            if tappedLeaveButton {
+                SegmentationEntry("modal_leave-clicked", true)
+            }
         }
     }
 
