@@ -339,7 +339,8 @@ struct AccountImageView_Previews: PreviewProvider {
     static func previewWithNavigationBar(
         _ source: AccountImageSource,
         _ availability: Availability?,
-        _ showNotificationsBadge: Bool = false) -> some View {
+        _ showNotificationsBadge: Bool = false
+    ) -> some View {
         NavigationStack {
             AccountImageViewRepresentable(
                 source: source,
