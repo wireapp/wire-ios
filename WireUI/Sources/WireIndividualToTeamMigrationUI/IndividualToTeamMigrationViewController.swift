@@ -219,7 +219,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             currentStep = step
             let vc = hostedView(
                 for: step,
-                stepIndex: childController.viewControllers.count + 1,
+                stepIndex: 4,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
@@ -241,7 +241,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
-            childController.pushViewController(vc, animated: true)
+            childController.setViewControllers([vc], animated: true)
         case .toApp:
             analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(
                 usingBackToWireButton: true,
