@@ -171,10 +171,16 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .toCancellationAlert:
             let alert = cancellationSheetFactory(
                 onLeave: { [weak self] in
-                    self?.analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(tappedContinueButton: false, tappedLeaveButton: true))
+                    self?.analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(
+                        tappedContinueButton: false,
+                        tappedLeaveButton: true
+                    ))
                     self?.actionCallback(.cancel)
                 }, onContinue: { [weak analyticsEventTracker] in
-                    analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(tappedContinueButton: true, tappedLeaveButton: false))
+                    analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(
+                        tappedContinueButton: true,
+                        tappedLeaveButton: false
+                    ))
                 }
             )
             childController.present(alert, animated: true)
@@ -237,10 +243,16 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             )
             childController.pushViewController(vc, animated: true)
         case .toApp:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(usingBackToWireButton: true, usingGoToTeamManagementButton: false))
+            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(
+                usingBackToWireButton: true,
+                usingGoToTeamManagementButton: false
+            ))
             actionCallback(.completionGoToApp)
         case .toTeamManagement:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(usingBackToWireButton: false, usingGoToTeamManagementButton: true))
+            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(
+                usingBackToWireButton: false,
+                usingGoToTeamManagementButton: true
+            ))
             actionCallback(.completionGoToTeamManagement)
         }
     }
