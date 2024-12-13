@@ -158,8 +158,6 @@ final class SelfProfileViewController: UIViewController {
         createConstraints()
         setupAccessibility()
         view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        setupModalDismissalHandler()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -246,14 +244,6 @@ final class SelfProfileViewController: UIViewController {
         navigationItem.backBarButtonItem?.accessibilityLabel = AccountPage.BackButton.description
     }
 
-    private func setupModalDismissalHandler() {
-        guard let presentationController = presentationController, presentationController.delegate == nil else {
-            return assertionFailure("Expected no other presentationController delegate.")
-        }
-
-        todo
-    }
-
     // MARK: - Events
 
     private func onTeamCreationBannerInteraction(
@@ -337,19 +327,30 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func dismiss() {
-        // analytics
-        if teamMigrationBanner != nil {
-            // trigger this even only when the banner was shown to the user
-            analyticsEventTracker?.trackEvent(.UI.dismissedSelfProfileWithPersonalMigrationCTA())
-        }
-
-        // dismiss
+        sendDismissAnalyticsEventIfNeeded()
         presentingViewController?.dismiss(animated: true)
     }
 
+    private func sendDismissAnalyticsEventIfNeeded() {
+        // only when the banner was shown to the user
+        guard teamMigrationBanner != nil else { return }
+
+        analyticsEventTracker?.trackEvent(.UI.dismissedSelfProfileWithPersonalMigrationCTA())
+    }
+
     override func accessibilityPerformEscape() -> Bool {
+        sendDismissAnalyticsEventIfNeeded()
         dismiss(animated: true)
         return true
+    }
+}
+
+// MARK: - UIAdaptivePresentationControllerDelegate
+
+extension SelfProfileViewController: UIAdaptivePresentationControllerDelegate {
+
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        sendDismissAnalyticsEventIfNeeded()
     }
 }
 
@@ -360,6 +361,7 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
     func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 
+        sendDismissAnalyticsEventIfNeeded()
         presentingViewController?.dismiss(animated: true) {
             if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
                 appDelegate.mediaPlaybackManager?.stop()

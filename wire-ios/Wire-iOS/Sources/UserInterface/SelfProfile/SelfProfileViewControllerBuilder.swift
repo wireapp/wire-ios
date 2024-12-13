@@ -45,7 +45,7 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
+    func build(mainCoordinator: AnyMainCoordinator) -> ViewController {
         SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,

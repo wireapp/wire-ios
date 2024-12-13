@@ -355,6 +355,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             let rootViewController = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
             let selfProfileUI = UINavigationController(rootViewController: rootViewController)
             selfProfileUI.modalPresentationStyle = .formSheet
+            selfProfileUI.presentationController?.delegate = rootViewController
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }

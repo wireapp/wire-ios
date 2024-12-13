@@ -20,6 +20,8 @@ import UIKit
 
 // sourcery: AutoMockable
 protocol SelfProfileViewControllerBuilderProtocol {
+    typealias ViewController = UIViewController & UIAdaptivePresentationControllerDelegate
+
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController
+    func build(mainCoordinator: AnyMainCoordinator) -> ViewController
 }

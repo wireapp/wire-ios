@@ -51,10 +51,10 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
 
         // open profile
         Task { @MainActor in
-            let selfProfileUI = UINavigationController(
-                rootViewController: selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
-            )
+            let rootViewController = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
             selfProfileUI.modalPresentationStyle = .formSheet
+            selfProfileUI.presentationController?.delegate = rootViewController
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
