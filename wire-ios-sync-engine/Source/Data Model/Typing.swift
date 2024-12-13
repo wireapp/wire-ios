@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 class Typing {
 
@@ -113,8 +114,12 @@ extension Typing: ZMTimerClient {
         syncContext.performGroupedBlock {
             let conversationIds = self.typingUserTimeout.pruneConversationsThatHaveTimoutBefore(date: Date())
             conversationIds.forEach {
-                if let conversation = self.syncContext.object(with: $0) as? ZMConversation {
-                    self.sendNotification(for: conversation)
+                do {
+                    if let conversation = try self.syncContext.existingObject(with: $0) as? ZMConversation {
+                        self.sendNotification(for: conversation)
+                    }
+                } catch {
+                    WireLogger.updateEvent.error(("Failed to retrieve conversation object locally \(error)"))
                 }
             }
 
