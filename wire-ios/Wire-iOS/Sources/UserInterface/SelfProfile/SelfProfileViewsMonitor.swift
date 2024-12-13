@@ -39,6 +39,7 @@ class SelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor {
 
     var didViewSelfProfile: Bool {
         get {
+            return false;
             guard let userSession else {
                 // TODO: [WPB-15038] inject to viewController and replace by mock in WireiOS tests
                 WireLogger.individualToTeamMigration.warn("no userSession available")

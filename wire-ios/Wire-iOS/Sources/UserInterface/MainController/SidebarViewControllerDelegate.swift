@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireAnalytics
 import WireMainNavigationUI
 import WireSidebarUI
 
@@ -26,22 +27,29 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     let connectUIBuilder: ConnectViewControllerBuilderProtocol
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+    let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     init(
         mainCoordinator: AnyMainCoordinator,
         connectUIBuilder: ConnectViewControllerBuilderProtocol,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) {
         self.mainCoordinator = mainCoordinator
         self.connectUIBuilder = connectUIBuilder
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
-    @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
-        Task {
+        // analytics
+        let isNotificationsBadgeVisible = viewController.accountInfo.showNotificationsBadge
+        analyticsEventTracker()?.trackEvent(.UI.triggerOpenProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+
+        // open profile
+        Task { @MainActor in
             let selfProfileUI = UINavigationController(
                 rootViewController: selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
             )

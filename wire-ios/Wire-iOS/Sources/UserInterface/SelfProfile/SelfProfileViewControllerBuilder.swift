@@ -36,7 +36,7 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
-        analyticsEventTracker: @escaping @autoclosure () -> (any AnalyticsEventTracker)?
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) {
         self.selfUser = selfUser
         self.userRightInterfaceType = userRightInterfaceType

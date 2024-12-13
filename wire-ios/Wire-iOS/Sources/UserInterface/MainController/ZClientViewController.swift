@@ -68,7 +68,8 @@ final class ZClientViewController: UIViewController {
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
+        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
     )
 
     private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
@@ -117,7 +118,7 @@ final class ZClientViewController: UIViewController {
         userRightInterfaceType: UserRight.self,
         userSession: userSession,
         accountSelector: SessionManager.shared,
-        analyticsEventTracker: self.userSession.analyticsEventTracker
+        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
     )
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(
