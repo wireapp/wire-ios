@@ -282,7 +282,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private(set) var reachability: ReachabilityWrapper
 
-    public internal(set) var environment: BackendEnvironmentProvider {
+    public internal(set) var environment: BackendEnvironment {
         didSet {
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
@@ -353,7 +353,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        environment: BackendEnvironmentProvider,
+        environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         requiredPushTokenType: PushToken.TokenType,
@@ -364,7 +364,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
-        analyticsServiceConfiguration: AnalyticsServiceConfiguration?
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        countlyProvider: @escaping () -> CountlyProtocol
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -419,7 +420,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: minTLSVersion,
             deleteUserLogs: deleteUserLogs,
-            analyticsServiceConfiguration: analyticsServiceConfiguration
+            analyticsServiceConfiguration: analyticsServiceConfiguration,
+            countlyProvider: countlyProvider
         )
 
         configureBlacklistDownload()
@@ -470,7 +472,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         application: ZMApplication,
         pushRegistry: PushRegistry,
         dispatchGroup: ZMSDispatchGroup,
-        environment: BackendEnvironmentProvider,
+        environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         requiredPushTokenType: PushToken.TokenType,
@@ -482,7 +484,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String? = nil,
         deleteUserLogs: (() -> Void)? = nil,
-        analyticsServiceConfiguration: AnalyticsServiceConfiguration?
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        countlyProvider: @escaping () -> CountlyProtocol
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -549,7 +552,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
             deviceModel: UIDevice.current.model,
-            deviceOS: UIDevice.current.systemVersion
+            deviceOS: UIDevice.current.systemVersion,
+            countlyProvider: countlyProvider
         )
 
         if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
@@ -1078,6 +1082,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         deleteTemporaryData()
 
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
+        PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
         let accountID = account.userIdentifier
         accountManager.remove(account)

@@ -43,7 +43,6 @@ public class SearchTask {
     private var result = SearchResult(
         contacts: [],
         teamMembers: [],
-        addressBook: [],
         directory: [],
         conversations: [],
         services: [],
@@ -188,7 +187,6 @@ extension SearchTask {
                             searchUsersCache: searchUsersCache
                         )
                     },
-                    addressBook: [],
                     directory: [],
                     conversations: [],
                     services: [],
@@ -261,7 +259,6 @@ extension SearchTask {
                 let result = SearchResult(
                     contacts: searchConnectedUsers,
                     teamMembers: searchTeamMembers,
-                    addressBook: [],
                     directory: [],
                     conversations: conversations,
                     services: [],
@@ -269,13 +266,6 @@ extension SearchTask {
                 )
 
                 self.result = self.result.union(withLocalResult: result.copy(on: contextProvider.viewContext))
-
-                if request.searchOptions.contains(.addressBook) {
-                    self.result = self.result.extendWithContactsFromAddressBook(
-                        request.normalizedQuery,
-                        contextProvider: contextProvider
-                    )
-                }
 
                 tasksRemaining -= 1
             }
@@ -627,7 +617,6 @@ extension SearchTask {
                             self?.result = SearchResult(
                                 contacts: prevResult.contacts,
                                 teamMembers: prevResult.teamMembers,
-                                addressBook: prevResult.addressBook,
                                 directory: result.directory + prevResult.directory,
                                 conversations: prevResult.conversations,
                                 services: prevResult.services,

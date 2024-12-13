@@ -71,13 +71,13 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
             timestamp: .now
         )
 
-        let systemMessageType: MessageType = .readReceiptsStatus(
+        let systemMessageType: SystemMessageType = .readReceiptsStatus(
             isEnabled: isEnabled,
             sender: (senderID.uuid, senderID.domain),
             date: .now
         )
 
-        await messageRepository.addMessageToConversation(
+        await messageRepository.addSystemMessage(
             messageType: systemMessageType,
             conversationID: conversationID.uuid,
             conversationDomain: conversationID.domain

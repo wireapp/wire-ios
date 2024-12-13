@@ -102,7 +102,8 @@ public final class SidebarViewController: UIViewController {
 
     public typealias AccountImageViewBuilder<AccountImageView> = (
         _ accountImage: SidebarAccountInfo.AccountImageSource,
-        _ availability: SidebarAccountInfo.Availability?
+        _ availability: SidebarAccountInfo.Availability?,
+        _ showNotificationsBadge: Bool
     ) -> AccountImageView
     public typealias LegalHoldIndicatorViewBuilder<LegalHoldIndicatorView> = () -> LegalHoldIndicatorView
 
@@ -164,10 +165,7 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
 
     @ObservedObject fileprivate var model: SidebarModel
 
-    private(set) var accountImageView: (
-        _ accountImage: SidebarAccountInfo.AccountImageSource,
-        _ availability: SidebarAccountInfo.Availability?
-    ) -> AccountImageView
+    private(set) var accountImageView: SidebarViewController.AccountImageViewBuilder<AccountImageView>
     private(set) var legalHoldIndicatorView: () -> LegalHoldIndicatorView
 
     var body: some View {

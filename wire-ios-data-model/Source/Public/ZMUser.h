@@ -21,7 +21,6 @@
 
 @class ZMConversation;
 @class UserClient;
-@class ZMAddressBookContact;
 @class AddressBookEntry;
 @class Member;
 @class Team;
