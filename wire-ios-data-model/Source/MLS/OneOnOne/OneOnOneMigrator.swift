@@ -56,20 +56,11 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
         // Create or join the MLS conversation if needed.
         if try await !mlsService.conversationExists(groupID: mlsGroupID) {
-            guard let epoch = await fetchMLSConversationEpoch(mlsGroupID: mlsGroupID, in: context) else {
-                throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
-            }
-
-            if epoch == 0 {
-                try await establishMLSGroupIfNeeded(
-                    userID: userID,
-                    mlsGroupID: mlsGroupID,
-                    removalKeys: removalKeys,
-                    in: context
-                )
-            } else {
-                try await mlsService.joinGroup(with: mlsGroupID)
-            }
+            try await createOrJoinMLSConversationIfNeeded(
+                userID: userID,
+                mlsGroupID: mlsGroupID,
+                removalKeys: removalKeys,
+                in: context)
         }
 
         // Perform the migration of messages and link the MLS conversation if needed.
@@ -170,6 +161,28 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
             // switch active conversation
             otherUser.oneOnOneConversation = mlsConversation
+        }
+    }
+
+    private func createOrJoinMLSConversationIfNeeded(
+        userID: QualifiedID,
+        mlsGroupID: MLSGroupID,
+        removalKeys: BackendMLSPublicKeys?,
+        in context: NSManagedObjectContext
+    ) async throws {
+        guard let epoch = await fetchMLSConversationEpoch(mlsGroupID: mlsGroupID, in: context) else {
+            throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
+        }
+
+        if epoch == 0 {
+            try await establishMLSGroupIfNeeded(
+                userID: userID,
+                mlsGroupID: mlsGroupID,
+                removalKeys: removalKeys,
+                in: context
+            )
+        } else {
+            try await mlsService.joinGroup(with: mlsGroupID)
         }
     }
 }
