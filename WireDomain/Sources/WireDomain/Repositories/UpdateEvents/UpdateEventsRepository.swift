@@ -107,7 +107,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let updateEventsLocalStore: any UpdateEventsLocalStoreProtocol
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
-    private let onDecryptedEvents = PassthroughSubject<[UpdateEvent], Never>()
+    private var onDecryptedEvents = PassthroughSubject<[UpdateEvent], Never>()
 
     // MARK: - Object lifecycle
 
@@ -191,6 +191,10 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 }
             }
         }
+        
+        // All events batches are now fetched.
+        onDecryptedEvents.send(completion: .finished)
+        onDecryptedEvents = .init()
     }
 
     func pullLastEventID() async throws {

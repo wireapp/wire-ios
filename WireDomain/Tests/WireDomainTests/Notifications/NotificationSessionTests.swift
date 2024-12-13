@@ -38,10 +38,14 @@ final class NotificationSessionTests: XCTestCase {
         
         let updateEventsAPI = MockUpdateEventsAPI()
         updateEventsAPI.getUpdateEventsSelfClientIDSinceEventID_MockValue = .init(fetchPage: { _ in
+            if count < 3 {
+                count += 1
+            }
+            
             // 3 events batches
-                .init(
+                return .init(
                     element: [Scaffolding.updateEventEnvelope],
-                    hasMore: count < 2,
+                    hasMore: count < 3,
                     nextStart: .init()
                 )
         })
@@ -70,9 +74,8 @@ final class NotificationSessionTests: XCTestCase {
         sut = NotificationSession(
             updateEventsRepository: updateEventsRepository,
             onNotificationContent: { _ in
-                count += 1
-                // Then, callback should be called 3 times
-                if count == 2 { expectation.fulfill() }
+                // Then, all 3 events batches have been received
+                expectation.fulfill()
             }
         )
         

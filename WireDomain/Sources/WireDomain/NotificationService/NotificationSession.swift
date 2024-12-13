@@ -42,6 +42,8 @@ final class NotificationSession {
     ) {
         self.updateEventsRepository = updateEventsRepository
         self.subscription = updateEventsRepository.observePendingEvents()
+            .collect() // Collects all the events batches.
+            .map { $0.flatMap { $0 } }
             .map(generateNotificationContent)
             .sink(receiveValue: onNotificationContent)
     }
