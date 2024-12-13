@@ -50,8 +50,8 @@ extension AnalyticsEvent.User {
     /// Segmentation: app_name; app_version; modal_disclaimers; modal_team-name; modal_confirmation
 
     static func personalTeamCreationFlowStopped( // TODO: implement
-        teamName: String,
         todo_modal_disclaimers: Void,
+        teamName: Bool,
         todo_modal_confirmation: Void
     ) -> AnalyticsEvent { // TODO: implement
         fatalError("user.personal-team-creation-flow-stopped")
@@ -62,12 +62,11 @@ extension AnalyticsEvent.User {
     /// Segmentation: app_name; app_version; modal_continue-clicked; modal_leave-clicked
 
     static func personalTeamCreationFlowCancelled( // TODO: implement
-        teamName: String,
         modalLeaveClicked: Bool,
         modalContinueClicked: Bool // TODO: rename arguments properly
     ) -> AnalyticsEvent {
         AnalyticsEvent("user.personal-team-creation-flow-cancelled") {
-            SegmentationEntry("modal_team-name", teamName)
+//            SegmentationEntry("modal_team-name", teamName)
             SegmentationEntry("modal_leave-clicked", modalLeaveClicked)
             SegmentationEntry("modal_continue-clicked", modalContinueClicked)
         }
@@ -78,12 +77,11 @@ extension AnalyticsEvent.User {
     /// Segmentation: app_name; app_version; modal_back-to-wire-clicked; modal_open-tm-clicked
 
     static func personalTeamCreationFlowCompleted(
-        teamName: String,
         modalOpenTeamManagementButtonClicked: Bool, // TODO: rename arguments properly
         backToWireButtonClicked: Bool
     ) -> AnalyticsEvent {
         AnalyticsEvent("user.personal-team-creation-flow-completed") {
-            SegmentationEntry("modal_team-name", teamName)
+//            SegmentationEntry("modal_team-name", teamName)
             SegmentationEntry("modal_open-tm-clicked", modalOpenTeamManagementButtonClicked)
             SegmentationEntry("modal_back-to-wire-clicked", backToWireButtonClicked)
         }

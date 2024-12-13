@@ -39,7 +39,7 @@ extension AnalyticsEvent.UI {
     }
 
     /// User probably saw the banner, but dismissed the profile screen.
-    static func dismissedSelfProfileWithPersonalMigrationCTA() -> AnalyticsEvent { // TODO: implement
+    static func dismissedSelfProfileWithPersonalMigrationCTA() -> AnalyticsEvent {
         personalMigrationCTA(
             isCreateTeamButtonUsed: false,
             isDismissCTAButtonUsed: true
