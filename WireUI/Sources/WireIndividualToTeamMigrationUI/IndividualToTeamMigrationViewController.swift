@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import UIKit
 import WireAnalytics
 import WireDesign
 import WireDomainAPI
@@ -105,7 +104,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         accessibilityAnnouncement: .localizedAccessibilityLabel(key: "individualToTeam.loading", bundle: .module)
     )
     let childController: UINavigationController
-    // var currentStep: Step // TODO: why is this never read?
+    private var currentStep: Step?
     let features: [TeamPlanFeature]
     let termsOfUseURL: String
     let privacyPolicyURL: String
@@ -124,7 +123,6 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     ) {
         self.analyticsEventTracker = analyticsEventTracker
         self.actionCallback = actionCallback
-        // self.currentStep = .teamPlanSelection(features: features)
         self.childController = UINavigationController()
         self.features = features
         self.privacyPolicyURL = privacyPolicyURL
@@ -182,6 +180,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             childController.present(alert, animated: true)
         case .toPlans:
             let step = Step.teamPlanSelection(features: features)
+            currentStep = step
             let vc = hostedView(
                 for: step,
                 stepIndex: childController.viewControllers.count + 1,
@@ -195,6 +194,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             actionCallback(.toLearnMoreAboutPlans)
         case .toTeamName:
             let step = Step.teamName
+            currentStep = step
             let vc = hostedView(
                 for: step,
                 stepIndex: childController.viewControllers.count + 1,
@@ -210,6 +210,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 termsOfUseURL: termsOfUseURL,
                 privacyPolicyURL: privacyPolicyURL
             )
+            currentStep = step
             let vc = hostedView(
                 for: step,
                 stepIndex: childController.viewControllers.count + 1,
@@ -227,6 +228,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             displayGenericError(error)
         case let .toCompletion(teamName):
             let step = Step.completion(profileName: userProfileName, teamName: teamName)
+            currentStep = step
             let vc = hostedView(
                 for: step,
                 stepIndex: childController.viewControllers.count + 1,
@@ -281,6 +283,21 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     private func displayError(title: String, body: String, action: String) {
         let alert = errorAlertFactory(title: title, body: body, action: action)
         present(alert, animated: true)
+    }
+}
+
+extension IndividualToTeamMigrationViewController: UIAdaptivePresentationControllerDelegate {
+
+    public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        guard let currentStep else { return assertionFailure("unexpected state") }
+
+        switch currentStep {
+        case .teamPlanSelection, .teamName, .confirmation:
+            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: currentStep))
+        case .completion:
+            // the flow-completed event will handle this case
+            break
+        }
     }
 }
 

@@ -267,7 +267,7 @@ final class SelfProfileViewController: UIViewController {
 
         analyticsEventTracker?.trackEvent(.UI.triggeredPersonalMigrationCTA())
 
-        let vc = IndividualToTeamMigrationViewController(
+        let viewController = IndividualToTeamMigrationViewController(
             privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
             termsOfUseURL: WireURLs.shared.legal.absoluteString,
             useCase: useCase,
@@ -295,7 +295,9 @@ final class SelfProfileViewController: UIViewController {
                 }
             }
         )
-        present(vc, animated: true)
+        viewController.modalPresentationStyle = .formSheet
+        viewController.presentationController?.delegate = viewController
+        present(viewController, animated: true)
     }
 
     private func dismissIndividualToTeamMigrationBanner() {

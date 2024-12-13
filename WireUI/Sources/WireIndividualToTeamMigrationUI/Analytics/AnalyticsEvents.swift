@@ -45,7 +45,7 @@ extension AnalyticsEvent.User {
         }
     }
 
-    static func personalToTeamMigrationFlowStopped( // TODO: implement
+    static func personalToTeamMigrationFlowStopped(
         at step: IndividualToTeamMigrationViewController.Step
     ) -> AnalyticsEvent! {
         switch step {
