@@ -160,7 +160,6 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
             userSession: userSession,
             accountSelector: MockAccountSelector(),
             mainCoordinator: .init(mainCoordinator: MockMainCoordinator()),
-            trackingManager: nil,
             analyticsEventTracker: nil
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
