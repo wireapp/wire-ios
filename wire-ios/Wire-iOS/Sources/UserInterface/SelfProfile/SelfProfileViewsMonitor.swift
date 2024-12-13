@@ -18,6 +18,7 @@
 
 import WireFoundation
 import WireSyncEngine
+import WireLogging
 
 protocol SelfProfileViewsMonitor {
     var didViewSelfProfile: Bool { get }
@@ -39,7 +40,8 @@ class SelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor {
     var didViewSelfProfile: Bool {
         get {
             guard let userSession else {
-                assertionFailure("No active user session")
+                // TODO: [WPB-15038] inject to viewController and replace by mock in WireiOS tests
+                WireLogger.individualToTeamMigration.warn("no userSession available")
                 return false
             }
             let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
@@ -54,7 +56,8 @@ class SelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor {
 
         set {
             guard let userSession else {
-                assertionFailure("No active user session")
+                // TODO: [WPB-15038] inject to viewController and replace by mock in WireiOS tests
+                WireLogger.individualToTeamMigration.warn("no userSession available")
                 return
             }
             let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
