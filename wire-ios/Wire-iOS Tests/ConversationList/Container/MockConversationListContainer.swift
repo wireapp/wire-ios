@@ -117,4 +117,9 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     ) {
         // no - op
     }
+
+    func refreshAccountImageViewNotificationBadge() {
+        // no - op
+    }
+
 }

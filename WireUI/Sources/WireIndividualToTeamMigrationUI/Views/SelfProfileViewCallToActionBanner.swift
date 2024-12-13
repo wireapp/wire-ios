@@ -51,7 +51,7 @@ private func contentView(
             Text(String.localized(key: "individualToTeam.banner.title", bundle: .module))
                 .wireTextStyle(.h5)
         }, icon: {
-            Image.info
+            Image.infoCircle
         })
         .fontWeight(.bold)
         Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
