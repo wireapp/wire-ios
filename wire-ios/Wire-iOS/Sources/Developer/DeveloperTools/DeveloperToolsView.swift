@@ -110,7 +110,7 @@ private struct TextItemCell: View {
 struct DeveloperToolsView_Previews: PreviewProvider {
 
     static var previews: some View {
-        NavigationStack {
+        NavigationView {
             DeveloperToolsView(viewModel: DeveloperToolsViewModel())
         }
     }

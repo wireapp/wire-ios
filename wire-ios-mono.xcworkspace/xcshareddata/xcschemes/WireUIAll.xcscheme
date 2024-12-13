@@ -287,20 +287,6 @@
                ReferencedContainer = "container:WireUI">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireDeveloperToolsUI"
-               BuildableName = "WireDeveloperToolsUI"
-               BlueprintName = "WireDeveloperToolsUI"
-               ReferencedContainer = "container:WireUI">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
