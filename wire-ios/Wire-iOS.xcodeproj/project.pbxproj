@@ -383,6 +383,7 @@
 		597C918E2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */; };
 		597CAEB32CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CAEB22CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift */; };
 		59800F502BE3BD38003730B3 /* ScreenCurtainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */; };
+		59817A632D0CBE30006D1B4D /* WireDeveloperToolsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59817A622D0CBE30006D1B4D /* WireDeveloperToolsUI */; };
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
 		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
@@ -3924,6 +3925,7 @@
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
+				59817A632D0CBE30006D1B4D /* WireDeveloperToolsUI in Frameworks */,
 				59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */,
 				590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */,
 				594341D72D08611700A6C0B5 /* WireCountly in Frameworks */,
@@ -8580,6 +8582,7 @@
 				76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */,
 				594906A42D0713C000238104 /* WireAnalytics */,
 				594341D62D08611700A6C0B5 /* WireCountly */,
+				59817A622D0CBE30006D1B4D /* WireDeveloperToolsUI */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11690,6 +11693,10 @@
 		595C49682CA995E900F8F881 /* WireSettingsUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSettingsUI;
+		};
+		59817A622D0CBE30006D1B4D /* WireDeveloperToolsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireDeveloperToolsUI;
 		};
 		59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */ = {
 			isa = XCSwiftPackageProductDependency;
