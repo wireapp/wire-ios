@@ -19,14 +19,13 @@
 import WireFoundation
 import WireSyncEngine
 
-
 protocol SelfProfileViewsMonitor {
     var didViewSelfProfile: Bool { get }
 
     func onDidViewSelfProfile()
 }
 
-class SelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor  {
+class SelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor {
     private enum UserDefaultsKey: String, DefaultsKey {
         case didViewSelfProfile
     }
