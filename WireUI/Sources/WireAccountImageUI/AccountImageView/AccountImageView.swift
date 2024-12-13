@@ -338,13 +338,13 @@ struct AccountImageView_Previews: PreviewProvider {
     @ViewBuilder
     static func previewWithNavigationBar(
         _ source: AccountImageSource,
-        _ availability: Availability?
-    ) -> some View {
+        _ availability: Availability?,
+        _ showNotificationsBadge: Bool = false) -> some View {
         NavigationStack {
             AccountImageViewRepresentable(
                 source: source,
                 availability: availability,
-                showNotificationsBadge: true
+                showNotificationsBadge: showNotificationsBadge
             )
             // slightly differnet colors so that we can verify that the view modifiers work
             .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
@@ -371,7 +371,7 @@ struct AccountImageView_Previews: PreviewProvider {
                         AccountImageViewRepresentable(
                             source: source,
                             availability: availability,
-                            showNotificationsBadge: true
+                            showNotificationsBadge: showNotificationsBadge
                         )
                         .padding(.horizontal)
                     }
