@@ -76,8 +76,8 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
         case let .account(string):
             (kSecAttrAccount, string)
 
-        case let .itemClass(itemClass):
-            (kSecClass, itemClass)
+        case .itemClass(.genericPassword):
+            (kSecClass, kSecClassGenericPassword)
 
         case .accessible(.afterFirstUnlock):
             (kSecAttrAccessible, kSecAttrAccessibleAfterFirstUnlock)

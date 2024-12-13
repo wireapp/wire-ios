@@ -17,8 +17,8 @@
 //
 
 import WireFoundation
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 protocol SelfProfileViewsMonitor {
     var didViewSelfProfile: Bool { get }
