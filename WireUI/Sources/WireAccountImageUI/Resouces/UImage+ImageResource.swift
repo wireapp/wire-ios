@@ -19,5 +19,6 @@
 import UIKit
 
 public extension UIImage {
-    static let close = UIImage(resource: .close)
+    static let close = UIImage(resource: .info)
+    static let notificationBadgeInfo = UIImage(resource: .notificationBadgeInfo)
 }

@@ -47,6 +47,9 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     @MainActor
     func showPermissionDeniedViewController()
 
+    @MainActor
+    func refreshAccountImageViewNotificationBadge()
+
     @discardableResult
     func selectOnListContentController(
         _ conversation: ZMConversation!,
@@ -95,6 +98,8 @@ extension ConversationListViewController {
 
         var selectedConversation: ZMConversation?
 
+        private let selfProfileViewsMonitor: SelfProfileViewsMonitor
+
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var accountUpdatedNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
@@ -102,6 +107,8 @@ extension ConversationListViewController {
 
         private var userObservationToken: NSObjectProtocol?
         private var teamObservationToken: NSObjectProtocol?
+
+        private var userDidViewSelfProfileToken: NSObjectProtocol?
 
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
@@ -114,6 +121,18 @@ extension ConversationListViewController {
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
+
+        public var hideProfileNotificationsBadge: Bool {
+            if userSession.selfUser.isTeamMember {
+                return true
+            }
+            guard let apiVersion = BackendInfo.apiVersion,
+                  apiVersion >= .v7 else {
+                return true
+            }
+
+            return selfProfileViewsMonitor.didViewSelfProfile
+        }
 
         init(
             account: Account,
@@ -134,6 +153,7 @@ extension ConversationListViewController {
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
             self.getUserAccountImageSourceUseCase = getUserAccountImageSourceUseCase
+            self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
             super.init()
 
             updateE2EICertifiedStatus()
@@ -151,6 +171,9 @@ extension ConversationListViewController {
 
             if let e2eiCertificateChangedToken {
                 notificationCenter.removeObserver(e2eiCertificateChangedToken)
+            }
+            if let userDidViewSelfProfileToken {
+                notificationCenter.removeObserver(userDidViewSelfProfileToken)
             }
         }
     }
@@ -209,6 +232,17 @@ extension ConversationListViewController.ViewModel {
             queue: .main
         ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
+        }
+
+        userDidViewSelfProfileToken = notificationCenter.addObserver(
+            forName: .userDidViewSelfProfile,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { [weak self] in
+                await self?.viewController?.refreshAccountImageViewNotificationBadge()
+            }
         }
     }
 
