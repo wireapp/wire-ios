@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum MessageType: Sendable {
+public enum SystemMessageType: Sendable {
     case federationTermination(
         domains: [String],
         date: Date
@@ -81,6 +81,24 @@ public enum MessageType: Sendable {
         date: Date
     )
 
+    case invalid(
+        sender: (id: UUID, domain: String?),
+        date: Date
+    )
+
+    case decryptionFailed(
+        sender: (id: UUID, domain: String?),
+        senderClientID: String,
+        remoteIdentityChanged: Bool,
+        date: Date
+    )
+
+    case sessionReset(
+        sender: (id: UUID, domain: String?),
+        senderClientID: String,
+        date: Date
+    )
+
     case messageTimerUpdate(
         sender: (id: UUID, domain: String?),
         date: Date,
@@ -92,4 +110,5 @@ public enum MessageType: Sendable {
         sender: (id: UUID, domain: String?),
         date: Date
     )
+
 }

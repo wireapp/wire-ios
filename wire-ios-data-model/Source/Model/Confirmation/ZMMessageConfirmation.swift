@@ -24,7 +24,7 @@ public enum MessageConfirmationType: Int16 {
     case delivered
     case read
 
-    static func convert(_ zmConfirmationType: Confirmation.TypeEnum) -> MessageConfirmationType {
+    public static func convert(_ zmConfirmationType: Confirmation.TypeEnum) -> MessageConfirmationType {
         switch zmConfirmationType {
         case .delivered:
             .delivered

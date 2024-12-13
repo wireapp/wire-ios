@@ -186,8 +186,8 @@ private enum Scaffolding {
         conversationID: conversationID,
         senderID: senderID,
         timestamp: timestamp,
-        message: .ciphertext("foo"),
-        externalData: .ciphertext("bar"),
+        message: .init(encryptedMessage: "foo"),
+        externalData: .init(encryptedMessage: "bar"),
         messageSenderClientID: "abc123",
         messageRecipientClientID: "def456"
     )
