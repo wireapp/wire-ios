@@ -30,7 +30,7 @@ extension ZMMessage {
 
 }
 
-extension ZMClientMessage {
+public extension ZMClientMessage {
 
     /// Reccomputes the message's `normalizedText` property if the message
     /// has a message text, otherwise sets it to an empty String.

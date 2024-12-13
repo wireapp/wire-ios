@@ -28,6 +28,11 @@ import WireDataModel
 /// as well as the possible source(s) of the models.
 public protocol UserClientsRepositoryProtocol {
 
+    /// Fetches self client locally.
+    /// - returns: The self client if any
+
+    func fetchSelfClient() async -> WireDataModel.UserClient?
+
     /// Pulls and stores self user clients locally.
     /// Deletes no longer relevant clients locally.
     /// - returns : A self user clients list.
@@ -66,6 +71,19 @@ public protocol UserClientsRepositoryProtocol {
     /// - returns: A flag indicating whether all self user clients are active MLS clients.
 
     func allSelfUserClientsAreActiveMLSClients() async -> Bool
+
+    /// Fetches a client locally.
+    /// - Parameters:
+    ///     - id: The client id.
+    ///     - user: The user linked to the client.
+    ///     - createIfNeeded: Creates the client if not found locally.
+    /// - returns: The user client fetched or created locally
+
+    func fetchClient(
+        id: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) async -> WireDataModel.UserClient?
 }
 
 public struct UserClientsRepository: UserClientsRepositoryProtocol {
@@ -89,6 +107,22 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
     }
 
     // MARK: - Public
+
+    public func fetchSelfClient() async -> WireDataModel.UserClient? {
+        await userClientsLocalStore.fetchSelfClient()
+    }
+
+    public func fetchClient(
+        id: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) async -> UserClient? {
+        await userClientsLocalStore.fetchClient(
+            id: id,
+            forUser: user,
+            createIfNeeded: createIfNeeded
+        )
+    }
 
     public func fetchOrCreateClient(
         id: String
@@ -143,4 +177,5 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
     public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
         await userClientsLocalStore.allSelfUserClientsAreActiveMLSClients()
     }
+
 }
