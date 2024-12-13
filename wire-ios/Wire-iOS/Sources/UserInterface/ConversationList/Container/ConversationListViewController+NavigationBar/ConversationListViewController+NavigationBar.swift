@@ -352,9 +352,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         // open profile
         Task {
-            let selfProfileUI = UINavigationController(
-                rootViewController: selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
-            )
+            let rootViewController = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }

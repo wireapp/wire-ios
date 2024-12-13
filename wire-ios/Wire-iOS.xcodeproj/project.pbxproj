@@ -3863,21 +3863,9 @@
 		F1FEA14D21DCEB1700790A54 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		594346032D08647F00A6C0B5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				TrackingManager/TrackingManager.swift,
-				"TrackingManager/TrackingManager+UIAlertController.swift",
-				TrackingManager/TrackingManagerError.swift,
-			);
-			target = 8F42C537199244A700288E4D /* Wire-iOS */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		594345FF2D08647F00A6C0B5 /* Analytics */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (594346032D08647F00A6C0B5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Analytics; sourceTree = "<group>"; };
 		595C04172CDE85E800DF6C57 /* MainController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MainController; sourceTree = "<group>"; };
+		597FD9192D0C55810023B520 /* Analytics */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Analytics; sourceTree = "<group>"; };
 		5983A3EE2CF86F9A002006F6 /* Logging */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logging; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -6324,7 +6312,7 @@
 				871BC3181D34F94200DF0793 /* Components */,
 				8FC85126199245760008B66B /* Helpers */,
 				E902B3B529ED3A2E0090DE32 /* SwiftUI Helpers */,
-				594345FF2D08647F00A6C0B5 /* Analytics */,
+				597FD9192D0C55810023B520 /* Analytics */,
 				8FC850F7199245760008B66B /* Developer */,
 				8FC85146199245760008B66B /* Managers */,
 				EF2126B41FB9DFE300625A9B /* Authentication */,
@@ -8554,6 +8542,9 @@
 				F1FEA15021DCEB1700790A54 /* PBXTargetDependency */,
 				168A16B21D9597C2005CFA6C /* PBXTargetDependency */,
 				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				597FD9192D0C55810023B520 /* Analytics */,
 			);
 			name = "Wire-iOS";
 			packageProductDependencies = (

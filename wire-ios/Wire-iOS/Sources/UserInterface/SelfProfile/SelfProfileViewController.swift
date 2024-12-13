@@ -158,6 +158,8 @@ final class SelfProfileViewController: UIViewController {
         createConstraints()
         setupAccessibility()
         view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        setupModalDismissalHandler()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -165,7 +167,7 @@ final class SelfProfileViewController: UIViewController {
         selfProfileViewsMonitor.onDidViewSelfProfile()
         configureAccountTitle()
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true)
+            self?.dismiss()
         }, accessibilityLabel: L10n.Localizable.General.close)
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.backButtonDisplayMode = .minimal
@@ -244,6 +246,14 @@ final class SelfProfileViewController: UIViewController {
         navigationItem.backBarButtonItem?.accessibilityLabel = AccountPage.BackButton.description
     }
 
+    private func setupModalDismissalHandler() {
+        guard let presentationController = presentationController, presentationController.delegate == nil else {
+            return assertionFailure("Expected no other presentationController delegate.")
+        }
+
+        todo
+    }
+
     // MARK: - Events
 
     private func onTeamCreationBannerInteraction(
@@ -265,12 +275,7 @@ final class SelfProfileViewController: UIViewController {
 
     private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
 
-        analyticsEventTracker?.trackEvent(
-            .UI.triggeredPersonalMigrationCTA(
-                isCreateTeamButtonUsed: false, // TODO: pass correct values
-                isDismissCTAButtonUsed: false
-            )
-        )
+        analyticsEventTracker?.trackEvent(.UI.triggeredPersonalMigrationCTA())
 
         let vc = IndividualToTeamMigrationViewController(
             privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
@@ -329,6 +334,17 @@ final class SelfProfileViewController: UIViewController {
             popoverPresentationController.sourceView = imageView
         }
         present(alertController, animated: true)
+    }
+
+    private func dismiss() {
+        // analytics
+        if teamMigrationBanner != nil {
+            // trigger this even only when the banner was shown to the user
+            analyticsEventTracker?.trackEvent(.UI.dismissedSelfProfileWithPersonalMigrationCTA())
+        }
+
+        // dismiss
+        presentingViewController?.dismiss(animated: true)
     }
 
     override func accessibilityPerformEscape() -> Bool {

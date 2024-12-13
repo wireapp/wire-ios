@@ -30,13 +30,29 @@ extension AnalyticsEvent.UI {
         }
     }
 
+    /// User tapped the "Create Wire Team" button.
+    static func triggeredPersonalMigrationCTA() -> AnalyticsEvent {
+        personalMigrationCTA(
+            isCreateTeamButtonUsed: true,
+            isDismissCTAButtonUsed: false
+        )
+    }
+
+    /// User probably saw the banner, but dismissed the profile screen.
+    static func dismissedSelfProfileWithPersonalMigrationCTA() -> AnalyticsEvent { // TODO: implement
+        personalMigrationCTA(
+            isCreateTeamButtonUsed: false,
+            isDismissCTAButtonUsed: true
+        )
+    }
+
     /// Tap on the create a team CTA
     ///
     /// Segmentation: app_name; app_version; clicked_create_team; clicked_dismiss_cta
 
-    static func triggeredPersonalMigrationCTA(
-        isCreateTeamButtonUsed: Bool, // TODO: set true when the flow is started
-        isDismissCTAButtonUsed: Bool // TODO: implement correctly, set true when the modal is dismissed
+    private static func personalMigrationCTA(
+        isCreateTeamButtonUsed: Bool,
+        isDismissCTAButtonUsed: Bool
     ) -> AnalyticsEvent {
         AnalyticsEvent("ui.clicked-personal-migration-cta") {
             SegmentationEntry("clicked_create_team", isCreateTeamButtonUsed)
