@@ -3,7 +3,7 @@
 import Foundation
 import PackageDescription
 
-let isEnabled = ProcessInfo.processInfo.environment["DEVELOPER_MODE_ENABLED"] == "1"
+let isDisabled = ProcessInfo.processInfo.environment["EXCLUDE_DEVELOPER_TOOLS"] == "1"
 
 let package = Package(
     name: "WireDeveloperTools",
@@ -18,14 +18,18 @@ let package = Package(
     swiftLanguageModes: [.v6]
 )
 
-if isEnabled {
+if !isDisabled {
     package.targets += [
         .target(name: "WireDeveloperTools"),
         .testTarget(name: "WireDeveloperToolsTests", dependencies: ["WireDeveloperTools"]),
+        // TODO: add more targets
     ]
 } else {
     package.targets += [
-        .target(name: "WireDeveloperTools", sources: ["./WireDeveloperPlaceholder.swift"])
+        .target(
+            name: "WireDeveloperTools",
+            sources: ["./WireDeveloperPlaceholder.swift"]
+        )
     ]
 }
 
