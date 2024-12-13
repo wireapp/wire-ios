@@ -18,34 +18,6 @@
 
 import WireAnalytics
 
-public // TODO: move out of `WireIndividiualToTeamMigrationUI` and remove `public`
-extension AnalyticsEvent.UI {
-
-    /// Tap on the Notification dot to see the CTA.
-    ///
-    /// Segmentation: app_name; app_version; migration_dot_active;
-
-    static func triggerOpenProfile(isMigrationDotActive: Bool) -> AnalyticsEvent { // TODO: implement
-        AnalyticsEvent("ui.clicked-profile") {
-            SegmentationEntry("migration_dot_active", isMigrationDotActive)
-        }
-    }
-
-    /// Tap on the create a team CTA
-    ///
-    /// Segmentation: app_name; app_version; clicked_create_team; clicked_dismiss_cta
-
-    static func triggeredPersonalMigrationCTA(
-        isCreateTeamButtonUsed: Bool, // TODO: set true when the flow is started
-        isDismissCTAButtonUsed: Bool // TODO: implement correctly, set true when the modal is dismissed
-    ) -> AnalyticsEvent {
-        AnalyticsEvent("ui.clicked-personal-migration-cta") {
-            SegmentationEntry("clicked_create_team", isCreateTeamButtonUsed)
-            SegmentationEntry("clicked_dismiss_cta", isDismissCTAButtonUsed)
-        }
-    }
-}
-
 extension AnalyticsEvent.User {
 
     /// Count of user reaching for each modal step (Step 1 through 3)
