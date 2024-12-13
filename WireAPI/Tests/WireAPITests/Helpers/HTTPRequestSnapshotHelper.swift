@@ -26,7 +26,7 @@ struct HTTPRequestSnapshotHelper {
 
     private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
         let ci = ProcessInfo.processInfo.environment["CI"]
-        return ci?.isEmpty == true ? .missing : .never
+        return (ci == nil || ci?.isEmpty == true) ? .missing : .never
     }
 
     /// Snapshot test a given request
