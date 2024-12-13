@@ -196,7 +196,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                     termsOfUseURL: termsOfUseURL,
                     privacyPolicyURL: privacyPolicyURL
                 ),
-                stepIndex: childController.viewControllers.count + 1,
+                stepIndex: 4,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
