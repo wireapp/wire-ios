@@ -38,19 +38,23 @@ final class AccountImageViewSnapshotTests: XCTestCase {
     @MainActor
     func testImageModeAllAccountTypesAndAvailabilities() {
         typealias Previews = AccountImageView_Previews
-        
+
         for showNotificationBadge in [true, false] {
             let showNotificationBadgeSuffix = showNotificationBadge ? "_showNotifications" : ""
-            
+
             for availability in Availability.allCases + [Availability?.none] {
                 // Given
-                let rootView = Previews.previewWithNavigationBar(.image(Previews.accountImage), availability, showNotificationBadge)
+                let rootView = Previews.previewWithNavigationBar(
+                    .image(Previews.accountImage),
+                    availability,
+                    showNotificationBadge
+                )
                 let hostingControllerView = UIHostingController(rootView: rootView).view!
                 hostingControllerView.frame = UIScreen.main.bounds
-                
+
                 var testName = if let availability { "imageMode_\(availability)" } else { "imageMode_noAvailability" }
                 testName += showNotificationBadgeSuffix
-                
+
                 // Then
                 snapshotHelper
                     .withUserInterfaceStyle(.light)
@@ -65,19 +69,19 @@ final class AccountImageViewSnapshotTests: XCTestCase {
     @MainActor
     func testTextModeAllAccountTypesAndAvailabilities() {
         typealias Previews = AccountImageView_Previews
-        
+
         for showNotificationBadge in [true, false] {
             let showNotificationBadgeSuffix = showNotificationBadge ? "_showNotifications" : ""
-            
+
             for availability in Availability.allCases + [Availability?.none] {
                 // Given
                 let rootView = Previews.previewWithNavigationBar(.text("CA"), availability, showNotificationBadge)
                 let hostingControllerView = UIHostingController(rootView: rootView).view!
                 hostingControllerView.frame = UIScreen.main.bounds
-                
+
                 var testName = if let availability { "textMode_\(availability)" } else { "textMode_noAvailability" }
                 testName += showNotificationBadgeSuffix
-                
+
                 // Then
                 snapshotHelper
                     .withUserInterfaceStyle(.light)
