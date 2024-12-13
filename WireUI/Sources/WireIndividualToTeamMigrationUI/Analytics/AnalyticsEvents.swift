@@ -36,8 +36,8 @@ extension AnalyticsEvent.UI {
     /// Segmentation: app_name; app_version; clicked_create_team; clicked_dismiss_cta
 
     static func triggeredPersonalMigrationCTA(
-        isCreateTeamButtonUsed: Bool,
-        isDismissCTAButtonUsed: Bool // TODO: implement correctly
+        isCreateTeamButtonUsed: Bool, // TODO: set true when the flow is started
+        isDismissCTAButtonUsed: Bool // TODO: implement correctly, set true when the modal is dismissed
     ) -> AnalyticsEvent {
         AnalyticsEvent("ui.clicked-personal-migration-cta") {
             SegmentationEntry("clicked_create_team", isCreateTeamButtonUsed)
