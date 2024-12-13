@@ -309,7 +309,6 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func navigateToTeam() {
-        // TODO: [WPB-11968] navigate to team
         URL.manageTeam(source: .settings).open()
     }
 

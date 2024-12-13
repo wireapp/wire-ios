@@ -35,9 +35,9 @@ struct TeamNameView: View {
                 .wireTextStyle(.body1)
             Spacer()
                 .frame(height: 24)
-           (
+            (
                 Text(String.localized(key: "individualToTeam.teamName.field.title", bundle: .module)) +
-                Text(verbatim: " *")
+                    Text(verbatim: " *")
                     .foregroundColor(ColorTheme.Base.requiredField.color)
             )
             .wireTextStyle(.h4)
