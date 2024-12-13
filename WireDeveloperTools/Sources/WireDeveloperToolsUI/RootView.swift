@@ -23,6 +23,17 @@ package struct RootView: View {
     package init() {}
 
     var body: some View {
-        Text(verbatim: "hello world")
+        NavigationStack {
+            List([0, 1, 2], id: \.self) { x in
+                Text(verbatim: "hello world \(x)")
+            }
+        }
     }
+}
+
+#Preview {
+    Spacer()
+        .sheet(isPresented: .constant(true)) {
+            RootView()
+        }
 }
