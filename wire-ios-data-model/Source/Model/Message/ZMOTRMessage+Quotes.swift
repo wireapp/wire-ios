@@ -19,7 +19,7 @@
 import Foundation
 import WireLogging
 
-extension ZMOTRMessage {
+public extension ZMOTRMessage {
 
     func establishRelationshipsForInsertedQuote(_ quote: Quote) {
 

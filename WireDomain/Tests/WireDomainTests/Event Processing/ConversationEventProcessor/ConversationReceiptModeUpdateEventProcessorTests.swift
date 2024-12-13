@@ -82,7 +82,7 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         userRepository.fetchUserIdDomain_MockValue = user
         conversationRepository.fetchConversationIdDomain_MockValue = conversation
         messageRepository
-            .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
         conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_MockMethod = { _, _ in }
 
         // When
@@ -94,7 +94,7 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(
-            messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            messageRepository.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
             1
         )
         XCTAssertEqual(conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_Invocations.count, 1)
