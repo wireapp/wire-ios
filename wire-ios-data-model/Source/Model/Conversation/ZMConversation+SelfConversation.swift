@@ -133,7 +133,7 @@ public extension ZMConversation {
 
     // MARK: - Sync downstream
 
-    internal static func updateConversation(
+    static func updateConversation(
         withLastReadFromSelfConversation lastRead: LastRead,
         in context: NSManagedObjectContext
     ) {
@@ -153,7 +153,7 @@ public extension ZMConversation {
         )
     }
 
-    internal static func updateConversation(
+    static func updateConversation(
         withClearedFromSelfConversation cleared: Cleared,
         in context: NSManagedObjectContext
     ) {
