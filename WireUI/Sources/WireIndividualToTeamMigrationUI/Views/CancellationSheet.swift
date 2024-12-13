@@ -27,7 +27,7 @@ func cancellationSheetFactory(
     let alert = UIAlertController(
         title: String.localized(key: "individualToTeam.cancellation.title", bundle: .module),
         message: String.localized(key: "individualToTeam.cancellation.body", bundle: .module),
-        preferredStyle: .actionSheet
+        preferredStyle: UIDevice.current.userInterfaceIdiom == .pad ? .alert : .actionSheet
     )
     alert.addAction(UIAlertAction(
         title: String.localized(key: "individualToTeam.cancellation.leave", bundle: .module),
