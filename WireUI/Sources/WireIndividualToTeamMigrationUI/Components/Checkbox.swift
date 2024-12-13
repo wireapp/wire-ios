@@ -41,12 +41,9 @@ struct Checkbox: View {
             }, label: {
                 Image(systemName: isChecked ? "checkmark.square.fill" : "square")
                     .font(.system(size: 24))
-                    .backgroundStyle(Color(
-                        uiColor: isChecked ? ColorTheme.Checkbox.enabled : ColorTheme.Checkbox
-                            .disabled
-                    ))
             })
             .buttonStyle(.plain)
+            .foregroundStyle(isChecked ? ColorTheme.Checkbox.selected.color : ColorTheme.Checkbox.enabled.color)
             Text(title)
                 .wireTextStyle(.subline1)
         }

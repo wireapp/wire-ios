@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"name\":\"iOS Team\",\"icon\":\"default\"}" \
+	"upgrade-personal-to-team"

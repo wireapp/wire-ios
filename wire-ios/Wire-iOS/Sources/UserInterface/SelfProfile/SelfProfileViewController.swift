@@ -266,6 +266,8 @@ final class SelfProfileViewController: UIViewController {
 
     private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
         let vc = IndividualToTeamMigrationViewController(
+            privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
+            termsOfUseURL: WireURLs.shared.legal.absoluteString,
             useCase: useCase,
             userProfileName: userName,
             actionCallback: { [weak self] action in
@@ -275,6 +277,8 @@ final class SelfProfileViewController: UIViewController {
                         switch action {
                         case .cancel:
                             presentedViewController?.dismiss(animated: true)
+                        case .toLearnMoreAboutPlans:
+                            _ = WireURLs.shared.wireEnterpriseInfo.open()
                         case .completionGoToApp:
                             dismissIndividualToTeamMigrationBanner()
                             presentedViewController?.dismiss(animated: true)
@@ -301,7 +305,7 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func navigateToTeam() {
-        // TODO: [WPB-11968] navigate to team
+        URL.manageTeam(source: .settings).open()
     }
 
     @objc
