@@ -216,7 +216,7 @@ final class ConversationLocalStoreTests: XCTestCase {
             }
 
         messageLocalStore
-            .addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
         userLocalStore.fetchUserIdDomain_MockValue = removedUser
 
         // When
@@ -231,7 +231,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         XCTAssertEqual(userLocalStore.fetchUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(
-            messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations
+            messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations
                 .count,
             1
         )
@@ -408,7 +408,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         userLocalStore.fetchOrCreateUserIdDomain_MockValue = addedUser
         messageLocalStore
-            .addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
@@ -427,7 +427,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(
-            messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations
+            messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations
                 .count,
             1
         )
@@ -450,11 +450,6 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
 
         let expectation = XCTestExpectation()
-
-        let typingUsersInfo = ConversationTypingUsersInfo(
-            users: Set([userObjectID]),
-            conversationID: conversationObjectID
-        )
 
         subscription = NotificationCenter.default.publisher(for: .typingNotification)
             .compactMap { $0.userInfo?["typingUsers"] as? Set<ZMUser> }
