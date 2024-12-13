@@ -54,6 +54,8 @@ private struct FeaturePreviewContainer: UIViewControllerRepresentable {
 
         IndividualToTeamMigrationViewController(
             features: features,
+            privacyPolicyURL: "https://wire.com/privacy-policy",
+            termsOfUseURL: "https://wire.com/en/terms-of-use-business",
             useCase: MockUseCase.success(),
             userProfileName: "Some User",
             analyticsEventTracker: nil,

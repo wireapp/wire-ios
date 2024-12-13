@@ -27,9 +27,13 @@ public extension ZMUserSession {
             assertionFailure("apiService is nil")
             return nil
         }
+
+        let builder = AccountsAPIBuilder(apiService: apiService)
+        let accountsAPI = builder.makeAPI(for: apiVersion)
+
         return IndividualToTeamMigrationUseCaseImplementation(
-            apiService: apiService,
-            apiVersion: apiVersion
+            accountsAPI: accountsAPI,
+            context: syncContext
         )
     }
 }

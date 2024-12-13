@@ -27,6 +27,7 @@ import WireReusableUIComponents
 public class IndividualToTeamMigrationViewController: UIViewController {
     public enum Action: Sendable {
         case cancel
+        case toLearnMoreAboutPlans
         case completionGoToApp
         case completionGoToTeamManagement
     }
@@ -34,7 +35,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     enum Step: Sendable {
         case teamPlanSelection(features: [TeamPlanFeature])
         case teamName
-        case confirmation(teamName: String)
+        case confirmation(teamName: String, termsOfUseURL: String, privacyPolicyURL: String)
         case completion(profileName: String, teamName: String)
 
         var title: String {
@@ -87,8 +88,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
 
     enum Transition: Sendable {
         case toCancellationAlert
-        case dismissCancellationAlert
         case toPlans
+        case toLearnMoreAboutPlans
         case toTeamName
         case toConfirmation(teamName: String)
         case toTeamCreation(teamName: String)
@@ -106,12 +107,16 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     let childController: UINavigationController
     // var currentStep: Step // TODO: why is this never read?
     let features: [TeamPlanFeature]
+    let termsOfUseURL: String
+    let privacyPolicyURL: String
     let useCase: any IndividualToTeamMigrationUseCase
     let userProfileName: String
     private let analyticsEventTracker: (any AnalyticsEventTracker)?
 
     public init(
         features: [TeamPlanFeature],
+        privacyPolicyURL: String,
+        termsOfUseURL: String,
         useCase: any IndividualToTeamMigrationUseCase,
         userProfileName: String,
         analyticsEventTracker: (any AnalyticsEventTracker)?,
@@ -122,12 +127,16 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         // self.currentStep = .teamPlanSelection(features: features)
         self.childController = UINavigationController()
         self.features = features
+        self.privacyPolicyURL = privacyPolicyURL
+        self.termsOfUseURL = termsOfUseURL
         self.useCase = useCase
         self.userProfileName = userProfileName
         super.init(nibName: nil, bundle: nil)
     }
 
     public convenience init(
+        privacyPolicyURL: String,
+        termsOfUseURL: String,
         useCase: any IndividualToTeamMigrationUseCase,
         userProfileName: String,
         analyticsEventTracker: (any AnalyticsEventTracker)?,
@@ -135,6 +144,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     ) {
         self.init(
             features: .features,
+            privacyPolicyURL: privacyPolicyURL,
+            termsOfUseURL: termsOfUseURL,
             useCase: useCase,
             userProfileName: userProfileName,
             analyticsEventTracker: analyticsEventTracker,
@@ -152,7 +163,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         addChild(childController)
         view.addSubview(childController.view)
         childController.didMove(toParent: self)
-        childController.navigationBar.tintColor = .darkText
+        childController.navigationBar.tintColor = ColorTheme.Backgrounds.onBackground
         transition(to: .toPlans)
     }
 
@@ -163,13 +174,9 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             let alert = cancellationSheetFactory(
                 onLeave: { [weak self] in
                     self?.actionCallback(.cancel)
-                }, onContinue: { [weak self] in
-                    self?.transition(to: .dismissCancellationAlert)
-                }
+                }, onContinue: {}
             )
             childController.present(alert, animated: true)
-        case .dismissCancellationAlert:
-            childController.dismiss(animated: true)
         case .toPlans:
             let step = Step.teamPlanSelection(features: features)
             let vc = hostedView(
@@ -181,6 +188,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             childController.pushViewController(vc, animated: false) { [analyticsEventTracker] in
                 analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(step: step))
             }
+        case .toLearnMoreAboutPlans:
+            actionCallback(.toLearnMoreAboutPlans)
         case .toTeamName:
             let step = Step.teamName
             let vc = hostedView(
@@ -193,7 +202,11 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(step: step))
             }
         case let .toConfirmation(teamName):
-            let step = Step.confirmation(teamName: teamName)
+            let step = Step.confirmation(
+                teamName: teamName,
+                termsOfUseURL: termsOfUseURL,
+                privacyPolicyURL: privacyPolicyURL
+            )
             let vc = hostedView(
                 for: step,
                 stepIndex: childController.viewControllers.count + 1,
@@ -205,8 +218,10 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             }
         case let .toTeamCreation(teamName: teamName):
             createTeam(named: teamName)
-        case let .toError(error):
+        case let .toError(error as IndividualToTeamMigrationError):
             displayError(error)
+        case let .toError(error):
+            displayGenericError(error)
         case let .toCompletion(teamName):
             let step = Step.completion(profileName: userProfileName, teamName: teamName)
             let vc = hostedView(
@@ -254,11 +269,11 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 action: .localized(key: "individualToTeam.error.alreadyPartOfTeam.action", bundle: .module)
             )
         case let .generic(error):
-            displayError(error)
+            displayGenericError(error)
         }
     }
 
-    private func displayError(_ error: some Error) {
+    private func displayGenericError(_ error: some Error) {
         displayError(
             title: .localized(key: "individualToTeam.error.generic.title", bundle: .module),
             body: .localized(key: "individualToTeam.error.generic.body", bundle: .module),
@@ -295,6 +310,7 @@ private func hostedView(
             stepCount: stepCount,
             stepTitle: step.title
         )
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         .ignoresSafeArea(.container, edges: .bottom)
     )
     vc.title = step.title
@@ -307,6 +323,7 @@ private func hostedView(
     // Hide navigation bar title
     vc.navigationItem.titleView = UIView()
     vc.navigationItem.rightBarButtonItem?.tintColor = ColorTheme.Backgrounds.onBackground
+    vc.navigationItem.leftBarButtonItem?.tintColor = ColorTheme.Backgrounds.onBackground
     return vc
 }
 
@@ -326,7 +343,7 @@ private func viewFor(
         TeamPlanSelectionView(features: features) { action in
             switch action {
             case .goToPlans:
-                transitionCallback(.toPlans)
+                transitionCallback(.toLearnMoreAboutPlans)
             case .continue:
                 transitionCallback(.toTeamName)
             }
@@ -338,8 +355,11 @@ private func viewFor(
                 transitionCallback(.toConfirmation(teamName: teamName))
             }
         }
-    case let .confirmation(teamName):
-        ConfirmationView { action in
+    case let .confirmation(teamName, termsOfUseURL, privacyPolicyURL):
+        ConfirmationView(
+            termsOfUseURL: termsOfUseURL,
+            privacyPolicyURL: privacyPolicyURL
+        ) { action in
             switch action {
             case .continue:
                 transitionCallback(.toTeamCreation(teamName: teamName))

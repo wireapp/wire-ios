@@ -20,5 +20,4 @@ import SwiftUI
 
 public extension Image {
     static let close = Image(.close)
-    static let info = Image(.info)
 }

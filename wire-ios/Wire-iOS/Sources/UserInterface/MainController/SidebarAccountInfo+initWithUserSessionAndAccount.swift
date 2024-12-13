@@ -25,7 +25,8 @@ extension SidebarAccountInfo {
     init(
         _ user: some UserType,
         _ accountImageSource: SidebarAccountInfo.AccountImageSource,
-        _ isE2EICertified: Bool
+        _ isE2EICertified: Bool,
+        showNotificationsBadge: Bool
     ) {
         self.init(
             displayName: user.name ?? "",
@@ -34,7 +35,8 @@ extension SidebarAccountInfo {
             availability: user.availability.mapToSidebarAccountInfoAvailability(),
             isE2EICertified: isE2EICertified,
             isVerified: user.isVerified,
-            isLegalHoldEnabled: user.isUnderLegalHold
+            isLegalHoldEnabled: user.isUnderLegalHold,
+            showNotificationsBadge: showNotificationsBadge
         )
     }
 }

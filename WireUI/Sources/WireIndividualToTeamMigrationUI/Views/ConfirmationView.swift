@@ -26,14 +26,29 @@ struct ConfirmationView: View {
         case `continue`
     }
 
+    let termsOfUseURL: String
+    let privacyPolicyURL: String
     let actionCallback: (Action) -> Void
     @State private var migrationConfirmed: Bool = false
     @State private var termsAccepted: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 56) {
-            Text(String.localized(key: "individualToTeam.confirmation.body", bundle: .module))
-                .wireTextStyle(.body1)
+            VStack(alignment: .leading) {
+                HStack(alignment: .top, spacing: 8) {
+                    Text(verbatim: "•")
+                    Text(String.localized(key: "individualToTeam.confirmation.body.createTeam", bundle: .module))
+                }
+                HStack(alignment: .top, spacing: 8) {
+                    Text(verbatim: "•")
+                    Text(String.localized(key: "individualToTeam.confirmation.body.teamOwner", bundle: .module))
+                }
+                HStack(alignment: .top, spacing: 8) {
+                    Text(verbatim: "•")
+                    Text(String.localized(key: "individualToTeam.confirmation.body.permanent", bundle: .module))
+                }
+            }
+            .wireTextStyle(.body1)
             VStack(alignment: .leading, spacing: 16) {
                 Checkbox(
                     isChecked: $migrationConfirmed,
@@ -41,7 +56,12 @@ struct ConfirmationView: View {
                 )
                 Checkbox(
                     isChecked: $termsAccepted,
-                    title: .localizedMarkdown(key: "individualToTeam.confirmation.termsCheckbox", bundle: .module)
+                    title: .formattedMarkdown(
+                        key: "individualToTeam.confirmation.termsCheckbox",
+                        bundle: .module,
+                        termsOfUseURL,
+                        privacyPolicyURL
+                    )
                 )
             }
             Spacer()

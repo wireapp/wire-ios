@@ -44,6 +44,8 @@ public enum ColorTheme {
         public static let onHighlight = UIColor(light: .black, dark: .black)
 
         public static let secondaryText = UIColor(light: .gray70, dark: .gray60)
+
+        public static let requiredField = UIColor(light: .red500Light, dark: .red500Dark)
     }
 
     public enum Backgrounds {
@@ -124,8 +126,8 @@ public enum ColorTheme {
     }
 
     public enum Checkbox {
-        public static let enabled = UIColor(light: .blue500Light, dark: .blue500Dark)
-        public static let disabled = UIColor(light: .gray50, dark: .gray80)
+        public static let enabled = UIColor(light: .gray50, dark: .gray80)
+        public static let selected = UIColor(light: .blue500Light, dark: .blue500Dark)
     }
 
     public enum Strokes {
@@ -145,6 +147,10 @@ public enum ColorTheme {
 
     public enum Backdrop {
         public static let background = UIColor.black.withAlphaComponent(0.55)
+    }
+
+    public enum NotificationBadge {
+        public static let fill = ColorTheme.Base.error
     }
 }
 
