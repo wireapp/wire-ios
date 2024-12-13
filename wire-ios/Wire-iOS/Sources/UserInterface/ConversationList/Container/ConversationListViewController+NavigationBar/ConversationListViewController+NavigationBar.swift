@@ -345,6 +345,12 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     @objc
     private func presentProfile() {
+        // analytics
+        let isNotificationsBadgeVisible = viewModel.hideProfileNotificationsBadge
+        let analyticsEventTracker = viewModel.userSession.analyticsEventTracker
+        analyticsEventTracker?.trackEvent(.UI.triggerOpenProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+
+        // open profile
         Task {
             let selfProfileUI = UINavigationController(
                 rootViewController: selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
