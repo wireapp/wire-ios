@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
-public extension UIImage {
-    static let close = UIImage(resource: .close)
+public extension Image {
+    static let infoCircle = Image(.infoCircle)
 }

@@ -16,8 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
+import WireDesign
 
-public extension UIImage {
-    static let close = UIImage(resource: .close)
+@MainActor
+func createNotificationBadgeView() -> UIImageView {
+    let imageView = UIImageView(image: .notificationBadgeInfo)
+    imageView.contentMode = .scaleAspectFit
+    imageView.backgroundColor = .clear
+    return imageView
 }

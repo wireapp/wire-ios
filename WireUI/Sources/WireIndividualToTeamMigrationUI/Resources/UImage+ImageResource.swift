@@ -19,5 +19,5 @@
 import UIKit
 
 public extension UIImage {
-    static let close = UIImage(resource: .close)
+    static let infoCircle = UIImage(resource: .infoCircle)
 }
