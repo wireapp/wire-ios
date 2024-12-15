@@ -45,7 +45,13 @@ public final class ZMUserSession: NSObject {
 
     private(set) var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
-    private(set) var apiService: APIServiceProtocol?
+    var apiService: APIServiceProtocol? {
+        guard let clientId = selfUserClient?.remoteIdentifier else {
+            return nil
+        }
+        return apiServiceFactory(clientId, userId)
+    }
+
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
@@ -1131,11 +1137,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
         WireLogger.authentication.addTag(.selfClientId, value: clientId)
-        guard  let selfUserId = ZMUser.selfUser(in: syncContext).remoteIdentifier else {
-            assertionFailure("unable to find selfUser from syncContext,")
-            return
-        }
-        apiService = apiServiceFactory(clientId, selfUserId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
