@@ -36,7 +36,23 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
             return nil
         }
 
-        let path = "/conversations/\(conversationId.transportString())/members/\(userId.transportString())"
+        let path: String
+
+        switch apiVersion {
+        case .v0, .v1, .v2, .v3, .v4, .v5, .v6:
+            path = "/conversations/\(conversationId.transportString())/members/\(userId.transportString())"
+        case .v7:
+            guard
+                let conversationDomain = conversation.domain ?? BackendInfo.domain,
+                let userDomain = participant.domain ?? BackendInfo.domain
+            else {
+                var action = action
+                action.notifyResult(.failure(UpdateRoleError.missingDomains))
+                return nil
+            }
+
+            path = "/conversations/\(conversationDomain)/\(conversationId.transportString())/members/\(userDomain)/\(userId.transportString())"
+        }
 
         return ZMTransportRequest(
             path: path,
