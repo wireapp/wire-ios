@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol UserClientsLocalStoreProtocol {
@@ -63,6 +64,62 @@ public protocol UserClientsLocalStoreProtocol {
     /// - returns: A flag indicating whether all self user clients are active MLS clients.
 
     func allSelfUserClientsAreActiveMLSClients() async -> Bool
+
+    /// Stores user client discovery date locally.
+    /// - Parameters:
+    ///     - discoveryDate: The date the client was discovered.
+    ///     - The client to update the discovery date for.
+
+    func storeClient(
+        discoveryDate: Date,
+        client: WireDataModel.UserClient
+    ) async
+
+    /// Adds new client to the ignored ones.
+    /// - Parameters:
+    ///     - selfClient: The self user client to add the new client for.
+    ///     - newClient: The new user client.
+
+    func addNewClientToIgnored(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async
+
+    /// Fetches the Proteus session ID of a given client.
+    /// - parameter client: The client to get the Proteus session ID for.
+    /// - returns: The Proteus session id.
+
+    func proteusSessionID(
+        for client: WireDataModel.UserClient
+    ) async -> ProteusSessionID?
+
+    /// Indicates a client session was created.
+    /// - Parameters:
+    ///     - selfClient: The self user client.
+    ///     - newClient: The new client that was created.
+
+    func clientSessionCreated(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async
+
+    /// Fetches self client locally.
+    /// - returns: The self client if any
+
+    func fetchSelfClient() async -> WireDataModel.UserClient?
+
+    /// Fetches a client locally.
+    /// - Parameters:
+    ///     - id: The client id.
+    ///     - user: The user linked to the client.
+    ///     - createIfNeeded: Creates the client if not found locally.
+    /// - returns: The user client fetched or created locally
+
+    func fetchClient(
+        id: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) async -> WireDataModel.UserClient?
 }
 
 public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
@@ -80,6 +137,28 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     ) {
         self.context = context
         self.userLocalStore = userLocalStore
+    }
+
+    public func fetchSelfClient() async -> UserClient? {
+        let selfUser = await userLocalStore.fetchSelfUser()
+
+        return await context.perform {
+            selfUser.selfClient()
+        }
+    }
+
+    public func fetchClient(
+        id: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) async -> UserClient? {
+        await context.perform {
+            UserClient.fetchUserClient(
+                withRemoteId: id,
+                forUser: user,
+                createIfNeeded: createIfNeeded
+            )
+        }
     }
 
     public func fetchOrCreateClient(
@@ -222,6 +301,42 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
 
                 return hasMLSIdentity && isRecentlyActive
             }
+        }
+    }
+
+    public func storeClient(
+        discoveryDate: Date,
+        client: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            client.discoveryDate = discoveryDate
+        }
+    }
+
+    public func addNewClientToIgnored(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            selfClient.addNewClientToIgnored(newClient)
+        }
+    }
+
+    public func proteusSessionID(
+        for client: WireDataModel.UserClient
+    ) async -> ProteusSessionID? {
+        await context.perform {
+            client.proteusSessionID
+        }
+    }
+
+    public func clientSessionCreated(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            selfClient.decrementNumberOfRemainingProteusKeys()
+            selfClient.updateSecurityLevelAfterDiscovering([newClient])
         }
     }
 

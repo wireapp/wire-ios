@@ -39,7 +39,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         switch apiVersion {
         case .v0:
             nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
             federatedRequest(for: action, apiVersion: apiVersion)
         }
     }

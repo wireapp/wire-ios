@@ -95,7 +95,6 @@ extension Settings {
             "NetworkStatus",
             "API Migration",
             "Cryptobox Migration",
-            "ContactAddressBook",
             "ZMUserSession",
             "ZMClientRegistrationStatus",
             "UserProfileImageUpdateStatus",

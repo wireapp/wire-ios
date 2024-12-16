@@ -37,7 +37,7 @@ class PrekeyAPIV0: PrekeyAPI {
         self.httpClient = httpClient
     }
 
-    open var apiVersion: APIVersion {
+    var apiVersion: APIVersion {
         .v0
     }
 
@@ -138,6 +138,10 @@ class PrekeyAPIV6: PrekeyAPIV5 {
     override var apiVersion: APIVersion {
         .v6
     }
+}
+
+final class PrekeyAPIV7: PrekeyAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
 }
 
 extension Collection<QualifiedClientID> {

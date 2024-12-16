@@ -22,7 +22,7 @@ import Foundation
 
 public enum UserClientsAPIError: Error {
 
-    /// A request url is not invalid.
+    /// A request url is invalid.
 
     case invalidURL
 }

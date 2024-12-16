@@ -18,6 +18,7 @@
 
 import MessageUI
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 
 final class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {

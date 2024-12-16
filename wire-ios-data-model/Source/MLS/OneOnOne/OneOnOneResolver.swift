@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
@@ -63,7 +64,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                         try await self.resolveOneOnOneConversation(with: userID, in: context)
                     } catch {
                         // skip conversation migration for this user
-                        WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
+                        WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed: \(error)")
                     }
                 }
             }

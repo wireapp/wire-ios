@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
@@ -39,6 +40,8 @@ final class ConversationLocalStoreTests: XCTestCase {
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
+
+    private var subscription: AnyCancellable?
 
     override func setUp() async throws {
         mlsService = MockMLSServiceInterface()
@@ -64,6 +67,7 @@ final class ConversationLocalStoreTests: XCTestCase {
         modelHelper = nil
         userLocalStore = nil
         messageLocalStore = nil
+        subscription = nil
     }
 
     // MARK: - Tests
@@ -212,7 +216,7 @@ final class ConversationLocalStoreTests: XCTestCase {
             }
 
         messageLocalStore
-            .addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
         userLocalStore.fetchUserIdDomain_MockValue = removedUser
 
         // When
@@ -227,7 +231,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         XCTAssertEqual(userLocalStore.fetchUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(
-            messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations
+            messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations
                 .count,
             1
         )
@@ -404,7 +408,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         userLocalStore.fetchOrCreateUserIdDomain_MockValue = addedUser
         messageLocalStore
-            .addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
@@ -423,7 +427,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(
-            messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations
+            messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations
                 .count,
             1
         )
@@ -431,6 +435,119 @@ final class ConversationLocalStoreTests: XCTestCase {
         await context.perform {
             XCTAssertTrue(conversation.localParticipants.contains(addedUser))
         }
+    }
+
+    func testUpdateTypingUsers_It_Sends_A_Notification_With_Typing_Users() async throws {
+
+        let (userObjectID, conversationObjectID) = try await context.perform { [self] in
+            let user = modelHelper.createUser(in: context)
+            let conversation = modelHelper.createGroupConversation(in: context)
+
+            try context.obtainPermanentIDs(for: [user, conversation])
+
+            return (user.objectID, conversation.objectID)
+
+        }
+
+        let expectation = XCTestExpectation()
+
+        subscription = NotificationCenter.default.publisher(for: .typingNotification)
+            .compactMap { $0.userInfo?["typingUsers"] as? Set<ZMUser> }
+            .sink { typingUsers in
+                // Then
+                XCTAssertEqual(typingUsers.first?.objectID, userObjectID)
+                expectation.fulfill()
+            }
+
+        // When
+
+        await sut.updateTypingUsers(
+            conversationID: conversationObjectID,
+            usersID: Set([userObjectID])
+        )
+
+        // Then
+
+        await fulfillment(of: [expectation], timeout: 5.0)
+    }
+
+    func testStoreMLSConversationEstablished_It_Sets_MLS_Status_Ready_And_Updates_MLS_Group_ID() async throws {
+
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+        }
+
+        let mlsGroupID = try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString))
+
+        // When
+
+        await sut.storeMLSConversationEstablished(
+            mlsGroupID: mlsGroupID,
+            conversation: conversation
+        )
+
+        // Then
+
+        await context.perform {
+            XCTAssertEqual(conversation.mlsStatus, .ready)
+            XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
+        }
+    }
+
+    func testUpdateOrCreateMLSGroup_It_Creates_MLS_Group_Locally() async throws {
+
+        // Mock
+
+        let mlsGroupID = try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString))
+
+        // When
+
+        await sut.updateOrCreateMLSGroup(groupID: mlsGroupID)
+
+        // Then
+
+        try await context.perform { [context] in
+            let mlsGroupRequest = MLSGroup.fetchRequest()
+            let mlsGroup = try context.fetch(mlsGroupRequest)
+                .compactMap { $0 as? MLSGroup }.first
+
+            XCTAssertEqual(mlsGroup?.id, mlsGroupID)
+        }
+    }
+
+    func testFetchOtherUserIDInOneOnOneConversation_It_Returns_The_Other_User_Qualified_ID() async {
+
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            let conversation = modelHelper.createMLSConversation(
+                conversationType: .oneOnOne,
+                in: context
+            )
+
+            let selfUser = modelHelper.createSelfUser(in: context)
+            let otherUser = modelHelper.createUser(id: Scaffolding.otherUserID, domain: Scaffolding.domain, in: context)
+            conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser]))
+
+            return conversation
+        }
+
+        // When
+
+        let qualifiedID = await sut.fetchOtherUserIDInOneOnOneConversation(
+            conversation: conversation
+        )
+
+        // Then
+
+        XCTAssertEqual(qualifiedID?.uuid, Scaffolding.otherUserID)
+        XCTAssertEqual(qualifiedID?.domain, Scaffolding.domain)
     }
 
     private enum Scaffolding {

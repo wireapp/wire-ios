@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+public import WireLogging
+
 import CryptoKit
 import DatadogCore
 import DatadogCrashReporting
@@ -29,7 +32,7 @@ public final class WireDatadog {
     private let applicationID: String
     private let buildVersion: String
     private let buildNumber: String
-    private let logLevel: WireDatadog.LogLevel = .debug
+    private let logLevel: WireLogLevel = .debug
 
     public private(set) var userIdentifier: String
     private(set) var logger: (any DatadogLogs.LoggerProtocol)?
@@ -72,7 +75,7 @@ public final class WireDatadog {
         let loggerConfiguration = Logger.Configuration(
             name: "iOS Wire App",
             networkInfoEnabled: true,
-            remoteLogThreshold: logLevel.datadogLevel
+            remoteLogThreshold: logLevel.mapToDatadogLogLevel()
         )
         self.logger = Logger.create(with: loggerConfiguration)
     }
@@ -96,7 +99,7 @@ public final class WireDatadog {
         Datadog.setUserInfo(id: userIdentifier)
 
         logger?.log(
-            level: logLevel.datadogLevel,
+            level: logLevel.mapToDatadogLogLevel(),
             message: "Datadog startMonitoring for device: \(userIdentifier)",
             error: nil,
             attributes: nil
@@ -104,7 +107,7 @@ public final class WireDatadog {
     }
 
     public func log(
-        level: WireDatadog.LogLevel,
+        level: WireLogLevel,
         message: String,
         error: (any Error)? = nil,
         attributes: [String: any Encodable]
@@ -113,8 +116,10 @@ public final class WireDatadog {
         finalAttributes["build_number"] = buildNumber
         finalAttributes["version"] = buildVersion
 
+        let level = level.mapToDatadogLogLevel()
+
         logger?.log(
-            level: level.datadogLevel, // TODO: [WPB-11881] review this when WireLogger is available as package
+            level: level,
             message: message,
             error: error,
             attributes: finalAttributes
@@ -148,8 +153,8 @@ public final class WireDatadog {
     }
 }
 
-extension WireDatadog.LogLevel {
-    var datadogLevel: LogLevel {
+extension WireLogLevel {
+    func mapToDatadogLogLevel() -> LogLevel {
         switch self {
         case .debug:
             .debug

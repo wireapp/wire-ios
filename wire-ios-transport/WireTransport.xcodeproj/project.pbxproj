@@ -21,11 +21,9 @@
 		09F028C61B7252FC00BADDB6 /* Lorem Ipsum.txt in Resources */ = {isa = PBXBuildFile; fileRef = 09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */; };
 		160C31231E5B28A10012E4BC /* ZMPushChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 160C31221E5B28A10012E4BC /* ZMPushChannel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		161E04B42656C5FB00DADC3D /* ZMPushChannelType.h in Headers */ = {isa = PBXBuildFile; fileRef = 161E04B22656C3F600DADC3D /* ZMPushChannelType.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		162F5806267150FC00337797 /* NativePushChannelTests+ServerTrust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F5805267150FC00337797 /* NativePushChannelTests+ServerTrust.swift */; };
 		1650EBDD21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */; };
 		166D18BB230EE8A8001288CD /* TransportSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166D18BA230EE8A8001288CD /* TransportSession.swift */; };
 		1671F7562B6BFB5600C2D8A3 /* CookieProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671F7552B6BFB5600C2D8A3 /* CookieProvider.swift */; };
-		16D7D9F7265251620049FFCA /* NativePushChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D7D9F6265251620049FFCA /* NativePushChannel.swift */; };
 		16F900E226C2CBE6002794B5 /* StarscreamPushChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F900E126C2CBE6002794B5 /* StarscreamPushChannel.swift */; };
 		22D0F91C29027191004E2882 /* ProxySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D0F91B29027191004E2882 /* ProxySettings.swift */; };
 		5431ABFF1DB4C35B0040343C /* RequestLoopDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431ABFE1DB4C35B0040343C /* RequestLoopDetection.swift */; };
@@ -103,6 +101,7 @@
 		591B6E662C8B09F7009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		591B6E692C8B09FB009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
 		591B6E6C2C8B09FE009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
+		59537CD92CFF7ED800920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CD82CFF7ED800920B59 /* WireLogging */; };
 		596090D52B14C91D0007583F /* ZMUpdateEventTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */; };
 		59FFFB762B74E100008F0E1B /* Date+TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB752B74E100008F0E1B /* Date+TransportCoding.swift */; };
 		59FFFB782B74E17C008F0E1B /* TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB772B74E17C008F0E1B /* TransportCoding.swift */; };
@@ -230,11 +229,9 @@
 		09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Lorem Ipsum.txt"; sourceTree = "<group>"; };
 		160C31221E5B28A10012E4BC /* ZMPushChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMPushChannel.h; sourceTree = "<group>"; };
 		161E04B22656C3F600DADC3D /* ZMPushChannelType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMPushChannelType.h; sourceTree = "<group>"; };
-		162F5805267150FC00337797 /* NativePushChannelTests+ServerTrust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NativePushChannelTests+ServerTrust.swift"; sourceTree = "<group>"; };
 		1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLAuthenticationChallengeSender.swift; sourceTree = "<group>"; };
 		166D18BA230EE8A8001288CD /* TransportSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportSession.swift; sourceTree = "<group>"; };
 		1671F7552B6BFB5600C2D8A3 /* CookieProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieProvider.swift; sourceTree = "<group>"; };
-		16D7D9F6265251620049FFCA /* NativePushChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePushChannel.swift; sourceTree = "<group>"; };
 		16F900E126C2CBE6002794B5 /* StarscreamPushChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarscreamPushChannel.swift; sourceTree = "<group>"; };
 		22D0F91B29027191004E2882 /* ProxySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySettings.swift; sourceTree = "<group>"; };
 		3E88BCA71B1F35DF00232589 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -425,6 +422,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				591B6E632C8B09F3009F8A7B /* WireUtilities.framework in Frameworks */,
+				59537CD92CFF7ED800920B59 /* WireLogging in Frameworks */,
 				01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -592,7 +590,6 @@
 				546E89CB1B33015000DD1042 /* ZMPushChannelConnectionTests.m */,
 				546E89CD1B33015000DD1042 /* ZMWebSocketHandshakeTests.m */,
 				546E89CE1B33015000DD1042 /* ZMWebSocketTests.m */,
-				162F5805267150FC00337797 /* NativePushChannelTests+ServerTrust.swift */,
 			);
 			path = PushChannel;
 			sourceTree = "<group>";
@@ -693,7 +690,6 @@
 				5499FF7C1B31C66C00835C8B /* ZMWebSocketFrame.m */,
 				5499FF7D1B31C66C00835C8B /* ZMWebSocketHandshake.h */,
 				5499FF7E1B31C66C00835C8B /* ZMWebSocketHandshake.m */,
-				16D7D9F6265251620049FFCA /* NativePushChannel.swift */,
 				16F900E126C2CBE6002794B5 /* StarscreamPushChannel.swift */,
 			);
 			path = PushChannel;
@@ -989,6 +985,7 @@
 			name = "WireTransport-ios";
 			packageProductDependencies = (
 				01BBCFD72BF559AA001D9397 /* Starscream */,
+				59537CD82CFF7ED800920B59 /* WireLogging */,
 			);
 			productName = Transport;
 			productReference = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */;
@@ -1169,7 +1166,6 @@
 				F19E555D22B27915005C792D /* ZMTransportResponse.swift in Sources */,
 				16F900E226C2CBE6002794B5 /* StarscreamPushChannel.swift in Sources */,
 				CB79AC2D2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift in Sources */,
-				16D7D9F7265251620049FFCA /* NativePushChannel.swift in Sources */,
 				5451EFA01B7A138B002F503B /* Collections+ZMTSafeTypes.m in Sources */,
 				F1D1281821C1556E0090045E /* BackendEnvironmentProvider.swift in Sources */,
 				54CA15AF1B32F2C1008D3787 /* ZMTaskIdentifierMap.m in Sources */,
@@ -1233,7 +1229,6 @@
 				01C83764292CC8DA009BB0BF /* ProxyCredentialsTests.swift in Sources */,
 				5E2C352621A567600034F1EE /* MockBackgroundActivityManager.swift in Sources */,
 				546E8A071B33015000DD1042 /* ZMURLSessionTests.m in Sources */,
-				162F5806267150FC00337797 /* NativePushChannelTests+ServerTrust.swift in Sources */,
 				546E8A011B33015000DD1042 /* ZMTransportRequestSchedulerTests.m in Sources */,
 				54EA3E6D1BEA65B80071592B /* Fakes.m in Sources */,
 				546E8A031B33015000DD1042 /* ZMTransportSessionTests.m in Sources */,
@@ -1647,6 +1642,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */;
 			productName = Starscream;
+		};
+		59537CD82CFF7ED800920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

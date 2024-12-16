@@ -22,5 +22,7 @@ enum ProteusMessageDecryptorError: Error {
     case senderClientNotFound
     case proteusSessionIDNotFound
     case senderFailedToEncrypt
+    case invalidCiphertext
+    case decodeError
 
 }
