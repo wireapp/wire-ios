@@ -70,5 +70,27 @@ public extension AnalyticsEvent {
             .init(name: "calling.call_quality_review", segmentation: review.segmentation)
         }
 
+        // TODO: parameters
+
+        /// An event tracking when the user ends a call.
+        ///
+        /// - Parameters:
+        ///   - todo: TODO
+        ///
+        /// - Returns: A call joined analytics event.
+
+        public static func endedCall(
+            isVideo: Bool,
+            conversationType: ConversationType
+        ) -> AnalyticsEvent {
+            AnalyticsEvent(
+                name: "calling.ended_call",
+                segmentation: [
+//                    .isVideoCall(isVideo),
+//                    .groupType(conversationType)
+                ]
+            )
+        }
+
     }
 }
