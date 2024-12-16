@@ -18,99 +18,80 @@
 
 public extension AnalyticsEvent.User {
 
-    /// Count of user reaching for each modal step (Step 1 through 3)
-    ///
-    /// Segmentation: app_name; app_version
+    enum IndividualToTeamMigration {
 
-    static func personalTeamCreationFlowStarted(
-        step: IndividualToTeamMigrationViewController.Step
-    ) -> AnalyticsEvent! {
+        /// The various steps of the individual to team migration flow.
 
-        let index: Int
-        switch step {
-        case .teamPlanSelection:
-            index = 1
-        case .teamName:
-            index = 2
-        case .confirmation:
-            index = 3
-        case .completion:
-            return .none
+        public enum Step: Int {
+            case disclaimer = 1
+            case teamName
+            case confirmation
         }
 
-        return AnalyticsEvent("user.personal-team-creation-flow-started") {
-            SegmentationEntry("step_modalcreateteam", index)
+        /// The actions a user can choose on the dismiss confirmation alert.
+
+        public enum CancelConfirmationAction {
+            case `continue`
+            case leave
+        }
+
+        /// The actions a user can choose on the final confirmation scren.
+
+        public enum CompletedAction {
+            case backToWire
+            case openTeamManagement
+        }
+
+    }
+
+    /// An event tracking when the user reaches a certain step of the individual to team migration flow.
+
+    static func personalTeamCreationFlowStarted(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
+        AnalyticsEvent("user.personal-team-creation-flow-started") {
+            SegmentationEntry("step_modalcreateteam", step.rawValue)
         }
     }
 
-    static func personalToTeamMigrationFlowStopped(
-        at step: IndividualToTeamMigrationViewController.Step
-    ) -> AnalyticsEvent! {
-        switch step {
-        case .teamPlanSelection:
-            personalTeamCreationFlowStopped(atDisclaimersStep: true, atTeamNameStep: false, atConfirmationStep: false)
-        case .teamName:
-            personalTeamCreationFlowStopped(atDisclaimersStep: false, atTeamNameStep: true, atConfirmationStep: false)
-        case .confirmation:
-            personalTeamCreationFlowStopped(atDisclaimersStep: false, atTeamNameStep: false, atConfirmationStep: true)
-        case .completion:
-            .none
-        }
-    }
+    /// An event tracking when the user dismisses the individual to team migration flow at a certain step.
 
-    /// Count of user dropping at each modal step (Step 1 through 3)
-    ///
-    /// Segmentation: app_name; app_version; modal_disclaimers; modal_team-name; modal_confirmation
-
-    private static func personalTeamCreationFlowStopped(
-        atDisclaimersStep: Bool,
-        atTeamNameStep: Bool,
-        atConfirmationStep: Bool
-    ) -> AnalyticsEvent {
+    static func personalToTeamMigrationFlowStopped(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
         AnalyticsEvent("user.personal-team-creation-flow-stopped") {
-            if atDisclaimersStep {
+            switch step {
+            case .disclaimer:
                 SegmentationEntry("modal_disclaimers", true)
-            }
-            if atTeamNameStep {
+            case .teamName:
                 SegmentationEntry("modal_team-name", true)
-            }
-            if atConfirmationStep {
+            case .confirmation:
                 SegmentationEntry("modal_confirmation", true)
             }
         }
     }
 
-    /// Count of user reaching the cancellation modal
-    ///
-    /// Segmentation: app_name; app_version; modal_continue-clicked; modal_leave-clicked
+    /// An event tracking when the user taps a button in the cancellation alert.
 
     static func personalTeamCreationFlowCancel(
-        tappedContinueButton: Bool,
-        tappedLeaveButton: Bool
+        action: IndividualToTeamMigration.CancelConfirmationAction
     ) -> AnalyticsEvent {
         AnalyticsEvent("user.personal-team-creation-flow-cancelled") {
-            if tappedContinueButton {
-                SegmentationEntry("modal_continue-clicked", true)
-            }
-            if tappedLeaveButton {
+            switch action {
+                case .continue:
+                    SegmentationEntry("modal_continue-clicked", true)
+            case .leave:
                 SegmentationEntry("modal_leave-clicked", true)
             }
         }
     }
 
-    /// Count of user reach the final stage (Step 4)
-    ///
-    /// Segmentation: app_name; app_version; modal_back-to-wire-clicked; modal_open-tm-clicked
+    /// An event tracking when the user taps a button in the final confirmation screen.
 
     static func personalTeamCreationFlowCompleted(
-        usingBackToWireButton: Bool,
-        usingGoToTeamManagementButton: Bool
+        action: IndividualToTeamMigration.CompletedAction
     ) -> AnalyticsEvent {
         AnalyticsEvent("user.personal-team-creation-flow-completed") {
-            if usingBackToWireButton {
+            switch action {
+            case .backToWire:
                 SegmentationEntry("modal_back-to-wire-clicked", true)
-            }
-            if usingGoToTeamManagementButton {
+            case .openTeamManagement:
                 SegmentationEntry("modal_open-tm-clicked", true)
             }
         }

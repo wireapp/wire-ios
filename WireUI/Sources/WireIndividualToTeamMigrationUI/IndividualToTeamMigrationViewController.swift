@@ -171,16 +171,10 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .toCancellationAlert:
             let alert = cancellationSheetFactory(
                 onLeave: { [weak self] in
-                    self?.analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(
-                        tappedContinueButton: false,
-                        tappedLeaveButton: true
-                    ))
+                    self?.analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(action: .leave))
                     self?.actionCallback(.cancel)
                 }, onContinue: { [weak analyticsEventTracker] in
-                    analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(
-                        tappedContinueButton: true,
-                        tappedLeaveButton: false
-                    ))
+                    analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCancel(action: .continue))
                 }
             )
             childController.present(alert, animated: true)
@@ -194,7 +188,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: false) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(step: step))
+                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .disclaimer))
             }
         case .toLearnMoreAboutPlans:
             actionCallback(.toLearnMoreAboutPlans)
@@ -208,7 +202,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(step: step))
+                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .teamName))
             }
         case let .toConfirmation(teamName):
             let step = Step.confirmation(
@@ -224,7 +218,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(step: step))
+                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .confirmation))
             }
         case let .toTeamCreation(teamName: teamName):
             createTeam(named: teamName)
@@ -243,16 +237,10 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             )
             childController.setViewControllers([vc], animated: true)
         case .toApp:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(
-                usingBackToWireButton: true,
-                usingGoToTeamManagementButton: false
-            ))
+            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .backToWire))
             actionCallback(.completionGoToApp)
         case .toTeamManagement:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(
-                usingBackToWireButton: false,
-                usingGoToTeamManagementButton: true
-            ))
+            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .openTeamManagement))
             actionCallback(.completionGoToTeamManagement)
         }
     }
@@ -304,8 +292,12 @@ extension IndividualToTeamMigrationViewController: UIAdaptivePresentationControl
         guard let currentStep else { return assertionFailure("unexpected state") }
 
         switch currentStep {
-        case .teamPlanSelection, .teamName, .confirmation:
-            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: currentStep))
+        case .teamPlanSelection:
+            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: .disclaimer))
+        case .teamName:
+            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: .teamName))
+        case .confirmation:
+            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: .confirmation))
         case .completion:
             // the flow-completed event will handle this case
             break
