@@ -957,7 +957,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 await performsMLSClientUpdates()
             } else {
                 // If we discover that
-                // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS client,
+                // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS
+                // client,
                 // we should create one.
                 let needsToRegisterMLSClient = BackendInfo.isMLSEnabled && mlsFeature.isEnabled
                 if let qualifiedSelfClientID, needsToRegisterMLSClient {
@@ -1050,10 +1051,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     private func createMLSClient(qualifiedID: QualifiedClientID) async {
         let mlsClientID = await syncContext.perform {
-            return MLSClientID(qualifiedClientID: qualifiedID)
+            MLSClientID(qualifiedClientID: qualifiedID)
         }
         do {
-            try await self.coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
+            try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
         } catch {
             WireLogger.mls.error("Failed to initialise mls client: \(error)")
         }

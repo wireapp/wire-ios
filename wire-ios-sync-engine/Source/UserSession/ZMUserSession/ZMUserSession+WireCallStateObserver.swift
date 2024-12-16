@@ -60,7 +60,10 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
     }
 
     private func trackCallJoined(isVideo: Bool, conversationType: ZMConversationType) {
-        let event = AnalyticsEvent.Calling.joinedCall(isVideo: isVideo, conversationType: mapConversationType(conversationType))
+        let event = AnalyticsEvent.Calling.joinedCall(
+            isVideo: isVideo,
+            conversationType: mapConversationType(conversationType)
+        )
         trackAnalyticsEvent(event)
     }
 

@@ -50,21 +50,24 @@ public extension AnalyticsEvent {
 
         public static func personalTeamCreationFlowStarted(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
             AnalyticsEvent(name: "user.personal-team-creation-flow-started") {
-                SegmentationEntry("step_modalcreateteam", step.rawValue)
+                SegmentationEntry(key: "step_modalcreateteam", value: step.rawValue)
             }
         }
 
         /// An event tracking when the user dismisses the individual to team migration flow at a certain step.
 
-        public static func personalToTeamMigrationFlowStopped(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
+        public static func personalToTeamMigrationFlowStopped(
+            at step: IndividualToTeamMigration
+                .Step
+        ) -> AnalyticsEvent {
             AnalyticsEvent(name: "user.personal-team-creation-flow-stopped") {
                 switch step {
                 case .disclaimer:
-                    SegmentationEntry("modal_disclaimers", true)
+                    SegmentationEntry(key: "modal_disclaimers", value: true)
                 case .teamName:
-                    SegmentationEntry("modal_team-name", true)
+                    SegmentationEntry(key: "modal_team-name", value: true)
                 case .confirmation:
-                    SegmentationEntry("modal_confirmation", true)
+                    SegmentationEntry(key: "modal_confirmation", value: true)
                 }
             }
         }
@@ -77,9 +80,9 @@ public extension AnalyticsEvent {
             AnalyticsEvent(name: "user.personal-team-creation-flow-cancelled") {
                 switch action {
                 case .continue:
-                    SegmentationEntry("modal_continue-clicked", true)
+                    SegmentationEntry(key: "modal_continue-clicked", value: true)
                 case .leave:
-                    SegmentationEntry("modal_leave-clicked", true)
+                    SegmentationEntry(key: "modal_leave-clicked", value: true)
                 }
             }
         }
@@ -92,9 +95,9 @@ public extension AnalyticsEvent {
             AnalyticsEvent(name: "user.personal-team-creation-flow-completed") {
                 switch action {
                 case .backToWire:
-                    SegmentationEntry("modal_back-to-wire-clicked", true)
+                    SegmentationEntry(key: "modal_back-to-wire-clicked", value: true)
                 case .openTeamManagement:
-                    SegmentationEntry("modal_open-tm-clicked", true)
+                    SegmentationEntry(key: "modal_open-tm-clicked", value: true)
                 }
             }
         }
