@@ -94,7 +94,7 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
             // then
             XCTAssertEqual(
                 request.path,
-                "/conversations/\(domain)/\(conversationID.transportString())/members/\(domain)/\(userID.transportString())"
+                "/v7/conversations/\(domain)/\(conversationID.transportString())/members/\(domain)/\(userID.transportString())"
             )
             let payload = Payload.ConversationUpdateRole(request)
             XCTAssertEqual(payload?.role, self.role.name)
