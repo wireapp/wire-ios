@@ -42,19 +42,17 @@ public extension AnalyticsEvent {
 
         public static var dismissedSelfProfileWithToTeamMigrationBanner: AnalyticsEvent {
             personalMigrationCTA(
-                isDismissCTAButtonUsed: true
+                isCreateTeamButtonUsed: false
             )
         }
 
         private static func personalMigrationCTA(
-            isCreateTeamButtonUsed: Bool = false,
-            isDismissCTAButtonUsed: Bool = false
+            isCreateTeamButtonUsed: Bool
         ) -> AnalyticsEvent {
             AnalyticsEvent(name: "ui.clicked-personal-migration-cta") {
                 if isCreateTeamButtonUsed {
                     SegmentationEntry(key: "clicked_create_team", value: true)
-                }
-                if isDismissCTAButtonUsed {
+                } else {
                     SegmentationEntry(key: "clicked_dismiss_cta", value: true)
                 }
             }
