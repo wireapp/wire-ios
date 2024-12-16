@@ -54,7 +54,7 @@ public struct ConnectionsAPIBuilder {
         case .v6:
             ConnectionsAPIV6(apiService: apiService)
         case .v7:
-            ConnectionsAPIV7(httpClient: httpClient)
+            ConnectionsAPIV7(apiService: apiService)
         }
     }
 

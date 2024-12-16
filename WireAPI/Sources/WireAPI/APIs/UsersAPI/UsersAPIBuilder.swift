@@ -54,7 +54,7 @@ public struct UsersAPIBuilder {
         case .v6:
             UsersAPIV6(apiService: apiService)
         case .v7:
-            UsersAPIV7(httpClient: httpClient)
+            UsersAPIV7(apiService: apiService)
         }
     }
 }
