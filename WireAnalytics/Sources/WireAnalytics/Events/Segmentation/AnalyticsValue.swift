@@ -28,14 +28,6 @@ public protocol AnalyticsValue {
 
 }
 
-extension Bool: AnalyticsValue {
-
-    public var analyticsValue: String {
-        self ? "True" : "False"
-    }
-
-}
-
 extension UInt: AnalyticsValue {
 
     public var analyticsValue: String {

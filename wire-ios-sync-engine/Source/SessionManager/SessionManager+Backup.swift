@@ -61,7 +61,7 @@ extension SessionManager {
                 case .success:
                     break
                 case .failure:
-                    activeUserSession.analyticsEventTracker?.trackEvent(.backupExportFailed)
+                    activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)
                 }
 
                 SessionManager.handle(
