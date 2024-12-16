@@ -39,7 +39,7 @@ public struct AppendKnockMessageUseCase: AppendKnockMessageUseCaseProtocol {
         try conversation.appendKnock(nonce: UUID())
 
         analyticsEventTracker?.trackEvent(
-            .conversationContribution(
+            .Contributed.conversationContribution(
                 .pingMessage,
                 conversationType: .init(conversation.conversationType),
                 conversationSize: UInt(conversation.localParticipants.count)
