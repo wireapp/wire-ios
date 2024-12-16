@@ -51,7 +51,10 @@ class AccountsAPIV7: AccountsAPIV6 {
             requiringAccessToken: true
         )
 
-        return try ResponseParser()
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+
+        return try ResponseParser(decoder: decoder)
             .success(code: .ok, type: UpgradeToTeamResponseV7.self)
             .failure(code: .forbidden, label: "user-already-in-a-team", error: AccountsAPIError.userAlreadyInATeam)
             .failure(code: .notFound, label: "not-found", error: AccountsAPIError.userNotFound)

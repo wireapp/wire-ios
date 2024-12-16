@@ -119,7 +119,7 @@ extension Typing: ZMTimerClient {
                         self.sendNotification(for: conversation)
                     }
                 } catch {
-                    WireLogger.updateEvent.error(("Failed to retrieve conversation object locally \(error)"))
+                    WireLogger.updateEvent.error("Failed to retrieve conversation object locally \(error)")
                 }
             }
 
