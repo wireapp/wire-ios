@@ -53,6 +53,8 @@ public struct SelfUserAPIBuilder {
             SelfUserAPIV5(apiService: apiService)
         case .v6:
             SelfUserAPIV6(apiService: apiService)
+        case .v7:
+            SelfUserAPIV7(httpClient: httpClient)
         }
     }
 

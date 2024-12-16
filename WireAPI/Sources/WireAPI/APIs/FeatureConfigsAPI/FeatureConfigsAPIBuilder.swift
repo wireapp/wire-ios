@@ -53,7 +53,8 @@ public struct FeatureConfigsAPIBuilder {
             FeatureConfigsAPIV5(apiService: apiService)
         case .v6:
             FeatureConfigsAPIV6(apiService: apiService)
+        case .v7:
+            FeatureConfigsAPIV7(httpClient: httpClient)
         }
     }
-
 }

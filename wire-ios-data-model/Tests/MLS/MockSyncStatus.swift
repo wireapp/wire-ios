@@ -38,4 +38,13 @@ class MockSyncStatus: SyncStatusProtocol {
         await mock()
     }
 
+    var mockResyncResources: (() -> Void)?
+    func resyncResources() {
+        guard let mock = mockResyncResources else {
+            fatalError("no mock for `resyncResources`")
+        }
+
+        mock()
+    }
+
 }

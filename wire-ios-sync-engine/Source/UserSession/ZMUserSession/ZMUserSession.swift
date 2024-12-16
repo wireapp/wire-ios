@@ -19,7 +19,9 @@
 import Combine
 import Foundation
 import WireAnalytics
+import WireAPI
 import WireDataModel
+import WireLogging
 import WireRequestStrategy
 import WireSystem
 
@@ -27,6 +29,8 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate
     & UserSessionLogoutDelegate
     & UserSessionSelfUserClientDelegate
+
+public typealias APIServiceFactory = @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
 
 @objcMembers
 public final class ZMUserSession: NSObject {
@@ -40,6 +44,14 @@ public final class ZMUserSession: NSObject {
     private(set) var isNetworkOnline = true
 
     private(set) var coreDataStack: CoreDataStack!
+    private let apiServiceFactory: APIServiceFactory
+    var apiService: APIServiceProtocol? {
+        guard let clientId = selfUserClient?.remoteIdentifier else {
+            return nil
+        }
+        return apiServiceFactory(clientId, userId)
+    }
+
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
@@ -193,7 +205,7 @@ public final class ZMUserSession: NSObject {
     }
 
     // swiftlint:disable:next todo_requires_jira_link
-    public var selfUserClient: UserClient? { // TODO: jacob we don't want this to be public
+    public var selfUserClient: WireDataModel.UserClient? { // TODO: jacob we don't want this to be public
         ZMUser.selfUser(in: managedObjectContext).selfClient()
     }
 
@@ -361,6 +373,7 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
+        apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
         application: ZMApplication,
         appVersion: String,
         coreDataStack: CoreDataStack,
@@ -379,6 +392,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies
     ) {
+        self.apiServiceFactory = apiServiceFactory
         self.application = application
         self.appVersion = appVersion
         self.flowManager = flowManager
@@ -731,7 +745,7 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Access Token
 
-    private func renewAccessTokenIfNeeded(for userClient: UserClient) {
+    private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
         guard
             let apiVersion = BackendInfo.apiVersion,
             apiVersion > .v2,
@@ -874,6 +888,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
 
+            managedObjectContext.resetMigrationNeedsSlowSyncFlagIfNeeded()
+            managedObjectContext.resetMigrationNeedsSyncResoucesFlagIfNeeded()
+
             hasCompletedInitialSync = true
             notificationDispatcher.isEnabled = true
             delegate?.clientCompletedInitialSync(accountId: account.userIdentifier)
@@ -914,28 +931,45 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: notificationContext
         ).post()
 
-        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-        if selfClient?.hasRegisteredMLSClient == true {
-
-            WaitingGroupTask(context: syncContext) { [self] in
-                // these operations are not dependent and should not be executed in same do/catch
-                do {
-                    // rework implementation of following method - WPB-6053
-                    try await mlsService.performPendingJoins()
-                } catch {
-                    WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
-                }
-                await mlsService.uploadKeyPackagesIfNeeded()
-                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+        func performsMLSClientUpdates() async {
+            // these operations are not dependent and should not be executed in same do/catch
+            do {
+                // rework implementation of following method - WPB-6053
+                try await mlsService.performPendingJoins()
+            } catch {
+                WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
             }
-        }
-
-        if mlsFeature.isEnabled {
-            mlsService.commitPendingProposalsIfNeeded()
+            await mlsService.uploadKeyPackagesIfNeeded()
+            await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
         }
 
         WaitingGroupTask(context: syncContext) { [self] in
+            await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
+
+            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
+                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+                let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
+                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
+            }
+
+            if hasRegisteredMLSClient {
+                await performsMLSClientUpdates()
+            } else {
+                // If we discover that
+                // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS client,
+                // we should create one.
+                let needsToRegisterMLSClient = BackendInfo.isMLSEnabled && mlsFeature.isEnabled
+                if let qualifiedSelfClientID, needsToRegisterMLSClient {
+                    await createMLSClient(qualifiedID: qualifiedSelfClientID)
+                    await performsMLSClientUpdates()
+                }
+            }
+
+            if mlsFeature.isEnabled {
+                mlsService.commitPendingProposalsIfNeeded()
+            }
+
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
         }
@@ -1003,6 +1037,28 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
+    private func fetchBackendMLSPublicKeys() async {
+        do {
+            var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
+            let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
+            let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+            BackendInfo.isMLSEnabled = hasValidKeys
+        } catch {
+            WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")
+        }
+    }
+
+    private func createMLSClient(qualifiedID: QualifiedClientID) async {
+        let mlsClientID = await syncContext.perform {
+            return MLSClientID(qualifiedClientID: qualifiedID)
+        }
+        do {
+            try await self.coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
+        } catch {
+            WireLogger.mls.error("Failed to initialise mls client: \(error)")
+        }
+    }
+
     func processEvents() {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
@@ -1050,14 +1106,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    public func didRegisterSelfUserClient(_ userClient: UserClient) {
+    public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier
         registerCurrentPushToken()
         renewAccessTokenIfNeeded(for: userClient)
 
-        UserClient.triggerSelfClientCapabilityUpdate(syncContext)
+        WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)
 
         managedObjectContext.performGroupedBlock { [weak self] in
             guard

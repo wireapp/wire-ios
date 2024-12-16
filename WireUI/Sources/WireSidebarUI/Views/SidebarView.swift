@@ -32,10 +32,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     private(set) var connectAction: () -> Void
     private(set) var supportAction: () -> Void
 
-    private(set) var accountImageView: (
-        _ accountImage: AccountImageSource,
-        _ availability: Availability?
-    ) -> AccountImageView
+    private(set) var accountImageView: SidebarViewController.AccountImageViewBuilder<AccountImageView>
     private(set) var legalHoldIndicatorView: () -> LegalHoldIndicatorView
 
     @State private var iconSize: CGSize?
@@ -47,8 +44,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
-        accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?)
-            -> AccountImageView,
+        accountImageView: @escaping SidebarViewController.AccountImageViewBuilder<AccountImageView>,
         legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
     ) {
         self.accountInfo = accountInfo
@@ -110,7 +106,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 isE2EICertified: accountInfo.isE2EICertified,
                 isVerified: accountInfo.isVerified,
                 isLegalHoldIndicatorVisible: accountInfo.isLegalHoldEnabled,
-                accountImageView: { accountImageView(accountInfo.accountImageSource, accountInfo.availability) },
+                accountImageView: { accountImageView(
+                    accountInfo.accountImageSource,
+                    accountInfo.availability,
+                    accountInfo.showNotificationsBadge
+                ) },
                 legalHoldIndicatorView: { legalHoldIndicatorView() }
             )
         }

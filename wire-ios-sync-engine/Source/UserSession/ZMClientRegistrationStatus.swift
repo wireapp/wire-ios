@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireSystem
 
 @objc(ZMClientRegistrationPhase)
@@ -455,17 +456,17 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
     }
 
-    private func fetchFetchBackendMLSPublicKeys() {
+    private func fetchBackendMLSPublicKeys() {
         var action = FetchBackendMLSPublicKeysAction()
         action.perform(in: managedObjectContext.notificationContext) { [weak self] result in
             switch result {
             case let .success(backendPublicKeys):
                 let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
                 BackendInfo.isMLSEnabled = hasValidKeys
-                self?.didFetchBackendMLSPublicKeys()
             case .failure:
-                self?.fetchFetchBackendMLSPublicKeys()
+                WireLogger.authentication.info("Backend doesn't have MLS public keys")
             }
+            self?.didFetchBackendMLSPublicKeys()
         }
     }
 
@@ -618,11 +619,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public func didFetchFeatureConfigs() {
         WireLogger.userClient.info("did fetch feature configs")
         needsToFetchFeatureConfigs = false
-        if isMLSEnabled {
-            fetchFetchBackendMLSPublicKeys()
-        } else {
-            RequestAvailableNotification.notifyNewRequestsAvailable(self)
-        }
+        fetchBackendMLSPublicKeys()
     }
 
     public func didFetchBackendMLSPublicKeys() {

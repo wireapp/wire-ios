@@ -259,6 +259,34 @@
                ReferencedContainer = "container:WireUI">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireIndividualToTeamMigrationUITests"
+               BuildableName = "WireIndividualToTeamMigrationUITests"
+               BlueprintName = "WireIndividualToTeamMigrationUITests"
+               ReferencedContainer = "container:WireUI">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireIndividualToTeamMigrationUI"
+               BuildableName = "WireIndividualToTeamMigrationUI"
+               BlueprintName = "WireIndividualToTeamMigrationUI"
+               ReferencedContainer = "container:WireUI">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

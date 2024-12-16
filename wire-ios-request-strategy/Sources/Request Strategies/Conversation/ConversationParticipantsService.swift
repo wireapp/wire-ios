@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol ConversationParticipantsServiceInterface {

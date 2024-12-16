@@ -18,6 +18,7 @@
 
 import MessageUI
 import UIKit
+import WireLogging
 import WireSyncEngine
 
 enum BlockerViewControllerContext {

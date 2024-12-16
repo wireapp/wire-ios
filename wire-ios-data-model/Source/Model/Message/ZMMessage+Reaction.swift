@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension ZMMessage {
+public extension ZMMessage {
 
     static func add(
         reaction: WireProtos.Reaction,
@@ -39,7 +39,7 @@ extension ZMMessage {
         localMessage.updateCategoryCache()
     }
 
-    func selfUserReactions() -> Set<String> {
+    internal func selfUserReactions() -> Set<String> {
         let result = usersReaction
             .filter { _, users in users.contains(where: \.isSelfUser) }
             .map(\.key)
@@ -47,7 +47,7 @@ extension ZMMessage {
         return Set(result)
     }
 
-    public func otherUsersReactions() -> Set<String> {
+    func otherUsersReactions() -> Set<String> {
         let result = usersReaction
             .filter { _, users in users.contains { user in
                 !user.isSelfUser

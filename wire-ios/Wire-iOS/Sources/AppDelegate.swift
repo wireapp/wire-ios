@@ -22,6 +22,8 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
+import WireCountly
+import WireLogging
 import WireSyncEngine
 
 enum ApplicationLaunchType {
@@ -386,7 +388,8 @@ private extension AppDelegate {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: LogFileDestination.deleteAllLogs,
-            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build()
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build(),
+            countlyProvider: { CountlyWrapper() }
         )
 
         voIPPushManager.delegate = sessionManager

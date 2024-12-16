@@ -19,41 +19,41 @@
 import Foundation
 import WireFoundation
 
-final class Assembly {
+public final class Assembly {
 
     let userID: UUID
     let clientID: String
-    let backendURL: URL
-    let backendWebSocketURL: URL
+    let backendEnvironment: BackendEnvironment
     let minTLSVersion: TLSVersion
     let cookieEncryptionKey: Data
 
-    init(
+    public init(
         userID: UUID,
         clientID: String,
-        backendURL: URL,
-        backendWebSocketURL: URL,
+        backendEnvironment: BackendEnvironment,
         minTLSVersion: TLSVersion,
         cookieEncryptionKey: Data
     ) {
         self.userID = userID
         self.clientID = clientID
-        self.backendURL = backendURL
-        self.backendWebSocketURL = backendWebSocketURL
+        self.backendEnvironment = backendEnvironment
         self.minTLSVersion = minTLSVersion
         self.cookieEncryptionKey = cookieEncryptionKey
     }
 
     private lazy var keychain: some KeychainProtocol = Keychain()
-    private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
+    private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(
+        minTLSVersion: minTLSVersion,
+        proxySettings: backendEnvironment.proxySettings
+    )
 
     private lazy var apiService: some APIServiceProtocol = APIService(
         networkService: apiNetworkService,
         authenticationManager: authenticationManager
     )
 
-    private lazy var apiNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendURL)
+    public lazy var apiNetworkService: NetworkService = {
+        let service = NetworkService(baseURL: backendEnvironment.url, serverTrustValidator: serverTrustValidator)
         let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
         let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
         service.configure(with: session)
@@ -66,14 +66,17 @@ final class Assembly {
     )
 
     private lazy var pushChannelNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendURL)
+        let service = NetworkService(
+            baseURL: backendEnvironment.webSocketURL,
+            serverTrustValidator: serverTrustValidator
+        )
         let config = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
         let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
         service.configure(with: session)
         return service
     }()
 
-    private lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
+    public lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
         clientID: clientID,
         cookieStorage: cookieStorage,
         networkService: apiNetworkService
@@ -84,5 +87,7 @@ final class Assembly {
         cookieEncryptionKey: cookieEncryptionKey,
         keychain: keychain
     )
+
+    private lazy var serverTrustValidator = ServerTrustValidator(pinnedKeys: backendEnvironment.pinnedKeys)
 
 }

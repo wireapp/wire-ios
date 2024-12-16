@@ -17,6 +17,13 @@
     {
       "target" : {
         "containerPath" : "container:WireFoundation",
+        "identifier" : "WireLoggingTests",
+        "name" : "WireLoggingTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireFoundation",
         "identifier" : "WireFoundationTests",
         "name" : "WireFoundationTests"
       }

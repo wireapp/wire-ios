@@ -20,6 +20,7 @@ import FLAnimatedImage
 import MobileCoreServices
 import Photos
 import WireCommonComponents
+import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
 

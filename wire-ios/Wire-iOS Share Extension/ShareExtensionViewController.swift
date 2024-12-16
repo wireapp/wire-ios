@@ -26,6 +26,7 @@ import WireCoreCrypto
 import WireDataModel
 import WireDesign
 import WireLinkPreview
+import WireLogging
 import WireShareEngine
 
 typealias Completion = () -> Void
