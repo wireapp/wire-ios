@@ -16,84 +16,88 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension AnalyticsEvent.User {
+public extension AnalyticsEvent {
 
-    enum IndividualToTeamMigration {
+    enum User {
 
-        /// The various steps of the individual to team migration flow.
+        public enum IndividualToTeamMigration {
 
-        public enum Step: Int {
-            case disclaimer = 1
-            case teamName
-            case confirmation
+            /// The various steps of the individual to team migration flow.
+
+            public enum Step: Int {
+                case disclaimer = 1
+                case teamName
+                case confirmation
+            }
+
+            /// The actions a user can choose on the dismiss confirmation alert.
+
+            public enum CancelConfirmationAction {
+                case `continue`
+                case leave
+            }
+
+            /// The actions a user can choose on the final confirmation scren.
+
+            public enum CompletedAction {
+                case backToWire
+                case openTeamManagement
+            }
+
         }
 
-        /// The actions a user can choose on the dismiss confirmation alert.
+        /// An event tracking when the user reaches a certain step of the individual to team migration flow.
 
-        public enum CancelConfirmationAction {
-            case `continue`
-            case leave
-        }
-
-        /// The actions a user can choose on the final confirmation scren.
-
-        public enum CompletedAction {
-            case backToWire
-            case openTeamManagement
-        }
-
-    }
-
-    /// An event tracking when the user reaches a certain step of the individual to team migration flow.
-
-    static func personalTeamCreationFlowStarted(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
-        AnalyticsEvent("user.personal-team-creation-flow-started") {
-            SegmentationEntry("step_modalcreateteam", step.rawValue)
-        }
-    }
-
-    /// An event tracking when the user dismisses the individual to team migration flow at a certain step.
-
-    static func personalToTeamMigrationFlowStopped(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
-        AnalyticsEvent("user.personal-team-creation-flow-stopped") {
-            switch step {
-            case .disclaimer:
-                SegmentationEntry("modal_disclaimers", true)
-            case .teamName:
-                SegmentationEntry("modal_team-name", true)
-            case .confirmation:
-                SegmentationEntry("modal_confirmation", true)
+        public static func personalTeamCreationFlowStarted(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
+            AnalyticsEvent("user.personal-team-creation-flow-started") {
+                SegmentationEntry("step_modalcreateteam", step.rawValue)
             }
         }
-    }
 
-    /// An event tracking when the user taps a button in the cancellation alert.
+        /// An event tracking when the user dismisses the individual to team migration flow at a certain step.
 
-    static func personalTeamCreationFlowCancel(
-        action: IndividualToTeamMigration.CancelConfirmationAction
-    ) -> AnalyticsEvent {
-        AnalyticsEvent("user.personal-team-creation-flow-cancelled") {
-            switch action {
+        public static func personalToTeamMigrationFlowStopped(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
+            AnalyticsEvent("user.personal-team-creation-flow-stopped") {
+                switch step {
+                case .disclaimer:
+                    SegmentationEntry("modal_disclaimers", true)
+                case .teamName:
+                    SegmentationEntry("modal_team-name", true)
+                case .confirmation:
+                    SegmentationEntry("modal_confirmation", true)
+                }
+            }
+        }
+
+        /// An event tracking when the user taps a button in the cancellation alert.
+
+        public static func personalTeamCreationFlowCancel(
+            action: IndividualToTeamMigration.CancelConfirmationAction
+        ) -> AnalyticsEvent {
+            AnalyticsEvent("user.personal-team-creation-flow-cancelled") {
+                switch action {
                 case .continue:
                     SegmentationEntry("modal_continue-clicked", true)
-            case .leave:
-                SegmentationEntry("modal_leave-clicked", true)
+                case .leave:
+                    SegmentationEntry("modal_leave-clicked", true)
+                }
+            }
+        }
+
+        /// An event tracking when the user taps a button in the final confirmation screen.
+
+        public static func personalTeamCreationFlowCompleted(
+            action: IndividualToTeamMigration.CompletedAction
+        ) -> AnalyticsEvent {
+            AnalyticsEvent("user.personal-team-creation-flow-completed") {
+                switch action {
+                case .backToWire:
+                    SegmentationEntry("modal_back-to-wire-clicked", true)
+                case .openTeamManagement:
+                    SegmentationEntry("modal_open-tm-clicked", true)
+                }
             }
         }
     }
 
-    /// An event tracking when the user taps a button in the final confirmation screen.
-
-    static func personalTeamCreationFlowCompleted(
-        action: IndividualToTeamMigration.CompletedAction
-    ) -> AnalyticsEvent {
-        AnalyticsEvent("user.personal-team-creation-flow-completed") {
-            switch action {
-            case .backToWire:
-                SegmentationEntry("modal_back-to-wire-clicked", true)
-            case .openTeamManagement:
-                SegmentationEntry("modal_open-tm-clicked", true)
-            }
-        }
-    }
 }

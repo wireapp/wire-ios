@@ -16,45 +16,49 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension AnalyticsEvent.UI {
+public extension AnalyticsEvent {
 
-    /// An event tracking when the user opens the self profile.
+    enum UI {
 
-    static func openSelfProfile(isMigrationDotActive: Bool) -> AnalyticsEvent {
-        AnalyticsEvent("ui.clicked-profile") {
-            if isMigrationDotActive {
-                SegmentationEntry("migration_dot_active", true)
+        /// An event tracking when the user opens the self profile.
+
+        public static func openSelfProfile(isMigrationDotActive: Bool) -> AnalyticsEvent {
+            AnalyticsEvent("ui.clicked-profile") {
+                if isMigrationDotActive {
+                    SegmentationEntry("migration_dot_active", true)
+                }
+            }
+        }
+
+        /// An event tracking when the user taps the "Create Wire Team" button on the profile.
+
+        public static var personalToTeamMigrationCTA: AnalyticsEvent {
+            personalMigrationCTA(
+                isCreateTeamButtonUsed: true
+            )
+        }
+
+        /// An event tracking when the dismisses the self profile and the personal to team migration banner was visible.
+
+        public static var dismissedSelfProfileWithToTeamMigrationBanner: AnalyticsEvent {
+            personalMigrationCTA(
+                isDismissCTAButtonUsed: true
+            )
+        }
+
+        private static func personalMigrationCTA(
+            isCreateTeamButtonUsed: Bool = false,
+            isDismissCTAButtonUsed: Bool = false
+        ) -> AnalyticsEvent {
+            AnalyticsEvent("ui.clicked-personal-migration-cta") {
+                if isCreateTeamButtonUsed {
+                    SegmentationEntry("clicked_create_team", true)
+                }
+                if isDismissCTAButtonUsed {
+                    SegmentationEntry("clicked_dismiss_cta", true)
+                }
             }
         }
     }
 
-    /// An event tracking when the user taps the "Create Wire Team" button on the profile.
-
-    static var personalToTeamMigrationCTA: AnalyticsEvent {
-        personalMigrationCTA(
-            isCreateTeamButtonUsed: true
-        )
-    }
-
-    /// An event tracking when the dismisses the self profile and the personal to team migration banner was visible.
-
-    static var dismissedSelfProfileWithToTeamMigrationBanner: AnalyticsEvent {
-        personalMigrationCTA(
-            isDismissCTAButtonUsed: true
-        )
-    }
-
-    private static func personalMigrationCTA(
-        isCreateTeamButtonUsed: Bool = false,
-        isDismissCTAButtonUsed: Bool = false
-    ) -> AnalyticsEvent {
-        AnalyticsEvent("ui.clicked-personal-migration-cta") {
-            if isCreateTeamButtonUsed {
-                SegmentationEntry("clicked_create_team", true)
-            }
-            if isDismissCTAButtonUsed {
-                SegmentationEntry("clicked_dismiss_cta", true)
-            }
-        }
-    }
 }
