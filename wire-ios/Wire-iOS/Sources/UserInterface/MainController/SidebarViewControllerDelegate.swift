@@ -47,7 +47,7 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
         // analytics
         let isNotificationsBadgeVisible = viewController.accountInfo.showNotificationsBadge
         let analyticsEventTracker = analyticsEventTracker()
-        analyticsEventTracker?.trackEvent(.UI.triggerOpenProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+        analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
 
         // open profile
         Task { @MainActor in

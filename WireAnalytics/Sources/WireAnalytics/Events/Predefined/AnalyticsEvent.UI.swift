@@ -16,15 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+public extension AnalyticsEvent.UI {
 
-extension AnalyticsEvent.UI {
+    /// An event tracking when the user opens the self profile.
 
-    /// Tap on the Notification dot to see the CTA.
-    ///
-    /// Segmentation: app_name; app_version; migration_dot_active;
-
-    static func triggerOpenProfile(isMigrationDotActive: Bool) -> AnalyticsEvent {
+    static func openSelfProfile(isMigrationDotActive: Bool) -> AnalyticsEvent {
         AnalyticsEvent("ui.clicked-profile") {
             if isMigrationDotActive {
                 SegmentationEntry("migration_dot_active", true)
@@ -32,29 +28,25 @@ extension AnalyticsEvent.UI {
         }
     }
 
-    /// User tapped the "Create Wire Team" button.
-    static func triggeredPersonalMigrationCTA() -> AnalyticsEvent {
+    /// An event tracking when the user taps the "Create Wire Team" button on the profile.
+
+    static var personalToTeamMigrationCTA: AnalyticsEvent {
         personalMigrationCTA(
-            isCreateTeamButtonUsed: true,
-            isDismissCTAButtonUsed: false
+            isCreateTeamButtonUsed: true
         )
     }
 
-    /// User probably saw the banner, but dismissed the profile screen.
-    static func dismissedSelfProfileWithPersonalMigrationCTA() -> AnalyticsEvent {
+    /// An event tracking when the dismisses the self profile and the personal to team migration banner was visible.
+
+    static var dismissedSelfProfileWithToTeamMigrationBanner: AnalyticsEvent {
         personalMigrationCTA(
-            isCreateTeamButtonUsed: false,
             isDismissCTAButtonUsed: true
         )
     }
 
-    /// Tap on the create a team CTA
-    ///
-    /// Segmentation: app_name; app_version; clicked_create_team; clicked_dismiss_cta
-
     private static func personalMigrationCTA(
-        isCreateTeamButtonUsed: Bool,
-        isDismissCTAButtonUsed: Bool
+        isCreateTeamButtonUsed: Bool = false,
+        isDismissCTAButtonUsed: Bool = false
     ) -> AnalyticsEvent {
         AnalyticsEvent("ui.clicked-personal-migration-cta") {
             if isCreateTeamButtonUsed {

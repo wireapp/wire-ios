@@ -264,7 +264,7 @@ final class SelfProfileViewController: UIViewController {
 
     private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
 
-        analyticsEventTracker?.trackEvent(.UI.triggeredPersonalMigrationCTA())
+        analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
 
         let viewController = IndividualToTeamMigrationViewController(
             privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
@@ -335,7 +335,7 @@ final class SelfProfileViewController: UIViewController {
         // only when the banner was shown to the user
         guard teamMigrationBanner != nil else { return }
 
-        analyticsEventTracker?.trackEvent(.UI.dismissedSelfProfileWithPersonalMigrationCTA())
+        analyticsEventTracker?.trackEvent(.UI.dismissedSelfProfileWithToTeamMigrationBanner)
     }
 
     override func accessibilityPerformEscape() -> Bool {
