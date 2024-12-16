@@ -45,14 +45,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try JSONEncoder.defaultEncoder.encode(params)
 
-            let components = URLComponents(string: self.resourcePath)
-
-            guard let url = components?.url else {
-                assertionFailure("generated an invalid url")
-                throw ConnectionsAPIError.invalidURL
-            }
-
-            let request = URLRequestBuilder(url: url)
+            let request = try URLRequestBuilder(path: self.resourcePath)
                 .withMethod(.post)
                 .withBody(body, contentType: .json)
                 .build()

@@ -25,14 +25,7 @@ class FeatureConfigsAPIV6: FeatureConfigsAPIV5 {
     }
 
     override func getFeatureConfigs() async throws -> [FeatureConfig] {
-        let components = URLComponents(string: resourcePath)
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw ConnectionsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: resourcePath)
             .withMethod(.get)
             .build()
 

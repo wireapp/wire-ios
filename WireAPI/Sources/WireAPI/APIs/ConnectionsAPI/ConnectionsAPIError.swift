@@ -22,10 +22,6 @@ import Foundation
 
 public enum ConnectionsAPIError: Error {
 
-    /// A request url is not invalid.
-
-    case invalidURL
-
     /// Invalid body
 
     case invalidBody

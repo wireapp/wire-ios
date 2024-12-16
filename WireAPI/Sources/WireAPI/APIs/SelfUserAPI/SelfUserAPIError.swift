@@ -30,8 +30,4 @@ public enum SelfUserAPIError: Error {
 
     case unsupportedEndpointForAPIVersion
 
-    /// A request url is not invalid.
-
-    case invalidURL
-
 }

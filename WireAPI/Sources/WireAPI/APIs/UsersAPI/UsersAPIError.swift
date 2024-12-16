@@ -26,8 +26,4 @@ public enum UsersAPIError: Error {
 
     case userNotFound
 
-    /// A request url is not invalid.
-
-    case invalidURL
-
 }

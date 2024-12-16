@@ -23,14 +23,9 @@ final class UserClientsAPIV7: UserClientsAPIV6 {
     override var apiVersion: APIVersion { .v7 }
 
     override func getSelfClients() async throws -> [SelfUserClient] {
-        let components = URLComponents(string: "\(pathPrefix)/clients")
+        let path = "\(pathPrefix)/clients"
 
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw UserClientsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .build()
 

@@ -27,14 +27,7 @@ class TeamsAPIV4: TeamsAPIV3 {
     // MARK: - Get team
 
     override func getTeam(for teamID: Team.ID) async throws -> Team {
-        let components = URLComponents(string: basePath(for: teamID))
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw TeamsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: basePath(for: teamID))
             .withMethod(.get)
             .build()
 
@@ -54,14 +47,9 @@ class TeamsAPIV4: TeamsAPIV3 {
     // MARK: - Get team roles
 
     override func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole] {
-        let components = URLComponents(string: "\(basePath(for: teamID))/conversations/roles")
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw TeamsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let path = "\(basePath(for: teamID))/conversations/roles"
+        
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .build()
 
@@ -84,16 +72,11 @@ class TeamsAPIV4: TeamsAPIV3 {
         for teamID: Team.ID,
         maxResults: UInt
     ) async throws -> [TeamMember] {
-        var components = URLComponents(string: "\(basePath(for: teamID))/members")
-        components?.queryItems = [URLQueryItem(name: "maxResults", value: "2000")]
+        let path = "\(basePath(for: teamID))/members"
 
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw TeamsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
+            .withQueryItem(name: "maxResults", value: "2000")
             .build()
 
         let (data, response) = try await apiService.executeRequest(
@@ -116,14 +99,9 @@ class TeamsAPIV4: TeamsAPIV3 {
         for teamID: Team.ID,
         userID: UUID
     ) async throws -> TeamMemberLegalholdInfo {
-        let components = URLComponents(string: "\(basePath(for: teamID))/legalhold/\(userID.transportString())")
+        let path = "\(basePath(for: teamID))/legalhold/\(userID.transportString())"
 
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw TeamsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .build()
 

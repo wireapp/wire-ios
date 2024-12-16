@@ -27,14 +27,7 @@ class TeamsAPIV2: TeamsAPIV1 {
     // MARK: - Get team
 
     override func getTeam(for teamID: Team.ID) async throws -> Team {
-        let components = URLComponents(string: basePath(for: teamID))
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw TeamsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: basePath(for: teamID))
             .withMethod(.get)
             .build()
 

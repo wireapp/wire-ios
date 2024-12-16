@@ -35,14 +35,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
     }
 
     func getSelfUser() async throws -> SelfUser {
-        let components = URLComponents(string: resourcePath)
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw SelfUserAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: resourcePath)
             .withMethod(.get)
             .build()
 

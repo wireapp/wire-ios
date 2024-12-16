@@ -71,14 +71,9 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
     func getProperty(
         forKey key: UserProperty.Key
     ) async throws -> UserProperty {
-        let components = URLComponents(string: resourcePath + key.rawValue)
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw UserPropertiesAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let path = resourcePath + key.rawValue
+        
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .build()
 

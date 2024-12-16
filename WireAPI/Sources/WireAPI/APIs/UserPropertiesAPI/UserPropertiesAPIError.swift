@@ -30,8 +30,4 @@ public enum UserPropertiesAPIError: Error {
 
     case invalidKey
 
-    /// A request url is not invalid.
-
-    case invalidURL
-
 }

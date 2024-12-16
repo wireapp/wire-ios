@@ -50,8 +50,4 @@ public enum TeamsAPIError: Error {
 
     case invalidRequest
 
-    /// A request url is not invalid.
-
-    case invalidURL
-
 }
