@@ -51,6 +51,7 @@ final class SelfProfileViewController: UIViewController {
 
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
+    private let selfProfileViewsMonitor: SelfProfileViewsMonitor
 
     // MARK: - Configuration
 
@@ -106,7 +107,7 @@ final class SelfProfileViewController: UIViewController {
 
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
-
+        self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
         if selfUser.isTeamMember {
@@ -162,6 +163,7 @@ final class SelfProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        selfProfileViewsMonitor.onDidViewSelfProfile()
         configureAccountTitle()
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
@@ -264,6 +266,8 @@ final class SelfProfileViewController: UIViewController {
 
     private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
         let vc = IndividualToTeamMigrationViewController(
+            privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
+            termsOfUseURL: WireURLs.shared.legal.absoluteString,
             useCase: useCase,
             userProfileName: userName,
             actionCallback: { [weak self] action in
@@ -273,6 +277,8 @@ final class SelfProfileViewController: UIViewController {
                         switch action {
                         case .cancel:
                             presentedViewController?.dismiss(animated: true)
+                        case .toLearnMoreAboutPlans:
+                            _ = WireURLs.shared.wireEnterpriseInfo.open()
                         case .completionGoToApp:
                             dismissIndividualToTeamMigrationBanner()
                             presentedViewController?.dismiss(animated: true)
@@ -299,7 +305,7 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func navigateToTeam() {
-        // TODO: [WPB-11968] navigate to team
+        URL.manageTeam(source: .settings).open()
     }
 
     @objc
@@ -336,4 +342,11 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
             self.accountSelector?.switchTo(account: account)
         }
     }
+}
+
+// MARK: - Notifications
+
+public extension Notification.Name {
+    // Used to notify the app that the user has viewed their own profile
+    static let userDidViewSelfProfile = Notification.Name("userDidViewSelfProfile")
 }

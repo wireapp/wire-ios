@@ -21,14 +21,14 @@ import Foundation
 /// The contents of a message, typically as a base-64 encoded
 /// Protobuf string.
 
-public enum MessageContent: Equatable, Codable, Sendable {
+public struct MessageContent: Equatable, Codable, Sendable {
 
     /// Encrypted message content.
 
-    case ciphertext(String)
+    public let encryptedMessage: String
 
     /// Unencrypted message content.
 
-    case plaintext(String)
+    public var decryptedMessage: String?
 
 }

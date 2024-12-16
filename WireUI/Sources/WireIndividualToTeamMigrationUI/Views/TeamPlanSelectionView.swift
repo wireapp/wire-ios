@@ -53,7 +53,9 @@ struct TeamPlanSelectionView: View {
                 }
             }
             Button(
-                action: {},
+                action: {
+                    actionCallback(.goToPlans)
+                },
                 label: {
                     Text(String.localized(key: "individualToTeam.planSelection.url", bundle: .module))
                         .lineLimit(nil)
