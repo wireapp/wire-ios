@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// Allows for writing the event initialization with segmentations more compact.
+
 public extension AnalyticsEvent {
 
     @resultBuilder

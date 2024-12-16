@@ -29,7 +29,7 @@ public extension AnalyticsEvent {
         ///
         /// - Returns: A conversation contribution analytics event.
 
-        static func conversationContribution(
+        public static func conversationContribution(
             _ contributionType: ConversationContributionType,
             conversationType: ConversationType,
             conversationSize: UInt

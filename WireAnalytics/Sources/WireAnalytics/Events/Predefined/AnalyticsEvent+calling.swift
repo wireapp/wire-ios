@@ -28,7 +28,7 @@ public extension AnalyticsEvent {
         ///
         /// - Returns: A call initialized analytics event.
 
-        static func callInitialized(
+        public static func initiatedCall(
             isVideo: Bool,
             conversationType: ConversationType
         ) -> AnalyticsEvent {
@@ -49,7 +49,7 @@ public extension AnalyticsEvent {
         ///
         /// - Returns: A call joined analytics event.
 
-        static func callJoined(
+        public static func joinedCall(
             isVideo: Bool,
             conversationType: ConversationType
         ) -> AnalyticsEvent {
@@ -66,7 +66,7 @@ public extension AnalyticsEvent {
         /// - Parameter review: The Review containing score, reason or duration related to the call
         /// - Returns: A callQualitySurvey analytics event.
 
-        static func callQualitySurvey(_ review: CallQualitySurveyReview) -> AnalyticsEvent {
+        public static func callQualitySurvey(_ review: CallQualitySurveyReview) -> AnalyticsEvent {
             .init(name: "calling.call_quality_review", segmentation: review.segmentation)
         }
 

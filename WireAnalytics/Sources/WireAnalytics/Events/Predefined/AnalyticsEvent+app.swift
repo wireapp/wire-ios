@@ -22,7 +22,7 @@ public extension AnalyticsEvent {
 
         /// An event tracking when the user opens the app.
 
-        static let open = AnalyticsEvent(name: "app.open")
+        public static let open = AnalyticsEvent(name: "app.open")
 
     }
 }

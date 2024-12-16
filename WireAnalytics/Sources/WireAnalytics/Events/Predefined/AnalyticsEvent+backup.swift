@@ -22,15 +22,15 @@ public extension AnalyticsEvent {
 
         /// An event tracking when the user fails to export a backup.
 
-        static let backupExportFailed = AnalyticsEvent(name: "backup.export_failed")
+        public static let exportFailed = AnalyticsEvent(name: "backup.export_failed")
 
         /// An event tracking when the user successuflly restores a backup.
 
-        static let backupRestored = AnalyticsEvent(name: "backup.restore_succeeded")
+        public static let restored = AnalyticsEvent(name: "backup.restore_succeeded")
 
         /// An event tracking when the user fails to restores a backup.
 
-        static let backupRestoredFailed = AnalyticsEvent(name: "backup.restore_failed")
+        public static let restoredFailed = AnalyticsEvent(name: "backup.restore_failed")
 
     }
 }
