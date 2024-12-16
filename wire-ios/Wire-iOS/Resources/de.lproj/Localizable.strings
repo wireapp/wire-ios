@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Mehr erfahren";
 "peoplepicker.no_matching_results.action.manage_services" = "Dienste verwalten";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Kein Ergebnis";
 "peoplepicker.no_matching_results.message.users" = "Finden Sie Personen in Wire anhand ihrer Namen oder @Benutzernamen";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Finden Sie Personen in Wire anhand ihrer Namen oder @Benutzernamen\n\nFinden Sie Personen einer anderen Domain mit @Benutzername@Domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Alle sind hier.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Diese Einladung ist 2 Wochen gültig. Senden Sie eine neue, wenn diese abläuft.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Weitere Personen einladen";
 "peoplepicker.invite_team_members" = "Lade weitere Mitglieder ein";
 "peoplepicker.quick-action.open-conversation" = "Öffnen";
 "peoplepicker.quick-action.admin-services" = "Dienste verwalten";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Eingaben bearbeiten";
 
 "registration.country_select.title" = "Land";
-
-"registration.share_contacts.hero.title" = "Kontakte auf Wire finden";
-"registration.share_contacts.hero.paragraph" = "Teilen Sie Ihre Kontakte, damit wir Sie mit anderen verbinden können. Wir anonymisieren alle Informationen und geben sie nicht an andere weiter.";
-"registration.share_contacts.find_friends_button.title" = "Kontakte teilen";
-"registration.share_contacts.skip_button.title" = "Nicht jetzt";
-
-"registration.address_book_access_denied.hero.title" = "Wire hat keinen Zugriff auf Ihre Kontakte.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire hilft Ihnen, Ihre Freunde zu finden, wenn Sie Ihre Kontakte teilen.";
-"registration.address_book_access_denied.hero.paragraph2" = "Um Zugriff zu erlauben, bitte auf \"Kontakte\" in den Einstellungen tippen.";
-"registration.address_book_access_denied.settings_button.title" = "Einstellungen";
-"registration.address_book_access_denied.maybe_later_button.title" = "Vielleicht später";
 
 "registration.push_access_denied.hero.title" = "Verpassen Sie keinen Anrufe oder Nachrichten.";
 "registration.push_access_denied.hero.paragraph1" = "Aktivieren Sie Benachrichtigungen in den Einstellungen.";

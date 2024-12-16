@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "További információ";
 "peoplepicker.no_matching_results.action.manage_services" = "Szolgáltatások kezelése";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Nincs találat.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Mindenki itt van.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "2 hétig használható. Küld újat, ha lejárt.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Több partner meghívása";
 "peoplepicker.invite_team_members" = "Hívj meg másokat a csapatba";
 "peoplepicker.quick-action.open-conversation" = "Megnyitás";
 "peoplepicker.quick-action.admin-services" = "Szolgáltatások kezelése";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Adatok Szerkesztése";
 
 "registration.country_select.title" = "Ország";
-
-"registration.share_contacts.hero.title" = "Keress ismerősöket a Wire-ön";
-"registration.share_contacts.hero.paragraph" = "A névjegyeid importálásával könnyebben kapcsolatba léphetsz másokkal. Minden információt anonimizálunk, és semmit nem osszuk meg senki mással.";
-"registration.share_contacts.find_friends_button.title" = "Névjegyek megosztása";
-"registration.share_contacts.skip_button.title" = "Most nem";
-
-"registration.address_book_access_denied.hero.title" = "A Wire nem fér hozzá a névjegyeidhez.";
-"registration.address_book_access_denied.hero.paragraph1" = "Segítünk megtalálni ismerőseidet, ha megosztod névjegyeidet a Wire-rel.";
-"registration.address_book_access_denied.hero.paragraph2" = "A hozzáférés engedélyezéséhez koppints a Beállításokra és kapcsold be a Névjegyzéket.";
-"registration.address_book_access_denied.settings_button.title" = "Beállítások";
-"registration.address_book_access_denied.maybe_later_button.title" = "Talán később";
 
 "registration.push_access_denied.hero.title" = "Ne maradj le egy hívásról vagy üzenetről se.";
 "registration.push_access_denied.hero.paragraph1" = "Engedélyezd az Értesítéseket a Beállításokban.";
