@@ -25,8 +25,8 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
             let role = Role.existingObject(for: action.roleID, in: context),
             let participant = ZMUser.existingObject(for: action.userID, in: context),
             let roleName = role.name,
-            let userId = participant.remoteIdentifier,
-            let conversationId = conversation.remoteIdentifier,
+            let userID = participant.remoteIdentifier?.transportString(),
+            let convID = conversation.remoteIdentifier?.transportString(),
             let payload = Payload.ConversationUpdateRole(role: roleName),
             let payloadData = payload.payloadData(encoder: .defaultEncoder),
             let payloadString = String(bytes: payloadData, encoding: .utf8)
@@ -40,10 +40,10 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
 
         switch apiVersion {
         case .v0, .v1, .v2, .v3, .v4, .v5, .v6:
-            path = "/conversations/\(conversationId.transportString())/members/\(userId.transportString())"
+            path = "/conversations/\(convID)/members/\(userID)"
         case .v7:
             guard
-                let conversationDomain = conversation.domain ?? BackendInfo.domain,
+                let convDomain = conversation.domain ?? BackendInfo.domain,
                 let userDomain = participant.domain ?? BackendInfo.domain
             else {
                 var action = action
@@ -51,7 +51,7 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
                 return nil
             }
 
-            path = "/conversations/\(conversationDomain)/\(conversationId.transportString())/members/\(userDomain)/\(userId.transportString())"
+            path = "/conversations/\(convDomain)/\(convID)/members/\(userDomain)/\(userID)"
         }
 
         return ZMTransportRequest(
