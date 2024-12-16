@@ -73,7 +73,6 @@ public struct FilterConversationsUseCase<ConversationContainer>: FilterConversat
     }
 }
 
-
 private extension FilterableConversation {
     func nameMatches(query: String) -> Bool {
         let conversationName = name.normalizedForSearch() as String
