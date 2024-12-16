@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Sužinoti daugiau";
 "peoplepicker.no_matching_results.action.manage_services" = "Valdyti tarnybas";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Rezultatų nėra.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Visi jau čia.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Pakvietimą galima naudoti 2 savaites. Išsiųskite naują jei galiojimas baigėsi.";
 "peoplepicker.send_invitation.dialog.ok" = "GERAI";
 
-"peoplepicker.invite_more_people" = "Pakviesti daugiau žmonių";
 "peoplepicker.invite_team_members" = "Kvieskite žmonių prisijungti prie komandos";
 "peoplepicker.quick-action.open-conversation" = "Atverti";
 "peoplepicker.quick-action.admin-services" = "Valdyti paslaugas";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Keisti duomenis";
 
 "registration.country_select.title" = "Šalis";
-
-"registration.share_contacts.hero.title" = "Ieškoti žmonių, naudojančių „Wire“";
-"registration.share_contacts.hero.paragraph" = "Dalinkitės savo kontaktais, kad galėtumėme jus sujungti su kitais. Visą informaciją mes nuasmeniname ir su niekuo nesidaliname.";
-"registration.share_contacts.find_friends_button.title" = "Dalintis kontaktais";
-"registration.share_contacts.skip_button.title" = "Vėliau";
-
-"registration.address_book_access_denied.hero.title" = "„Wire“ neturi teisės prisijungti prie jūsų kontaktų.";
-"registration.address_book_access_denied.hero.paragraph1" = "„Wire“ padės rasti draugus jei pasidalinsite kontaktais.";
-"registration.address_book_access_denied.hero.paragraph2" = "Norėdami leisti prisijungti, spustelėkite Nustatymai ir įjunkite Kontaktai.";
-"registration.address_book_access_denied.settings_button.title" = "Nustatymai";
-"registration.address_book_access_denied.maybe_later_button.title" = "Gal vėliau";
 
 "registration.push_access_denied.hero.title" = "Niekada nepraleiskite skambučio ar žinutės.";
 "registration.push_access_denied.hero.paragraph1" = "Aktyvuokite Pranešimus Nustatymuose.";
