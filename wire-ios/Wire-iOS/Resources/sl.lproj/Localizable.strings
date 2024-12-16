@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Nauči se več";
 "peoplepicker.no_matching_results.action.manage_services" = "Manage Services";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Ni rezultatov.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Everyone’s here.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Lahko se uporabi v roku 2 tednov. Pošlji novo, ko se ta izteče.";
 "peoplepicker.send_invitation.dialog.ok" = "V redu";
 
-"peoplepicker.invite_more_people" = "Povabi več oseb";
 "peoplepicker.invite_team_members" = "Invite people to join the team";
 "peoplepicker.quick-action.open-conversation" = "Odpri";
 "peoplepicker.quick-action.admin-services" = "Manage Services";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Uredi podrobnosti";
 
 "registration.country_select.title" = "Država";
-
-"registration.share_contacts.hero.title" = "Najdi osebe na Wire";
-"registration.share_contacts.hero.paragraph" = "Delite vaše stike, da vas lahko povežemo z drugimi. Vse informacije anonimiziramo in ne delimo z drugimi.";
-"registration.share_contacts.find_friends_button.title" = "Deli stike";
-"registration.share_contacts.skip_button.title" = "Ne zdaj";
-
-"registration.address_book_access_denied.hero.title" = "Wire nima dostopa do vaših stikov.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire vam pomaga najti vaše prijatelje, če delite vaše stike.";
-"registration.address_book_access_denied.hero.paragraph2" = "Za dostop tapnite Nastavitve in vklopite Stiki.";
-"registration.address_book_access_denied.settings_button.title" = "Nastavitve";
-"registration.address_book_access_denied.maybe_later_button.title" = "Morda kasneje";
 
 "registration.push_access_denied.hero.title" = "Nikoli ne zamudi klica ali sporočila.";
 "registration.push_access_denied.hero.paragraph1" = "Omogoči obvestila v nastavitvah.";

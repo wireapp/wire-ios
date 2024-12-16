@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Más información";
 "peoplepicker.no_matching_results.action.manage_services" = "Gestionar los servicios";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "No hay resultados.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Todos están aquí.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Puede aceptarse hasta pasadas 2 semanas. Envía una nueva si ésta caduca.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Invitar a más contactos";
 "peoplepicker.invite_team_members" = "Invitar personas para unirse al equipo";
 "peoplepicker.quick-action.open-conversation" = "Abrir";
 "peoplepicker.quick-action.admin-services" = "Gestionar los servicios";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Editar detalles";
 
 "registration.country_select.title" = "País";
-
-"registration.share_contacts.hero.title" = "Encontrar contactos en Wire";
-"registration.share_contacts.hero.paragraph" = "Compartir tus contactos permite a Wire a conectarte con otros usuarios. Toda la información es anónima y no la compartimos con nadie.";
-"registration.share_contacts.find_friends_button.title" = "Compartir contactos";
-"registration.share_contacts.skip_button.title" = "Ahora no";
-
-"registration.address_book_access_denied.hero.title" = "Wire no tiene acceso a tus contactos.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire encuentra usuarios de Wire que conoces si compartes tus contactos.";
-"registration.address_book_access_denied.hero.paragraph2" = "Para habilitar el acceso, activa el acceso a los contactos en Ajustes.";
-"registration.address_book_access_denied.settings_button.title" = "Ajustes";
-"registration.address_book_access_denied.maybe_later_button.title" = "Tal vez después";
 
 "registration.push_access_denied.hero.title" = "No pierdas nunca una llamada o mensaje.";
 "registration.push_access_denied.hero.paragraph1" = "Activa las notificaciones en Ajustes.";

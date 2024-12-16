@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Läs mer";
 "peoplepicker.no_matching_results.action.manage_services" = "Hantera Tjänster";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Inga resultat.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Alla är här.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Det kan användas i 2 veckor. Skicka en ny om det löper ut.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Bjud in fler personer";
 "peoplepicker.invite_team_members" = "Bjud in personer att gå med i teamet";
 "peoplepicker.quick-action.open-conversation" = "Öppna";
 "peoplepicker.quick-action.admin-services" = "Hantera Tjänster";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Redigera detaljer";
 
 "registration.country_select.title" = "Land";
-
-"registration.share_contacts.hero.title" = "Hitta personer på Wire";
-"registration.share_contacts.hero.paragraph" = "Tillåt Wire åtkomst till dina kontakter för att ansluta dig med andra. Vi anonymiserar all information och delar inte den med någon annan.";
-"registration.share_contacts.find_friends_button.title" = "Dela kontakter";
-"registration.share_contacts.skip_button.title" = "Inte nu";
-
-"registration.address_book_access_denied.hero.title" = "Wire har inte åtkomst till dina kontakter.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire hjälper dig att hitta dina vänner om du delar dina kontakter.";
-"registration.address_book_access_denied.hero.paragraph2" = "För att aktivera, tryck på Inställningar och aktivera kontakter.";
-"registration.address_book_access_denied.settings_button.title" = "Inställningar";
-"registration.address_book_access_denied.maybe_later_button.title" = "Kanske senare";
 
 "registration.push_access_denied.hero.title" = "Missa aldrig ett samtal eller ett meddelande.";
 "registration.push_access_denied.hero.paragraph1" = "Aktivera notiser i inställningar.";
