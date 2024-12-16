@@ -32,7 +32,8 @@ struct SidebarPreview: View {
         availability: .away,
         isE2EICertified: true,
         isVerified: true,
-        isLegalHoldEnabled: true
+        isLegalHoldEnabled: true,
+        showNotificationsBadge: true
     )
     @State private var selectedMenuItem: SidebarSelectableMenuItem = .all
 
@@ -51,7 +52,7 @@ struct SidebarPreview: View {
                     foldersAction: { _ in },
                     connectAction: {},
                     supportAction: {},
-                    accountImageView: { _, _ in MockAccountImageView() },
+                    accountImageView: { _, _, _ in MockAccountImageView() },
                     legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
                 )
                 .navigationSplitViewColumnWidth(primarySplitColumnWidth)

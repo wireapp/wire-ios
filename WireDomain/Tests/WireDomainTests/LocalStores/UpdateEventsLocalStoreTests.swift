@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
 import XCTest
+@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
 
@@ -284,7 +284,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             conversationID: conversationID,
             senderID: aliceID,
             timestamp: time30SecondsAgo,
-            message: .ciphertext("xxxxx"),
+            message: MessageContent(encryptedMessage: "xxxxx"),
             externalData: nil,
             messageSenderClientID: aliceClientID,
             messageRecipientClientID: selfClientID
@@ -294,7 +294,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             conversationID: conversationID,
             senderID: aliceID,
             timestamp: time20SecondsAgo,
-            message: .ciphertext("yyyyy"),
+            message: MessageContent(encryptedMessage: "yyyyy"),
             externalData: nil,
             messageSenderClientID: aliceClientID,
             messageRecipientClientID: selfClientID

@@ -18,8 +18,8 @@
 
 import Foundation
 
-extension GenericMessage {
-    public init?(from updateEvent: ZMUpdateEvent) {
+public extension GenericMessage {
+    init?(from updateEvent: ZMUpdateEvent) {
         let base64Content: String?
 
         switch updateEvent.type {

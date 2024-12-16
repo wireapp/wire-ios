@@ -25,7 +25,10 @@ import WireFoundation
 func confirmationPreview() -> some View {
     PageContainer(
         content: {
-            ConfirmationView { _ in }
+            ConfirmationView(
+                termsOfUseURL: "https://wire.com/en/terms-of-use-business",
+                privacyPolicyURL: "https://wire.com/privacy-policy"
+            ) { _ in }
         },
         step: 3,
         stepCount: 4,
