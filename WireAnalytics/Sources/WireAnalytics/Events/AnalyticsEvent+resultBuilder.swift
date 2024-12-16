@@ -18,32 +18,32 @@
 
 // Allows for writing the event initialization with segmentations more compact.
 
-public extension AnalyticsEvent {
+extension AnalyticsEvent {
 
     @resultBuilder
     struct SegmentationEntryBuilder {
 
-        public static func buildBlock(_ components: [SegmentationEntry]...) -> [SegmentationEntry] {
+        static func buildBlock(_ components: [SegmentationEntry]...) -> [SegmentationEntry] {
             components.flatMap { $0 }
         }
 
-        public static func buildExpression(_ expression: SegmentationEntry) -> [SegmentationEntry] {
+        static func buildExpression(_ expression: SegmentationEntry) -> [SegmentationEntry] {
             [expression]
         }
 
-        public static func buildExpression(_ expression: [SegmentationEntry]) -> [SegmentationEntry] {
+        static func buildExpression(_ expression: [SegmentationEntry]) -> [SegmentationEntry] {
             expression
         }
 
-        public static func buildOptional(_ components: [SegmentationEntry]?) -> [SegmentationEntry] {
+        static func buildOptional(_ components: [SegmentationEntry]?) -> [SegmentationEntry] {
             components ?? []
         }
 
-        public static func buildEither(first components: [SegmentationEntry]) -> [SegmentationEntry] {
+        static func buildEither(first components: [SegmentationEntry]) -> [SegmentationEntry] {
             components
         }
 
-        public static func buildEither(second components: [SegmentationEntry]) -> [SegmentationEntry] {
+        static func buildEither(second components: [SegmentationEntry]) -> [SegmentationEntry] {
             components
         }
     }
