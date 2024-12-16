@@ -79,7 +79,7 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
         XCTAssertEqual(appendLocationInvocation.locationData.zoomLevel, testLocationData.zoomLevel)
         XCTAssertNotNil(appendLocationInvocation.nonce)
 
-        let expectedEvent = AnalyticsEvent.conversationContribution(
+        let expectedEvent = AnalyticsEvent.Contributed.conversationContribution(
             .locationMessage,
             conversationType: .group,
             conversationSize: 0

@@ -29,13 +29,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: GitHub Action for SwiftFormat
         run: >
-          swiftformat --lint
-          ./WirePlugins
-          ./WireAPI
-          ./WireAnalytics
-          ./WireDomain
-          ./WireFoundation
-          ./WireUI
-          ./scripts
+          swiftformat --lint .
           --reporter github-actions-log
           --config .swiftformat

@@ -19,7 +19,7 @@
 public import SwiftUI
 
 private struct WireAccentColorKey: EnvironmentKey {
-    static let defaultValue: AccentColor = .default
+    static var defaultValue: AccentColor { .default }
 }
 
 public extension EnvironmentValues {
