@@ -57,6 +57,7 @@ struct PageContainer<Content: View>: View {
                     minHeight: proxy.size.height - 24
                 )
             }
+            .scrollIndicators(.hidden)
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
