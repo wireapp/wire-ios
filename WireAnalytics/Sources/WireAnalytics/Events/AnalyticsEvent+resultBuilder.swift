@@ -55,7 +55,7 @@ public extension AnalyticsEvent {
     ///   - segmentation: Additional metadata.
 
     init(
-        _ name: String,
+        name: String,
         @SegmentationEntryBuilder segmentation: () -> [SegmentationEntry]
     ) {
         self.init(

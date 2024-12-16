@@ -49,7 +49,7 @@ public extension AnalyticsEvent {
         /// An event tracking when the user reaches a certain step of the individual to team migration flow.
 
         public static func personalTeamCreationFlowStarted(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
-            AnalyticsEvent("user.personal-team-creation-flow-started") {
+            AnalyticsEvent(name: "user.personal-team-creation-flow-started") {
                 SegmentationEntry("step_modalcreateteam", step.rawValue)
             }
         }
@@ -57,7 +57,7 @@ public extension AnalyticsEvent {
         /// An event tracking when the user dismisses the individual to team migration flow at a certain step.
 
         public static func personalToTeamMigrationFlowStopped(at step: IndividualToTeamMigration.Step) -> AnalyticsEvent {
-            AnalyticsEvent("user.personal-team-creation-flow-stopped") {
+            AnalyticsEvent(name: "user.personal-team-creation-flow-stopped") {
                 switch step {
                 case .disclaimer:
                     SegmentationEntry("modal_disclaimers", true)
@@ -74,7 +74,7 @@ public extension AnalyticsEvent {
         public static func personalTeamCreationFlowCancel(
             action: IndividualToTeamMigration.CancelConfirmationAction
         ) -> AnalyticsEvent {
-            AnalyticsEvent("user.personal-team-creation-flow-cancelled") {
+            AnalyticsEvent(name: "user.personal-team-creation-flow-cancelled") {
                 switch action {
                 case .continue:
                     SegmentationEntry("modal_continue-clicked", true)
@@ -89,7 +89,7 @@ public extension AnalyticsEvent {
         public static func personalTeamCreationFlowCompleted(
             action: IndividualToTeamMigration.CompletedAction
         ) -> AnalyticsEvent {
-            AnalyticsEvent("user.personal-team-creation-flow-completed") {
+            AnalyticsEvent(name: "user.personal-team-creation-flow-completed") {
                 switch action {
                 case .backToWire:
                     SegmentationEntry("modal_back-to-wire-clicked", true)

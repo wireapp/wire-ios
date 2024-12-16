@@ -23,7 +23,7 @@ public extension AnalyticsEvent {
         /// An event tracking when the user opens the self profile.
 
         public static func openSelfProfile(isMigrationDotActive: Bool) -> AnalyticsEvent {
-            AnalyticsEvent("ui.clicked-profile") {
+            AnalyticsEvent(name: "ui.clicked-profile") {
                 if isMigrationDotActive {
                     SegmentationEntry("migration_dot_active", true)
                 }
@@ -50,7 +50,7 @@ public extension AnalyticsEvent {
             isCreateTeamButtonUsed: Bool = false,
             isDismissCTAButtonUsed: Bool = false
         ) -> AnalyticsEvent {
-            AnalyticsEvent("ui.clicked-personal-migration-cta") {
+            AnalyticsEvent(name: "ui.clicked-personal-migration-cta") {
                 if isCreateTeamButtonUsed {
                     SegmentationEntry("clicked_create_team", true)
                 }

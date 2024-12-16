@@ -18,9 +18,7 @@
 
 /// An event that can be tracked.
 
-public struct AnalyticsEvent: Equatable, Identifiable, Sendable {
-
-    public var id: String { name }
+public struct AnalyticsEvent: Equatable, Sendable {
 
     /// A unique name.
 
@@ -36,7 +34,7 @@ public struct AnalyticsEvent: Equatable, Identifiable, Sendable {
     ///   - name: A unique name.
     ///   - segmentation: Additional metadata.
 
-    public init<Collection>(
+    init<Collection>(
         name: String,
         segmentation: Collection = []
     ) where Collection: Swift.Collection, Collection.Element == SegmentationEntry {
