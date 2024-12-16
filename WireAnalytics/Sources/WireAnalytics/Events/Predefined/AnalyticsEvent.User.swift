@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
-
-extension AnalyticsEvent.User {
+public extension AnalyticsEvent.User {
 
     /// Count of user reaching for each modal step (Step 1 through 3)
     ///

@@ -3821,7 +3821,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		595C04172CDE85E800DF6C57 /* MainController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MainController; sourceTree = "<group>"; };
-		597FD9192D0C55810023B520 /* Analytics */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Analytics; sourceTree = "<group>"; };
+		597FD9192D0C55810023B520 /* AnalyticsTrackingManager */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AnalyticsTrackingManager; sourceTree = "<group>"; };
 		597FD93A2D0C5AAE0023B520 /* SelfProfile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SelfProfile; sourceTree = "<group>"; };
 		5983A3EE2CF86F9A002006F6 /* Logging */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logging; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -6192,7 +6192,7 @@
 				871BC3181D34F94200DF0793 /* Components */,
 				8FC85126199245760008B66B /* Helpers */,
 				E902B3B529ED3A2E0090DE32 /* SwiftUI Helpers */,
-				597FD9192D0C55810023B520 /* Analytics */,
+				597FD9192D0C55810023B520 /* AnalyticsTrackingManager */,
 				8FC850F7199245760008B66B /* Developer */,
 				8FC85146199245760008B66B /* Managers */,
 				EF2126B41FB9DFE300625A9B /* Authentication */,
@@ -8424,7 +8424,7 @@
 				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				597FD9192D0C55810023B520 /* Analytics */,
+				597FD9192D0C55810023B520 /* AnalyticsTrackingManager */,
 				597FD93A2D0C5AAE0023B520 /* SelfProfile */,
 			);
 			name = "Wire-iOS";
