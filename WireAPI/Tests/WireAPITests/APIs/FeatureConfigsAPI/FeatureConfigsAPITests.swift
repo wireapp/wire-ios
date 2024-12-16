@@ -424,12 +424,3 @@ extension FeatureConfigsAPITests {
     }
 
 }
-
-// private extension APIVersion {
-//
-//    func buildAPI(client: any APIServiceProtocol) -> any FeatureConfigsAPI {
-//        let builder = FeatureConfigsAPIBuilder(apiService: apiService)
-//        return builder.makeAPI(for: self)
-//    }
-//
-// }
