@@ -48,31 +48,26 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
+        // Fetch MLS 1:1 conversation and store it locally.
         let (mlsGroupID, removalKeys) = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
         )
 
-        if try await mlsService.conversationExists(groupID: mlsGroupID) {
-            return mlsGroupID
-        }
-
-        guard let epoch = await fetchMLSConversationEpoch(mlsGroupID: mlsGroupID, in: context) else {
-            throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
-        }
-
-        if epoch == 0 {
-            try await establishMLSGroupIfNeeded(
+        // Create or join the MLS conversation if needed.
+        if try await !mlsService.conversationExists(groupID: mlsGroupID) {
+            try await createOrJoinMLSConversationIfNeeded(
                 userID: userID,
                 mlsGroupID: mlsGroupID,
                 removalKeys: removalKeys,
-                in: context
-            )
-        } else {
-            try await mlsService.joinGroup(with: mlsGroupID)
+                in: context)
         }
 
-        try await switchLocalConversationToMLS(
+        // Perform the migration of messages and link the MLS conversation if needed.
+        // It's safe to attempt this step each time to enhance the resilience of the app.
+        // This ensures that in cases where an MLS conversation exists but Proteus hasn't yet switched and the messages haven't been migrated,
+        // it will attempt the migration again.
+        try await migrateMessagesAndLinkMLSConversationIfNeeded(
             userID: userID,
             mlsGroupID: mlsGroupID,
             in: context
@@ -137,7 +132,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
-    private func switchLocalConversationToMLS(
+    private func migrateMessagesAndLinkMLSConversationIfNeeded(
         userID: QualifiedID,
         mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
@@ -155,10 +150,10 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             }
 
             // move local messages from proteus conversation if it exists
-            if let proteusConversation = otherUser.oneOnOneConversation {
+            if let existingConversation = otherUser.oneOnOneConversation, existingConversation.messageProtocol == .proteus {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+                mlsConversation.mutableMessages.union(existingConversation.allMessages)
 
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
@@ -166,6 +161,28 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
             // switch active conversation
             otherUser.oneOnOneConversation = mlsConversation
+        }
+    }
+
+    private func createOrJoinMLSConversationIfNeeded(
+        userID: QualifiedID,
+        mlsGroupID: MLSGroupID,
+        removalKeys: BackendMLSPublicKeys?,
+        in context: NSManagedObjectContext
+    ) async throws {
+        guard let epoch = await fetchMLSConversationEpoch(mlsGroupID: mlsGroupID, in: context) else {
+            throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
+        }
+
+        if epoch == 0 {
+            try await establishMLSGroupIfNeeded(
+                userID: userID,
+                mlsGroupID: mlsGroupID,
+                removalKeys: removalKeys,
+                in: context
+            )
+        } else {
+            try await mlsService.joinGroup(with: mlsGroupID)
         }
     }
 }
