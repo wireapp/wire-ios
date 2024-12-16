@@ -28,7 +28,7 @@ class PushChannelAPIImpl: PushChannelAPI {
 
     func createPushChannel(clientID: String) async throws -> any PushChannelProtocol {
         let path = "/await"
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .withQueryItem(name: "client", value: clientID)

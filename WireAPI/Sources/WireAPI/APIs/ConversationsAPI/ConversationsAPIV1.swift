@@ -34,7 +34,7 @@ class ConversationsAPIV1: ConversationsAPIV0 {
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try jsonEncoder.encode(params)
-            
+
             let request = try URLRequestBuilder(path: path)
                 .withMethod(.post)
                 .withBody(body, contentType: .json)

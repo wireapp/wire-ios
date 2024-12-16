@@ -72,7 +72,7 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
         forKey key: UserProperty.Key
     ) async throws -> UserProperty {
         let path = resourcePath + key.rawValue
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .build()

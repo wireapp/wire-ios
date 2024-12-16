@@ -48,7 +48,7 @@ class TeamsAPIV4: TeamsAPIV3 {
 
     override func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole] {
         let path = "\(basePath(for: teamID))/conversations/roles"
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .build()
