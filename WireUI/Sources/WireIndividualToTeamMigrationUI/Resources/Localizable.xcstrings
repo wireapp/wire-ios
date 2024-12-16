@@ -162,13 +162,32 @@
         }
       }
     },
-    "individualToTeam.confirmation.body" : {
-      "extractionState" : "manual",
+    "individualToTeam.confirmation.body.createTeam" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• You create a team and transfer your personal account into a team account\n• As the team owner you can invite and remove team members and  manage team settings\n• This change is permanent and irrevocable"
+            "value" : "You create a team and transfer your personal account into a team account"
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.body.permanent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This change is permanent and irrevocable"
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.body.teamOwner" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As the team owner you can invite and remove team members and  manage team settings"
           }
         }
       }
@@ -222,7 +241,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accept our [Terms & Conditions](https://wire.com/en/terms-of-use-business) and [Privacy Policy](https://wire.com/en/privacy-policy)."
+            "value" : "Accept our [Terms & Conditions](%@) and [Privacy Policy](%@)."
           }
         }
       }
@@ -412,17 +431,6 @@
         }
       }
     },
-    "individualToTeam.plansURL" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "https://wire.com/en/pricing"
-          }
-        }
-      }
-    },
     "individualToTeam.progressCount" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -461,7 +469,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your team"
+            "value" : "Your Team"
           }
         }
       }
@@ -472,7 +480,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Team name *"
+            "value" : "Team name"
           }
         }
       }

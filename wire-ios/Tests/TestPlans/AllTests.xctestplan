@@ -48,6 +48,7 @@
         "CallActionsViewSnapshotTests",
         "MessageReplyPreviewViewTests\/testThatItRendersImageMessagePreview()",
         "SearchResultLabelTests",
+        "ServiceDetailViewControllerSnapshotTests\/testForTeamMemberWrappedInNavigationController()",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Video_DarkMode()",
         "StartUIViewControllerSnapshotTests\/testForNoContactWhenSelfIsTeamMember()"
