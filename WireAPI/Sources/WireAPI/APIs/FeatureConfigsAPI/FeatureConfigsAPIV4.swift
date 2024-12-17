@@ -25,21 +25,19 @@ class FeatureConfigsAPIV4: FeatureConfigsAPIV3 {
     }
 
     override func getFeatureConfigs() async throws -> [FeatureConfig] {
-        let request = try URLRequestBuilder(path: resourcePath)
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
+        let request = HTTPRequest(
+            path: "\(pathPrefix)/feature-configs",
+            method: .get
         )
+
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: FeatureConfigsResponseAPIV4.self)
             .failure(code: .forbidden, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
             .failure(code: .forbidden, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
             .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
-            .parse(code: response.statusCode, data: data)
+            .parse(response)
     }
 
 }

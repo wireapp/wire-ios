@@ -22,14 +22,14 @@ import Foundation
 
 public struct FeatureConfigsAPIBuilder {
 
-    let apiService: any APIServiceProtocol
+    let httpClient: any HTTPClient
 
     /// Create a new builder.
     ///
     /// - Parameter httpClient: A http client.
 
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    public init(httpClient: any HTTPClient) {
+        self.httpClient = httpClient
     }
 
     /// Make a versioned `FeatureConfigsAPI`.
@@ -40,21 +40,21 @@ public struct FeatureConfigsAPIBuilder {
     public func makeAPI(for version: APIVersion) -> any FeatureConfigsAPI {
         switch version {
         case .v0:
-            FeatureConfigsAPIV0(apiService: apiService)
+            FeatureConfigsAPIV0(httpClient: httpClient)
         case .v1:
-            FeatureConfigsAPIV1(apiService: apiService)
+            FeatureConfigsAPIV1(httpClient: httpClient)
         case .v2:
-            FeatureConfigsAPIV2(apiService: apiService)
+            FeatureConfigsAPIV2(httpClient: httpClient)
         case .v3:
-            FeatureConfigsAPIV3(apiService: apiService)
+            FeatureConfigsAPIV3(httpClient: httpClient)
         case .v4:
-            FeatureConfigsAPIV4(apiService: apiService)
+            FeatureConfigsAPIV4(httpClient: httpClient)
         case .v5:
-            FeatureConfigsAPIV5(apiService: apiService)
+            FeatureConfigsAPIV5(httpClient: httpClient)
         case .v6:
-            FeatureConfigsAPIV6(apiService: apiService)
+            FeatureConfigsAPIV6(httpClient: httpClient)
         case .v7:
-            FeatureConfigsAPIV7(apiService: apiService)
+            FeatureConfigsAPIV7(httpClient: httpClient)
         }
     }
 }

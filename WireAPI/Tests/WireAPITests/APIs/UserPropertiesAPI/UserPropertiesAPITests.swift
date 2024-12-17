@@ -17,19 +17,19 @@
 //
 
 import XCTest
+
 @testable import WireAPI
-@testable import WireAPISupport
 
 final class UserPropertiesAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APIServiceSnapshotHelper<any UserPropertiesAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any UserPropertiesAPI>!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
-            let builder = UserPropertiesBuilder(apiService: apiService)
+        apiSnapshotHelper = APISnapshotHelper { httpClient, apiVersion in
+            let builder = UserPropertiesBuilder(httpClient: httpClient)
             return builder.makeAPI(for: apiVersion)
         }
     }
@@ -63,70 +63,66 @@ final class UserPropertiesAPITests: XCTestCase {
 
     // MARK: - V0
 
-    func testGetUserReceiptModeProperty_SuccessResponse_200_V0_Then_Verify_Request() async throws {
+    func testGetUserReceiptModeProperty_SuccessResponse_200_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetUserReceiptModePropertySuccessResponseV0")
-        ])
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetUserReceiptModePropertySuccessResponseV0"
+        )
+
+        let sut = UserPropertiesAPIV0(httpClient: httpClient)
+
+        // When
+        let result = try await sut.areReadReceiptsEnabled
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
-            // When
-            let result = try await sut.areReadReceiptsEnabled
-
-            // Then
-            XCTAssertEqual(
-                result,
-                true
-            )
-        }
+        XCTAssertEqual(
+            result,
+            true
+        )
     }
 
-    func testGetUserTypingIndicatorModeProperty_SuccessResponse_200_V0_Then_Verify_Request() async throws {
+    func testGetUserTypingIndicatorModeProperty_SuccessResponse_200_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetUserTypingIndicatorModePropertySuccessResponseV0")
-        ])
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetUserTypingIndicatorModePropertySuccessResponseV0"
+        )
+
+        let sut = UserPropertiesAPIV0(httpClient: httpClient)
+
+        // When
+        let result = try await sut.areTypingIndicatorsEnabled
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
-            // When
-            let result = try await sut.areReadReceiptsEnabled
-
-            // Then
-            XCTAssertEqual(
-                result,
-                false
-            )
-        }
+        XCTAssertEqual(
+            result,
+            false
+        )
     }
 
-    func testGetUserLabelsProperty_SuccessResponse_200_V0_Then_Verify_Request() async throws {
+    func testGetUserLabelsProperty_SuccessResponse_200_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetUserLabelsPropertySuccessResponseV0")
-        ])
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetUserLabelsPropertySuccessResponseV0"
+        )
+
+        let sut = UserPropertiesAPIV0(httpClient: httpClient)
+
+        // When
+        let labels = try await sut.getLabels()
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
-            // When
-            let labels = try await sut.getLabels()
-
-            // Then
-            XCTAssertEqual(labels.count, 2)
-            XCTAssertEqual(labels[0].name, "Foo")
-            XCTAssertEqual(labels[1].name, nil)
-        }
+        XCTAssertEqual(labels.count, 2)
+        XCTAssertEqual(labels[0].name, "Foo")
+        XCTAssertEqual(labels[1].name, nil)
     }
 
     func testGetLabels_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: ""
-        )
-
-        let sut = UserPropertiesAPIV4(apiService: apiService)
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
+        let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then
         await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
@@ -137,12 +133,8 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetUserTypingIndicatorModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: ""
-        )
-
-        let sut = UserPropertiesAPIV4(apiService: apiService)
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
+        let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then
         await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
@@ -153,12 +145,8 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetUserReceiptModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: ""
-        )
-
-        let sut = UserPropertiesAPIV4(apiService: apiService)
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
+        let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then
         await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
@@ -171,12 +159,8 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetUserProperties_FailureResponse_InvalidKey_V4() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .badRequest,
-            label: ""
-        )
-
-        let sut = UserPropertiesAPIV4(apiService: apiService)
+        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
+        let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then
         await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.invalidKey) {

@@ -1,5 +1,4 @@
-curl \
-	--request PUT \
-	--header "Content-Type: application/json" \
-	--data "{\"supported_protocols\":[\"mls\"]}" \
-	"/v6/self/supported-protocols"
+- HTTPRequest
+  - path: "/v6/self/supported-protocols"
+  - method: put
+  - body: {"supported_protocols":["mls"]}

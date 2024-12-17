@@ -20,38 +20,32 @@ import Foundation
 
 class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
 
-    let apiService: any APIServiceProtocol
+    let httpClient: any HTTPClient
 
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    init(httpClient: any HTTPClient) {
+        self.httpClient = httpClient
     }
 
     var apiVersion: APIVersion {
         .v0
     }
 
-    var resourcePath: String {
-        "\(pathPrefix)/feature-configs/"
-    }
-
     // MARK: - Get all feature configs
 
     func getFeatureConfigs() async throws -> [FeatureConfig] {
-        let request = try URLRequestBuilder(path: resourcePath)
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
+        let request = HTTPRequest(
+            path: "\(pathPrefix)/feature-configs",
+            method: .get
         )
+
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: FeatureConfigsResponseAPIV0.self)
             .failure(code: .forbidden, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
             .failure(code: .forbidden, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
             .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
-            .parse(code: response.statusCode, data: data)
+            .parse(response)
     }
 
 }

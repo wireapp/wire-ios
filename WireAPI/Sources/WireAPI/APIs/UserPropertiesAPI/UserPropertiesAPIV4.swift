@@ -25,14 +25,14 @@ class UserPropertiesAPIV4: UserPropertiesAPIV3 {
     }
 
     override func parseResponse<Payload: UserPropertiesResponseAPIV0>(
-        _ response: (code: Int, data: Data),
+        _ response: HTTPResponse,
         forPayloadType type: Payload.Type
     ) throws -> UserProperty where Payload.APIModel == UserProperty {
         try ResponseParser()
             .success(code: .ok, type: type)
             .failure(code: .badRequest, error: UserPropertiesAPIError.invalidKey) /// Error code only present in api v4.
             .failure(code: .notFound, error: UserPropertiesAPIError.propertyNotFound)
-            .parse(code: response.code, data: response.data)
+            .parse(response)
     }
 
 }

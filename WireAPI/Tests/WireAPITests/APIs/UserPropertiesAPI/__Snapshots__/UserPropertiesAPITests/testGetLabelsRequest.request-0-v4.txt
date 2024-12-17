@@ -1,2 +1,4 @@
-curl \
-	"/v4/properties/labels"
+- HTTPRequest
+  - path: "/v4/properties/labels"
+  - method: get
+  - body: none

@@ -10,7 +10,18 @@
   ],
   "defaultOptions" : {
     "codeCoverage" : false,
-    "language" : "en"
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
+    "language" : "en",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireLogging",
+      "identifier" : "WireLoggingTests",
+      "name" : "WireLoggingTests"
+    }
   },
   "testTargets" : [
     {

@@ -17,19 +17,19 @@
 //
 
 import XCTest
+
 @testable import WireAPI
-@testable import WireAPISupport
 
 final class SelfUserAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APIServiceSnapshotHelper<any SelfUserAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any SelfUserAPI>!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
-            let builder = SelfUserAPIBuilder(apiService: apiService)
+        apiSnapshotHelper = APISnapshotHelper { httpClient, apiVersion in
+            let builder = SelfUserAPIBuilder(httpClient: httpClient)
             return builder.makeAPI(for: apiVersion)
         }
     }
@@ -58,18 +58,50 @@ final class SelfUserAPITests: XCTestCase {
 
     func testPushSupportedProtocols_UnsupportedVersionError_V0_to_V4() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([])
+        let httpClient = HTTPClientMock(
+            code: .ok,
+            payload: nil
+        )
 
         let unsupportedVersions: [APIVersion] = [.v0, .v1, .v2, .v3, .v4]
-        let suts = unsupportedVersions.map {
-            $0.buildAPI(apiService: apiService)
-        }
+        let suts = unsupportedVersions.map { $0.buildAPI(client: httpClient) }
 
-        for sut in suts {
-            // Then
-            await XCTAssertThrowsErrorAsync(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
-                // When
-                try await sut.pushSupportedProtocols([.mls])
+        try await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            for sut in suts {
+                taskGroup.addTask {
+                    // Then
+                    await self.XCTAssertThrowsErrorAsync(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
+                        // When
+                        try await sut.pushSupportedProtocols([.mls])
+                    }
+                }
+
+                try await taskGroup.waitForAll()
+            }
+        }
+    }
+
+    // MARK: - Request supported endpoints
+
+    func testPushSupportedProtocols_V5_And_NextVersions() async throws {
+        // Given
+        let httpClient = HTTPClientMock(
+            code: .ok,
+            payload: nil
+        )
+
+        let supportedVersions = APIVersion.v5.andNextVersions
+
+        let suts = supportedVersions.map { $0.buildAPI(client: httpClient) }
+
+        try await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            for sut in suts {
+                taskGroup.addTask {
+                    // When
+                    try await sut.pushSupportedProtocols([.mls])
+                }
+
+                try await taskGroup.waitForAll()
             }
         }
     }
@@ -78,33 +110,29 @@ final class SelfUserAPITests: XCTestCase {
 
     // MARK: - V0
 
-    func testGetSelfUser_SuccessResponse_200_V0_Then_VerifyRequests() async throws {
+    func testGetSelfUser_SuccessResponse_200_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetSelfUserSuccessResponseV0")
-        ])
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetSelfUserSuccessResponseV0"
+        )
+
+        let sut = SelfUserAPIV0(httpClient: httpClient)
+
+        // When
+        let result = try await sut.getSelfUser()
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
-            // When
-            let result = try await sut.getSelfUser()
-
-            // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.selfUserV0
-            )
-        }
+        XCTAssertEqual(
+            result,
+            Scaffolding.selfUserV0
+        )
     }
 
     func testGetSelfUser_FailureResponse() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: "not-found"
-        )
-
-        let sut = SelfUserAPIV0(apiService: apiService)
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
+        let sut = SelfUserAPIV0(httpClient: httpClient)
 
         // Then
         await XCTAssertThrowsErrorAsync {
@@ -115,50 +143,42 @@ final class SelfUserAPITests: XCTestCase {
 
     // MARK: - V4
 
-    func testGetSelfUser_SuccessResponse_200_V4_Then_VerifyRequests() async throws {
+    func testGetSelfUser_SuccessResponse_200_V4() async throws {
         // Given
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetSelfUserSuccessResponseV4"
+        )
 
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetSelfUserSuccessResponseV4")
-        ])
+        let sut = SelfUserAPIV4(httpClient: httpClient)
+
+        // When
+        let result = try await sut.getSelfUser()
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: [.v4], apiService: apiService) { sut in
-            // When
-            let result = try await sut.getSelfUser()
-
-            // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.selfUserV5
-            )
-        }
+        XCTAssertEqual(
+            result,
+            Scaffolding.selfUserV5
+        )
     }
 
     // MARK: - V5
 
-    func testPushSupportedProtocols_SuccessResponse_200_V5_And_Next_Versions_Verify_Requests() async throws {
+    func testPushSupportedProtocols_SuccessResponse_200_V5() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, nil)
-        ])
+        let httpClient = HTTPClientMock(code: .ok, payload: nil)
 
-        let supportedVersions = APIVersion.v5.andNextVersions
+        // When
+        let sut = SelfUserAPIV5(httpClient: httpClient)
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
-            // When
-            try await sut.pushSupportedProtocols([.mls])
-        }
+        try await sut.pushSupportedProtocols([.mls])
     }
 
     func testPushSupportedProtocols_FailureResponse_InvalidRequest_V5() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: ""
-        )
-        let sut = SelfUserAPIV5(apiService: apiService)
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
+        let sut = SelfUserAPIV5(httpClient: httpClient)
 
         // Then
         await XCTAssertThrowsErrorAsync {
@@ -228,8 +248,8 @@ extension SelfUserAPITests {
 }
 
 private extension APIVersion {
-    func buildAPI(apiService: any APIServiceProtocol) -> any SelfUserAPI {
-        let builder = SelfUserAPIBuilder(apiService: apiService)
+    func buildAPI(client: any HTTPClient) -> any SelfUserAPI {
+        let builder = SelfUserAPIBuilder(httpClient: client)
         return builder.makeAPI(for: self)
     }
 }

@@ -23,7 +23,7 @@ import Foundation
 
 extension MockAPIServiceProtocol {
 
-    typealias Response = (statusCode: HTTPStatusCode, resourceName: String?)
+    typealias Response = (statusCode: HTTPStatusCode, resourceName: String)
 
     /// Create a mock api service that returns zero or more responses.
     ///

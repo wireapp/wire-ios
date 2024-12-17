@@ -18,24 +18,12 @@
 
 import Foundation
 
-/// Errors originating from `UpdateEventsAPI`.
+/// Errors originating from `PushChannelAPI`.
 
-public enum UpdateEventsAPIError: Error {
+public enum PushChannelAPIError: Error {
 
-    /// A request url is invalid.
+    /// A submitted request is invalid.
 
-    case invalidURL
-
-    /// A provided client id is not valid.
-
-    case invalidClient
-
-    /// One or more provided query parameters are invalid.
-
-    case invalidParameters
-
-    /// The requested notification(s) was not found.
-
-    case notFound
+    case invalidRequest
 
 }

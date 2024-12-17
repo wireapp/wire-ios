@@ -24,10 +24,10 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         static let batchSize = 500
     }
 
-    let apiService: any APIServiceProtocol
+    let httpClient: any HTTPClient
 
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    init(httpClient: any HTTPClient) {
+        self.httpClient = httpClient
     }
 
     var apiVersion: APIVersion {
@@ -45,20 +45,17 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try JSONEncoder.defaultEncoder.encode(params)
 
-            let request = try URLRequestBuilder(path: self.resourcePath)
-                .withMethod(.post)
-                .withBody(body, contentType: .json)
-                .build()
-
-            let (data, response) = try await self.apiService.executeRequest(
-                request,
-                requiringAccessToken: true
+            let request = HTTPRequest(
+                path: self.resourcePath,
+                method: .post,
+                body: body
             )
+            let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
                 .success(code: .ok, type: PaginatedConnectionListV0.self)
                 .failure(code: .badRequest, error: ConnectionsAPIError.invalidBody)
-                .parse(code: response.statusCode, data: data)
+                .parse(response)
         }
     }
 }

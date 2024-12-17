@@ -24,9 +24,15 @@ class ConversationsAPIV3: ConversationsAPIV2 {
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        let path = "\(pathPrefix)\(basePath)/list"
 
-        let request = try URLRequestBuilder(path: path)
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/list")
+
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()

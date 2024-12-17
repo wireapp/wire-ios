@@ -20,10 +20,10 @@ import Foundation
 
 class UsersAPIV0: UsersAPI, VersionedAPI {
 
-    let apiService: any APIServiceProtocol
+    let httpClient: any HTTPClient
 
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    init(httpClient: any HTTPClient) {
+        self.httpClient = httpClient
     }
 
     var apiVersion: APIVersion {
@@ -33,40 +33,32 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
     // MARK: - Get team
 
     func getUser(for userID: UserID) async throws -> User {
-        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())"
-
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
+        let request = HTTPRequest(
+            path: "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())",
+            method: .get
         )
+
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: UserResponseV0.self)
             .failure(code: .notFound, label: "not-found", error: UsersAPIError.userNotFound)
-            .parse(code: response.statusCode, data: data)
+            .parse(response)
     }
 
     func getUsers(userIDs: [UserID]) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
-        let path = "\(pathPrefix)/list-users"
-
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.post)
-            .withBody(body, contentType: .json)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
+        let request = HTTPRequest(
+            path: "\(pathPrefix)/list-users",
+            method: .post,
+            body: body
         )
+
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: ListUsersResponseV0.self)
-            .parse(code: response.statusCode, data: data)
+            .parse(response)
     }
 }
 

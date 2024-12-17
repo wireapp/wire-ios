@@ -27,11 +27,15 @@ class PushChannelAPIImpl: PushChannelAPI {
     }
 
     func createPushChannel(clientID: String) async throws -> any PushChannelProtocol {
-        let path = "/await"
+        var components = URLComponents(string: "/await")
+        components?.queryItems = [URLQueryItem(name: "client", value: clientID)]
 
-        let request = try URLRequestBuilder(path: path)
+        guard let url = components?.url else {
+            throw PushChannelAPIError.invalidRequest
+        }
+
+        let request = URLRequestBuilder(url: url)
             .withMethod(.get)
-            .withQueryItem(name: "client", value: clientID)
             .build()
 
         return try await pushChannelService.createPushChannel(request)

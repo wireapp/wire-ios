@@ -1,2 +1,0 @@
-curl \
-	"/v5/feature-configs/"

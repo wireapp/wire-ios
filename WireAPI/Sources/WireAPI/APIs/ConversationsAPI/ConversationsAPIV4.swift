@@ -24,9 +24,14 @@ class ConversationsAPIV4: ConversationsAPIV3 {
     override func getConversationGuestLink(
         conversationID: String
     ) async throws -> String? {
-        let path = "\(pathPrefix)\(basePath)/\(conversationID)/code"
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/\(conversationID)/code")
 
-        let request = try URLRequestBuilder(path: path)
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
 

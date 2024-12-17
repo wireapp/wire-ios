@@ -1,5 +1,4 @@
-curl \
-	--request POST \
-	--header "Content-Type: application/json" \
-	--data "{\"size\":500}" \
-	"/v4/list-connections/"
+- HTTPRequest
+  - path: "/v4/list-connections/"
+  - method: post
+  - body: {"size":500}

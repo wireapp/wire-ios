@@ -1,2 +1,0 @@
-curl \
-	"/v7/feature-configs/"

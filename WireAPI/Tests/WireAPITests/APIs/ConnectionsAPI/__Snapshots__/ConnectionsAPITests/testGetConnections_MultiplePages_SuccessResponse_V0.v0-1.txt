@@ -1,4 +1,4 @@
 - HTTPRequest
   - path: "/list-connections/"
   - method: post
-  - body: {"size":500}
+  - body: {"paging_state":"first","size":500}

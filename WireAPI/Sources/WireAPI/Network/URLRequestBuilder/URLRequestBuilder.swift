@@ -40,7 +40,7 @@ struct URLRequestBuilder {
 
     func withQueryItem(
         name: String,
-        value: String?
+        value: String
     ) -> Self {
         withCopy {
             let queryItem = URLQueryItem(

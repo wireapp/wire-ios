@@ -29,11 +29,16 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
     }
 
     override func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope {
-        let path = "\(pathPrefix)\(basePath)/last"
+        var components = URLComponents(string: "\(pathPrefix)\(basePath)/last")
+        components?.queryItems = [URLQueryItem(name: "client", value: selfClientID)]
 
-        let request = try URLRequestBuilder(path: path)
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UpdateEventsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
             .withMethod(.get)
-            .withQueryItem(name: "client", value: selfClientID)
             .build()
 
         let (data, response) = try await apiService.executeRequest(
@@ -57,11 +62,20 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
         let resourcePath = "\(pathPrefix)\(basePath)"
 
         return PayloadPager(start: sinceEventID.transportString()) { nextSince in
-            let request = try URLRequestBuilder(path: resourcePath)
+            var components = URLComponents(string: resourcePath)
+            components?.queryItems = [
+                URLQueryItem(name: "client", value: selfClientID),
+                URLQueryItem(name: "since", value: nextSince),
+                URLQueryItem(name: "size", value: "500")
+            ]
+
+            guard let url = components?.url else {
+                assertionFailure("generated an invalid url")
+                throw UpdateEventsAPIError.invalidURL
+            }
+
+            let request = URLRequestBuilder(url: url)
                 .withMethod(.get)
-                .withQueryItem(name: "client", value: selfClientID)
-                .withQueryItem(name: "since", value: nextSince)
-                .withQueryItem(name: "size", value: "500")
                 .build()
 
             let (data, response) = try await self.apiService.executeRequest(

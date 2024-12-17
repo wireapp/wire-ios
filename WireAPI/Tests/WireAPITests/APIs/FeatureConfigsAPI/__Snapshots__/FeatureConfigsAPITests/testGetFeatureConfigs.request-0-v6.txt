@@ -1,2 +1,4 @@
-curl \
-	"/v6/feature-configs/"
+- HTTPRequest
+  - path: "/v6/feature-configs"
+  - method: get
+  - body: none

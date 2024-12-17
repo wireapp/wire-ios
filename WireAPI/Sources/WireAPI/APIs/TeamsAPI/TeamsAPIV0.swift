@@ -20,10 +20,10 @@ import Foundation
 
 class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
-    let apiService: any APIServiceProtocol
+    let httpClient: any HTTPClient
 
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    init(httpClient: any HTTPClient) {
+        self.httpClient = httpClient
     }
 
     var apiVersion: APIVersion {
@@ -37,41 +37,35 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
     // MARK: - Get team
 
     func getTeam(for teamID: Team.ID) async throws -> Team {
-        let request = try URLRequestBuilder(path: basePath(for: teamID))
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
+        let request = HTTPRequest(
+            path: basePath(for: teamID),
+            method: .get
         )
+
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: TeamResponseV0.self)
             .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
             .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
-            .parse(code: response.statusCode, data: data)
+            .parse(response)
     }
 
     // MARK: - Get team roles
 
     func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole] {
-        let path = "\(basePath(for: teamID))/conversations/roles"
-
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
+        let request = HTTPRequest(
+            path: "\(basePath(for: teamID))/conversations/roles",
+            method: .get
         )
+
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: ConversationRolesListResponseV0.self)
             .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
             .failure(code: .notFound, error: TeamsAPIError.teamNotFound)
-            .parse(code: response.statusCode, data: data)
+            .parse(response)
     }
 
     // MARK: - Get team members
@@ -80,24 +74,26 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         for teamID: Team.ID,
         maxResults: UInt
     ) async throws -> [TeamMember] {
-        let path = "\(basePath(for: teamID))/members"
+        var components = URLComponents(string: "\(basePath(for: teamID))/members")
+        components?.queryItems = [URLQueryItem(name: "maxResults", value: "2000")]
 
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .withQueryItem(name: "maxResults", value: "2000")
-            .build()
+        guard let path = components?.url?.absoluteString else {
+            throw TeamsAPIError.failedToGenerateRequest
+        }
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
+        let request = HTTPRequest(
+            path: path,
+            method: .get
         )
+
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: TeamMemberListResponseV0.self)
             .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParmeter)
             .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
             .failure(code: .notFound, error: TeamsAPIError.teamNotFound)
-            .parse(code: response.statusCode, data: data)
+            .parse(response)
     }
 
     // MARK: - Get team member legalhold
@@ -106,22 +102,18 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         for teamID: Team.ID,
         userID: UUID
     ) async throws -> TeamMemberLegalholdInfo {
-        let path = "\(basePath(for: teamID))/legalhold/\(userID.transportString())"
-
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
+        let request = HTTPRequest(
+            path: "\(basePath(for: teamID))/legalhold/\(userID.transportString())",
+            method: .get
         )
+
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: TeamMemberLegalholdResponseV0.self)
             .failure(code: .notFound, error: TeamsAPIError.invalidRequest)
             .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
-            .parse(code: response.statusCode, data: data)
+            .parse(response)
     }
 
 }

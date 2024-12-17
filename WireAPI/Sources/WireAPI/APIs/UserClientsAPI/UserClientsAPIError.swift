@@ -18,24 +18,11 @@
 
 import Foundation
 
-/// Errors originating from `UpdateEventsAPI`.
+/// Errors originating from `UserClientsAPI`.
 
-public enum UpdateEventsAPIError: Error {
+public enum UserClientsAPIError: Error {
 
     /// A request url is invalid.
 
     case invalidURL
-
-    /// A provided client id is not valid.
-
-    case invalidClient
-
-    /// One or more provided query parameters are invalid.
-
-    case invalidParameters
-
-    /// The requested notification(s) was not found.
-
-    case notFound
-
 }

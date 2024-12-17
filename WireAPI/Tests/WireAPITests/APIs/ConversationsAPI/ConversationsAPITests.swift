@@ -96,14 +96,18 @@ final class ConversationsAPITests: XCTestCase {
             (.ok, "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ])
 
+        // when
+        let api = ConversationsAPIV0(apiService: apiService)
+        let pager = try await api.getLegacyConversationIdentifiers()
+
+        for try await _ in pager {
+            // trigger fetching date
+        }
+
         // then
 
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { api in
-            let pager = try await api.getLegacyConversationIdentifiers()
-
-            for try await _ in pager {
-                // trigger fetching date
-            }
+            _ = try await api.getLegacyConversationIdentifiers()
         }
     }
 
@@ -160,12 +164,15 @@ final class ConversationsAPITests: XCTestCase {
         ])
 
         // when
-        try await apiSnapshotHelper.verifyRequest(for: [.v1], apiService: apiService) { api in
-            let pager = try await api.getConversationIdentifiers()
+        let api = ConversationsAPIV1(apiService: apiService)
+        let pager = try await api.getConversationIdentifiers()
 
-            for try await _ in pager {
-                // trigger fetching date
-            }
+        for try await _ in pager {
+            // trigger fetching date
+        }
+
+        try await apiSnapshotHelper.verifyRequest(for: [.v1], apiService: apiService) { api in
+            _ = try await api.getConversationIdentifiers()
         }
     }
 

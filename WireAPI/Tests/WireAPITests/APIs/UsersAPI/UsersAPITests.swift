@@ -17,19 +17,19 @@
 //
 
 import XCTest
+
 @testable import WireAPI
-@testable import WireAPISupport
 
 final class UsersAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APIServiceSnapshotHelper<any UsersAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any UsersAPI>!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
-            let builder = UsersAPIBuilder(apiService: apiService)
+        apiSnapshotHelper = APISnapshotHelper { httpClient, apiVersion in
+            let builder = UsersAPIBuilder(httpClient: httpClient)
             return builder.makeAPI(for: apiVersion)
         }
     }
@@ -57,50 +57,47 @@ final class UsersAPITests: XCTestCase {
 
     // MARK: - V0
 
-    func testGetUserForID_SuccessResponse_200_V0_Then_Verify_Request() async throws {
+    func testGetUserForID_SuccessResponse_200_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetUserSuccessResponseV0")
-        ])
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetUserSuccessResponseV0"
+        )
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
-            // When
-            let result = try await sut.getUser(for: Scaffolding.userID)
+        let sut = UsersAPIV0(httpClient: httpClient)
 
-            // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.user
-            )
-        }
+        // When
+        let result = try await sut.getUser(for: Scaffolding.userID)
+
+        // Then
+        XCTAssertEqual(
+            result,
+            Scaffolding.user
+        )
     }
 
-    func testGetUsersForIDs_SuccessResponse_200_V0_Then_Verify_Request() async throws {
+    func testGetUsersForIDs_SuccessResponse_200_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetUsersSuccessResponseV0")
-        ])
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetUsersSuccessResponseV0"
+        )
+        let sut = UsersAPIV0(httpClient: httpClient)
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
-            // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
+        // When
+        let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
 
-            // Then
-            XCTAssertEqual(
-                result,
-                UserList(found: [Scaffolding.user], failed: [])
-            )
-        }
+        // Then
+        XCTAssertEqual(
+            result,
+            UserList(found: [Scaffolding.user], failed: [])
+        )
     }
 
     func testGetUsersForIDs_FailureResponse_NotFound_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: "not-found"
-        )
-
-        let sut = UsersAPIV0(apiService: apiService)
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
+        let sut = UsersAPIV0(httpClient: httpClient)
 
         // Then
         await XCTAssertThrowsErrorAsync(UsersAPIError.userNotFound) {
@@ -111,34 +108,31 @@ final class UsersAPITests: XCTestCase {
 
     // MARK: - V4
 
-    func testGetUserForID_SuccessResponse_200_V4_Then_Verify_Request() async throws {
+    func testGetUserForID_SuccessResponse_200_V4() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetUserSuccessResponseV4")
-        ])
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetUserSuccessResponseV4"
+        )
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v4], apiService: apiService) { sut in
-            // When
-            let result = try await sut.getUser(
-                for: Scaffolding.userID
-            )
+        let sut = UsersAPIV4(httpClient: httpClient)
 
-            // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.user
-            )
-        }
+        // When
+        let result = try await sut.getUser(
+            for: Scaffolding.userID
+        )
+
+        // Then
+        XCTAssertEqual(
+            result,
+            Scaffolding.user
+        )
     }
 
     func testGetUsersForIDs_FailureResponse_NotFound_V4() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: "not-found"
-        )
-
-        let sut = UsersAPIV4(apiService: apiService)
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
+        let sut = UsersAPIV4(httpClient: httpClient)
 
         // Then
         await XCTAssertThrowsErrorAsync(UsersAPIError.userNotFound) {
@@ -147,22 +141,22 @@ final class UsersAPITests: XCTestCase {
         }
     }
 
-    func testGetUsersForIDs_SuccessResponse_200_V4_Then_Verify_Request() async throws {
+    func testGetUsersForIDs_SuccessResponse_200_V4() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetUsersSuccessResponseV4")
-        ])
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetUsersSuccessResponseV4"
+        )
+        let sut = UsersAPIV4(httpClient: httpClient)
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v4], apiService: apiService) { sut in
-            // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
+        // When
+        let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
 
-            // Then
-            XCTAssertEqual(
-                result,
-                UserList(found: [Scaffolding.user], failed: [Scaffolding.userID])
-            )
-        }
+        // Then
+        XCTAssertEqual(
+            result,
+            UserList(found: [Scaffolding.user], failed: [Scaffolding.userID])
+        )
     }
 
     enum Scaffolding {

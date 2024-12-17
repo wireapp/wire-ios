@@ -1,2 +1,4 @@
-curl \
-	"/v6/self/"
+- HTTPRequest
+  - path: "/v6/self"
+  - method: get
+  - body: none

@@ -26,9 +26,14 @@ class ConversationsAPIV2: ConversationsAPIV1 {
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
 
         // New change for v2
-        let path = "\(pathPrefix)\(basePath)/list"
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/list")
 
-        let request = try URLRequestBuilder(path: path)
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()

@@ -1,2 +1,4 @@
-curl \
-	"/v3/properties/WIRE_TYPING_INDICATOR_MODE"
+- HTTPRequest
+  - path: "/v3/properties/WIRE_TYPING_INDICATOR_MODE"
+  - method: get
+  - body: none

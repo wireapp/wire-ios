@@ -126,9 +126,6 @@ struct APIServiceSnapshotHelper<API> {
         line: UInt = #line
     ) async throws {
         let sut = buildAPI(apiService, apiVersion)
-
-        apiService.executeRequestRequiringAccessToken_Invocations = []
-
         try? await block(sut)
 
         let receivedRequests = apiService.executeRequestRequiringAccessToken_Invocations.map(\.request)

@@ -25,13 +25,18 @@ class UserClientsAPIV2: UserClientsAPIV1 {
     }
 
     override func getClients(for userIDs: Set<UserID>) async throws -> [OtherUserClients] {
-        let path = "/users/list-clients"
+        let components = URLComponents(string: "/users/list-clients")
+
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UserClientsAPIError.invalidURL
+        }
 
         let body = try JSONEncoder.defaultEncoder.encode(
             UserClientsRequestV0(qualifiedIDs: Array(userIDs))
         )
 
-        let request = try URLRequestBuilder(path: path)
+        let request = URLRequestBuilder(url: url)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()

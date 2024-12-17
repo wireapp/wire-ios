@@ -18,28 +18,20 @@
 
 import Foundation
 import XCTest
+
 @testable import WireAPI
-@testable import WireAPISupport
 
 class ConnectionsAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APIServiceSnapshotHelper<any ConnectionsAPI>!
-
-    // MARK: - Setup
-
-    override func setUp() {
-        apiSnapshotHelper = APIServiceSnapshotHelper<any ConnectionsAPI> { apiService, apiVersion in
-            let builder = ConnectionsAPIBuilder(apiService: apiService)
-            return builder.makeAPI(for: apiVersion)
-        }
-    }
-
-    override func tearDown() {
-        apiSnapshotHelper = nil
-    }
-
     /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
+        // given
+        let apiSnapshotHelper = APISnapshotHelper<any ConnectionsAPI> { httpClient, apiVersion in
+            let builder = ConnectionsAPIBuilder(httpClient: httpClient)
+            return builder.makeAPI(for: apiVersion)
+        }
+
+        // when
         // then
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             let pager = try await sut.getConnections()
@@ -51,11 +43,12 @@ class ConnectionsAPITests: XCTestCase {
 
     func testGetConnections_SuccessResponse_200_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetConnectionsSuccessResponseV0")
-        ])
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetConnectionsSuccessResponseV0"
+        )
 
-        let sut = ConnectionsAPIV0(apiService: apiService)
+        let sut = ConnectionsAPIV0(httpClient: httpClient)
 
         // When
         let pager = try await sut.getConnections()
@@ -87,13 +80,11 @@ class ConnectionsAPITests: XCTestCase {
 
     func testGetConnections_FailureResponse_400_V0() async throws {
         // Given
-
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .badRequest,
-            label: ""
+        let httpClient = try HTTPClientMock(
+            code: .badRequest, errorLabel: ""
         )
 
-        let sut = ConnectionsAPIV0(apiService: apiService)
+        let sut = ConnectionsAPIV0(httpClient: httpClient)
 
         // When
         let pager = try await sut.getConnections()
@@ -111,26 +102,35 @@ class ConnectionsAPITests: XCTestCase {
 
     func testGetConnections_MultiplePages_SuccessResponse_V0() async throws {
         // Given
+        var requestIndex = 0
         // We fake responses with 1 element per page even if batchSize is 500
         // pager is driven by has_more attribute in response
+        let httpClient = HTTPClientMock { _ in
+            let response = HTTPClientMock
+                .PredefinedResponse(resourceName: "GetConnectionsMultiplePagesSuccessResponseV0.\(requestIndex)")
+            requestIndex += 1
 
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.0"),
-            (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.1"),
-            (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.2")
-        ])
+            let statusOk = HTTPStatusCode.ok.rawValue
+            return HTTPResponse(code: statusOk, payload: try response.data())
+        }
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
-            // WHEN
-            let pager = try await sut.getConnections()
-            for try await _ in pager {
-                // do something with the data
-                // this will trigger the fetch when we wait for the page
-            }
+        // WHEN
+        let sut = ConnectionsAPIV0(httpClient: httpClient)
+        let pager = try await sut.getConnections()
+        for try await _ in pager {
+            // do something with the data
+            // this will trigger the fetch when we wait for the page
         }
 
         // THEN
-        let invokedRequest = apiService.executeRequestRequiringAccessToken_Invocations
-        XCTAssertEqual(invokedRequest.count, 3)
+        XCTAssertEqual(httpClient.receivedRequests.count, 3)
+
+        // checks we made the 3 correct requests
+        for (index, receivedRequest) in httpClient.receivedRequests.enumerated() {
+            await HTTPRequestSnapshotHelper().verifyRequest(
+                request: receivedRequest,
+                resourceName: "v0.\(index)"
+            )
+        }
     }
 }

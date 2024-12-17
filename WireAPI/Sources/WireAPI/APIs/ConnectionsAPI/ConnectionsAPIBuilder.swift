@@ -22,14 +22,14 @@ import Foundation
 
 public struct ConnectionsAPIBuilder {
 
-    let apiService: any APIServiceProtocol
+    let httpClient: any HTTPClient
 
     /// Create a new builder.
     ///
-    /// - Parameter APIService: An api service.
+    /// - Parameter httpClient: A http client.
 
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    public init(httpClient: any HTTPClient) {
+        self.httpClient = httpClient
     }
 
     /// Make a versioned `ConnectionsAPI`.
@@ -40,21 +40,21 @@ public struct ConnectionsAPIBuilder {
     public func makeAPI(for version: APIVersion) -> any ConnectionsAPI {
         switch version {
         case .v0:
-            ConnectionsAPIV0(apiService: apiService)
+            ConnectionsAPIV0(httpClient: httpClient)
         case .v1:
-            ConnectionsAPIV1(apiService: apiService)
+            ConnectionsAPIV1(httpClient: httpClient)
         case .v2:
-            ConnectionsAPIV2(apiService: apiService)
+            ConnectionsAPIV2(httpClient: httpClient)
         case .v3:
-            ConnectionsAPIV3(apiService: apiService)
+            ConnectionsAPIV3(httpClient: httpClient)
         case .v4:
-            ConnectionsAPIV4(apiService: apiService)
+            ConnectionsAPIV4(httpClient: httpClient)
         case .v5:
-            ConnectionsAPIV5(apiService: apiService)
+            ConnectionsAPIV5(httpClient: httpClient)
         case .v6:
-            ConnectionsAPIV6(apiService: apiService)
+            ConnectionsAPIV6(httpClient: httpClient)
         case .v7:
-            ConnectionsAPIV7(apiService: apiService)
+            ConnectionsAPIV7(httpClient: httpClient)
         }
     }
 
