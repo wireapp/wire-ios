@@ -50,7 +50,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertEqual(detectedCode, "wire-46A17D7F-2351-495E-AEDA-E7C96AC74994")
@@ -69,7 +69,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertEqual(detectedCode, "wire-70488875-13DD-4BA7-9636-A983E1831F5F")
@@ -92,7 +92,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertEqual(detectedCode, "wire-A6AAA905-E42D-4220-A455-CFE8822DB690")
@@ -122,7 +122,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertNil(detectedCode)
@@ -141,7 +141,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertNil(detectedCode)
@@ -160,7 +160,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
             detectionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
 
         // THEN
         XCTAssertNil(detectedCode)
@@ -180,7 +180,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
 
         do {
@@ -192,7 +192,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
 
         // WHEN
@@ -209,7 +209,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
     }
 
@@ -228,7 +228,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
 
         // WHEN
@@ -241,7 +241,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
 
         // THEN
@@ -254,7 +254,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
                 detectionExpectation.fulfill()
             }
 
-            waitForExpectations(timeout: 1, handler: nil)
+            waitForExpectations(timeout: 1)
         }
     }
 
