@@ -22,6 +22,7 @@ import Foundation
 
 extension SegmentationEntry {
 
+    // TODO: fix doc
     /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A string indicating device OS version of the user
@@ -31,6 +32,7 @@ extension SegmentationEntry {
         .init(key: "os_version", value: value)
     }
 
+    // TODO: fix doc
     /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A string indicating device model of the user
@@ -40,6 +42,7 @@ extension SegmentationEntry {
         .init(key: "device_model", value: value)
     }
 
+        // TODO: fix doc
     /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A boolean indicating if the self user is a team member.

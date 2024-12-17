@@ -1030,6 +1030,10 @@ extension WireCallCenterV3 {
         let analyticsEventTracker = analyticsEventTracker()
         analyticsEventTracker?.trackEvent(
             .Calling.endedCall(
+                deviceModel: UIDevice.current.model,
+                deviceOS: UIDevice.current.systemVersion,
+                wasScreenShared: false, // TODO: fix
+                totalScreenSharingDuration: 0 // TODO: fix
             )
         )
 
