@@ -71,9 +71,9 @@ final class CallEndedAnalyticsController {
             .Calling.endedCall(
                 deviceModel: eventInfo.deviceModel,
                 deviceOS: eventInfo.deviceOS,
-                wasScreenShared: eventInfo.wasScreenShared,
+                wasScreenShared: !eventInfo.uniqueScreenSharingUsers.isEmpty,
                 totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,
-                uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers,
+                uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers.count,
                 participantCount: eventInfo.participantCount,
                 // TODO: make complete
                 callEndReason: reason.analyticsValue
@@ -92,9 +92,8 @@ private extension CallEndedAnalyticsController {
     struct EventInfo {
         var deviceModel = UIDevice.current.model
         var deviceOS = UIDevice.current.systemVersion
-        var wasScreenShared = false
         var totalScreenSharingDuration = 0
-        var uniqueScreenSharingUsers = 0
+        var uniqueScreenSharingUsers = Set<UUID>()
         var participantCount = UInt()
     }
 
@@ -132,10 +131,12 @@ extension CallEndedAnalyticsController: WireCallCenterCallParticipantObserver {
         participants: [CallParticipant]
     ) {
         // if there is anybody sharing the screen take a note and also remember the time if needed
-        let anyScreenSharingParticipant = participants.first { participant in participant.state.videoState == .screenSharing
-        }
-        if anyScreenSharingParticipant != nil {
-            eventInfo?.wasScreenShared = true
+        let screenSharingParticipants = participants
+            .filter { participant in participant.state.videoState == .screenSharing }
+            .map(\.userId.identifier)
+        eventInfo?.uniqueScreenSharingUsers.formUnion(screenSharingParticipants)
+
+        if !screenSharingParticipants.isEmpty {
             screenSharingStart = screenSharingStart ?? .now
         } else if let screenSharingStart {
             // screen sharing just stopped
