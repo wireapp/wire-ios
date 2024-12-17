@@ -59,3 +59,24 @@ public enum NetworkError: Error, Equatable {
         }
     }
 }
+
+// MARK: - LocalizedError
+
+extension NetworkError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .errorEncodingRequest:
+            "Failed to encode the request."
+        case let .errorDecodingResponse(response):
+            "Failed to decode the response: \(response)."
+        case let .errorDecodingURLResponse(urlResponse):
+            "Failed to decode the URL response: \(urlResponse)."
+        case .endpointNotAvailable:
+            "The requested endpoint is not available."
+        case let .missingClients(status, response):
+            "Missing clients with status: \(status). Response: \(response)."
+        case let .invalidRequestError(failure, response):
+            "Invalid request error: \(failure). Response: \(response)."
+        }
+    }
+}
