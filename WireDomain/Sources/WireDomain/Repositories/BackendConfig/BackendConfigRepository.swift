@@ -62,7 +62,7 @@ final class BackendConfigRepository: BackendConfigRepositoryProtocol {
     // MARK: - Private
 
     private func storeIsMLSEnabledStatus(newValue: Bool) {
-        var storage = UserDefaults.standard
+        let storage = UserDefaults.standard
         let key = "isMLSEnabled"
         storage.set(newValue, forKey: key)
     }
