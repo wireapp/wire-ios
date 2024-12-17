@@ -1033,7 +1033,10 @@ extension WireCallCenterV3 {
                 deviceModel: UIDevice.current.model,
                 deviceOS: UIDevice.current.systemVersion,
                 wasScreenShared: false, // TODO: fix
-                totalScreenSharingDuration: 0 // TODO: fix
+                totalScreenSharingDuration: 0, // TODO: fix,
+                uniqueScreenSharingUsers: 0, // TODO: fix
+                participantCount: 0 // TODO: fix
+                // TODO: make complete
             )
         )
 
@@ -1126,6 +1129,8 @@ extension WireCallCenterV3 {
             callState: callState,
             callSnapshot: callSnapshots[conversationId]
         )
+
+        // TODO: extract data?
 
         if case .terminating = callState {
             clearSnapshot(conversationId: conversationId)
