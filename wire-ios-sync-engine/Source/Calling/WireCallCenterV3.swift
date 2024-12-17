@@ -20,6 +20,7 @@ import avs
 import Combine
 import Foundation
 import WireLogging
+import WireAnalytics
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
 /// WireCallCenter.
@@ -50,6 +51,8 @@ public class WireCallCenterV3: NSObject {
 
     /// The object that performs network requests when the call center requests them.
     weak var transport: WireCallCenterTransport?
+
+    private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     // MARK: - Calling State
 
@@ -125,13 +128,14 @@ public class WireCallCenterV3: NSObject {
         avsWrapper: AVSWrapperType? = nil,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) {
-
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
+        self.analyticsEventTracker = analyticsEventTracker
 
         super.init()
 
@@ -1022,6 +1026,12 @@ extension WireCallCenterV3 {
         completionHandler: @escaping () -> Void
     ) {
         Self.logger.info("handle call event (timestamp: \(callEvent.currentTimestamp))")
+
+        let analyticsEventTracker = analyticsEventTracker()
+        analyticsEventTracker?.trackEvent(
+            .Calling.endedCall(
+            )
+        )
 
         guard
             let context = uiMOC,
