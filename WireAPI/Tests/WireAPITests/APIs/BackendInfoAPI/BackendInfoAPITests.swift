@@ -44,8 +44,8 @@ final class BackendInfoAPITests: XCTestCase {
 
     func testGetBackendInfoRequest() async throws {
         try await apiSnapshotHelper.verifyRequest(for: [.v0]) { sut in
-                _ = try? await sut.getBackendInfo()
-            }
+            _ = try? await sut.getBackendInfo()
+        }
     }
 
     func testGetBackendMLSPublicKeysRequest() async throws {
@@ -60,7 +60,7 @@ final class BackendInfoAPITests: XCTestCase {
     // MARK: - V0
 
     func testGetBackendInfo_SuccessResponse_200_V0_WithoutDevelopmentVersions() async throws {
-        try await withThrowingTaskGroup(of: BackendInfo.self) { taskGroup in
+        try await withThrowingTaskGroup(of: BackendInfo.self) { _ in
             // Given
             let apiService = MockAPIServiceProtocol.withResponses([
                 (.ok, "GetBackendInfoSuccessResponse1")
@@ -130,12 +130,14 @@ final class BackendInfoAPITests: XCTestCase {
                     XCTAssertEqual(
                         value,
                         BackendMLSPublicKeys(
-                            removal: MLSPublicKeys.init(
+                            removal: .init(
                                 ed25519: "YVAl3Nsu27aNpNbYlPB6fi",
                                 ed448: nil,
                                 p256: "BM036midcNiOMgny9m7N",
                                 p384: "BPSlomkR8K4BcFLGTDOJx",
-                                p512: "BAC3OmJi7rAPFAIXjU"))
+                                p512: "BAC3OmJi7rAPFAIXjU"
+                            )
+                        )
                     )
                 }
             }
