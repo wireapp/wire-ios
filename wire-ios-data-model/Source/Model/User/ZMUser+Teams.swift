@@ -54,11 +54,13 @@ public extension ZMUser {
     func createOrDeleteMembershipIfBelongingToTeam() {
         guard
             let teamIdentifier,
-            let managedObjectContext,
-            let team = Team.fetch(with: teamIdentifier, in: managedObjectContext)
+            let managedObjectContext
         else {
             return
         }
+
+        let team = Team.fetchOrCreate(with: teamIdentifier, in: managedObjectContext)
+        team.needsToBeUpdatedFromBackend = true
 
         if !isAccountDeleted {
             createMembership(in: team, context: managedObjectContext)
