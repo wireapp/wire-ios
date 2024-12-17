@@ -19,10 +19,19 @@
         "enabled" : false,
         "key" : "LIBDISPATCH_COOPERATIVE_POOL_STRICT",
         "value" : "1"
+      },
+      {
+        "key" : "CI",
+        "value" : "${CI}"
       }
     ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireRequestStrategy.xcodeproj",
+      "identifier" : "166901731D707509000FE4AF",
+      "name" : "WireRequestStrategyTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

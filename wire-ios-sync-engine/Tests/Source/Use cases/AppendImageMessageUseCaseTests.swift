@@ -71,7 +71,7 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
         XCTAssertEqual(appendImageInvocation.imageData, testImageData)
         XCTAssertNotNil(appendImageInvocation.nonce)
 
-        let expectedEvent = AnalyticsEvent.conversationContribution(
+        let expectedEvent = AnalyticsEvent.Contributed.conversationContribution(
             .imageMessage,
             conversationType: .group,
             conversationSize: 0

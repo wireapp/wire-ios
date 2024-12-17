@@ -50,7 +50,7 @@ public final class WireAccentColorMapping: ObservableObject, Sendable {
 }
 
 private struct WireAccentColorMappingKey: EnvironmentKey {
-    static let defaultValue: WireAccentColorMapping? = .none
+    static var defaultValue: WireAccentColorMapping? { .none }
 }
 
 public extension EnvironmentValues {
