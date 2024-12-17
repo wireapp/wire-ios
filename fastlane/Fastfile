@@ -627,8 +627,10 @@ platform :ios do
             app_name = build.app_center_app_name
         end
 
-        sh "echo SHA of IPA is:"
-        sh "shasum -a 256 ../#{build.artifact_path(with_filename: true)}.ipa || true"
+        # Calculate SHA-256 for the local IPA file
+        ipa_path = "../#{build.artifact_path(with_filename: true)}.ipa"
+        sha256 = `shasum -a 256 #{ipa_path} | awk '{print $1}'`.strip
+        UI.message("SHA-256 of IPA is: #{sha256}")
 
         appcenter_upload(
           api_token: ENV["APPCENTER_API_TOKEN"],
@@ -641,8 +643,16 @@ platform :ios do
           dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
         )
 
+        # Fetch install URL after upload
         appcenter_build_info = Fastlane::Actions.lane_context[:APPCENTER_BUILD_INFORMATION]
-        `export TEMP='BUILD_INSTALL_LINK=#{appcenter_build_info['install_url']}' && echo $TEMP >> ./.post_build/.env`
+        install_url = appcenter_build_info['install_url']
+
+        # Export SHA-256 and INSTALL_LINK to .post_build/.env file
+        export_env_path = "./.post_build/.env"
+        FileUtils.mkdir_p("./.post_build")
+
+        sh "export TEMP='BUILD_INSTALL_LINK=#{install_url}' && echo $TEMP >> #{export_env_path}"
+        sh "export TEMP='BUILD_SHA256=#{sha256}' && echo $TEMP >> #{export_env_path}"
     end
 
     # Upload to S3 (Automation builds)
