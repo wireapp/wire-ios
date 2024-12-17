@@ -80,8 +80,8 @@ public extension AnalyticsEvent {
         /// - Returns: A call joined analytics event.
 
         public static func endedCall(
-            isVideo: Bool,
-            conversationType: ConversationType
+//            isVideo: Bool,
+//            conversationType: ConversationType
         ) -> AnalyticsEvent {
             AnalyticsEvent(
                 name: "calling.ended_call",
