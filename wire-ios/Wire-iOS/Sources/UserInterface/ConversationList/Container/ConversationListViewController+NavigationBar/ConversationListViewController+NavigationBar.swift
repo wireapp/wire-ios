@@ -345,11 +345,17 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     @objc
     private func presentProfile() {
+        // analytics
+        let isNotificationsBadgeVisible = viewModel.hideProfileNotificationsBadge
+        let analyticsEventTracker = viewModel.userSession.analyticsEventTracker
+        analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+
+        // open profile
         Task {
-            let selfProfileUI = UINavigationController(
-                rootViewController: selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
-            )
+            let rootViewController = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
             selfProfileUI.modalPresentationStyle = .formSheet
+            selfProfileUI.presentationController?.delegate = rootViewController
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }

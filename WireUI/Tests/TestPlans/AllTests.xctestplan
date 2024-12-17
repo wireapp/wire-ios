@@ -14,8 +14,19 @@
         "argument" : "-NSShowNonLocalizedStrings YES"
       }
     ],
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireUI",
+      "identifier" : "WireDesignTests",
+      "name" : "WireDesignTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
@@ -80,13 +91,6 @@
         "containerPath" : "container:WireUI",
         "identifier" : "WireReusableUIComponentsTests",
         "name" : "WireReusableUIComponentsTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireIndividualToTeamMigrationUITests",
-        "name" : "WireIndividualToTeamMigrationUITests"
       }
     }
   ],

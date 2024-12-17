@@ -79,7 +79,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
 
         XCTAssertNil(mockConversation.draftMessage)
 
-        let expectedEvent = AnalyticsEvent.conversationContribution(
+        let expectedEvent = AnalyticsEvent.Contributed.conversationContribution(
             .textMessage,
             conversationType: .group,
             conversationSize: 0

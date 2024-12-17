@@ -24,6 +24,10 @@
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
       },
       {
+        "key" : "CI",
+        "value" : "${CI}"
+      },
+      {
         "key" : "IMAGE_DIFF_DIR",
         "value" : "$(SOURCE_ROOT)\/SnapshotResults"
       },
@@ -48,7 +52,6 @@
         "CallActionsViewSnapshotTests",
         "MessageReplyPreviewViewTests\/testThatItRendersImageMessagePreview()",
         "SearchResultLabelTests",
-        "ServiceDetailViewControllerSnapshotTests\/testForTeamMemberWrappedInNavigationController()",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Video_DarkMode()",
         "StartUIViewControllerSnapshotTests\/testForNoContactWhenSelfIsTeamMember()"
