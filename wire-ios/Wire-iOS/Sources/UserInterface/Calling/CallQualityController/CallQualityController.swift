@@ -38,7 +38,10 @@ class CallQualityController: NSObject {
         super.init()
 
         if let userSession = ZMUserSession.shared() {
-            self.token = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+            self.token = WireCallCenterV3.addCallStateObserver(
+                observer: self,
+                contextProvider: userSession.contextProvider
+            )
         }
     }
 

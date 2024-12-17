@@ -54,7 +54,10 @@ final class ProximityMonitorManager: NSObject {
             return
         }
 
-        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: userSession.contextProvider
+        )
         AVSMediaManagerClientChangeNotification.add(self)
 
         updateProximityMonitorState()
