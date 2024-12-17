@@ -1510,9 +1510,9 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
             switch session.backupImportDidSucceed {
             case true?:
-                userSession.trackAnalyticsEvent(.backupRestored)
+                userSession.trackAnalyticsEvent(.Backup.restored)
             case false?:
-                userSession.trackAnalyticsEvent(.backupRestoredFailed)
+                userSession.trackAnalyticsEvent(.Backup.restoredFailed)
             case nil:
                 break
             }

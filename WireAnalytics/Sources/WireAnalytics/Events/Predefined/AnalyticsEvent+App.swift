@@ -16,29 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents a key-value pair for analytics event segmentation.
-///
-/// This struct is used to provide additional, structured information about an analytics event.
-/// Each `SegmentationEntry` consists of a key (identifying the type of information) and a value
-/// (the actual data point).
+public extension AnalyticsEvent {
 
-struct SegmentationEntry: Hashable, Sendable {
+    enum App {
 
-    let key: String
-    let value: String
+        /// An event tracking when the user opens the app.
 
-    init(key: String, value: String) {
-        self.key = key
-        self.value = value
-    }
+        public static let open = AnalyticsEvent(name: "app.open")
 
-    init(key: String, value: Int) {
-        self.key = key
-        self.value = "\(value)"
-    }
-
-    init(key: String, value: Bool) {
-        self.key = key
-        self.value = value ? "True" : "False"
     }
 }
