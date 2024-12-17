@@ -334,7 +334,12 @@ private func hostedView(
     vc.title = step.title
     vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
         action: UIAction { _ in
-            transitionCallback(.toCancellationAlert)
+            switch step {
+            case .teamPlanSelection, .teamName, .confirmation:
+                transitionCallback(.toCancellationAlert)
+            case .completion:
+                transitionCallback(.toApp)
+            }
         },
         accessibilityLabel: step.closeButtonAccessibilityLabel
     )
