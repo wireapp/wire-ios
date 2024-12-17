@@ -65,7 +65,7 @@ final class DecodeImageOperationTests: XCTestCase {
         }
 
         operationQueue.addOperation(decodeOperation)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
         sut.image = image
@@ -89,7 +89,7 @@ final class DecodeImageOperationTests: XCTestCase {
         }
 
         operationQueue.addOperation(decodeOperation)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
         XCTAssertNil(image)
