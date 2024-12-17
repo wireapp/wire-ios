@@ -25,6 +25,7 @@ final class CallEndedAnalyticsController {
     private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     private var eventInfo: EventInfo?
+    private var screenSharingStart: Date?
     private var callStateObserverToken: AnyObject!
     private var callParticipantObsererToken: AnyObject!
 
@@ -35,16 +36,14 @@ final class CallEndedAnalyticsController {
         self.contextProvider = contextProvider
         self.analyticsEventTracker = analyticsEventTracker
 
-        // TODO: use protocol
+        // TODO: can't we have a protocol instead of using static/class methods?
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(
             observer: self,
             contextProvider: contextProvider
         )
     }
 
-    private func handleCallEstablished(
-        _ conversation: ZMConversation
-    ) {
+    private func handleCallEstablished(_ conversation: ZMConversation) {
         print("wexflwjdksf TODO: start analytics tracking")
 
         guard eventInfo == nil else {
@@ -132,11 +131,17 @@ extension CallEndedAnalyticsController: WireCallCenterCallParticipantObserver {
         conversation: ZMConversation,
         participants: [CallParticipant]
     ) {
-        for participant in participants {
-            if participant.state.videoState == .screenSharing {
-                eventInfo?.wasScreenShared = true
-                break
-            }
+        // if there is anybody sharing the screen take a note and also remember the time if needed
+        let anyScreenSharingParticipant = participants.first { participant in participant.state.videoState == .screenSharing
+        }
+        if anyScreenSharingParticipant != nil {
+            eventInfo?.wasScreenShared = true
+            screenSharingStart = screenSharingStart ?? .now
+        } else if let screenSharingStart {
+            // screen sharing just stopped
+            let duration = screenSharingStart.distance(to: .now)
+            eventInfo?.totalScreenSharingDuration += Int(round(duration))
+            self.screenSharingStart = nil
         }
     }
 
