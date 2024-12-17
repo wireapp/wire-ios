@@ -16,16 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-public protocol BackendInfoAPI {
-
-    /// Fetch the info of the local backend.
-
-    func getBackendInfo() async throws -> BackendInfo
-
-    /// Fetch the info of MLS support on the backend available from ``APIVersion`` v5.
-
-    func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys
-
+class BackendInfoAPIV4: BackendInfoAPIV3 {
+    override var apiVersion: APIVersion { .v4 }
 }

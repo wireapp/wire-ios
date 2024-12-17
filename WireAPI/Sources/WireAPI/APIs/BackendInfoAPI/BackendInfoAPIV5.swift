@@ -16,49 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+class BackendInfoAPIV5: BackendInfoAPIV4 {
 
-class BackendInfoAPIImpl: BackendInfoAPI {
+    override var apiVersion: APIVersion { .v5 }
 
-    let apiService: any APIServiceProtocol
-
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
-
-    func getBackendInfo() async throws -> BackendInfo {
-        let request = try URLRequestBuilder(path: "/api-version")
+    override func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys {
+        let request = try URLRequestBuilder(path: "/mls/public-keys")
             .withMethod(.get)
             .withAcceptType(.json)
             .build()
 
         let (data, response) = try await apiService.executeRequest(
             request,
-            requiringAccessToken: false
+            requiringAccessToken: true
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: BackendInfoResponse.self)
+            .success(code: .ok, type: BackendMLSPublicKeysResponse.self)
+            .failure(code: .badRequest, label: "mls-not-enabled", error: BackendInfoAPIError.mlsNotEnabled)
             .parse(code: response.statusCode, data: data)
     }
 
 }
 
-private struct BackendInfoResponse: Decodable, ToAPIModelConvertible {
+private struct BackendMLSPublicKeysResponse: Decodable, ToAPIModelConvertible {
 
-    var domain: String
-    var federation: Bool
-    var supported: [UInt]
-    var development: [UInt]?
+    var removal: MLSPublicKeys
 
-    func toAPIModel() -> BackendInfo {
-        .init(
-            domain: domain,
-            isFederationEnabled: federation,
-            isMLSEnabled: false,
-            supportedVersions: Set(supported.compactMap(APIVersion.init)),
-            developmentVersions: Set(development?.compactMap(APIVersion.init) ?? [])
-        )
+    func toAPIModel() -> BackendMLSPublicKeys {
+        .init(removal: removal)
     }
 
 }

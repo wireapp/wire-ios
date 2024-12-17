@@ -18,14 +18,16 @@
 
 import Foundation
 
-public protocol BackendInfoAPI {
+/// Errors originating from `BackendInfoAPI`.
 
-    /// Fetch the info of the local backend.
+public enum BackendInfoAPIError: Error {
 
-    func getBackendInfo() async throws -> BackendInfo
+    /// Unsupported endpoint for API version
 
-    /// Fetch the info of MLS support on the backend available from ``APIVersion`` v5.
+    case unsupportedEndpointForAPIVersion
 
-    func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys
+    /// MLS is not configured on this backend
+
+    case mlsNotEnabled
 
 }

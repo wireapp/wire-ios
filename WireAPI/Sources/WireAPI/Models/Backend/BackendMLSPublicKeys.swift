@@ -18,14 +18,10 @@
 
 import Foundation
 
-public protocol BackendInfoAPI {
+/// 
 
-    /// Fetch the info of the local backend.
+public struct BackendMLSPublicKeys: Equatable {
 
-    func getBackendInfo() async throws -> BackendInfo
-
-    /// Fetch the info of MLS support on the backend available from ``APIVersion`` v5.
-
-    func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys
+    public let removal: MLSPublicKeys
 
 }

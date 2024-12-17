@@ -53,3 +53,15 @@ public struct MLSPublicKeys: Equatable, Codable, Sendable {
     }
 
 }
+
+public extension MLSPublicKeys {
+
+    func hasValidKeys() -> Bool {
+        [ed25519, ed448, p256, p384, p512].contains { key in
+            guard let key else { return false }
+
+            return !key.isEmpty
+        }
+    }
+
+}
