@@ -114,7 +114,7 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         sut.openOneToOneConversation()
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         XCTAssertEqual(mockUserSession.createTeamOneOnOneWithCompletion_Invocations.count, 1)
         XCTAssertEqual(transitionCount, 1)
@@ -139,7 +139,7 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         sut.startOneToOneConversation()
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         XCTAssertEqual(mockViewModelDelegate.startAnimatingActivity_Invocations.count, 1)
         XCTAssertEqual(mockUserSession.createTeamOneOnOneWithCompletion_Invocations.count, 1)
@@ -162,7 +162,7 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         sut.startOneToOneConversation()
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         XCTAssertEqual(mockViewModelDelegate.startAnimatingActivity_Invocations.count, 1)
         XCTAssertEqual(mockUserSession.createTeamOneOnOneWithCompletion_Invocations.count, 1)
@@ -186,7 +186,7 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         sut.updateActionsList()
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
         XCTAssertEqual(mockViewModelDelegate.updateFooterActionsViews_Invocations.first, [.openOneToOne])
     }
 

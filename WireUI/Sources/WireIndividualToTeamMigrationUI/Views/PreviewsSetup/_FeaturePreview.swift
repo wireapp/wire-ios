@@ -58,6 +58,7 @@ private struct FeaturePreviewContainer: UIViewControllerRepresentable {
             termsOfUseURL: "https://wire.com/en/terms-of-use-business",
             useCase: MockUseCase.success(),
             userProfileName: "Some User",
+            analyticsEventTracker: nil,
             actionCallback: { _ in }
         )
     }

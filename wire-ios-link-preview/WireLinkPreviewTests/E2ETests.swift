@@ -297,7 +297,7 @@ final class E2ETests: XCTestCase {
             completionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 60, handler: nil)
+        waitForExpectations(timeout: 60)
 
         if expected == nil {
             return XCTAssertNil(result, "Expected no OpenGraph data from \(mockData.urlString)", line: line)

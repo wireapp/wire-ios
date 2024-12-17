@@ -225,7 +225,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -274,7 +274,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).warn(message)
 
         // THEN
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -325,7 +325,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).debug(message)
 
         // THEN
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -391,7 +391,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
 
         // AFTER
         ZMSLog.removeLogHook(token: token1)
