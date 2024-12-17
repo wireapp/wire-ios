@@ -85,19 +85,21 @@ public extension AnalyticsEvent {
             deviceModel: String,
             deviceOS: String,
             wasScreenShared: Bool,
-            totalScreenSharingDuration: TimeInterval
+            totalScreenSharingDuration: Int,
+            uniqueScreenSharingUsers: Int,
+            participantCount: UInt
         ) -> AnalyticsEvent {
-            AnalyticsEvent(name: "calling.ended_call") {
-                SegmentationEntry.deviceModel(deviceModel)
-                SegmentationEntry.deviceOS(deviceOS)
+            AnalyticsEvent(name: "calling.ended_call", segmentation: [
+                .deviceModel(deviceModel),
+                .deviceOS(deviceOS),
+                .wasScreenShared(wasScreenShared),
+                .totalScreenSharingDuration(totalScreenSharingDuration),
+                .uniqueScreenSharingUsers(uniqueScreenSharingUsers),
                 // TODO: implement
-                // call_screen_share
-                // call_screen_share_duration
-                // call_screen_share_unique
-                // call_direction
+                //
                 // call_duration
                 // conversation_type
-                // conversation_size
+                .conversationSize(participantCount)
                 // conversation_guests
                 // conversation_guest_pro
                 // call_participants
@@ -106,8 +108,36 @@ public extension AnalyticsEvent {
                 // call_av_switch_toggle
                 // call_video
                 // team_is_team
-            }
+            ])
         }
 
     }
+}
+
+private extension SegmentationEntry {
+
+    /// Creates a `SegmentationEntry` for indicating whether any screen sharing happened during the call. (including other participants)
+
+    static func wasScreenShared(_ value: Bool) -> Self {
+        .init(key: "call_screen_share", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` for providing the total time in seconds any screen sharing happened in the call.
+
+    static func totalScreenSharingDuration(_ value: Int) -> Self {
+        .init(key: "call_screen_share_duration", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` for the number of unique users who shared the screen during the call.
+
+    static func uniqueScreenSharingUsers(_ value: Int) -> Self {
+        .init(key: "call_screen_share_unique", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` for the number of unique users who shared the screen during the call.
+
+    static func callDirection(_ value: Int) -> Self {
+        .init(key: "call_direction", value: value)
+    }
+
 }

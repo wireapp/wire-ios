@@ -85,7 +85,7 @@ extension SegmentationEntry {
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
     static func conversationSize(_ value: UInt) -> Self {
-        .init(key: "conversation_size", value: value.analyticsValue)
+        .init(key: "conversation_size", value: value.analyticsValue) // TODO: is `.analyticsValue` needed?
     }
 
     /// Creates a `SegmentationEntry` for the score of the calling survey
