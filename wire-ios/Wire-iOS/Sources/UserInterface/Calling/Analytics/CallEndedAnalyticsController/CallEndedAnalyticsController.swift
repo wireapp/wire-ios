@@ -65,8 +65,9 @@ final class CallEndedAnalyticsController {
                 wasScreenShared: eventInfo.wasScreenShared,
                 totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,
                 uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers,
-                participantCount: eventInfo.participantCount
+                participantCount: eventInfo.participantCount,
                 // TODO: make complete
+                callEndReason: reason.analyticsValue
             )
         )
 
@@ -99,7 +100,6 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         timestamp: Date?,
         previousCallState: CallState?
     ) {
-
         switch callState {
         case .established:
             handleCallEstablished()

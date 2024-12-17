@@ -109,7 +109,10 @@ final class ActiveCallRouter<TopOverlayPresenter>
         )
         self.transitioningDelegate = CallQualityAnimator()
 
-        callEndedAnalyticsController = .init(contextProvider: userSession.contextProvider)
+        callEndedAnalyticsController = .init(
+            contextProvider: userSession.contextProvider,
+            analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
+        )
 
         callController.router = self
         callQualityController.router = self

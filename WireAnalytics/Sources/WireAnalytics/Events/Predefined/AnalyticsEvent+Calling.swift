@@ -87,7 +87,8 @@ public extension AnalyticsEvent {
             wasScreenShared: Bool,
             totalScreenSharingDuration: Int,
             uniqueScreenSharingUsers: Int,
-            participantCount: UInt
+            participantCount: UInt,
+            callEndReason: String
         ) -> AnalyticsEvent {
             AnalyticsEvent(name: "calling.ended_call", segmentation: [
                 .deviceModel(deviceModel),
@@ -99,11 +100,11 @@ public extension AnalyticsEvent {
                 //
                 // call_duration
                 // conversation_type
-                .conversationSize(participantCount)
+                .conversationSize(participantCount),
                 // conversation_guests
                 // conversation_guest_pro
                 // call_participants
-                // call_end_reason
+                .callEndReason(callEndReason)
                 // conversation_services
                 // call_av_switch_toggle
                 // call_video
@@ -138,6 +139,12 @@ private extension SegmentationEntry {
 
     static func callDirection(_ value: Int) -> Self {
         .init(key: "call_direction", value: value)
+    }
+
+    // TODO: add more
+
+    static func callEndReason(_ value: String) -> Self {
+        .init(key: "call_end_reason", value: value)
     }
 
 }
