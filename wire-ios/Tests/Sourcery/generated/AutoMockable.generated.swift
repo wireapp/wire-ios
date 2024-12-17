@@ -1423,11 +1423,11 @@ class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBui
     // MARK: - build
 
     var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
-    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UIViewController)?
-    var buildMainCoordinator_MockValue: UIViewController?
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> ViewController)?
+    var buildMainCoordinator_MockValue: ViewController?
 
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
+    func build(mainCoordinator: AnyMainCoordinator) -> ViewController {
         buildMainCoordinator_Invocations.append(mainCoordinator)
 
         if let mock = buildMainCoordinator_MockMethod {

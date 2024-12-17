@@ -32,6 +32,6 @@ public struct SubmitCallQualitySurveyUseCase: SubmitCallQualitySurveyUseCaseProt
     }
 
     public func invoke(_ review: CallQualitySurveyReview) {
-        analyticsEventTracker?.trackEvent(.callQualitySurvey(review))
+        analyticsEventTracker?.trackEvent(.Calling.callQualitySurvey(review))
     }
 }
