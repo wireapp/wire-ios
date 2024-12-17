@@ -64,7 +64,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         }
 
         paginationController.updatePagination(page2, filter: nil)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -99,7 +99,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         }
 
         paginationController.updatePagination(.failure(.noMorePages), filter: nil)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -137,7 +137,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         _ = paginationController.fetchNewPage()
 
         // THEN
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
     // MARK: - Utilities

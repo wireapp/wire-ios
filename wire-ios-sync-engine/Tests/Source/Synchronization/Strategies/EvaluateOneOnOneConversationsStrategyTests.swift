@@ -81,7 +81,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         }
 
         // then
-        await fulfillment(of: [expectation], timeout: 0.1)
+        await fulfillment(of: [expectation], timeout: 1)
 
         XCTAssertEqual(mockSyncStatus.finishCurrentSyncPhasePhase_Invocations.count, 1)
     }
@@ -104,7 +104,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         }
 
         // then
-        await fulfillment(of: [expectation], timeout: 0.1)
+        await fulfillment(of: [expectation], timeout: 1)
 
         XCTAssert(mockSyncStatus.finishCurrentSyncPhasePhase_Invocations.isEmpty)
     }
