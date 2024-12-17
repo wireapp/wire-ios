@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+
 public extension AnalyticsEvent {
 
     enum Calling {
@@ -80,16 +82,31 @@ public extension AnalyticsEvent {
         /// - Returns: A call joined analytics event.
 
         public static func endedCall(
-//            isVideo: Bool,
-//            conversationType: ConversationType
+            deviceModel: String,
+            deviceOS: String,
+            wasScreenShared: Bool,
+            totalScreenSharingDuration: TimeInterval
         ) -> AnalyticsEvent {
-            AnalyticsEvent(
-                name: "calling.ended_call",
-                segmentation: [
-//                    .isVideoCall(isVideo),
-//                    .groupType(conversationType)
-                ]
-            )
+            AnalyticsEvent(name: "calling.ended_call") {
+                SegmentationEntry.deviceModel(deviceModel)
+                SegmentationEntry.deviceOS(deviceOS)
+                // TODO: implement
+                // call_screen_share
+                // call_screen_share_duration
+                // call_screen_share_unique
+                // call_direction
+                // call_duration
+                // conversation_type
+                // conversation_size
+                // conversation_guests
+                // conversation_guest_pro
+                // call_participants
+                // call_end_reason
+                // conversation_services
+                // call_av_switch_toggle
+                // call_video
+                // team_is_team
+            }
         }
 
     }
