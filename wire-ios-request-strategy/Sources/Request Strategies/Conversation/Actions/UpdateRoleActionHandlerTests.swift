@@ -58,7 +58,7 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
         super.tearDown()
     }
 
-    func testThatItCreatesAnExpectedRequestForUpdatingRole() throws {
+    func testThatItCreatesAnExpectedRequestForUpdatingRole_V0() throws {
         try syncMOC.performGroupedAndWait {
             // given
             let userID = self.user.remoteIdentifier!
@@ -72,6 +72,29 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(
                 request.path,
                 "/conversations/\(conversationID.transportString())/members/\(userID.transportString())"
+            )
+            let payload = Payload.ConversationUpdateRole(request)
+            XCTAssertEqual(payload?.role, self.role.name)
+        }
+    }
+
+    func testThatItCreatesAnExpectedRequestForUpdatingRole_V7() throws {
+        try syncMOC.performGroupedAndWait {
+            // given
+            let domain = "wire.com"
+            let userID = self.user.remoteIdentifier!
+            self.user.domain = domain
+            let conversationID = self.conversation.remoteIdentifier!
+            self.conversation.domain = domain
+            let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
+
+            // when
+            let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v7))
+
+            // then
+            XCTAssertEqual(
+                request.path,
+                "/v7/conversations/\(domain)/\(conversationID.transportString())/members/\(domain)/\(userID.transportString())"
             )
             let payload = Payload.ConversationUpdateRole(request)
             XCTAssertEqual(payload?.role, self.role.name)
