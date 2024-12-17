@@ -119,7 +119,10 @@ final class AudioMessageView: UIView, TransferView {
         layoutIfNeeded()
 
         if let session = ZMUserSession.shared() {
-            self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: session)
+            self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+                observer: self,
+                contextProvider: session.contextProvider
+            )
         }
     }
 

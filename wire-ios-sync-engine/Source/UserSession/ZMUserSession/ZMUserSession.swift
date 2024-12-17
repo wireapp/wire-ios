@@ -661,7 +661,10 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setupCallStateObserverForAnalytics() {
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: self)
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: contextProvider
+        )
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {

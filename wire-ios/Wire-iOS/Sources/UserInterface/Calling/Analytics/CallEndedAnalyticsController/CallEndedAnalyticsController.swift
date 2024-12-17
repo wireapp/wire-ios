@@ -17,14 +17,41 @@
 //
 
 import WireAnalytics
+import WireSyncEngine
 
 final class CallEndedAnalyticsController {
 
-    private let analyticsTracker: () -> (any AnalyticsEventTracker)?
+    private let contextProvider: ContextProvider
+    private var callStateObserverToken: AnyObject!
 
-    init(analyticsTracker: @escaping () -> (any AnalyticsEventTracker)?) {
-        self.analyticsTracker = analyticsTracker
+    init(contextProvider: ContextProvider) {
+        self.contextProvider = contextProvider
 
-//        WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: contextProvider
+        )
     }
+}
+
+extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
+
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: any UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
+
+        switch callState {
+        case .established:
+            print("wexflwjdksf TODO: start analytics tracking")
+        case .terminating(let reason):
+            print("wexflwjdksf TODO: send analytics event and reset")
+        default:
+            break
+        }
+    }
+
 }
