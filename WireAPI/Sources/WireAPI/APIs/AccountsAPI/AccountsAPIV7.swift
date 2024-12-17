@@ -35,7 +35,7 @@ class AccountsAPIV7: AccountsAPIV6 {
 
         let encodedJSON: Data
         do {
-            encodedJSON = try JSONEncoder().encode(body)
+            encodedJSON = try JSONEncoder.defaultEncoder.encode(body)
         } catch {
             assertionFailure("failed to encode body")
             throw AccountsAPIError.invalidRequestBody
