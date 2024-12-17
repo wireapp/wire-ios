@@ -33,6 +33,10 @@
         "enabled" : false,
         "key" : "ZMLOG_TAGS",
         "value" : "MockTransportRequests"
+      },
+      {
+        "key" : "CI",
+        "value" : "${CI}"
       }
     ],
     "targetForVariableExpansion" : {
