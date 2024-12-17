@@ -48,7 +48,7 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
             ZMMessage.addReaction(reaction, to: message)
             if reaction == "❤️" {
                 analyticsEventTracker?.trackEvent(
-                    .conversationContribution(
+                    .Contributed.conversationContribution(
                         .likeMessage,
                         conversationType: .init(conversation.conversationType),
                         conversationSize: UInt(conversation.localParticipants.count)

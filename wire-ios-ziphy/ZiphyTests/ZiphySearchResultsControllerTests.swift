@@ -56,7 +56,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -96,7 +96,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -136,7 +136,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendDownloadResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -167,7 +167,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         var fetchResult: ZiphyResult<[Ziph]>?
         let nextFetchExpectation = expectation(description: "Next trending images are fetched.")
@@ -178,7 +178,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -221,7 +221,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
 
         request?.cancel()
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2)
 
         // THEN
         XCTAssertNil(fetchResult)

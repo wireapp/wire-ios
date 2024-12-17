@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public extension AnalyticsEvent {
 
-/// Errors originating from `UserClientsAPI`.
+    enum Backup {
 
-public enum UserClientsAPIError: Error {
+        /// An event tracking when the user fails to export a backup.
 
-    /// A request url is invalid.
+        public static let exportFailed = AnalyticsEvent(name: "backup.export_failed")
 
-    case invalidURL
+        /// An event tracking when the user successuflly restores a backup.
+
+        public static let restored = AnalyticsEvent(name: "backup.restore_succeeded")
+
+        /// An event tracking when the user fails to restores a backup.
+
+        public static let restoredFailed = AnalyticsEvent(name: "backup.restore_failed")
+
+    }
 }

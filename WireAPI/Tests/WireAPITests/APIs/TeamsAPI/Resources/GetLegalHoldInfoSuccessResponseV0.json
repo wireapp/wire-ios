@@ -1,0 +1,7 @@
+{
+  "status": "pending",
+  "last_prekey": {
+      "id": 12345,
+      "key": "foo"
+   }
+}

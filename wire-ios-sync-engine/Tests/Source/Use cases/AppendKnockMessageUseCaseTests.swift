@@ -69,7 +69,7 @@ final class AppendKnockMessageUseCaseTests: XCTest {
 
         XCTAssertNil(mockConversation.draftMessage)
 
-        let expectedEvent = AnalyticsEvent.conversationContribution(
+        let expectedEvent = AnalyticsEvent.Contributed.conversationContribution(
             .pingMessage,
             conversationType: .group,
             conversationSize: 0

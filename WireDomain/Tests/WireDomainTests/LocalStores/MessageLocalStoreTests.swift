@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireDomain
 
 final class MessageLocalStoreTests: XCTestCase {

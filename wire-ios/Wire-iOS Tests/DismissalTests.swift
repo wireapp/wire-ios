@@ -66,7 +66,7 @@ final class DismissalTests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2)
     }
 
     func testThatItAllowsDismissalForControllerInNavigationController() {
@@ -96,7 +96,7 @@ final class DismissalTests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2)
     }
 
     // MARK: - Dismissal
@@ -113,7 +113,7 @@ final class DismissalTests: XCTestCase {
         }
 
         // THEN
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2)
     }
 
     func testThatItCallsHandlerForAlreadyDismissedViewController() {
@@ -129,7 +129,7 @@ final class DismissalTests: XCTestCase {
         }
 
         // THEN
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2)
     }
 
 }

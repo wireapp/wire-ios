@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public extension AnalyticsEvent {
 
-/// Errors originating from `PushChannelAPI`.
+    enum App {
 
-public enum PushChannelAPIError: Error {
+        /// An event tracking when the user opens the app.
 
-    /// A submitted request is invalid.
+        public static let open = AnalyticsEvent(name: "app.open")
 
-    case invalidRequest
-
+    }
 }
