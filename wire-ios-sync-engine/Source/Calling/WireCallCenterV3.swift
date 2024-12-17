@@ -1093,20 +1093,6 @@ extension WireCallCenterV3 {
     ) {
         callState.logState()
 
-        // TODO: remove
-        let analyticsEventTracker = analyticsEventTracker()
-        analyticsEventTracker?.trackEvent(
-            .Calling.endedCall(
-                deviceModel: UIDevice.current.model,
-                deviceOS: UIDevice.current.systemVersion,
-                wasScreenShared: false, // TODO: fix
-                totalScreenSharingDuration: 0, // TODO: fix,
-                uniqueScreenSharingUsers: 0, // TODO: fix
-                participantCount: 0 // TODO: fix
-                // TODO: make complete
-            )
-        )
-
         var callState = callState
 
         if case .terminating(reason: .stillOngoing) = callState {

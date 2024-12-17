@@ -22,17 +22,73 @@ import WireSyncEngine
 final class CallEndedAnalyticsController {
 
     private let contextProvider: ContextProvider
-    private var callStateObserverToken: AnyObject!
+    private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
-    init(contextProvider: ContextProvider) {
+    private var callStateObserverToken: AnyObject!
+    private var eventInfo: EventInfo?
+
+    init(
+        contextProvider: ContextProvider,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+    ) {
         self.contextProvider = contextProvider
+        self.analyticsEventTracker = analyticsEventTracker
 
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(
             observer: self,
             contextProvider: contextProvider
         )
     }
+
+    private func handleCallEstablished() {
+        print("wexflwjdksf TODO: start analytics tracking")
+
+        guard eventInfo == nil else {
+            return assertionFailure("call established callback before call terminated")
+        }
+
+        eventInfo = .init()
+    }
+
+    private func handleCallTerminating(_ reason: CallClosedReason) {
+        print("wexflwjdksf TODO: send analytics event and reset")
+
+        guard let eventInfo else {
+            return assertionFailure("call terminated callback before call established")
+        }
+
+        let analyticsEventTracker = analyticsEventTracker()
+        analyticsEventTracker?.trackEvent(
+            .Calling.endedCall(
+                deviceModel: eventInfo.deviceModel,
+                deviceOS: eventInfo.deviceOS,
+                wasScreenShared: eventInfo.wasScreenShared,
+                totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,
+                uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers,
+                participantCount: eventInfo.participantCount
+                // TODO: make complete
+            )
+        )
+
+        self.eventInfo = nil
+    }
 }
+
+// MARK: - CallEndedAnalyticsController.EventInfo
+
+private extension CallEndedAnalyticsController {
+
+    struct EventInfo {
+        var deviceModel = UIDevice.current.model
+        var deviceOS = UIDevice.current.systemVersion
+        var wasScreenShared = false
+        var totalScreenSharingDuration = 0
+        var uniqueScreenSharingUsers = 0
+        var participantCount = UInt()
+    }
+}
+
+// MARK: - CallEndedAnalyticsController + WireCallCenterCallStateObserver
 
 extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
 
@@ -46,9 +102,9 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
 
         switch callState {
         case .established:
-            print("wexflwjdksf TODO: start analytics tracking")
+            handleCallEstablished()
         case .terminating(let reason):
-            print("wexflwjdksf TODO: send analytics event and reset")
+            handleCallTerminating(reason)
         default:
             break
         }

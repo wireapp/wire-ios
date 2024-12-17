@@ -44,7 +44,7 @@ public enum WireCallCenterV3Factory {
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
         transport: WireCallCenterTransport,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)? // TODO: needed?
     ) -> WireCallCenterV3 {
 
         if let wireCallCenter = uiMOC.zm_callCenter {
