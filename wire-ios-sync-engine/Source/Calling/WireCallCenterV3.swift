@@ -555,6 +555,8 @@ public extension WireCallCenterV3 {
     ) throws {
         Self.logger.info("answering call")
 
+        // TODO: start analytics?
+
         guard let conversationId = conversation.avsIdentifier else {
             throw Failure.missingAVSIdentifier
         }
@@ -621,6 +623,8 @@ public extension WireCallCenterV3 {
 
     func startCall(in conversation: ZMConversation, isVideo: Bool) throws {
         Self.logger.info("starting call")
+
+        // TODO: start analytics?
 
         guard let conversationId = conversation.avsIdentifier else {
             throw Failure.missingAVSIdentifier
@@ -1027,19 +1031,6 @@ extension WireCallCenterV3 {
     ) {
         Self.logger.info("handle call event (timestamp: \(callEvent.currentTimestamp))")
 
-        let analyticsEventTracker = analyticsEventTracker()
-        analyticsEventTracker?.trackEvent(
-            .Calling.endedCall(
-                deviceModel: UIDevice.current.model,
-                deviceOS: UIDevice.current.systemVersion,
-                wasScreenShared: false, // TODO: fix
-                totalScreenSharingDuration: 0, // TODO: fix,
-                uniqueScreenSharingUsers: 0, // TODO: fix
-                participantCount: 0 // TODO: fix
-                // TODO: make complete
-            )
-        )
-
         guard
             let context = uiMOC,
             let conversationType = conversationType(from: callEvent)
@@ -1101,6 +1092,20 @@ extension WireCallCenterV3 {
         userId: AVSIdentifier? = nil
     ) {
         callState.logState()
+
+        // TODO: remove
+        let analyticsEventTracker = analyticsEventTracker()
+        analyticsEventTracker?.trackEvent(
+            .Calling.endedCall(
+                deviceModel: UIDevice.current.model,
+                deviceOS: UIDevice.current.systemVersion,
+                wasScreenShared: false, // TODO: fix
+                totalScreenSharingDuration: 0, // TODO: fix,
+                uniqueScreenSharingUsers: 0, // TODO: fix
+                participantCount: 0 // TODO: fix
+                // TODO: make complete
+            )
+        )
 
         var callState = callState
 
