@@ -35,9 +35,9 @@ public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
     }
 
     var unsafePerformCount = 0
-    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
+    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
         unsafePerformCount += 1
-        return try block(coreCrypto)
+        return try await block(coreCrypto)
     }
 
     var performAsyncCount = 0

@@ -957,7 +957,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 await performsMLSClientUpdates()
             } else {
                 // If we discover that
-                // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS client,
+                // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS
+                // client,
                 // we should create one.
                 let needsToRegisterMLSClient = BackendInfo.isMLSEnabled && mlsFeature.isEnabled
                 if let qualifiedSelfClientID, needsToRegisterMLSClient {

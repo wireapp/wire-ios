@@ -25,16 +25,18 @@ class SelfUserAPIV4: SelfUserAPIV3 {
     }
 
     override func getSelfUser() async throws -> SelfUser {
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/self",
-            method: .get
-        )
+        let request = try URLRequestBuilder(path: resourcePath)
+            .withMethod(.get)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: SelfUserV4.self)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
 }

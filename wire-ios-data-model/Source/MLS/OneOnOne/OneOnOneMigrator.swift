@@ -60,12 +60,14 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 userID: userID,
                 mlsGroupID: mlsGroupID,
                 removalKeys: removalKeys,
-                in: context)
+                in: context
+            )
         }
 
         // Perform the migration of messages and link the MLS conversation if needed.
         // It's safe to attempt this step each time to enhance the resilience of the app.
-        // This ensures that in cases where an MLS conversation exists but Proteus hasn't yet switched and the messages haven't been migrated,
+        // This ensures that in cases where an MLS conversation exists but Proteus hasn't yet switched and the messages
+        // haven't been migrated,
         // it will attempt the migration again.
         try await migrateMessagesAndLinkMLSConversationIfNeeded(
             userID: userID,
@@ -150,7 +152,8 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             }
 
             // move local messages from proteus conversation if it exists
-            if let existingConversation = otherUser.oneOnOneConversation, existingConversation.messageProtocol == .proteus {
+            if let existingConversation = otherUser.oneOnOneConversation,
+               existingConversation.messageProtocol == .proteus {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(existingConversation.allMessages)
