@@ -50,6 +50,29 @@ import WireDataModel
 
 
 
+class MockBackendConfigRepositoryProtocol: BackendConfigRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pullMLSBackendStatus
+
+    var pullMLSBackendStatus_Invocations: [Void] = []
+    var pullMLSBackendStatus_MockMethod: (() async -> Void)?
+
+    func pullMLSBackendStatus() async {
+        pullMLSBackendStatus_Invocations.append(())
+
+        guard let mock = pullMLSBackendStatus_MockMethod else {
+            fatalError("no mock for `pullMLSBackendStatus`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
 
     // MARK: - Life cycle

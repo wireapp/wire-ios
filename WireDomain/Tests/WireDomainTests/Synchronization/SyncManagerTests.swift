@@ -39,6 +39,7 @@ final class SyncManagerTests: XCTestCase {
     private var userRepository: MockUserRepositoryProtocol!
     private var conversationLabelsRepository: MockConversationLabelsRepositoryProtocol!
     private var featureConfigsRepository: MockFeatureConfigRepositoryProtocol!
+    private var backendConfigRepository: MockBackendConfigRepositoryProtocol!
     private var pushSupportedProtocolsUseCase: MockPushSupportedProtocolsUseCaseProtocol!
     private var mlsService: MockMLSServiceInterface!
 
@@ -59,6 +60,7 @@ final class SyncManagerTests: XCTestCase {
         userRepository = MockUserRepositoryProtocol()
         conversationLabelsRepository = MockConversationLabelsRepositoryProtocol()
         featureConfigsRepository = MockFeatureConfigRepositoryProtocol()
+        backendConfigRepository = MockBackendConfigRepositoryProtocol()
         pushSupportedProtocolsUseCase = MockPushSupportedProtocolsUseCaseProtocol()
 
         sut = SyncManager(
@@ -69,6 +71,7 @@ final class SyncManagerTests: XCTestCase {
             userRepository: userRepository,
             conversationLabelsRepository: conversationLabelsRepository,
             featureConfigsRepository: featureConfigsRepository,
+            backendConfigRepository: backendConfigRepository,
             updateEventProcessor: updateEventProcessor,
             pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
             mlsProvider: MLSProvider(service: mlsService, isMLSEnabled: true),

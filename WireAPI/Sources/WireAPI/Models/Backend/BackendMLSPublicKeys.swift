@@ -18,9 +18,9 @@
 
 import Foundation
 
-/// 
+/// Public keys used by the backend to sign external proposals
 
-public struct BackendMLSPublicKeys: Equatable {
+public struct BackendMLSPublicKeys: Equatable, Sendable {
 
     public let removal: MLSPublicKeys
 

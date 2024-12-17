@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol BackendInfoAPI {
 
     /// Fetch the info of the local backend.

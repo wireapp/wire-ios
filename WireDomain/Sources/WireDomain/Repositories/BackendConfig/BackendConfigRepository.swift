@@ -16,14 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireAPI
 import WireLogging
-import Foundation
 
+// sourcery: AutoMockable
+/// Facilitate access to backend configurations.
 ///
+/// A repository provides an abstraction for the access and storage backend configurations.
 protocol BackendConfigRepositoryProtocol {
 
-    ///
+    /// Fetches backend MLS public keys, calculates and stores the `isMLSEnabled` for backend info
 
     func pullMLSBackendStatus() async
 }
@@ -46,14 +49,22 @@ final class BackendConfigRepository: BackendConfigRepositoryProtocol {
     // MARK: - Public
 
     func pullMLSBackendStatus() async {
-        var storage = UserDefaults.standard
         do {
             let backendMLSPublicKeys = try await backendInfoAPI.getBackendMLSPublicKeys()
             let hasValidKeys = backendMLSPublicKeys.removal.hasValidKeys()
-            storage.set(hasValidKeys, forKey: "isMLSEnabled")
+            storeIsMLSEnabledStatus(newValue: hasValidKeys)
         } catch {
-            storage.set(false, forKey: "isMLSEnabled")
-            logger.info("")
+            storeIsMLSEnabledStatus(newValue: false)
+            logger.info("no backend MLS public keys")
         }
     }
+
+    // MARK: - Private
+
+    private func storeIsMLSEnabledStatus(newValue: Bool) {
+        var storage = UserDefaults.standard
+        let key = "isMLSEnabled"
+        storage.set(newValue, forKey: key)
+    }
+
 }

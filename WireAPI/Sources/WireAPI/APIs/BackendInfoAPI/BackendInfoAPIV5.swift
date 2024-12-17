@@ -21,7 +21,7 @@ class BackendInfoAPIV5: BackendInfoAPIV4 {
     override var apiVersion: APIVersion { .v5 }
 
     override func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys {
-        let request = try URLRequestBuilder(path: "/mls/public-keys")
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/mls/public-keys")
             .withMethod(.get)
             .withAcceptType(.json)
             .build()

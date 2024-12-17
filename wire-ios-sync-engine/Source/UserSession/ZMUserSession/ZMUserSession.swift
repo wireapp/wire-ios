@@ -1050,10 +1050,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     private func createMLSClient(qualifiedID: QualifiedClientID) async {
         let mlsClientID = await syncContext.perform {
-            return MLSClientID(qualifiedClientID: qualifiedID)
+            MLSClientID(qualifiedClientID: qualifiedID)
         }
         do {
-            try await self.coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
+            try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
         } catch {
             WireLogger.mls.error("Failed to initialise mls client: \(error)")
         }
