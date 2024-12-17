@@ -53,13 +53,13 @@ struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpd
 
         if currentTimeout != timeout {
 
-            let messageType: MessageType = .messageTimerUpdate(
+            let messageType: SystemMessageType = .messageTimerUpdate(
                 sender: (userID.uuid, userID.domain),
                 date: timestamp,
                 timeoutValue: timeoutValue
             )
 
-            await messageLocalStore.addSystemMessageToConversation(
+            await messageLocalStore.addSystemMessage(
                 messageType: messageType,
                 conversationID: conversationID.uuid,
                 conversationDomain: conversationID.domain

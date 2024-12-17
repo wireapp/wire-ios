@@ -69,6 +69,7 @@ class BackendEnvironmentTests: XCTestCase {
         let environmentType = EnvironmentType.custom(url: configURL)
         return BackendEnvironment(
             title: title,
+            trustData: [],
             environmentType: environmentType,
             endpoints: endpoints,
             proxySettings: proxySettings,

@@ -22,12 +22,11 @@ import WireDataModel
 /// Facilitate access to message related domain objects.
 public protocol MessageRepositoryProtocol {
 
-    func addMessageToConversation(
-        messageType: MessageType,
+    func addSystemMessage(
+        messageType: SystemMessageType,
         conversationID: UUID,
         conversationDomain: String?
     ) async
-
 }
 
 public class MessageRepository: MessageRepositoryProtocol {
@@ -35,24 +34,28 @@ public class MessageRepository: MessageRepositoryProtocol {
     // MARK: - Properties
 
     private let localStore: any MessageLocalStoreProtocol
+    private let conversationRepository: any ConversationRepositoryProtocol
 
     // MARK: - Object lifecycle
 
     public init(
-        localStore: any MessageLocalStoreProtocol
+        localStore: any MessageLocalStoreProtocol,
+        conversationRepository: any ConversationRepositoryProtocol
     ) {
         self.localStore = localStore
+        self.conversationRepository = conversationRepository
     }
 
-    public func addMessageToConversation(
-        messageType: MessageType,
+    public func addSystemMessage(
+        messageType: SystemMessageType,
         conversationID: UUID,
         conversationDomain: String?
     ) async {
-        await localStore.addSystemMessageToConversation(
+        await localStore.addSystemMessage(
             messageType: messageType,
             conversationID: conversationID,
             conversationDomain: conversationDomain
         )
     }
+
 }

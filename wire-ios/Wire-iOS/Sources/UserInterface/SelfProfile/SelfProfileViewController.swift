@@ -22,8 +22,10 @@
 
 import SwiftUI
 import UIKit
+import WireAPI
 import WireCommonComponents
 import WireDesign
+import WireDomainAPI
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireReusableUIComponents
@@ -41,12 +43,15 @@ final class SelfProfileViewController: UIViewController {
     private let settingsController: SettingsTableViewController
     private weak var accountSelectorView: AccountSelectorView?
     private let profileLayoutGuide = UILayoutGuide()
+    private var profileLayoutGuideViewTopConstraint = NSLayoutConstraint()
+    private var profileLayoutGuideBannerTopConstraint = NSLayoutConstraint()
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
     private var teamMigrationBanner: UIViewController?
 
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
+    private let selfProfileViewsMonitor: SelfProfileViewsMonitor
 
     // MARK: - Configuration
 
@@ -102,20 +107,22 @@ final class SelfProfileViewController: UIViewController {
 
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
-
+        self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
         if selfUser.isTeamMember {
             userSession.enqueue {
                 selfUser.refreshTeamData()
             }
-        } else {
-            // TODO: [WPB-11270] show banner
-//            teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
-//               actionCallback: { [weak self] _ in
-//                   self?.userDidTapCreateTeam()
-//               }
-//           )
+        } else if
+            let backendInfoApiVersion = BackendInfo.apiVersion,
+            let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+            apiVersion >= .v7 {
+            self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
+                actionCallback: { [weak self] action in
+                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
+                }
+            )
         }
     }
 
@@ -156,6 +163,7 @@ final class SelfProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        selfProfileViewsMonitor.onDidViewSelfProfile()
         configureAccountTitle()
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
@@ -188,8 +196,13 @@ final class SelfProfileViewController: UIViewController {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
         settingsController.view.translatesAutoresizingMaskIntoConstraints = false
 
+        profileLayoutGuideViewTopConstraint = profileLayoutGuide.topAnchor
+            .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+
         if let teamMigrationBanner {
             teamMigrationBanner.view.translatesAutoresizingMaskIntoConstraints = false
+            profileLayoutGuideBannerTopConstraint = profileLayoutGuide.topAnchor
+                .constraint(equalTo: teamMigrationBanner.view.bottomAnchor)
             NSLayoutConstraint.activate([
 
                 // teamMigrationBanner
@@ -199,12 +212,10 @@ final class SelfProfileViewController: UIViewController {
                     constant: 20
                 ),
                 teamMigrationBanner.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-
-                profileLayoutGuide.topAnchor.constraint(equalTo: teamMigrationBanner.view.bottomAnchor)
+                profileLayoutGuideBannerTopConstraint
             ])
-
         } else {
-            profileLayoutGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+            profileLayoutGuideViewTopConstraint.isActive = true
         }
 
         NSLayoutConstraint.activate([
@@ -236,20 +247,65 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Events
 
-    private func onTeamCreationBannerInteraction(_ action: SelfProfileViewCallToActionBanner.Action) {
+    private func onTeamCreationBannerInteraction(
+        _ action: SelfProfileViewCallToActionBanner.Action,
+        apiVersion: WireAPI.APIVersion
+    ) {
         switch action {
         case .createWireTeam:
-            userDidTapCreateTeam()
+            let sessionContextProvider = userSession.contextProvider
+            let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
+            guard let userName = user.normalizedName,
+                  let useCase = SessionManager.shared?.activeUserSession?
+                  .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
+                return
+            }
+            userDidTapCreateTeam(useCase: useCase, userName: userName)
         }
     }
 
-    private func userDidTapCreateTeam() {
-        // TODO: [WPB-11270] Present team creation flow
-//        let vc = IndividualToTeamMigrationViewController(
-//            features: ,
-//            useCase: ,
-//        )
-//        present(vc, animated: true)
+    private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
+        let vc = IndividualToTeamMigrationViewController(
+            privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
+            termsOfUseURL: WireURLs.shared.legal.absoluteString,
+            useCase: useCase,
+            userProfileName: userName,
+            actionCallback: { [weak self] action in
+                Task { [weak self] in
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        switch action {
+                        case .cancel:
+                            presentedViewController?.dismiss(animated: true)
+                        case .toLearnMoreAboutPlans:
+                            _ = WireURLs.shared.wireEnterpriseInfo.open()
+                        case .completionGoToApp:
+                            dismissIndividualToTeamMigrationBanner()
+                            presentedViewController?.dismiss(animated: true)
+                        case .completionGoToTeamManagement:
+                            dismissIndividualToTeamMigrationBanner()
+                            presentedViewController?.dismiss(animated: true, completion: { [weak self] in
+                                self?.navigateToTeam()
+                            })
+                        }
+                    }
+                }
+            }
+        )
+        present(vc, animated: true)
+    }
+
+    private func dismissIndividualToTeamMigrationBanner() {
+        teamMigrationBanner?.willMove(toParent: nil)
+        teamMigrationBanner?.view.removeFromSuperview()
+        teamMigrationBanner?.removeFromParent()
+        teamMigrationBanner = nil
+        profileLayoutGuideBannerTopConstraint.isActive = false
+        profileLayoutGuideViewTopConstraint.isActive = true
+    }
+
+    private func navigateToTeam() {
+        URL.manageTeam(source: .settings).open()
     }
 
     @objc
@@ -286,4 +342,11 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
             self.accountSelector?.switchTo(account: account)
         }
     }
+}
+
+// MARK: - Notifications
+
+public extension Notification.Name {
+    // Used to notify the app that the user has viewed their own profile
+    static let userDidViewSelfProfile = Notification.Name("userDidViewSelfProfile")
 }
