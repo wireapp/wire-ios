@@ -9,8 +9,19 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireShareEngine.xcodeproj",
+      "identifier" : "5470D3F11D76E1B000FDE440",
+      "name" : "WireShareEngineTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

@@ -71,7 +71,7 @@ final class AppendFileMessageUseCaseTests: XCTestCase {
         let appendFileInvocation = try XCTUnwrap(mockConversation.appendFile_Invocations.first)
         XCTAssertEqual(appendFileInvocation.fileMetadata, fileMetadata)
 
-        let expectedEvent = AnalyticsEvent.conversationContribution(
+        let expectedEvent = AnalyticsEvent.Contributed.conversationContribution(
             .fileMessage,
             conversationType: .group,
             conversationSize: 0
