@@ -1,4 +1,0 @@
-- HTTPRequest
-  - path: "/list-connections/"
-  - method: post
-  - body: {"size":500}

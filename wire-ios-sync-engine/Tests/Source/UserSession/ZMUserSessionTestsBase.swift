@@ -51,7 +51,10 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         mockGetFeatureConfigsActionHandler = .init(result: .success(()), context: syncMOC.notificationContext)
         let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
-        mockFetchBackendMLSPublicKeysActionHandler = .init(result: .success(backendPublicKeys), context: syncMOC.notificationContext)
+        mockFetchBackendMLSPublicKeysActionHandler = .init(
+            result: .success(backendPublicKeys),
+            context: syncMOC.notificationContext
+        )
 
         dataChangeNotificationsCount = 0
         baseURL = URL(string: "http://bar.example.com")

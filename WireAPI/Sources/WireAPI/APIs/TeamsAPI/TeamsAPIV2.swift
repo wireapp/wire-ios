@@ -27,19 +27,21 @@ class TeamsAPIV2: TeamsAPIV1 {
     // MARK: - Get team
 
     override func getTeam(for teamID: Team.ID) async throws -> Team {
-        let request = HTTPRequest(
-            path: basePath(for: teamID),
-            method: .get
-        )
+        let request = try URLRequestBuilder(path: basePath(for: teamID))
+            .withMethod(.get)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             // New response payload.
             .success(code: .ok, type: TeamResponseV2.self)
             .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
             .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
 }
