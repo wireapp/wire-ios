@@ -52,6 +52,7 @@ public struct AVSCallMember: Hashable {
     ) {
         self.client = client
         self.audioState = audioState
+        print(videoState == .screenSharing)
         self.videoState = videoState
         self.microphoneState = microphoneState
     }
@@ -87,6 +88,7 @@ extension AVSCallMember {
         self.client = AVSClient(member: member)
         self.audioState = member.aestab
         self.videoState = member.vrecv
+        print(videoState)
         self.microphoneState = member.muted
     }
 }

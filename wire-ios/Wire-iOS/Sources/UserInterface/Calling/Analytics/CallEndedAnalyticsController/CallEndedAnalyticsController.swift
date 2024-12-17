@@ -24,8 +24,9 @@ final class CallEndedAnalyticsController {
     private let contextProvider: ContextProvider
     private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
-    private var callStateObserverToken: AnyObject!
     private var eventInfo: EventInfo?
+    private var callStateObserverToken: AnyObject!
+    private var callParticipantObsererToken: AnyObject!
 
     init(
         contextProvider: ContextProvider,
@@ -34,13 +35,16 @@ final class CallEndedAnalyticsController {
         self.contextProvider = contextProvider
         self.analyticsEventTracker = analyticsEventTracker
 
+        // TODO: use protocol
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(
             observer: self,
             contextProvider: contextProvider
         )
     }
 
-    private func handleCallEstablished() {
+    private func handleCallEstablished(
+        _ conversation: ZMConversation
+    ) {
         print("wexflwjdksf TODO: start analytics tracking")
 
         guard eventInfo == nil else {
@@ -48,14 +52,20 @@ final class CallEndedAnalyticsController {
         }
 
         eventInfo = .init()
+
+        callParticipantObsererToken = WireCallCenterV3.addCallParticipantObserver(
+            observer: self,
+            for: conversation,
+            contextProvider: contextProvider
+        )
     }
 
     private func handleCallTerminating(_ reason: CallClosedReason) {
         print("wexflwjdksf TODO: send analytics event and reset")
 
-        guard let eventInfo else {
-            return assertionFailure("call terminated callback before call established")
-        }
+        guard let eventInfo else { return }
+
+        callParticipantObsererToken = nil
 
         let analyticsEventTracker = analyticsEventTracker()
         analyticsEventTracker?.trackEvent(
@@ -73,6 +83,7 @@ final class CallEndedAnalyticsController {
 
         self.eventInfo = nil
     }
+
 }
 
 // MARK: - CallEndedAnalyticsController.EventInfo
@@ -87,6 +98,7 @@ private extension CallEndedAnalyticsController {
         var uniqueScreenSharingUsers = 0
         var participantCount = UInt()
     }
+
 }
 
 // MARK: - CallEndedAnalyticsController + WireCallCenterCallStateObserver
@@ -102,11 +114,29 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
     ) {
         switch callState {
         case .established:
-            handleCallEstablished()
+            handleCallEstablished(conversation)
         case .terminating(let reason):
             handleCallTerminating(reason)
         default:
             break
+        }
+    }
+
+}
+
+// MARK: - CallEndedAnalyticsController + WireCallCenterCallParticipantObserver
+
+extension CallEndedAnalyticsController: WireCallCenterCallParticipantObserver {
+
+    func callParticipantsDidChange(
+        conversation: ZMConversation,
+        participants: [CallParticipant]
+    ) {
+        for participant in participants {
+            if participant.state.videoState == .screenSharing {
+                eventInfo?.wasScreenShared = true
+                break
+            }
         }
     }
 

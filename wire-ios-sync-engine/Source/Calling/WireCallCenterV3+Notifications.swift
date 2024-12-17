@@ -444,9 +444,13 @@ extension WireCallCenterV3 {
     public class func addCallParticipantObserver(
         observer: WireCallCenterCallParticipantObserver,
         for conversation: ZMConversation,
-        userSession: ZMUserSession
-    ) -> Any {
-        addCallParticipantObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
+        contextProvider: ContextProvider
+    ) -> AnyObject {
+        addCallParticipantObserver(
+            observer: observer,
+            for: conversation,
+            context: contextProvider.viewContext
+        )
     }
 
     /// Add observer of call particpants in a conversation. Returns a token which needs to be retained as long as the
@@ -456,7 +460,7 @@ extension WireCallCenterV3 {
         observer: WireCallCenterCallParticipantObserver,
         for conversation: ZMConversation,
         context: NSManagedObjectContext
-    ) -> Any {
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterCallParticipantNotification.notificationName,
             context: context.notificationContext,
