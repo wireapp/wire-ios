@@ -1,4 +1,5 @@
-- HTTPRequest
-  - path: "/v7/list-connections/"
-  - method: post
-  - body: {"size":500}
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"size\":500}" \
+	"/v7/list-connections/"

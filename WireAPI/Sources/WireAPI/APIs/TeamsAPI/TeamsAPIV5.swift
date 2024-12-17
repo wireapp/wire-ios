@@ -27,36 +27,42 @@ class TeamsAPIV5: TeamsAPIV4 {
     // MARK: - Get team
 
     override func getTeam(for teamID: Team.ID) async throws -> Team {
-        let request = HTTPRequest(
-            path: basePath(for: teamID),
-            method: .get
-        )
+        let request = try URLRequestBuilder(path: basePath(for: teamID))
+            .withMethod(.get)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         // New: 404
         return try ResponseParser()
             .success(code: .ok, type: TeamResponseV2.self)
             .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
             .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     // MARK: - Get team roles
 
     override func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole] {
-        let request = HTTPRequest(
-            path: "\(basePath(for: teamID))/conversations/roles",
-            method: .get
-        )
+        let path = "\(basePath(for: teamID))/conversations/roles"
 
-        let response = try await httpClient.executeRequest(request)
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         // New: 400 error was removed.
         return try ResponseParser()
             .success(code: .ok, type: ConversationRolesListResponseV0.self)
             .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     // MARK: - Get team members
@@ -65,25 +71,23 @@ class TeamsAPIV5: TeamsAPIV4 {
         for teamID: Team.ID,
         maxResults: UInt
     ) async throws -> [TeamMember] {
-        var components = URLComponents(string: "\(basePath(for: teamID))/members")
-        components?.queryItems = [URLQueryItem(name: "maxResults", value: "2000")]
+        let path = "\(basePath(for: teamID))/members"
 
-        guard let path = components?.url?.absoluteString else {
-            throw TeamsAPIError.failedToGenerateRequest
-        }
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .withQueryItem(name: "maxResults", value: "2000")
+            .build()
 
-        let request = HTTPRequest(
-            path: path,
-            method: .get
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
         )
-
-        let response = try await httpClient.executeRequest(request)
 
         // New: 400 error was removed.
         return try ResponseParser()
             .success(code: .ok, type: TeamMemberListResponseV0.self)
             .failure(code: .forbidden, label: "no-team-memper", error: TeamsAPIError.selfUserIsNotTeamMember)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     // MARK: - Get team member legalhold
@@ -92,19 +96,23 @@ class TeamsAPIV5: TeamsAPIV4 {
         for teamID: Team.ID,
         userID: UUID
     ) async throws -> TeamMemberLegalholdInfo {
-        let request = HTTPRequest(
-            path: "\(basePath(for: teamID))/legalhold/\(userID.transportString())",
-            method: .get
-        )
+        let path = "\(basePath(for: teamID))/legalhold/\(userID.transportString())"
 
-        let response = try await httpClient.executeRequest(request)
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         // New: 404 invalid request.
         return try ResponseParser()
             .success(code: .ok, type: TeamMemberLegalholdResponseV0.self)
             .failure(code: .notFound, error: TeamsAPIError.invalidRequest)
             .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
 }

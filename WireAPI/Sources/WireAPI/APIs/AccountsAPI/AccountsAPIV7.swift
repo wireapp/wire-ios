@@ -24,24 +24,18 @@ class AccountsAPIV7: AccountsAPIV6 {
     }
 
     override func upgradeToTeam(teamName: String) async throws -> UpgradedAccountTeam {
-        let components = URLComponents(string: "upgrade-personal-to-team")
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw AccountsAPIError.invalidURL
-        }
-
+        let path = "/upgrade-personal-to-team"
         let body = UpgradeToTeamRequestBodyV7(name: teamName)
 
         let encodedJSON: Data
         do {
-            encodedJSON = try JSONEncoder().encode(body)
+            encodedJSON = try JSONEncoder.defaultEncoder.encode(body)
         } catch {
             assertionFailure("failed to encode body")
             throw AccountsAPIError.invalidRequestBody
         }
 
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withBody(encodedJSON, contentType: .json)
             .withMethod(.post)
             .build()
