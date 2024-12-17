@@ -47,7 +47,7 @@ public struct SystemLogger: LoggerProtocol {
     }
 
     public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, osLogType: .fault)
+        log(message, attributes: attributes, osLogType: .default)
     }
 
     public func error(_ message: any LogConvertible, attributes: LogAttributes...) {

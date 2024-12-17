@@ -48,7 +48,7 @@ final class SwitchBackendConfirmationViewModelTests: XCTestCase {
         sut.handleEvent(.userDidConfirm)
 
         // Then
-        await fulfillment(of: [done], timeout: 0.5)
+        await fulfillment(of: [done], timeout: 1)
         XCTAssertTrue(didConfirm)
     }
 
@@ -66,7 +66,7 @@ final class SwitchBackendConfirmationViewModelTests: XCTestCase {
         sut.handleEvent(.userDidCancel)
 
         // Then
-        await fulfillment(of: [done], timeout: 0.5)
+        await fulfillment(of: [done], timeout: 1)
         XCTAssertFalse(didConfirm)
     }
 

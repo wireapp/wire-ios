@@ -37,6 +37,7 @@ final class ZClientViewController: UIViewController {
     let account: Account
     let userSession: UserSession
     let trackingManager: TrackingManager?
+    private let selfProfileViewsMonitor: SelfProfileViewsMonitor
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
     }
@@ -67,7 +68,8 @@ final class ZClientViewController: UIViewController {
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
+        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
     )
 
     private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
@@ -115,7 +117,8 @@ final class ZClientViewController: UIViewController {
         selfUser: userSession.editableSelfUser,
         userRightInterfaceType: UserRight.self,
         userSession: userSession,
-        accountSelector: SessionManager.shared
+        accountSelector: SessionManager.shared,
+        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
     )
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(
@@ -155,6 +158,7 @@ final class ZClientViewController: UIViewController {
 
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
+    var userDidViewSelfProfileToken: NSObjectProtocol?
 
     private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
@@ -180,7 +184,7 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
-
+        self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
         self.proximityMonitorManager = ProximityMonitorManager()
@@ -270,6 +274,7 @@ final class ZClientViewController: UIViewController {
 
         setupUserChangeInfoObserver()
         setUpConferenceCallingUnavailableObserver()
+        setupDidViewSelfProfileObserver()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -772,16 +777,26 @@ final class ZClientViewController: UIViewController {
 
     private func updateCachedAccountInfo() async {
         do {
+            let user = userSession.selfUser
             cachedAccountInfo = SidebarAccountInfo(
-                userSession.selfUser,
+                user,
                 cachedAccountImage,
-                cachedAccountInfo.isE2EICertified
+                cachedAccountInfo.isE2EICertified,
+                showNotificationsBadge: shouldShowNotificationsBadge(user: user)
             )
             let isE2EICertified = try await userSession.isSelfUserE2EICertifiedUseCase.invoke()
             cachedAccountInfo.isE2EICertified = isE2EICertified
         } catch {
             WireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
         }
+    }
+
+    private func shouldShowNotificationsBadge(user: any UserType) -> Bool {
+        !user.isTeamMember && BackendInfo.apiVersion.map { $0 >= .v7 } ?? false && !hasSeenSelfProfile
+    }
+
+    private var hasSeenSelfProfile: Bool {
+        selfProfileViewsMonitor.didViewSelfProfile
     }
 
     private func conversationFilter() -> ConversationFilter? {
@@ -798,7 +813,8 @@ extension ZClientViewController: UserObserving {
 
             var sidebarUpdateNeeded = false
 
-            if changeInfo.nameChanged || changeInfo.availabilityChanged || changeInfo.trustLevelChanged {
+            if changeInfo.nameChanged || changeInfo.availabilityChanged || changeInfo.trustLevelChanged || changeInfo
+                .teamsChanged {
                 sidebarUpdateNeeded = true
             }
 
@@ -824,5 +840,19 @@ extension ZClientViewController: UserObserving {
     @objc
     func setupUserChangeInfoObserver() {
         userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
+    }
+}
+
+extension ZClientViewController {
+    func setupDidViewSelfProfileObserver() {
+        userDidViewSelfProfileToken = NotificationCenter.default.addObserver(
+            forName: .userDidViewSelfProfile,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { [weak self] in
+                await self?.updateCachedAccountInfo()
+            }
+        }
     }
 }

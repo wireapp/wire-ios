@@ -31,7 +31,7 @@ private extension ZMConversation {
 extension ZMOTRMessage {
 
     @objc(unarchiveIfNeeded:)
-    func unarchiveIfNeeded(_ conversation: ZMConversation) {
+    public func unarchiveIfNeeded(_ conversation: ZMConversation) {
         if let clearedTimestamp = conversation.clearedTimeStamp,
            let serverTimestamp,
            serverTimestamp.compare(clearedTimestamp) == ComparisonResult.orderedAscending {

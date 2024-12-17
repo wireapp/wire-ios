@@ -19,11 +19,11 @@
 import WireAPI
 import WireDataModel
 
-/// An extension that encapsulates storage operations related to conversation MLS.
+/// An extension that encapsulates storage operations related to MLS.
 
 extension ConversationLocalStore {
 
-    // MARK: - Message protocols
+    // MARK: - Update message protocols
 
     func assignMessageProtocol(
         from conversation: Conversation,
@@ -98,7 +98,7 @@ extension ConversationLocalStore {
         }
     }
 
-    // MARK: - Self / MLS
+    // MARK: - Self MLS Conversation
 
     func createOrJoinSelfConversation(
         from localConversation: ZMConversation
@@ -135,4 +135,5 @@ extension ConversationLocalStore {
             try await mlsService.joinGroup(with: groupID)
         }
     }
+
 }

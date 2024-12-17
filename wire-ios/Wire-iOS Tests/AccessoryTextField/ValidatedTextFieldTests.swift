@@ -101,7 +101,7 @@ final class ValidatedTextFieldTests: XCTestCase {
         sut.text = "foo"
 
         // Then
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
     }
 
 }

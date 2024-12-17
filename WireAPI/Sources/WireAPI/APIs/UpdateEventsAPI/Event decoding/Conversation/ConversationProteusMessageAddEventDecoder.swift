@@ -47,8 +47,8 @@ struct ConversationProteusMessageAddEventDecoder {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp.date,
-            message: .ciphertext(payload.text),
-            externalData: payload.data.map { .ciphertext($0) },
+            message: .init(encryptedMessage: payload.text),
+            externalData: payload.data.map { .init(encryptedMessage: $0) },
             messageSenderClientID: payload.sender,
             messageRecipientClientID: payload.recipient
         )
