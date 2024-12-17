@@ -20,6 +20,7 @@ import avs
 import Combine
 import Foundation
 import WireLogging
+import WireAnalytics
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
 /// WireCallCenter.
@@ -50,6 +51,8 @@ public class WireCallCenterV3: NSObject {
 
     /// The object that performs network requests when the call center requests them.
     weak var transport: WireCallCenterTransport?
+
+    private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     // MARK: - Calling State
 
@@ -125,13 +128,14 @@ public class WireCallCenterV3: NSObject {
         avsWrapper: AVSWrapperType? = nil,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) {
-
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
+        self.analyticsEventTracker = analyticsEventTracker
 
         super.init()
 
@@ -551,6 +555,8 @@ public extension WireCallCenterV3 {
     ) throws {
         Self.logger.info("answering call")
 
+        // TODO: start analytics?
+
         guard let conversationId = conversation.avsIdentifier else {
             throw Failure.missingAVSIdentifier
         }
@@ -617,6 +623,8 @@ public extension WireCallCenterV3 {
 
     func startCall(in conversation: ZMConversation, isVideo: Bool) throws {
         Self.logger.info("starting call")
+
+        // TODO: start analytics?
 
         guard let conversationId = conversation.avsIdentifier else {
             throw Failure.missingAVSIdentifier
@@ -1085,6 +1093,20 @@ extension WireCallCenterV3 {
     ) {
         callState.logState()
 
+        // TODO: remove
+        let analyticsEventTracker = analyticsEventTracker()
+        analyticsEventTracker?.trackEvent(
+            .Calling.endedCall(
+                deviceModel: UIDevice.current.model,
+                deviceOS: UIDevice.current.systemVersion,
+                wasScreenShared: false, // TODO: fix
+                totalScreenSharingDuration: 0, // TODO: fix,
+                uniqueScreenSharingUsers: 0, // TODO: fix
+                participantCount: 0 // TODO: fix
+                // TODO: make complete
+            )
+        )
+
         var callState = callState
 
         if case .terminating(reason: .stillOngoing) = callState {
@@ -1112,6 +1134,8 @@ extension WireCallCenterV3 {
             callState: callState,
             callSnapshot: callSnapshots[conversationId]
         )
+
+        // TODO: extract data?
 
         if case .terminating = callState {
             clearSnapshot(conversationId: conversationId)

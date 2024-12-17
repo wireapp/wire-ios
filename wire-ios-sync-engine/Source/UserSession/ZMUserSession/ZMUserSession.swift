@@ -562,7 +562,8 @@ public final class ZMUserSession: NSObject {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            searchUsersCache: dependencies.caches.searchUsers
+            searchUsersCache: dependencies.caches.searchUsers,
+            analyticsEventTracker: { [weak self] in self?.analyticsEventTracker }
         )
     }
 
@@ -660,7 +661,10 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setupCallStateObserverForAnalytics() {
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: self)
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: contextProvider
+        )
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {

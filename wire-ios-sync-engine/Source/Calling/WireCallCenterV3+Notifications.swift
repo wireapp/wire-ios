@@ -200,9 +200,12 @@ extension WireCallCenterV3 {
 
     public class func addCallErrorObserver(
         observer: WireCallCenterCallErrorObserver,
-        userSession: ZMUserSession
+        contextProvider: ContextProvider
     ) -> Any {
-        addCallErrorObserver(observer: observer, context: userSession.managedObjectContext)
+        addCallErrorObserver(
+            observer: observer,
+            context: contextProvider.viewContext
+        )
     }
 
     class func addCallErrorObserver(observer: WireCallCenterCallErrorObserver, context: NSManagedObjectContext) -> Any {
@@ -222,9 +225,12 @@ extension WireCallCenterV3 {
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addCallStateObserver(
         observer: WireCallCenterCallStateObserver,
-        userSession: ZMUserSession
-    ) -> Any {
-        addCallStateObserver(observer: observer, context: userSession.managedObjectContext)
+        contextProvider: ContextProvider
+    ) -> AnyObject {
+        addCallStateObserver(
+            observer: observer,
+            context: contextProvider.viewContext
+        )
     }
 
     /// Register observer of the call center call state in all user sessions.
@@ -261,7 +267,7 @@ extension WireCallCenterV3 {
 
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
-    class func addCallStateObserver(observer: WireCallCenterCallStateObserver, context: NSManagedObjectContext) -> Any {
+    class func addCallStateObserver(observer: WireCallCenterCallStateObserver, context: NSManagedObjectContext) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterCallStateNotification.notificationName,
             context: context.notificationContext,

@@ -21,6 +21,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 import WireRequestStrategy
+import WireAnalytics
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,
@@ -45,6 +46,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     private let ephemeralURLSession = URLSession(configuration: .ephemeral)
     private let fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol
 
+    private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
+
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Internal Properties
@@ -60,12 +63,14 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         flowManager: FlowManagerType,
         callEventStatus: CallEventStatus,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
-        messageSender: MessageSenderInterface
+        messageSender: MessageSenderInterface,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
         self.callEventStatus = callEventStatus
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
+        self.analyticsEventTracker = analyticsEventTracker
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -89,7 +94,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 clientId: clientId,
                 uiMOC: managedObjectContext.zm_userInterface,
                 flowManager: flowManager,
-                transport: self
+                transport: self,
+                analyticsEventTracker: analyticsEventTracker
             )
         }
 
@@ -225,7 +231,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                         clientId: clientId,
                         uiMOC: uiContext.zm_userInterface,
                         flowManager: self.flowManager,
-                        transport: self
+                        transport: self,
+                        analyticsEventTracker: self.analyticsEventTracker
                     )
                 }
                 break

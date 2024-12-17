@@ -3824,6 +3824,7 @@
 		597FD9192D0C55810023B520 /* AnalyticsTrackingManager */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AnalyticsTrackingManager; sourceTree = "<group>"; };
 		597FD93A2D0C5AAE0023B520 /* SelfProfile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SelfProfile; sourceTree = "<group>"; };
 		5983A3EE2CF86F9A002006F6 /* Logging */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logging; sourceTree = "<group>"; };
+		59C4D4202D119FC300F3047B /* Analytics */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Analytics; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -7322,6 +7323,7 @@
 		D58191FE2091CB01003BA7EC /* Calling */ = {
 			isa = PBXGroup;
 			children = (
+				59C4D4202D119FC300F3047B /* Analytics */,
 				D3DE46032923BB02000F1055 /* BottomSheetContainerViewController */,
 				160D6921212C813700096EAD /* CallController */,
 				160D691E212C78C700096EAD /* CallQualityController */,
@@ -8426,6 +8428,7 @@
 			fileSystemSynchronizedGroups = (
 				597FD9192D0C55810023B520 /* AnalyticsTrackingManager */,
 				597FD93A2D0C5AAE0023B520 /* SelfProfile */,
+				59C4D4202D119FC300F3047B /* Analytics */,
 			);
 			name = "Wire-iOS";
 			packageProductDependencies = (

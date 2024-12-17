@@ -18,11 +18,11 @@
 
 import Foundation
 import WireDataModel
+import WireAnalytics
 
 /// Creates call centers.
 
-@objcMembers
-public class WireCallCenterV3Factory: NSObject {
+public enum WireCallCenterV3Factory {
 
     /// The class to use when creating a call center,
     public static var wireCallCenterClass: WireCallCenterV3.Type = WireCallCenterV3.self
@@ -38,12 +38,13 @@ public class WireCallCenterV3Factory: NSObject {
     /// - parameter transport: The object that performs network requests when the call center requests them.
     /// - returns: The call center to use for the given configuration.
 
-    public class func callCenter(
+    public static func callCenter(
         withUserId userId: AVSIdentifier,
         clientId: String,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) -> WireCallCenterV3 {
 
         if let wireCallCenter = uiMOC.zm_callCenter {
@@ -54,7 +55,8 @@ public class WireCallCenterV3Factory: NSObject {
                 clientId: clientId,
                 uiMOC: uiMOC,
                 flowManager: flowManager,
-                transport: transport
+                transport: transport,
+                analyticsEventTracker: analyticsEventTracker
             )
 
             newInstance.useConstantBitRateAudio = uiMOC.zm_useConstantBitRateAudio

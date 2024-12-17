@@ -67,7 +67,7 @@ final class SoundEventListener: NSObject {
             self,
             notificationContext: userSession.managedObjectContext.notificationContext
         )
-        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, contextProvider: userSession.contextProvider)
         self.unreadMessageObserverToken = NewUnreadMessagesChangeInfo.add(observer: self, for: userSession)
         self.unreadKnockMessageObserverToken = NewUnreadKnockMessagesChangeInfo.add(observer: self, for: userSession)
         NotificationCenter.default.addObserver(

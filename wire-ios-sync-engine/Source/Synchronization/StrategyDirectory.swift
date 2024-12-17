@@ -19,6 +19,7 @@
 import Foundation
 import WireDomain
 import WireRequestStrategy
+import WireAnalytics
 
 @objc
 public protocol StrategyDirectoryProtocol {
@@ -54,7 +55,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -71,7 +73,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            analyticsEventTracker: analyticsEventTracker
         )
 
         self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
@@ -110,7 +113,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -293,7 +297,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
                 flowManager: flowManager,
                 callEventStatus: applicationStatusDirectory.callEventStatus,
-                messageSender: messageSender
+                messageSender: messageSender,
+                analyticsEventTracker: analyticsEventTracker
             ),
             LegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,

@@ -83,6 +83,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
     private let mainWindow: UIWindow
     private let callController: CallController
     private let callQualityController: CallQualityController
+    private let callEndedAnalyticsController: CallEndedAnalyticsController
     private var transitioningDelegate: CallQualityAnimator
 
     private var isCallQualityShown = false
@@ -107,6 +108,8 @@ final class ActiveCallRouter<TopOverlayPresenter>
             submitCallQualitySurvey: userSession.makeCallQualitySurveyUseCase()
         )
         self.transitioningDelegate = CallQualityAnimator()
+
+        callEndedAnalyticsController = .init(contextProvider: userSession.contextProvider)
 
         callController.router = self
         callQualityController.router = self
