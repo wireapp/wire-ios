@@ -22,14 +22,14 @@ import Foundation
 
 public struct TeamsAPIBuilder {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
     /// Create a new builder.
     ///
-    /// - Parameter httpClient: A http client.
+    /// - Parameter APIService: An api service.
 
-    public init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    public init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     /// Make a versioned`TeamsAPI`.
@@ -40,21 +40,21 @@ public struct TeamsAPIBuilder {
     public func makeAPI(for version: APIVersion) -> any TeamsAPI {
         switch version {
         case .v0:
-            TeamsAPIV0(httpClient: httpClient)
+            TeamsAPIV0(apiService: apiService)
         case .v1:
-            TeamsAPIV1(httpClient: httpClient)
+            TeamsAPIV1(apiService: apiService)
         case .v2:
-            TeamsAPIV2(httpClient: httpClient)
+            TeamsAPIV2(apiService: apiService)
         case .v3:
-            TeamsAPIV3(httpClient: httpClient)
+            TeamsAPIV3(apiService: apiService)
         case .v4:
-            TeamsAPIV4(httpClient: httpClient)
+            TeamsAPIV4(apiService: apiService)
         case .v5:
-            TeamsAPIV5(httpClient: httpClient)
+            TeamsAPIV5(apiService: apiService)
         case .v6:
-            TeamsAPIV6(httpClient: httpClient)
+            TeamsAPIV6(apiService: apiService)
         case .v7:
-            TeamsAPIV7(httpClient: httpClient)
+            TeamsAPIV7(apiService: apiService)
         }
     }
 }
