@@ -232,7 +232,7 @@ jobs:
 
   upload-test-results-datadadog:
     name: Upload to Datadog
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: run-tests
     if: always()
     steps:
