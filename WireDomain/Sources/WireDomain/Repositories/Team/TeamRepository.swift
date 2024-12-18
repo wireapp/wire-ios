@@ -78,6 +78,8 @@ public class TeamRepository: TeamRepositoryProtocol {
     private let teamsAPI: any TeamsAPI
     private let teamLocalStore: any TeamLocalStoreProtocol
 
+    private let pullSelfTeamSync: PullSelfTeamSync
+
     // MARK: - Object lifecycle
 
     public init(
@@ -90,20 +92,16 @@ public class TeamRepository: TeamRepositoryProtocol {
         self.userRepository = userRepository
         self.teamLocalStore = teamLocalStore
         self.teamsAPI = teamsAPI
+        self.pullSelfTeamSync = PullSelfTeamSync(
+            api: teamsAPI,
+            store: teamLocalStore
+        )
     }
 
     // MARK: - Public
 
     public func pullSelfTeam() async throws {
-        let team = try await fetchSelfTeamRemotely()
-
-        await teamLocalStore.storeTeam(
-            id: team.id,
-            name: team.name,
-            creatorID: team.creatorID,
-            logoID: team.logoID,
-            logoKey: team.logoKey
-        )
+        try await pullSelfTeamSync.pull(selfTeamID: selfTeamID)
     }
 
     public func pullSelfTeamRoles() async throws {
