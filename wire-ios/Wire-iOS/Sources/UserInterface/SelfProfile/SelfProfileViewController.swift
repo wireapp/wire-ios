@@ -281,7 +281,10 @@ final class SelfProfileViewController: UIViewController {
                             presentedViewController?.dismiss(animated: true)
                         case .toLearnMoreAboutPlans:
                             _ = WireURLs.shared.wireEnterpriseInfo.open()
-                        case .completionGoToApp:
+                        case .completionDismiss:
+                            dismissIndividualToTeamMigrationBanner()
+                            presentedViewController?.dismiss(animated: true)
+                        case .completionGoToConversations:
                             dismissIndividualToTeamMigrationBanner()
                             if let presentingViewController {
                                 presentingViewController.dismiss(animated: true)

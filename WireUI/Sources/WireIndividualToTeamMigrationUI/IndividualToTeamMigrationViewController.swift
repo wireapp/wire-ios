@@ -27,7 +27,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     public enum Action: Sendable {
         case cancel
         case toLearnMoreAboutPlans
-        case completionGoToApp
+        case completionDismiss
+        case completionGoToConversations
         case completionGoToTeamManagement
     }
 
@@ -94,7 +95,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case toTeamCreation(teamName: String)
         case toError(error: any Error)
         case toCompletion(teamName: String)
-        case toApp
+        case toDismiss
+        case toConversations
         case toTeamManagement
     }
 
@@ -217,7 +219,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             currentStep = step
             let vc = hostedView(
                 for: step,
-                stepIndex: 4,
+                stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
@@ -236,15 +238,19 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             currentStep = step
             let vc = hostedView(
                 for: step,
-                stepIndex: childController.viewControllers.count + 1,
+                stepIndex: 4,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.setViewControllers([vc], animated: true)
             isModalInPresentation = false
-        case .toApp:
+        case .toDismiss:
+            // TODO: track event
             analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .backToWire))
-            actionCallback(.completionGoToApp)
+            actionCallback(.completionDismiss)
+        case .toConversations:
+            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .backToWire))
+            actionCallback(.completionGoToConversations)
         case .toTeamManagement:
             analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .openTeamManagement))
             actionCallback(.completionGoToTeamManagement)
@@ -343,7 +349,7 @@ private func hostedView(
             case .teamPlanSelection, .teamName, .confirmation:
                 transitionCallback(.toCancellationAlert)
             case .completion:
-                transitionCallback(.toApp)
+                transitionCallback(.toDismiss)
             }
         },
         accessibilityLabel: step.closeButtonAccessibilityLabel
@@ -397,7 +403,7 @@ private func viewFor(
         CompletionView(profileName: profileName, teamName: teamName) { action in
             switch action {
             case .goBack:
-                transitionCallback(.toApp)
+                transitionCallback(.toConversations)
             case .goToTeamManagement:
                 transitionCallback(.toTeamManagement)
             }
