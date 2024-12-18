@@ -53,12 +53,14 @@ struct PageContainer<Content: View>: View {
                     Spacer(minLength: 36)
                     content
                 }
+                .padding(.horizontal, 16)
+                // Ensure there is a minimum of 16 points space to the bottom of the screen.
+                .padding(.bottom, max(16 - proxy.safeAreaInsets.bottom, 0))
                 .frame(
-                    minHeight: proxy.size.height - 24
+                    minHeight: proxy.size.height
                 )
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 24)
+            .scrollIndicators(.hidden)
         }
     }
 }
