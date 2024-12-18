@@ -39,7 +39,7 @@ class BackendInfoAPIV5: BackendInfoAPIV4 {
 
 }
 
-private struct BackendMLSPublicKeysResponse: Decodable, ToAPIModelConvertible {
+private struct BackendMLSPublicKeysResponseV5: Decodable, ToAPIModelConvertible {
 
     var removal: MLSPublicKeys
 
