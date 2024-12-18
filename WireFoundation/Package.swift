@@ -7,6 +7,7 @@ let package = Package(
     name: "WireFoundation",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
+        // TODO: [WPB-7394] `Clibsodium` is no longer needed as a product
         .library(name: "Clibsodium", targets: ["Clibsodium"]),
         .library(name: "WireCrypto", targets: ["WireCrypto"]),
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
