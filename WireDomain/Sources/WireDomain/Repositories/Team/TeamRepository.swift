@@ -80,6 +80,7 @@ public class TeamRepository: TeamRepositoryProtocol {
 
     private let pullSelfTeamSync: PullSelfTeamSync
     private let pullSelfTeamRolesSync: PullSelfTeamRolesSync
+    private let pullSelfTeamMembersSync: PullSelfTeamMembersSync
 
     // MARK: - Object lifecycle
 
@@ -101,6 +102,10 @@ public class TeamRepository: TeamRepositoryProtocol {
             api: teamsAPI,
             store: teamLocalStore
         )
+        self.pullSelfTeamMembersSync = PullSelfTeamMembersSync(
+            api: teamsAPI,
+            store: teamLocalStore
+        )
     }
 
     // MARK: - Public
@@ -114,16 +119,7 @@ public class TeamRepository: TeamRepositoryProtocol {
     }
 
     public func pullSelfTeamMembers() async throws {
-        let teamMembers = try await fetchSelfTeamMembersRemotely()
-
-        let teamMembersInfo = teamMembers.map {
-            $0.toDomainModel()
-        }
-
-        try await teamLocalStore.storeTeamMembers(
-            selfTeamID: selfTeamID,
-            teamMembersInfo: teamMembersInfo
-        )
+        try await pullSelfTeamMembersSync.pull(selfTeamID: selfTeamID)
     }
 
     public func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
@@ -209,19 +205,6 @@ public class TeamRepository: TeamRepositoryProtocol {
             for: selfTeamID,
             userID: selfUserID
         )
-    }
-
-    // MARK: - Private
-
-    private func fetchSelfTeamMembersRemotely() async throws -> [WireAPI.TeamMember] {
-        do {
-            return try await teamsAPI.getTeamMembers(
-                for: selfTeamID,
-                maxResults: 2000
-            )
-        } catch {
-            throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
     }
 
 }

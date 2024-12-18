@@ -20,7 +20,7 @@ import Foundation
 
 /// Represents the membership of a user to a particular team.
 
-public struct TeamMember: Equatable {
+public struct TeamMember: Equatable, Sendable {
 
     /// The id of the member.
 
