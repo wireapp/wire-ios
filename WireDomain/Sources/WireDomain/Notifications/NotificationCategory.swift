@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UserNotifications
+import Foundation
 
-protocol NotificationBuilder {
-    func shouldBuildNotification() -> Bool
-    func buildContent() -> UNMutableNotificationContent
+/// Categories to which push notifications belong.
+enum NotificationCategory: String {
+    case nonActionable
+    case unmutedConversation
+    case incomingCall
+    case missedCall
+    case incomingConnectionRequest
 }

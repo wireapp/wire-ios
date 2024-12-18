@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UserNotifications
+import Foundation
 
-protocol NotificationBuilder {
-    func shouldBuildNotification() -> Bool
-    func buildContent() -> UNMutableNotificationContent
+/// Push notification sounds.
+enum NotificationSound: String {
+    case call = "ringing_from_them_long.caf"
+    case ping = "ping_from_them.caf"
+    case newMessage = "default"
 }

@@ -20,53 +20,12 @@ import WireAPI
 import UserNotifications
 
 struct ConversationNotificationBuilder: NotificationBuilder {
-    let event: ConversationEvent
+    private let event: ConversationEvent
+    private let builder: NotificationBuilder
     
     init(event: ConversationEvent) {
         self.event = event
-    }
-    
-    func shouldBuildNotification() -> Bool {
-        true
-    }
-    
-    func build() -> UNMutableNotificationContent {
-        switch event {
-        case .mlsMessageAdd(let conversationMLSMessageAddEvent):
-            
-        case .proteusMessageAdd(let conversationProteusMessageAddEvent):
-            
-        case .accessUpdate(let conversationAccessUpdateEvent):
-            UNMutableNotificationContent()
-        case .codeUpdate(let conversationCodeUpdateEvent):
-            UNMutableNotificationContent()
-        case .create(let conversationCreateEvent):
-            UNMutableNotificationContent()
-        case .delete(let conversationDeleteEvent):
-            UNMutableNotificationContent()
-        case .memberJoin(let conversationMemberJoinEvent):
-            UNMutableNotificationContent()
-        case .memberLeave(let conversationMemberLeaveEvent):
-            UNMutableNotificationContent()
-        case .memberUpdate(let conversationMemberUpdateEvent):
-            UNMutableNotificationContent()
-        case .messageTimerUpdate(let conversationMessageTimerUpdateEvent):
-            UNMutableNotificationContent()
-        case .mlsWelcome(let conversationMLSWelcomeEvent):
-            UNMutableNotificationContent()
-        case .protocolUpdate(let conversationProtocolUpdateEvent):
-            UNMutableNotificationContent()
-        case .receiptModeUpdate(let conversationReceiptModeUpdateEvent):
-            UNMutableNotificationContent()
-        case .rename(let conversationRenameEvent):
-            UNMutableNotificationContent()
-        case .typing(let conversationTypingEvent):
-            UNMutableNotificationContent()
-        }
-    }
-    
-    private func makeBuilder() -> NotificationBuilder {
-        switch event {
+        self.builder = switch event {
         case .mlsMessageAdd(let conversationMLSMessageAddEvent):
             fatalError()
         case .proteusMessageAdd(let conversationProteusMessageAddEvent):
@@ -74,6 +33,16 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         default:
             fatalError() // TODO: Implement me
         }
+    }
+    
+    func shouldBuildNotification() -> Bool {
+        builder.shouldBuildNotification()
+    }
+    
+    func buildContent() -> UNMutableNotificationContent {
+        let notificationContent = builder.buildContent()
+        
+        return notificationContent
     }
     
 }

@@ -20,9 +20,25 @@ import WireDataModel
 
 struct NewMessageNotificationBuilder: NotificationBuilder {
     
-    let message: GenericMessage
-    let conversation: ZMConversation
-    let sender: ZMUser
+    private let message: GenericMessage
+    private let conversation: ZMConversation
+    private let sender: ZMUser
+    
+    private var category: NotificationCategory {
+        switch message.content {
+        default:
+            return .unmutedConversation
+        }
+    }
+    
+    private var sound: NotificationSound {
+        switch message.content {
+        case .knock:
+            return .ping
+        default:
+            return .newMessage
+        }
+    }
     
     init(
         message: GenericMessage,
@@ -38,19 +54,22 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         true
     }
     
-    func build() -> UNMutableNotificationContent {
+    func buildContent() -> UNMutableNotificationContent {
         let shouldHideNotification = Bool.random() // TODO: Use `persistentStoreMetadataForKey` from WireDataModel
         
         guard !shouldHideNotification else {
             return makeHiddenNotification()
         }
         
+        let selfUser = ZMUser.selfUser(
+            in: NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        )
+        
         switch message.content {
         case .location:
             return makeLocationNotification()
-        case .knock: break
-            //            self = .knock
-            
+        case .knock:
+            return makePingNotification()
         case .image: break
             // NOTE: is this v2 asset ?
             //            self = .image
@@ -98,16 +117,65 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
 //            return nil
         }
         
+        return UNMutableNotificationContent()
+    }
+    
+    // MARK: - Make notifications
+    
+    private func makePingNotification() -> UNMutableNotificationContent {
+        let selfUser = ZMUser.selfUser(
+            in: NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        )
+        
+        let content = UNMutableNotificationContent()
+        
+        guard let senderName = sender.name,
+              let conversationName = conversation.displayName else {
+            return content
+        }
+        
+        let teamName = selfUser.team?.name
+        let isGroup = conversation.conversationType == .group
+        
+        let title = makeTitle(
+            sender: senderName,
+            conversation: conversationName,
+            team: teamName,
+            isGroup: isGroup
+        )
+        
+        content.title = title.make()
+        content.body = "" // TODO
+        content.categoryIdentifier = category.rawValue
+        content.sound = UNNotificationSound(named: .init(sound.rawValue))
+        content.userInfo = makeNotificationUserInfo(
+            selfUser: selfUser,
+            sender: sender,
+            conversation: conversation
+        )
+        
+        return content
     }
     
     private func makeHiddenNotification() -> UNMutableNotificationContent {
+        let selfUser = ZMUser.selfUser(
+            in: NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        )
+        
         let content = UNMutableNotificationContent()
-        let title = ""
         let body = "New message"
         
-        content.title = title
+        // No title for hidden message, only a body.
         content.body = body
-        content.sound = .default
+        content.categoryIdentifier = category.rawValue
+        content.sound = UNNotificationSound(named: .init(sound.rawValue))
+        content.userInfo = makeNotificationUserInfo(
+            selfUser: selfUser,
+            sender: sender,
+            conversation: conversation
+        )
+        
+        return content
     }
     
     private func makeLocationNotification() -> UNMutableNotificationContent {
@@ -117,22 +185,22 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         
         let content = UNMutableNotificationContent()
         
-        let teamName = selfUser.teamName
-        let conversationName = conversation.displayName
-        
-        let title: String? = if let conversationName, let teamName {
-            "\(conversationName) in \(teamName)"
-        } else if let conversationName {
-            conversationName
-        } else if let teamName {
-            teamName
-        } else {
-            nil
+        guard let senderName = sender.name,
+              let conversationName = conversation.displayName else {
+            return content
         }
         
-        if let title {
-            content.title = title
-        }
+        let teamName = selfUser.team?.name
+        let isGroup = conversation.conversationType == .group
+        
+        let title = makeTitle(
+            sender: senderName,
+            conversation: conversationName,
+            team: teamName,
+            isGroup: isGroup
+        )
+        
+        content.title = title.make()
         
         let body = if conversation.conversationType == .oneOnOne {
             ""
@@ -141,20 +209,14 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         }
         
         content.body = body
-        content.categoryIdentifier = "unmutedConversation"
-        content.sound = .default
+        content.categoryIdentifier = category.rawValue
+        content.sound = UNNotificationSound(named: .init(sound.rawValue))
         
-        var userInfo: [AnyHashable: Any] = [:]
-        userInfo["selfUserIDString"] = selfUser.remoteIdentifier
-        userInfo["senderIDString"] = sender.remoteIdentifier
-        userInfo["conversationIDString"] = conversation.remoteIdentifier
-        userInfo["messageNonceString"] = message.messageID
-        userInfo["eventIDString"] = "" // TODO:
-        userInfo["eventTime"] = "" // TODO:
-        userInfo["conversationNameString"] = conversation.displayName
-        userInfo["teamNameString"] = selfUser.team?.name
-        
-        content.userInfo = userInfo
+        content.userInfo = makeNotificationUserInfo(
+            selfUser: selfUser,
+            sender: sender,
+            conversation: conversation
+        )
         
         return content
     }
@@ -184,7 +246,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
             isReply = false
         }
         
-        let title = "" // No title for ephemeral message
+        // No title for ephemeral message, only a body.
         let body = if isMention {
             "Someone mentioned you"
         } else if isReply {
@@ -195,10 +257,55 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         
         let content = UNMutableNotificationContent()
         content.body = body
-        content.sound = .default
-        content.categoryIdentifier = "unmutedConversation"
+        content.sound = UNNotificationSound(named: .init(sound.rawValue))
+        content.categoryIdentifier = category.rawValue
         
+        content.userInfo = makeNotificationUserInfo(
+            selfUser: selfUser,
+            sender: sender,
+            conversation: conversation
+        )
+        
+        // only group non ephemeral messages
+        content.threadIdentifier = conversation.remoteIdentifier.transportString()
+        
+        return content
+    }
+    
+    // MARK: - Helpers
+    
+    private func makeTitle(
+        sender: String,
+        conversation: String,
+        team: String?,
+        isGroup: Bool
+    ) -> NotificationTitle {
+        let format: NotificationTitle.Format
+        
+        if isGroup {
+            if let team {
+                format = .conversationInTeam(conversation: conversation, team: team)
+            } else {
+                format = .conversationOnly(conversation: conversation)
+            }
+        } else {
+            if let team {
+                format = .senderInTeam(sender: sender, team: team)
+            } else {
+                format = .senderOnly(sender: sender)
+            }
+        }
+        
+        return .newMessage(format)
+    }
+    
+    private func makeNotificationUserInfo(
+        selfUser: ZMUser,
+        sender: ZMUser,
+        conversation: ZMConversation
+    ) -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
+        
         userInfo["selfUserIDString"] = selfUser.remoteIdentifier
         userInfo["senderIDString"] = sender.remoteIdentifier
         userInfo["conversationIDString"] = conversation.remoteIdentifier
@@ -208,12 +315,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         userInfo["conversationNameString"] = conversation.displayName
         userInfo["teamNameString"] = selfUser.team?.name
         
-        content.userInfo = userInfo
-        
-        // only group non ephemeral messages
-        content.threadIdentifier = conversation.remoteIdentifier.transportString()
-        
-        return content
+        return userInfo
     }
 
 }

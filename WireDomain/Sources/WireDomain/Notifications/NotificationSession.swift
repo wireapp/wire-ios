@@ -76,14 +76,18 @@ final class NotificationSession {
         for events: [UpdateEvent]
     ) -> UNMutableNotificationContent {
         
+        var notifications: [UNMutableNotificationContent] = []
+        
         for event in events {
-            let builder = makeBuilder(for: event)
+            let notificationBuilder = makeBuilder(for: event)
             
-            guard builder.shouldBuildNotification() else {
+            guard notificationBuilder.shouldBuildNotification() else {
                 fatalError() // TODO: Implement me
             }
             
-            return builder.build()
+            let notificationContent = notificationBuilder.buildContent()
+            
+            notifications.append(notificationContent)
         }
         
         return UNMutableNotificationContent()
