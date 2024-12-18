@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
-import Combine
 
 /// Access update events.
 protocol UpdateEventsRepositoryProtocol {
-    
+
     /// Observe a pending events stream.
     /// - Returns: A publisher of update events.
 
@@ -82,11 +82,11 @@ protocol UpdateEventsRepositoryProtocol {
     /// - Parameter id: The id to store.
 
     func storeLastEventEnvelopeID(_ id: UUID)
-    
+
     /// Fetches the last event envelope id.
     ///
     /// - Returns: The last envelope id if any.
-    
+
     func fetchLastEventEnvelopeID() -> UUID?
 
     /// Pulls the last event envelope id and stores it locally.
@@ -128,7 +128,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
     // MARK: - Pull pending events
-    
+
     func observePendingEvents() -> AnyPublisher<[UpdateEvent], Never> {
         onDecryptedEvents.eraseToAnyPublisher()
     }
@@ -179,7 +179,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                     decryptedEnvelopeData,
                     index: currentIndex
                 )
-                
+
                 onDecryptedEvents.send(decryptedEvents)
 
                 currentIndex += 1
@@ -191,7 +191,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 }
             }
         }
-        
+
         // All events batches are now fetched.
         onDecryptedEvents.send(completion: .finished)
         onDecryptedEvents = .init()
@@ -253,7 +253,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     func stopReceivingLiveEvents() async {
         pushChannel.close()
     }
-    
+
     func fetchLastEventEnvelopeID() -> UUID? {
         updateEventsLocalStore.lastEventID()
     }

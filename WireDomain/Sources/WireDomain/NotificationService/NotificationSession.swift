@@ -16,26 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import WireAPI
 import WireDataModel
-import Combine
 
 /// Observes pending events, process them and generates new notifications content.
 final class NotificationSession {
-    
+
     // MARK: - Failure
-    
+
     enum Failure: Error {
         case unableToPullPendingEvents(Error)
     }
-    
+
     // MARK: - Properties
-    
+
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
     private var subscription: AnyCancellable?
-    
+
     // MARK: - Object lifecycle
-    
+
     init(
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
         onNotificationContent: @escaping (UNMutableNotificationContent) -> Void
@@ -47,52 +47,52 @@ final class NotificationSession {
             .map(generateNotificationContent)
             .sink(receiveValue: onNotificationContent)
     }
-    
+
     deinit {
         subscription?.cancel()
         subscription = nil
     }
-    
+
     // MARK: - Notifications
-    
+
     func processPushNotification(
         eventID: UUID
     ) async throws {
         let newEventID = eventID
         let lastEventId = updateEventsRepository.fetchLastEventEnvelopeID()
-        
+
         if lastEventId == nil {
             updateEventsRepository.storeLastEventEnvelopeID(newEventID)
         }
-        
+
         do {
             try await updateEventsRepository.pullPendingEvents()
         } catch {
             throw Failure.unableToPullPendingEvents(error)
         }
     }
-    
+
     private func generateNotificationContent(
         for events: [UpdateEvent]
     ) -> UNMutableNotificationContent {
         // TODO: [WPB-11175] - Generate UNNotificationContent from update events
         for event in events {
             switch event {
-            case .conversation(let conversationEvent):
+            case let .conversation(conversationEvent):
                 break
-            case .featureConfig(let featureConfigEvent):
+            case let .featureConfig(featureConfigEvent):
                 break
-            case .federation(let federationEvent):
+            case let .federation(federationEvent):
                 break
-            case .user(let userEvent):
+            case let .user(userEvent):
                 break
-            case .team(let teamEvent):
+            case let .team(teamEvent):
                 break
-            case .unknown(let eventType):
+            case let .unknown(eventType):
                 break
             }
         }
-        
+
         return UNMutableNotificationContent()
     }
 }

@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 import WireFoundation
 
 public final class Assembly {
-    
+
     private let userID: UUID
     private let clientID: String
     private let context: NSManagedObjectContext
@@ -31,7 +31,7 @@ public final class Assembly {
     private let apiVersion: WireAPI.APIVersion
     private let pushChannel: any PushChannelProtocol
     private let cookieStorage: ZMPersistentCookieStorage
-    
+
     init(
         userID: UUID,
         clientID: String,
@@ -52,65 +52,62 @@ public final class Assembly {
         self.apiVersion = apiVersion
         self.pushChannel = pushChannel
         self.cookieStorage = cookieStorage
-        
-        self.registerNotificationServiceDependencies()
+
+        registerNotificationServiceDependencies()
     }
-    
+
     // MARK: - API Init
-    
+
     private lazy var updateEventsAPI = UpdateEventsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
-    
+
     private lazy var updateEventDecryptor = UpdateEventDecryptor(
         proteusService: proteusService,
         context: context
     )
-    
+
     // MARK: - Repositories and local stores Init
-    
+
     private lazy var userLocalStore = UserLocalStore(context: context)
-    
+
     private lazy var updateEventsLocalStore = UpdateEventsLocalStore(
         context: context,
         userID: userID,
         sharedUserDefaults: sharedUserDefaults
     )
-    
+
 }
 
 extension Assembly {
-    
+
     /// Register some domain dependencies to be resolved by the `NotificationService`.
-    /// Since `NotificationService` is not initializable, the injector provides a lightweight dependency injection mechanism to retrieve some already initialized dependencies that the notification service requires.
+    /// Since `NotificationService` is not initializable, the injector provides a lightweight dependency injection
+    /// mechanism to retrieve some already initialized dependencies that the notification service requires.
 
     private func registerNotificationServiceDependencies() {
         Injector.register(UserLocalStoreProtocol.self) {
             self.userLocalStore
         }
-        
+
         Injector.register(UpdateEventsAPI.self) {
             self.updateEventsAPI
         }
-        
+
         Injector.register(PushChannelProtocol.self) {
             self.pushChannel
         }
-        
+
         Injector.register(UpdateEventDecryptorProtocol.self) {
             self.updateEventDecryptor
         }
-        
+
         Injector.register(UpdateEventsLocalStoreProtocol.self) {
             self.updateEventsLocalStore
         }
-        
+
         Injector.register(ZMPersistentCookieStorage.self) {
             self.cookieStorage
         }
     }
 }
-
-
-
-

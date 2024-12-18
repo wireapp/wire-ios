@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import WireAPI
+import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import WireAPISupport
-import WireAPI
+import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
 final class InjectorTests: XCTestCase {
-    
+
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
 
@@ -37,15 +37,15 @@ final class InjectorTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
     }
-    
+
     override func tearDown() async throws {
         stack = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
     }
-    
+
     func testRegisterAlreadyInitialized_Service_It_Resolves_The_Service() throws {
-        
+
         // Given, an already initialized service
         let updateEventsRepository = UpdateEventsRepository(
             userID: .mockID1,
@@ -55,39 +55,44 @@ final class InjectorTests: XCTestCase {
             updateEventDecryptor: MockUpdateEventDecryptorProtocol(),
             updateEventsLocalStore: MockUpdateEventsLocalStoreProtocol()
         )
-        
+
         // When, registering the service
         Injector.register(UpdateEventsRepositoryProtocol.self) {
             updateEventsRepository
         }
-        
+
         // Then, the instance is resolved
         let _: UpdateEventsRepositoryProtocol = Injector.resolve()
     }
-    
+
     func testRegisterService_It_Resolves_The_Service_On_The_Fly() throws {
-        
+
         // Given, a registered service not yet initialized
-        Injector.register(UpdateEventsRepositoryProtocol.self) { userID, selfClientID, updateEventsAPI, pushChannel, updateEventDecryptor, updateEventsLocalStore in
-            UpdateEventsRepository(
-                userID: userID,
-                selfClientID: selfClientID,
-                updateEventsAPI: updateEventsAPI,
-                pushChannel: pushChannel,
-                updateEventDecryptor: updateEventDecryptor,
-                updateEventsLocalStore: updateEventsLocalStore
-            )
-        }
-        
+        Injector
+            .register(
+                UpdateEventsRepositoryProtocol
+                    .self
+            ) { userID, selfClientID, updateEventsAPI, pushChannel, updateEventDecryptor, updateEventsLocalStore in
+                UpdateEventsRepository(
+                    userID: userID,
+                    selfClientID: selfClientID,
+                    updateEventsAPI: updateEventsAPI,
+                    pushChannel: pushChannel,
+                    updateEventDecryptor: updateEventDecryptor,
+                    updateEventsLocalStore: updateEventsLocalStore
+                )
+            }
+
         // When, setting up the service dependencies
         let mockUpdateEventsAPI: UpdateEventsAPI = MockUpdateEventsAPI()
         let mockPushChannel: PushChannelProtocol = MockPushChannelProtocol()
         let mockUpdateEventDecryptor: UpdateEventDecryptorProtocol = MockUpdateEventDecryptorProtocol()
         let mockUpdateEventsLocalStore: UpdateEventsLocalStoreProtocol = MockUpdateEventsLocalStoreProtocol()
-        
+
         // Then, it resolves the service on the fly with the provided dependencies
         let _: UpdateEventsRepositoryProtocol = Injector.resolve(
-            arguments: UUID.mockID1, UUID.mockID2.uuidString, mockUpdateEventsAPI, mockPushChannel, mockUpdateEventDecryptor, mockUpdateEventsLocalStore
+            arguments: UUID.mockID1, UUID.mockID2.uuidString, mockUpdateEventsAPI, mockPushChannel,
+            mockUpdateEventDecryptor, mockUpdateEventsLocalStore
         )
     }
 }

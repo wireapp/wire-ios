@@ -28,8 +28,8 @@ extension ServiceKey: Hashable {
         ObjectIdentifier(serviceType).hash(into: &hasher)
         ObjectIdentifier(argumentsType).hash(into: &hasher)
     }
-    
+
     static func == (lhs: ServiceKey, rhs: ServiceKey) -> Bool {
-        return lhs.serviceType == rhs.serviceType && lhs.argumentsType == rhs.argumentsType
+        lhs.serviceType == rhs.serviceType && lhs.argumentsType == rhs.argumentsType
     }
 }

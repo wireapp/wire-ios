@@ -26,15 +26,15 @@ protocol ServiceEntryProtocol: AnyObject {
 }
 
 final class ServiceEntry<Service>: ServiceEntryProtocol {
-    
+
     // MARK: - Properties
-    
+
     let serviceType: Any.Type
     let argumentsType: Any.Type
     let factory: FunctionType
-    
+
     // MARK: - Object lifecycle
-    
+
     init(serviceType: Service.Type, argumentsType: Any.Type, factory: FunctionType) {
         self.serviceType = serviceType
         self.argumentsType = argumentsType

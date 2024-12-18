@@ -22,19 +22,19 @@ import Foundation
 struct NotificationPayload {
     let userID: UUID
     let eventID: UUID
-    
+
     enum Failure: Error {
         case missingUserID
         case missingEventID
     }
-    
+
     enum Key: String {
         case data
         case user
         case id
     }
-    
-    init(userInfo: [AnyHashable : Any]) throws {
+
+    init(userInfo: [AnyHashable: Any]) throws {
         guard
             let data = userInfo[Key.data.rawValue] as? [String: Any],
             let userIDString = data[Key.user.rawValue] as? String,
@@ -42,14 +42,14 @@ struct NotificationPayload {
         else {
             throw Failure.missingUserID
         }
-        
+
         guard let innerData = data[Key.data.rawValue] as? [AnyHashable: Any],
               let eventIDString = innerData[Key.id.rawValue] as? String,
               let eventID = UUID(uuidString: eventIDString)
         else {
             throw Failure.missingEventID
         }
-        
+
         self.userID = userID
         self.eventID = eventID
     }

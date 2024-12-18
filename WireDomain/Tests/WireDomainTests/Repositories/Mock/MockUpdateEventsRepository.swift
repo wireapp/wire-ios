@@ -17,15 +17,13 @@
 //
 
 import Combine
-import WireAPI
 import Foundation
+import WireAPI
 @testable import WireDomain
 
 class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
 
     // MARK: - Life cycle
-
-
 
     // MARK: - observePendingEvents
 

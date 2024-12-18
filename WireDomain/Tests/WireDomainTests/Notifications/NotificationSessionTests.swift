@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAPISupport
 import XCTest
 @testable import WireAPI
-import WireAPISupport
-@testable import WireDomainSupport
 @testable import WireDomain
+@testable import WireDomainSupport
 
 final class NotificationSessionTests: XCTestCase {
     private var sut: NotificationSession!
@@ -28,40 +28,40 @@ final class NotificationSessionTests: XCTestCase {
     override func tearDown() async throws {
         sut = nil
     }
-    
+
     func testNotificationSession_It_Triggers_Callback_When_Pulling_Pending_Events() async throws {
-        
+
         // Given
-        
+
         let expectation = XCTestExpectation()
         var count = 0
-        
+
         let updateEventsAPI = MockUpdateEventsAPI()
         updateEventsAPI.getUpdateEventsSelfClientIDSinceEventID_MockValue = .init(fetchPage: { _ in
             if count < 3 {
                 count += 1
             }
-            
+
             // 3 events batches
-                return .init(
-                    element: [Scaffolding.updateEventEnvelope],
-                    hasMore: count < 3,
-                    nextStart: .init()
-                )
+            return .init(
+                element: [Scaffolding.updateEventEnvelope],
+                hasMore: count < 3,
+                nextStart: .init()
+            )
         })
-        
+
         let updateEventDecryptor = MockUpdateEventDecryptorProtocol()
         updateEventDecryptor.decryptEventsIn_MockValue = [
             Scaffolding.mlsMessageUpdateEvent,
             Scaffolding.proteusMessageUpdateEvent
         ]
-        
+
         let updateEventsLocalStore = MockUpdateEventsLocalStoreProtocol()
         updateEventsLocalStore.lastEventID_MockValue = .mockID1
         updateEventsLocalStore.indexOfLastEventEnvelope_MockValue = 1
         updateEventsLocalStore.persistEventEnvelopeIndex_MockMethod = { _, _ in }
         updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
-        
+
         let updateEventsRepository = UpdateEventsRepository(
             userID: .mockID1,
             selfClientID: UUID.mockID2.uuidString,
@@ -70,7 +70,7 @@ final class NotificationSessionTests: XCTestCase {
             updateEventDecryptor: updateEventDecryptor,
             updateEventsLocalStore: updateEventsLocalStore
         )
-        
+
         sut = NotificationSession(
             updateEventsRepository: updateEventsRepository,
             onNotificationContent: { _ in
@@ -78,26 +78,26 @@ final class NotificationSessionTests: XCTestCase {
                 expectation.fulfill()
             }
         )
-        
+
         // When
-        
+
         try await updateEventsRepository.pullPendingEvents()
-        
+
         await fulfillment(of: [expectation])
-        
+
     }
-    
+
     enum Scaffolding {
         static let updateEventEnvelope = UpdateEventEnvelope(
             id: .mockID1,
             events: [mlsMessageUpdateEvent, proteusMessageUpdateEvent],
             isTransient: false
         )
-        
+
         static let mlsMessageUpdateEvent: UpdateEvent = .conversation(.mlsMessageAdd(mlsMessageAddEvent))
-        
+
         static let proteusMessageUpdateEvent: UpdateEvent = .conversation(.proteusMessageAdd(proteusMessageAddEvent))
-        
+
         static let mlsMessageAddEvent = ConversationMLSMessageAddEvent(
             conversationID: ConversationID(uuid: .mockID1, domain: ""),
             senderID: UserID(uuid: .mockID2, domain: ""),
