@@ -96,6 +96,7 @@ final class CallEndedAnalyticsController {
                 totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,
                 uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers.count,
                 callDirection: eventInfo.callDirection,
+                callDuration: eventInfo.callDuration(),
                 participantCount: eventInfo.participantCount,
                 // TODO: make complete
                 callEndReason: reason.analyticsValue
@@ -112,12 +113,18 @@ final class CallEndedAnalyticsController {
 private extension CallEndedAnalyticsController {
 
     struct EventInfo {
+
         var deviceModel = UIDevice.current.model
         var deviceOS = UIDevice.current.systemVersion
-        var callDirection: AnalyticsEvent.Calling.CallDirection?
+        var callDirection: AnalyticsEvent.Calling.CallDirection = .incoming
+        var callStart = Date.now
         var totalScreenSharingDuration = 0
         var uniqueScreenSharingUsers = Set<UUID>()
         var participantCount = UInt()
+
+        func callDuration(at callEnd: Date = .now) -> Int {
+            Int(round(callEnd.timeIntervalSince(callStart)))
+        }
     }
 
 }

@@ -87,7 +87,8 @@ public extension AnalyticsEvent {
             wasScreenShared: Bool,
             totalScreenSharingDuration: Int,
             uniqueScreenSharingUsers: Int,
-            callDirection: CallDirection?,
+            callDirection: CallDirection,
+            callDuration: Int,
             participantCount: UInt,
             callEndReason: String
         ) -> AnalyticsEvent {
@@ -97,11 +98,11 @@ public extension AnalyticsEvent {
                 .wasScreenShared(wasScreenShared),
                 .totalScreenSharingDuration(totalScreenSharingDuration),
                 .uniqueScreenSharingUsers(uniqueScreenSharingUsers),
-                // TODO: implement
-                callDirection.map { .callDirection($0.rawValue) },
-                // call_duration
+                .callDirection(callDirection.rawValue),
+                .callDuration(callDuration),
                 // conversation_type
                 .conversationSize(participantCount),
+                // TODO: implement
                 // conversation_guests
                 // conversation_guest_pro
                 // call_participants
@@ -141,10 +142,16 @@ private extension SegmentationEntry {
         .init(key: "call_screen_share_unique", value: value)
     }
 
-    /// Creates a `SegmentationEntry` for the number of unique users who shared the screen during the call.
+    /// Creates a `SegmentationEntry` providing the information if the call was incoming or outgoing.
 
     static func callDirection(_ value: String) -> Self {
         .init(key: "call_direction", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` for the length of the call in seconds.
+
+    static func callDuration(_ value: Int) -> Self {
+        .init(key: "call_duration", value: value)
     }
 
     // TODO: add more
