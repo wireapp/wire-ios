@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
+import WireLogging
 
 enum AlertChoice {
     case cancel
@@ -111,7 +112,8 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
         callEndedAnalyticsController = .init(
             contextProvider: userSession.contextProvider,
-            analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
+            analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
+            logger: WireLogger.analytics
         )
 
         callController.router = self

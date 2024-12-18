@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
 import WireAnalytics
 import WireSyncEngine
 
@@ -29,12 +30,16 @@ final class CallEndedAnalyticsController {
     private var callStateObserverToken: AnyObject!
     private var callParticipantObsererToken: AnyObject!
 
+    private let logger: LoggerProtocol
+
     init(
         contextProvider: ContextProvider,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?,
+        logger: LoggerProtocol
     ) {
         self.contextProvider = contextProvider
         self.analyticsEventTracker = analyticsEventTracker
+        self.logger = logger
 
         // TODO: can't we have a protocol instead of using static/class methods?
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(
@@ -43,14 +48,27 @@ final class CallEndedAnalyticsController {
         )
     }
 
-    private func handleCallEstablished(_ conversation: ZMConversation) {
-        print("wexflwjdksf TODO: start analytics tracking")
-
-        guard eventInfo == nil else {
-            return assertionFailure("call established callback before call terminated")
+    private func handleIncomingCall() {
+        if let eventInfo {
+            logger.error("handleIncomingCall: expected eventInfo to be nil, but is: \(eventInfo)")
         }
 
-        eventInfo = .init()
+        eventInfo = .init(callDirection: .incoming)
+    }
+
+    private func handleOutgoingCall() {
+        if let eventInfo {
+            logger.error("handleOutgoingCall: expected eventInfo to be nil, but is: \(eventInfo)")
+        }
+
+        eventInfo = .init(callDirection: .outgoing)
+    }
+
+    private func handleCallEstablished(_ conversation: ZMConversation) {
+        if eventInfo == nil {
+            logger.error("handleCallEstablished: expected eventInfo to be non-nil")
+            eventInfo = .init()
+        }
 
         callParticipantObsererToken = WireCallCenterV3.addCallParticipantObserver(
             observer: self,
@@ -60,11 +78,14 @@ final class CallEndedAnalyticsController {
     }
 
     private func handleCallTerminating(_ reason: CallClosedReason) {
-        print("wexflwjdksf TODO: send analytics event and reset")
-
-        guard let eventInfo else { return }
+        if eventInfo == nil {
+            logger.error("handleCallTerminating: expected eventInfo to be non-nil")
+            eventInfo = .init()
+        }
 
         callParticipantObsererToken = nil
+
+        guard let eventInfo else { return }
 
         let analyticsEventTracker = analyticsEventTracker()
         analyticsEventTracker?.trackEvent(
@@ -74,6 +95,7 @@ final class CallEndedAnalyticsController {
                 wasScreenShared: !eventInfo.uniqueScreenSharingUsers.isEmpty,
                 totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,
                 uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers.count,
+                callDirection: eventInfo.callDirection,
                 participantCount: eventInfo.participantCount,
                 // TODO: make complete
                 callEndReason: reason.analyticsValue
@@ -92,6 +114,7 @@ private extension CallEndedAnalyticsController {
     struct EventInfo {
         var deviceModel = UIDevice.current.model
         var deviceOS = UIDevice.current.systemVersion
+        var callDirection: AnalyticsEvent.Calling.CallDirection?
         var totalScreenSharingDuration = 0
         var uniqueScreenSharingUsers = Set<UUID>()
         var participantCount = UInt()
@@ -110,7 +133,13 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         timestamp: Date?,
         previousCallState: CallState?
     ) {
+        logger.info("callCenterDidChange: \(callState)")
+
         switch callState {
+        case .incoming:
+            handleIncomingCall()
+        case .outgoing:
+            handleOutgoingCall()
         case .established:
             handleCallEstablished(conversation)
         case .terminating(let reason):

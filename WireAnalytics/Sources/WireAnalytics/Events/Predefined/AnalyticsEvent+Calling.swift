@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+//public import Foundation
 
 public extension AnalyticsEvent {
 
@@ -87,6 +87,7 @@ public extension AnalyticsEvent {
             wasScreenShared: Bool,
             totalScreenSharingDuration: Int,
             uniqueScreenSharingUsers: Int,
+            callDirection: CallDirection?,
             participantCount: UInt,
             callEndReason: String
         ) -> AnalyticsEvent {
@@ -97,7 +98,7 @@ public extension AnalyticsEvent {
                 .totalScreenSharingDuration(totalScreenSharingDuration),
                 .uniqueScreenSharingUsers(uniqueScreenSharingUsers),
                 // TODO: implement
-                //
+                callDirection.map { .callDirection($0.rawValue) },
                 // call_duration
                 // conversation_type
                 .conversationSize(participantCount),
@@ -109,7 +110,12 @@ public extension AnalyticsEvent {
                 // call_av_switch_toggle
                 // call_video
                 // team_is_team
-            ])
+            ].compactMap(\.self))
+        }
+
+        public enum CallDirection: String {
+            case outgoing
+            case incoming
         }
 
     }
@@ -137,7 +143,7 @@ private extension SegmentationEntry {
 
     /// Creates a `SegmentationEntry` for the number of unique users who shared the screen during the call.
 
-    static func callDirection(_ value: Int) -> Self {
+    static func callDirection(_ value: String) -> Self {
         .init(key: "call_direction", value: value)
     }
 
