@@ -79,13 +79,19 @@ extension SegmentationEntry {
         .init(key: "contribution_type", value: value.analyticsValue)
     }
 
+    /// Creates a `SegmentationEntry` for the type of conversation.
+
+    static func conversationType(_ value: ConversationType_) -> Self {
+        .init(key: "conversation_type", value: value.rawValue)
+    }
+
     /// Creates a `SegmentationEntry` for the size of a conversation.
     ///
     /// - Parameter value: The number of participants in the conversation.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
     static func conversationSize(_ value: UInt) -> Self {
-        .init(key: "conversation_size", value: value.analyticsValue) // TODO: is `.analyticsValue` needed?
+        .init(key: "conversation_size", value: value.analyticsValue) // TODO: [WPB-12199] is `.analyticsValue` needed?
     }
 
     /// Creates a `SegmentationEntry` for the score of the calling survey

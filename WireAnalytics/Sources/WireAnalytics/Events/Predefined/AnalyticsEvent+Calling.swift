@@ -89,6 +89,7 @@ public extension AnalyticsEvent {
             uniqueScreenSharingUsers: Int,
             callDirection: CallDirection,
             callDuration: Int,
+            conversationType: ConversationType_,
             participantCount: UInt,
             callEndReason: String
         ) -> AnalyticsEvent {
@@ -100,7 +101,7 @@ public extension AnalyticsEvent {
                 .uniqueScreenSharingUsers(uniqueScreenSharingUsers),
                 .callDirection(callDirection.rawValue),
                 .callDuration(callDuration),
-                // conversation_type
+                .conversationType(conversationType),
                 .conversationSize(participantCount),
                 // TODO: implement
                 // conversation_guests

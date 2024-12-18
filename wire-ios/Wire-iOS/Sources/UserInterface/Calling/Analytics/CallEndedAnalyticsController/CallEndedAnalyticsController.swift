@@ -48,20 +48,25 @@ final class CallEndedAnalyticsController {
         )
     }
 
-    private func handleIncomingCall() {
+    private func handleIncomingCall(_ conversation: ZMConversation) {
         if let eventInfo {
             logger.error("handleIncomingCall: expected eventInfo to be nil, but is: \(eventInfo)")
         }
 
-        eventInfo = .init(callDirection: .incoming)
+        eventInfo = .init(
+            conversationType: conversation.conversationType == .group ? .group : .oneOnOne
+        )
     }
 
-    private func handleOutgoingCall() {
+    private func handleOutgoingCall(_ conversation: ZMConversation) {
         if let eventInfo {
             logger.error("handleOutgoingCall: expected eventInfo to be nil, but is: \(eventInfo)")
         }
 
-        eventInfo = .init(callDirection: .outgoing)
+        eventInfo = .init(
+            callDirection: .outgoing,
+            conversationType: conversation.conversationType == .group ? .group : .oneOnOne
+        )
     }
 
     private func handleCallEstablished(_ conversation: ZMConversation) {
@@ -97,6 +102,7 @@ final class CallEndedAnalyticsController {
                 uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers.count,
                 callDirection: eventInfo.callDirection,
                 callDuration: eventInfo.callDuration(),
+                conversationType: eventInfo.conversationType,
                 participantCount: eventInfo.participantCount,
                 // TODO: make complete
                 callEndReason: reason.analyticsValue
@@ -118,6 +124,7 @@ private extension CallEndedAnalyticsController {
         var deviceOS = UIDevice.current.systemVersion
         var callDirection: AnalyticsEvent.Calling.CallDirection = .incoming
         var callStart = Date.now
+        var conversationType: ConversationType_ = .oneOnOne
         var totalScreenSharingDuration = 0
         var uniqueScreenSharingUsers = Set<UUID>()
         var participantCount = UInt()
@@ -144,9 +151,9 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
 
         switch callState {
         case .incoming:
-            handleIncomingCall()
+            handleIncomingCall(conversation)
         case .outgoing:
-            handleOutgoingCall()
+            handleOutgoingCall(conversation)
         case .established:
             handleCallEstablished(conversation)
         case .terminating(let reason):

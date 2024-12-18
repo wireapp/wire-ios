@@ -21,11 +21,17 @@
 public enum ConversationType: String, AnalyticsValue {
 
     case group
-    case oneOnOne = "one_on_one"
+    case oneOnOne = "one_on_one" // TODO: [WPB-12199] one_to_one?
     case unknown
 
     public var analyticsValue: String {
         rawValue
     }
 
+}
+
+// TODO: [WPB-12199] one_to_one or one_on_one?
+public enum ConversationType_: String {
+    case group
+    case oneOnOne = "one_to_one"
 }
