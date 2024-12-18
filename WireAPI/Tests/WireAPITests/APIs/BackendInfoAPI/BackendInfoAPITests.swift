@@ -43,14 +43,20 @@ final class BackendInfoAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetBackendInfoRequest() async throws {
-        try await apiSnapshotHelper.verifyRequest(for: [.v0]) { sut in
+        // Then
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            // When
             _ = try? await sut.getBackendInfo()
         }
     }
 
     func testGetBackendMLSPublicKeysRequest() async throws {
-        let apiVersions = Set(APIVersion.allCases).subtracting([.v0, .v1, .v2, .v3, .v4])
+        // Given
+        let apiVersions = APIVersion.v5.andNextVersions
+
+        // Then
         try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
             _ = try await sut.getBackendMLSPublicKeys()
         }
     }
@@ -145,7 +151,7 @@ final class BackendInfoAPITests: XCTestCase {
     }
 
     func testGetBackendMLSPublicKeys_givenV5AndErrorResponse() async throws {
-        // given
+        // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: "mls-not-enabled"

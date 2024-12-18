@@ -32,7 +32,7 @@ class BackendInfoAPIV5: BackendInfoAPIV4 {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: BackendMLSPublicKeysResponse.self)
+            .success(code: .ok, type: BackendMLSPublicKeysResponseV5.self)
             .failure(code: .badRequest, label: "mls-not-enabled", error: BackendInfoAPIError.mlsNotEnabled)
             .parse(code: response.statusCode, data: data)
     }

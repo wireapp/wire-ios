@@ -30,6 +30,7 @@ class BackendInfoAPIV0: BackendInfoAPI, VersionedAPI {
         self.apiService = apiService
     }
 
+    // 'api-version` is a not a versioned endpoint, no version prefix is ​​needed.
     func getBackendInfo() async throws -> BackendInfo {
         let request = try URLRequestBuilder(path: "/api-version")
             .withMethod(.get)

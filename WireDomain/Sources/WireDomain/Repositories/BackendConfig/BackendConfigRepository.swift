@@ -51,7 +51,7 @@ final class BackendConfigRepository: BackendConfigRepositoryProtocol {
     func pullMLSBackendStatus() async {
         do {
             let backendMLSPublicKeys = try await backendInfoAPI.getBackendMLSPublicKeys()
-            let hasValidKeys = backendMLSPublicKeys.removal.hasValidKeys()
+            let hasValidKeys = backendMLSPublicKeys.removal.hasValidKey()
             storeIsMLSEnabledStatus(newValue: hasValidKeys)
         } catch {
             storeIsMLSEnabledStatus(newValue: false)
