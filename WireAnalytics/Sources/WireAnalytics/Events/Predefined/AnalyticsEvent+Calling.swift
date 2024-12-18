@@ -72,14 +72,25 @@ public extension AnalyticsEvent {
             .init(name: "calling.call_quality_review", segmentation: review.segmentation)
         }
 
-        // TODO: parameters
-
-        /// An event tracking when the user ends a call.
-        ///
+        /// An event tracking when a call ends.
         /// - Parameters:
-        ///   - todo: TODO
-        ///
-        /// - Returns: A call joined analytics event.
+        ///   - deviceModel: <#deviceModel description#>
+        ///   - deviceOS: <#deviceOS description#>
+        ///   - wasScreenShared: <#wasScreenShared description#>
+        ///   - totalScreenSharingDuration: <#totalScreenSharingDuration description#>
+        ///   - uniqueScreenSharingUsers: <#uniqueScreenSharingUsers description#>
+        ///   - callDirection: <#callDirection description#>
+        ///   - callDuration: <#callDuration description#>
+        ///   - conversationType: <#conversationType description#>
+        ///   - participantCount: <#participantCount description#>
+        ///   - conversationGuestsNonTeam: <#conversationGuestsNonTeam description#>
+        ///   - conversationGuestsTeam: <#conversationGuestsTeam description#>
+        ///   - callParticipants: <#callParticipants description#>
+        ///   - callEndReason: <#callEndReason description#>
+        ///   - conversationServices: <#conversationServices description#>
+        ///   - hasAVSwitchToggled: <#hasAVSwitchToggled description#>
+        ///   - isVideoCall: <#isVideoCall description#>
+        ///   - isTeamMember: <#isTeamMember description#>
 
         public static func endedCall(
             deviceModel: String,

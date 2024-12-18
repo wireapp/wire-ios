@@ -104,8 +104,14 @@ final class CallEndedAnalyticsController {
                 callDuration: eventInfo.callDuration(),
                 conversationType: eventInfo.conversationType,
                 participantCount: eventInfo.participantCount,
-                // TODO: make complete
-                callEndReason: reason.analyticsValue
+                conversationGuestsNonTeam: 0, // TODO: fix
+                conversationGuestsTeam: 0, // TODO: fix
+                callParticipants: 0, // TODO: fix
+                callEndReason: reason.analyticsValue,
+                conversationServices: 0, // TODO: fix
+                hasAVSwitchToggled: false, // TODO: fix,
+                isVideoCall: false, // TODO: fix,
+                isTeamMember: false // TODO: fix,
             )
         )
 
