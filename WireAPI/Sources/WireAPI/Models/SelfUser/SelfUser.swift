@@ -83,4 +83,39 @@ public struct SelfUser: Equatable, Sendable {
     /// Messaging protocols which this user supports
 
     public let supportedProtocols: Set<MessageProtocol>?
+
+    public init(
+        id: UUID,
+        qualifiedID: UserID,
+        ssoID: SSOID?,
+        name: String,
+        handle: String?,
+        teamID: UUID?,
+        phone: String?,
+        accentID: Int,
+        managedBy: ManagingSystem?,
+        assets: [UserAsset]?,
+        deleted: Bool?,
+        email: String?,
+        expiresAt: Date?,
+        service: Service?,
+        supportedProtocols: Set<MessageProtocol>?
+    ) {
+        self.id = id
+        self.qualifiedID = qualifiedID
+        self.ssoID = ssoID
+        self.name = name
+        self.handle = handle
+        self.teamID = teamID
+        self.phone = phone
+        self.accentID = accentID
+        self.managedBy = managedBy
+        self.assets = assets
+        self.deleted = deleted
+        self.email = email
+        self.expiresAt = expiresAt
+        self.service = service
+        self.supportedProtocols = supportedProtocols
+    }
+
 }

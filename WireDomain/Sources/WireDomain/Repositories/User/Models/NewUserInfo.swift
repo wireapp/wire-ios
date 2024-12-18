@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-public struct NewUserInfo: Sendable {
+public struct NewUserInfo: Equatable, Sendable {
     let userID: WireDataModel.QualifiedID
     let name: String
     let handle: String?

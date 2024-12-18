@@ -171,6 +171,8 @@ public final class UserRepository: UserRepositoryProtocol {
     private let conversationRepository: any ConversationRepositoryProtocol
     private let userLocalStore: any UserLocalStoreProtocol
 
+    private let pullSelfUserSync: PullSelfUserSync
+
     // MARK: - Object lifecycle
 
     public init(
@@ -185,16 +187,16 @@ public final class UserRepository: UserRepositoryProtocol {
         self.conversationLabelsRepository = conversationLabelsRepository
         self.conversationRepository = conversationRepository
         self.userLocalStore = userLocalStore
+        self.pullSelfUserSync = PullSelfUserSync(
+            api: selfUserAPI,
+            store: userLocalStore
+        )
     }
 
     // MARK: - Public
 
     public func pullSelfUser() async throws {
-        let selfUser = try await selfUserAPI.getSelfUser()
-
-        await userLocalStore.persistUser(
-            userInfo: selfUser.toDomainModel()
-        )
+        try await pullSelfUserSync.pull()
     }
 
     public func fetchSelfUser() async -> ZMUser {
