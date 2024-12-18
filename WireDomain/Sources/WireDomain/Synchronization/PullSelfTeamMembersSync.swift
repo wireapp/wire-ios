@@ -30,8 +30,16 @@ protocol PullSelfTeamMembersSyncProtocol {
 
 struct PullSelfTeamMembersSync: PullSelfTeamMembersSyncProtocol {
 
-    let api: any TeamsAPI
-    let store: any TeamLocalStoreProtocol
+    private let api: any TeamsAPI
+    private let store: any TeamLocalStoreProtocol
+
+    init(
+        api: any TeamsAPI,
+        store: any TeamLocalStoreProtocol
+    ) {
+        self.api = api
+        self.store = store
+    }
 
     /// Fetch the team members0from remote, then create or update
     /// them locally.
