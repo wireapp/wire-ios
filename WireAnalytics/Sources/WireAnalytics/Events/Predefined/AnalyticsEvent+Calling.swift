@@ -72,6 +72,7 @@ public extension AnalyticsEvent {
             .init(name: "calling.call_quality_review", segmentation: review.segmentation)
         }
 
+        // TODO: finish documentation
         /// An event tracking when a call ends.
         /// - Parameters:
         ///   - deviceModel: <#deviceModel description#>
@@ -92,7 +93,7 @@ public extension AnalyticsEvent {
         ///   - isVideoCall: <#isVideoCall description#>
         ///   - isTeamMember: <#isTeamMember description#>
 
-        public static func endedCall(
+        public static func endedCall( // TODO: apply similar structure: https://github.com/wireapp/wire-android/pull/3756/files
             deviceModel: String,
             deviceOS: String,
             wasScreenShared: Bool,
@@ -129,7 +130,7 @@ public extension AnalyticsEvent {
                 .callAVSwitchToggled(hasAVSwitchToggled),
                 .isVideoCall(isVideoCall),
                 .teamIsTeam(isTeamMember)
-            ].compactMap(\.self))
+            ])
         }
 
         public enum CallDirection: String {

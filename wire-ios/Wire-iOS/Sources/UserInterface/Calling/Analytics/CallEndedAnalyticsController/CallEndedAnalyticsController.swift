@@ -26,7 +26,7 @@ final class CallEndedAnalyticsController {
     private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     private var eventInfo: EventInfo?
-    private var screenSharingStart: Date?
+    private var screenSharingStart: Date? // TODO: move into EventInfo
     private var callStateObserverToken: AnyObject!
     private var callParticipantObsererToken: AnyObject!
 
@@ -82,7 +82,10 @@ final class CallEndedAnalyticsController {
         )
     }
 
-    private func handleCallTerminating(_ reason: CallClosedReason) {
+    private func handleCallTerminating(
+        _ conversation: ZMConversation,
+        _ reason: CallClosedReason
+    ) {
         if eventInfo == nil {
             logger.error("handleCallTerminating: expected eventInfo to be non-nil")
             eventInfo = .init()
@@ -91,6 +94,12 @@ final class CallEndedAnalyticsController {
         callParticipantObsererToken = nil
 
         guard let eventInfo else { return }
+
+        let guestHasTeam = conversation.participants
+            .filter { $0.isGuest(in: conversation) }
+            .map { $0.hasTeam }
+        let conversationGuestsTeam = guestHasTeam.count { $0 }
+        let conversationGuestsNonTeam = guestHasTeam.count { !$0 }
 
         let analyticsEventTracker = analyticsEventTracker()
         analyticsEventTracker?.trackEvent(
@@ -104,14 +113,14 @@ final class CallEndedAnalyticsController {
                 callDuration: eventInfo.callDuration(),
                 conversationType: eventInfo.conversationType,
                 participantCount: eventInfo.participantCount,
-                conversationGuestsNonTeam: 0, // TODO: fix
-                conversationGuestsTeam: 0, // TODO: fix
+                conversationGuestsNonTeam: conversationGuestsNonTeam,
+                conversationGuestsTeam: conversationGuestsTeam,
                 callParticipants: 0, // TODO: fix
                 callEndReason: reason.analyticsValue,
                 conversationServices: 0, // TODO: fix
-                hasAVSwitchToggled: false, // TODO: fix,
-                isVideoCall: false, // TODO: fix,
-                isTeamMember: false // TODO: fix,
+                hasAVSwitchToggled: false, // TODO: fix
+                isVideoCall: false, // TODO: fix
+                isTeamMember: false // TODO: fix
             )
         )
 
@@ -163,7 +172,7 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         case .established:
             handleCallEstablished(conversation)
         case .terminating(let reason):
-            handleCallTerminating(reason)
+            handleCallTerminating(conversation, reason)
         default:
             break
         }
