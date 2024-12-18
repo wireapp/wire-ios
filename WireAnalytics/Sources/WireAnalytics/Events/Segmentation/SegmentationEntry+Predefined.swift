@@ -58,7 +58,7 @@ extension SegmentationEntry {
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
     static func isVideoCall(_ value: Bool) -> Self {
-        .init(key: "is_video_call", value: value)
+        .init(key: "call_video", value: value)
     }
 
     /// Creates a `SegmentationEntry` for the type of group in a conversation.

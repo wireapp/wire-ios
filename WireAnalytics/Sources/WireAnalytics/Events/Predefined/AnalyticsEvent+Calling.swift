@@ -91,7 +91,14 @@ public extension AnalyticsEvent {
             callDuration: Int,
             conversationType: ConversationType_,
             participantCount: UInt,
-            callEndReason: String
+            conversationGuestsNonTeam: Int,
+            conversationGuestsTeam: Int,
+            callParticipants: Int,
+            callEndReason: String,
+            conversationServices: Int,
+            hasAVSwitchToggled: Bool,
+            isVideoCall: Bool,
+            isTeamMember: Bool
         ) -> AnalyticsEvent {
             AnalyticsEvent(name: "calling.ended_call", segmentation: [
                 .deviceModel(deviceModel),
@@ -103,15 +110,14 @@ public extension AnalyticsEvent {
                 .callDuration(callDuration),
                 .conversationType(conversationType),
                 .conversationSize(participantCount),
-                // TODO: implement
-                // conversation_guests
-                // conversation_guest_pro
-                // call_participants
-                .callEndReason(callEndReason)
-                // conversation_services
-                // call_av_switch_toggle
-                // call_video
-                // team_is_team
+                .conversationGuestsNonTeam(conversationGuestsNonTeam),
+                .conversationGuestsTeam(conversationGuestsTeam),
+                .callParticipants(callParticipants),
+                .callEndReason(callEndReason),
+                .conversationServices(conversationServices),
+                .callAVSwitchToggled(hasAVSwitchToggled),
+                .isVideoCall(isVideoCall),
+                .teamIsTeam(isTeamMember)
             ].compactMap(\.self))
         }
 
@@ -123,7 +129,7 @@ public extension AnalyticsEvent {
     }
 }
 
-private extension SegmentationEntry {
+private extension SegmentationEntry { // TODO: consider nested enum/namespace `Call`
 
     /// Creates a `SegmentationEntry` for indicating whether any screen sharing happened during the call. (including other participants)
 
@@ -155,10 +161,50 @@ private extension SegmentationEntry {
         .init(key: "call_duration", value: value)
     }
 
-    // TODO: add more
+    /// Creates a `SegmentationEntry` for the maximum number of users in the call.
+
+    static func callParticipants(_ value: Int) -> Self {
+        .init(key: "call_participants", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` for the reason a call has ended.
 
     static func callEndReason(_ value: String) -> Self {
         .init(key: "call_end_reason", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` providing the information if the user has toggled the video during the call.
+
+    static func callAVSwitchToggled(_ value: Bool) -> Self {
+        .init(key: "call_av_switch_toggle", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` providing the information if the user is part of a team (redundant to `is_team_member`).
+
+    static func teamIsTeam(_ value: Bool) -> Self {
+        .init(key: "team_is_team", value: value)
+    }
+
+}
+
+private extension SegmentationEntry { // TODO: consider nested enum/namespace `Conversation`
+
+    /// Creates a `SegmentationEntry` for the number of guests in a conversation which are not members of any team (free users).
+
+    static func conversationGuestsNonTeam(_ value: Int) -> Self {
+        .init(key: "conversation_guests", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` for the number of guests in a conversation which are members of a team.
+
+    static func conversationGuestsTeam(_ value: Int) -> Self {
+        .init(key: "conversation_guests_pro", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` for the number of services (members) of the conversation.
+
+    static func conversationServices(_ value: Int) -> Self {
+        .init(key: "conversation_services", value: value)
     }
 
 }
