@@ -550,7 +550,7 @@ platform :ios do
             UI.message "clear simulator content for #{existing_simulator}"
             `xcrun simctl erase #{existing_simulator}`
         end
-        ENV['IOS_SIM_ID'] = existing_simulator
+        ENV['IOS_SIM_ID'] = existing_simulator.strip
     end
 
     # Upload to AppStore
