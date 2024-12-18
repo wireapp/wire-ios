@@ -164,8 +164,8 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
-
             }
+            
             if proteusConversations.count > 0 {
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
@@ -177,7 +177,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
     }
     
     func fetchAllOneOnOneProteusConversations(otherUserID: QualifiedID, in context: NSManagedObjectContext) -> [ZMConversation] {
-        guard let otherUser = ZMUser.fetch(with: otherUserID.uuid, domain: otherUserID.domain, in: context) else {
+        guard let otherUser = ZMUser.fetch(with: otherUserID, in: context) else {
             return []
         }
         let selfUser = ZMUser.selfUser(in: context)
