@@ -347,16 +347,15 @@ final class ConversationListViewModel: NSObject {
         case .favorites:
             [.favorites]
         case .oneOnOne:
-            [.contacts, .contactRequests]
+            [.contactRequests, .contacts]
         case let .folder(id, _):
             if let folder = conversationDirectory.nonDeletedFolders.first(where: { $0.remoteIdentifier == id }) {
                 [.folder(label: folder)]
             } else {
-                // FIXME: [WPB-13905] Log invalid state once WPB-13905 is implemented
                 []
             }
         case .none:
-            [.conversations, .contactRequests]
+            [.contactRequests, .conversations]
         }
 
         let sections = kinds.map { kind in
