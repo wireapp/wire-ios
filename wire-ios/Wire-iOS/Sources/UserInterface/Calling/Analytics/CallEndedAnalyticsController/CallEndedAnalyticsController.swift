@@ -48,13 +48,17 @@ final class CallEndedAnalyticsController {
         )
     }
 
-    private func handleIncomingCall(_ conversation: ZMConversation) {
+    private func handleIncomingCall(
+        _ conversation: ZMConversation,
+        _ isVideoCall: Bool
+    ) {
         if let eventInfo {
             logger.error("handleIncomingCall: expected eventInfo to be nil, but is: \(eventInfo)")
         }
 
         eventInfo = .init(
-            conversationType: conversation.conversationType == .group ? .group : .oneOnOne
+            conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
+            isVideoCall: isVideoCall
         )
     }
 
@@ -65,7 +69,8 @@ final class CallEndedAnalyticsController {
 
         eventInfo = .init(
             callDirection: .outgoing,
-            conversationType: conversation.conversationType == .group ? .group : .oneOnOne
+            conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
+            isVideoCall: false // TODO: how to get this info?
         )
     }
 
@@ -93,7 +98,7 @@ final class CallEndedAnalyticsController {
 
         callParticipantObsererToken = nil
 
-        guard let eventInfo else { return }
+        guard let eventInfo else { return } // TODO: consider that we want to track the event even when no call was established
 
         let guestHasTeam = conversation.participants
             .filter { $0.isGuest(in: conversation) }
@@ -119,7 +124,7 @@ final class CallEndedAnalyticsController {
                 callEndReason: reason.analyticsValue,
                 conversationServices: 0, // TODO: fix
                 hasAVSwitchToggled: false, // TODO: fix
-                isVideoCall: false, // TODO: fix
+                isVideoCall: eventInfo.isVideoCall,
                 isTeamMember: false // TODO: fix
             )
         )
@@ -143,6 +148,7 @@ private extension CallEndedAnalyticsController {
         var totalScreenSharingDuration = 0
         var uniqueScreenSharingUsers = Set<UUID>()
         var participantCount = UInt()
+        var isVideoCall = false
 
         func callDuration(at callEnd: Date = .now) -> Int {
             Int(round(callEnd.timeIntervalSince(callStart)))
@@ -165,8 +171,8 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         logger.info("callCenterDidChange: \(callState)")
 
         switch callState {
-        case .incoming:
-            handleIncomingCall(conversation)
+        case .incoming(let isVideoCall, _, _):
+            handleIncomingCall(conversation, isVideoCall)
         case .outgoing:
             handleOutgoingCall(conversation)
         case .established:
