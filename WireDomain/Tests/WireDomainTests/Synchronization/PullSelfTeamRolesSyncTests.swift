@@ -45,7 +45,6 @@ final class PullSelfTeamRolesSyncTests: XCTestCase {
         api.getTeamRolesFor_MockValue = Scaffolding.remoteTeamRoles
         store.storeTeamRolesSelfTeamIDTeamRolesInfo_MockMethod = { _, _ in }
 
-
         // When
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
 

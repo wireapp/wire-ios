@@ -46,7 +46,6 @@ final class PullSelfTeamMembersSyncTests: XCTestCase {
 
         store.storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod = { _, _ in }
 
-
         // When
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
 
