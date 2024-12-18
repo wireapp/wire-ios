@@ -211,15 +211,6 @@ jobs:
         id: base64-decoded-S3_PATHS
         with:
           base64: ${{ env.S3_PATHS }}
-      - uses: akiojin/decode-base64-github-action@v1.0.2
-        id: base64-decoded-BUILD_INSTALL_LINK
-        with:
-          base64: ${{ env.BUILD_INSTALL_LINK }}
-      - name: Print Install URL and SHA56
-        run: |
-          echo "Install URL: $BUILD_INSTALL_LINK"
-          echo "Install URL decoded: $steps.base64-decoded-BUILD_INSTALL_LINK"
-          echo "SHA-256: $BUILD_SHA256"    
       - name: Notify on Wire if succeeded
         if: success()
         uses: 8398a7/action-slack@v3
@@ -235,7 +226,7 @@ jobs:
             `${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            **SHA256:  ${{ env.BUILD_SHA256 }}
+            **SHA256:**  ${{ env.BUILD_SHA256 }}
       - name: Notify on Wire if failed
         if: failure()
         uses: 8398a7/action-slack@v3
