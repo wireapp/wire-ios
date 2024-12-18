@@ -75,24 +75,38 @@ final class NotificationSession {
     private func generateNotificationContent(
         for events: [UpdateEvent]
     ) -> UNMutableNotificationContent {
-        // TODO: [WPB-11175] - Generate UNNotificationContent from update events
+        
         for event in events {
-            switch event {
-            case .conversation(let conversationEvent):
-                break
-            case .featureConfig(let featureConfigEvent):
-                break
-            case .federation(let federationEvent):
-                break
-            case .user(let userEvent):
-                break
-            case .team(let teamEvent):
-                break
-            case .unknown(let eventType):
-                break
+            let builder = makeBuilder(for: event)
+            
+            guard builder.shouldBuildNotification() else {
+                fatalError() // TODO: Implement me
             }
+            
+            return builder.build()
         }
         
         return UNMutableNotificationContent()
+    }
+    
+    private func makeBuilder(for event: UpdateEvent) -> NotificationBuilder {
+        switch event {
+        case .conversation(let conversationEvent):
+            let conversationNotificationBuilder = ConversationNotificationBuilder(
+                event: conversationEvent
+            )
+            
+            return conversationNotificationBuilder
+        case .featureConfig(let featureConfigEvent):
+            fatalError()
+        case .federation(let federationEvent):
+            fatalError()
+        case .user(let userEvent):
+            fatalError()
+        case .team(let teamEvent):
+            fatalError()
+        case .unknown(let eventType):
+            fatalError()
+        }
     }
 }
