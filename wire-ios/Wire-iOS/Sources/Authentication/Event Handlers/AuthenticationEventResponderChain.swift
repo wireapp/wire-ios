@@ -180,11 +180,7 @@ final class AuthenticationEventResponderChain {
     /// - parameter eventType: The type of event that occured, and any required context.
 
     func handleEvent(ofType eventType: EventType) {
-        if case .userInput = eventType {
-            log.info("Event handling manager received event: userInput")
-        } else {
-            log.info("Event handling manager received event: \(eventType)")
-        }
+        log.info("Event handling manager received event: \(eventType)")
 
         switch eventType {
         case let .flowStart(error, numberOfAccounts):
