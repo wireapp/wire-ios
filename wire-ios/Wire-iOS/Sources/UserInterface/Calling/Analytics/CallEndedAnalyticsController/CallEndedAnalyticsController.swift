@@ -106,6 +106,7 @@ final class CallEndedAnalyticsController {
 
         let (
             isTeamMember,
+            conversationSize,
             conversationGuestsTeam,
             conversationGuestsNonTeam,
             conversationServices
@@ -113,6 +114,7 @@ final class CallEndedAnalyticsController {
             let isTeamMember = conversation.participants
                 .first { $0.isSelfUser }
                 .map { $0.hasTeam } ?? false
+            let conversationSize = conversation.localParticipants.count
             let guestsWithTeam = conversation.participants
                 .filter { $0.isGuest(in: conversation) }
                 .map { $0.hasTeam }
@@ -121,6 +123,7 @@ final class CallEndedAnalyticsController {
             let conversationServices = conversation.sortedServiceUsers.count
             return (
                 isTeamMember,
+                conversationSize,
                 conversationGuestsTeam,
                 conversationGuestsNonTeam,
                 conversationServices
@@ -138,7 +141,7 @@ final class CallEndedAnalyticsController {
                 callDirection: eventInfo.callDirection,
                 callDuration: eventInfo.callDuration(),
                 conversationType: eventInfo.conversationType,
-                conversationSize: 0, // TODO: fix
+                conversationSize: conversationSize,
                 conversationGuestsNonTeam: conversationGuestsNonTeam,
                 conversationGuestsTeam: conversationGuestsTeam,
                 callParticipants: eventInfo.participantCount,
