@@ -83,7 +83,7 @@ public extension AnalyticsEvent {
         ///   - callDirection: <#callDirection description#>
         ///   - callDuration: <#callDuration description#>
         ///   - conversationType: <#conversationType description#>
-        ///   - participantCount: <#participantCount description#>
+        ///   - conversationSize: <#participantCount description#>
         ///   - conversationGuestsNonTeam: <#conversationGuestsNonTeam description#>
         ///   - conversationGuestsTeam: <#conversationGuestsTeam description#>
         ///   - callParticipants: <#callParticipants description#>
@@ -102,7 +102,7 @@ public extension AnalyticsEvent {
             callDirection: CallDirection,
             callDuration: Int,
             conversationType: ConversationType_,
-            participantCount: UInt,
+            conversationSize: Int,
             conversationGuestsNonTeam: Int,
             conversationGuestsTeam: Int,
             callParticipants: Int,
@@ -121,7 +121,7 @@ public extension AnalyticsEvent {
                 .callDirection(callDirection.rawValue),
                 .callDuration(callDuration),
                 .conversationType(conversationType),
-                .conversationSize(participantCount),
+                .conversationSize(conversationSize),
                 .conversationGuestsNonTeam(conversationGuestsNonTeam),
                 .conversationGuestsTeam(conversationGuestsTeam),
                 .callParticipants(callParticipants),

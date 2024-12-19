@@ -90,8 +90,8 @@ extension SegmentationEntry {
     /// - Parameter value: The number of participants in the conversation.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func conversationSize(_ value: UInt) -> Self {
-        .init(key: "conversation_size", value: value.analyticsValue) // TODO: [WPB-12199] is `.analyticsValue` needed?
+    static func conversationSize(_ value: Int) -> Self {
+        .init(key: "conversation_size", value: UInt(value).analyticsValue) // TODO: [WPB-12199] is `.analyticsValue` needed?
     }
 
     /// Creates a `SegmentationEntry` for the score of the calling survey

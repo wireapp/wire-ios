@@ -215,12 +215,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// - Parameter event: The event to track.
 
     public func trackEvent(_ event: AnalyticsEvent) {
-        guard
-            let countly,
-            let currentUser
-        else {
-            return
-        }
+        guard let countly, let currentUser else { return }
 
         var segmentation = event.segmentation.union(baseSegmentation)
         segmentation.insert(.isSelfTeamMember(currentUser.teamInfo != nil))

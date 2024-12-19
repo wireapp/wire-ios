@@ -42,7 +42,7 @@ public struct AppendKnockMessageUseCase: AppendKnockMessageUseCaseProtocol {
             .Contributed.conversationContribution(
                 .pingMessage,
                 conversationType: .init(conversation.conversationType),
-                conversationSize: UInt(conversation.localParticipants.count)
+                conversationSize: conversation.localParticipants.count
             )
         )
     }

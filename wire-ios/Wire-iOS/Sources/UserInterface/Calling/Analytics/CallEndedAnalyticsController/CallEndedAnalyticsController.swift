@@ -107,7 +107,8 @@ final class CallEndedAnalyticsController {
         let (
             isTeamMember,
             conversationGuestsTeam,
-            conversationGuestsNonTeam
+            conversationGuestsNonTeam,
+            conversationServices
         ) = context.performAndWait {
             let isTeamMember = conversation.participants
                 .first { $0.isSelfUser }
@@ -117,8 +118,13 @@ final class CallEndedAnalyticsController {
                 .map { $0.hasTeam }
             let conversationGuestsTeam = guestsWithTeam.count { $0 }
             let conversationGuestsNonTeam = guestsWithTeam.count { !$0 }
-
-            return (isTeamMember, conversationGuestsTeam, conversationGuestsNonTeam)
+            let conversationServices = conversation.sortedServiceUsers.count
+            return (
+                isTeamMember,
+                conversationGuestsTeam,
+                conversationGuestsNonTeam,
+                conversationServices
+            )
         }
 
         let analyticsEventTracker = analyticsEventTracker()
@@ -132,12 +138,12 @@ final class CallEndedAnalyticsController {
                 callDirection: eventInfo.callDirection,
                 callDuration: eventInfo.callDuration(),
                 conversationType: eventInfo.conversationType,
-                participantCount: eventInfo.participantCount,
+                conversationSize: 0, // TODO: fix
                 conversationGuestsNonTeam: conversationGuestsNonTeam,
                 conversationGuestsTeam: conversationGuestsTeam,
-                callParticipants: 0, // TODO: fix
+                callParticipants: eventInfo.participantCount,
                 callEndReason: reason.analyticsValue,
-                conversationServices: 0, // TODO: fix
+                conversationServices: conversationServices,
                 hasAVSwitchToggled: false, // TODO: fix
                 isVideoCall: eventInfo.isVideoCall,
                 isTeamMember: isTeamMember
@@ -162,7 +168,7 @@ private extension CallEndedAnalyticsController {
         var conversationType: ConversationType_ = .oneOnOne
         var totalScreenSharingDuration = 0
         var uniqueScreenSharingUsers = Set<UUID>()
-        var participantCount = UInt()
+        var participantCount = Int()
         var isVideoCall = false
 
         func callDuration(at callEnd: Date = .now) -> Int {
