@@ -151,22 +151,25 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
-
-            // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both conversations here.
-            let proteusConversations: [ZMConversation] = fetchAllOneOnOneProteusConversations(otherUserID: userID, in: context)
+            // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both
+            // conversations here.
+            let proteusConversations: [ZMConversation] = fetchAllOneOnOneProteusConversations(
+                otherUserID: userID,
+                in: context
+            )
             var allProteusConversations = Set(proteusConversations)
             if let oneOnOneConservsation = otherUser.oneOnOneConversation {
                 allProteusConversations.insert(oneOnOneConservsation)
             }
-            
+
             // move local messages from proteus conversation if it exists
             for proteusConversation in allProteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
             }
-            
-            if proteusConversations.count > 0 {
+
+            if !proteusConversations.isEmpty {
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }
@@ -175,8 +178,11 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             otherUser.oneOnOneConversation = mlsConversation
         }
     }
-    
-    func fetchAllOneOnOneProteusConversations(otherUserID: QualifiedID, in context: NSManagedObjectContext) -> [ZMConversation] {
+
+    func fetchAllOneOnOneProteusConversations(
+        otherUserID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
         guard let otherUser = ZMUser.fetch(with: otherUserID, in: context) else {
             return []
         }
@@ -184,7 +190,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         guard let selfTeam = selfUser.team else {
             return []
         }
-        
+
         let request = NSFetchRequest<NSManagedObject>(entityName: ZMConversation.entityName())
         let teamOneOnOnePredicate = ZMConversation.predicateForTeamOneToOneConversation()
 
@@ -201,7 +207,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             sameParticipant
         ])
 
-        do  {
+        do {
             let result = try context.fetch(request)
             return result.compactMap { $0 as? ZMConversation }
         } catch {

@@ -259,21 +259,20 @@ final class OneOnOneMigratorTests: XCTestCase {
     func test_migrateToMLS_moveMessagesFromDuplicateProteusConversations() async throws {
         let modelHelper = ModelHelper()
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
-        let userID: QualifiedID = QualifiedID(uuid: .create(), domain: "local@domain.com")
+        let userID = QualifiedID(uuid: .create(), domain: "local@domain.com")
         let selfUserID = QualifiedID(uuid: .create(), domain: "local@domain.com")
         let mlsGroupID: MLSGroupID = .random()
-        
+
         let selfUser = await syncContext.perform {
-            let user = modelHelper.createSelfUser(id: selfUserID.uuid, domain: selfUserID.domain, in: self.syncContext)
-            return user
+            modelHelper.createSelfUser(id: selfUserID.uuid, domain: selfUserID.domain, in: self.syncContext)
         }
-    
+
         let (_, proteusConversation, mlsConversation) = await createConversations(
             userID: userID,
             mlsGroupID: mlsGroupID,
             in: syncContext
         )
-        
+
         let duplicateProteusConversation = try await syncContext.perform {
             let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
             let team = modelHelper.createTeam(in: self.syncContext)
@@ -281,14 +280,14 @@ final class OneOnOneMigratorTests: XCTestCase {
 
             proteusConversation.addParticipantAndUpdateConversationState(user: selfUser)
             proteusConversation.addParticipantAndUpdateConversationState(user: otherUser)
-            return self.createFakeProteusConversation(with: UUID(),
-                                          selfUser: selfUser,
-                                          otherUser: otherUser,
-                                          in: self.syncContext)
+            return self.createFakeProteusConversation(
+                with: UUID(),
+                selfUser: selfUser,
+                otherUser: otherUser,
+                in: self.syncContext
+            )
         }
 
-       
-        
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
             result: .success((mlsGroupID, nil)),
@@ -337,7 +336,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
             XCTAssertNil(mlsConversation.lastMessage)
-            
+
             // this save is needed, in order for the fetch request to get the correct duplicate OneOnOne conv.
             try self.syncContext.save()
         }
@@ -367,7 +366,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         }
         withExtendedLifetime(handler) {}
     }
-    
+
     // MARK: - Core Data Objects
 
     private func createConversations(
@@ -425,25 +424,24 @@ final class OneOnOneMigratorTests: XCTestCase {
         return (connection, conversation)
     }
 
-    func createFakeProteusConversation(with id: UUID,
+    func createFakeProteusConversation(
+        with id: UUID,
         selfUser: ZMUser,
         otherUser: ZMUser,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
-           let oneOnOneConversation = ModelHelper().createGroupConversation(
-                id: id,
-                with: Set([otherUser, selfUser]),
-                team: selfUser.team,
-                domain: selfUser.domain,
-                in: context
-            )
-            oneOnOneConversation.messageProtocol = .proteus
-            oneOnOneConversation.userDefinedName = nil
+        let oneOnOneConversation = ModelHelper().createGroupConversation(
+            id: id,
+            with: Set([otherUser, selfUser]),
+            team: selfUser.team,
+            domain: selfUser.domain,
+            in: context
+        )
+        oneOnOneConversation.messageProtocol = .proteus
+        oneOnOneConversation.userDefinedName = nil
         return oneOnOneConversation
     }
 
-    
-    
     private func createMLSConversation(
         with identifier: MLSGroupID,
         in context: NSManagedObjectContext
