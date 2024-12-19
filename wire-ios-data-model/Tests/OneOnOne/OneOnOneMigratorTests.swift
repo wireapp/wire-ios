@@ -34,7 +34,7 @@ final class OneOnOneMigratorTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
 
-        coreDataStack = try await coreDataStackHelper.createStack(at: coreDataStackHelper.storageDirectory)
+        coreDataStack = try await coreDataStackHelper.createStack(at: coreDataStackHelper.storageDirectory, inMemoryStore: false)
         syncContext = coreDataStack.syncContext
 
         mockMLSService = MockMLSServiceInterface()
@@ -267,7 +267,8 @@ final class OneOnOneMigratorTests: XCTestCase {
             let user = modelHelper.createSelfUser(id: selfUserID.uuid, domain: selfUserID.domain, in: self.syncContext)
             return user
         }
-        let (connection, proteusConversation, mlsConversation) = await createConversations(
+    
+        let (_, proteusConversation, mlsConversation) = await createConversations(
             userID: userID,
             mlsGroupID: mlsGroupID,
             in: syncContext
@@ -280,10 +281,12 @@ final class OneOnOneMigratorTests: XCTestCase {
 
             proteusConversation.addParticipantAndUpdateConversationState(user: selfUser)
             proteusConversation.addParticipantAndUpdateConversationState(user: otherUser)
-            return self.createFakeProteusConversation(with: UUID(),
+            let conv = self.createFakeProteusConversation(with: UUID(),
                                           selfUser: selfUser,
                                           otherUser: otherUser,
                                           in: self.syncContext)
+            try self.syncContext.save()
+            return conv
         }
 
        
@@ -313,14 +316,14 @@ final class OneOnOneMigratorTests: XCTestCase {
             var message = try proteusConversation.appendText(content: "Hello World!")
             message.updateServerTimestamp(with: 0)
 
-//            message = try proteusConversation.appendKnock()
-//            message.updateServerTimestamp(with: 1)
-//
-//            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
-//            message.updateServerTimestamp(with: 2)
-//
-//            XCTAssertEqual(proteusConversation.allMessages.count, 3)
-//            XCTAssertNil(mlsConversation.lastMessage)
+            message = try proteusConversation.appendKnock()
+            message.updateServerTimestamp(with: 1)
+
+            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message.updateServerTimestamp(with: 2)
+
+            XCTAssertEqual(proteusConversation.allMessages.count, 3)
+            XCTAssertNil(mlsConversation.lastMessage)
         }
 
         // duplicate Proteus OneOnOne conversation
@@ -328,14 +331,16 @@ final class OneOnOneMigratorTests: XCTestCase {
             var message = try duplicateProteusConversation.appendText(content: "Hello World Dup!")
             message.updateServerTimestamp(with: 10)
 
-//            message = try duplicateProteusConversation.appendKnock()
-//            message.updateServerTimestamp(with: 11)
-//
-//            message = try duplicateProteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
-//            message.updateServerTimestamp(with: 12)
-//
-//            XCTAssertEqual(proteusConversation.allMessages.count, 3)
-//            XCTAssertNil(mlsConversation.lastMessage)
+            message = try duplicateProteusConversation.appendKnock()
+            message.updateServerTimestamp(with: 11)
+
+            message = try duplicateProteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message.updateServerTimestamp(with: 12)
+
+            XCTAssertEqual(proteusConversation.allMessages.count, 3)
+            XCTAssertNil(mlsConversation.lastMessage)
+            
+            try self.syncContext.save()
         }
 
         // When
@@ -348,14 +353,14 @@ final class OneOnOneMigratorTests: XCTestCase {
         // Then
         await syncContext.perform {
             let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
-            let expectedMessagesCount = 2
+            let expectedMessagesCount = 6
             if mlsMessages.count == expectedMessagesCount {
                 XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
                 XCTAssertTrue(mlsMessages[1].isKnock)
-//                XCTAssertTrue(mlsMessages[2].isImage)
-//                XCTAssertEqual(mlsMessages[3].textMessageData?.messageText, "Hello World Dup!")
-//                XCTAssertTrue(mlsMessages[4].isKnock)
-//                XCTAssertTrue(mlsMessages[5].isImage)
+                XCTAssertTrue(mlsMessages[2].isImage)
+                XCTAssertEqual(mlsMessages[3].textMessageData?.messageText, "Hello World Dup!")
+                XCTAssertTrue(mlsMessages[4].isKnock)
+                XCTAssertTrue(mlsMessages[5].isImage)
             } else {
                 XCTFail("messages count is \(mlsMessages.count) instead of \(expectedMessagesCount)")
             }
@@ -435,6 +440,8 @@ final class OneOnOneMigratorTests: XCTestCase {
             )
             oneOnOneConversation.messageProtocol = .proteus
             oneOnOneConversation.userDefinedName = nil
+            let a = oneOnOneConversation.value(forKey: "conversationType") as? Int16
+            print("conv: \(oneOnOneConversation.remoteIdentifier) - \(oneOnOneConversation.conversationType)"  )
             return oneOnOneConversation
     }
 

@@ -185,23 +185,11 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             return []
         }
         
-        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-        request.predicate = ZMConversation.predicateForTeamOneToOneConversation()
+        let request = NSFetchRequest<NSManagedObject>(entityName: ZMConversation.entityName())
+        let teamOneOnOnePredicate = ZMConversation.predicateForTeamOneToOneConversation()
 
-        // We consider a conversation being an existing 1:1 team conversation in case the following points are true:
-        //  1. It is a conversation inside the team
-        //  2. The only participants are the current user and the selected user
-        //  3. It does not have a custom display name
-        let sameTeam = NSPredicate(format: "team == %@", selfTeam)
-        let groupConversation = NSPredicate(
-            format: "%K == %d",
-            ZMConversationConversationTypeKey,
-            ZMConversationType.group.rawValue
-        )
-        let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
         let sameParticipant = NSPredicate(
-            format: "%K.@count == 2 AND ANY %K.user == %@ AND ANY %K.user == %@",
-            ZMConversationParticipantRolesKey,
+            format: "ANY %K.user == %@ AND ANY %K.user == %@",
             ZMConversationParticipantRolesKey,
             otherUser,
             ZMConversationParticipantRolesKey,
@@ -209,13 +197,15 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         )
 
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            sameTeam,
-            groupConversation,
-            noUserDefinedName,
+            teamOneOnOnePredicate,
             sameParticipant
         ])
 
-        
-        return context.fetchOrAssert(request: request)
+        do  {
+            let result = try context.fetch(request)
+            return result.compactMap { $0 as? ZMConversation }
+        } catch {
+            return []
+        }
     }
 }
