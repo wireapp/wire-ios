@@ -17,7 +17,7 @@
 //
 
 import XCTest
-@testable import WireCryptobox
+@testable import WireCrypto
 
 private typealias Sut = ChaCha20Poly1305.StreamEncryption
 
