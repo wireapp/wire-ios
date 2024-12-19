@@ -186,8 +186,8 @@ private enum Scaffolding {
         conversationID: conversationID,
         senderID: senderID,
         timestamp: timestamp,
-        message: .ciphertext("foo"),
-        externalData: .ciphertext("bar"),
+        message: .init(encryptedMessage: "foo"),
+        externalData: .init(encryptedMessage: "bar"),
         messageSenderClientID: "abc123",
         messageRecipientClientID: "def456"
     )
@@ -201,7 +201,7 @@ private enum Scaffolding {
     static let receiptModeUpdateEvent = ConversationReceiptModeUpdateEvent(
         conversationID: conversationID,
         senderID: senderID,
-        newRecieptMode: 1
+        newReceiptMode: 1
     )
 
     static let renameEvent = ConversationRenameEvent(

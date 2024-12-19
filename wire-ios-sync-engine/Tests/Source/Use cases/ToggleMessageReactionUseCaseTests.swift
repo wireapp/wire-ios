@@ -101,7 +101,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         XCTAssertEqual(
             analyticsEventTracker.trackEvent_Invocations,
             [
-                AnalyticsEvent.conversationContribution(
+                AnalyticsEvent.Contributed.conversationContribution(
                     .likeMessage,
                     conversationType: .group,
                     conversationSize: 0
@@ -143,7 +143,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         XCTAssertEqual(
             analyticsEventTracker.trackEvent_Invocations,
             [
-                AnalyticsEvent.conversationContribution(
+                AnalyticsEvent.Contributed.conversationContribution(
                     .likeMessage,
                     conversationType: .group,
                     conversationSize: 0

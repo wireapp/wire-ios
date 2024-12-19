@@ -54,7 +54,7 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
         }
 
         analyticsEventTracker?.trackEvent(
-            .conversationContribution(
+            .Contributed.conversationContribution(
                 contributionType,
                 conversationType: .init(conversation.conversationType),
                 conversationSize: UInt(conversation.localParticipants.count)

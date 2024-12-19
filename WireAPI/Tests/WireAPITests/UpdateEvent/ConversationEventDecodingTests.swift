@@ -458,7 +458,8 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             subconversation: "subconversation",
-            message: "message"
+            message: "message",
+            timestamp: fractionalDate(from: "2024-06-04T15:03:07.598Z")
         )
 
         static let mlsWelcomeEvent = ConversationMLSWelcomeEvent(
@@ -471,8 +472,8 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp,
-            message: .ciphertext("foo"),
-            externalData: .ciphertext("bar"),
+            message: .init(encryptedMessage: "foo"),
+            externalData: .init(encryptedMessage: "bar"),
             messageSenderClientID: "abc123",
             messageRecipientClientID: "def456"
         )
@@ -486,7 +487,7 @@ final class ConversationEventDecodingTests: XCTestCase {
         static let receiptModeUpdateEvent = ConversationReceiptModeUpdateEvent(
             conversationID: conversationID,
             senderID: senderID,
-            newRecieptMode: 1
+            newReceiptMode: 1
         )
 
         static let renameEvent = ConversationRenameEvent(

@@ -108,7 +108,6 @@ final class ConversationGuestOptionsViewController: UIViewController,
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = SemanticColors.View.backgroundDefault
-        tableView.contentInsetAdjustmentBehavior = .never
     }
 
     private func setupNavigationBar() {

@@ -44,7 +44,7 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
         try conversation.appendLocation(with: locationData, nonce: UUID())
 
         analyticsEventTracker?.trackEvent(
-            .conversationContribution(
+            .Contributed.conversationContribution(
                 .locationMessage,
                 conversationType: .init(conversation.conversationType),
                 conversationSize: UInt(conversation.localParticipants.count)

@@ -29,20 +29,46 @@ struct DeepLinksView: View {
     // MARK: - Views
 
     var body: some View {
-        List {
-            Section("Open deeplink") {
-                TextField("Link", text: $urlString, prompt: Text("Enter deeplink"))
-                Button("Go") {
-                    viewModel.openLink(urlString: urlString)
+        VStack(spacing: 0) {
+            List {
+                Section("Open deeplink") {
+                    TextField("Link", text: $urlString, prompt: Text("Enter deeplink"))
+                    Button("Go") {
+                        viewModel.openLink(urlString: urlString)
+                    }
+                    .disabled(urlString.isEmpty)
                 }
-                .disabled(urlString.isEmpty)
             }
+            .listStyle(InsetGroupedListStyle())
+            .frame(height: 150)
+
+            QRCodeScannerView { scannedCode in
+                urlString = scannedCode
+                viewModel.openLink(urlString: scannedCode)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
         }
         .alert(
             isPresented: $viewModel.isShowingAlert,
             error: viewModel.error,
             actions: {}
         )
+    }
+}
+
+struct QRCodeScannerView: UIViewControllerRepresentable {
+
+    var onQRCodeScanned: (String) -> Void
+
+    func makeUIViewController(context: Context) -> QRCodeScannerViewController {
+        let viewController = QRCodeScannerViewController()
+        viewController.onQRCodeScanned = onQRCodeScanned
+        return viewController
+    }
+
+    func updateUIViewController(_ uiViewController: QRCodeScannerViewController, context: Context) {
+        // Nothing to update here.
     }
 }
 

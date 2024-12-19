@@ -50,7 +50,7 @@ class ZiphyClientTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -83,7 +83,7 @@ class ZiphyClientTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -114,7 +114,7 @@ class ZiphyClientTests: XCTestCase {
         }
 
         sendResponse(afterDelay: 1)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 

@@ -24,13 +24,8 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-public import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-public import UIKit
-#elseif os(OSX)
-public import AppKit
-#endif
 
+import Foundation
 
 @testable import WireSystem
 

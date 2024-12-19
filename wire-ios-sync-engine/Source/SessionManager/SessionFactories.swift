@@ -17,6 +17,7 @@
 //
 
 import avs
+import WireAPI
 import WireDataModel
 
 open class AuthenticatedSessionFactory {
@@ -26,7 +27,7 @@ open class AuthenticatedSessionFactory {
     let flowManager: FlowManagerType
     let application: ZMApplication
 
-    var environment: BackendEnvironmentProvider
+    var environment: WireTransport.BackendEnvironment
     var reachability: Reachability
 
     let minTLSVersion: String?
@@ -36,7 +37,7 @@ open class AuthenticatedSessionFactory {
         application: ZMApplication,
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
-        environment: BackendEnvironmentProvider,
+        environment: WireTransport.BackendEnvironment,
         proxyUsername: String?,
         proxyPassword: String?,
         reachability: Reachability,
@@ -60,6 +61,41 @@ open class AuthenticatedSessionFactory {
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
+
+        let apiServiceFactory: APIServiceFactory = { [weak self, environment, minTLSVersion] clientID, userID in
+            let wireAssembly = WireAPI.Assembly(
+                userID: userID,
+                clientID: clientID,
+                backendEnvironment: BackendEnvironment(
+                    url: environment.backendURL,
+                    webSocketURL: environment.backendWSURL,
+                    pinnedKeys: environment.trustData.map { trustData in
+                        PinnedKey(
+                            key: trustData.certificateKey,
+                            hosts: trustData.hosts.map { host in
+                                switch host.rule {
+                                case .equals:
+                                    .equals(host.value)
+                                case .endsWith:
+                                    .endsWith(host.value)
+                                }
+                            }
+                        )
+                    },
+                    proxySettings: self?.proxySettings
+                ),
+                minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
+                cookieEncryptionKey: UserDefaults.cookiesKey()
+            )
+
+            let authenticationManager = wireAssembly.authenticationManager
+            let networkService = wireAssembly.apiNetworkService
+
+            return APIService(
+                networkService: networkService,
+                authenticationManager: authenticationManager
+            )
+        }
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: proxyUsername,
@@ -74,6 +110,7 @@ open class AuthenticatedSessionFactory {
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
+            apiServiceFactory: apiServiceFactory,
             appVersion: appVersion,
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
@@ -114,6 +151,21 @@ open class AuthenticatedSessionFactory {
 
     private(set) var proxyUsername: String?
     private(set) var proxyPassword: String?
+
+    private var proxySettings: ProxySettings? {
+        guard let proxy = environment.proxy else { return nil }
+
+        if proxy.needsAuthentication {
+            guard let proxyUsername, let proxyPassword else {
+                fatalInternal("Proxy needs authentication but credentials are missing")
+                return nil
+            }
+
+            return .authenticated(host: proxy.host, port: proxy.port, username: proxyUsername, password: proxyPassword)
+        } else {
+            return .unauthenticated(host: proxy.host, port: proxy.port)
+        }
+    }
 }
 
 // MARK: -

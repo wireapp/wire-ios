@@ -34,6 +34,10 @@ enum HTTPStatusCode: Int {
 
     case badRequest = 400
 
+    /// unauthorized - 401
+
+    case unauthorized = 401
+
     /// not found - 404
 
     case notFound = 404
@@ -41,6 +45,10 @@ enum HTTPStatusCode: Int {
     /// forbidden - 403
 
     case forbidden = 403
+
+    /// conflict - 409
+
+    case conflict = 409
 
     // MARK: Server Errors - 5xx
 

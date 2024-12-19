@@ -1102,10 +1102,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     // MARK: - MLS: Conversation Create
 
     func testUpdateOrCreateConversation_Group_MLS_AsksToUpdateConversationIfNeeded() async {
-        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
-        defer {
-            DeveloperFlag.storage = .standard
-        }
         // given
         let qualifiedID = await syncMOC.perform {
             self.groupConversation.qualifiedID!
@@ -1115,6 +1111,9 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             type: BackendConversationType.group.rawValue,
             messageProtocol: "mls"
         )
+        await syncMOC.perform {
+            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+        }
 
         // when
         await sut.updateOrCreateConversation(
@@ -1173,7 +1172,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         // then
         XCTAssertTrue(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
@@ -1195,7 +1194,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
-        await fulfillment(of: [didCallCreateGroup], timeout: 0.5)
+        await fulfillment(of: [didCallCreateGroup], timeout: 1)
 
         // then
         XCTAssertFalse(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
@@ -1222,7 +1221,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
-        await fulfillment(of: [didJoinGroup], timeout: 0.5)
+        await fulfillment(of: [didJoinGroup], timeout: 1)
 
         // then
         XCTAssertFalse(mockMLSService.joinGroupWith_Invocations.isEmpty)
@@ -1278,14 +1277,13 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     // MARK: - MLS conversation member leave
 
     func test_UpdateConversationMemberLeave_WipesMLSGroup() async {
-        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
-        defer {
-            DeveloperFlag.storage = .standard
-        }
         // Given
         let wipeGroupExpectation = XCTestExpectation(description: "it wipes group")
         mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in
             wipeGroupExpectation.fulfill()
+        }
+        await syncMOC.perform {
+            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
 
         let (payload, updateEvent) = await syncMOC.perform { [self] in
@@ -1321,7 +1319,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             originalEvent: updateEvent,
             in: syncMOC
         )
-        await fulfillment(of: [wipeGroupExpectation], timeout: 0.5)
+        await fulfillment(of: [wipeGroupExpectation], timeout: 1)
 
         // Then
         let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations

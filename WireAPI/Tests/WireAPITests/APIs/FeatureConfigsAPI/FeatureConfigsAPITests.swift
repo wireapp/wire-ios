@@ -17,19 +17,19 @@
 //
 
 import XCTest
-
 @testable import WireAPI
+@testable import WireAPISupport
 
 final class FeatureConfigsAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<any FeatureConfigsAPI>!
+    private var apiSnapshotHelper: APIServiceSnapshotHelper<any FeatureConfigsAPI>!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        apiSnapshotHelper = APISnapshotHelper { httpClient, apiVersion in
-            let builder = FeatureConfigsAPIBuilder(httpClient: httpClient)
+        apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
+            let builder = FeatureConfigsAPIBuilder(apiService: apiService)
             return builder.makeAPI(for: apiVersion)
         }
     }
@@ -53,61 +53,56 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            payloadResourceName: "GetFeatureConfigsSuccessResponseV0"
-        )
 
-        let sut = APIVersion.v0.buildAPI(client: httpClient)
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV0")
+        ])
 
         // When
-        let result = try await sut.getFeatureConfigs()
-
-        // Then
-        XCTAssertEqual(
-            result,
-            Scaffolding.featureConfigsV0
-        )
+        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
+            let result = try await sut.getFeatureConfigs()
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.featureConfigsV0
+            )
+        }
     }
 
     // MARK: - V1 to V3
 
-    func testGetFeatureConfigs_SuccessResponse_200_V1_to_V3() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V1_to_V3_Then_Verify_Requests() async throws {
         // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            payloadResourceName: "GetFeatureConfigsSuccessResponseV1"
-        )
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV1")
+        ])
 
         let supportedVersions: [APIVersion] = [.v1, .v2, .v3]
 
-        let suts = supportedVersions.map { $0.buildAPI(client: httpClient) }
-
-        try await withThrowingTaskGroup(of: [FeatureConfig].self) { taskGroup in
-            for sut in suts {
-                taskGroup.addTask {
-                    // When
-                    try await sut.getFeatureConfigs()
-                }
-
-                for try await result in taskGroup {
-                    // Then
-                    XCTAssertEqual(
-                        result,
-                        Scaffolding.featureConfigsV1
-                    )
-                }
-            }
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getFeatureConfigs()
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.featureConfigsV1
+            )
         }
     }
 
     func testGetFeatureConfigs_FailureResponse_No_Team() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "no-team")
-        let sut = FeatureConfigsAPIV0(httpClient: httpClient)
+
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: "no-team"
+        )
+
+        let sut = FeatureConfigsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(FeatureConfigsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.teamNotFound) {
             // When
             try await sut.getFeatureConfigs()
         }
@@ -115,11 +110,15 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_FailureResponse_No_Team_Member() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .forbidden, errorLabel: "no-team-member")
-        let sut = FeatureConfigsAPIV0(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "no-team-member"
+        )
+
+        let sut = FeatureConfigsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(FeatureConfigsAPIError.userIsNotTeamMember) {
+        await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.userIsNotTeamMember) {
             // When
             try await sut.getFeatureConfigs()
         }
@@ -127,11 +126,15 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_FailureResponse_Insufficient_Permissions() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .forbidden, errorLabel: "operation-denied")
-        let sut = FeatureConfigsAPIV0(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "operation-denied"
+        )
+
+        let sut = FeatureConfigsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(FeatureConfigsAPIError.insufficientPermissions) {
+        await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.insufficientPermissions) {
             // When
             try await sut.getFeatureConfigs()
         }
@@ -139,60 +142,45 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     // MARK: - V4 & V5
 
-    func testGetFeatureConfigs_SuccessResponse_200_V4_TO_V5() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V4_To_V5_Then_Verify_Requests() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .ok, payloadResourceName: "GetFeatureConfigsSuccessResponseV4")
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV4")
+        ])
 
         let supportedVersions: [APIVersion] = [.v4, .v5]
 
-        let suts = supportedVersions.map { $0.buildAPI(client: httpClient) }
-
-        try await withThrowingTaskGroup(of: [FeatureConfig].self) { taskGroup in
-            for sut in suts {
-                taskGroup.addTask {
-                    // When
-                    try await sut.getFeatureConfigs()
-                }
-
-                for try await result in taskGroup {
-                    // Then
-                    XCTAssertEqual(
-                        result,
-                        Scaffolding.featureConfigsV4
-                    )
-                }
-            }
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getFeatureConfigs()
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.featureConfigsV4
+            )
         }
     }
 
     // MARK: - V6 and next versions
 
-    func testGetFeatureConfigs_SuccessResponse_200_V6_And_Next_Versions() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V6_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            payloadResourceName: "GetFeatureConfigsSuccessResponseV6"
-        )
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV6")
+        ])
 
         let supportedVersions = APIVersion.v6.andNextVersions
 
-        let suts = supportedVersions.map { $0.buildAPI(client: httpClient) }
-
-        try await withThrowingTaskGroup(of: [FeatureConfig].self) { taskGroup in
-            for sut in suts {
-                taskGroup.addTask {
-                    // When
-                    try await sut.getFeatureConfigs()
-                }
-
-                for try await result in taskGroup {
-                    // Then
-                    XCTAssertEqual(
-                        result,
-                        Scaffolding.featureConfigsV6
-                    )
-                }
-            }
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getFeatureConfigs()
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.featureConfigsV6
+            )
         }
     }
 
@@ -433,15 +421,6 @@ extension FeatureConfigsAPITests {
                 )
             )
         ]
-    }
-
-}
-
-private extension APIVersion {
-
-    func buildAPI(client: any HTTPClient) -> any FeatureConfigsAPI {
-        let builder = FeatureConfigsAPIBuilder(httpClient: client)
-        return builder.makeAPI(for: self)
     }
 
 }

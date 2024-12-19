@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireAnalytics
 import WireMainNavigationUI
 import WireSidebarUI
 
@@ -26,24 +27,34 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     let connectUIBuilder: ConnectViewControllerBuilderProtocol
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+    let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     init(
         mainCoordinator: AnyMainCoordinator,
         connectUIBuilder: ConnectViewControllerBuilderProtocol,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) {
         self.mainCoordinator = mainCoordinator
         self.connectUIBuilder = connectUIBuilder
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
-    @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
-        Task {
-            let selfProfileUI = UINavigationController(rootViewController: selfProfileUIBuilder.build())
+        // analytics
+        let isNotificationsBadgeVisible = viewController.accountInfo.showNotificationsBadge
+        let analyticsEventTracker = analyticsEventTracker()
+        analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+
+        // open profile
+        Task { @MainActor in
+            let rootViewController = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
             selfProfileUI.modalPresentationStyle = .formSheet
+            selfProfileUI.presentationController?.delegate = rootViewController
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
@@ -51,7 +62,10 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     @MainActor
     func sidebarViewController(_ viewController: SidebarViewController, didTapFoldersMenuItem frame: CGRect) {
         Task {
-            let folderPicker = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            let folderPicker = folderPickerViewControllerBuilder.build(
+                mainCoordinator: mainCoordinator,
+                showCloseButton: false
+            )
             folderPicker.modalPresentationStyle = .popover
 
             if let popover = folderPicker.popoverPresentationController,

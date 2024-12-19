@@ -22,14 +22,14 @@ import Foundation
 
 public struct UserPropertiesBuilder {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
     /// Create a new builder.
     ///
-    /// - Parameter httpClient: A http client.
+    /// - Parameter APIService: An api service.
 
-    public init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    public init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     /// Make a versioned `UserPropertiesAPI`.
@@ -40,19 +40,21 @@ public struct UserPropertiesBuilder {
     public func makeAPI(for version: APIVersion) -> any UserPropertiesAPI {
         switch version {
         case .v0:
-            UserPropertiesAPIV0(httpClient: httpClient)
+            UserPropertiesAPIV0(apiService: apiService)
         case .v1:
-            UserPropertiesAPIV1(httpClient: httpClient)
+            UserPropertiesAPIV1(apiService: apiService)
         case .v2:
-            UserPropertiesAPIV2(httpClient: httpClient)
+            UserPropertiesAPIV2(apiService: apiService)
         case .v3:
-            UserPropertiesAPIV3(httpClient: httpClient)
+            UserPropertiesAPIV3(apiService: apiService)
         case .v4:
-            UserPropertiesAPIV4(httpClient: httpClient)
+            UserPropertiesAPIV4(apiService: apiService)
         case .v5:
-            UserPropertiesAPIV5(httpClient: httpClient)
+            UserPropertiesAPIV5(apiService: apiService)
         case .v6:
-            UserPropertiesAPIV6(httpClient: httpClient)
+            UserPropertiesAPIV6(apiService: apiService)
+        case .v7:
+            UserPropertiesAPIV7(apiService: apiService)
         }
     }
 

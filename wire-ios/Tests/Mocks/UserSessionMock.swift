@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireAnalytics
 import WireDataModel
 import WireDataModelSupport
 import WireRequestStrategySupport
@@ -130,6 +131,7 @@ final class UserSessionMock: UserSession {
     var requireCustomAppLockPasscode: Bool = false
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
+    var analyticsEventTracker: (any AnalyticsEventTracker)?
 
     func openAppLock() throws {
         openApp.append(())
@@ -339,6 +341,28 @@ final class UserSessionMock: UserSession {
 
     func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase {
         CreateConversationFolderUseCase(context: syncContext)
+    }
+
+    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
+        let mock = MockSearchUsersUseCaseProtocol()
+        mock.invokeQueryOptionsMessageProtocol_MockMethod = { _, _, _ in
+            let payload = ["documents": [
+                [
+                    "id": self.selfUser.remoteIdentifier ?? UUID(),
+                    "name": self.selfUser.name ?? "",
+                    "accent_id": 1,
+                    "handle": self.selfUser.handle ?? ""
+                ]
+            ]]
+            return SearchResult(
+                payload: payload,
+                query: .fullTextSearch(""),
+                searchOptions: [.directory],
+                contextProvider: MockContextProvider(),
+                searchUsersCache: nil
+            )!
+        }
+        return mock
     }
 
     var e2eiFeature: Feature.E2EI = .init(status: .enabled)

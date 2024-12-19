@@ -88,7 +88,7 @@ final class UserImageLocalCacheTests: XCTestCase {
             completeImageArrived.fulfill()
         }
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
     }
 
     // MARK: - Storing

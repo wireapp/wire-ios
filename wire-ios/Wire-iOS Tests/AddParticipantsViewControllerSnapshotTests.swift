@@ -59,6 +59,7 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
+        mockSelfUser.canCreateService = true
         userSession = UserSessionMock(mockUser: mockSelfUser)
     }
 
@@ -106,10 +107,29 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         mockConversation.conversationType = .group
         mockConversation.teamType = MockTeam()
         mockConversation.allowServices = true
+        mockConversation.messageProtocol = .proteus
 
         sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
 
         // THEN
+        XCTAssertTrue(mockConversation.botCanBeAdded)
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testThatTabBarIsNotShown_WhenBotCanNotBeAdded() {
+        // GIVEN
+        let mockConversation = MockGroupDetailsConversation()
+
+        // WHEN
+        mockConversation.conversationType = .group
+        mockConversation.teamType = MockTeam()
+        mockConversation.allowServices = true
+        mockConversation.messageProtocol = .mls
+
+        sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
+
+        // THEN
+        XCTAssertFalse(mockConversation.botCanBeAdded)
         snapshotHelper.verify(matching: sut)
     }
 

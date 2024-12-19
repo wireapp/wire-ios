@@ -18,6 +18,7 @@
 
 import MessageUI
 import UIKit
+import WireLogging
 import WireSyncEngine
 
 enum BlockerViewControllerContext {
@@ -289,7 +290,7 @@ extension BlockerViewController {
         successEnrollmentViewController.onOkTapped = { viewController in
             viewController.dismiss(animated: true)
         }
-        successEnrollmentViewController.presentTopmost()
+        successEnrollmentViewController.presentOverAll()
     }
 
 }

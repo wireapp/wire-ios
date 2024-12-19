@@ -37,6 +37,7 @@
 "general.on" = "Zapnuto";
 "general.loading" = "Načítání…";
 "general.paste" = "Vložit";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -85,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Dozvědět se více";
 "peoplepicker.no_matching_results.action.manage_services" = "Spravovat služby";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Žádné výsledky.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Všichni jsou zde.";
@@ -97,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Může být použito na 2 týdny. Zašlete novou, pokud její platnost vyprší.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Pozvat další osoby";
 "peoplepicker.invite_team_members" = "Pozvat do týmu další členy";
 "peoplepicker.quick-action.open-conversation" = "Otevřít";
 "peoplepicker.quick-action.admin-services" = "Spravovat služby";
@@ -156,6 +155,13 @@
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "je v kontaktech";
@@ -326,7 +332,6 @@
 "conversation.create.guidance.empty" = "Alespoň jeden znak";
 "conversation.create.guidance.toolong" = "Příliš mnoho znaků";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Povolit hosty";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";
 "conversation.create.services.title" = "Allow services";
@@ -1582,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Upravit Detaily";
 
 "registration.country_select.title" = "Země";
-
-"registration.share_contacts.hero.title" = "Najít lidi na Wire";
-"registration.share_contacts.hero.paragraph" = "Vaše údaje o kontaktech používáme k propojení s ostatními uživateli. Všechny informace anonymizujeme a nesdílíme je s nikým dalším.";
-"registration.share_contacts.find_friends_button.title" = "Sdílet kontakty";
-"registration.share_contacts.skip_button.title" = "Nyní ne";
-
-"registration.address_book_access_denied.hero.title" = "Wire nemá přístup k vašim kontaktům.";
-"registration.address_book_access_denied.hero.paragraph1" = "Pokud s aplikací sdílíte své kontakty, Wire vám pomůže najít vaše přátele.";
-"registration.address_book_access_denied.hero.paragraph2" = "Klepnutím v Nastavení a zapnutím Kontaktů povolíte přístup.";
-"registration.address_book_access_denied.settings_button.title" = "Nastavení";
-"registration.address_book_access_denied.maybe_later_button.title" = "Možná později";
 
 "registration.push_access_denied.hero.title" = "Nikdy nezmeškáte hovor nebo zprávu.";
 "registration.push_access_denied.hero.paragraph1" = "Povolte oznámení v nastavení.";

@@ -21,22 +21,29 @@ import Foundation
 class ConversationsAPIV5: ConversationsAPIV4 {
     override var apiVersion: APIVersion { .v5 }
 
+    var oneToOneConversationsPath: String {
+        "\(pathPrefix)\(basePath)/one2one"
+    }
+
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        let resourcePath = "\(pathPrefix)/conversations/list"
+        let path = "\(pathPrefix)\(basePath)/list"
 
-        let request = HTTPRequest(
-            path: resourcePath,
-            method: .post,
-            body: body
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
         )
-        let response = try await httpClient.executeRequest(request)
 
         // Removed in v5: remove handling of error code 400
         return try ResponseParser()
-            .success(code: .ok, type: QualifiedConversationListV5.self) // Change in v5
-            .parse(response)
+            .success(code: .ok, type: QualifiedConversationListV5.self)
+            .parse(code: response.statusCode, data: data)
     }
 
     override func getMLSOneToOneConversation(
@@ -47,20 +54,22 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             throw ConversationsAPIError.userAndDomainShouldNotBeEmpty
         }
 
-        let resourcePath = "\(pathPrefix)/conversations/one2one/\(domain)/\(userID)"
+        let path = "\(oneToOneConversationsPath)/\(domain)/\(userID)"
 
-        let request = HTTPRequest(
-            path: resourcePath,
-            method: .get
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
         )
-
-        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: ConversationV5.self)
             .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
             .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 }
 

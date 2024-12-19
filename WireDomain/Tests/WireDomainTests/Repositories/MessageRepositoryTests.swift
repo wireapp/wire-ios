@@ -17,6 +17,7 @@
 //
 
 import WireDomainSupport
+import WireTestingPackage
 import XCTest
 @testable import WireDomain
 
@@ -24,30 +25,34 @@ final class MessageRepositoryTests: XCTestCase {
 
     private var sut: MessageRepository!
     private var localStore: MockMessageLocalStoreProtocol!
+    private var conversationRepository: MockConversationRepositoryProtocol!
 
     override func setUp() async throws {
         localStore = MockMessageLocalStoreProtocol()
+        conversationRepository = MockConversationRepositoryProtocol()
 
         sut = MessageRepository(
-            localStore: localStore
+            localStore: localStore,
+            conversationRepository: conversationRepository
         )
     }
 
     override func tearDown() async throws {
         sut = nil
         localStore = nil
+        conversationRepository = nil
     }
 
     // MARK: - Tests
 
-    func testAddMessageToConversation_It_Invokes_Local_Store_Method() async {
+    func testAddSystemMessageToConversation_It_Invokes_Local_Store_Method() async {
         // Mock
 
-        localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+        localStore.addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
-        await sut.addMessageToConversation(
+        await sut.addSystemMessage(
             messageType: .mlsMigrationMLSNotSupportedForSelfUser,
             conversationID: Scaffolding.conversationID,
             conversationDomain: Scaffolding.conversationDomain
@@ -56,16 +61,14 @@ final class MessageRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(
-            localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            localStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
             1
         )
     }
 
     private enum Scaffolding {
-
-        static let conversationID = UUID()
+        static let conversationID = UUID.mockID1
         static let conversationDomain = "domain.com"
-
     }
 
 }

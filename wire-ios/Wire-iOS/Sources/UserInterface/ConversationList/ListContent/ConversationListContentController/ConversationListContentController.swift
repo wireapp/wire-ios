@@ -74,8 +74,6 @@ final class ConversationListContentController: UICollectionViewController {
         flowLayout.sectionInset = .zero
         self.listViewModel = .init(userSession: userSession)
         super.init(collectionViewLayout: flowLayout)
-
-        registerSectionHeader()
     }
 
     @available(*, unavailable)
@@ -153,52 +151,6 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.accessibilityIdentifier = "conversation list"
         collectionView.backgroundColor = .clear
         clearsSelectionOnViewWillAppear = false
-    }
-
-    // MARK: - section header
-
-    override func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
-
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            let section = indexPath.section
-
-            if let header = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: ConversationListHeaderView.reuseIdentifier,
-                for: indexPath
-            ) as? ConversationListHeaderView {
-                header.title = listViewModel.sectionHeaderTitle(sectionIndex: section)?.uppercased()
-
-                header.folderBadge = listViewModel.folderBadge(at: section)
-
-                header.collapsed = listViewModel.collapsed(at: section)
-
-                header.tapHandler = { [weak self] collapsed in
-                    self?.listViewModel.setCollapsed(sectionIndex: section, collapsed: collapsed)
-                }
-
-                return header
-            } else {
-                fatal("Unknown supplementary view for \(kind)")
-            }
-        default:
-            fatal("No supplementary view for \(kind)")
-        }
-    }
-
-    private func registerSectionHeader() {
-        collectionView?.register(
-            ConversationListHeaderView.self,
-            forSupplementaryViewOfKind:
-            UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: ConversationListHeaderView.reuseIdentifier
-        )
-
     }
 
     /// ensures that the list selection state matches that of the model.
@@ -386,18 +338,6 @@ extension ConversationListContentController: UICollectionViewDelegateFlowLayout 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int
-    ) -> CGSize {
-        CGSize(
-            width: collectionView.bounds.size.width,
-            height: listViewModel.sectionHeaderVisible(section: section) ? CGFloat.ConversationListSectionHeader
-                .height : 0
-        )
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         layoutCell.size(inCollectionViewSize: collectionView.bounds.size)
@@ -413,17 +353,6 @@ extension ConversationListContentController: UICollectionViewDelegateFlowLayout 
 }
 
 extension ConversationListContentController: ConversationListViewModelDelegate {
-
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
-        guard let header = collectionView.supplementaryView(
-            forElementKind: UICollectionView.elementKindSectionHeader,
-            at: IndexPath(item: 0, section: section)
-        ) as? ConversationListHeaderView else {
-            return
-        }
-
-        header.folderBadge = listViewModel.folderBadge(at: section)
-    }
 
     func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?) {
         defer {
@@ -471,6 +400,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         let reloadClosure = {
             self.collectionView.reloadSections(IndexSet(integer: section))
             self.ensureCurrentSelection()
+            self.contentDelegate?.conversationListContentControllerDidReload(self)
         }
 
         if animated {
@@ -482,14 +412,13 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         }
     }
 
-    func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool) {}
-
     func reload<C>(
         using stagedChangeset: StagedChangeset<C>,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C?) -> Void
     ) {
         collectionView.reload(using: stagedChangeset, interrupt: interrupt, setData: setData)
+        contentDelegate?.conversationListContentControllerDidReload(self)
     }
 }
 

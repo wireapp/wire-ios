@@ -33,6 +33,7 @@ public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
     case fetchingLegalHoldStatus
     case fetchingLabels
     case fetchingFeatureConfig
+    case fetchingBackendMLSPublicKeys
     case updateSelfSupportedProtocols
     case evaluate1on1ConversationsForMLS
     // following is quick sync only
@@ -77,6 +78,8 @@ public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
             "fetchingLabels"
         case .fetchingFeatureConfig:
             "fetchingFeatureConfig"
+        case .fetchingBackendMLSPublicKeys:
+            "fetchingBackendMLSPublicKeys"
         case .updateSelfSupportedProtocols:
             "updateSelfSupportedProtocols"
         case .evaluate1on1ConversationsForMLS:

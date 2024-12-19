@@ -24,19 +24,22 @@ class ConversationsAPIV3: ConversationsAPIV2 {
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        let resourcePath = "\(pathPrefix)/conversations/list"
+        let path = "\(pathPrefix)\(basePath)/list"
 
-        let request = HTTPRequest(
-            path: resourcePath,
-            method: .post,
-            body: body
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
         )
-        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: QualifiedConversationListV3.self) // Change in v3
             .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 }
 

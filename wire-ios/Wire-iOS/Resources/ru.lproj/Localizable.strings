@@ -37,6 +37,7 @@
 "general.on" = "Вкл.";
 "general.loading" = "Загрузка…";
 "general.paste" = "Вставить";
+"general.or" = "или";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -85,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Подробнее";
 "peoplepicker.no_matching_results.action.manage_services" = "Управление сервисами";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Ничего не найдено.";
 "peoplepicker.no_matching_results.message.users" = "Найти пользователей в Wire, используя имя или @псевдоним";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Найти пользователей в Wire, используя имя или @псевдоним\n\nНайти пользователей в другом домене, используя @псевдоним@домен";
 "peoplepicker.no_matching_results.message.users_all_added" = "Все пользователи добавлены.";
@@ -97,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Оно будет актуально в течение 2 недель. Вы можете отправить новое приглашение, если срок этого истечет.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Пригласить больше пользователей";
 "peoplepicker.invite_team_members" = "Пригласите пользователей в команду";
 "peoplepicker.quick-action.open-conversation" = "Открыть";
 "peoplepicker.quick-action.admin-services" = "Управление сервисами";
@@ -155,7 +154,14 @@
 "conversation_list.empty_placeholder.favorite.link" = "Как помечать беседы как избранные";
 "conversation_list.empty_placeholder.group.subheadline" = "Вы еще не участвуете ни в одной групповой беседе. Начните новую!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "У вас пока нет контактов. Ищите друзей в %@ и общайтесь.";
-"conversation_list.empty_placeholder.oneonone.button" = "Связаться с друзьями";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "Не удалось найти ни одной беседы.\n\nСвяжитесь с пользователями или начните новую групповую беседу:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "Ничего не найдено.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "Новая беседа";
+"conversation_list.empty_placeholder.search.button.ipad" = "Начать новую беседу";
+"conversation_list.empty_placeholder.search.connect_button" = "Связаться с пользователями";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
@@ -326,7 +332,6 @@
 "conversation.create.guidance.empty" = "Не менее 1 символа";
 "conversation.create.guidance.toolong" = "Слишком много символов";
 "conversation.create.options.title" = "НАСТРОЙКИ БЕСЕДЫ";
-"conversation.create.options.subtitle" = "Гости: %@, Сервисы: %@, Отчеты о прочтении: %@";
 "conversation.create.guests.title" = "Разрешить гостей";
 "conversation.create.guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
 "conversation.create.services.title" = "Разрешить сервисы";
@@ -1582,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Изменить профиль";
 
 "registration.country_select.title" = "Страна";
-
-"registration.share_contacts.hero.title" = "Найти друзей в Wire";
-"registration.share_contacts.hero.paragraph" = "Поделитесь своими контактами, чтобы мы могли соединить вас с другими пользователями. Мы анонимизируем всю информацию и не делимся ею с кем-либо еще.";
-"registration.share_contacts.find_friends_button.title" = "Обмен контактами";
-"registration.share_contacts.skip_button.title" = "Не сейчас";
-
-"registration.address_book_access_denied.hero.title" = "У Wire нет доступа к вашим контактам.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire помогает найти друзей, если вы делитесь своими контактами.";
-"registration.address_book_access_denied.hero.paragraph2" = "Чтобы включить доступ, зайдите в Настройки и разрешите доступ к Контактам.";
-"registration.address_book_access_denied.settings_button.title" = "Настройки";
-"registration.address_book_access_denied.maybe_later_button.title" = "Может быть позже";
 
 "registration.push_access_denied.hero.title" = "Не пропустите ни одного звонка или сообщения.";
 "registration.push_access_denied.hero.paragraph1" = "Включить уведомления в настройках.";

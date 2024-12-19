@@ -187,7 +187,7 @@ extension ConversationViewController {
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
-            let navigationController = participantsViewController.wrapInNavigationController()
+            let navigationController = UINavigationController(rootViewController: participantsViewController)
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
         }

@@ -20,6 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 /// The actions that can be performed from the profile details or devices.
@@ -176,6 +177,14 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         }
     }
 
+    private var canCreateConversationWithOtherDomain: Bool {
+        if userSession.isFederationUsageAllowed {
+            true
+        } else {
+            viewer.domain == user.domain
+        }
+    }
+
     private func makeActionsList(isOneOnOneReady: Bool) -> [ProfileAction] {
 
         // Do nothing if the user was deleted
@@ -214,7 +223,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         switch (context, conversation?.conversationType) {
         case (_, .oneOnOne?):
 
-            if viewer.canCreateConversation(type: .group) {
+            if viewer.canCreateConversation(type: .group), canCreateConversationWithOtherDomain {
                 actions.append(.createGroup)
             }
 

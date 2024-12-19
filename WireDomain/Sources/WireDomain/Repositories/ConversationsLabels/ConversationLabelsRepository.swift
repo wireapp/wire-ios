@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Facilitates access to conversation labels related domain objects.
@@ -42,24 +42,20 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
     // MARK: - Properties
 
     private let userPropertiesAPI: any UserPropertiesAPI
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: create ConversationLabelsLocalStore
-    private let context: NSManagedObjectContext
+    private let conversationLabelsLocalStore: any ConversationLabelsLocalStoreProtocol
     private let logger = WireLogger(tag: "conversation-labels")
 
     // MARK: - Object lifecycle
 
     init(
         userPropertiesAPI: any UserPropertiesAPI,
-        context: NSManagedObjectContext
+        conversationLabelsLocalStore: any ConversationLabelsLocalStoreProtocol
     ) {
         self.userPropertiesAPI = userPropertiesAPI
-        self.context = context
+        self.conversationLabelsLocalStore = conversationLabelsLocalStore
     }
 
     // MARK: - Public
-
-    /// Retrieve from backend and store conversation labels locally
 
     public func pullConversationLabels() async throws {
         let conversationLabels = try await userPropertiesAPI.getLabels()
@@ -70,7 +66,10 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
         _ conversationLabels: [ConversationLabel]
     ) async throws {
         await storeLabelsLocally(conversationLabels)
-        try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
+
+        try await conversationLabelsLocalStore.deleteOldLabelsLocally(
+            excludedLabels: conversationLabels.map { $0.toDomainModel() }
+        )
     }
 
     // MARK: - Private
@@ -81,7 +80,9 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
         await withThrowingTaskGroup(of: Void.self) { taskGroup in
             for conversationLabel in conversationLabels {
                 taskGroup.addTask { [self] in
-                    try await storeLabelLocally(conversationLabel)
+                    try await conversationLabelsLocalStore.storeLabel(
+                        conversationLabel.toDomainModel()
+                    )
                 }
             }
 
@@ -91,9 +92,12 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
                 case .success:
                     continue
                 case let .failure(error):
-                    let repoError = error as? ConversationLabelsRepositoryError
-                    if case let .failedToStoreLabelLocally(label) = repoError {
-                        logger.error("Failed to store conversation label with id \(label.id): \(error)")
+                    let repoError = error as? ConversationLabelsLocalStore.Failure
+                    if case let .failedToStoreLabelLocally(id) = repoError {
+                        logger
+                            .error(
+                                "Failed to store conversation label with id \(id.safeForLoggingDescription): \(error)"
+                            )
                     } else {
                         logger.error("Failed to store conversation with error: \(error)")
                     }
@@ -101,105 +105,4 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
             }
         }
     }
-
-    /// Save label and related conversations objects to local storage.
-    /// - Parameter conversationLabel: conversation label from WireAPI
-
-    private func storeLabelLocally(
-        _ conversationLabel: ConversationLabel
-    ) async throws {
-        try await context.perform { [context] in
-            var created = false
-            let label: Label? = if conversationLabel.type == Label.Kind.favorite.rawValue {
-                Label.fetchFavoriteLabel(in: context)
-            } else {
-                Label.fetchOrCreate(
-                    remoteIdentifier: conversationLabel.id,
-                    create: true,
-                    in: context,
-                    created: &created
-                )
-            }
-
-            guard let label else {
-                throw ConversationLabelsRepositoryError.failedToStoreLabelLocally(conversationLabel)
-            }
-
-            label.name = conversationLabel.name
-            label.kind = Label.Kind(rawValue: conversationLabel.type) ?? .folder
-
-            let conversations = ZMConversation.fetchObjects(
-                withRemoteIdentifiers: Set(conversationLabel.conversationIDs),
-                in: context
-            ) as? Set<ZMConversation> ?? Set()
-
-            label.conversations = conversations
-            label.modifiedKeys = nil
-
-            do {
-                try context.save()
-            } catch {
-                throw ConversationLabelsRepositoryError.failedToStoreLabelLocally(conversationLabel)
-            }
-        }
-    }
-
-    /// Delete old `folder` labels and related conversations objects from local storage.
-    /// - Parameter excludedLabels: remote labels that should be excluded from deletion.
-    /// - Only old labels of type `folder` are deleted, `favorite` labels always remain in the local storage.
-
-    private func deleteOldLabelsLocally(
-        excludedLabels remoteLabels: [ConversationLabel]
-    ) async throws {
-        try await context.perform { [self] in
-            let uuids = remoteLabels.map { $0.id.uuidData as NSData }
-            let predicateFormat = "type == \(Label.Kind.folder.rawValue) AND NOT remoteIdentifier_data IN %@"
-
-            let predicate = NSPredicate(
-                format: predicateFormat,
-                uuids as CVarArg
-            )
-
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult>
-            fetchRequest = NSFetchRequest(entityName: Label.entityName())
-            fetchRequest.predicate = predicate
-
-            /// Since batch operations bypass the context processing,
-            /// relationships rules are often ignored (e.g delete rule)
-            /// Nevertheless, CoreData automatically handles two specific scenarios:
-            /// `Cascade` delete rule and `Nullify` delete rule on an optional property
-            /// Since `conversations` is nullify and optional, we can safely perform a batch delete.
-
-            let deleteRequest = NSBatchDeleteRequest(
-                fetchRequest: fetchRequest
-            )
-
-            deleteRequest.resultType = .resultTypeObjectIDs
-
-            do {
-                let batchDelete = try context.execute(deleteRequest) as? NSBatchDeleteResult
-
-                guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
-                    throw ConversationLabelsRepositoryError.failedToDeleteStoredLabels
-                }
-
-                let deletedObjects: [AnyHashable: Any] = [
-                    NSDeletedObjectsKey: deleteResult
-                ]
-
-                /// Since `NSBatchDeleteRequest` only operates at the SQL level (in the persistent store itself),
-                /// we need to manually update our in-memory objects after execution.
-
-                NSManagedObjectContext.mergeChanges(
-                    fromRemoteContextSave: deletedObjects,
-                    into: [context]
-                )
-
-            } catch {
-                logger.error("Failed to delete old labels: \(error)")
-                throw error
-            }
-        }
-    }
-
 }

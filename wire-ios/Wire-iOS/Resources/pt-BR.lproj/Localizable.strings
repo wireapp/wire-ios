@@ -37,6 +37,7 @@
 "general.on" = "Ligado";
 "general.loading" = "Carregando…";
 "general.paste" = "Colar";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -85,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Saiba mais";
 "peoplepicker.no_matching_results.action.manage_services" = "Gerenciar Serviços";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Sem resultados.";
 "peoplepicker.no_matching_results.message.users" = "Encontre pessoas no Wire por nome ou @nomedeusuário";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Encontre pessoas no Wire por nome ou @nomedeusuario\n\nEncontre pessoas em outro domínio por @nomedeusuario@nomededominio";
 "peoplepicker.no_matching_results.message.users_all_added" = "Todo mundo está aqui.";
@@ -97,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Pode ser usado por duas semanas. Envie um novo caso expire.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Convidar mais pessoas";
 "peoplepicker.invite_team_members" = "Convide pessoas para entrar na equipe";
 "peoplepicker.quick-action.open-conversation" = "Abrir";
 "peoplepicker.quick-action.admin-services" = "Gerenciar serviços";
@@ -156,6 +155,13 @@
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "nos Contatos";
@@ -326,7 +332,6 @@
 "conversation.create.guidance.empty" = "Pelo menos 1 caractere";
 "conversation.create.guidance.toolong" = "Muitos caracteres";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Convidados: %@, Serviços: %@, Confirmação de leitura: %@";
 "conversation.create.guests.title" = "Permitir convidados";
 "conversation.create.guests.subtitle" = "Abra esta conversa para pessoas de fora da sua equipe.";
 "conversation.create.services.title" = "Permitir serviços";
@@ -1582,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Editar detalhes";
 
 "registration.country_select.title" = "País";
-
-"registration.share_contacts.hero.title" = "Encontrar pessoas no Wire";
-"registration.share_contacts.hero.paragraph" = "Compartilhe seus contatos, assim podemos conectar você com outras pessoas. Nós tornamos secretas todas as informações e não compartilhamos com mais ninguém.";
-"registration.share_contacts.find_friends_button.title" = "Compartilhar Contatos";
-"registration.share_contacts.skip_button.title" = "Agora não";
-
-"registration.address_book_access_denied.hero.title" = "O Wire não tem acesso aos seus contatos.";
-"registration.address_book_access_denied.hero.paragraph1" = "O Wire ajuda você a encontrar seus amigos, se você compartilhar com seus contatos.";
-"registration.address_book_access_denied.hero.paragraph2" = "Para habilitar os contatos toque em Ajustes e ative os Contatos.";
-"registration.address_book_access_denied.settings_button.title" = "Ajustes";
-"registration.address_book_access_denied.maybe_later_button.title" = "Talvez mais tarde";
 
 "registration.push_access_denied.hero.title" = "Nunca perca uma chamada ou uma mensagem.";
 "registration.push_access_denied.hero.paragraph1" = "Habilite Notificações em Ajustes.";

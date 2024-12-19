@@ -17,19 +17,19 @@
 //
 
 import XCTest
-
 @testable import WireAPI
+@testable import WireAPISupport
 
 final class TeamsAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<any TeamsAPI>!
+    private var apiSnapshotHelper: APIServiceSnapshotHelper<any TeamsAPI>!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        apiSnapshotHelper = APISnapshotHelper { httpClient, apiVersion in
-            let builder = TeamsAPIBuilder(httpClient: httpClient)
+        apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
+            let builder = TeamsAPIBuilder(apiService: apiService)
             return builder.makeAPI(for: apiVersion)
         }
     }
@@ -59,9 +59,9 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetLegalholdStatusRequest() async throws {
+    func testGetLegalholdInfoRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
-            _ = try await sut.getLegalholdStatus(for: .mockID1, userID: .mockID2)
+            _ = try await sut.getLegalholdInfo(for: .mockID1, userID: .mockID2)
         }
     }
 
@@ -69,40 +69,45 @@ final class TeamsAPITests: XCTestCase {
 
     // MARK: - V0
 
-    func testGetTeamForID_SuccessResponse_200_V0() async throws {
+    func testGetTeamForID_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            payloadResourceName: "GetTeamSuccessResponseV0"
-        )
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetTeamSuccessResponseV0")
+        ])
 
-        let sut = TeamsAPIV0(httpClient: httpClient)
         let teamID = try XCTUnwrap(Team.ID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506"))
 
-        // When
-        let result = try await sut.getTeam(for: teamID)
-
         // Then
-        XCTAssertEqual(
-            result,
-            Team(
-                id: teamID,
-                name: "teamName",
-                creatorID: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
-                logoID: "iconID",
-                logoKey: "iconKey",
-                splashScreenID: nil
+        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getTeam(for: teamID)
+
+            // Then
+            XCTAssertEqual(
+                result,
+                Team(
+                    id: teamID,
+                    name: "teamName",
+                    creatorID: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                    logoID: "iconID",
+                    logoKey: "iconKey",
+                    splashScreenID: nil
+                )
             )
-        )
+        }
     }
 
     func testGetTeamForID_FailureResponse_InvalidID_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
-        let sut = TeamsAPIV0(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: ""
+        )
+
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidTeamID) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidTeamID) {
             // When
             try await sut.getTeam(for: Team.ID())
         }
@@ -110,50 +115,59 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_FailureResponse_TeamNotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "no-team")
-        let sut = TeamsAPIV0(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: "no-team"
+        )
+
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
             // When
             try await sut.getTeam(for: Team.ID())
         }
     }
 
-    func testGetTeamRolesForID_SuccessResponse_200_V0() async throws {
+    func testGetTeamRolesForID_SuccessResponse_200_V0_Then_Verify_Request() async throws {
+
         // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            payloadResourceName: "GetTeamRolesSuccessResponseV0"
-        )
-
-        let sut = TeamsAPIV0(httpClient: httpClient)
-
-        // When
-        let result = try await sut.getTeamRoles(for: Team.ID())
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetTeamRolesSuccessResponseV0")
+        ])
 
         // Then
-        XCTAssertEqual(
-            result,
-            [
-                ConversationRole(
-                    name: "admin",
-                    actions: [
-                        .addConversationMember,
-                        .removeConversationMember
-                    ]
-                )
-            ]
-        )
+        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getTeamRoles(for: .mockID1)
+
+            // Then
+            XCTAssertEqual(
+                result,
+                [
+                    ConversationRole(
+                        name: "admin",
+                        actions: [
+                            .addConversationMember,
+                            .removeConversationMember
+                        ]
+                    )
+                ]
+            )
+        }
     }
 
     func testGetTeamRolesForID_FailureResponse_NoTeamMember_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .forbidden, errorLabel: "no-team-member")
-        let sut = TeamsAPIV0(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "no-team-member"
+        )
+
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.selfUserIsNotTeamMember) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.selfUserIsNotTeamMember) {
             // When
             try await sut.getTeamRoles(for: Team.ID())
         }
@@ -161,59 +175,68 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamRolesForID_FailureResponse_TeamNotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
-        let sut = TeamsAPIV0(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: ""
+        )
+
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
             // When
             try await sut.getTeamRoles(for: Team.ID())
         }
     }
 
-    func testGetMembers_SuccessResponse_200_V0() async throws {
+    func testGetMembers_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            payloadResourceName: "GetTeamMembersSuccessResponseV0"
-        )
-
-        let sut = TeamsAPIV0(httpClient: httpClient)
-
-        // When
-        let result = try await sut.getTeamMembers(
-            for: Team.ID(),
-            maxResults: 2000
-        )
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetTeamMembersSuccessResponseV0")
+        ])
 
         // Then
-        XCTAssertEqual(
-            result,
-            [
-                TeamMember(
-                    userID: try XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
-                    creationDate: try XCTUnwrap(
-                        ISO8601DateFormatter.fractionalInternetDateTime
-                            .date(from: "2024-05-14T08:55:04.779Z")
-                    ),
-                    creatorID: try XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
-                    legalholdStatus: .pending,
-                    permissions: TeamMemberPermissions(
-                        copyPermissions: 123,
-                        selfPermissions: 456
+        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getTeamMembers(
+                for: .mockID1,
+                maxResults: 2000
+            )
+
+            // Then
+            XCTAssertEqual(
+                result,
+                [
+                    TeamMember(
+                        userID: try XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
+                        creationDate: try XCTUnwrap(
+                            ISO8601DateFormatter.fractionalInternetDateTime
+                                .date(from: "2024-05-14T08:55:04.779Z")
+                        ),
+                        creatorID: try XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
+                        legalholdStatus: .pending,
+                        permissions: TeamMemberPermissions(
+                            copyPermissions: 123,
+                            selfPermissions: 456
+                        )
                     )
-                )
-            ]
-        )
+                ]
+            )
+        }
     }
 
     func testGetTeamMembers_FailureResponse_InvalidQueryParameter_V0() async throws {
+
         // Given
-        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
-        let sut = TeamsAPIV0(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .badRequest,
+            label: ""
+        )
+
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidQueryParmeter) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidQueryParmeter) {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
@@ -224,11 +247,15 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_NoTeamMember_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .forbidden, errorLabel: "no-team-member")
-        let sut = TeamsAPIV0(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "no-team-member"
+        )
+
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.selfUserIsNotTeamMember) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.selfUserIsNotTeamMember) {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
@@ -239,11 +266,15 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_TeamNotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
-        let sut = TeamsAPIV0(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: ""
+        )
+
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
@@ -252,97 +283,90 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetLegalholdStatus_SuccessResponse_200_V0() async throws {
+    func testGetLegalholdInfo_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            jsonResponse: """
-            {
-                "status": "pending"
-            }
-            """
-        )
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetLegalHoldInfoSuccessResponseV0")
+        ])
 
-        let sut = TeamsAPIV0(httpClient: httpClient)
-
-        // When
-        let result = try await sut.getLegalholdStatus(
-            for: Team.ID(),
-            userID: UUID()
-        )
-
-        // Then
-        XCTAssertEqual(result, .pending)
-    }
-
-    func testGetLegalholdStatus_FailureResponse_InvalidRequest_V0() async throws {
-        // Given
-        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
-        let sut = TeamsAPIV0(httpClient: httpClient)
-
-        // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidRequest) {
+        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
-            try await sut.getLegalholdStatus(
-                for: Team.ID(),
-                userID: UUID()
+            let result = try await sut.getLegalholdInfo(
+                for: .mockID1,
+                userID: .mockID2
+            )
+
+            // Then
+            XCTAssertEqual(
+                result,
+                TeamMemberLegalholdInfo(
+                    status: .pending,
+                    prekey: .init(id: 12_345, base64EncodedKey: "foo")
+                )
             )
         }
     }
 
-    func testGetLegalholdStatus_FailureResponse_MemberNotFound_V0() async throws {
-        // Given
-        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "no-team-member")
-        let sut = TeamsAPIV0(httpClient: httpClient)
+    func testGetLegalholdInfo_FailureResponse_InvalidRequest_V0() async throws {
+        try await internalTest_GetLegalholdInfo_Failure(
+            expectedError: TeamsAPIError.invalidRequest,
+            for: .v0,
+            code: .notFound,
+            errorLabel: ""
+        )
+    }
 
-        // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamMemberNotFound) {
-            // When
-            try await sut.getLegalholdStatus(
-                for: Team.ID(),
-                userID: UUID()
-            )
-        }
+    func testGetLegalholdInfo_FailureResponse_MemberNotFound_V0() async throws {
+        try await internalTest_GetLegalholdInfo_Failure(
+            expectedError: TeamsAPIError.teamMemberNotFound,
+            for: .v0,
+            code: .notFound,
+            errorLabel: "no-team-member"
+        )
     }
 
     // MARK: - V2
 
-    func testGetTeamForID_SuccessResponse_200_V2() async throws {
+    func testGetTeamForID_SuccessResponse_200_V2_Then_Verify_Request() async throws {
         // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            payloadResourceName: "GetTeamSuccessResponseV2"
-        )
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetTeamSuccessResponseV2")
+        ])
 
-        let sut = TeamsAPIV2(httpClient: httpClient)
         let teamID = try XCTUnwrap(Team.ID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506"))
 
-        // When
-        let result = try await sut.getTeam(for: teamID)
+        try await apiSnapshotHelper.verifyRequest(for: [.v2], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getTeam(for: teamID)
 
-        // Then
-        XCTAssertEqual(
-            result,
-            Team(
-                id: teamID,
-                name: "teamName",
-                creatorID: try XCTUnwrap(UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")),
-                logoID: "iconID",
-                logoKey: "iconKey",
-                splashScreenID: "splashScreen"
+            // Then
+            XCTAssertEqual(
+                result,
+                Team(
+                    id: teamID,
+                    name: "teamName",
+                    creatorID: try XCTUnwrap(UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")),
+                    logoID: "iconID",
+                    logoKey: "iconKey",
+                    splashScreenID: "splashScreen"
+                )
             )
-        )
+        }
     }
 
     // MARK: - V4
 
     func testGetTeamForID_FailureResponse_InvalidID_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
-        let sut = TeamsAPIV4(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .badRequest,
+            label: ""
+        )
+
+        let sut = TeamsAPIV4(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidTeamID) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidTeamID) {
             // When
             try await sut.getTeam(for: Team.ID())
         }
@@ -350,11 +374,15 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamRolesForID_FailureResponse_TeamNotFound_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
-        let sut = TeamsAPIV4(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .badRequest,
+            label: ""
+        )
+
+        let sut = TeamsAPIV4(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
             // When
             try await sut.getTeamRoles(for: Team.ID())
         }
@@ -362,11 +390,15 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_InvalidRequest_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
-        let sut = TeamsAPIV4(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .badRequest,
+            label: ""
+        )
+
+        let sut = TeamsAPIV4(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidRequest) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidRequest) {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
@@ -375,44 +407,63 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetLegalholdStatus_FailureResponse_InvalidRequest_V4() async throws {
-        // Given
-        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
-        let sut = TeamsAPIV4(httpClient: httpClient)
-
-        // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidRequest) {
-            // When
-            try await sut.getLegalholdStatus(
-                for: Team.ID(),
-                userID: UUID()
-            )
-        }
+    func testGetLegalholdInfo_FailureResponse_InvalidRequest_V4() async throws {
+        try await internalTest_GetLegalholdInfo_Failure(
+            expectedError: TeamsAPIError.invalidRequest,
+            for: .v4,
+            code: .badRequest,
+            errorLabel: ""
+        )
     }
 
     // MARK: - V5
 
     func testGetTeamForID_FailureResponse_InvalidID_V5() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
-        let sut = TeamsAPIV5(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: ""
+        )
+
+        let sut = TeamsAPIV5(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidTeamID) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidTeamID) {
             // When
             try await sut.getTeam(for: Team.ID())
         }
     }
 
-    func testGetLegalholdStatus_FailureResponse_InvalidRequest_V5() async throws {
+    func testGetLegalholdInfo_FailureResponse_InvalidRequest_V5() async throws {
+        try await internalTest_GetLegalholdInfo_Failure(
+            expectedError: TeamsAPIError.invalidRequest,
+            for: .v5,
+            code: .notFound,
+            errorLabel: ""
+        )
+    }
+
+    private func internalTest_GetLegalholdInfo_Failure(
+        expectedError: any Error & Equatable,
+        for apiVersion: APIVersion,
+        code: HTTPStatusCode,
+        errorLabel: String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
-        let sut = TeamsAPIV5(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: code,
+            label: errorLabel
+        )
+        let builder = TeamsAPIBuilder(apiService: apiService)
+        let sut = builder.makeAPI(for: apiVersion)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidRequest) {
+
+        await XCTAssertThrowsErrorAsync(expectedError) {
             // When
-            try await sut.getLegalholdStatus(
+            try await sut.getLegalholdInfo(
                 for: Team.ID(),
                 userID: UUID()
             )

@@ -37,6 +37,7 @@
 "general.on" = "開啟";
 "general.loading" = "載入中...";
 "general.paste" = "貼上";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
@@ -85,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "瞭解詳情";
 "peoplepicker.no_matching_results.action.manage_services" = "管理服務";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "沒有符合結果。";
 "peoplepicker.no_matching_results.message.users" = "依照使用者名稱或@別名在Wire尋找";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "依照使用者名稱或@別名在Wire尋找\n依照使用者名稱或@別名@網域在其它網域尋找";
 "peoplepicker.no_matching_results.message.users_all_added" = "大家都已加入";
@@ -97,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "連結兩週內有效。如逾期請重新發送。";
 "peoplepicker.send_invitation.dialog.ok" = "確認";
 
-"peoplepicker.invite_more_people" = "邀請更多人";
 "peoplepicker.invite_team_members" = "邀請其他人加入團隊";
 "peoplepicker.quick-action.open-conversation" = "開啟";
 "peoplepicker.quick-action.admin-services" = "管理服務";
@@ -156,6 +155,13 @@
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在聯絡人中";
@@ -326,7 +332,6 @@
 "conversation.create.guidance.empty" = "至少1個字元";
 "conversation.create.guidance.toolong" = "字數過多";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "允許訪客";
 "conversation.create.guests.subtitle" = "開放這個對話與團隊以外的訪客。";
 "conversation.create.services.title" = "Allow services";
@@ -1582,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "編輯詳細資訊";
 
 "registration.country_select.title" = "國家";
-
-"registration.share_contacts.hero.title" = "在Wire上找尋其他人";
-"registration.share_contacts.hero.paragraph" = "分享您的通訊錄來找尋其他連絡人。我們將您的資料匿名處理並且不與任何人分享。";
-"registration.share_contacts.find_friends_button.title" = "分享通訊錄";
-"registration.share_contacts.skip_button.title" = "現在略過";
-
-"registration.address_book_access_denied.hero.title" = "Wire沒有您的通訊錄的使用權限。";
-"registration.address_book_access_denied.hero.paragraph1" = "如果您分享通訊錄，我們將幫助您找到其他的連絡人。";
-"registration.address_book_access_denied.hero.paragraph2" = "請到手機「設定」來開啟聯絡資訊使用權限。";
-"registration.address_book_access_denied.settings_button.title" = "設定";
-"registration.address_book_access_denied.maybe_later_button.title" = "現在略過";
 
 "registration.push_access_denied.hero.title" = "別錯過來電或訊息。";
 "registration.push_access_denied.hero.paragraph1" = "在手機「設定」允許通知。";

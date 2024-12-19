@@ -64,9 +64,7 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     var mlsThumbprint: String? {
-        e2eIdentityCertificate?
-            .mlsThumbprint
-            .splitStringIntoLines(charactersPerLine: 16)
+        userClient.mlsThumbPrint?.splitStringIntoLines(charactersPerLine: 16)
     }
 
     var serialNumber: String? {

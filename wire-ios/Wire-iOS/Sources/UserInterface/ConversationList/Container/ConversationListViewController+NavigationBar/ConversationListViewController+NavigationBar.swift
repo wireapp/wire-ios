@@ -54,10 +54,18 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
     }
 
+    func conversationListViewControllerViewModelDidReloadContent(_ viewModel: ViewModel) {
+        configureEmptyPlaceholder()
+    }
+
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
         if mainSplitViewState == .collapsed {
             setupLeftNavigationBarButtonItems()
         }
+    }
+
+    func refreshAccountImageViewNotificationBadge() {
+        accountImageView?.hideProfileNotificationsBadge = viewModel.hideProfileNotificationsBadge
     }
 
     // MARK: - Navigation Bar Items
@@ -67,6 +75,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let accountImageView = AccountImageView()
         accountImageView.source = viewModel.accountImageSource
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
+        accountImageView.hideProfileNotificationsBadge = viewModel.hideProfileNotificationsBadge
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -177,7 +186,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             withConfiguration: symbolConfiguration
         )!
 
-        var selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
+        let selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
         case .favorites, .groups, .oneOnOne, .folder:
             filledFilterImage
         case .none:
@@ -336,9 +345,17 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     @objc
     private func presentProfile() {
+        // analytics
+        let isNotificationsBadgeVisible = viewModel.hideProfileNotificationsBadge
+        let analyticsEventTracker = viewModel.userSession.analyticsEventTracker
+        analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+
+        // open profile
         Task {
-            let selfProfileUI = UINavigationController(rootViewController: selfProfileViewControllerBuilder.build())
+            let rootViewController = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
             selfProfileUI.modalPresentationStyle = .formSheet
+            selfProfileUI.presentationController?.delegate = rootViewController
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
@@ -445,7 +462,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             guard let self, let mainCoordinator else { return }
 
             Task { @MainActor [folderPickerViewControllerBuilder] in
-                let viewController = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+                let viewController = folderPickerViewControllerBuilder.build(
+                    mainCoordinator: mainCoordinator,
+                    showCloseButton: true
+                )
                 if let sheet = viewController.sheetPresentationController {
                     sheet.detents = [.medium(), .large()]
                     sheet.prefersGrabberVisible = true

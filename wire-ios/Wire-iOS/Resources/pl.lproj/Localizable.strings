@@ -37,6 +37,7 @@
 "general.on" = "Włączone";
 "general.loading" = "Wczytuje…";
 "general.paste" = "Wklej";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -85,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Dowiedz się więcej";
 "peoplepicker.no_matching_results.action.manage_services" = "Zarządzaj usługami";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Brak wyników.";
 "peoplepicker.no_matching_results.message.users" = "Znajdź osoby w Wire według imienia lub @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Znajdź osoby w Wire według imienia lub @username\n\nZnajdź osoby w innej domenie przez @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Wszyscy są tutaj.";
@@ -97,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "To może służyć do 2 tygodni. Wyślij nowe, jeśli wygaśnie.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Zaproś więcej osób";
 "peoplepicker.invite_team_members" = "Zaproś osoby do zespołu";
 "peoplepicker.quick-action.open-conversation" = "Otwórz";
 "peoplepicker.quick-action.admin-services" = "Zarządzaj usługami";
@@ -156,6 +155,13 @@
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "w kontaktach";
@@ -326,7 +332,6 @@
 "conversation.create.guidance.empty" = "Co najmniej 1 znak";
 "conversation.create.guidance.toolong" = "Zbyt wiele znaków";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Zezwalaj na gości";
 "conversation.create.guests.subtitle" = "Wyraź zgodę na dołączenie do rozmowy osób spoza twojej drużyny.";
 "conversation.create.services.title" = "Allow services";
@@ -1582,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Edytuj szczegóły";
 
 "registration.country_select.title" = "Państwo";
-
-"registration.share_contacts.hero.title" = "Znajdź osoby w Wire";
-"registration.share_contacts.hero.paragraph" = "Wykorzystujemy Twoje dane kontaktowe do łączenia Cię z innymi. Wszystkie informacje są anonimowe i nie dzielimy ich z nikim innym.";
-"registration.share_contacts.find_friends_button.title" = "Udostępnij kontakty";
-"registration.share_contacts.skip_button.title" = "Nie teraz";
-
-"registration.address_book_access_denied.hero.title" = "Wire nie ma dostępu do twoich kontaktów.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire poszuka twoich przyjaciół jeśli udostępnisz swoje kontakty";
-"registration.address_book_access_denied.hero.paragraph2" = "Aby włączyć dostęp dotknij ustawienia i włącz kontakty.";
-"registration.address_book_access_denied.settings_button.title" = "Ustawienia";
-"registration.address_book_access_denied.maybe_later_button.title" = "Może później";
 
 "registration.push_access_denied.hero.title" = "Nigdy nie przegap połączenia lub wiadomości.";
 "registration.push_access_denied.hero.paragraph1" = "Włączyć powiadomienia w ustawieniach.";

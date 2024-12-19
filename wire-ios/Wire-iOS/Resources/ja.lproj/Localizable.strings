@@ -37,6 +37,7 @@
 "general.on" = "オン";
 "general.loading" = "読み込み中…";
 "general.paste" = "ペースト";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
@@ -85,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "もっと知る";
 "peoplepicker.no_matching_results.action.manage_services" = "サービスを管理";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "結果はありません";
 "peoplepicker.no_matching_results.message.users" = "Wireで名前または@usernameで人を見つけます";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "全員がいます。";
@@ -97,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "2週間使用できます。\n期限が切れた時は新しいものを送ります";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "さらに招待する";
 "peoplepicker.invite_team_members" = "チームに招待する";
 "peoplepicker.quick-action.open-conversation" = "開く";
 "peoplepicker.quick-action.admin-services" = "サービスを管理";
@@ -156,6 +155,13 @@
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "連絡先";
@@ -326,7 +332,6 @@
 "conversation.create.guidance.empty" = "１文字以上";
 "conversation.create.guidance.toolong" = "文字が多すぎます";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "ゲストアクセスを許可";
 "conversation.create.guests.subtitle" = "チーム外の人々にこの会話を公開します。";
 "conversation.create.services.title" = "サービスを許可";
@@ -1582,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "詳細を編集する";
 
 "registration.country_select.title" = "国";
-
-"registration.share_contacts.hero.title" = "Wireで友人を見つける";
-"registration.share_contacts.hero.paragraph" = "他のユーザーとつながるために、Wireがあなたの連絡先にアクセスすることを許可してください。私たちはすべての情報を匿名化し、他の誰ともあなたの連絡先に関する情報をシェアしません。";
-"registration.share_contacts.find_friends_button.title" = "連絡先を共有します";
-"registration.share_contacts.skip_button.title" = "いまは行わない";
-
-"registration.address_book_access_denied.hero.title" = "Wireはあなたの連絡先へのアクセスしていません。";
-"registration.address_book_access_denied.hero.paragraph1" = "連絡先をシェアした場合、Wireで友人を探すことが容易になります。";
-"registration.address_book_access_denied.hero.paragraph2" = "設定から連絡先を有効にすることで連絡先にアクセスできるようになります。";
-"registration.address_book_access_denied.settings_button.title" = "設定";
-"registration.address_book_access_denied.maybe_later_button.title" = "後で";
 
 "registration.push_access_denied.hero.title" = "電話やメッセージを見逃さない";
 "registration.push_access_denied.hero.paragraph1" = "設定で通知を有効にする";

@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireFoundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
@@ -1063,6 +1064,7 @@ public final class MLSService: MLSServiceInterface {
             )
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
+            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
                 logger.info("no need to upload new key packages yet")
                 return
@@ -1075,7 +1077,6 @@ public final class MLSService: MLSServiceInterface {
                 keyPackages: keyPackages,
                 context: context.notificationContext
             )
-            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
             logger.info("success: uploaded key packages for client \(clientID)")
         } catch {
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
@@ -1194,7 +1195,7 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("checking if group (\(groupID)) exists...")
         let result = try await coreCrypto.perform { coreCrypto in
-            await coreCrypto.conversationExists(conversationId: groupID.data)
+            try await coreCrypto.conversationExists(conversationId: groupID.data)
         }
         logger.info("... group (\(groupID)) " + (result ? "exists!" : "does not exist!"))
         return result

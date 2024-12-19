@@ -28,14 +28,18 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     // MARK: - Properties
 
+    let apiService: any APIServiceProtocol
+
     var apiVersion: APIVersion { .v0 }
 
-    let httpClient: any HTTPClient
+    var basePath: String {
+        "/conversations"
+    }
 
     // MARK: - Initialize
 
-    init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID> {
@@ -48,7 +52,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         // As soon as APIVersion.v0 is removed, the legacy function can be deleted, making the code clean and easy to
         // understand.
 
-        let resourcePath = "/conversations/list-ids/"
+        let path = "\(basePath)/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
 
         return PayloadPager<UUID> { start in
@@ -56,16 +60,19 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try jsonEncoder.encode(params)
 
-            let request = HTTPRequest(
-                path: resourcePath,
-                method: .post,
-                body: body
+            let request = try URLRequestBuilder(path: path)
+                .withMethod(.post)
+                .withBody(body, contentType: .json)
+                .build()
+
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
             )
-            let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
                 .success(code: .ok, type: PaginatedConversationIDsV0.self)
-                .parse(response)
+                .parse(code: response.statusCode, data: data)
         }
     }
 
@@ -77,19 +84,22 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        let resourcePath = "\(pathPrefix)/conversations/list/v2"
+        let path = "\(pathPrefix)\(basePath)/list/v2"
 
-        let request = HTTPRequest(
-            path: resourcePath,
-            method: .post,
-            body: body
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
         )
-        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: QualifiedConversationListV0.self)
             .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     func getMLSOneToOneConversation(
@@ -98,6 +108,35 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     ) async throws -> Conversation {
         throw ConversationsAPIError.unsupportedEndpointForAPIVersion
     }
+
+    func getConversationGuestLink(
+        conversationID: String
+    ) async throws -> String? {
+        let path = "\(pathPrefix)\(basePath)/\(conversationID)/code"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationCodeV0.self)
+            .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+            .failure(code: .notFound, label: "cnv", error: ConversationsAPIError.invalidConversationID)
+            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+            .failure(
+                code: .notFound,
+                label: "no-conversation-code",
+                error: ConversationsAPIError.conversationCodeNotFound
+            )
+            .failure(code: .conflict, label: "guest-links-disabled", error: ConversationsAPIError.guestLinksDisabled)
+            .parse(code: response.statusCode, data: data)
+    }
+
 }
 
 // MARK: Encodables
@@ -218,5 +257,16 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
             lastEvent: lastEvent,
             lastEventTime: lastEventTime?.date
         )
+    }
+}
+
+struct ConversationCodeV0: Decodable, ToAPIModelConvertible {
+
+    let code: String
+    let key: String
+    let uri: String?
+
+    func toAPIModel() -> String? {
+        uri
     }
 }

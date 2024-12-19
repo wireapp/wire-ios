@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
 
@@ -97,8 +98,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         let collectionView = UICollectionView(forGroupedSections: ())
         collectionView.accessibilityIdentifier = "group_details.list"
 
-        collectionView.contentInsetAdjustmentBehavior = .never
-
         [collectionView, footerView].forEach { subview in
             subview.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(subview)
@@ -136,6 +135,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
 
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     override func viewDidLoad() {

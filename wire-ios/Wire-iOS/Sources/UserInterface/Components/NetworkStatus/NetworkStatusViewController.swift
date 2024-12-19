@@ -144,7 +144,7 @@ final class NetworkStatusViewController: UIViewController {
             preferredStyle: .alert
         )
         alert.addAction(.confirm())
-        alert.presentTopmost()
+        alert.presentOverAll()
     }
 
     private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {

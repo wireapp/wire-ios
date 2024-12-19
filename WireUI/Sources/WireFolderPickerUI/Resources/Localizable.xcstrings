@@ -131,122 +131,122 @@
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "معرفة المزيد"
           }
         },
         "da" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Lær mere"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Mehr erfahren"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "How to add a conversation to a folder"
+            "value" : "Learn more"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Más información"
           }
         },
         "et" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Loe lähemalt"
           }
         },
         "fi" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Lue lisää"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "En savoir plus"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Ulteriori informazioni"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "もっと知る"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Sužinoti daugiau"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Leer meer"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Więcej informacji"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Mais informação"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Как добавить беседу в папку"
+            "value" : "Подробнее"
           }
         },
         "sl" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Nauči se več"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Daha fazla bilgi"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "Дізнатися більше"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "更多信息"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
+            "state" : "translated",
+            "value" : "瞭解詳情"
           }
         }
       }

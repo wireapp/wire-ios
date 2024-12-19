@@ -23,6 +23,7 @@ import WireAccountImageUI
 import WireCommonComponents
 import WireDesign
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireSidebarUI
 import WireSyncEngine
@@ -36,6 +37,7 @@ final class ZClientViewController: UIViewController {
     let account: Account
     let userSession: UserSession
     let trackingManager: TrackingManager?
+    private let selfProfileViewsMonitor: SelfProfileViewsMonitor
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
     }
@@ -45,6 +47,15 @@ final class ZClientViewController: UIViewController {
     }
 
     private(set) var conversationRootViewController: UIViewController?
+
+    private lazy var conversationFilterSelector = ConversationFilterSelector(
+        conversationFilter: { [weak conversationListViewController] in
+            conversationListViewController?.conversationFilter
+        },
+        updateConversationFilter: { [weak mainCoordinator] filter in
+            mainCoordinator?.applyConversationFilter(filter)
+        }
+    )
 
     var currentConversation: ZMConversation? {
         conversationListViewController.selectedConversation
@@ -57,7 +68,8 @@ final class ZClientViewController: UIViewController {
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
+        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
     )
 
     private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
@@ -105,7 +117,8 @@ final class ZClientViewController: UIViewController {
         selfUser: userSession.editableSelfUser,
         userRightInterfaceType: UserRight.self,
         userSession: userSession,
-        accountSelector: SessionManager.shared
+        accountSelector: SessionManager.shared,
+        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
     )
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(
@@ -145,6 +158,7 @@ final class ZClientViewController: UIViewController {
 
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
+    var userDidViewSelfProfileToken: NSObjectProtocol?
 
     private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
@@ -170,7 +184,7 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
-
+        self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
         self.proximityMonitorManager = ProximityMonitorManager()
@@ -260,20 +274,14 @@ final class ZClientViewController: UIViewController {
 
         setupUserChangeInfoObserver()
         setUpConferenceCallingUnavailableObserver()
+        setupDidViewSelfProfileObserver()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         firstTimeRequestToEnableAnalytics()
-
-        // in expanded layout we want to see the same background color of the
-        // sidebar also for the status bar
-        if mainSplitViewController.isCollapsed {
-            view.backgroundColor = ColorTheme.Backgrounds.surface
-        } else {
-            view.backgroundColor = SidebarViewDesign().backgroundColor
-        }
+        view.backgroundColor = ColorTheme.Backgrounds.surface
     }
 
     private func firstTimeRequestToEnableAnalytics() {
@@ -291,8 +299,6 @@ final class ZClientViewController: UIViewController {
 
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
-
-        selfProfileViewControllerBuilder.mainCoordinator = .init(mainCoordinator: mainCoordinator)
 
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
@@ -329,6 +335,8 @@ final class ZClientViewController: UIViewController {
             await updateCachedAccountImage()
             await updateCachedAccountInfo()
         }
+
+        conversationFilterSelector.observe(conversationDirectory: userSession.conversationDirectory)
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -425,7 +433,7 @@ final class ZClientViewController: UIViewController {
             selfProfileUIBuilder: selfProfileViewControllerBuilder,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
-        let navController = controller.wrapInNavigationController()
+        let navController = UINavigationController(rootViewController: controller)
         navController.modalPresentationStyle = .formSheet
         present(navController, animated: true)
     }
@@ -521,6 +529,15 @@ final class ZClientViewController: UIViewController {
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
         topOverlayViewController?.willMove(toParent: nil)
 
+        func setupConstraints(for view: UIView, in superview: UIView) {
+            NSLayoutConstraint.activate([
+                view.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
+                view.topAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.topAnchor),
+                superview.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                superview.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ])
+        }
+
         if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds
@@ -532,7 +549,7 @@ final class ZClientViewController: UIViewController {
                     to: viewController,
                     duration: 0.5,
                     options: .transitionCrossDissolve,
-                    animations: { viewController.view.fitIn(view: self.view) },
+                    animations: { setupConstraints(for: viewController.view, in: self.view) },
                     completion: { _ in
                         viewController.didMove(toParent: self)
                         previousViewController.removeFromParent()
@@ -541,14 +558,13 @@ final class ZClientViewController: UIViewController {
                 )
             } else {
                 topOverlayContainer.addSubview(viewController.view)
-                viewController.view.fitIn(view: topOverlayContainer)
+                setupConstraints(for: viewController.view, in: topOverlayContainer)
                 viewController.didMove(toParent: self)
                 topOverlayViewController = viewController
             }
         } else if let previousViewController = topOverlayViewController {
             if animated {
                 let heightConstraint = topOverlayContainer.heightAnchor.constraint(equalToConstant: 0)
-
                 UIView.animate(
                     withDuration: 0.35,
                     delay: 0,
@@ -577,7 +593,7 @@ final class ZClientViewController: UIViewController {
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
             topOverlayContainer.addSubview(viewController.view)
-            viewController.view.fitIn(view: topOverlayContainer)
+            setupConstraints(for: viewController.view, in: topOverlayContainer)
 
             viewController.didMove(toParent: self)
 
@@ -609,7 +625,7 @@ final class ZClientViewController: UIViewController {
             selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             presenter: { viewController, animated, completion in
-                viewController.presentTopmost(animated: animated, completion: completion)
+                viewController.presentOverAll(animated: animated, completion: completion)
             }
         )
     }
@@ -621,7 +637,7 @@ final class ZClientViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             topOverlayContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            topOverlayContainer.topAnchor.constraint(equalTo: view.topAnchor),
             topOverlayContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mainSplitViewController.view.topAnchor.constraint(equalTo: topOverlayContainer.bottomAnchor),
             mainSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -636,12 +652,7 @@ final class ZClientViewController: UIViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-
-        if mainSplitViewController.isCollapsed {
-            view.backgroundColor = ColorTheme.Backgrounds.surface
-        } else {
-            view.backgroundColor = SidebarViewDesign().backgroundColor
-        }
+        view.backgroundColor = ColorTheme.Backgrounds.surface
     }
 
     /// Open the user client list screen
@@ -766,16 +777,26 @@ final class ZClientViewController: UIViewController {
 
     private func updateCachedAccountInfo() async {
         do {
+            let user = userSession.selfUser
             cachedAccountInfo = SidebarAccountInfo(
-                userSession.selfUser,
+                user,
                 cachedAccountImage,
-                cachedAccountInfo.isE2EICertified
+                cachedAccountInfo.isE2EICertified,
+                showNotificationsBadge: shouldShowNotificationsBadge(user: user)
             )
             let isE2EICertified = try await userSession.isSelfUserE2EICertifiedUseCase.invoke()
             cachedAccountInfo.isE2EICertified = isE2EICertified
         } catch {
             WireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
         }
+    }
+
+    private func shouldShowNotificationsBadge(user: any UserType) -> Bool {
+        !user.isTeamMember && BackendInfo.apiVersion.map { $0 >= .v7 } ?? false && !hasSeenSelfProfile
+    }
+
+    private var hasSeenSelfProfile: Bool {
+        selfProfileViewsMonitor.didViewSelfProfile
     }
 
     private func conversationFilter() -> ConversationFilter? {
@@ -792,7 +813,8 @@ extension ZClientViewController: UserObserving {
 
             var sidebarUpdateNeeded = false
 
-            if changeInfo.nameChanged || changeInfo.availabilityChanged || changeInfo.trustLevelChanged {
+            if changeInfo.nameChanged || changeInfo.availabilityChanged || changeInfo.trustLevelChanged || changeInfo
+                .teamsChanged {
                 sidebarUpdateNeeded = true
             }
 
@@ -818,5 +840,19 @@ extension ZClientViewController: UserObserving {
     @objc
     func setupUserChangeInfoObserver() {
         userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
+    }
+}
+
+extension ZClientViewController {
+    func setupDidViewSelfProfileObserver() {
+        userDidViewSelfProfileToken = NotificationCenter.default.addObserver(
+            forName: .userDidViewSelfProfile,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { [weak self] in
+                await self?.updateCachedAccountInfo()
+            }
+        }
     }
 }

@@ -26,30 +26,31 @@ final class APIServiceTests: XCTestCase {
 
     var sut: APIService!
     var backendURL: URL!
-    var authenticationStorage: InMemoryAuthenticationStorage!
+    var authenticationManager: MockAuthenticationManagerProtocol!
 
     override func setUp() async throws {
-        try await super.setUp()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
-        authenticationStorage = InMemoryAuthenticationStorage()
-        let networkService = NetworkService(baseURL: backendURL)
+        authenticationManager = MockAuthenticationManagerProtocol()
+        let networkService = NetworkService(
+            baseURL: backendURL,
+            serverTrustValidator: ServerTrustValidator(pinnedKeys: [])
+        )
         networkService.configure(with: .mockURLSession())
         sut = APIService(
             networkService: networkService,
-            authenticationStorage: authenticationStorage
+            authenticationManager: authenticationManager
         )
     }
 
     override func tearDown() async throws {
         backendURL = nil
-        authenticationStorage = nil
+        authenticationManager = nil
         sut = nil
-        try await super.tearDown()
     }
 
     // MARK: - Execute request
 
-    func testItExecutesARequestNotRequiringAuthentication() async throws {
+    func testExecuteRequest_Not_Requiring_Access_Token() async throws {
         // Given
         let request = Scaffolding.getRequest
 
@@ -74,10 +75,10 @@ final class APIServiceTests: XCTestCase {
         XCTAssertEqual(receivedRequest.url?.absoluteString, backendURL.appendingPathComponent("/foo").absoluteString)
     }
 
-    func testItExecutesARequestRequiringAuthentication() async throws {
+    func testExecuteRequest_Requiring_Access_Token() async throws {
         // Given
         let request = Scaffolding.getRequest
-        authenticationStorage.storeAccessToken(Scaffolding.accessToken)
+        authenticationManager.getValidAccessToken_MockValue = Scaffolding.validAccessToken
 
         // Mock a dummy response.
         var receivedRequests = [URLRequest]()
@@ -101,43 +102,85 @@ final class APIServiceTests: XCTestCase {
 
         // Then the request has an access token attached.
         let authorizationHeader = receivedRequest.value(forHTTPHeaderField: "Authorization")
-        XCTAssertEqual(authorizationHeader, "Bearer some-access-token")
+        XCTAssertEqual(authorizationHeader, "Bearer a-valid-access-token")
     }
 
-    func testItThrowsIfAuthenticationIsRequiredButNoAccessTokenIsFound() async throws {
+    func testExecuteRequest_Retry_After_First_Authentication_Error() async throws {
         // Given
         let request = Scaffolding.getRequest
-        XCTAssertNil(authenticationStorage.fetchAccessToken())
+        authenticationManager.getValidAccessToken_MockValue = Scaffolding.validAccessToken
 
         // Mock a dummy response.
-        URLProtocolMock.mockHandler = { _ in
-            (Data(), HTTPURLResponse())
+        var receivedRequests = [URLRequest]()
+        URLProtocolMock.mockHandler = {
+            receivedRequests.append($0)
+            return try $0.mockErrorResponse(statusCode: .unauthorized)
         }
 
-        // Then
-        await XCTAssertThrowsError(APIServiceError.missingAccessToken) {
-            // When
-            try await self.sut.executeRequest(
-                request,
-                requiringAccessToken: true
-            )
-        }
+        // Mock new access token.
+        authenticationManager.refreshAccessToken_MockValue = Scaffolding.newAccessToken
+
+        // When
+        _ = try await sut.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        // Then an existing token was fetched.
+        XCTAssertEqual(authenticationManager.getValidAccessToken_Invocations.count, 1)
+
+        // Then two request was received.
+        try XCTAssertCount(receivedRequests, count: 2)
+
+        // Then first request has the old access token.
+        let firstRequest = receivedRequests[0]
+        XCTAssertEqual(
+            firstRequest.url?.absoluteString,
+            backendURL.appendingPathComponent("/foo").absoluteString
+        )
+        XCTAssertEqual(
+            firstRequest.value(forHTTPHeaderField: "Authorization"),
+            "Bearer a-valid-access-token"
+        )
+
+        // Then a new token was requested.
+        XCTAssertEqual(authenticationManager.refreshAccessToken_Invocations.count, 1)
+
+        // Then the second request has the new access token.
+        let secondRequest = receivedRequests[1]
+        XCTAssertEqual(
+            secondRequest.url?.absoluteString,
+            backendURL.appendingPathComponent("/foo").absoluteString
+        )
+        XCTAssertEqual(
+            secondRequest.value(forHTTPHeaderField: "Authorization"),
+            "Bearer a-new-access-token"
+        )
     }
 
 }
 
 private enum Scaffolding {
 
+    static let userID = UUID(uuidString: "70aa272d-3413-4cda-9059-64c097956583")!
+
     static let getRequest = try! URLRequestBuilder(path: "/foo")
         .withMethod(.get)
         .withAcceptType(.json)
         .build()
 
-    static let accessToken = AccessToken(
-        userID: UUID(),
-        token: "some-access-token",
+    static let validAccessToken = AccessToken(
+        userID: userID,
+        token: "a-valid-access-token",
         type: "Bearer",
-        validityInSeconds: 900
+        expirationDate: Date(timeIntervalSinceNow: 900)
+    )
+
+    static let newAccessToken = AccessToken(
+        userID: userID,
+        token: "a-new-access-token",
+        type: "Bearer",
+        expirationDate: Date(timeIntervalSinceNow: 900)
     )
 
 }

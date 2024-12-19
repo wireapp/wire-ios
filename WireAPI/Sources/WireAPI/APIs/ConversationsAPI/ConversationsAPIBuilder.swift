@@ -21,13 +21,14 @@ import Foundation
 /// Builder for the conversations API.
 public struct ConversationsAPIBuilder {
 
-    private let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
-    /// Create a new builder for the conversations API.
+    /// Create a new builder.
     ///
-    /// - Parameter httpClient: A http client.
-    public init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    /// - Parameter APIService: An api service.
+
+    public init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     /// Make a versioned `ConversationsAPI`.
@@ -37,19 +38,21 @@ public struct ConversationsAPIBuilder {
     public func makeAPI(for version: APIVersion) -> any ConversationsAPI {
         switch version {
         case .v0:
-            ConversationsAPIV0(httpClient: httpClient)
+            ConversationsAPIV0(apiService: apiService)
         case .v1:
-            ConversationsAPIV1(httpClient: httpClient)
+            ConversationsAPIV1(apiService: apiService)
         case .v2:
-            ConversationsAPIV2(httpClient: httpClient)
+            ConversationsAPIV2(apiService: apiService)
         case .v3:
-            ConversationsAPIV3(httpClient: httpClient)
+            ConversationsAPIV3(apiService: apiService)
         case .v4:
-            ConversationsAPIV4(httpClient: httpClient)
+            ConversationsAPIV4(apiService: apiService)
         case .v5:
-            ConversationsAPIV5(httpClient: httpClient)
+            ConversationsAPIV5(apiService: apiService)
         case .v6:
-            ConversationsAPIV6(httpClient: httpClient)
+            ConversationsAPIV6(apiService: apiService)
+        case .v7:
+            ConversationsAPIV7(apiService: apiService)
         }
     }
 

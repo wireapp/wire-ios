@@ -78,7 +78,6 @@ final class ConversationServicesOptionsViewController: UIViewController,
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = SemanticColors.View.backgroundDefault
-        tableView.contentInsetAdjustmentBehavior = .never
     }
 
     private func createConstraints() {

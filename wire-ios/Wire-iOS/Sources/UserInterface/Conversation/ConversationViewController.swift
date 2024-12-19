@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
 
@@ -114,8 +115,8 @@ final class ConversationViewController: UIViewController {
         default:
             break
         }
-
-        return viewController?.wrapInNavigationController()
+        guard let viewController else { return nil }
+        return UINavigationController(rootViewController: viewController)
     }
 
     required init(
@@ -430,8 +431,11 @@ final class ConversationViewController: UIViewController {
                     assertionFailure("mlsService is missing")
                     return
                 }
-
-                let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+                let mlsFeature = await userSession.makeGetMLSFeatureUseCase().invoke()
+                let resolver = OneOnOneResolver(
+                    migrator: OneOnOneMigrator(mlsService: mlsService),
+                    isMLSEnabled: mlsFeature.isEnabled
+                )
                 let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
                 if case let .migratedToMLSGroup(identifier) = resolvedState {
@@ -713,7 +717,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         let navigationController = KeyboardAvoidingViewController(viewController: collectionController!)
             .wrapInNavigationController()
 
-        ZClientViewController.shared?.present(navigationController, animated: true)
+        navigationController.presentOverAll(animated: true)
     }
 
 }

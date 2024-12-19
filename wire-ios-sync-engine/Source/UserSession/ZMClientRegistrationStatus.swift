@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireSystem
 
 @objc(ZMClientRegistrationPhase)
@@ -251,7 +252,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     public var clientIsReadyForRequests: Bool {
-        currentPhase == .registered && !needsToRegisterMLSCLient
+        currentPhase == .registered && !needsToRegisterMLSClient
     }
 
     var isWaitingForLogin: Bool {
@@ -262,7 +263,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         Self.needsToRegisterClient(in: managedObjectContext)
     }
 
-    var needsToRegisterMLSCLient: Bool {
+    var needsToRegisterMLSClient: Bool {
         Self.needsToRegisterMLSClient(in: managedObjectContext)
     }
 
@@ -301,7 +302,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         needsToFetchFeatureConfigs = needsToRegisterClient
         needsRefreshSelfUser = needsToRegisterClient
 
-        if !needsToRegisterClient, needsToRegisterMLSCLient {
+        if !needsToRegisterClient, needsToRegisterMLSClient {
             guard let client = ZMUser.selfUser(in: managedObjectContext).selfClient() else {
                 fatal("Expected a self user client to exist")
             }
@@ -455,6 +456,20 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
     }
 
+    private func fetchBackendMLSPublicKeys() {
+        var action = FetchBackendMLSPublicKeysAction()
+        action.perform(in: managedObjectContext.notificationContext) { [weak self] result in
+            switch result {
+            case let .success(backendPublicKeys):
+                let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+                BackendInfo.isMLSEnabled = hasValidKeys
+            case .failure:
+                WireLogger.authentication.info("Backend doesn't have MLS public keys")
+            }
+            self?.didFetchBackendMLSPublicKeys()
+        }
+    }
+
     @objc
     public func didDeleteClient() {
         WireLogger.userClient.info("client was deleted. will prepare for registration")
@@ -479,7 +494,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         prekeys = nil
         lastResortPrekey = nil
 
-        if needsToRegisterMLSCLient {
+        if needsToRegisterMLSClient {
             createMLSClient(client: client)
         } else {
             registrationStatusDelegate?.didRegisterSelfUserClient(client)
@@ -604,6 +619,11 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public func didFetchFeatureConfigs() {
         WireLogger.userClient.info("did fetch feature configs")
         needsToFetchFeatureConfigs = false
+        fetchBackendMLSPublicKeys()
+    }
+
+    public func didFetchBackendMLSPublicKeys() {
+        WireLogger.userClient.info("did fetch backend MLS public keys")
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
@@ -648,14 +668,22 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
     }
 
+    private var isMLSEnabled: Bool {
+        FeatureRepository(context: managedObjectContext).fetchMLS().isEnabled
+    }
+
     @objc(needsToRegisterMLSClientInContext:)
     public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
         guard !needsToRegisterClient(in: context) else {
             return false
         }
         let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
-        let isAllowedToRegisterMLSCLient = DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
-        return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
+        let mlsFeature = FeatureRepository(context: context).fetchMLS()
+
+        let shouldRegisterMLSCLient = mlsFeature.isEnabled
+        let canRegisterMLSCLient = BackendInfo.isMLSEnabled
+
+        return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient
     }
 
     public func willGeneratePrekeys() {

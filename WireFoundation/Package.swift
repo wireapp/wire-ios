@@ -7,9 +7,11 @@ let package = Package(
     name: "WireFoundation",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
+        // TODO: [WPB-7394] `Clibsodium` is no longer needed as a product
+        .library(name: "Clibsodium", targets: ["Clibsodium"]),
+        .library(name: "WireCrypto", targets: ["WireCrypto"]),
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
-        .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
@@ -18,6 +20,21 @@ let package = Package(
         .package(path: "../WirePlugins")
     ],
     targets: [
+        .binaryTarget(
+            name: "Clibsodium",
+            url: "https://github.com/wireapp/libsodium/releases/download/1.0.14/Clibsodium.xcframework.zip",
+            checksum: "837bd861aa034f0bf0000bad55d030beab03369baeda11ef9e4c3672b0d7459f"
+        ),
+
+        .target(
+            name: "WireCrypto",
+            dependencies: ["Clibsodium"]
+        ),
+        .testTarget(
+            name: "WireCryptoTests",
+            dependencies: ["WireCrypto", "WireTestingPackage"]
+        ),
+
         .target(name: "WireFoundation"),
         .testTarget(
             name: "WireFoundationTests",
@@ -27,16 +44,6 @@ let package = Package(
             name: "WireFoundationSupport",
             dependencies: ["WireFoundation"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
-        ),
-
-        .target(
-            name: "WireUtilitiesPackage",
-            path: "./Sources/WireUtilities"
-        ),
-        .testTarget(
-            name: "WireUtilitiesPackageTests",
-            dependencies: ["WireUtilitiesPackage"],
-            path: "./Tests/WireUtilitiesTests"
         ),
 
         .target(
@@ -50,8 +57,7 @@ let package = Package(
     swiftLanguageModes: [.v6]
 )
 
-for target in package.targets {
-    guard target.type != .plugin else { continue }
+for target in package.targets where target.name != "Clibsodium" {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("FullTypedThrows"),

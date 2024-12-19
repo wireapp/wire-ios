@@ -37,6 +37,7 @@
 "general.on" = "Açık";
 "general.loading" = "Yükleniyor…";
 "general.paste" = "Yapıştır";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -85,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Daha fazla bilgi";
 "peoplepicker.no_matching_results.action.manage_services" = "Hizmetleri yönet";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Sonuç yok.";
 "peoplepicker.no_matching_results.message.users" = "Wire'daki insanları isim veya @kullanıcıadı'na göre bulun";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Herkes burada.";
@@ -97,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "2 hafta için kullanılabilir. Süresi dolduğunda yenisini gönderebilirsiniz.";
 "peoplepicker.send_invitation.dialog.ok" = "TAMAM";
 
-"peoplepicker.invite_more_people" = "Daha fazla kişi davet et";
 "peoplepicker.invite_team_members" = "İnsanları takıma katılmaya davet edin";
 "peoplepicker.quick-action.open-conversation" = "Aç";
 "peoplepicker.quick-action.admin-services" = "Hizmetleri yönet";
@@ -156,6 +155,13 @@
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "Kişilerde";
@@ -326,7 +332,6 @@
 "conversation.create.guidance.empty" = "En az 1 karakter";
 "conversation.create.guidance.toolong" = "Çok fazla karakter";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Misafirlere izin ver";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";
 "conversation.create.services.title" = "Allow services";
@@ -1582,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Ayrıntıları Düzenle";
 
 "registration.country_select.title" = "Ülke";
-
-"registration.share_contacts.hero.title" = "Wire'da yeni insanlar keşfedin";
-"registration.share_contacts.hero.paragraph" = "Kişilerinizi paylaşın ki sizi başkalarına bağlayabilelim. Tüm bilgilerinizi gizler ve kimseyle paylaşmayız.";
-"registration.share_contacts.find_friends_button.title" = "Kişileri paylaş";
-"registration.share_contacts.skip_button.title" = "Şimdi değil";
-
-"registration.address_book_access_denied.hero.title" = "Wire'ın kişilerinize erişimi yoktur.";
-"registration.address_book_access_denied.hero.paragraph1" = "Eğer kişilerinizi paylaşırsanız Wire arkadaşlarınızı bulmanıza yardım eder.";
-"registration.address_book_access_denied.hero.paragraph2" = "Erişim sağlamak için Ayarlara girip Kişileri açın.";
-"registration.address_book_access_denied.settings_button.title" = "Ayarlar";
-"registration.address_book_access_denied.maybe_later_button.title" = "Belki sonra";
 
 "registration.push_access_denied.hero.title" = "Asla bir arama veya mesaj kaçırmayın.";
 "registration.push_access_denied.hero.paragraph1" = "Ayarlardan Bildirimleri Etkinleştir.";
