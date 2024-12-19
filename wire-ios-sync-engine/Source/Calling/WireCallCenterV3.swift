@@ -462,7 +462,7 @@ extension WireCallCenterV3 {
     }
     
     /// This publisher fires when `setVideoState(conversationId:videoState:)` is called.
-    /*private*/ static func setVideoStatePublisher() -> AnyPublisher<(callCenter: WireCallCenterV3, conversationId: AVSIdentifier, videoState: VideoState), Never> {
+    public /*private*/ static func setVideoStatePublisher() -> AnyPublisher<(callCenter: WireCallCenterV3, conversationId: AVSIdentifier, videoState: VideoState), Never> {
         setVideoStatePublisherSubject.eraseToAnyPublisher()
     }
 
