@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable import WireFoundation
+@testable import WireCrypto
 
 final class SecureRandomByteGeneratorTests: XCTestCase {
 
