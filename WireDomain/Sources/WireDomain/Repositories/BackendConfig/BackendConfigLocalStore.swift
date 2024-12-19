@@ -32,37 +32,29 @@ protocol BackendConfigLocalStoreProtocol {
 
 final class BackendConfigLocalStore: BackendConfigLocalStoreProtocol {
 
-    enum Key: String, DefaultsKey {
+    enum Key: String {
         case isMLSEnabled
     }
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
-    private let storage: PrivateUserDefaults<Key>
+    private let storage: UserDefaults
 
     // MARK: - Object lifecycle
 
-    init(
-        context: NSManagedObjectContext,
-        userID: UUID,
-        sharedUserDefaults: UserDefaults
-    ) {
-        self.context = context
-        self.storage = PrivateUserDefaults(
-            userID: userID,
-            storage: sharedUserDefaults
-        )
+    init(sharedUserDefaults: UserDefaults) {
+        self.storage = sharedUserDefaults
     }
+
 
     // MARK: - Public
 
     public func storeIsMLSEnabledStatus(newValue: Bool) {
-        storage.set(newValue, forKey: .isMLSEnabled)
+        storage.set(newValue, forKey: Key.isMLSEnabled.rawValue)
     }
 
     public var isMLSEnabled: Bool {
-        storage.bool(forKey: .isMLSEnabled)
+        storage.bool(forKey: Key.isMLSEnabled.rawValue)
     }
 
 }
