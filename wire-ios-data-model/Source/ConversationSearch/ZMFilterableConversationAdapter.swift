@@ -38,7 +38,7 @@ public struct ZMFilterableConversationAdapter: FilterableConversation {
     }
 
     public var isOneOnOne: Bool {
-        conversation.oneOnOneUser != nil
+        conversation.conversationType == .oneOnOne && conversation.oneOnOneUser != nil
     }
 
     public init(conversation: ZMConversation) {
