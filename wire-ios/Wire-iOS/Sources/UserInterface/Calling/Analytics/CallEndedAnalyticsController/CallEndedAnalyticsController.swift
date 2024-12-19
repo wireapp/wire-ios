@@ -62,7 +62,10 @@ final class CallEndedAnalyticsController {
         )
     }
 
-    private func handleOutgoingCall(_ conversation: ZMConversation) {
+    private func handleOutgoingCall(
+        _ conversation: ZMConversation,
+        _ isVideoCall: Bool
+    ) {
         if let eventInfo {
             logger.error("handleOutgoingCall: expected eventInfo to be nil, but is: \(eventInfo)")
         }
@@ -70,7 +73,7 @@ final class CallEndedAnalyticsController {
         eventInfo = .init(
             callDirection: .outgoing,
             conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
-            isVideoCall: false // TODO: how to get this info?
+            isVideoCall: isVideoCall
         )
     }
 
@@ -185,8 +188,8 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         switch callState {
         case .incoming(let isVideoCall, _, _):
             handleIncomingCall(conversation, isVideoCall)
-        case .outgoing:
-            handleOutgoingCall(conversation)
+        case .outgoing(let isVideoCall, _):
+            handleOutgoingCall(conversation, isVideoCall)
         case .established:
             handleCallEstablished(conversation)
         case .terminating(let reason):

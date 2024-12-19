@@ -273,7 +273,7 @@ extension VoiceChannel {
         switch state {
         case .incoming(video: _, shouldRing: _, degraded: true), .answered(degraded: true):
             return .incoming(reason: degradationReason)
-        case .outgoing(degraded: true):
+        case .outgoing(_, degraded: true):
             return .outgoing(reason: degradationReason)
         case .terminating(reason: .securityDegraded):
             return .terminating(reason: degradationReason)

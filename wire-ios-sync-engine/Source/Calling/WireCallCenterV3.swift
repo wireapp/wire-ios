@@ -664,7 +664,7 @@ public extension WireCallCenterV3 {
             throw Failure.unknown
         }
 
-        let callState: CallState = .outgoing(degraded: isDegraded(conversationId: conversationId))
+        let callState: CallState = .outgoing(isVideo: isVideo, degraded: isDegraded(conversationId: conversationId))
         let previousCallState = callSnapshots[conversationId]?.callState
 
         createSnapshot(

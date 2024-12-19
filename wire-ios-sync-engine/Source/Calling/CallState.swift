@@ -164,7 +164,7 @@ public enum CallState: Equatable { // TODO: check
     /// There's no call
     case none
     /// Outgoing call is pending
-    case outgoing(degraded: Bool)
+    case outgoing(isVideo: Bool, degraded: Bool)
     /// Incoming call is pending
     case incoming(video: Bool, shouldRing: Bool, degraded: Bool)
     /// Call is answered
@@ -192,8 +192,8 @@ public enum CallState: Equatable { // TODO: check
             zmLog.debug("established data channel")
         case .established:
             zmLog.debug("established call")
-        case let .outgoing(degraded: degraded):
-            zmLog.debug("outgoing call, , degraded: \(degraded)")
+        case let .outgoing(isVideo: isVideo, degraded: degraded):
+            zmLog.debug("outgoing call, isVideo: \(isVideo), degraded: \(degraded)")
         case let .terminating(reason: reason):
             zmLog.debug("terminating call reason: \(reason)")
         case .mediaStopped:
@@ -213,8 +213,8 @@ public enum CallState: Equatable { // TODO: check
         switch self {
         case .incoming(video: let video, shouldRing: let shouldRing, degraded: _):
             .incoming(video: video, shouldRing: shouldRing, degraded: isConversationDegraded)
-        case .outgoing:
-            .outgoing(degraded: isConversationDegraded)
+        case .outgoing(let isVideo, _):
+            .outgoing(isVideo: isVideo, degraded: isConversationDegraded)
         case .answered:
             .answered(degraded: isConversationDegraded)
         default:
