@@ -46,7 +46,6 @@ final class BackendConfigLocalStore: BackendConfigLocalStoreProtocol {
         self.storage = sharedUserDefaults
     }
 
-
     // MARK: - Public
 
     public func storeIsMLSEnabledStatus(newValue: Bool) {
