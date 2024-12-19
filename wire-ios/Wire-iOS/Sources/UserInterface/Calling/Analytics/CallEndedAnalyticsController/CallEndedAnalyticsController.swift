@@ -98,13 +98,25 @@ final class CallEndedAnalyticsController {
 
         callParticipantObsererToken = nil
 
-        guard let eventInfo else { return } // TODO: consider that we want to track the event even when no call was established
+        guard let eventInfo, let context = conversation.managedObjectContext else { return }
+        // TODO: consider that we want to track the event even when no call was established
 
-        let guestHasTeam = conversation.participants
-            .filter { $0.isGuest(in: conversation) }
-            .map { $0.hasTeam }
-        let conversationGuestsTeam = guestHasTeam.count { $0 }
-        let conversationGuestsNonTeam = guestHasTeam.count { !$0 }
+        let (
+            isTeamMember,
+            conversationGuestsTeam,
+            conversationGuestsNonTeam
+        ) = context.performAndWait {
+            let isTeamMember = conversation.participants
+                .first { $0.isSelfUser }
+                .map { $0.hasTeam } ?? false
+            let guestsWithTeam = conversation.participants
+                .filter { $0.isGuest(in: conversation) }
+                .map { $0.hasTeam }
+            let conversationGuestsTeam = guestsWithTeam.count { $0 }
+            let conversationGuestsNonTeam = guestsWithTeam.count { !$0 }
+
+            return (isTeamMember, conversationGuestsTeam, conversationGuestsNonTeam)
+        }
 
         let analyticsEventTracker = analyticsEventTracker()
         analyticsEventTracker?.trackEvent(
@@ -125,7 +137,7 @@ final class CallEndedAnalyticsController {
                 conversationServices: 0, // TODO: fix
                 hasAVSwitchToggled: false, // TODO: fix
                 isVideoCall: eventInfo.isVideoCall,
-                isTeamMember: false // TODO: fix
+                isTeamMember: isTeamMember
             )
         )
 
