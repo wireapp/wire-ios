@@ -9,8 +9,19 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireFoundation",
+      "identifier" : "WireFoundationTests",
+      "name" : "WireFoundationTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
