@@ -34,7 +34,7 @@ final class OneOnOneMigratorTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
 
-        coreDataStack = try await coreDataStackHelper.createStack(at: coreDataStackHelper.storageDirectory, inMemoryStore: false)
+        coreDataStack = try await coreDataStackHelper.createStack(at: coreDataStackHelper.storageDirectory)
         syncContext = coreDataStack.syncContext
 
         mockMLSService = MockMLSServiceInterface()
@@ -281,12 +281,10 @@ final class OneOnOneMigratorTests: XCTestCase {
 
             proteusConversation.addParticipantAndUpdateConversationState(user: selfUser)
             proteusConversation.addParticipantAndUpdateConversationState(user: otherUser)
-            let conv = self.createFakeProteusConversation(with: UUID(),
+            return self.createFakeProteusConversation(with: UUID(),
                                           selfUser: selfUser,
                                           otherUser: otherUser,
                                           in: self.syncContext)
-            try self.syncContext.save()
-            return conv
         }
 
        
@@ -340,6 +338,7 @@ final class OneOnOneMigratorTests: XCTestCase {
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
             XCTAssertNil(mlsConversation.lastMessage)
             
+            // this save is needed, in order for the fetch request to get the correct duplicate OneOnOne conv.
             try self.syncContext.save()
         }
 
@@ -440,9 +439,7 @@ final class OneOnOneMigratorTests: XCTestCase {
             )
             oneOnOneConversation.messageProtocol = .proteus
             oneOnOneConversation.userDefinedName = nil
-            let a = oneOnOneConversation.value(forKey: "conversationType") as? Int16
-            print("conv: \(oneOnOneConversation.remoteIdentifier) - \(oneOnOneConversation.conversationType)"  )
-            return oneOnOneConversation
+        return oneOnOneConversation
     }
 
     
