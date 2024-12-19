@@ -20,20 +20,25 @@ import WireAPISupport
 import XCTest
 @testable import WireAPI
 @testable import WireDomain
+@testable import WireDomainSupport
 
 final class BackendConfigRepositoryTests: XCTestCase {
     private var sut: BackendConfigRepository!
     private var backendInfoAPI: MockBackendInfoAPI!
-    private let storage = UserDefaults.standard
-    private let key = "isMLSEnabled"
+    private var backendConfigLocalStore: MockBackendConfigLocalStoreProtocol!
 
     override func setUp() async throws {
         backendInfoAPI = MockBackendInfoAPI()
-        sut = BackendConfigRepository(backendInfoAPI: backendInfoAPI)
+        backendConfigLocalStore = MockBackendConfigLocalStoreProtocol()
+        sut = BackendConfigRepository(
+            backendInfoAPI: backendInfoAPI,
+            backendConfigLocalStore: backendConfigLocalStore
+        )
     }
 
     override func tearDown() async throws {
         backendInfoAPI = nil
+        backendConfigLocalStore = nil
         sut = nil
     }
 
@@ -50,13 +55,15 @@ final class BackendConfigRepositoryTests: XCTestCase {
                 p512: "BAC3OmJi7rAPFAIXjU"
             )
         )
+        backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
         await sut.pullMLSBackendStatus()
 
         // Then
         XCTAssertEqual(backendInfoAPI.getBackendMLSPublicKeys_Invocations.count, 1)
-        XCTAssertTrue(storage.bool(forKey: key))
+        XCTAssertEqual(backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_Invocations.count, 1)
+        XCTAssertTrue(backendConfigLocalStore.isMLSEnabled)
     }
 
     func testPullMLSBackendStatus_MLSPublicKeysAreInvalid_It_Invokes_And_isMLSEnabledIsFalse() async {
@@ -70,12 +77,14 @@ final class BackendConfigRepositoryTests: XCTestCase {
                 p512: nil
             )
         )
+        backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
         await sut.pullMLSBackendStatus()
 
         // Then
         XCTAssertEqual(backendInfoAPI.getBackendMLSPublicKeys_Invocations.count, 1)
-        XCTAssertFalse(storage.bool(forKey: key))
+        XCTAssertEqual(backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_Invocations.count, 1)
+        XCTAssertFalse(backendConfigLocalStore.isMLSEnabled)
     }
 }

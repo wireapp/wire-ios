@@ -36,14 +36,17 @@ final class BackendConfigRepository: BackendConfigRepositoryProtocol {
     // MARK: - Properties
 
     private let backendInfoAPI: any BackendInfoAPI
+    private let backendConfigLocalStore: any BackendConfigLocalStoreProtocol
     private let logger = WireLogger.mls
 
     // MARK: - Object lifecycle
 
     init(
-        backendInfoAPI: any BackendInfoAPI
+        backendInfoAPI: any BackendInfoAPI,
+        backendConfigLocalStore: any BackendConfigLocalStoreProtocol
     ) {
         self.backendInfoAPI = backendInfoAPI
+        self.backendConfigLocalStore = backendConfigLocalStore
     }
 
     // MARK: - Public
@@ -52,19 +55,11 @@ final class BackendConfigRepository: BackendConfigRepositoryProtocol {
         do {
             let backendMLSPublicKeys = try await backendInfoAPI.getBackendMLSPublicKeys()
             let hasValidKeys = backendMLSPublicKeys.removal.hasValidKey()
-            storeIsMLSEnabledStatus(newValue: hasValidKeys)
+            backendConfigLocalStore.storeIsMLSEnabledStatus(newValue: hasValidKeys)
         } catch {
-            storeIsMLSEnabledStatus(newValue: false)
+            backendConfigLocalStore.storeIsMLSEnabledStatus(newValue: false)
             logger.info("no backend MLS public keys")
         }
-    }
-
-    // MARK: - Private
-
-    private func storeIsMLSEnabledStatus(newValue: Bool) {
-        let storage = UserDefaults.standard
-        let key = "isMLSEnabled"
-        storage.set(newValue, forKey: key)
     }
 
 }

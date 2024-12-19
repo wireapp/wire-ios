@@ -116,11 +116,11 @@ final class BackendInfoAPITests: XCTestCase {
     // MARK: - V5
 
     func testGetBackendMLSPublicKeys_SuccessResponse_200_V5_And_Next_Versions() async throws {
+        // Given
         try await withThrowingTaskGroup(of: BackendMLSPublicKeys.self) { taskGroup in
-            let testedVersions = [APIVersion.v5, .v6, .v7]
+            let testedVersions = APIVersion.v5.andNextVersions
 
             for version in testedVersions {
-                // Given
                 let apiService = MockAPIServiceProtocol.withResponses([
                     (.ok, "GetBackendMLSPublicKeysSuccessResponse1")
                 ])
