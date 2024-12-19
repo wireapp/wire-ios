@@ -172,6 +172,7 @@ public final class UserRepository: UserRepositoryProtocol {
     private let userLocalStore: any UserLocalStoreProtocol
 
     private let pullSelfUserSync: PullSelfUserSync
+    private let pullKnownUsersSync: PullKnownUsersSync
 
     // MARK: - Object lifecycle
 
@@ -189,6 +190,10 @@ public final class UserRepository: UserRepositoryProtocol {
         self.userLocalStore = userLocalStore
         self.pullSelfUserSync = PullSelfUserSync(
             api: selfUserAPI,
+            store: userLocalStore
+        )
+        self.pullKnownUsersSync = PullKnownUsersSync(
+            api: usersAPI,
             store: userLocalStore
         )
     }
@@ -230,15 +235,7 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func pullKnownUsers() async throws {
-        let knownUserIDs: [WireDataModel.QualifiedID]
-
-        do {
-            knownUserIDs = try await userLocalStore.fetchUsersQualifiedIDs()
-        } catch {
-            throw UserRepositoryError.failedToCollectKnownUsers(error)
-        }
-
-        try await pullUsers(userIDs: knownUserIDs)
+        try await pullKnownUsersSync.pull()
     }
 
     public func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws {
