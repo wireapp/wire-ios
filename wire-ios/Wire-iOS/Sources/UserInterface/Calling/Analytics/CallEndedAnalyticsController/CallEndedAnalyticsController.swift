@@ -19,33 +19,45 @@
 import WireLogging
 import WireAnalytics
 import WireSyncEngine
+import Combine
 
 final class CallEndedAnalyticsController {
 
     private let contextProvider: ContextProvider
+    private let callCenterType: WireCallCenterV3.Type
     private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     private var eventInfo: EventInfo?
     private var screenSharingStart: Date? // TODO: move into EventInfo
     private var callStateObserverToken: AnyObject!
     private var callParticipantObsererToken: AnyObject!
+    private var setVideoCancellable = Set<AnyCancellable>()
 
     private let logger: LoggerProtocol
 
     init(
         contextProvider: ContextProvider,
+        callCenterType: WireCallCenterV3.Type,
+        toggleVideoPublisher: AnyPublisher<Void, Never>,
         analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?,
         logger: LoggerProtocol
     ) {
         self.contextProvider = contextProvider
+        self.callCenterType = callCenterType
         self.analyticsEventTracker = analyticsEventTracker
         self.logger = logger
 
         // TODO: can't we have a protocol instead of using static/class methods?
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+        callStateObserverToken = callCenterType.addCallStateObserver(
             observer: self,
             contextProvider: contextProvider
         )
+
+        //setVideoCancellable = callCenter.setVideoStatePublisher()
+        toggleVideoPublisher.sink { [weak self] in
+            self?.eventInfo?.hasAVSwitchToggled = true
+            self?.setVideoCancellable.removeAll()
+        }.store(in: &setVideoCancellable)
     }
 
     private func handleIncomingCall(
@@ -83,7 +95,7 @@ final class CallEndedAnalyticsController {
             eventInfo = .init()
         }
 
-        callParticipantObsererToken = WireCallCenterV3.addCallParticipantObserver(
+        callParticipantObsererToken = callCenterType.addCallParticipantObserver(
             observer: self,
             for: conversation,
             contextProvider: contextProvider
@@ -147,7 +159,7 @@ final class CallEndedAnalyticsController {
                 callParticipants: eventInfo.participantCount,
                 callEndReason: reason.analyticsValue,
                 conversationServices: conversationServices,
-                hasAVSwitchToggled: false, // TODO: fix
+                hasAVSwitchToggled: eventInfo.hasAVSwitchToggled,
                 isVideoCall: eventInfo.isVideoCall,
                 isTeamMember: isTeamMember
             )
@@ -173,6 +185,7 @@ private extension CallEndedAnalyticsController {
         var uniqueScreenSharingUsers = Set<UUID>()
         var participantCount = Int()
         var isVideoCall = false
+        var hasAVSwitchToggled = false
 
         func callDuration(at callEnd: Date = .now) -> Int {
             Int(round(callEnd.timeIntervalSince(callStart)))
@@ -193,6 +206,8 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         previousCallState: CallState?
     ) {
         logger.info("callCenterDidChange: \(callState)")
+
+        //conversation.managedObjectContext?.zm_callCenter.setVideo
 
         switch callState {
         case .incoming(let isVideoCall, _, _):

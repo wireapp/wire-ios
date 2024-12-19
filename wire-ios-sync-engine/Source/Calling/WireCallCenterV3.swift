@@ -100,6 +100,7 @@ public class WireCallCenterV3: NSObject {
     var clientsRequestCompletionsByConversationId = [AVSIdentifier: (String) -> Void]()
 
     private let onParticipantsChangedSubject = PassthroughSubject<ConferenceParticipantsInfo, Never>()
+    private let setVideoStatePublisherSubject = PassthroughSubject<(conversationId: AVSIdentifier, videoState: VideoState), Never>()
 
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
@@ -458,6 +459,11 @@ extension WireCallCenterV3 {
 
     func onParticipantsChanged() -> AnyPublisher<ConferenceParticipantsInfo, Never> {
         onParticipantsChangedSubject.eraseToAnyPublisher()
+    }
+    
+    /// This publisher fires when `setVideoState(conversationId:videoState:)` is called.
+    /*private*/ func setVideoStatePublisher() -> AnyPublisher<(conversationId: AVSIdentifier, videoState: VideoState), Never> {
+        setVideoStatePublisherSubject.eraseToAnyPublisher()
     }
 
 }
@@ -886,6 +892,8 @@ public extension WireCallCenterV3 {
     /// - parameter videoState: The new video state for the self user.
 
     func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
+        defer { setVideoStatePublisherSubject.send((conversationId, videoState)) }
+
         Self.logger.info("setting video state")
         guard videoState != .badConnection else { return }
 

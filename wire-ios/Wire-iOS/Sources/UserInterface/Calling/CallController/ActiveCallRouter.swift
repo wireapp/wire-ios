@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 import WireLogging
+import Combine
 
 enum AlertChoice {
     case cancel
@@ -95,6 +96,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
     init(
         mainWindow: UIWindow,
         userSession: UserSession,
+        toggleVideoPublisher: AnyPublisher<Void, Never>,
         topOverlayPresenter: TopOverlayPresenter
     ) {
         self.mainWindow = mainWindow
@@ -112,6 +114,8 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
         callEndedAnalyticsController = .init(
             contextProvider: userSession.contextProvider,
+            callCenterType: WireCallCenterV3.self,
+            toggleVideoPublisher: toggleVideoPublisher,
             analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
             logger: WireLogger.analytics
         )
