@@ -95,7 +95,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case toTeamCreation(teamName: String)
         case toError(error: any Error)
         case toCompletion(teamName: String)
-        case toDismiss
+        case toCompletionDismiss
         case toConversations
         case toTeamManagement
     }
@@ -244,9 +244,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             )
             childController.setViewControllers([vc], animated: true)
             isModalInPresentation = false
-        case .toDismiss:
-            // TODO: track event
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .backToWire))
+        case .toCompletionDismiss:
+            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: nil))
             actionCallback(.completionDismiss)
         case .toConversations:
             analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .backToWire))
@@ -349,7 +348,7 @@ private func hostedView(
             case .teamPlanSelection, .teamName, .confirmation:
                 transitionCallback(.toCancellationAlert)
             case .completion:
-                transitionCallback(.toDismiss)
+                transitionCallback(.toCompletionDismiss)
             }
         },
         accessibilityLabel: step.closeButtonAccessibilityLabel

@@ -90,17 +90,19 @@ public extension AnalyticsEvent {
         /// An event tracking when the user taps a button in the final confirmation screen.
 
         public static func personalTeamCreationFlowCompleted(
-            action: IndividualToTeamMigration.CompletedAction
+            action: IndividualToTeamMigration.CompletedAction?
         ) -> AnalyticsEvent {
-            AnalyticsEvent(name: "user.personal-team-creation-flow-completed") {
-                switch action {
-                case .backToWire:
-                    SegmentationEntry(key: "modal_back-to-wire-clicked", value: true)
-                case .openTeamManagement:
-                    SegmentationEntry(key: "modal_open-tm-clicked", value: true)
-                }
+            let segment: SegmentationEntry? = switch action {
+            case .none:
+                nil
+            case .backToWire:
+                SegmentationEntry(key: "modal_back-to-wire-clicked", value: true)
+            case .openTeamManagement:
+                SegmentationEntry(key: "modal_open-tm-clicked", value: true)
+            }
+            return AnalyticsEvent(name: "user.personal-team-creation-flow-completed") {
+                if let segment { segment }
             }
         }
     }
-
 }
