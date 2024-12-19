@@ -153,7 +153,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
             // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both
             // conversations here.
-            let proteusConversations: [ZMConversation] = fetchAllOneOnOneProteusConversations(
+            let proteusConversations: [ZMConversation] = fetchAllTeamOneOnOneProteusConversations(
                 otherUserID: userID,
                 in: context
             )
@@ -179,7 +179,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
-    func fetchAllOneOnOneProteusConversations(
+    func fetchAllTeamOneOnOneProteusConversations(
         otherUserID: QualifiedID,
         in context: NSManagedObjectContext
     ) -> [ZMConversation] {
@@ -191,7 +191,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             return []
         }
 
-        let request = NSFetchRequest<NSManagedObject>(entityName: ZMConversation.entityName())
+        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         let teamOneOnOnePredicate = ZMConversation.predicateForTeamOneToOneConversation()
 
         let sameParticipant = NSPredicate(
@@ -207,11 +207,6 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             sameParticipant
         ])
 
-        do {
-            let result = try context.fetch(request)
-            return result.compactMap { $0 as? ZMConversation }
-        } catch {
-            return []
-        }
+        return context.fetchOrAssert(request: request)
     }
 }
