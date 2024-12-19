@@ -14,8 +14,19 @@
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       }
     ],
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireDomain",
+      "identifier" : "WireDomainPkgTests",
+      "name" : "WireDomainPkgTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

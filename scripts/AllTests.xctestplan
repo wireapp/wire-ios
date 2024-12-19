@@ -9,8 +9,19 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:",
+      "identifier" : "TrimStringCatalogsTests",
+      "name" : "TrimStringCatalogsTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
