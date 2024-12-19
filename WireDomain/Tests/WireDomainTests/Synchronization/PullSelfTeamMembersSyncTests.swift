@@ -40,7 +40,7 @@ final class PullSelfTeamMembersSyncTests: XCTestCase {
         sut = nil
     }
 
-    func testPullSelfTeamMembers_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
+    func testPull() async throws {
         // Mock
         api.getTeamMembersForMaxResults_MockValue = Scaffolding.remoteMembers
 

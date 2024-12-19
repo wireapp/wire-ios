@@ -40,7 +40,7 @@ final class PullSelfTeamSyncTests: XCTestCase {
         sut = nil
     }
 
-    func testPullSelfTeam_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
+    func testPull() async throws {
         // Mock
         api.getTeamFor_MockValue = WireAPI.Team(
             id: Scaffolding.selfTeamID,

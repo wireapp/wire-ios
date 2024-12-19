@@ -40,7 +40,7 @@ final class PullSelfTeamRolesSyncTests: XCTestCase {
         sut = nil
     }
 
-    func testPullSelfTeamRoles_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
+    func testPull() async throws {
         // Mock
         api.getTeamRolesFor_MockValue = Scaffolding.remoteTeamRoles
         store.storeTeamRolesSelfTeamIDTeamRolesInfo_MockMethod = { _, _ in }

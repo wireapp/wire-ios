@@ -44,7 +44,7 @@ final class PullLastUpdateEventIDSyncTests: XCTestCase {
         sut = nil
     }
 
-    func testPullLastEventID_It_Invokes_Local_Store_Method() async throws {
+    func testPull() async throws {
         // Mock
         api.getLastUpdateEventSelfClientID_MockValue = Scaffolding.envelope1
         store.storeLastEventIDId_MockMethod = { _ in }

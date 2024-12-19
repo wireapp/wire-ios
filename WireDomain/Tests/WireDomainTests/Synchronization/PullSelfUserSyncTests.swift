@@ -40,7 +40,7 @@ final class PullSelfUserSyncTests: XCTestCase {
         sut = nil
     }
 
-    func testPullSelfUser_It_Invokes_Local_Store_Methods() async throws {
+    func testPull() async throws {
         // Mock
         api.getSelfUser_MockValue = Scaffolding.remoteSelfUser
         store.persistUserUserInfo_MockMethod = { _ in }
