@@ -112,6 +112,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     let privacyPolicyURL: String
     let useCase: any IndividualToTeamMigrationUseCase
     let userProfileName: String
+    private var analyticsFlowCompletionAction: AnalyticsEvent.User.IndividualToTeamMigration.CompletedAction?
     private let analyticsEventTracker: (any AnalyticsEventTracker)?
 
     public init(
@@ -166,6 +167,13 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         childController.didMove(toParent: self)
         childController.navigationBar.tintColor = ColorTheme.Backgrounds.onBackground
         transition(to: .toPlans)
+    }
+
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if isBeingDismissed {
+            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: analyticsFlowCompletionAction))
+        }
     }
 
     @MainActor
@@ -245,13 +253,13 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             childController.setViewControllers([vc], animated: true)
             isModalInPresentation = false
         case .toCompletionDismiss:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: nil))
+            analyticsFlowCompletionAction = nil
             actionCallback(.completionDismiss)
         case .toConversations:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .backToWire))
+            analyticsFlowCompletionAction = .backToWire
             actionCallback(.completionGoToConversations)
         case .toTeamManagement:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .openTeamManagement))
+            analyticsFlowCompletionAction = .openTeamManagement
             actionCallback(.completionGoToTeamManagement)
         }
     }
@@ -413,3 +421,4 @@ private func viewFor(
 #Preview {
     featurePreview()
 }
+Í
