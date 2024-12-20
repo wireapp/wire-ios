@@ -330,13 +330,13 @@ extension CompanyLoginController {
             case let .success(backendEnvironment):
                 requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
                     guard didConfirm else { return }
-                    sessionManager.switchBackend(to: backendEnvironment) { [weak self] error in
+                    sessionManager.switchBackend(to: backendEnvironment) { error in
                         if let error {
-                            self?.presentCompanyLoginAlert(error: .unknown)
+                            self.presentCompanyLoginAlert(error: .unknown)
                         }
 
                         BackendEnvironment.shared = backendEnvironment
-                        self?.startAutomaticSSOFlow(promptOnError: false)
+                        self.startAutomaticSSOFlow(promptOnError: false)
                     }
                 }
             case let .failure(error):
