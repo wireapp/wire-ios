@@ -329,7 +329,6 @@ private func hostedView(
             stepTitle: step.title
         )
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-        .ignoresSafeArea(.container, edges: .bottom)
     )
     vc.title = step.title
     vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
