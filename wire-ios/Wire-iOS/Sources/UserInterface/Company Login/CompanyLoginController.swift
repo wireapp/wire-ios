@@ -332,6 +332,7 @@ extension CompanyLoginController {
                     guard didConfirm else { return }
                     sessionManager.switchBackend(to: backendEnvironment) { error in
                         if let error {
+                            WireLogger.authentication.error("sso login flow failed due to backend switch error: \(String(describing: error))")
                             self.presentCompanyLoginAlert(error: .unknown)
                         }
 
