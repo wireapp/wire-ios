@@ -90,7 +90,11 @@ platform :ios do
         matching_frameworks = folders.map { |folder| frameworks[folder] }
 
         framework_schemes = matching_frameworks.map { |f| f.scheme }
-        run_tests_frameworks(framework_schemes, options)
+        begin
+            run_tests_frameworks(framework_schemes, options)
+        rescue => e
+            UI.test_failure!("Failing running tests #{e.to_s}")
+        end
     end
 
     desc "Test one framework only"
