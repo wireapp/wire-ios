@@ -298,9 +298,6 @@ extension WireCallCenterV3 {
     }
 
     func handleParticipantChange(conversationId: AVSIdentifier, data: String) {
-
-// TODO: screensharing toggle arrives here
-
         handleEvent("participant-change") {
             guard let data = data.data(using: .utf8) else {
                 Self.logger.info("Invalid participant change data", attributes: .safePublic)

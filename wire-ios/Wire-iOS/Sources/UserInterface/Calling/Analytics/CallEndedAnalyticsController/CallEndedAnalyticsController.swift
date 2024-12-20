@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
-import WireAnalytics
-import WireSyncEngine
 import Combine
+import WireAnalytics
+import WireLogging
+import WireSyncEngine
 
 final class CallEndedAnalyticsController {
 
@@ -48,12 +48,12 @@ final class CallEndedAnalyticsController {
         self.logger = logger
 
         // TODO: can't we have a protocol instead of using static/class methods?
-        callStateObserverToken = callCenterType.addCallStateObserver(
+        self.callStateObserverToken = callCenterType.addCallStateObserver(
             observer: self,
             contextProvider: contextProvider
         )
 
-        //setVideoCancellable = callCenter.setVideoStatePublisher()
+        // setVideoCancellable = callCenter.setVideoStatePublisher()
         toggleVideoPublisher.sink { [weak self] in
             self?.eventInfo?.hasAVSwitchToggled = true
             self?.setVideoCancellable.removeAll()
@@ -125,11 +125,11 @@ final class CallEndedAnalyticsController {
         ) = context.performAndWait {
             let isTeamMember = conversation.participants
                 .first { $0.isSelfUser }
-                .map { $0.hasTeam } ?? false
+                .map(\.hasTeam) ?? false
             let conversationSize = conversation.localParticipants.count
             let guestsWithTeam = conversation.participants
                 .filter { $0.isGuest(in: conversation) }
-                .map { $0.hasTeam }
+                .map(\.hasTeam)
             let conversationGuestsTeam = guestsWithTeam.count { $0 }
             let conversationGuestsNonTeam = guestsWithTeam.count { !$0 }
             let conversationServices = conversation.sortedServiceUsers.count
@@ -207,16 +207,16 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
     ) {
         logger.info("callCenterDidChange: \(callState)")
 
-        //conversation.managedObjectContext?.zm_callCenter.setVideo
+        // conversation.managedObjectContext?.zm_callCenter.setVideo
 
         switch callState {
-        case .incoming(let isVideoCall, _, _):
+        case let .incoming(isVideoCall, _, _):
             handleIncomingCall(conversation, isVideoCall)
-        case .outgoing(let isVideoCall, _):
+        case let .outgoing(isVideoCall, _):
             handleOutgoingCall(conversation, isVideoCall)
         case .established:
             handleCallEstablished(conversation)
-        case .terminating(let reason):
+        case let .terminating(reason):
             handleCallTerminating(conversation, reason)
         default:
             break

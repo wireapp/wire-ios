@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import UIKit
 import WireCommonComponents
-import WireSyncEngine
 import WireLogging
-import Combine
+import WireSyncEngine
 
 enum AlertChoice {
     case cancel
@@ -112,7 +112,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
         )
         self.transitioningDelegate = CallQualityAnimator()
 
-        callEndedAnalyticsController = .init(
+        self.callEndedAnalyticsController = .init(
             contextProvider: userSession.contextProvider,
             callCenterType: WireCallCenterV3.self,
             toggleVideoPublisher: toggleVideoPublisher,

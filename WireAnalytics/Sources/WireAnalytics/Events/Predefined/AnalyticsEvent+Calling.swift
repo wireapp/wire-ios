@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//public import Foundation
-
 public extension AnalyticsEvent {
 
     enum Calling {
@@ -143,7 +141,8 @@ public extension AnalyticsEvent {
 
 private extension SegmentationEntry { // TODO: consider nested enum/namespace `Call`
 
-    /// Creates a `SegmentationEntry` for indicating whether any screen sharing happened during the call. (including other participants)
+    /// Creates a `SegmentationEntry` for indicating whether any screen sharing happened during the call. (including
+    /// other participants)
 
     static func wasScreenShared(_ value: Bool) -> Self {
         .init(key: "call_screen_share", value: value)
@@ -191,7 +190,8 @@ private extension SegmentationEntry { // TODO: consider nested enum/namespace `C
         .init(key: "call_av_switch_toggle", value: value)
     }
 
-    /// Creates a `SegmentationEntry` providing the information if the user is part of a team (redundant to `is_team_member`).
+    /// Creates a `SegmentationEntry` providing the information if the user is part of a team (redundant to
+    /// `is_team_member`).
 
     static func teamIsTeam(_ value: Bool) -> Self {
         .init(key: "team_is_team", value: value)
@@ -201,7 +201,8 @@ private extension SegmentationEntry { // TODO: consider nested enum/namespace `C
 
 private extension SegmentationEntry { // TODO: consider nested enum/namespace `Conversation`
 
-    /// Creates a `SegmentationEntry` for the number of guests in a conversation which are not members of any team (free users).
+    /// Creates a `SegmentationEntry` for the number of guests in a conversation which are not members of any team (free
+    /// users).
 
     static func conversationGuestsNonTeam(_ value: Int) -> Self {
         .init(key: "conversation_guests", value: value)

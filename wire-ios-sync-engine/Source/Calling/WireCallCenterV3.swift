@@ -19,8 +19,8 @@
 import avs
 import Combine
 import Foundation
-import WireLogging
 import WireAnalytics
+import WireLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
 /// WireCallCenter.
@@ -100,7 +100,10 @@ public class WireCallCenterV3: NSObject {
     var clientsRequestCompletionsByConversationId = [AVSIdentifier: (String) -> Void]()
 
     private let onParticipantsChangedSubject = PassthroughSubject<ConferenceParticipantsInfo, Never>()
-    private static let setVideoStatePublisherSubject = PassthroughSubject<(callCenter: WireCallCenterV3, conversationId: AVSIdentifier, videoState: VideoState), Never>()
+    private static let setVideoStatePublisherSubject = PassthroughSubject<
+        (callCenter: WireCallCenterV3, conversationId: AVSIdentifier, videoState: VideoState),
+        Never
+    >()
 
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
@@ -460,9 +463,13 @@ extension WireCallCenterV3 {
     func onParticipantsChanged() -> AnyPublisher<ConferenceParticipantsInfo, Never> {
         onParticipantsChangedSubject.eraseToAnyPublisher()
     }
-    
+
     /// This publisher fires when `setVideoState(conversationId:videoState:)` is called.
-    public /*private*/ static func setVideoStatePublisher() -> AnyPublisher<(callCenter: WireCallCenterV3, conversationId: AVSIdentifier, videoState: VideoState), Never> {
+    public /* private */ static func setVideoStatePublisher() -> AnyPublisher<(
+        callCenter: WireCallCenterV3,
+        conversationId: AVSIdentifier,
+        videoState: VideoState
+    ), Never> {
         setVideoStatePublisherSubject.eraseToAnyPublisher()
     }
 

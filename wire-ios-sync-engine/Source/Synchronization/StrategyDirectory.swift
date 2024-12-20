@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireAnalytics
 import WireDomain
 import WireRequestStrategy
-import WireAnalytics
 
 @objc
 public protocol StrategyDirectoryProtocol {

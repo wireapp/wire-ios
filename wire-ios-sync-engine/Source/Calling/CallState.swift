@@ -213,7 +213,7 @@ public enum CallState: Equatable { // TODO: check
         switch self {
         case .incoming(isVideo: let video, shouldRing: let shouldRing, degraded: _):
             .incoming(isVideo: video, shouldRing: shouldRing, degraded: isConversationDegraded)
-        case .outgoing(let isVideo, _):
+        case let .outgoing(isVideo, _):
             .outgoing(isVideo: isVideo, degraded: isConversationDegraded)
         case .answered:
             .answered(degraded: isConversationDegraded)

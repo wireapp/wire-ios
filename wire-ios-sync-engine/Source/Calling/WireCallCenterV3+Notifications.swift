@@ -267,7 +267,10 @@ extension WireCallCenterV3 {
 
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
-    class func addCallStateObserver(observer: WireCallCenterCallStateObserver, context: NSManagedObjectContext) -> AnyObject {
+    class func addCallStateObserver(
+        observer: WireCallCenterCallStateObserver,
+        context: NSManagedObjectContext
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterCallStateNotification.notificationName,
             context: context.notificationContext,

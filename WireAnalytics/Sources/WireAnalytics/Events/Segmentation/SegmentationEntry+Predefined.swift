@@ -42,7 +42,7 @@ extension SegmentationEntry {
         .init(key: "device_model", value: value)
     }
 
-        // TODO: fix doc
+    // TODO: fix doc
     /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A boolean indicating if the self user is a team member.
@@ -91,7 +91,10 @@ extension SegmentationEntry {
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
     static func conversationSize(_ value: Int) -> Self {
-        .init(key: "conversation_size", value: UInt(value).analyticsValue) // TODO: [WPB-12199] is `.analyticsValue` needed?
+        .init(
+            key: "conversation_size",
+            value: UInt(value).analyticsValue // TODO: [WPB-12199] is `.analyticsValue` needed?
+        )
     }
 
     /// Creates a `SegmentationEntry` for the score of the calling survey
