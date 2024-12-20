@@ -441,6 +441,28 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertNil(user.membership);
 }
 
+- (void)testThatItCreatesMembershipIfUserIsNotSelfUserButTeamExists
+{
+    // given
+    NSUUID *uuid = [NSUUID createUUID];
+    NSUUID *teamId = NSUUID.createUUID;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.remoteIdentifier = uuid;
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    team.remoteIdentifier = teamId;
+
+    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
+    payload[@"team"] = teamId.transportString;
+
+    // when
+    [self performPretendingUiMocIsSyncMoc:^{
+        [user updateWithTransportData:payload authoritative:NO];
+    }];
+
+    // then
+    XCTAssertNotNil(user.membership);
+}
+
 - (void)testThatItDeletesMembershipIfUserBelongsToSelfUserTeamOnAnExistingUserWhoIsMarkedAsDeleted
 {
     // given
