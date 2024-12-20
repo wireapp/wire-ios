@@ -570,7 +570,7 @@ final class ConversationListCellTests: XCTestCase {
 
     func testThatItRendersGroupConversationWithOngoingCall() {
         let conversation = createGroupConversation()
-        let icon = CallingMatcher.icon(for: .outgoing(degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(for: .outgoing(isVideo: false, degraded: false), conversation: conversation)
         verify(conversation, icon: icon)
     }
 
@@ -630,7 +630,7 @@ final class ConversationListCellTests: XCTestCase {
 
     func testThatItRendersOneOnOneConversationWithOngoingCall() {
         let conversation = otherUserConversation
-        let icon = CallingMatcher.icon(for: .outgoing(degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(for: .outgoing(isVideo: false, degraded: false), conversation: conversation)
         verify(conversation!, icon: icon)
     }
 

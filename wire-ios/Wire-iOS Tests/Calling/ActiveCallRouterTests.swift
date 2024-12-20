@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import Combine
 
 @testable import Wire
 
@@ -34,6 +35,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         sut = ActiveCallRouter(
             mainWindow: .init(),
             userSession: userSession,
+            toggleVideoPublisher: Empty().eraseToAnyPublisher(),
             topOverlayPresenter: mockTopOverlayPresenter
         )
     }

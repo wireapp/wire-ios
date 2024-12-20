@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import Wire
 
 private extension CallStateMock {
@@ -137,7 +138,7 @@ struct CallInfoTestFixture {
             accessoryType: .avatar(hashBoxSelfUser),
             canToggleMediaType: true,
             isMuted: false,
-            callState: CallState.outgoing(degraded: true),
+            callState: CallState.outgoing(isVideo: false, degraded: true),
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
             state: .ringingOutgoing,
             isConstantBitRate: false,
