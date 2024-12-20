@@ -47,7 +47,8 @@ final class CallParticipantsSnapshotTests: MessagingTest {
             clientId: UUID().transportString(),
             uiMOC: uiMOC,
             flowManager: mockFlowManager,
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            analyticsEventTracker: { .none }
         )
 
         let aliceId = AVSIdentifier.stub

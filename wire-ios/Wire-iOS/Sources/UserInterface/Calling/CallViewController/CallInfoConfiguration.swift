@@ -252,7 +252,7 @@ private extension VoiceChannel {
 
     private var isIncomingVideoCall: Bool {
         switch state {
-        case .incoming(video: true, shouldRing: true, degraded: _): true
+        case .incoming(isVideo: true, shouldRing: true, degraded: _): true
         default: false
         }
     }
@@ -271,7 +271,7 @@ extension VoiceChannel {
         guard let degradationReason else { return .none }
 
         switch state {
-        case .incoming(video: _, shouldRing: _, degraded: true), .answered(degraded: true):
+        case .incoming(isVideo: _, shouldRing: _, degraded: true), .answered(degraded: true):
             return .incoming(reason: degradationReason)
         case .outgoing(_, degraded: true):
             return .outgoing(reason: degradationReason)

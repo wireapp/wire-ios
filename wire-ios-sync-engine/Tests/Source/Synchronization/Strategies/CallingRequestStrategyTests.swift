@@ -54,14 +54,16 @@ class CallingRequestStrategyTests: MessagingTest {
                 flowManager: FlowManagerMock(),
                 callEventStatus: CallEventStatus(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
-                messageSender: mockMessageSender
+                messageSender: mockMessageSender,
+                analyticsEventTracker: { .none }
             )
             sut.callCenter = WireCallCenterV3Mock(
                 userId: .stub,
                 clientId: UUID().transportString(),
                 uiMOC: uiMOC,
                 flowManager: FlowManagerMock(),
-                transport: WireCallCenterTransportMock()
+                transport: WireCallCenterTransportMock(),
+                analyticsEventTracker: { .none }
             )
         }
         setupMockMessageSyncForMLSSuccessfully()
@@ -500,7 +502,8 @@ class CallingRequestStrategyTests: MessagingTest {
                 flowManager: FlowManagerMock(),
                 callEventStatus: CallEventStatus(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
-                messageSender: mockMessageSender
+                messageSender: mockMessageSender,
+                analyticsEventTracker: { .none }
             )
             // Given
             let selfClient = createSelfClient()

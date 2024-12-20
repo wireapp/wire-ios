@@ -88,7 +88,7 @@ struct CallInfoTestFixture {
             accessoryType: .avatar(hashBoxOtherUser),
             canToggleMediaType: true,
             isMuted: false,
-            callState: CallState.incoming(video: false, shouldRing: true, degraded: false),
+            callState: CallState.incoming(isVideo: false, shouldRing: true, degraded: false),
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
             state: .ringingIncoming(name: nil),
             isConstantBitRate: false,

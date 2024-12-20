@@ -827,7 +827,7 @@ public extension WireCallCenterV3 {
         if let previousSnapshot = callSnapshots[conversationId] {
             if previousSnapshot.isGroup {
                 let callState: CallState = .incoming(
-                    video: previousSnapshot.isVideo,
+                    isVideo: previousSnapshot.isVideo,
                     shouldRing: false,
                     degraded: isDegraded(conversationId: conversationId)
                 )
@@ -861,7 +861,7 @@ public extension WireCallCenterV3 {
 
         if let previousSnapshot = callSnapshots[conversationId] {
             let callState: CallState = .incoming(
-                video: previousSnapshot.isVideo,
+                isVideo: previousSnapshot.isVideo,
                 shouldRing: false,
                 degraded: isDegraded(conversationId: conversationId)
             )
@@ -1108,7 +1108,7 @@ extension WireCallCenterV3 {
             if isDegraded(conversationId: conversationId) {
                 callState = .terminating(reason: .securityDegraded)
             } else if canJoinCall(conversationId: conversationId) {
-                callState = .incoming(video: false, shouldRing: false, degraded: false)
+                callState = .incoming(isVideo: false, shouldRing: false, degraded: false)
             }
         }
 
