@@ -74,8 +74,12 @@ platform :ios do
         end
        
        UI.message "🤖 No schemes to test" if schemas.empty?
-
-       run_tests_frameworks(schemas, options)
+       
+       begin
+           run_tests_frameworks(schemas, options)
+       rescue => e
+           UI.test_failure!("Failing running tests #{e.to_s}")
+       end
     end
 
     desc "Test Frameworks without dependencies given folders"
