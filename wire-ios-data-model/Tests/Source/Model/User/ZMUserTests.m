@@ -281,7 +281,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     payload[@"team"] = teamId.transportString;
     
     // when
-    [user updateWithTransportData:payload authoritative:NO];
+    [self performPretendingUiMocIsSyncMoc:^{
+        [user updateWithTransportData:payload authoritative:NO];
+    }];
     
     // then
     XCTAssertEqualObjects(user.teamIdentifier.transportString, teamId.transportString);
