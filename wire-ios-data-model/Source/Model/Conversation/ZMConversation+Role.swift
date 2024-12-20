@@ -19,6 +19,7 @@
 import Foundation
 
 public enum UpdateRoleError: Error {
+    case missingDomains
     case unknown
 }
 
