@@ -283,6 +283,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var environment: BackendEnvironmentProvider {
         didSet {
+            apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
             authenticatedSessionFactory.environment = environment
