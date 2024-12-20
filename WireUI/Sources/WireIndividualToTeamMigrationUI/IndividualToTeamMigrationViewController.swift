@@ -172,7 +172,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         if isBeingDismissed {
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: analyticsFlowCompletionAction))
+            analyticsEventTracker?
+                .trackEvent(.User.personalTeamCreationFlowCompleted(action: analyticsFlowCompletionAction))
         }
     }
 
