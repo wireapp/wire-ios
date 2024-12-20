@@ -40,6 +40,15 @@ platform :ios do
         ) if is_running_on_ci
     end
 
+    def delete_keychain_if_needed
+        return unless is_running_on_ci
+        begin
+            delete_keychain
+        rescue
+            UI.verbose("No keychain found, skipping deletion...")
+        end
+    end
+
     before_all do |lane|
         ensure_xcode_version
         create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks].include?(lane)
@@ -54,11 +63,7 @@ platform :ios do
     end
 
     after_all do |lane|
-        begin
-            delete_keychain if is_running_on_ci
-        rescue
-            UI.verbose("No keychain found, skipping deletion...") 
-        end
+        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks].include?(lane)
     end
 
     desc "Test frameworks given folders"
