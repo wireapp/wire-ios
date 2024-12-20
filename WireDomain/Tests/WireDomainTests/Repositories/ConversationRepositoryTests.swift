@@ -93,10 +93,9 @@ final class ConversationRepositoryTests: XCTestCase {
 
     func testPullFoundConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
         // Mock
-
-        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: [Scaffolding.id],
+                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
                 hasMore: false,
                 nextStart: .init()
             )
@@ -116,7 +115,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
+        XCTAssertEqual(conversationsAPI.getConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(
             conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
@@ -127,9 +126,9 @@ final class ConversationRepositoryTests: XCTestCase {
     func testPullNotFoundConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
         // Mock
 
-        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: [Scaffolding.id],
+                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
                 hasMore: false,
                 nextStart: .init()
             )
@@ -150,7 +149,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
+        XCTAssertEqual(conversationsAPI.getConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(
             conversationsLocalStore.storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
@@ -161,10 +160,9 @@ final class ConversationRepositoryTests: XCTestCase {
 
     func testPullFailedConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
         // Mock
-
-        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: [Scaffolding.id],
+                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
                 hasMore: false,
                 nextStart: .init()
             )
@@ -184,7 +182,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
+        XCTAssertEqual(conversationsAPI.getConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(
             conversationsLocalStore.storeFailedConversationConversationIDConversationDomain_Invocations.count,
