@@ -110,11 +110,13 @@ jobs:
       - name: "Test all selected frameworks" 
         if: ${{ inputs.test_dependencies || inputs.all }}
         run: |
+          set -eo pipefail
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
 
       - name: "Test frameworks without dependencies" 
         if: ${{ inputs.test_dependencies == false }}
         run: |
+          set -eo pipefail
           bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
 
       - name: Find all .xcresult files
