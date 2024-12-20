@@ -18,4 +18,49 @@
 
 import Foundation
 
-enum NotificationBody {}
+enum NotificationBody {
+    
+    case newMessage(MessageBodyFormat)
+    
+    func make() -> String {
+        switch self {
+        case .newMessage(let messageBodyFormat):
+            let newMessageBodyComposer = NewMessageNotificationBodyComposer(
+                format: messageBodyFormat
+            )
+            
+            return newMessageBodyComposer.make()
+        }
+    }
+    
+}
+
+extension NotificationBody {
+    
+    /// The expected formats for the body of a new message notification.
+    enum MessageBodyFormat {
+        /// `Someone sent a message`
+        case sentWithUnknownSender
+        /// `Someone mentioned you`
+        case mentionedWithUnknownSender
+        /// `Someone replied to you`
+        case repliedWithUnknownSender
+        /// `[sender name]: [text]` or `[text]` is sender is nil.
+        case text(content: String, senderName: String?)
+        /// `Mention from [sender name]: [text]` or `Mention: [text]` is sender is nil.
+        case textWithMention(content: String, senderName: String?)
+        /// `Reply from [sender name]: [text]` or `Reply: [text]` if sender is nil.
+        case textWithReply(content: String, senderName: String?)
+        /// `[sender name] shared a picture` or `Shared a picture` if sender is nil.
+        case sharedPicture(senderName: String?)
+        /// `[sender name] shared a video` or `Shared a video` if sender is nil.
+        case sharedVideo(senderName: String?)
+        /// `[sender name] shared an audio message` or `Shared an audio message` if sender is nil.
+        case sharedAudio(senderName: String?)
+        /// `[sender name] shared a file` or `Shared a file` if sender is nil.
+        case sharedFile(senderName: String?)
+        /// `[sender name] shared a location` or `Shared a location` if sender is nil.
+        case sharedLocation(senderName: String?)
+    }
+    
+}

@@ -16,13 +16,48 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UserNotifications
 
 /// Categories to which push notifications belong.
-enum NotificationCategory: String {
+public enum NotificationCategory: String, CaseIterable {
+    
     case nonActionable
     case unmutedConversation
     case incomingCall
     case missedCall
     case incomingConnectionRequest
+    
+    /// Available actions for each category
+    private var actions: [NotificationAction] {
+        switch self {
+        case .nonActionable:
+            []
+        case .unmutedConversation:
+            [MuteNotificationAction()]
+        case .incomingCall:
+            [IgnoreCallNotificationAction()]
+        case .missedCall:
+            [CallbackNotificationAction()]
+        case .incomingConnectionRequest:
+            [AcceptConnectionNotificationAction()]
+        }
+    }
+    
+    private func make() -> UNNotificationCategory {
+        let userActions = actions.map { $0.make() }
+        
+        return UNNotificationCategory(
+            identifier: rawValue,
+            actions: userActions,
+            intentIdentifiers: [],
+            options: []
+        )
+    }
+}
+
+extension NotificationCategory {
+    static var allCategories: Set<UNNotificationCategory> {
+        let categories = NotificationCategory.allCases.map { $0.make() }
+        return Set(categories)
+    }
 }

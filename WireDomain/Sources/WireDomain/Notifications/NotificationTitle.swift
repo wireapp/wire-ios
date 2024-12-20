@@ -20,28 +20,33 @@ import Foundation
 
 enum NotificationTitle {
     
-    case newMessage(Format)
-    
-    enum Format {
-        case senderOnly(sender: String)
-        case senderInTeam(sender: String, team: String)
-        case conversationOnly(conversation: String)
-        case conversationInTeam(conversation: String, team: String)
-    }
+    case newMessage(MessageTitleFormat)
     
     func make() -> String {
         switch self {
-        case .newMessage(let format):
-            switch format {
-            case .senderOnly(let sender):
-                "\(sender)"
-            case .senderInTeam(let sender, let team):
-                "\(sender) in \(team)"
-            case .conversationOnly(let conversation):
-                "\(conversation)"
-            case .conversationInTeam(let conversation, let team):
-                "\(conversation) in \(team)"
-            }
+        case .newMessage(let messageFormat):
+            let newMessageTitleComposer = NewMessageNotificationTitleComposer(
+                format: messageFormat
+            )
+            
+            return newMessageTitleComposer.make()
         }
     }
+ 
+}
+
+extension NotificationTitle {
+    
+    /// The expected formats for the title of a new message notification.
+    enum MessageTitleFormat {
+        /// `[sender name]`
+        case sender(sender: String)
+        /// `[sender name] in [team name]`
+        case senderInTeam(sender: String, team: String)
+        /// `[conversation name]`
+        case conversation(conversation: String)
+        /// `[conversation name] in [team name]`
+        case conversationInTeam(conversation: String, team: String)
+    }
+    
 }
