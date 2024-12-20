@@ -24,6 +24,11 @@ import struct WireAPI.HTTPRequest
 /// Provides convenience to snapshot `HTTPRequest` objects.
 struct HTTPRequestSnapshotHelper {
 
+    private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
+        let ci = ProcessInfo.processInfo.environment["CI"]
+        return (ci == nil || ci?.isEmpty == true) ? .missing : .never
+    }
+
     /// Snapshot test a given request
     /// - Parameters:
     ///   - request: httpRequest to verify
@@ -40,9 +45,7 @@ struct HTTPRequestSnapshotHelper {
         function: String = #function,
         line: UInt = #line
     ) {
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             let errorMessage = verifySnapshot(
                 of: request,
                 as: .dump,
@@ -62,7 +65,8 @@ struct HTTPRequestSnapshotHelper {
     /// - Parameters:
     ///   - request: url request to verify
     ///   - resourceName: name of the file containing the expected request description
-    ///   - record: if true, a new snapshot will be recorded, overwriting an existing snapshot.
+    ///   - record: if true, a new snapshot will be recorded, overwriting an existing snapshot. If false it record only
+    /// if missing. If nil, it fallbacks to defaultRecordMode
     ///   - file: The file invoking the test.
     ///   - function: The method invoking the test.
     ///   - line: The line invoking the test.
@@ -71,14 +75,12 @@ struct HTTPRequestSnapshotHelper {
     func verifyRequest(
         request: URLRequest,
         resourceName: String? = nil,
-        record: Bool = false,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         function: String = #function,
         line: UInt = #line
     ) {
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             let errorMessage = verifySnapshot(
                 of: request,
                 as: .curl,
