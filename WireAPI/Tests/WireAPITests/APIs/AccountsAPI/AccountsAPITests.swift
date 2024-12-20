@@ -36,7 +36,7 @@ final class AccountsAPITests: XCTestCase {
     }
 
     override func tearDown() {
-        apiSnapshotHelper = nil
+        apiSnapshotHelper = nil // this is a comment
     }
 
     // MARK: - Request generation
