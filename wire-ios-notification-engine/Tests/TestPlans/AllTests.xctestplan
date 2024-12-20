@@ -9,8 +9,19 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireNotificationEngine.xcodeproj",
+      "identifier" : "EE761664299E60C9005DB75F",
+      "name" : "WireNotificationEngineTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [

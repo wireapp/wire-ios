@@ -329,12 +329,16 @@ private func hostedView(
             stepTitle: step.title
         )
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-        .ignoresSafeArea(.container, edges: .bottom)
     )
     vc.title = step.title
     vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
         action: UIAction { _ in
-            transitionCallback(.toCancellationAlert)
+            switch step {
+            case .teamPlanSelection, .teamName, .confirmation:
+                transitionCallback(.toCancellationAlert)
+            case .completion:
+                transitionCallback(.toApp)
+            }
         },
         accessibilityLabel: step.closeButtonAccessibilityLabel
     )
