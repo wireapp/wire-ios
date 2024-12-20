@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+import Clibsodium
 
 public extension ChaCha20Poly1305 {
 
@@ -32,9 +33,9 @@ public extension ChaCha20Poly1305 {
             /// Decryption failed to incorrect key, malformed message
             case decryptionFailed
             /// Failure reading input stream
-            case readError(Error)
+            case readError(any Error)
             /// Failure writing to output stream
-            case writeError(Error)
+            case writeError(any Error)
             /// Stream end was reached while expecting more data
             case unexpectedStreamEnd
             /// Failure generating a key.

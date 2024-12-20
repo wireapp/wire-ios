@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Clibsodium
 import Foundation
+import WireCrypto
 import WireUtilities
 
 public extension ChaCha20Poly1305 {

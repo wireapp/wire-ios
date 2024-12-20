@@ -20,7 +20,7 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 
 jobs:
   changelog:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       changelog-url: ${{ steps.expose-url.outputs.changelog }}
       changelog-name: ${{ steps.expose-url.outputs.changelog-name }}
