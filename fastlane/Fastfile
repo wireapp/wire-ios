@@ -82,7 +82,7 @@ platform :ios do
     lane :test_only_frameworks do |options|
         frameworks = Framework.all
 
-        folders = options[:folders].filter { |f| !["fastlane", "scripts", "carthage"].include?(f) }.split(',')
+        folders = options[:folders].split(',').filter { |f| !["fastlane", "scripts", "carthage"].include?(f) }
         matching_frameworks = folders.map { |folder| frameworks[folder] }
 
         framework_schemes = matching_frameworks.map { |f| f.scheme }
@@ -124,7 +124,7 @@ platform :ios do
     lane :generate_framework_schemes do |options|
         frameworks = Framework.all      
 
-        folders = options[:folders].filter { |f| !["fastlane", "scripts", "carthage"].include?(f) }.split(',')
+        folders = options[:folders].split(',').filter { |f| !["fastlane", "scripts", "carthage"].include?(f) }
         matching_frameworks = folders.map { |folder| frameworks[folder] }
         
         unique_schemes = matching_frameworks.compact.map do |framework|
