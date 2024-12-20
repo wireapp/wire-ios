@@ -80,12 +80,13 @@ platform :ios do
 
     desc "Test Frameworks without dependencies given folders"
     lane :test_only_frameworks do |options|
-        if (options[:folders].nil? || options[:folders].empty?)
-            frameworks = Framework.all
+        frameworks = Framework.all
 
-            framework_schemes = frameworks.map { |f| f.scheme }
-            run_tests_frameworks(framework_schemes, options)
-        end
+        folders = options[:folders].split(',')
+        matching_frameworks = folders.map { |folder| frameworks[folder] }
+
+        framework_schemes = matching_frameworks.map { |f| f.scheme }
+        run_tests_frameworks(framework_schemes, options)
     end
 
     desc "Test one framework only"
