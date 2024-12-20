@@ -27,7 +27,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     public enum Action: Sendable {
         case cancel
         case toLearnMoreAboutPlans
-        case completionGoToApp
+        case completionDismiss
+        case completionGoToConversations
         case completionGoToTeamManagement
     }
 
@@ -94,7 +95,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case toTeamCreation(teamName: String)
         case toError(error: any Error)
         case toCompletion(teamName: String)
-        case toApp
+        case toCompletionDismiss
+        case toConversations
         case toTeamManagement
     }
 
@@ -110,6 +112,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     let privacyPolicyURL: String
     let useCase: any IndividualToTeamMigrationUseCase
     let userProfileName: String
+    private var analyticsFlowCompletionAction: AnalyticsEvent.User.IndividualToTeamMigration.CompletedAction?
     private let analyticsEventTracker: (any AnalyticsEventTracker)?
 
     public init(
@@ -165,6 +168,14 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         transition(to: .toPlans)
     }
 
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if isBeingDismissed {
+            analyticsEventTracker?
+                .trackEvent(.User.personalTeamCreationFlowCompleted(action: analyticsFlowCompletionAction))
+        }
+    }
+
     @MainActor
     func transition(to transition: Transition) {
         switch transition {
@@ -213,7 +224,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             currentStep = step
             let vc = hostedView(
                 for: step,
-                stepIndex: 4,
+                stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
@@ -231,16 +242,26 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             currentStep = step
             let vc = hostedView(
                 for: step,
-                stepIndex: childController.viewControllers.count + 1,
+                stepIndex: 4,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.setViewControllers([vc], animated: true)
+<<<<<<< HEAD
         case .toApp:
             analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .backToWire))
             actionCallback(.completionGoToApp)
+=======
+            isModalInPresentation = false
+        case .toCompletionDismiss:
+            analyticsFlowCompletionAction = nil
+            actionCallback(.completionDismiss)
+        case .toConversations:
+            analyticsFlowCompletionAction = .backToWire
+            actionCallback(.completionGoToConversations)
+>>>>>>> dbe41d57a8 (fix: dismiss to conversations on "Back To Wire" and "Go To Team Management - WPB-15082 (#2305))
         case .toTeamManagement:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .openTeamManagement))
+            analyticsFlowCompletionAction = .openTeamManagement
             actionCallback(.completionGoToTeamManagement)
         }
     }
@@ -337,7 +358,7 @@ private func hostedView(
             case .teamPlanSelection, .teamName, .confirmation:
                 transitionCallback(.toCancellationAlert)
             case .completion:
-                transitionCallback(.toApp)
+                transitionCallback(.toCompletionDismiss)
             }
         },
         accessibilityLabel: step.closeButtonAccessibilityLabel
@@ -391,7 +412,7 @@ private func viewFor(
         CompletionView(profileName: profileName, teamName: teamName) { action in
             switch action {
             case .goBack:
-                transitionCallback(.toApp)
+                transitionCallback(.toConversations)
             case .goToTeamManagement:
                 transitionCallback(.toTeamManagement)
             }
