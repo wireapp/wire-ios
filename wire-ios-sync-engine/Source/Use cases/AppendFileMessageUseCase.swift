@@ -17,6 +17,7 @@
 //
 
 import WireAnalytics
+import WireLogging
 import WireDataModel
 
 public protocol AppendFileMessageUseCaseProtocol {
@@ -29,9 +30,14 @@ public protocol AppendFileMessageUseCaseProtocol {
 public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    var analyticsLogger: WireLogger
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(
+        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        analyticsLogger: WireLogger
+    ) {
         self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsLogger = analyticsLogger
     }
 
     public func invoke(
@@ -50,13 +56,20 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
             } else if fileMessageData.isPDF {
                 contributionType = .fileMessage
             }
+        }
 
+        let conversationType = SegmentationEntry.Conversation.ConversationType(conversation.conversationType)
+        guard let conversationType else {
+            return analyticsLogger.error(
+                "AppendFileMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
+                "converted to SegmentationEntry.Conversation.ConversationType."
+            )
         }
 
         analyticsEventTracker?.trackEvent(
             .Contributed.conversationContribution(
                 contributionType,
-                conversationType: .init(conversation.conversationType),
+                conversationType: conversationType,
                 conversationSize: conversation.localParticipants.count
             )
         )

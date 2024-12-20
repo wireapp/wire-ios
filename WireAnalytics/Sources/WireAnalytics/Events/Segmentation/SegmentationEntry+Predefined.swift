@@ -61,13 +61,20 @@ extension SegmentationEntry {
         .init(key: "call_video", value: value)
     }
 
+    /// Creates a `SegmentationEntry` for the type of conversation.
+
+    static func conversationType(_ value: SegmentationEntry.Conversation.ConversationType) -> Self {
+        .init(key: "conversation_type", value: value.rawValue)
+    }
+
     /// Creates a `SegmentationEntry` for the type of group in a conversation.
     ///
     /// - Parameter value: The `ConversationType` of the conversation.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func groupType(_ value: ConversationType) -> Self {
-        .init(key: "group_type", value: value.analyticsValue)
+    @available(*, deprecated, renamed: "conversationType")
+    static func groupType(_ value: SegmentationEntry.Conversation.LegacyConversationType) -> Self {
+        .init(key: "group_type", value: value.rawValue)
     }
 
     /// Creates a `SegmentationEntry` for the type of contribution in a conversation.
@@ -77,12 +84,6 @@ extension SegmentationEntry {
 
     static func contributionType(_ value: ConversationContributionType) -> Self {
         .init(key: "contribution_type", value: value.analyticsValue)
-    }
-
-    /// Creates a `SegmentationEntry` for the type of conversation.
-
-    static func conversationType(_ value: ConversationType_) -> Self {
-        .init(key: "conversation_type", value: value.rawValue)
     }
 
     /// Creates a `SegmentationEntry` for the size of a conversation.

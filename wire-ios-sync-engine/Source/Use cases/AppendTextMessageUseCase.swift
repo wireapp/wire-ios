@@ -17,6 +17,7 @@
 //
 
 import WireAnalytics
+import WireLogging
 import WireDataModel
 
 public protocol AppendTextMessageUseCaseProtocol {
@@ -33,9 +34,14 @@ public protocol AppendTextMessageUseCaseProtocol {
 public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    var analyticsLogger: WireLogger
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(
+        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        analyticsLogger: WireLogger
+    ) {
         self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsLogger = analyticsLogger
     }
 
     public func invoke(
@@ -53,10 +59,19 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
             nonce: UUID()
         )
         conversation.draftMessage = nil
+
+        let conversationType = SegmentationEntry.Conversation.ConversationType(conversation.conversationType)
+        guard let conversationType else {
+            return analyticsLogger.error(
+                "AppendTextMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
+                "converted to SegmentationEntry.Conversation.ConversationType."
+            )
+        }
+
         analyticsEventTracker?.trackEvent(
             .Contributed.conversationContribution(
                 .textMessage,
-                conversationType: .init(conversation.conversationType),
+                conversationType: conversationType,
                 conversationSize: conversation.localParticipants.count
             )
         )

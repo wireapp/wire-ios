@@ -460,7 +460,6 @@
 		E97296252C4A784300C4F1DB /* MessageAppendableConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97296242C4A784300C4F1DB /* MessageAppendableConversation.swift */; };
 		E97296282C4AA7D300C4F1DB /* AppendImageMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97296262C4AA72100C4F1DB /* AppendImageMessageUseCaseTests.swift */; };
 		E9816C8E2CC9231500D77F22 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A602C5BBF13009C41DE /* WireAPI */; };
-		E9816C942CC925C400D77F22 /* AnalyticsEventTrackerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9816C932CC925AC00D77F22 /* AnalyticsEventTrackerProvider.swift */; };
 		E98E5DFC2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */; };
 		E998FE8E2C184C9800EAA672 /* UserCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = E998FE8D2C184C9800EAA672 /* UserCredentials.swift */; };
 		E9A71BD32C32EA8B0027EC01 /* AppendTextMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A71BD22C32EA8B0027EC01 /* AppendTextMessageUseCase.swift */; };
@@ -1158,7 +1157,6 @@
 		E96970572C8F3546009F037C /* AppendFileMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendFileMessageUseCaseTests.swift; sourceTree = "<group>"; };
 		E97296242C4A784300C4F1DB /* MessageAppendableConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAppendableConversation.swift; sourceTree = "<group>"; };
 		E97296262C4AA72100C4F1DB /* AppendImageMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendImageMessageUseCaseTests.swift; sourceTree = "<group>"; };
-		E9816C932CC925AC00D77F22 /* AnalyticsEventTrackerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEventTrackerProvider.swift; sourceTree = "<group>"; };
 		E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCaseTests.swift; sourceTree = "<group>"; };
 		E998FE8D2C184C9800EAA672 /* UserCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCredentials.swift; sourceTree = "<group>"; };
 		E9A71BD22C32EA8B0027EC01 /* AppendTextMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendTextMessageUseCase.swift; sourceTree = "<group>"; };
@@ -1355,6 +1353,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		59C60D1A2D00672300CAC544 /* Transcoders */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Transcoders; sourceTree = "<group>"; };
+		59D0583B2D158D0D00B687F2 /* Analytics */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Analytics; sourceTree = "<group>"; };
 		59D264272CF722430005317F /* TestsPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestsPlans; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -1808,6 +1807,7 @@
 		5423B98C191A49CD0044347D /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				59D0583B2D158D0D00B687F2 /* Analytics */,
 				060C06662B7619C600B484C6 /* E2EI */,
 				EFF9403C2240FE12004F3115 /* DeepLink */,
 				0928E38F1BA2CFF60057232E /* E2EE */,
@@ -2472,7 +2472,6 @@
 		E6C983EF2B986B2900D55177 /* ZMUserSession */ = {
 			isa = PBXGroup;
 			children = (
-				E9816C932CC925AC00D77F22 /* AnalyticsEventTrackerProvider.swift */,
 				E623B6362BD688A100F91B37 /* Dependencies */,
 				E6BD767E2BDBAAE300FB1F8B /* CoreDataStack+Caches.swift */,
 				EE419B57256FEA3D004618E2 /* ZMUserSession.Configuration.swift */,
@@ -2829,6 +2828,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				59D0583B2D158D0D00B687F2 /* Analytics */,
 			);
 			name = "WireSyncEngine-ios";
 			packageProductDependencies = (
@@ -3368,7 +3370,6 @@
 				16F5F16C1E4092C00062F0AE /* NSManagedObjectContext+CTCallCenter.swift in Sources */,
 				09531F181AE960E300B8556A /* ZMLoginCodeRequestTranscoder.m in Sources */,
 				06D16AB52BA0624800D5A28A /* IsE2EICertificateEnrollmentRequiredUseCase.swift in Sources */,
-				E9816C942CC925C400D77F22 /* AnalyticsEventTrackerProvider.swift in Sources */,
 				F148F6671FB9AA7600BD6909 /* UnregisteredTeam.swift in Sources */,
 				1672A64523473EA100380537 /* LabelDownstreamRequestStrategy.swift in Sources */,
 				09BCDB8F1BCE7F000020DCC7 /* ZMAPSMessageDecoder.m in Sources */,

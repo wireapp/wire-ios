@@ -107,6 +107,8 @@ public final class ZMUserSession: NSObject {
 
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
+    let analyiticsLogger: WireLogger
+
     // MARK: Computed Properties
 
     var isPerformingSync = true {
@@ -424,6 +426,7 @@ public final class ZMUserSession: NSObject {
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
+        analyiticsLogger = .analytics
 
         super.init()
     }

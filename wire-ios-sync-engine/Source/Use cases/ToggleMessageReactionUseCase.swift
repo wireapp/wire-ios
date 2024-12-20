@@ -17,6 +17,7 @@
 //
 
 import WireAnalytics
+import WireLogging
 import WireDataModel
 
 public protocol ToggleMessageReactionUseCaseProtocol {
@@ -31,9 +32,14 @@ public protocol ToggleMessageReactionUseCaseProtocol {
 public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    var analyticsLogger: WireLogger
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(
+        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        analyticsLogger: WireLogger
+    ) {
         self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsLogger = analyticsLogger
     }
 
     public func invoke(
@@ -47,10 +53,19 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
         } else {
             ZMMessage.addReaction(reaction, to: message)
             if reaction == "❤️" {
+
+                let conversationType = SegmentationEntry.Conversation.ConversationType(conversation.conversationType)
+                guard let conversationType else {
+                    return analyticsLogger.error(
+                        "ToggleMessageReactionUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
+                        "converted to SegmentationEntry.Conversation.ConversationType."
+                    )
+                }
+
                 analyticsEventTracker?.trackEvent(
                     .Contributed.conversationContribution(
                         .likeMessage,
-                        conversationType: .init(conversation.conversationType),
+                        conversationType: conversationType,
                         conversationSize: conversation.localParticipants.count
                     )
                 )

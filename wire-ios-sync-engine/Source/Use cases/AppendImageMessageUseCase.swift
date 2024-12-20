@@ -18,6 +18,7 @@
 
 import WireAnalytics
 import WireDataModel
+import WireLogging
 
 public protocol AppendImageMessageUseCaseProtocol {
 
@@ -30,9 +31,14 @@ public protocol AppendImageMessageUseCaseProtocol {
 public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    var analyticsLogger: WireLogger
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(
+        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        analyticsLogger: WireLogger
+    ) {
         self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsLogger = analyticsLogger
     }
 
     public func invoke(
@@ -40,10 +46,19 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
         in conversation: some MessageAppendableConversation
     ) throws {
         try conversation.appendImage(from: imageData, nonce: UUID())
+
+        let conversationType = SegmentationEntry.Conversation.ConversationType(conversation.conversationType)
+        guard let conversationType else {
+            return analyticsLogger.error(
+                "AppendImageMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
+                "converted to SegmentationEntry.Conversation.ConversationType."
+            )
+        }
+
         analyticsEventTracker?.trackEvent(
             .Contributed.conversationContribution(
                 .imageMessage,
-                conversationType: .init(conversation.conversationType),
+                conversationType: conversationType,
                 conversationSize: conversation.localParticipants.count
             )
         )

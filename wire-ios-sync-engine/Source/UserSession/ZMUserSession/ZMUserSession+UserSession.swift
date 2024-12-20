@@ -334,27 +334,45 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol {
-        AppendTextMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+        AppendTextMessageUseCase(
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsLogger: analyiticsLogger
+        )
     }
 
     public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {
-        AppendImageMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+        AppendImageMessageUseCase(
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsLogger: analyiticsLogger
+        )
     }
 
     public func makeAppendKnockMessageUseCase() -> AppendKnockMessageUseCaseProtocol {
-        AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+        AppendKnockMessageUseCase(
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsLogger: analyiticsLogger
+        )
     }
 
     public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
-        AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+        AppendLocationMessageUseCase(
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsLogger: analyiticsLogger
+        )
     }
 
     public func makeAppendFileMessageUseCase() -> AppendFileMessageUseCaseProtocol {
-        AppendFileMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+        AppendFileMessageUseCase(
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsLogger: analyiticsLogger
+        )
     }
 
     public func makeToggleMessageReactionUseCase() -> ToggleMessageReactionUseCaseProtocol {
-        ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
+        ToggleMessageReactionUseCase(
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsLogger: analyiticsLogger
+        )
     }
 
     public func makeCallQualitySurveyUseCase() -> SubmitCallQualitySurveyUseCaseProtocol {

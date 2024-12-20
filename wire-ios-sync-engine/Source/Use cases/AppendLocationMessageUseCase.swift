@@ -18,6 +18,7 @@
 
 import WireAnalytics
 import WireDataModel
+import WireLogging
 
 public protocol AppendLocationMessagekUseCaseProtocol {
 
@@ -31,9 +32,14 @@ public protocol AppendLocationMessagekUseCaseProtocol {
 public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    var analyticsLogger: WireLogger
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(
+        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        analyticsLogger: WireLogger
+    ) {
         self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsLogger = analyticsLogger
     }
 
     public func invoke(
@@ -43,10 +49,18 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
 
         try conversation.appendLocation(with: locationData, nonce: UUID())
 
+        let conversationType = SegmentationEntry.Conversation.ConversationType(conversation.conversationType)
+        guard let conversationType else {
+            return analyticsLogger.error(
+                "AppendLocationMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
+                "converted to SegmentationEntry.Conversation.ConversationType."
+            )
+        }
+
         analyticsEventTracker?.trackEvent(
             .Contributed.conversationContribution(
                 .locationMessage,
-                conversationType: .init(conversation.conversationType),
+                conversationType: conversationType,
                 conversationSize: conversation.localParticipants.count
             )
         )
