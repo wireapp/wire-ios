@@ -63,7 +63,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         )
 
         store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-        store.storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod = { _, _, _ in}
+        store.storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod = { _, _, _ in }
         store.storeFailedConversationConversationIDConversationDomain_MockMethod = { _, _ in }
 
         // When
@@ -88,7 +88,8 @@ final class PullAllConversationsSyncTests: XCTestCase {
         XCTAssertEqual(storeFoundInvocations[0].isFederationEnabled, Scaffolding.isFederationEnabled)
         XCTAssertEqual(storeFoundInvocations[0].isMLSEnabled, Scaffolding.isMLSEnabled)
 
-        let storeNotFoundInvocations = store.storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
+        let storeNotFoundInvocations = store
+            .storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
         try XCTAssertCount(storeNotFoundInvocations, count: 1)
         XCTAssertEqual(storeNotFoundInvocations[0].needsBackendUpdate, true)
         XCTAssertEqual(storeNotFoundInvocations[0].conversationID, Scaffolding.conversationID2.uuid)
@@ -118,7 +119,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         )
 
         store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-        store.storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod = { _, _, _ in}
+        store.storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod = { _, _, _ in }
         store.storeFailedConversationConversationIDConversationDomain_MockMethod = { _, _ in }
 
         // When
@@ -143,7 +144,8 @@ final class PullAllConversationsSyncTests: XCTestCase {
         XCTAssertEqual(storeFoundInvocations[0].isFederationEnabled, Scaffolding.isFederationEnabled)
         XCTAssertEqual(storeFoundInvocations[0].isMLSEnabled, Scaffolding.isMLSEnabled)
 
-        let storeNotFoundInvocations = store.storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
+        let storeNotFoundInvocations = store
+            .storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
         try XCTAssertCount(storeNotFoundInvocations, count: 1)
         XCTAssertEqual(storeNotFoundInvocations[0].needsBackendUpdate, true)
         XCTAssertEqual(storeNotFoundInvocations[0].conversationID, Scaffolding.conversationID2.uuid)

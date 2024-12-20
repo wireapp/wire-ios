@@ -71,7 +71,7 @@ private enum Scaffolding {
             name: "label 2",
             type: 1,
             conversationIDs: [UUID()]
-        ),
+        )
     ]
 
     static var localLabels: [ConversationLabelInfo] {
