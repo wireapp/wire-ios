@@ -19,13 +19,6 @@
 #include "./warnings.xcconfig"
 #include "../version.xcconfig"
 
-// Architectures
-//
-SDKROOT = iphoneos
-ARCHS[sdk=iphoneos*] = arm64
-ARCHS[sdk=iphonesimulator*] = x86_64
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator
-
 // Code Signing
 //
 CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
