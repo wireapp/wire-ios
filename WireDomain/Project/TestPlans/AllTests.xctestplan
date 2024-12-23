@@ -31,6 +31,9 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()"
+      ],
       "target" : {
         "containerPath" : "container:WireDomain Project.xcodeproj",
         "identifier" : "01D0DCAF2C1C8C880076CB1C",

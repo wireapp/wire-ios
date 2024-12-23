@@ -77,7 +77,7 @@ public extension ConversationAccessMode {
 }
 
 /// Defines who can join the conversation.
-public enum ConversationAccessRole: String {
+public enum ConversationAccessRole: String, Equatable {
     /// Only the team member can join.
     case team
     /// Only users who have verified their phone number / email can join.

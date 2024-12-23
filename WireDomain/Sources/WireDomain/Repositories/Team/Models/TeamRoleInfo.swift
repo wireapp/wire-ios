@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct TeamRoleInfo: Sendable {
+public struct TeamRoleInfo: Equatable, Sendable {
     let role: String
     let actions: [String]
 }

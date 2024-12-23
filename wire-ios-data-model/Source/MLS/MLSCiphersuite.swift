@@ -19,7 +19,7 @@
 import Foundation
 
 @objc
-public enum MLSCipherSuite: Int, Codable, CustomStringConvertible {
+public enum MLSCipherSuite: Int, Codable, Equatable, CustomStringConvertible {
 
     case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
     case MLS_128_DHKEMP256_AES128GCM_SHA256_P256 = 2

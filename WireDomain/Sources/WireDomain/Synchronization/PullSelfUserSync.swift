@@ -17,34 +17,39 @@
 //
 
 import Foundation
+import WireAPI
 
-/// Represents the role a user can have in a conversation.
-///
-/// Each member of a conversation is assigned a role which allows them
-/// to perform a specific set of actions in that conversation.
+protocol PullSelfUserSyncProtocol {
 
-public struct ConversationRole: Equatable, Sendable {
+    func pull() async throws
 
-    /// The name of the role.
+}
 
-    public let name: String
+/// An object to keep the local self user up to date
+/// with the remote self user.
 
-    /// The actions that can be performed in the role.
+struct PullSelfUserSync: PullSelfUserSyncProtocol {
 
-    public let actions: Set<ConversationAction>
+    private let api: any SelfUserAPI
+    private let store: any UserLocalStoreProtocol
 
-    /// Create a new `ConversationRole`.
-    ///
-    /// - Parameters:
-    ///   - name: The name of the role.
-    ///   - actions: The actions that can be performed in the role.
-
-    public init(
-        name: String,
-        actions: Set<ConversationAction>
+    init(
+        api: any SelfUserAPI,
+        store: any UserLocalStoreProtocol
     ) {
-        self.name = name
-        self.actions = actions
+        self.api = api
+        self.store = store
+    }
+
+    /// Fetch the self user from remote, then create or update
+    /// it locally.
+
+    func pull() async throws {
+        let remoteSelfUser = try await api.getSelfUser()
+
+        await store.persistUser(
+            userInfo: remoteSelfUser.toDomainModel()
+        )
     }
 
 }

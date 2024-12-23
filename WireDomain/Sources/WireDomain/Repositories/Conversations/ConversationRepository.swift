@@ -225,6 +225,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     private let backendInfo: BackendInfo
     private let mlsProvider: MLSProvider
 
+    private let pullAllConversationsSync: PullAllConversationsSync
+
     // MARK: - Object lifecycle
 
     public init(
@@ -243,6 +245,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         self.messageRepository = messageRepository
         self.backendInfo = backendInfo
         self.mlsProvider = mlsProvider
+        self.pullAllConversationsSync = PullAllConversationsSync(
+            localDomain: backendInfo.domain,
+            isFederationEnabled: backendInfo.isFederationEnabled,
+            isMLSEnabled: backendInfo.isMLSEnabled,
+            api: conversationsAPI,
+            store: conversationsLocalStore
+        )
     }
 
     // MARK: - Public
@@ -313,62 +322,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func pullConversations() async throws {
-        var qualifiedIds: [WireAPI.QualifiedID]
-
-        if let result =
-            try? await conversationsAPI
-                .getLegacyConversationIdentifiers() {  // only for api v0 (see `ConversationsAPIV0` method comment)
-            let uuids = try await result.reduce(into: [UUID]()) { partialResult, uuids in
-                partialResult.append(contentsOf: uuids)
-            }
-            qualifiedIds = uuids.map {
-                WireAPI.QualifiedID(uuid: $0, domain: backendInfo.domain)
-            }
-        } else {
-            // fallback to api versions > v0.
-            let ids = try await conversationsAPI.getConversationIdentifiers()
-            qualifiedIds = try await ids.reduce(into: [WireAPI.QualifiedID]()) { partialResult, uuids in
-                partialResult.append(contentsOf: uuids)
-            }
-        }
-
-        let conversationList = try await conversationsAPI.getConversations(
-            for: qualifiedIds
-        )
-
-        await withThrowingTaskGroup(of: Void.self) { taskGroup in
-            let foundConversations = conversationList.found
-            let missingConversationsQualifiedIds = conversationList.notFound
-            let failedConversationsQualifiedIds = conversationList.failed
-
-            for conversation in foundConversations {
-                taskGroup.addTask { [self] in
-                    await storeConversation(
-                        conversation.toDomainModel(),
-                        timestamp: .now
-                    )
-                }
-            }
-
-            for id in missingConversationsQualifiedIds {
-                taskGroup.addTask { [self] in
-                    await conversationsLocalStore.storeConversation(
-                        needsBackendUpdate: true,
-                        conversationID: id.uuid,
-                        conversationDomain: id.domain
-                    )
-                }
-            }
-
-            for id in failedConversationsQualifiedIds {
-                taskGroup.addTask { [self] in
-                    await conversationsLocalStore.storeFailedConversation(
-                        conversationID: id.uuid,
-                        conversationDomain: id.domain
-                    )
-                }
-            }
-        }
+        try await pullAllConversationsSync.pull()
     }
 
     public func pullMLSOneToOneConversation(

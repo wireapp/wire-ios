@@ -20,7 +20,7 @@ import WireTransport
 
 /// This enum matches the backend convention for type
 @objc(ZMBackendConversationType)
-public enum BackendConversationType: Int {
+public enum BackendConversationType: Int, Equatable {
     case group = 0
     case `self` = 1
     case oneOnOne = 2
