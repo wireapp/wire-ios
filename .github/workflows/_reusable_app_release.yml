@@ -212,7 +212,6 @@ jobs:
           status: ${{ job.status }}
           text: |
             **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test 🚀
-            **COUNTLY_ENABLED:** ${{ env.ENABLE_COUNTLY }}
             **DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}
             **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
             **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
