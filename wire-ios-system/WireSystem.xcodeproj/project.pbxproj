@@ -395,6 +395,8 @@
 			baseConfigurationReferenceAnchor = 5939CB6D2CEBB29F000F6FAD /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project-debug.xcconfig";
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Debug;
@@ -404,6 +406,7 @@
 			baseConfigurationReferenceAnchor = 5939CB6D2CEBB29F000F6FAD /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project.xcconfig";
 			buildSettings = {
+				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Release;
@@ -416,7 +419,6 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystem;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -530,10 +532,8 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystemSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -614,7 +614,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystemSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
