@@ -18,23 +18,30 @@
 
 import SwiftUI
 
-struct TertiaryButtonStyle: SwiftUI.ButtonStyle {
+struct LinkButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.isFocused) var isFocused
 
-    typealias Theme = ColorTheme.Buttons.Tertiary
+    typealias Theme = ColorTheme.Buttons.Link
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .lineLimit(1)
+            .underline()
             .padding(8)
-            .background(isEnabled ? Theme.enabled.color : Theme.disabled.color)
-            .foregroundStyle(isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color)
-            .wireTextStyle(.buttonSmall)
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isEnabled ? Theme.enabledOutline.color : Theme.disabledOutline.color, lineWidth: 1)
-            }
-            .clipShape(.rect(cornerRadius: 12))
+            .foregroundStyle(foregroundColor(for: isEnabled, and: isFocused))
+            .wireTextStyle(.body1)
+    }
+}
+
+
+private func foregroundColor(for isEnabled: Bool, and isFocused: Bool) -> Color {
+    switch (isEnabled, isFocused) {
+    case (false, _):
+        return ColorTheme.Buttons.Link.onDisabled.color
+    case (true, true):
+        return ColorTheme.Buttons.Link.onFocus.color
+    case (true, false):
+        return ColorTheme.Buttons.Link.onEnabled.color
     }
 }

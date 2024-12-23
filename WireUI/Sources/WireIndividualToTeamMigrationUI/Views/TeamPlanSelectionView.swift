@@ -61,7 +61,7 @@ struct TeamPlanSelectionView: View {
                         .lineLimit(nil)
                 }
             )
-            .wireButtonStyle(.tertiary)
+            .wireButtonStyle(.link)
             .padding(.top, 4)
             Spacer()
             Button(

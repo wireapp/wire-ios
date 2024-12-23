@@ -112,16 +112,22 @@ final class SelfProfileViewController: UIViewController {
             userSession.enqueue {
                 selfUser.refreshTeamData()
             }
-        } else if
-            let backendInfoApiVersion = BackendInfo.apiVersion,
-            let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-            apiVersion >= .v7 {
-            self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
-                actionCallback: { [weak self] action in
-                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
-                }
-            )
         }
+//        else if
+//            let backendInfoApiVersion = BackendInfo.apiVersion,
+//            let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+//            apiVersion >= .v7 {
+//            self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
+//                actionCallback: { [weak self] action in
+//                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
+//                }
+//            )
+//        }
+        self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
+            actionCallback: { [weak self] action in
+                self?.onTeamCreationBannerInteraction(action, apiVersion: .v7)
+            }
+        )
     }
 
     @available(*, unavailable)
@@ -253,11 +259,15 @@ final class SelfProfileViewController: UIViewController {
         case .createWireTeam:
             let sessionContextProvider = userSession.contextProvider
             let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
-            guard let userName = user.normalizedName,
-                  let useCase = SessionManager.shared?.activeUserSession?
-                  .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
+//            guard let userName = user.normalizedName,
+//                  let useCase = SessionManager.shared?.activeUserSession?
+//                  .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
+//                return
+//            }
+            guard let userName = user.normalizedName else {
                 return
             }
+            let useCase = MockUseCase.success()
             userDidTapCreateTeam(useCase: useCase, userName: userName)
         }
     }
