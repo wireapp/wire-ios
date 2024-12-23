@@ -59,8 +59,16 @@ public extension ZMUser {
             return
         }
 
-        let team = Team.fetchOrCreate(with: teamIdentifier, in: managedObjectContext)
-        team.needsToBeUpdatedFromBackend = true
+        let team: Team
+        if isSelfUser {
+            team = Team.fetchOrCreate(with: teamIdentifier, in: managedObjectContext)
+            team.needsToBeUpdatedFromBackend = true
+            team.needsToRedownloadMembers = true
+        } else if let existingTeam = Team.fetch(with: teamIdentifier, in: managedObjectContext) {
+            team = existingTeam
+        } else {
+            return
+        }
 
         if !isAccountDeleted {
             createMembership(in: team, context: managedObjectContext)
