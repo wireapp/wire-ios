@@ -130,6 +130,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         self.useCase = useCase
         self.userProfileName = userProfileName
         super.init(nibName: nil, bundle: nil)
+        isModalInPresentation = true
     }
 
     public convenience init(
@@ -178,6 +179,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 }
             )
             childController.present(alert, animated: true)
+            isModalInPresentation = true
         case .toPlans:
             let step = Step.teamPlanSelection(features: features)
             currentStep = step
@@ -190,6 +192,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             childController.pushViewController(vc, animated: false) { [analyticsEventTracker] in
                 analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .disclaimer))
             }
+            isModalInPresentation = true
         case .toLearnMoreAboutPlans:
             actionCallback(.toLearnMoreAboutPlans)
         case .toTeamName:
@@ -204,6 +207,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
                 analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .teamName))
             }
+            isModalInPresentation = true
         case let .toConfirmation(teamName):
             let step = Step.confirmation(
                 teamName: teamName,
@@ -220,6 +224,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
                 analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .confirmation))
             }
+            isModalInPresentation = true
         case let .toTeamCreation(teamName: teamName):
             createTeam(named: teamName)
         case let .toError(error as IndividualToTeamMigrationError):
@@ -236,6 +241,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.setViewControllers([vc], animated: true)
+            isModalInPresentation = false
         case .toApp:
             analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .backToWire))
             actionCallback(.completionGoToApp)
@@ -329,7 +335,6 @@ private func hostedView(
             stepTitle: step.title
         )
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-        .ignoresSafeArea(.container, edges: .bottom)
     )
     vc.title = step.title
     vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
