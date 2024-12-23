@@ -34,14 +34,13 @@ struct LinkButtonStyle: SwiftUI.ButtonStyle {
     }
 }
 
-
 private func foregroundColor(for isEnabled: Bool, and isFocused: Bool) -> Color {
     switch (isEnabled, isFocused) {
     case (false, _):
-        return ColorTheme.Buttons.Link.onDisabled.color
+        ColorTheme.Buttons.Link.onDisabled.color
     case (true, true):
-        return ColorTheme.Buttons.Link.onFocus.color
+        ColorTheme.Buttons.Link.onFocus.color
     case (true, false):
-        return ColorTheme.Buttons.Link.onEnabled.color
+        ColorTheme.Buttons.Link.onEnabled.color
     }
 }
