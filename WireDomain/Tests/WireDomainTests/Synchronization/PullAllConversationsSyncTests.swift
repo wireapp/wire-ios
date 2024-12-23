@@ -70,13 +70,6 @@ final class PullAllConversationsSyncTests: XCTestCase {
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getConversationsFor_Invocations.count, 1)
-        XCTAssertEqual(
-            store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
-            1
-        )
-
-        // Then
         XCTAssertEqual(api.getConversationIdentifiers_Invocations.count, 1)
 
         try XCTAssertCount(api.getConversationsFor_Invocations, count: 1)
@@ -101,6 +94,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         XCTAssertEqual(storeFailedInvocations[0].conversationDomain, Scaffolding.conversationID3.domain)
     }
 
+    // TODO: WPB-15185 Re-enable
     func testPull_LegacyIdentifiers() async throws {
         // Mock
         api.getConversationIdentifiers_MockError = ConversationsAPIError.notImplemented
