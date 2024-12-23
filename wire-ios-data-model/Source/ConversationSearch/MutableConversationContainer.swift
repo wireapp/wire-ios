@@ -21,7 +21,5 @@
 public protocol MutableConversationContainer {
     associatedtype Conversation: FilterableConversation
 
-    var conversations: [Conversation] { get }
-
-    mutating func removeConversation(at index: Int)
+    var conversations: [Conversation] { get set }
 }
