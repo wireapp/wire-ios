@@ -501,12 +501,13 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
 extension ConversationListViewModel.Section: MutableConversationContainer {
 
     var conversations: [ZMFilterableConversationAdapter] {
-        items
-            .compactMap { $0.item as? ZMConversation }
-            .map(ZMFilterableConversationAdapter.init(conversation:))
-    }
-
-    mutating func removeConversation(at index: Int) {
-        items.remove(at: index)
+        get {
+            items
+                .compactMap { $0.item as? ZMConversation }
+                .map(ZMFilterableConversationAdapter.init(conversation:))
+        }
+        set {
+            items = newValue.map { ConversationListViewModel.SectionItem(item: $0.conversation, kind: kind) }
+        }
     }
 }
