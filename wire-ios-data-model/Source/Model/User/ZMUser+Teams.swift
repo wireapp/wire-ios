@@ -54,14 +54,11 @@ public extension ZMUser {
     func createOrDeleteMembershipIfBelongingToTeam() {
         guard
             let teamIdentifier,
-            let managedObjectContext,
-            let team = Team.fetch(with: teamIdentifier, in: managedObjectContext)
+            let managedObjectContext
         else {
             return
         }
 
-<<<<<<< HEAD
-=======
         let team: Team
         if isSelfUser {
             team = Team.fetchOrCreate(with: teamIdentifier, in: managedObjectContext)
@@ -73,7 +70,6 @@ public extension ZMUser {
             return
         }
 
->>>>>>> e7a621cf2a (fix: Creating team membership & tests - WPB-15043 (#2325))
         if !isAccountDeleted {
             createMembership(in: team, context: managedObjectContext)
         } else {
