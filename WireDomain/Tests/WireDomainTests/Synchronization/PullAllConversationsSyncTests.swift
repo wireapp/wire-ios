@@ -94,7 +94,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         XCTAssertEqual(storeFailedInvocations[0].conversationDomain, Scaffolding.conversationID3.domain)
     }
 
-    // TODO: WPB-15185 Re-enable
+    // TODO: [WPB-15185] Re-enable
     func testPull_LegacyIdentifiers() async throws {
         // Mock
         api.getConversationIdentifiers_MockError = ConversationsAPIError.notImplemented
