@@ -359,6 +359,7 @@ final class SyncManagerTests: XCTestCase {
         userRepository.pullKnownUsers_MockMethod = {}
         conversationLabelsRepository.pullConversationLabels_MockMethod = {}
         featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
+        backendConfigRepository.pullMLSBackendStatus_MockMethod = {}
         userRepository.pullSelfUser_MockMethod = {}
         teamRepository.pullSelfLegalholdInfo_MockMethod = {}
         pushSupportedProtocolsUseCase.invoke_MockMethod = {}

@@ -55,7 +55,9 @@ final class BackendConfigRepositoryTests: XCTestCase {
                 p512: "BAC3OmJi7rAPFAIXjU"
             )
         )
-        backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
+        backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { newValue in
+            self.backendConfigLocalStore.underlyingIsMLSEnabled = newValue
+        }
 
         // When
         await sut.pullMLSBackendStatus()
@@ -77,7 +79,9 @@ final class BackendConfigRepositoryTests: XCTestCase {
                 p512: nil
             )
         )
-        backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
+        backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { newValue in
+            self.backendConfigLocalStore.underlyingIsMLSEnabled = newValue
+        }
 
         // When
         await sut.pullMLSBackendStatus()
