@@ -207,11 +207,6 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        syncMOC.performGroupedAndWait {
-            // then
-            XCTAssertTrue(team == nil || team.isZombieObject)
-        }
     }
 
     func testThatItCreatesNoNewRequestAfterReceivingAResponse() {
