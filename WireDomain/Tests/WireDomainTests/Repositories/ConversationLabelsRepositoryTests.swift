@@ -57,8 +57,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             Scaffolding.conversationLabel1
         ]
 
-        conversationLabelsLocalStore.storeLabel_MockMethod = { _ in }
-        conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_MockMethod = { _ in }
+        conversationLabelsLocalStore.setLabels_MockMethod = { _ in }
 
         // When
 
@@ -67,15 +66,13 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userPropertiesAPI.getLabels_Invocations.count, 1)
-        XCTAssertEqual(conversationLabelsLocalStore.storeLabel_Invocations.count, 1)
-        XCTAssertEqual(conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_Invocations.count, 1)
+        XCTAssertEqual(conversationLabelsLocalStore.setLabels_Invocations.count, 1)
     }
 
     func testUpdateConversationLabels_It_Invokes_Local_Store_And_User_Properties_API_Methods() async throws {
         // Mock
 
-        conversationLabelsLocalStore.storeLabel_MockMethod = { _ in }
-        conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_MockMethod = { _ in }
+        conversationLabelsLocalStore.setLabels_MockMethod = { _ in }
 
         // When
 
@@ -85,8 +82,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationLabelsLocalStore.storeLabel_Invocations.count, 1)
-        XCTAssertEqual(conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_Invocations.count, 1)
+        XCTAssertEqual(conversationLabelsLocalStore.setLabels_Invocations.count, 1)
     }
 
     private enum Scaffolding {
