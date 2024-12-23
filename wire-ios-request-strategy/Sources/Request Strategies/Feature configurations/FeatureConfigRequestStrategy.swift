@@ -23,6 +23,8 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
+    let mlsFeatureProcessor: MLSFeatureProcessorProtocol
+
     // Slow Sync
 
     private unowned var syncStatus: SyncProgress
@@ -43,11 +45,13 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncProgress: SyncProgress
+        syncProgress: SyncProgress,
+        mlsFeatureProcessor: MLSFeatureProcessorProtocol
     ) {
         self.actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
         self.syncStatus = syncProgress
+        self.mlsFeatureProcessor = mlsFeatureProcessor
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -115,10 +119,14 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         liveEvents: Bool,
         prefetchResult: ZMFetchRequestBatchResult?
     ) {
-        events.forEach(processEvent)
+        for event in events {
+            Task {
+                await processEvent(event)
+            }
+        }
     }
 
-    private func processEvent(_ event: ZMUpdateEvent) {
+    private func processEvent(_ event: ZMUpdateEvent) async {
         guard
             event.type == .featureConfigUpdate,
             let name = event.payload["name"] as? String,
@@ -135,10 +143,11 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             let repository = FeatureRepository(context: managedObjectContext)
 
             let processor = FeatureConfigsPayloadProcessor()
-            try processor.processEventPayload(
+            try await processor.processEventPayload(
                 data: payloadData,
                 featureName: featureName,
-                repository: repository
+                repository: repository,
+                mlsFeatureProcessor: mlsFeatureProcessor
             )
 
             WireLogger.featureConfigs.info("Finished processing update event \(name)")

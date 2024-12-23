@@ -18,6 +18,37 @@
 
 import Foundation
 import protocol WireDataModel.FeatureRepositoryInterface
+import WireDataModel
+
+
+public protocol MLSFeatureProcessorProtocol {
+
+    func processFeatureConfigChanges() async
+
+}
+
+public final class MLSFeatureProcessor: MLSFeatureProcessorProtocol {
+
+    private let  mlsClientSyncManager: MLSClientSyncManagerProtocol
+
+    public init(
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        mlsService: any MLSServiceInterface,
+        syncContext: NSManagedObjectContext,
+        mlsFeature: Feature.MLS
+    ) {
+        self.mlsClientSyncManager = MLSClientSyncManager(
+            coreCryptoProvider: coreCryptoProvider,
+            mlsService: mlsService,
+            syncContext: syncContext,
+            mlsFeature: mlsFeature
+        )
+    }
+
+    public func processFeatureConfigChanges() async {
+        await mlsClientSyncManager.initiateOrSyncMLSClient()
+    }
+}
 
 struct FeatureConfigsPayloadProcessor {
 
@@ -207,8 +238,9 @@ struct FeatureConfigsPayloadProcessor {
     func processEventPayload(
         data: Data,
         featureName: Feature.Name,
-        repository: FeatureRepositoryInterface
-    ) throws {
+        repository: FeatureRepositoryInterface,
+        mlsFeatureProcessor: MLSFeatureProcessorProtocol
+    ) async throws {
         switch featureName {
         case .conferenceCalling:
             if let apiVersion = BackendInfo.apiVersion,
@@ -256,6 +288,7 @@ struct FeatureConfigsPayloadProcessor {
         case .mls:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
             repository.storeMLS(.init(status: response.status, config: response.config))
+            await mlsFeatureProcessor.processFeatureConfigChanges()
 
         case .mlsMigration:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLSMigration.Config>.self, from: data)

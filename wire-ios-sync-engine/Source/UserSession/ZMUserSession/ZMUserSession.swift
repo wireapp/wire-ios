@@ -962,13 +962,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
             if hasRegisteredMLSClient {
                 await performsMLSClientUpdates()
             } else {
-                // If we discover that
-                // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS
-                // client,
-                // we should create one.
-                let needsToRegisterMLSClient = BackendInfo.isMLSEnabled && mlsFeature.isEnabled
-                if let qualifiedSelfClientID, needsToRegisterMLSClient {
-                    await createMLSClient(qualifiedID: qualifiedSelfClientID)
+                if let qualifiedSelfClientID {
+                    await createMLSClientIfNeeded(qualifiedID: qualifiedSelfClientID)
                     await performsMLSClientUpdates()
                 }
             }
@@ -1055,7 +1050,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    private func createMLSClient(qualifiedID: QualifiedClientID) async {
+    func createMLSClientIfNeeded(qualifiedID: QualifiedClientID) async {
+        // If we discover that
+        // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS
+        // client,
+        // we should create one.
+        guard BackendInfo.isMLSEnabled && mlsFeature.isEnabled else { // && there is no mls client already
+            return
+        }
         let mlsClientID = await syncContext.perform {
             MLSClientID(qualifiedClientID: qualifiedID)
         }
@@ -1139,6 +1141,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             // So we perform a slow sync to sync the conversations. This will ensure that
             // the message protocol of each conversation is up-to-date.
             // The client will then join any MLS groups they haven't joined yet.
+            print("11111 did forceSlowSync in didRegisterSelfUserClient")
             syncStatus.forceSlowSync()
         }
 
