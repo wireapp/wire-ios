@@ -20,18 +20,18 @@ import Foundation
 
 struct NewMessageNotificationTitleComposer {
     let format: NotificationTitle.MessageTitleFormat
-    
+
     func make() -> String {
         switch format {
-        case .sender(let sender):
+        case let .sender(sender):
             "\(sender)"
-        case .senderInTeam(let sender, let team):
+        case let .senderInTeam(sender, team):
             "\(sender) in \(team)"
-        case .conversation(let conversation):
+        case let .conversation(conversation):
             "\(conversation)"
-        case .conversationInTeam(let conversation, let team):
+        case let .conversationInTeam(conversation, team):
             "\(conversation) in \(team)"
         }
     }
-    
+
 }

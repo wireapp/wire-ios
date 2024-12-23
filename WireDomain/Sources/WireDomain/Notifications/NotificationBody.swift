@@ -19,24 +19,28 @@
 import Foundation
 
 enum NotificationBody {
-    
+
     case newMessage(MessageBodyFormat)
-    
+    case bundled(messagesCount: Int)
+
     func make() -> String {
         switch self {
-        case .newMessage(let messageBodyFormat):
+        case let .newMessage(messageBodyFormat):
             let newMessageBodyComposer = NewMessageNotificationBodyComposer(
                 format: messageBodyFormat
             )
-            
+
             return newMessageBodyComposer.make()
+            
+        case .bundled(let count):
+            return "\(count) new messages."
         }
     }
-    
+
 }
 
 extension NotificationBody {
-    
+
     /// The expected formats for the body of a new message notification.
     enum MessageBodyFormat {
         /// `Someone sent a message`
@@ -61,6 +65,10 @@ extension NotificationBody {
         case sharedFile(senderName: String?)
         /// `[sender name] shared a location` or `Shared a location` if sender is nil.
         case sharedLocation(senderName: String?)
+        /// `[sender name] pinged you`
+        case ping(senderName: String?)
+        /// `New message`
+        case hidden
     }
-    
+
 }

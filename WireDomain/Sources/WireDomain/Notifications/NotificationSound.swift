@@ -22,5 +22,5 @@ import Foundation
 enum NotificationSound: String {
     case call = "ringing_from_them_long.caf"
     case ping = "ping_from_them.caf"
-    case `default` = "default"
+    case `default`
 }

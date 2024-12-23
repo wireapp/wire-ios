@@ -39,19 +39,19 @@ protocol NotificationAction {
 extension NotificationAction {
     func make() -> UNNotificationAction {
         var options = UNNotificationActionOptions()
-        
+
         if isDestructive {
             options.insert(.destructive)
         }
-        
+
         if opensApplication {
             options.insert(.foreground)
         }
-        
+
         if requiresAuthentication {
             options.insert(.authenticationRequired)
         }
-        
+
         /// The representation of the action that can be used with `UserNotifications` API.
         return UNNotificationAction(
             identifier: identifier,

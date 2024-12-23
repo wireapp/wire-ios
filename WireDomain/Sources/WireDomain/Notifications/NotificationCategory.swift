@@ -20,13 +20,13 @@ import UserNotifications
 
 /// Categories to which push notifications belong.
 public enum NotificationCategory: String, CaseIterable {
-    
+
     case nonActionable
     case unmutedConversation
     case incomingCall
     case missedCall
     case incomingConnectionRequest
-    
+
     /// Available actions for each category
     private var actions: [NotificationAction] {
         switch self {
@@ -42,10 +42,10 @@ public enum NotificationCategory: String, CaseIterable {
             [AcceptConnectionNotificationAction()]
         }
     }
-    
+
     private func make() -> UNNotificationCategory {
         let userActions = actions.map { $0.make() }
-        
+
         return UNNotificationCategory(
             identifier: rawValue,
             actions: userActions,

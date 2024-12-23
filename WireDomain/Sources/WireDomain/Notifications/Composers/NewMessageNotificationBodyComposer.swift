@@ -20,7 +20,7 @@ import Foundation
 
 struct NewMessageNotificationBodyComposer {
     let format: NotificationBody.MessageBodyFormat
-    
+
     func make() -> String {
         switch format {
         case .sentWithUnknownSender:
@@ -29,22 +29,26 @@ struct NewMessageNotificationBodyComposer {
             "Someone mentioned you"
         case .repliedWithUnknownSender:
             "Someone replied to you"
-        case .text(let content, let senderName):
+        case let .text(content, senderName):
             senderName != nil ? "\(senderName!): \(content)" : content
-        case .textWithMention(let content, let senderName):
+        case let .textWithMention(content, senderName):
             senderName != nil ? "Mention from \(senderName!): \(content)" : "Mention: \(content)"
-        case .textWithReply(let content, let senderName):
+        case let .textWithReply(content, senderName):
             senderName != nil ? "Reply from \(senderName!): \(content)" : "Reply: \(content)"
-        case .sharedPicture(let senderName):
+        case let .sharedPicture(senderName):
             senderName != nil ? "\(senderName!) shared a picture" : "Shared a picture"
-        case .sharedVideo(let senderName):
+        case let .sharedVideo(senderName):
             senderName != nil ? "\(senderName!) shared a video" : "Shared a video"
-        case .sharedAudio(let senderName):
+        case let .sharedAudio(senderName):
             senderName != nil ? "\(senderName!) shared an audio message" : "Shared an audio message"
-        case .sharedFile(let senderName):
+        case let .sharedFile(senderName):
             senderName != nil ? "\(senderName!) shared a file" : "Shared a file"
-        case .sharedLocation(let senderName):
+        case let .sharedLocation(senderName):
             senderName != nil ? "\(senderName!) shared a location" : "Shared a location"
+        case let .ping(senderName):
+            senderName != nil ? "\(senderName!) pinged you" : "You were pinged"
+        case .hidden:
+            "New message"
         }
     }
 }

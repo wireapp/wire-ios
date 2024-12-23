@@ -16,26 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import WireAPI
 import WireDataModel
-import Combine
 
 /// Observes pending events, process them and generates new notifications content.
 final class NotificationSession {
-    
+
     // MARK: - Failure
-    
+
     enum Failure: Error {
         case unableToPullPendingEvents(Error)
     }
-    
+
     // MARK: - Properties
-    
+
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
     private var subscription: AnyCancellable?
-    
+
     // MARK: - Object lifecycle
-    
+
     init(
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
         onNotificationContent: @escaping (UNMutableNotificationContent) -> Void
@@ -44,73 +44,78 @@ final class NotificationSession {
         self.subscription = updateEventsRepository.observePendingEvents()
             .collect() // Collects all the events batches.
             .map { $0.flatMap { $0 } }
-            .map(generateNotificationContent)
+            .map { events in
+                // Uses a Future to bridge between Combine / async await
+                Future<UNMutableNotificationContent, Never> { [self] promise in
+                    Task {
+                        let notification = await generateNotificationContent(for: events)
+                        promise(.success(notification))
+                    }
+                }
+            }
+            .switchToLatest()
             .sink(receiveValue: onNotificationContent)
     }
-    
+
     deinit {
         subscription?.cancel()
         subscription = nil
     }
-    
+
     // MARK: - Notifications
-    
+
     func processPushNotification(
         eventID: UUID
     ) async throws {
         let newEventID = eventID
         let lastEventId = updateEventsRepository.fetchLastEventEnvelopeID()
-        
+
         if lastEventId == nil {
             updateEventsRepository.storeLastEventEnvelopeID(newEventID)
         }
-        
+
         do {
             try await updateEventsRepository.pullPendingEvents()
         } catch {
             throw Failure.unableToPullPendingEvents(error)
         }
     }
-    
+
     private func generateNotificationContent(
         for events: [UpdateEvent]
-    ) -> UNMutableNotificationContent {
-        
+    ) async -> UNMutableNotificationContent {
+
         var notifications: [UNMutableNotificationContent] = []
-        
+
         for event in events {
-            let notificationBuilder = makeBuilder(for: event)
+            let notificationBuilder: NotificationBuilder
             
-            guard notificationBuilder.shouldBuildNotification() else {
-                fatalError() // TODO: Implement me
+            switch event {
+            case .conversation(let conversationEvent):
+                notificationBuilder = await ConversationNotificationBuilder(
+                    event: conversationEvent
+                )
+            default:
+                continue
             }
-            
-            let notificationContent = notificationBuilder.buildContent()
-            
+
+            guard await notificationBuilder.shouldBuildNotification() else {
+                continue
+            }
+
+            let notificationContent = await notificationBuilder.buildContent()
             notifications.append(notificationContent)
         }
         
-        return UNMutableNotificationContent()
-    }
-    
-    private func makeBuilder(for event: UpdateEvent) -> NotificationBuilder {
-        switch event {
-        case .conversation(let conversationEvent):
-            let conversationNotificationBuilder = ConversationNotificationBuilder(
-                event: conversationEvent
-            )
-            
-            return conversationNotificationBuilder
-        case .featureConfig(let featureConfigEvent):
-            fatalError()
-        case .federation(let federationEvent):
-            fatalError()
-        case .user(let userEvent):
-            fatalError()
-        case .team(let teamEvent):
-            fatalError()
-        case .unknown(let eventType):
-            fatalError()
+        var notification = UNMutableNotificationContent()
+        
+        if notifications.count > 1 {
+            let body = NotificationBody.bundled(messagesCount: notifications.count)
+            notification.body = body.make()
+        } else if let singleNotification = notifications.first {
+            notification = singleNotification
         }
+        
+        return notification
     }
 }

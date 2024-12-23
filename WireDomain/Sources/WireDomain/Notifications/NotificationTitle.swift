@@ -19,24 +19,24 @@
 import Foundation
 
 enum NotificationTitle {
-    
+
     case newMessage(MessageTitleFormat)
-    
+
     func make() -> String {
         switch self {
-        case .newMessage(let messageFormat):
+        case let .newMessage(messageFormat):
             let newMessageTitleComposer = NewMessageNotificationTitleComposer(
                 format: messageFormat
             )
-            
+
             return newMessageTitleComposer.make()
         }
     }
- 
+
 }
 
 extension NotificationTitle {
-    
+
     /// The expected formats for the title of a new message notification.
     enum MessageTitleFormat {
         /// `[sender name]`
@@ -48,5 +48,5 @@ extension NotificationTitle {
         /// `[conversation name] in [team name]`
         case conversationInTeam(conversation: String, team: String)
     }
-    
+
 }
