@@ -281,14 +281,25 @@ final class SelfProfileViewController: UIViewController {
                             presentedViewController?.dismiss(animated: true)
                         case .toLearnMoreAboutPlans:
                             _ = WireURLs.shared.wireEnterpriseInfo.open()
-                        case .completionGoToApp:
+                        case .completionDismiss:
                             dismissIndividualToTeamMigrationBanner()
                             presentedViewController?.dismiss(animated: true)
+                        case .completionGoToConversations:
+                            dismissIndividualToTeamMigrationBanner()
+                            if let presentingViewController {
+                                presentingViewController.dismiss(animated: true)
+                            } else {
+                                presentedViewController?.dismiss(animated: true)
+                            }
                         case .completionGoToTeamManagement:
                             dismissIndividualToTeamMigrationBanner()
-                            presentedViewController?.dismiss(animated: true, completion: { [weak self] in
-                                self?.navigateToTeam()
-                            })
+                            if let presentingViewController {
+                                presentingViewController.dismiss(animated: true) {
+                                    URL.manageTeam(source: .settings).open()
+                                }
+                            } else {
+                                presentedViewController?.dismiss(animated: true)
+                            }
                         }
                     }
                 }
