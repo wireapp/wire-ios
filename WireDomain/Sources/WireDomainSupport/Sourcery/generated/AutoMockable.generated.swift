@@ -50,6 +50,61 @@ import WireDataModel
 
 
 
+class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - isMLSEnabled
+
+    var isMLSEnabled: Bool {
+        get { return underlyingIsMLSEnabled }
+        set(value) { underlyingIsMLSEnabled = value }
+    }
+
+    var underlyingIsMLSEnabled: Bool!
+
+
+    // MARK: - storeIsMLSEnabledStatus
+
+    var storeIsMLSEnabledStatusNewValue_Invocations: [Bool] = []
+    var storeIsMLSEnabledStatusNewValue_MockMethod: ((Bool) -> Void)?
+
+    func storeIsMLSEnabledStatus(newValue: Bool) {
+        storeIsMLSEnabledStatusNewValue_Invocations.append(newValue)
+
+        guard let mock = storeIsMLSEnabledStatusNewValue_MockMethod else {
+            fatalError("no mock for `storeIsMLSEnabledStatusNewValue`")
+        }
+
+        mock(newValue)
+    }
+
+}
+
+class MockBackendConfigRepositoryProtocol: BackendConfigRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pullMLSBackendStatus
+
+    var pullMLSBackendStatus_Invocations: [Void] = []
+    var pullMLSBackendStatus_MockMethod: (() async -> Void)?
+
+    func pullMLSBackendStatus() async {
+        pullMLSBackendStatus_Invocations.append(())
+
+        guard let mock = pullMLSBackendStatus_MockMethod else {
+            fatalError("no mock for `pullMLSBackendStatus`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
 
     // MARK: - Life cycle
