@@ -20,7 +20,7 @@ import Foundation
 
 /// Metadata about the local backend.
 
-public struct BackendInfo: Equatable {
+public struct BackendInfo: Equatable, Sendable {
 
     /// The local domain.
 

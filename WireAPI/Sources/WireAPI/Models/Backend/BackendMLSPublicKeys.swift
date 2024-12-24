@@ -18,38 +18,10 @@
 
 import Foundation
 
-/// A container of MLS public keys.
+/// Public keys used by the backend to sign external proposals
 
-public struct MLSPublicKeys: Equatable, Codable, Sendable {
+public struct BackendMLSPublicKeys: Equatable, Sendable {
 
-    /// The ed25519 signature key.
-
-    public let ed25519: String?
-
-    /// The ed448 signature key.
-
-    public let ed448: String?
-
-    /// The p256 signature key.
-
-    public let p256: String?
-
-    /// The p384 signature key.
-
-    public let p384: String?
-
-    /// The p512 signature key.
-
-    public let p512: String?
-
-    enum CodingKeys: String, CodingKey {
-
-        case ed25519
-        case ed448
-        case p256 = "ecdsa_secp256r1_sha256"
-        case p384 = "ecdsa_secp384r1_sha384"
-        case p512 = "ecdsa_secp521r1_sha512"
-
-    }
+    public let removal: MLSPublicKeys
 
 }
