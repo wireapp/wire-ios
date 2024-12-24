@@ -102,3 +102,6 @@ vendor/*
 # Failing Snapshot Tests
 SnapshotResults
 artifacts/
+
+ios/backendConnections.json
+**/backendConnections.json
