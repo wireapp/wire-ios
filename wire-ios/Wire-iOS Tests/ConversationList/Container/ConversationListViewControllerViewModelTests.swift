@@ -48,6 +48,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
 
         sut = ConversationListViewController.ViewModel(
             account: account,
+            selfProfileViewsMonitor: MockSelfProfileViewsMonitorImplementation(didViewSelfProfile: false),
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
