@@ -281,8 +281,8 @@ struct FeatureConfigsPayloadProcessor {
     private func processMLSFeatureConfigChanges(
         mlsClientManager: MLSClientManagerProtocol,
         context: NSManagedObjectContext,
-        mlsFeature: Feature.MLS)
-    async {
+        mlsFeature: Feature.MLS
+    ) async {
         let (qualifiedSelfClientID, hasRegisteredMLSClient) = await context.perform {
             let selfClient = ZMUser.selfUser(in: context).selfClient()
             return (selfClient?.qualifiedClientID, selfClient?.hasRegisteredMLSClient ?? false)
