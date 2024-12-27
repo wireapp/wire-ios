@@ -354,7 +354,8 @@ public final class ZMUserSession: NSObject {
 
     private lazy var  mlsClientManager = MLSClientManager(
         coreCryptoProvider: coreCryptoProvider,
-        mlsService: mlsService)
+        mlsService: mlsService
+    )
 
     // MARK: Dependency Injection
 
@@ -955,7 +956,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 await mlsClientManager.initializeMLSClientIfNeeded(
                     for: qualifiedSelfClientID,
                     hasRegisteredMLSClient: hasRegisteredMLSClient,
-                    mlsFeature: mlsFeature)
+                    mlsFeature: mlsFeature
+                )
             } else {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
             }

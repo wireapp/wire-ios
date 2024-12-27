@@ -18,6 +18,7 @@
 
 import Foundation
 import protocol WireDataModel.FeatureRepositoryInterface
+import WireLogging
 
 struct FeatureConfigsPayloadProcessor {
 
@@ -208,7 +209,7 @@ struct FeatureConfigsPayloadProcessor {
         data: Data,
         featureName: Feature.Name,
         repository: FeatureRepositoryInterface,
-        mlsFeatureProcessor: MLSFeatureProcessorProtocol,
+        mlsClientManager: MLSClientManagerProtocol,
         in context: NSManagedObjectContext
     ) throws {
         switch featureName {
@@ -260,7 +261,12 @@ struct FeatureConfigsPayloadProcessor {
             repository.storeMLS(.init(status: response.status, config: response.config))
             Task {
                 let mlsFeature = await repository.fetchMLS()
-                await mlsFeatureProcessor.processFeatureConfigChanges(mlsFeature)
+                await processMLSFeatureConfigChanges(
+                    mlsClientManager: mlsClientManager,
+                    context: context,
+                    mlsFeature: mlsFeature)
+
+                //await mlsFeatureProcessor.processFeatureConfigChanges(mlsFeature)
             }
 
         case .mlsMigration:
@@ -272,4 +278,25 @@ struct FeatureConfigsPayloadProcessor {
             repository.storeE2EI(.init(status: response.status, config: response.config))
         }
     }
+
+    private func processMLSFeatureConfigChanges(
+        mlsClientManager: MLSClientManagerProtocol,
+        context: NSManagedObjectContext,
+        mlsFeature: Feature.MLS)
+    async {
+        let (qualifiedSelfClientID, hasRegisteredMLSClient) = await context.perform {
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return (selfClient?.qualifiedClientID, selfClient?.hasRegisteredMLSClient ?? false)
+        }
+
+        guard let qualifiedSelfClientID else {
+            WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
+            return
+        }
+        await mlsClientManager.initializeMLSClientIfNeeded(
+            for: qualifiedSelfClientID,
+            hasRegisteredMLSClient: hasRegisteredMLSClient,
+            mlsFeature: mlsFeature)
+    }
+
 }

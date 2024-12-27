@@ -23,7 +23,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
-    let mlsFeatureProcessor: MLSFeatureProcessorProtocol
+    let mlsClientManager: MLSClientManagerProtocol
 
     // Slow Sync
 
@@ -46,12 +46,12 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
-        mlsFeatureProcessor: MLSFeatureProcessorProtocol
+        mlsClientManager: MLSClientManagerProtocol
     ) {
         self.actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
         self.syncStatus = syncProgress
-        self.mlsFeatureProcessor = mlsFeatureProcessor
+        self.mlsClientManager = mlsClientManager
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -143,7 +143,7 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
                 data: payloadData,
                 featureName: featureName,
                 repository: repository,
-                mlsFeatureProcessor: mlsFeatureProcessor,
+                mlsClientManager: mlsClientManager,
                 in: managedObjectContext
             )
 

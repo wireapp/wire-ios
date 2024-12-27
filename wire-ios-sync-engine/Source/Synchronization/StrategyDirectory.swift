@@ -142,11 +142,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
         )
-        let mlsFeatureProcessor = MLSFeatureProcessor(
+        let mlsClientManager = MLSClientManager(
             coreCryptoProvider: coreCryptoProvider,
-            mlsService: mlsService,
-            syncContext: syncMOC
-        )
+            mlsService: mlsService)
 
         return [
 
@@ -363,7 +361,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                mlsFeatureProcessor: mlsFeatureProcessor
+                mlsClientManager: mlsClientManager
             ),
             FetchBackendMLSPublicKeysRequestStrategy(
                 withManagedObjectContext: syncMOC,
