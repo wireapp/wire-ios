@@ -62,7 +62,6 @@ public class GroupSteps {
   @When("I add members (.*) to new group via search")
   public void iAddMembersToNewGroupViaSearch(String members) {
     String[] aliases = members.split(",");
-    int count = 3;
 
     for (String alias : aliases) {
       String name = alias.strip();
@@ -75,6 +74,25 @@ public class GroupSteps {
     }
 
     getAddPeoplePage().tapCreateButton();
+  }
+
+  @When("I add members (.*) to existing group via search")
+  public void iAddMembersToExistingGroupViaSearch(String members) {
+    String[] aliases = members.split(",");
+    getGroupDetailsPage().tapAddPeopleButton();
+
+    for (String alias : aliases) {
+      String name = alias.strip();
+      name = context.getUsersManager()
+          .replaceAliasesOccurrences(name, ClientUsersManager.FindBy.NAME_ALIAS);
+      name = context.getUsersManager()
+          .replaceAliasesOccurrences(name, ClientUsersManager.FindBy.UNIQUE_USERNAME_ALIAS);
+
+      getGroupAddPeoplePage().searchAndAdd(name);
+    }
+
+    getGroupAddPeoplePage().tapAddButton();
+    getGroupDetailsPage().tapXButton();
   }
 
   @When("I add service (.*) to group")
