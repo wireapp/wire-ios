@@ -45,7 +45,7 @@ public class GroupSteps {
     int count = 3;
 
     for (String alias : aliases) {
-      String name = alias;
+      String name = alias.strip();
       name = context.getUsersManager()
           .replaceAliasesOccurrences(name, ClientUsersManager.FindBy.NAME_ALIAS);
       name = context.getUsersManager()

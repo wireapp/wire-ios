@@ -10,8 +10,7 @@ Feature: Groups
     When I login to Wire as <TeamOwner>
     And  I open search screen
     And I create new group "<ConversationTitle>"
-    And I add members "<Member1>", "<Member2>", "<Member3>" to new group via search
-    And I tap Create button on Add People page
+    And I add members <Member1>, <Member2>, <Member3> to new group via search
   # Add service to team
     When I open group conversation details
     And I tap Add People button on Group Details page
