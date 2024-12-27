@@ -8,8 +8,7 @@ Feature: Group Management
     And User <TeamOwner> adds user <Member1>,<Member2>,<Member3>,<Member4>,<Member5>,<Member6>,<Member7>,<Member8>,<Member9>,<Member10> to team <TeamName> with role Member
     And User <TeamOwner> is me
     And User adds the following device: {"<Member1>": [{"name": "<device1>"}], "<Member2>": [{"name": "<device2>"}]}
-    And I sign in user <TeamOwner> with fast login
-    And I accept alert if visible
+    When I login to Wire as <TeamOwner>
     And  I open search screen
     And I open create group screen
     Then I see Guests option on group creation view
