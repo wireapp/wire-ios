@@ -46,7 +46,7 @@ public final class MLSClientSyncManager: MLSClientSyncManagerProtocol {
         self.mlsService = mlsService
     }
 
-    // MARK: - Public Implentation
+    // MARK: - Public Implementation
 
     public func initiateOrSyncMLSClientIfNeeded(
         for qualifiedClientID: QualifiedClientID,
