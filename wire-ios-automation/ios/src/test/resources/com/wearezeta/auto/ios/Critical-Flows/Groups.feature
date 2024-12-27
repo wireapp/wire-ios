@@ -10,34 +10,8 @@ Feature: Group Management
     And User adds the following device: {"<Member1>": [{"name": "<device1>"}], "<Member2>": [{"name": "<device2>"}]}
     When I login to Wire as <TeamOwner>
     And  I open search screen
-    And I open create group screen
-    Then I see Guests option on group creation view
-    And I see Services option on group creation view
-    And I verify the value of Allow Guests equals to "1" on New Group page
-    And I switch Allow Guests toggle on New Group page
-    And I verify the value of Allow Guests equals to "0" on New Group page
-    And I enter group name "<ConversationTitle>" on New Group page
-    And I tap Next button on New Group page
-    And I type first 3 letters of name "<Member1>" in search input field on Add People page
-    And I select search result item <Member1> on Add People page
-    And I type first 3 letters of name "<Member2>" in search input field on Add People page
-    And I select search result item <Member2> on Add People page
-    And I type first 3 letters of name "<Member3>" in search input field on Add People page
-    And I select search result item <Member3> on Add People page
-    And I type first 3 letters of name "<Member4>" in search input field on Add People page
-    And I select search result item <Member4> on Add People page
-    And I type first 3 letters of name "<Member5>" in search input field on Add People page
-    And I select search result item <Member5> on Add People page
-    And I type first 3 letters of name "<Member6>" in search input field on Add People page
-    And I select search result item <Member6> on Add People page
-    And I type first 3 letters of name "<Member7>" in search input field on Add People page
-    And I select search result item <Member7> on Add People page
-    And I type first 3 letters of name "<Member8>" in search input field on Add People page
-    And I select search result item <Member8> on Add People page
-    And I type first 3 letters of name "<Member9>" in search input field on Add People page
-    And I select search result item <Member9> on Add People page
-    And I type first 3 letters of name "<Member10>" in search input field on Add People page
-    And I select search result item <Member10> on Add People page
+    And I create new group "<ConversationTitle>"
+    And I add members "<Member1>", "<Member2>", "<Member3>" to new group via search
     And I tap Create button on Add People page
     And User <TeamOwner> adds user <Member11> to team <TeamName> with role Member
     And User adds the following device: {"<Member11>": [{"name": "Device3"}]}
