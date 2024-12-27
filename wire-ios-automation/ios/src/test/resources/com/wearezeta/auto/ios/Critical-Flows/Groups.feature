@@ -26,15 +26,11 @@ Feature: Groups
     And I close Group Details
     Then I see "You removed <Member3>" system message in the conversation view
   # Adding new person to team and group
-    And User <TeamOwner> adds user <Member4> to team <TeamName> with role Member
+    Given User <TeamOwner> adds user <Member4> to team <TeamName> with role Member
     And User adds the following device: {"<Member4>": [{"name": "Device3"}]}
-    And I open group conversation details
-    When I tap Add People button on Group Details page
-    And I type search query "<Member4>" on Group Add People page
-    And I select search result item <Member4> on Group Add People page
-    And I tap Add Participants button on Group Add People page
-    And I close Group Details
-    And I see "You added <Member4>" system message in the conversation view
+    When I open group conversation details
+    And I add members <Member4> to existing group via search
+    Then I see "You added <Member4>" system message in the conversation view
 # Team owner sends welcome message with mention
     When I type the "<Message>" message
     When I tap Mention button from input tools
