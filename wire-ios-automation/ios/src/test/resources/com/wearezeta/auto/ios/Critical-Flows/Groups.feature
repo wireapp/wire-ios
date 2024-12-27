@@ -29,7 +29,7 @@ Feature: Groups
     And I type first 3 letters of name "<ServiceName>" in search input field on Add People page
     And I tap on service "<ServiceName>" in service search result
     And I tap Add Service button on service detail page
-    When I tap X button on Group Details page
+    When I close Group Details
     Then I see "You added <ServiceName>" system message in the conversation view
   # Team members send message and user reacts
     When User <Member1> sends 1 default messages to conversation <ConversationTitle>
@@ -41,7 +41,7 @@ Feature: Groups
     And I select participant <Member3> on Group Details page
     And I tap Remove From Conversation button on Group participant profile page
     And I confirm removal from group
-    And I tap X button on Group Details page
+    And I close Group Details
     Then I see "You removed <Member3>" system message in the conversation view
   # Adding new person to team and group
     And User <TeamOwner> adds user <Member4> to team <TeamName> with role Member
@@ -51,7 +51,7 @@ Feature: Groups
     And I type search query "<Member4>" on Group Add People page
     And I select search result item <Member4> on Group Add People page
     And I tap Add Participants button on Group Add People page
-    And I tap X button on Group Details page
+    And I close Group Details
     And I see "You added <Member4>" system message in the conversation view
 # Team owner sends welcome message with mention
     When I type the "<Message>" message
