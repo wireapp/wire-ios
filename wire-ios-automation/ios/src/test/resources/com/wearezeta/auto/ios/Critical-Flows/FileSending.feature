@@ -11,7 +11,6 @@ Feature: File Sending
     And <TeamOwnerA> starts instance using <CallBackend>
     And User <TeamOwnerB> is me
     When I login to Wire as <TeamOwnerB>
-    Then I am signed in properly
     Given User <TeamOwnerA> sent connection request to <TeamOwnerB>
     When I accept connection request from <TeamOwnerA>
     And I wait for 1 seconds
@@ -21,13 +20,7 @@ Feature: File Sending
     And I tap on Download on edit menu
     And I wait for 2 seconds
     And I tap on file transfer placeholder in conversation view
-    And I tap Share button in file inspection page
-    And I tap More button on share extension
-    And I tap Wire in share extension
-    And I tap Choose in share extension
-    And I select conversation "<TeamOwnerA>" in share extension
-    And I tap Send button in share extension
-    And I tap Done button in file inspection page
+    And I share the current file in conversation <TeamOwnerA>
     Then I see 2 file transfer placeholder in the conversation view
     When I tap Audio Message button from input tools
     And I tap Start Recording button on Voice Filters overlay
