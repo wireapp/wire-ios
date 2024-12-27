@@ -265,8 +265,6 @@ struct FeatureConfigsPayloadProcessor {
                     mlsClientManager: mlsClientManager,
                     context: context,
                     mlsFeature: mlsFeature)
-
-                //await mlsFeatureProcessor.processFeatureConfigChanges(mlsFeature)
             }
 
         case .mlsMigration:

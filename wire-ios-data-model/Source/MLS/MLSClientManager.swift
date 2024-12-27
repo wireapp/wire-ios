@@ -18,7 +18,6 @@
 
 import WireLogging
 
-// TODO: Add tests
 public protocol MLSClientManagerProtocol {
 
     func initializeMLSClientIfNeeded(
