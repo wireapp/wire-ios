@@ -352,6 +352,10 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
+    private lazy var  mlsClientSyncManager: MLSClientSyncManager = MLSClientSyncManager(
+        coreCryptoProvider: coreCryptoProvider,
+        mlsService: mlsService)
+
     // MARK: Dependency Injection
 
     let dependencies: UserSessionDependencies
@@ -937,18 +941,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: notificationContext
         ).post()
 
-        func performsMLSClientUpdates() async {
-            // these operations are not dependent and should not be executed in same do/catch
-            do {
-                // rework implementation of following method - WPB-6053
-                try await mlsService.performPendingJoins()
-            } catch {
-                WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
-            }
-            await mlsService.uploadKeyPackagesIfNeeded()
-            await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
-        }
-
         WaitingGroupTask(context: syncContext) { [self] in
             await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
@@ -959,14 +951,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
             }
 
-            // TODO: Use MLSClientSyncManager
-            if hasRegisteredMLSClient {
-                await performsMLSClientUpdates()
-            } else {
-                if let qualifiedSelfClientID {
-                    await createMLSClientIfNeeded(qualifiedID: qualifiedSelfClientID)
-                    await performsMLSClientUpdates()
-                }
+            if let qualifiedSelfClientID {
+                await mlsClientSyncManager.initiateOrSyncMLSClientIfNeeded(
+                    for: qualifiedSelfClientID,
+                    hasRegisteredMLSClient: hasRegisteredMLSClient,
+                    mlsFeature: mlsFeature)
             }
 
             if mlsFeature.isEnabled {
@@ -1048,24 +1037,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
             BackendInfo.isMLSEnabled = hasValidKeys
         } catch {
             WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")
-        }
-    }
-
-    func createMLSClientIfNeeded(qualifiedID: QualifiedClientID) async {
-        // If we discover that
-        // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS
-        // client,
-        // we should create one.
-        guard BackendInfo.isMLSEnabled && mlsFeature.isEnabled else { // && there is no mls client already
-            return
-        }
-        let mlsClientID = await syncContext.perform {
-            MLSClientID(qualifiedClientID: qualifiedID)
-        }
-        do {
-            try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
-        } catch {
-            WireLogger.mls.error("Failed to initialise mls client: \(error)")
         }
     }
 
