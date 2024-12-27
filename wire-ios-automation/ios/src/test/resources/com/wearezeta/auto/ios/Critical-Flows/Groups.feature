@@ -9,16 +9,8 @@ Feature: Groups
     And User adds the following device: {"<Member1>": [{"name": "<device1>"}], "<Member2>": [{"name": "<device2>"}]}
     When I login to Wire as <TeamOwner>
     And  I open search screen
-    And I open create group screen
-    And I switch Allow Guests toggle on New Group page
-    And I enter group name "<ConversationTitle>" on New Group page
-    And I tap Next button on New Group page
-    And I type first 3 letters of name "<Member1>" in search input field on Add People page
-    And I select search result item <Member1> on Add People page
-    And I type first 3 letters of name "<Member2>" in search input field on Add People page
-    And I select search result item <Member2> on Add People page
-    And I type first 3 letters of name "<Member3>" in search input field on Add People page
-    And I select search result item <Member3> on Add People page
+    And I create new group "<ConversationTitle>"
+    And I add members "<Member1>", "<Member2>", "<Member3>" to new group via search
     And I tap Create button on Add People page
   # Add service to team
     When I open group conversation details
