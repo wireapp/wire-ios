@@ -7,9 +7,7 @@ Feature: Groups
     And User <TeamOwner> enables <ServiceName> service for team <TeamName>
     And User <TeamOwner> is me
     And User adds the following device: {"<Member1>": [{"name": "<device1>"}], "<Member2>": [{"name": "<device2>"}]}
-    And I tap Login button on Welcome page
-    And I sign in user <TeamOwner> with email
-    And I accept First Time overlay
+    When I login to Wire as <TeamOwner>
     And  I open search screen
     And I open create group screen
     And I switch Allow Guests toggle on New Group page
