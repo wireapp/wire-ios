@@ -2,12 +2,14 @@ package com.wearezeta.auto.ios.steps;
 
 import com.wearezeta.auto.common.usrmgmt.ClientUsersManager;
 import com.wearezeta.auto.ios.common.IOSTestContext;
+import com.wearezeta.auto.ios.pages.ConversationsListPage;
 import com.wearezeta.auto.ios.pages.SearchUIPage;
 import com.wearezeta.auto.ios.pages.ServiceDetailPage;
 import com.wearezeta.auto.ios.pages.TeamSearchUIPage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupAddPeoplePage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupConnectedParticipantProfilePage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupDetailsPage;
+import com.wearezeta.auto.ios.pages.details_overlay.single.SinglePendingUserIncomingConnectionProfilePage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.AddPeoplePage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.NewGroupPage;
 import io.cucumber.java.en.When;
@@ -50,6 +52,14 @@ public class GroupSteps {
 
   private ServiceDetailPage getServiceDetailPage() {
     return context.getPagesCollection().getPage(ServiceDetailPage.class);
+  }
+
+  private ConversationsListPage getConversationListPage() {
+    return context.getPagesCollection().getPage(ConversationsListPage.class);
+  }
+
+  private SinglePendingUserIncomingConnectionProfilePage getSinglePendingUserIncomingConnectionProfilePage() {
+    return context.getPagesCollection().getPage(SinglePendingUserIncomingConnectionProfilePage.class);
   }
 
   @When("^I create new group \"(.*)\"$")
@@ -113,5 +123,13 @@ public class GroupSteps {
     getGroupDetailsPage().selectParticipant(name);
     getGroupParticipantProfilePage().tapRemoveFromConversationButton();
     getGroupParticipantProfilePage().confirmRemove();
+  }
+
+  @When("I accept connection request from (.*)")
+  public void iAcceptConnectionRequestFrom(String name) {
+    name = context.getUsersManager().replaceAliasesOccurrences(name, ClientUsersManager.FindBy.NAME_ALIAS);
+
+    getConversationListPage().openConnectionRequest();
+    getSinglePendingUserIncomingConnectionProfilePage().tapConnect();
   }
 }
