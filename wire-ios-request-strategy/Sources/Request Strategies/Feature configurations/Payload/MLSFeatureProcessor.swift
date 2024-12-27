@@ -38,8 +38,7 @@ public final class MLSFeatureProcessor: MLSFeatureProcessorProtocol {
     ) {
         self.mlsClientSyncManager = MLSClientSyncManager(
             coreCryptoProvider: coreCryptoProvider,
-            mlsService: mlsService
-        )
+            mlsService: mlsService)
         self.context = syncContext
     }
 

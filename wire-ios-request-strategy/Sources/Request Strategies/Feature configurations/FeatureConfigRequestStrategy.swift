@@ -119,9 +119,7 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         liveEvents: Bool,
         prefetchResult: ZMFetchRequestBatchResult?
     ) {
-        for event in events {
-            processEvent(event)
-        }
+        events.forEach(processEvent)
     }
 
     private func processEvent(_ event: ZMUpdateEvent) {
