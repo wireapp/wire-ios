@@ -37,6 +37,21 @@ public class GroupAddPeoplePage extends IOSPage {
         participantsSearchList.selectItem(name);
     }
 
+    public void searchAndAdd(String name) {
+        searchAndAdd(name, 3);
+    }
+
+    public void searchAndAdd(String name, int count) {
+        if (name.length() > count) {
+            typeSearchQuery(name.substring(0, count));
+        } else {
+            throw new IllegalArgumentException(String.format("Name is only %s chars length. Put in step a less value",
+                name.length()));
+        }
+
+        selectItem(name);
+    }
+
     public boolean isItemVisible(String name) {
         return participantsSearchList.isItemVisible(name);
     }

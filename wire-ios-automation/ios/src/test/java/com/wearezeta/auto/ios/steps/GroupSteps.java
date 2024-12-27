@@ -3,7 +3,10 @@ package com.wearezeta.auto.ios.steps;
 import com.wearezeta.auto.common.usrmgmt.ClientUsersManager;
 import com.wearezeta.auto.ios.common.IOSTestContext;
 import com.wearezeta.auto.ios.pages.SearchUIPage;
+import com.wearezeta.auto.ios.pages.ServiceDetailPage;
+import com.wearezeta.auto.ios.pages.TeamSearchUIPage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupAddPeoplePage;
+import com.wearezeta.auto.ios.pages.details_overlay.group.GroupDetailsPage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.AddPeoplePage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.NewGroupPage;
 import io.cucumber.java.en.When;
@@ -32,6 +35,18 @@ public class GroupSteps {
     return context.getPagesCollection().getPage(AddPeoplePage.class);
   }
 
+  private GroupDetailsPage getGroupDetailsPage() {
+    return context.getPagesCollection().getPage(GroupDetailsPage.class);
+  }
+
+  private TeamSearchUIPage getTeamSearchUIPage() {
+    return context.getPagesCollection().getPage(TeamSearchUIPage.class);
+  }
+
+  private ServiceDetailPage getServiceDetailPage() {
+    return context.getPagesCollection().getPage(ServiceDetailPage.class);
+  }
+
   @When("^I create new group \"(.*)\"$")
   public void iCreateNewGroup(String groupName) {
     getSearchUIPage().iOpenCreateGroupScreen();
@@ -51,16 +66,20 @@ public class GroupSteps {
       name = context.getUsersManager()
           .replaceAliasesOccurrences(name, ClientUsersManager.FindBy.UNIQUE_USERNAME_ALIAS);
 
-      if (name.length() > count) {
-        getGroupAddPeoplePage().typeSearchQuery(name.substring(0, count));
-      } else {
-        throw new IllegalArgumentException(String.format("Name is only %s chars length. Put in step a less value",
-            name.length()));
-      }
-
-      getAddPeoplePage().selectItem(name);
+      getGroupAddPeoplePage().searchAndAdd(name);
     }
 
     getAddPeoplePage().tapCreateButton();
+  }
+
+  @When("I add service (.*) to group")
+  public void iAddService(String serviceName) {
+    getGroupDetailsPage().tapAddPeopleButton();
+    getTeamSearchUIPage().tapTeamSearchUITab();
+
+    getGroupAddPeoplePage().searchAndAdd(serviceName);
+
+    getServiceDetailPage().addService();
+    getGroupDetailsPage().tapXButton();
   }
 }
