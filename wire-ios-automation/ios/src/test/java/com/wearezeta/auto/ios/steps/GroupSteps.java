@@ -2,16 +2,14 @@ package com.wearezeta.auto.ios.steps;
 
 import com.wearezeta.auto.common.usrmgmt.ClientUsersManager;
 import com.wearezeta.auto.ios.common.IOSTestContext;
-import com.wearezeta.auto.ios.pages.ConversationsListPage;
-import com.wearezeta.auto.ios.pages.SearchUIPage;
-import com.wearezeta.auto.ios.pages.ServiceDetailPage;
-import com.wearezeta.auto.ios.pages.TeamSearchUIPage;
+import com.wearezeta.auto.ios.pages.*;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupAddPeoplePage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupConnectedParticipantProfilePage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupDetailsPage;
 import com.wearezeta.auto.ios.pages.details_overlay.single.SinglePendingUserIncomingConnectionProfilePage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.AddPeoplePage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.NewGroupPage;
+import com.wearezeta.auto.ios.pages.webview.WebViewPage;
 import io.cucumber.java.en.When;
 
 public class GroupSteps {
@@ -38,6 +36,10 @@ public class GroupSteps {
     return context.getPagesCollection().getPage(GroupConnectedParticipantProfilePage.class);
   }
 
+  private FileInspectionPage getFileInspectionPage()  {
+    return context.getPagesCollection().getPage(FileInspectionPage.class);
+  }
+
   private AddPeoplePage getAddPeoplePage()  {
     return context.getPagesCollection().getPage(AddPeoplePage.class);
   }
@@ -60,6 +62,10 @@ public class GroupSteps {
 
   private SinglePendingUserIncomingConnectionProfilePage getSinglePendingUserIncomingConnectionProfilePage() {
     return context.getPagesCollection().getPage(SinglePendingUserIncomingConnectionProfilePage.class);
+  }
+
+  private WebViewPage getWebView() {
+    return context.getPagesCollection().getPage(WebViewPage.class);
   }
 
   @When("^I create new group \"(.*)\"$")
@@ -131,5 +137,18 @@ public class GroupSteps {
 
     getConversationListPage().openConnectionRequest();
     getSinglePendingUserIncomingConnectionProfilePage().tapConnect();
+  }
+
+  @When("I share the current file in conversation (.*)")
+  public void iShareCurrentFile(String conversationName) {
+    getFileInspectionPage().tapShareButton();
+    getWebView().tapMoreButonShareExt();
+    getWebView().tapWireInShareExt();
+    getWebView().tapChooseInShareExt();
+    conversationName = context.getUsersManager()
+        .replaceAliasesOccurrences(conversationName, ClientUsersManager.FindBy.NAME_ALIAS);
+    getWebView().selectConversationInShareExt(conversationName);
+    getWebView().tapSendButtonShareExt();
+    getFileInspectionPage().tapDoneButton();
   }
 }
