@@ -6,6 +6,7 @@ import com.wearezeta.auto.ios.pages.SearchUIPage;
 import com.wearezeta.auto.ios.pages.ServiceDetailPage;
 import com.wearezeta.auto.ios.pages.TeamSearchUIPage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupAddPeoplePage;
+import com.wearezeta.auto.ios.pages.details_overlay.group.GroupConnectedParticipantProfilePage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupDetailsPage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.AddPeoplePage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.NewGroupPage;
@@ -29,6 +30,10 @@ public class GroupSteps {
 
   private GroupAddPeoplePage getGroupAddPeoplePage() {
     return context.getPagesCollection().getPage(GroupAddPeoplePage.class);
+  }
+
+  private GroupConnectedParticipantProfilePage getGroupParticipantProfilePage() {
+    return context.getPagesCollection().getPage(GroupConnectedParticipantProfilePage.class);
   }
 
   private AddPeoplePage getAddPeoplePage()  {
@@ -81,5 +86,14 @@ public class GroupSteps {
 
     getServiceDetailPage().addService();
     getGroupDetailsPage().tapXButton();
+  }
+
+  @When("^I remove (.*) from group$")
+  public void removeFromGroup(String name) {
+    name = context.getUsersManager().replaceAliasesOccurrences(name, ClientUsersManager.FindBy.NAME_ALIAS);
+
+    getGroupDetailsPage().selectParticipant(name);
+    getGroupParticipantProfilePage().tapRemoveFromConversationButton();
+    getGroupParticipantProfilePage().confirmRemove();
   }
 }

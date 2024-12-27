@@ -22,9 +22,7 @@ Feature: Groups
     Then I see ❤️ reaction in the conversation view
   # Remove person from group
     When I open group conversation details
-    And I select participant <Member3> on Group Details page
-    And I tap Remove From Conversation button on Group participant profile page
-    And I confirm removal from group
+    And I remove <Member3> from group
     And I close Group Details
     Then I see "You removed <Member3>" system message in the conversation view
   # Adding new person to team and group
