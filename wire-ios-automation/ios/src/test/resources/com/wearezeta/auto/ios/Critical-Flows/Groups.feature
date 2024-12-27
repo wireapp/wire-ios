@@ -13,12 +13,7 @@ Feature: Groups
     And I add members <Member1>, <Member2>, <Member3> to new group via search
   # Add service to team
     When I open group conversation details
-    And I tap Add People button on Group Details page
-    And I tap Services tab on Team Search UI page
-    And I type first 3 letters of name "<ServiceName>" in search input field on Add People page
-    And I tap on service "<ServiceName>" in service search result
-    And I tap Add Service button on service detail page
-    When I close Group Details
+    And I add service <ServiceName> to group
     Then I see "You added <ServiceName>" system message in the conversation view
   # Team members send message and user reacts
     When User <Member1> sends 1 default messages to conversation <ConversationTitle>
