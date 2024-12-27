@@ -74,14 +74,18 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         let selfClient = await syncMOC.perform {
             self.createSelfClient(onMOC: self.syncMOC)
         }
+        let hasRegisteredMLSClient = await syncMOC.perform {
+            selfClient.hasRegisteredMLSClient
+        }
         let qualifiedID = await syncMOC.perform {
             selfClient.qualifiedClientID
         }
 
         // When
+        XCTAssertFalse(hasRegisteredMLSClient)
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID!,
-            hasRegisteredMLSClient: false,
+            hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature
         )
 
@@ -110,14 +114,18 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         let selfClient = await syncMOC.perform {
             self.createSelfClient(onMOC: self.syncMOC)
         }
+        let hasRegisteredMLSClient = await syncMOC.perform {
+            selfClient.hasRegisteredMLSClient
+        }
         let qualifiedID = await syncMOC.perform {
             selfClient.qualifiedClientID
         }
 
         // When
+        XCTAssertFalse(hasRegisteredMLSClient)
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID!,
-            hasRegisteredMLSClient: false,
+            hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature
         )
 
@@ -151,9 +159,16 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         }
 
         // When
+        let hasRegisteredMLSClient = await syncMOC.perform {
+            selfClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
+            selfClient.needsToUploadMLSPublicKeys = false
+            return selfClient.hasRegisteredMLSClient
+        }
+        XCTAssertTrue(hasRegisteredMLSClient)
+
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID!,
-            hasRegisteredMLSClient: true,
+            hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature
         )
 
@@ -182,14 +197,18 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         let selfClient = await syncMOC.perform {
             self.createSelfClient(onMOC: self.syncMOC)
         }
+        let hasRegisteredMLSClient = await syncMOC.perform {
+            selfClient.hasRegisteredMLSClient
+        }
         let qualifiedID = await syncMOC.perform {
             selfClient.qualifiedClientID
         }
 
         // When
+        XCTAssertFalse(hasRegisteredMLSClient)
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID!,
-            hasRegisteredMLSClient: false,
+            hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature
         )
 
