@@ -41,12 +41,12 @@ Feature: Groups
     And I select participant <Member3> on Group Details page
     And I tap Remove From Conversation button on Group participant profile page
     And I confirm removal from group
+    And I tap X button on Group Details page
     Then I see "You removed <Member3>" system message in the conversation view
   # Adding new person to team and group
     And User <TeamOwner> adds user <Member4> to team <TeamName> with role Member
     And User adds the following device: {"<Member4>": [{"name": "Device3"}]}
     And I open group conversation details
-    And I wait for 100 seconds
     When I tap Add People button on Group Details page
     And I type search query "<Member4>" on Group Add People page
     And I select search result item <Member4> on Group Add People page
