@@ -1,6 +1,6 @@
 Feature: Groups
 
-  @flows @WPB6540 @TC-8579
+  @flows @TC-8579
   Scenario Outline: Team owner making an all team chat (contains bug)
     Given There is a team owner "<TeamOwner>" with team "<TeamName>"
     And User <TeamOwner> adds user <Member1>,<Member2>,<Member3> to team <TeamName> with role Member
