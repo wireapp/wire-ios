@@ -959,6 +959,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
             }
 
+            // TODO: Use MLSClientSyncManager
             if hasRegisteredMLSClient {
                 await performsMLSClientUpdates()
             } else {
@@ -1141,7 +1142,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
             // So we perform a slow sync to sync the conversations. This will ensure that
             // the message protocol of each conversation is up-to-date.
             // The client will then join any MLS groups they haven't joined yet.
-            print("11111 did forceSlowSync in didRegisterSelfUserClient")
             syncStatus.forceSlowSync()
         }
 

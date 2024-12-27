@@ -145,8 +145,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         let mlsFeatureProcessor = MLSFeatureProcessor(
             coreCryptoProvider: coreCryptoProvider,
             mlsService: mlsService,
-            syncContext: syncMOC,
-            mlsFeature: mlsFeature)
+            syncContext: syncMOC
+        )
 
         return [
 

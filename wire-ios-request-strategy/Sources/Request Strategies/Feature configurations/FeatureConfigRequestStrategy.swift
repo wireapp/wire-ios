@@ -120,13 +120,11 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         prefetchResult: ZMFetchRequestBatchResult?
     ) {
         for event in events {
-            Task {
-                await processEvent(event)
-            }
+            processEvent(event)
         }
     }
 
-    private func processEvent(_ event: ZMUpdateEvent) async {
+    private func processEvent(_ event: ZMUpdateEvent) {
         guard
             event.type == .featureConfigUpdate,
             let name = event.payload["name"] as? String,
@@ -143,11 +141,12 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             let repository = FeatureRepository(context: managedObjectContext)
 
             let processor = FeatureConfigsPayloadProcessor()
-            try await processor.processEventPayload(
+            try processor.processEventPayload(
                 data: payloadData,
                 featureName: featureName,
                 repository: repository,
-                mlsFeatureProcessor: mlsFeatureProcessor
+                mlsFeatureProcessor: mlsFeatureProcessor,
+                in: managedObjectContext
             )
 
             WireLogger.featureConfigs.info("Finished processing update event \(name)")

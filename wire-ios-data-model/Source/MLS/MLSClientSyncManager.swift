@@ -18,9 +18,14 @@
 
 import WireLogging
 
+// TODO: Add tests
 public protocol MLSClientSyncManagerProtocol {
 
-    func initiateOrSyncMLSClient() async
+    func initiateOrSyncMLSClientIfNeeded(
+        for qualifiedClientID: QualifiedClientID,
+        hasRegisteredMLSClient: Bool,
+        mlsFeature: Feature.MLS
+    ) async
 
 }
 
@@ -30,41 +35,31 @@ public final class MLSClientSyncManager: MLSClientSyncManagerProtocol {
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let mlsService: MLSServiceInterface
-    private let syncContext: NSManagedObjectContext
-    private let mlsFeature: Feature.MLS
 
     // MARK: - Initialize
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        mlsService: any MLSServiceInterface,
-        syncContext: NSManagedObjectContext,
-        mlsFeature: Feature.MLS
+        mlsService: any MLSServiceInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.mlsService = mlsService
-        self.syncContext = syncContext
-        self.mlsFeature = mlsFeature
     }
 
     // MARK: - Public Implentation
 
-    public func initiateOrSyncMLSClient() async {
-        print("something")
-        let (proteusService, conversationID) = await syncContext.perform { [syncContext] in (
-            "proteusService",
-            "conversationID"
-        ) }
-        print(proteusService)
-        print(conversationID)
-        let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform { [syncContext] in
-            let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-            let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
-            return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
+    public func initiateOrSyncMLSClientIfNeeded(
+        for qualifiedClientID: QualifiedClientID,
+        hasRegisteredMLSClient: Bool,
+        mlsFeature: Feature.MLS
+    ) async {
+        guard BackendInfo.isMLSEnabled && mlsFeature.isEnabled else {
+            return
         }
 
-        if let qualifiedSelfClientID, !hasRegisteredMLSClient {
-            await createMLSClientIfNeeded(qualifiedID: qualifiedSelfClientID)
+        if !hasRegisteredMLSClient {
+            let mlsClientID = MLSClientID(qualifiedClientID: qualifiedClientID)
+            await createMLSClient(mlsClientID: mlsClientID)
         }
         await performsMLSClientUpdates()
     }
@@ -82,18 +77,7 @@ public final class MLSClientSyncManager: MLSClientSyncManagerProtocol {
         await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
     }
 
-    private func createMLSClientIfNeeded(qualifiedID: QualifiedClientID) async {
-        // If we discover that
-        // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS
-        // client,
-        // we should create one.
-        guard BackendInfo.isMLSEnabled && mlsFeature.isEnabled else {
-            return
-        }
-        let mlsClientID = await syncContext.perform {
-            MLSClientID(qualifiedClientID: qualifiedID)
-        }
-
+    private func createMLSClient(mlsClientID: MLSClientID) async {
         do {
             try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
         } catch {
