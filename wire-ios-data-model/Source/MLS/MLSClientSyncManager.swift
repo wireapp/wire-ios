@@ -19,9 +19,9 @@
 import WireLogging
 
 // TODO: Add tests
-public protocol MLSClientSyncManagerProtocol {
+public protocol MLSClientManagerProtocol {
 
-    func initiateOrSyncMLSClientIfNeeded(
+    func initializeMLSClientIfNeeded(
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
         mlsFeature: Feature.MLS
@@ -29,7 +29,7 @@ public protocol MLSClientSyncManagerProtocol {
 
 }
 
-public final class MLSClientSyncManager: MLSClientSyncManagerProtocol {
+public final class MLSClientManager: MLSClientManagerProtocol {
 
     // MARK: - Properties
 
@@ -48,7 +48,7 @@ public final class MLSClientSyncManager: MLSClientSyncManagerProtocol {
 
     // MARK: - Public Implementation
 
-    public func initiateOrSyncMLSClientIfNeeded(
+    public func initializeMLSClientIfNeeded(
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
         mlsFeature: Feature.MLS

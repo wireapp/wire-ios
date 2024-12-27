@@ -352,7 +352,7 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
-    private lazy var  mlsClientSyncManager: MLSClientSyncManager = MLSClientSyncManager(
+    private lazy var  mlsClientManager = MLSClientManager(
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService)
 
@@ -952,10 +952,12 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
 
             if let qualifiedSelfClientID {
-                await mlsClientSyncManager.initiateOrSyncMLSClientIfNeeded(
+                await mlsClientManager.initializeMLSClientIfNeeded(
                     for: qualifiedSelfClientID,
                     hasRegisteredMLSClient: hasRegisteredMLSClient,
                     mlsFeature: mlsFeature)
+            } else {
+                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
             }
 
             if mlsFeature.isEnabled {

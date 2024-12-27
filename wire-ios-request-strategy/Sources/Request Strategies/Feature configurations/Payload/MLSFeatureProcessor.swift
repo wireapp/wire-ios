@@ -27,7 +27,7 @@ public protocol MLSFeatureProcessorProtocol {
 
 public final class MLSFeatureProcessor: MLSFeatureProcessorProtocol {
 
-    private let mlsClientSyncManager: MLSClientSyncManagerProtocol
+    private let mlsClientManager: MLSClientManagerProtocol
     private let context: NSManagedObjectContext
 
     public init(
@@ -36,7 +36,7 @@ public final class MLSFeatureProcessor: MLSFeatureProcessorProtocol {
         syncContext: NSManagedObjectContext
 
     ) {
-        self.mlsClientSyncManager = MLSClientSyncManager(
+        self.mlsClientManager = MLSClientManager(
             coreCryptoProvider: coreCryptoProvider,
             mlsService: mlsService)
         self.context = syncContext
@@ -49,7 +49,7 @@ public final class MLSFeatureProcessor: MLSFeatureProcessorProtocol {
         }
 
         if let qualifiedSelfClientID {
-            await mlsClientSyncManager.initiateOrSyncMLSClientIfNeeded(
+            await mlsClientManager.initializeMLSClientIfNeeded(
                 for: qualifiedSelfClientID,
                 hasRegisteredMLSClient: hasRegisteredMLSClient,
                 mlsFeature: mlsFeature)
