@@ -18,8 +18,8 @@
 
 import Foundation
 import XCTest
-@testable import WireRequestStrategy
 @testable import WireDataModelSupport
+@testable import WireRequestStrategy
 
 class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
@@ -40,7 +40,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         mockMLService = MockMLSServiceInterface()
         sut = MLSClientManager(
             coreCryptoProvider: mockCoreCryptoProvider,
-            mlsService: mockMLService)
+            mlsService: mockMLService
+        )
     }
 
     override func tearDown() {
@@ -81,7 +82,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID!,
             hasRegisteredMLSClient: false,
-            mlsFeature: mlsFeature)
+            mlsFeature: mlsFeature
+        )
 
         // Then
         XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
@@ -116,7 +118,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID!,
             hasRegisteredMLSClient: false,
-            mlsFeature: mlsFeature)
+            mlsFeature: mlsFeature
+        )
 
         // Then
         XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 0)
@@ -151,7 +154,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID!,
             hasRegisteredMLSClient: true,
-            mlsFeature: mlsFeature)
+            mlsFeature: mlsFeature
+        )
 
         // Then
         XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 0)
@@ -186,7 +190,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID!,
             hasRegisteredMLSClient: false,
-            mlsFeature: mlsFeature)
+            mlsFeature: mlsFeature
+        )
 
         // Then
         XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 0)

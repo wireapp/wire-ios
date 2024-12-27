@@ -264,7 +264,8 @@ struct FeatureConfigsPayloadProcessor {
                 await processMLSFeatureConfigChanges(
                     mlsClientManager: mlsClientManager,
                     context: context,
-                    mlsFeature: mlsFeature)
+                    mlsFeature: mlsFeature
+                )
             }
 
         case .mlsMigration:
@@ -294,7 +295,8 @@ struct FeatureConfigsPayloadProcessor {
         await mlsClientManager.initializeMLSClientIfNeeded(
             for: qualifiedSelfClientID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
-            mlsFeature: mlsFeature)
+            mlsFeature: mlsFeature
+        )
     }
 
 }

@@ -144,7 +144,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         )
         let mlsClientManager = MLSClientManager(
             coreCryptoProvider: coreCryptoProvider,
-            mlsService: mlsService)
+            mlsService: mlsService
+        )
 
         return [
 
