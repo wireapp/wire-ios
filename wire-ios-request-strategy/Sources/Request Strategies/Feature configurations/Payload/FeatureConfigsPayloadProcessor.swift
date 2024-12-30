@@ -18,6 +18,7 @@
 
 import Foundation
 import protocol WireDataModel.FeatureRepositoryInterface
+import WireLogging
 
 struct FeatureConfigsPayloadProcessor {
 
@@ -207,7 +208,9 @@ struct FeatureConfigsPayloadProcessor {
     func processEventPayload(
         data: Data,
         featureName: Feature.Name,
-        repository: FeatureRepositoryInterface
+        repository: FeatureRepositoryInterface,
+        mlsClientManager: MLSClientManagerProtocol,
+        in context: NSManagedObjectContext
     ) throws {
         switch featureName {
         case .conferenceCalling:
@@ -256,6 +259,14 @@ struct FeatureConfigsPayloadProcessor {
         case .mls:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
             repository.storeMLS(.init(status: response.status, config: response.config))
+            Task {
+                let mlsFeature = await repository.fetchMLS()
+                await processMLSFeatureConfigChanges(
+                    mlsClientManager: mlsClientManager,
+                    context: context,
+                    mlsFeature: mlsFeature
+                )
+            }
 
         case .mlsMigration:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLSMigration.Config>.self, from: data)
@@ -265,5 +276,26 @@ struct FeatureConfigsPayloadProcessor {
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
             repository.storeE2EI(.init(status: response.status, config: response.config))
         }
+    }
+
+    private func processMLSFeatureConfigChanges(
+        mlsClientManager: MLSClientManagerProtocol,
+        context: NSManagedObjectContext,
+        mlsFeature: Feature.MLS
+    ) async {
+        let (qualifiedSelfClientID, hasRegisteredMLSClient) = await context.perform {
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return (selfClient?.qualifiedClientID, selfClient?.hasRegisteredMLSClient ?? false)
+        }
+
+        guard let qualifiedSelfClientID else {
+            WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
+            return
+        }
+        await mlsClientManager.initializeMLSClientIfNeeded(
+            for: qualifiedSelfClientID,
+            hasRegisteredMLSClient: hasRegisteredMLSClient,
+            mlsFeature: mlsFeature
+        )
     }
 }
