@@ -18,6 +18,7 @@
 
 import WireLogging
 
+// sourcery: AutoMockable
 public protocol MLSClientManagerProtocol {
 
     func initializeMLSClientIfNeeded(
