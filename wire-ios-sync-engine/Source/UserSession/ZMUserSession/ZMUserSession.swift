@@ -366,7 +366,7 @@ public final class ZMUserSession: NSObject {
     // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
 
-    var callStateObserverToken: Any?
+    var callStateObserverToken: AnyObject?
 
     // MARK: - Initialize
 
