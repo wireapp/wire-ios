@@ -377,7 +377,11 @@ extension SettingsCellDescriptorFactory {
                     return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-                    return BackupViewController(backupSource: SessionManager.shared!)
+                    let viewModel = BackupViewModel()
+                    let backupController = BackupHostingController(viewModel: viewModel)
+                    backupController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
+                    return backupController
+                    //return BackupViewController(backupSource: SessionManager.shared!)
                 } else {
                     let alert = UIAlertController(
                         title: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.title,

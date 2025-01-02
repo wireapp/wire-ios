@@ -101,6 +101,10 @@
 		06C412AC238FCAA80018866F /* Int+Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AB238FCAA80018866F /* Int+Const.swift */; };
 		06C412B0239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */; };
 		06CDC6F62A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CDC6F52A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift */; };
+		06D4B85B2D22DDF2004627EB /* BackupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D4B85A2D22DDF2004627EB /* BackupView.swift */; };
+		06D4B8632D230537004627EB /* BackupSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D4B8622D230535004627EB /* BackupSection.swift */; };
+		06D720222D2357DF00D36510 /* BackupHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D720212D2357C000D36510 /* BackupHostingController.swift */; };
+		06D720242D2359EC00D36510 /* BackupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D720232D2359EA00D36510 /* BackupViewModel.swift */; };
 		06D93B472B56F64F00A0A512 /* E2EIFeatureChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D93B462B56F64F00A0A512 /* E2EIFeatureChange.swift */; };
 		06DF42D12757DA56009C8A99 /* GuestLinkInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */; };
 		06E097982A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E097972A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift */; };
@@ -2052,6 +2056,10 @@
 		06C412AB238FCAA80018866F /* Int+Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Const.swift"; sourceTree = "<group>"; };
 		06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+DragAndDrop.swift"; sourceTree = "<group>"; };
 		06CDC6F52A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailedUsersSystemMessageCell.swift; sourceTree = "<group>"; };
+		06D4B85A2D22DDF2004627EB /* BackupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupView.swift; sourceTree = "<group>"; };
+		06D4B8622D230535004627EB /* BackupSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupSection.swift; sourceTree = "<group>"; };
+		06D720212D2357C000D36510 /* BackupHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupHostingController.swift; sourceTree = "<group>"; };
+		06D720232D2359EA00D36510 /* BackupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupViewModel.swift; sourceTree = "<group>"; };
 		06D93B462B56F64F00A0A512 /* E2EIFeatureChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIFeatureChange.swift; sourceTree = "<group>"; };
 		06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestLinkInfoCell.swift; sourceTree = "<group>"; };
 		06E097972A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+IncompleteMetadata.swift"; sourceTree = "<group>"; };
@@ -4093,6 +4101,38 @@
 				06B3091226AEDC990057AF9E /* UIAlertController+FeatureConfig.swift */,
 			);
 			path = UIAlertController;
+			sourceTree = "<group>";
+		};
+		06D4B85C2D2302F3004627EB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				06D4B8622D230535004627EB /* BackupSection.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		06D4B85D2D230304004627EB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				06D4B85A2D22DDF2004627EB /* BackupView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		06D4B8602D23031D004627EB /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				06D720232D2359EA00D36510 /* BackupViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		06D4B8612D230327004627EB /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				06D720212D2357C000D36510 /* BackupHostingController.swift */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		06F3E73124EFA9E600B1083C /* Notification Extension */ = {
@@ -7502,6 +7542,10 @@
 		E666EDD42B73E5F500C03E2B /* Backup */ = {
 			isa = PBXGroup;
 			children = (
+				06D4B8612D230327004627EB /* ViewControllers */,
+				06D4B8602D23031D004627EB /* ViewModels */,
+				06D4B85D2D230304004627EB /* Views */,
+				06D4B85C2D2302F3004627EB /* Models */,
 				E666EDD52B73E62800C03E2B /* BackupSource.swift */,
 				E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */,
 				E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */,
@@ -9296,6 +9340,7 @@
 				064AD4C425DD31A600143D74 /* UIApplication+OpenURL.swift in Sources */,
 				87E4D2CA1FC6E39800F3C664 /* CharacterInputField.swift in Sources */,
 				F15650D921DD107800210504 /* RoundedViewProtocol.swift in Sources */,
+				06D4B85B2D22DDF2004627EB /* BackupView.swift in Sources */,
 				A9F57E3D2419A83100EEA912 /* TokenContainer.swift in Sources */,
 				E95F1CA12C3D472A005E80BC /* AnalytitcsServiceConfigurationBuilder.swift in Sources */,
 				F1CB5D252158FE1F001CCF5D /* MentionsHandler+TextView.swift in Sources */,
@@ -9490,6 +9535,7 @@
 				EFF3DA452097587F007A3358 /* UIPasteboard+MediaAsset.swift in Sources */,
 				1682AEB620480C80003A052A /* UIViewController+Navigation.swift in Sources */,
 				5E33F0D020AD629D00414EA6 /* CallPermissionsConfiguration.swift in Sources */,
+				06D720242D2359EC00D36510 /* BackupViewModel.swift in Sources */,
 				EF2388862211A67900331C07 /* UserRight.swift in Sources */,
 				5405444F253842C200FAE77A /* LaunchSequenceOperation.swift in Sources */,
 				871BC2551D34F8F800DF0793 /* CrossfadeTransition.swift in Sources */,
@@ -9827,6 +9873,7 @@
 				06ADE9F12BC7C515008BA0B3 /* RemoveClientsViewController.swift in Sources */,
 				EF17B0D6223A70D1006252A8 /* SketchColorPickerController.swift in Sources */,
 				16829EDF2010D60800F579A0 /* InviteTeamMemberSection.swift in Sources */,
+				06D720222D2357DF00D36510 /* BackupHostingController.swift in Sources */,
 				594C4E2B2CCA98F000F13D03 /* AccountImageSourceMapping.swift in Sources */,
 				87E8D0BD21821E6F00BD26AC /* ConversationContentViewController+Reply.swift in Sources */,
 				63238C6B2B860E2B00951467 /* DeveloperE2eiView.swift in Sources */,
@@ -9934,6 +9981,7 @@
 				5EE73BF3212323C70032986D /* RegistrationCredentialsVerifiedEventHandler.swift in Sources */,
 				EE8E926E2024F085000F4752 /* MarkdownTextView.swift in Sources */,
 				63E128B726208BAD009D9AF2 /* CallGridHintNotificationLabel.swift in Sources */,
+				06D4B8632D230537004627EB /* BackupSection.swift in Sources */,
 				A9E674D124F40C550058FC72 /* KeyboardAvoidingAuthenticationCoordinatedViewController.swift in Sources */,
 				F12CDAE01E43868200CEFCEB /* ConfirmEmailViewController.swift in Sources */,
 				7CCFC10F228AFCC0007C365B /* ConversationLegalHoldCell.swift in Sources */,

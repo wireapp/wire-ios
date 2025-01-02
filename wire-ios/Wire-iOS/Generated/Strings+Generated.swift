@@ -5560,12 +5560,10 @@ internal enum L10n {
         internal enum HistoryBackup {
           /// Back Up Now
           internal static let action = L10n.tr("Localizable", "self.settings.history_backup.action", fallback: "Back Up Now")
-          /// Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.
-          /// 
-          /// Choose a strong password to protect the backup file.
-          internal static let description = L10n.tr("Localizable", "self.settings.history_backup.description", fallback: "Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.\n\nChoose a strong password to protect the backup file.")
-          /// Back Up Conversations
-          internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back Up Conversations")
+          /// Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.
+          internal static let description = L10n.tr("Localizable", "self.settings.history_backup.description", fallback: "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.")
+          /// Back up or Restore
+          internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back up or Restore")
           internal enum Error {
             /// Error
             internal static let title = L10n.tr("Localizable", "self.settings.history_backup.error.title", fallback: "Error")
@@ -5762,6 +5760,12 @@ internal enum L10n {
             /// Receive news and product updates from Wire via email.
             internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.description.title", fallback: "Receive news and product updates from Wire via email.")
           }
+        }
+        internal enum RestoreFromBackup {
+          /// Restore from Backup
+          internal static let action = L10n.tr("Localizable", "self.settings.restore_from_backup.action", fallback: "Restore from Backup")
+          /// The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.
+          internal static let description = L10n.tr("Localizable", "self.settings.restore_from_backup.description", fallback: "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.")
         }
         internal enum SoundMenu {
           /// Sound Alerts

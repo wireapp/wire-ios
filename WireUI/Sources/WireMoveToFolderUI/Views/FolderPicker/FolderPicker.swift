@@ -88,7 +88,7 @@ public struct FolderPicker: View {
         }
     }
 
-    private var folderList: some View {
+    private var folderList: some View {//
         List(viewModel.folders, id: \.identifier) { folder in
             FolderRow(
                 folder: folder,

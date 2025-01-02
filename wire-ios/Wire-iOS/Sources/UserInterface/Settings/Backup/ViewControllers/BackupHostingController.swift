@@ -17,22 +17,20 @@
 //
 
 import SwiftUI
+import UIKit
 
-struct DeveloperDebugActionsView: View {
+public final class BackupHostingController: UIHostingController<BackupView> {
+    private let viewModel: BackupViewModel
 
-    @ObservedObject var viewModel: DeveloperDebugActionsViewModel
-
-    var body: some View {//
-        List(viewModel.buttons) { button in
-            Button(action: button.action) {
-                Text(button.title)
-            }
-        }
+    public init(
+        viewModel: BackupViewModel
+    ) {
+        self.viewModel = viewModel
+        super.init(rootView: BackupView(viewModel: viewModel))
     }
-}
 
-// MARK: - Previews
-
-#Preview {
-    DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: nil))
+    @available(*, unavailable)
+    dynamic required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
