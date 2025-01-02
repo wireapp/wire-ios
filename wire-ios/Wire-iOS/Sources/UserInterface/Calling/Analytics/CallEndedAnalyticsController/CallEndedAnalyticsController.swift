@@ -210,8 +210,6 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
     ) {
         logger.info("callCenterDidChange: \(callState)")
 
-        // conversation.managedObjectContext?.zm_callCenter.setVideo
-
         switch callState {
         case let .incoming(isVideoCall, _, _):
             handleIncomingCall(conversation, isVideoCall)

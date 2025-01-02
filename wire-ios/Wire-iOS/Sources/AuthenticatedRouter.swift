@@ -68,9 +68,7 @@ final class AuthenticatedRouter {
         self.activeCallRouter = ActiveCallRouter(
             mainWindow: mainWindow,
             userSession: userSession,
-            toggleVideoPublisher: WireCallCenterV3.setVideoStatePublisher().map { _, _, _ in
-                ()
-            }.eraseToAnyPublisher(),
+            toggleVideoPublisher: WireCallCenterV3.setVideoStatePublisher().map { _, _, _ in }.eraseToAnyPublisher(),
             topOverlayPresenter: .init(mainWindow: mainWindow)
         )
         self.zClientControllerBuilder = .init(
