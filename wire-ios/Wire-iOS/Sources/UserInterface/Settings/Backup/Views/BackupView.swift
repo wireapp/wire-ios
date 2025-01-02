@@ -36,10 +36,8 @@ public struct BackupView: View {
                     footer: Text(section.type.footer)
                 ) {
                     Button(action: {
-                        print("Action for Section 1 triggered!")
-                        withAnimation {
-                            isSheetPresented = true
-                        }
+                        print("Action for Section!")
+                        isSheetPresented.toggle()
                     }) {
                         HStack {
                             Text(section.type.title)
@@ -49,22 +47,20 @@ public struct BackupView: View {
                             Image(.chevronRight).foregroundStyle(Color.primary)
                         }
                     }
-                    //                    .sheet(isPresented: $isSheetPresented) {
-                    //                    }
-//                    .presentationDragIndicator(.visible)
-//                    .presentationDetents([.medium, .large])
+                    .sheet(isPresented: $isSheetPresented) {
+                        NavigationStack {
+                            SetBackupPassword()
+                        }
+                        .presentationDetents([.medium, .large])
+                    }
                 }
             }
         }
         .listStyle(.grouped)
         .listRowBackground(Color(ColorTheme.Backgrounds.background))
-        .sheet(isPresented: $isSheetPresented) {
-            //SetBackupPassword()
-        }
     }
 }
 
 #Preview {
     BackupView(viewModel: BackupViewModel())
 }
-

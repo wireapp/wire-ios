@@ -28,13 +28,13 @@ public final class BackupViewModel: ObservableObject {
                 action: {
                     print("Action for Section 1 triggered!")
                 }
-            ),
-            BackupSection(
-                type: .restore,
-                action: {
-                    print("Action for Section 2 triggered!")
-                }
             )
+//            BackupSection(
+//                type: .restore,
+//                action: {
+//                    print("Action for Section 2 triggered!")
+//                }
+//            )
         ]
     }
 

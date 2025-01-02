@@ -27,12 +27,14 @@ public struct SetBackupPassword: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    public init(){}
+
     public var body: some View {
         BackupSheetView()
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
-                Text("Set password")
+                Text(String("Set password"))
             )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -58,7 +60,7 @@ struct BackupSheetView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("The backup will be compressed and encrypted with a password. Make sure to store it in a secure place.")
+            Text(String("The backup will be compressed and encrypted with a password. Make sure to store it in a secure place."))
                 .font(.textStyle(.body1))
                 .foregroundStyle(Color.primaryText)
                 .multilineTextAlignment(.leading)
@@ -77,7 +79,7 @@ struct BackupSheetView: View {
                     dismiss()
                 },
                 label: {
-                    Text("Back Up Now")
+                    Text(String("Back Up Now"))
                 }
             )
             .wireButtonStyle(.primary)

@@ -22,9 +22,7 @@ import UIKit
 public final class BackupHostingController: UIHostingController<BackupView> {
     private let viewModel: BackupViewModel
 
-    public init(
-        viewModel: BackupViewModel
-    ) {
+    public init(viewModel: BackupViewModel) {
         self.viewModel = viewModel
         super.init(rootView: BackupView(viewModel: viewModel))
     }
