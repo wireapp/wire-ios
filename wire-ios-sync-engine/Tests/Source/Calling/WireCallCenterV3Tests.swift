@@ -1252,7 +1252,7 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItStartsACall_conference_video() throws {
         // given
         try checkThatItPostsNotification(
-            expectedCallState: .outgoing(isVideo: false, degraded: false),
+            expectedCallState: .outgoing(isVideo: true, degraded: false),
             expectedCallerId: selfUserID,
             expectedConversationId: groupConversationID
         ) {
