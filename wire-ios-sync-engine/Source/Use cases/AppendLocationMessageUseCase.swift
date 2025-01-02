@@ -53,7 +53,7 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
         guard let conversationType else {
             return analyticsLogger.error(
                 "AppendLocationMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
-                "converted to SegmentationEntry.Conversation.ConversationType."
+                    "converted to SegmentationEntry.Conversation.ConversationType."
             )
         }
 

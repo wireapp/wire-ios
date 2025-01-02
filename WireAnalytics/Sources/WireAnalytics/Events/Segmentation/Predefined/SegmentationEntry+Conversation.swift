@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension SegmentationEntry {
+public extension SegmentationEntry {
 
-    public enum Conversation {
+    enum Conversation {
 
         public enum ConversationType: String {
             case group
@@ -40,9 +40,9 @@ extension SegmentationEntry.Conversation.ConversationType {
     func mapToConversationType() -> SegmentationEntry.Conversation.LegacyConversationType {
         switch self {
         case .group:
-                .group
+            .group
         case .oneOnOne:
-                .oneOnOne
+            .oneOnOne
         }
     }
 }

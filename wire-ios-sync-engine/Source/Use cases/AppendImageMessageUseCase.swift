@@ -51,7 +51,7 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
         guard let conversationType else {
             return analyticsLogger.error(
                 "AppendImageMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
-                "converted to SegmentationEntry.Conversation.ConversationType."
+                    "converted to SegmentationEntry.Conversation.ConversationType."
             )
         }
 

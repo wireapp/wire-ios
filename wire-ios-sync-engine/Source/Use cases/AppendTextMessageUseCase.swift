@@ -17,8 +17,8 @@
 //
 
 import WireAnalytics
-import WireLogging
 import WireDataModel
+import WireLogging
 
 public protocol AppendTextMessageUseCaseProtocol {
 
@@ -64,7 +64,7 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
         guard let conversationType else {
             return analyticsLogger.error(
                 "AppendTextMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
-                "converted to SegmentationEntry.Conversation.ConversationType."
+                    "converted to SegmentationEntry.Conversation.ConversationType."
             )
         }
 

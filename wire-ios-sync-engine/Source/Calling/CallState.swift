@@ -159,7 +159,7 @@ public enum ActiveSpeakerState: Hashable {
 
 /// The current state of a call.
 
-public enum CallState: Equatable { // TODO: check
+public enum CallState: Equatable {
 
     /// There's no call
     case none

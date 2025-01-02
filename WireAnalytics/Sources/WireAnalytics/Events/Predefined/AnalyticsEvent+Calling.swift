@@ -93,7 +93,7 @@ public extension AnalyticsEvent {
         ///   - isVideoCall: <#isVideoCall description#>
         ///   - isTeamMember: <#isTeamMember description#>
 
-        public static func endedCall( // TODO: apply similar structure: https://github.com/wireapp/wire-android/pull/3756/files
+        public static func endedCall( // TODO: apply similar structure: https://github.com/wireapp/wire-android/pull/3756/files#diff-911099b2239b176e83580216da2c915a1a8f2561d8d37812c8245d9168989602R978
             deviceModel: String,
             deviceOS: String,
             wasScreenShared: Bool,

@@ -21,7 +21,7 @@ import Foundation
 
 /// Reasons why a call can be terminated.
 
-public enum CallClosedReason: Int32 { // TODO: check
+public enum CallClosedReason: Int32 {
 
     /// Ongoing call was closed by remote or self user
     case normal

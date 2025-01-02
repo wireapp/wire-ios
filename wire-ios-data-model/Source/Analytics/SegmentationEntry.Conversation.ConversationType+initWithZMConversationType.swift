@@ -18,9 +18,9 @@
 
 import WireAnalytics
 
-extension SegmentationEntry.Conversation.ConversationType {
+public extension SegmentationEntry.Conversation.ConversationType {
 
-    public init?(_ conversationType: ZMConversationType) {
+    init?(_ conversationType: ZMConversationType) {
         switch conversationType {
         case .oneOnOne:
             self = .oneOnOne

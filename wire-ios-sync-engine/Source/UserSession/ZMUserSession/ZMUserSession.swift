@@ -426,7 +426,7 @@ public final class ZMUserSession: NSObject {
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
-        analyiticsLogger = .analytics
+        self.analyiticsLogger = .analytics
 
         super.init()
     }

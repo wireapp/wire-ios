@@ -52,7 +52,7 @@ public class WireCallCenterV3: NSObject {
     /// The object that performs network requests when the call center requests them.
     weak var transport: WireCallCenterTransport?
 
-    private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
+    //private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     // MARK: - Calling State
 
@@ -139,7 +139,7 @@ public class WireCallCenterV3: NSObject {
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
-        self.analyticsEventTracker = analyticsEventTracker
+//        self.analyticsEventTracker = analyticsEventTracker
 
         super.init()
 
