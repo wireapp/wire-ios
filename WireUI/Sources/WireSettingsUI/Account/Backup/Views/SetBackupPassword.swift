@@ -34,14 +34,18 @@ public struct SetBackupPassword: View {
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
-                Text(String("Set password"))
+                Text("setBackupPassword.title", tableName: "Localizable", bundle: .module)
             )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     CloseButton(
                         action: didTapClose,
-                        accessibilityLabel: "Close"
+                        accessibilityLabel: String(
+                            localized: "setBackupPassword.close.label",
+                            table: "Accessibility",
+                            bundle: .module
+                        )
                     )
                 }
             }
@@ -60,7 +64,7 @@ struct BackupSheetView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text(String("The backup will be compressed and encrypted with a password. Make sure to store it in a secure place."))
+            Text("setBackupPassword.description", tableName: "Localizable", bundle: .module)
                 .font(.textStyle(.body1))
                 .foregroundStyle(Color.primaryText)
                 .multilineTextAlignment(.leading)
@@ -75,11 +79,10 @@ struct BackupSheetView: View {
 
             Button(
                 action: {
-                    print("Back up initiated with password")
                     dismiss()
                 },
                 label: {
-                    Text(String("Back Up Now"))
+                    Text("setBackupPassword.button", tableName: "Localizable", bundle: .module)
                 }
             )
             .wireButtonStyle(.primary)
@@ -88,7 +91,8 @@ struct BackupSheetView: View {
         .frame(maxHeight: .infinity)
     }
 
-    func isPasswordValid() -> Bool {
+    // TODO: remove it
+    private func isPasswordValid() -> Bool {
         guard !password.isEmpty else {
             return true
         }
@@ -101,7 +105,7 @@ struct BackupSheetView: View {
 // MARK: - Previews
 
 @available(iOS 17.0, *)
-#Preview("With Data") {
+#Preview("Set password sheet") {
     SetBackupPasswordPreview()
 }
 
@@ -109,7 +113,7 @@ private struct SetBackupPasswordPreview: View {
     @State private var isPresented = true
 
     var body: some View {
-        Button("Open Sheet") {
+        Button("Back Up Now") {
             isPresented.toggle()
         }
         .sheet(isPresented: $isPresented) {

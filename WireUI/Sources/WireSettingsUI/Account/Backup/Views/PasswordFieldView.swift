@@ -26,13 +26,17 @@ struct PasswordFieldView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(String("Password (OPTIONAL)"))
+            Text("passwordField.title", tableName: "Localizable", bundle: .module)
                 .font(.subheadline)
                 .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color)
 
             ZStack {
                 if isPasswordVisible {
-                    TextField(String("Enter password"), text: $password)
+                    TextField(String(
+                        localized: "passwordField.placeholder",
+                        table: "Localizable",
+                        bundle: .module),
+                              text: $password)
                         .font(.textStyle(.body1))
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .overlay(
@@ -40,7 +44,11 @@ struct PasswordFieldView: View {
                                 .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
                         )
                 } else {
-                    SecureField(String("Enter password"), text: $password)
+                    SecureField(String(
+                        localized: "passwordField.placeholder",
+                        table: "Localizable",
+                        bundle: .module),
+                                text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
@@ -60,7 +68,7 @@ struct PasswordFieldView: View {
                 }
             }
 
-            Text(String("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."))
+            Text("passwordField.rules", tableName: "Localizable", bundle: .module)
                 .font(.caption)
                 .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color)
         }
