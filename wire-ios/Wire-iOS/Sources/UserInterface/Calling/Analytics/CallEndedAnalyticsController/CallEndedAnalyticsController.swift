@@ -180,7 +180,7 @@ private extension CallEndedAnalyticsController {
         var deviceOS = UIDevice.current.systemVersion
         var callDirection: AnalyticsEvent.Calling.CallDirection = .incoming
         var callStart = Date.now
-        var conversationType: ConversationType_ = .oneOnOne
+        var conversationType: SegmentationEntry.Conversation.ConversationType = .oneOnOne
         var totalScreenSharingDuration = 0
         var uniqueScreenSharingUsers = Set<UUID>()
         var participantCount = Int()

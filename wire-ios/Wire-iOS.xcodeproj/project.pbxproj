@@ -367,6 +367,7 @@
 		5965E9922C9BE152001D8AE1 /* StartUIViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965E9912C9BE151001D8AE1 /* StartUIViewControllerBuilder.swift */; };
 		596841CA2BD14D200009C6B8 /* ImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841C92BD14D200009C6B8 /* ImageTransformer.swift */; };
 		596841CC2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */; };
+		5977ED1F2D26747900F5C78E /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 5977ED1E2D26747900F5C78E /* WireLogging */; };
 		59797A462C6F98880044882D /* ZClientControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59797A452C6F98880044882D /* ZClientControllerBuilder.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
 		597C918E2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */; };
@@ -3927,6 +3928,7 @@
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				59B4046C2CAB140A00CC33BF /* WireSettingsUI in Frameworks */,
 				59B48C602C89CCCC00EA7999 /* WireFoundation in Frameworks */,
+				5977ED1F2D26747900F5C78E /* WireLogging in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
 				59AF77A32CC7FF89002438D1 /* WireMainNavigationUI in Frameworks */,
@@ -8495,6 +8497,7 @@
 				59B48C5F2C89CCCC00EA7999 /* WireFoundation */,
 				59B4046B2CAB140A00CC33BF /* WireSettingsUI */,
 				59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */,
+				5977ED1E2D26747900F5C78E /* WireLogging */,
 			);
 			productName = "Wire-iOS UnitTests";
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
@@ -11459,6 +11462,10 @@
 		595C49682CA995E900F8F881 /* WireSettingsUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSettingsUI;
+		};
+		5977ED1E2D26747900F5C78E /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
 		};
 		59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */ = {
 			isa = XCSwiftPackageProductDependency;
