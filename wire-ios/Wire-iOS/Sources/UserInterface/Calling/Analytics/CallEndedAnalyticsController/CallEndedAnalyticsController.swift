@@ -147,20 +147,24 @@ final class CallEndedAnalyticsController {
             .Calling.endedCall(
                 deviceModel: eventInfo.deviceModel,
                 deviceOS: eventInfo.deviceOS,
-                wasScreenShared: !eventInfo.uniqueScreenSharingUsers.isEmpty,
-                totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,
-                uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers.count,
-                callDirection: eventInfo.callDirection,
-                callDuration: eventInfo.callDuration(),
-                conversationType: eventInfo.conversationType,
-                conversationSize: conversationSize,
-                conversationGuestsNonTeam: conversationGuestsNonTeam,
-                conversationGuestsTeam: conversationGuestsTeam,
-                callParticipants: eventInfo.participantCount,
                 callEndReason: reason.analyticsValue,
-                conversationServices: conversationServices,
-                hasAVSwitchToggled: eventInfo.hasAVSwitchToggled,
-                isVideoCall: eventInfo.isVideoCall,
+                callDetails: .init(
+                    wasScreenShared: !eventInfo.uniqueScreenSharingUsers.isEmpty,
+                    totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,
+                    uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers.count,
+                    callDirection: eventInfo.callDirection,
+                    callDuration: eventInfo.callDuration(),
+                    callParticipantCount: eventInfo.participantCount,
+                    conversationServiceCount: conversationServices,
+                    hasAVSwitchToggled: eventInfo.hasAVSwitchToggled,
+                    isVideoCall: eventInfo.isVideoCall
+                ),
+                conversationDetails: .init(
+                    conversationType: eventInfo.conversationType,
+                    conversationSize: conversationSize,
+                    conversationGuestsNonTeam: conversationGuestsNonTeam,
+                    conversationGuestsTeam: conversationGuestsTeam
+                ),
                 isTeamMember: isTeamMember
             )
         )
