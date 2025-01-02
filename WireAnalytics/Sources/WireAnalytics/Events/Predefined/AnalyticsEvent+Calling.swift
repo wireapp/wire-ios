@@ -115,21 +115,21 @@ public extension AnalyticsEvent {
             AnalyticsEvent(name: "calling.ended_call", segmentation: [
                 .deviceModel(deviceModel),
                 .deviceOS(deviceOS),
-                .wasScreenShared(wasScreenShared),
-                .totalScreenSharingDuration(totalScreenSharingDuration),
-                .uniqueScreenSharingUsers(uniqueScreenSharingUsers),
-                .callDirection(callDirection.rawValue),
-                .callDuration(callDuration),
+                .Call.wasScreenShared(wasScreenShared),
+                .Call.totalScreenSharingDuration(totalScreenSharingDuration),
+                .Call.uniqueScreenSharingUsers(uniqueScreenSharingUsers),
+                .Call.callDirection(callDirection.rawValue),
+                .Call.callDuration(callDuration),
                 .conversationType(conversationType),
                 .conversationSize(conversationSize),
                 .conversationGuestsNonTeam(conversationGuestsNonTeam),
                 .conversationGuestsTeam(conversationGuestsTeam),
-                .callParticipants(callParticipants),
-                .callEndReason(callEndReason),
+                .Call.callParticipants(callParticipants),
+                .Call.callEndReason(callEndReason),
                 .conversationServices(conversationServices),
-                .callAVSwitchToggled(hasAVSwitchToggled),
+                .Call.callAVSwitchToggled(hasAVSwitchToggled),
                 .isVideoCall(isVideoCall),
-                .teamIsTeam(isTeamMember)
+                .Team.teamIsTeam(isTeamMember)
             ])
         }
 
@@ -141,67 +141,7 @@ public extension AnalyticsEvent {
     }
 }
 
-private extension SegmentationEntry { // TODO: consider nested enum/namespace `Call`
-
-    /// Creates a `SegmentationEntry` for indicating whether any screen sharing happened during the call. (including
-    /// other participants)
-
-    static func wasScreenShared(_ value: Bool) -> Self {
-        .init(key: "call_screen_share", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` for providing the total time in seconds any screen sharing happened in the call.
-
-    static func totalScreenSharingDuration(_ value: Int) -> Self {
-        .init(key: "call_screen_share_duration", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` for the number of unique users who shared the screen during the call.
-
-    static func uniqueScreenSharingUsers(_ value: Int) -> Self {
-        .init(key: "call_screen_share_unique", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` providing the information if the call was incoming or outgoing.
-
-    static func callDirection(_ value: String) -> Self {
-        .init(key: "call_direction", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` for the length of the call in seconds.
-
-    static func callDuration(_ value: Int) -> Self {
-        .init(key: "call_duration", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` for the maximum number of users in the call.
-
-    static func callParticipants(_ value: Int) -> Self {
-        .init(key: "call_participants", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` for the reason a call has ended.
-
-    static func callEndReason(_ value: String) -> Self {
-        .init(key: "call_end_reason", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` providing the information if the user has toggled the video during the call.
-
-    static func callAVSwitchToggled(_ value: Bool) -> Self {
-        .init(key: "call_av_switch_toggle", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` providing the information if the user is part of a team (redundant to
-    /// `is_team_member`).
-
-    static func teamIsTeam(_ value: Bool) -> Self {
-        .init(key: "team_is_team", value: value)
-    }
-
-}
-
-private extension SegmentationEntry { // TODO: consider nested enum/namespace `Conversation`
+private extension SegmentationEntry { // TODO: consider moving to nested enum/namespace `Conversation` if needed
 
     /// Creates a `SegmentationEntry` for the number of guests in a conversation which are not members of any team (free
     /// users).
