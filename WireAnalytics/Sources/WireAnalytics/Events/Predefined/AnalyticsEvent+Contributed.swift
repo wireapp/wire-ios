@@ -31,14 +31,14 @@ public extension AnalyticsEvent {
 
         public static func conversationContribution(
             _ contributionType: ConversationContributionType,
-            conversationType: SegmentationEntry.Conversation.LegacyConversationType,
+            conversationType: SegmentationEntry.Conversation.ConversationType?,
             conversationSize: Int
         ) -> AnalyticsEvent {
             AnalyticsEvent(
                 name: "contributed",
                 segmentation: [
                     .contributionType(contributionType),
-                    .Removed.groupType(conversationType),
+                    .Removed.groupType(conversationType?.mapToConversationType() ?? .unknown),
                     .conversationSize(conversationSize)
                 ]
             )

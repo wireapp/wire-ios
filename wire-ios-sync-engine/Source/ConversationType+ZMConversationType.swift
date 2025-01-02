@@ -18,17 +18,16 @@
 
 import WireAnalytics
 
-extension SegmentationEntry.Conversation.LegacyConversationType {
+extension SegmentationEntry.Conversation.ConversationType {
 
-    init(_ conversationType: ZMConversationType) {
+    init?(_ conversationType: ZMConversationType) {
         switch conversationType {
         case .group:
             self = .group
         case .oneOnOne:
             self = .oneOnOne
         default:
-            self = .unknown
+            return nil
         }
     }
-
 }
