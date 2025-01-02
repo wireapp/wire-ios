@@ -32,4 +32,3 @@ jobs:
       is_cloud_build: true
       pr_s3_path: "PR-${{ github.event.pull_request.number }}"
     secrets: inherit
-
