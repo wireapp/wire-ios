@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireLogging
+import WireTransport
 
 private enum UserProperty: CaseIterable {
     case readReceiptsEnabled
