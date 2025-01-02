@@ -571,8 +571,7 @@ public final class ZMUserSession: NSObject {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            searchUsersCache: dependencies.caches.searchUsers,
-            analyticsEventTracker: { [weak self] in self?.analyticsEventTracker }
+            searchUsersCache: dependencies.caches.searchUsers
         )
     }
 

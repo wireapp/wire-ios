@@ -54,7 +54,7 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
             ZMMessage.addReaction(reaction, to: message)
             if reaction == "❤️" {
 
-                let conversationType = SegmentationEntry.Conversation.ConversationType(conversation.conversationType)
+                let conversationType = AnalyticsEvent.Segmentation.Conversation.ConversationType(conversation.conversationType)
                 guard let conversationType else {
                     return analyticsLogger.error(
                         "ToggleMessageReactionUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +

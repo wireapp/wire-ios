@@ -34,16 +34,14 @@ public extension AnalyticsEvent {
             conversationType: Segmentation.Conversation.ConversationType?,
             conversationSize: Int
         ) -> AnalyticsEvent {
-            AnalyticsEvent(
-                name: "contributed",
-                segmentation: [
-                    .contributionType(contributionType),
-                    .conversationType(conversationType),
-                    .groupType(conversationType.mapToConversationType()),
-                    .Removed.groupType(conversationType?.mapToConversationType() ?? .unknown),
-                    .conversationSize(conversationSize)
-                ]
-            )
+            AnalyticsEvent(name: "contributed") {
+                Segmentation.contributionType(contributionType)
+                if let conversationType {
+                    Segmentation.conversationType(conversationType)
+                }
+                Segmentation.Removed.groupType(conversationType?.mapToConversationType() ?? .unknown)
+                Segmentation.conversationSize(conversationSize)
+            }
         }
 
     }

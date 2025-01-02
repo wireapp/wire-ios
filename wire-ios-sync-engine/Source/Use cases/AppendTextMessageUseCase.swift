@@ -60,7 +60,7 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
         )
         conversation.draftMessage = nil
 
-        let conversationType = SegmentationEntry.Conversation.ConversationType(conversation.conversationType)
+        let conversationType = AnalyticsEvent.Segmentation.Conversation.ConversationType(conversation.conversationType)
         guard let conversationType else {
             return analyticsLogger.error(
                 "AppendTextMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +

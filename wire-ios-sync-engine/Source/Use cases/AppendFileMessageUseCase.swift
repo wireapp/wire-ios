@@ -58,7 +58,7 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
             }
         }
 
-        let conversationType = SegmentationEntry.Conversation.ConversationType(conversation.conversationType)
+        let conversationType = AnalyticsEvent.Segmentation.Conversation.ConversationType(conversation.conversationType)
         guard let conversationType else {
             return analyticsLogger.error(
                 "AppendFileMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +

@@ -108,8 +108,7 @@ final class WireCallCenterV3Tests: MessagingTest {
             avsWrapper: mockAVSWrapper,
             uiMOC: uiMOC,
             flowManager: flowManager,
-            transport: mockTransport,
-            analyticsEventTracker: { .none }
+            transport: mockTransport
         )
         // set conferenceCalling feature flag
         conferenceCalling = Feature.fetch(name: .conferenceCalling, context: uiMOC)

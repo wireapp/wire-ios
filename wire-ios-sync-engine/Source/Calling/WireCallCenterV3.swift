@@ -52,8 +52,6 @@ public class WireCallCenterV3: NSObject {
     /// The object that performs network requests when the call center requests them.
     weak var transport: WireCallCenterTransport?
 
-    //private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
-
     // MARK: - Calling State
 
     /// The date when the call was established (Participants can talk to each other).
@@ -132,14 +130,12 @@ public class WireCallCenterV3: NSObject {
         avsWrapper: AVSWrapperType? = nil,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+        transport: WireCallCenterTransport
     ) {
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
-//        self.analyticsEventTracker = analyticsEventTracker
 
         super.init()
 

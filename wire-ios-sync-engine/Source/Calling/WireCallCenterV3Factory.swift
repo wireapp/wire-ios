@@ -43,8 +43,7 @@ public enum WireCallCenterV3Factory {
         clientId: String,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)? // TODO: needed?
+        transport: WireCallCenterTransport
     ) -> WireCallCenterV3 {
 
         if let wireCallCenter = uiMOC.zm_callCenter {
@@ -55,8 +54,7 @@ public enum WireCallCenterV3Factory {
                 clientId: clientId,
                 uiMOC: uiMOC,
                 flowManager: flowManager,
-                transport: transport,
-                analyticsEventTracker: analyticsEventTracker
+                transport: transport
             )
 
             newInstance.useConstantBitRateAudio = uiMOC.zm_useConstantBitRateAudio

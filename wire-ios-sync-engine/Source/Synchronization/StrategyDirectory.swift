@@ -55,8 +55,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        searchUsersCache: SearchUsersCache?,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+        searchUsersCache: SearchUsersCache?
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -73,8 +72,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            searchUsersCache: searchUsersCache,
-            analyticsEventTracker: analyticsEventTracker
+            searchUsersCache: searchUsersCache
         )
 
         self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
@@ -113,8 +111,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        searchUsersCache: SearchUsersCache?,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+        searchUsersCache: SearchUsersCache?
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -297,8 +294,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
                 flowManager: flowManager,
                 callEventStatus: applicationStatusDirectory.callEventStatus,
-                messageSender: messageSender,
-                analyticsEventTracker: analyticsEventTracker
+                messageSender: messageSender
             ),
             LegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,

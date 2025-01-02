@@ -46,8 +46,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     private let ephemeralURLSession = URLSession(configuration: .ephemeral)
     private let fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol
 
-    private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
-
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Internal Properties
@@ -63,14 +61,12 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         flowManager: FlowManagerType,
         callEventStatus: CallEventStatus,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
-        messageSender: MessageSenderInterface,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+        messageSender: MessageSenderInterface
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
         self.callEventStatus = callEventStatus
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
-        self.analyticsEventTracker = analyticsEventTracker
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -94,8 +90,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 clientId: clientId,
                 uiMOC: managedObjectContext.zm_userInterface,
                 flowManager: flowManager,
-                transport: self,
-                analyticsEventTracker: analyticsEventTracker
+                transport: self
             )
         }
 
@@ -231,8 +226,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                         clientId: clientId,
                         uiMOC: uiContext.zm_userInterface,
                         flowManager: self.flowManager,
-                        transport: self,
-                        analyticsEventTracker: self.analyticsEventTracker
+                        transport: self
                     )
                 }
                 break

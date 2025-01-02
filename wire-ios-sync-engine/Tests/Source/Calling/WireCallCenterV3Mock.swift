@@ -129,8 +129,7 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
         avsWrapper: AVSWrapperType? = nil,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+        transport: WireCallCenterTransport
     ) {
         self.mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
         super.init(
@@ -139,8 +138,7 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
             avsWrapper: mockAVSWrapper,
             uiMOC: uiMOC,
             flowManager: flowManager,
-            transport: transport,
-            analyticsEventTracker: analyticsEventTracker
+            transport: transport
         )
     }
 
@@ -168,8 +166,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
         avsWrapper: AVSWrapperType? = nil,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+        transport: WireCallCenterTransport
     ) {
         self.mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
         super.init(
@@ -178,8 +175,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
             avsWrapper: mockAVSWrapper,
             uiMOC: uiMOC,
             flowManager: flowManager,
-            transport: transport,
-            analyticsEventTracker: analyticsEventTracker
+            transport: transport
         )
     }
 

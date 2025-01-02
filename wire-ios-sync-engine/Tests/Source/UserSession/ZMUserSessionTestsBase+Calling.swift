@@ -31,8 +31,7 @@ extension ZMUserSessionTestsBase {
             clientId: selfUser.selfClient()!.remoteIdentifier!,
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock(),
-            analyticsEventTracker: { .none }
+            transport: WireCallCenterTransportMock()
         ) as! WireCallCenterV3Mock
     }
 

@@ -56,8 +56,7 @@ class AVSBridgingTests: MessagingTest {
             avsWrapper: avsWrapper,
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock(),
-            analyticsEventTracker: { .none }
+            transport: WireCallCenterTransportMock()
         )
         callCenterRef = Unmanaged.passUnretained(callCenter).toOpaque()
     }

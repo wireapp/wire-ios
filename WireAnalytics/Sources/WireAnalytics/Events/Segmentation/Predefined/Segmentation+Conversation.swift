@@ -25,24 +25,23 @@ public extension AnalyticsEvent.Segmentation {
             case oneOnOne = "one_to_one"
         }
 
-        // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
-        @available(*, deprecated, message: "Use `ConversationType`.")
-        enum LegacyConversationType: String {
-            case group
-            case oneOnOne = "one_on_one"
-            case unknown
+        /// Creates a `SegmentationEntry` for the number of guests in a conversation which are not members of any team (free
+        /// users).
+
+        static func conversationGuestsNonTeam(_ value: Int) -> AnalyticsEvent.Segmentation {
+            .init(key: "conversation_guests", value: value)
         }
-    }
-}
 
-extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
+        /// Creates a `SegmentationEntry` for the number of guests in a conversation which are members of a team.
 
-    func mapToConversationType() -> AnalyticsEvent.Segmentation.Conversation.LegacyConversationType {
-        switch self {
-        case .group:
-            .group
-        case .oneOnOne:
-            .oneOnOne
+        static func conversationGuestsTeam(_ value: Int) -> AnalyticsEvent.Segmentation {
+            .init(key: "conversation_guests_pro", value: value)
+        }
+
+        /// Creates a `SegmentationEntry` for the number of services (members) of the conversation.
+
+        static func conversationServices(_ value: Int) -> AnalyticsEvent.Segmentation {
+            .init(key: "conversation_services", value: value)
         }
     }
 }

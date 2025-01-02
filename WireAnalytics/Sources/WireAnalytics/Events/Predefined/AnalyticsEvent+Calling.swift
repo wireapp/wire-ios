@@ -101,7 +101,7 @@ public extension AnalyticsEvent {
             uniqueScreenSharingUsers: Int,
             callDirection: CallDirection,
             callDuration: Int,
-            conversationType: SegmentationEntry.Conversation.ConversationType,
+            conversationType: Segmentation.Conversation.ConversationType,
             conversationSize: Int,
             conversationGuestsNonTeam: Int,
             conversationGuestsTeam: Int,
@@ -122,13 +122,13 @@ public extension AnalyticsEvent {
                 .Call.callDuration(callDuration),
                 .conversationType(conversationType),
                 .conversationSize(conversationSize),
-                .conversationGuestsNonTeam(conversationGuestsNonTeam),
-                .conversationGuestsTeam(conversationGuestsTeam),
+                .Conversation.conversationGuestsNonTeam(conversationGuestsNonTeam),
+                .Conversation.conversationGuestsTeam(conversationGuestsTeam),
                 .Call.callParticipants(callParticipants),
                 .Call.callEndReason(callEndReason),
-                .conversationServices(conversationServices),
+                .Conversation.conversationServices(conversationServices),
                 .Call.callAVSwitchToggled(hasAVSwitchToggled),
-                .isVideoCall(isVideoCall),
+                .Call.isVideoCall(isVideoCall),
                 .Team.teamIsTeam(isTeamMember)
             ])
         }
@@ -139,27 +139,4 @@ public extension AnalyticsEvent {
         }
 
     }
-}
-
-private extension SegmentationEntry { // TODO: consider moving to nested enum/namespace `Conversation` if needed
-
-    /// Creates a `SegmentationEntry` for the number of guests in a conversation which are not members of any team (free
-    /// users).
-
-    static func conversationGuestsNonTeam(_ value: Int) -> Self {
-        .init(key: "conversation_guests", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` for the number of guests in a conversation which are members of a team.
-
-    static func conversationGuestsTeam(_ value: Int) -> Self {
-        .init(key: "conversation_guests_pro", value: value)
-    }
-
-    /// Creates a `SegmentationEntry` for the number of services (members) of the conversation.
-
-    static func conversationServices(_ value: Int) -> Self {
-        .init(key: "conversation_services", value: value)
-    }
-
 }
