@@ -140,7 +140,7 @@ final class BackupPasswordViewController: UIViewController {
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 
-    private func updateState(with text: String) {
+    private func updateState(with text: String) {//
         switch PasswordRuleSet.shared.validatePassword(text) {
         case .valid:
             password = text

@@ -466,7 +466,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
                     mainCoordinator: mainCoordinator,
                     showCloseButton: true
                 )
-                if let sheet = viewController.sheetPresentationController {
+                if let sheet = viewController.sheetPresentationController {//
                     sheet.detents = [.medium(), .large()]
                     sheet.prefersGrabberVisible = true
                 }
