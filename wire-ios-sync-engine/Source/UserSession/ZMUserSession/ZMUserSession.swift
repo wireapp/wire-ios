@@ -502,6 +502,12 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
 
+        // Proactively keep the self user in sync, which helps add resilience
+        // in cases where the self client may otherwise only have limited
+        // one time opportunities to discover important changes.
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        selfUser.needsToBeUpdatedFromBackend = true
+
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
         }
