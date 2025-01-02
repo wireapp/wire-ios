@@ -25,8 +25,8 @@ public extension AnalyticsEvent.Segmentation {
             case oneOnOne = "one_to_one"
         }
 
-        /// Creates a ``Segmentation`` for the number of guests in a conversation which are not members of any team (free
-        /// users).
+        /// Creates a ``Segmentation`` for the number of guests in a conversation which are not members of any team
+        /// (free users).
 
         static func conversationGuestsNonTeam(_ value: Int) -> AnalyticsEvent.Segmentation {
             .init(key: "conversation_guests", value: value)

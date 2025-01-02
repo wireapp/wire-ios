@@ -58,18 +58,10 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
             }
         }
 
-        let conversationType = AnalyticsEvent.Segmentation.Conversation.ConversationType(conversation.conversationType)
-        guard let conversationType else {
-            return analyticsLogger.error(
-                "AppendFileMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
-                    "converted to Segmentation.Conversation.ConversationType."
-            )
-        }
-
         analyticsEventTracker?.trackEvent(
             .Contributed.conversationContribution(
                 contributionType,
-                conversationType: conversationType,
+                conversationType: .init(conversation.conversationType),
                 conversationSize: conversation.localParticipants.count
             )
         )

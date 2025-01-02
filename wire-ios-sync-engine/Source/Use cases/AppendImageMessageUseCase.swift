@@ -47,18 +47,10 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
     ) throws {
         try conversation.appendImage(from: imageData, nonce: UUID())
 
-        let conversationType = AnalyticsEvent.Segmentation.Conversation.ConversationType(conversation.conversationType)
-        guard let conversationType else {
-            return analyticsLogger.error(
-                "AppendImageMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
-                    "converted to Segmentation.Conversation.ConversationType."
-            )
-        }
-
         analyticsEventTracker?.trackEvent(
             .Contributed.conversationContribution(
                 .imageMessage,
-                conversationType: conversationType,
+                conversationType: .init(conversation.conversationType),
                 conversationSize: conversation.localParticipants.count
             )
         )

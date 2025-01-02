@@ -49,18 +49,10 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
 
         try conversation.appendLocation(with: locationData, nonce: UUID())
 
-        let conversationType = AnalyticsEvent.Segmentation.Conversation.ConversationType(conversation.conversationType)
-        guard let conversationType else {
-            return analyticsLogger.error(
-                "AppendLocationMessageUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
-                    "converted to Segmentation.Conversation.ConversationType."
-            )
-        }
-
         analyticsEventTracker?.trackEvent(
             .Contributed.conversationContribution(
                 .locationMessage,
-                conversationType: conversationType,
+                conversationType: .init(conversation.conversationType),
                 conversationSize: conversation.localParticipants.count
             )
         )
