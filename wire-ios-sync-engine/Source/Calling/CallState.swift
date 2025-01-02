@@ -164,9 +164,9 @@ public enum CallState: Equatable {
     /// There's no call
     case none
     /// Outgoing call is pending
-    case outgoing(degraded: Bool)
+    case outgoing(isVideo: Bool, degraded: Bool)
     /// Incoming call is pending
-    case incoming(video: Bool, shouldRing: Bool, degraded: Bool)
+    case incoming(isVideo: Bool, shouldRing: Bool, degraded: Bool)
     /// Call is answered
     case answered(degraded: Bool)
     /// Call is established (data is flowing)
@@ -186,14 +186,14 @@ public enum CallState: Equatable {
         switch self {
         case let .answered(degraded: degraded):
             zmLog.debug("answered call, degraded: \(degraded)")
-        case let .incoming(video: isVideo, shouldRing: shouldRing, degraded: degraded):
+        case let .incoming(isVideo: isVideo, shouldRing: shouldRing, degraded: degraded):
             zmLog.debug("incoming call, isVideo: \(isVideo), shouldRing: \(shouldRing), degraded: \(degraded)")
         case .establishedDataChannel:
             zmLog.debug("established data channel")
         case .established:
             zmLog.debug("established call")
-        case let .outgoing(degraded: degraded):
-            zmLog.debug("outgoing call, , degraded: \(degraded)")
+        case let .outgoing(isVideo: isVideo, degraded: degraded):
+            zmLog.debug("outgoing call, isVideo: \(isVideo), degraded: \(degraded)")
         case let .terminating(reason: reason):
             zmLog.debug("terminating call reason: \(reason)")
         case .mediaStopped:
@@ -211,10 +211,10 @@ public enum CallState: Equatable {
 
     func update(isConversationDegraded: Bool) -> CallState {
         switch self {
-        case .incoming(video: let video, shouldRing: let shouldRing, degraded: _):
-            .incoming(video: video, shouldRing: shouldRing, degraded: isConversationDegraded)
-        case .outgoing:
-            .outgoing(degraded: isConversationDegraded)
+        case .incoming(isVideo: let video, shouldRing: let shouldRing, degraded: _):
+            .incoming(isVideo: video, shouldRing: shouldRing, degraded: isConversationDegraded)
+        case let .outgoing(isVideo, _):
+            .outgoing(isVideo: isVideo, degraded: isConversationDegraded)
         case .answered:
             .answered(degraded: isConversationDegraded)
         default:

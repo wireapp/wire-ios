@@ -31,8 +31,8 @@ public extension AnalyticsEvent {
 
         public static func conversationContribution(
             _ contributionType: ConversationContributionType,
-            conversationType: ConversationType,
-            conversationSize: UInt
+            conversationType: SegmentationEntry.Conversation.LegacyConversationType,
+            conversationSize: Int
         ) -> AnalyticsEvent {
             AnalyticsEvent(
                 name: "contributed",

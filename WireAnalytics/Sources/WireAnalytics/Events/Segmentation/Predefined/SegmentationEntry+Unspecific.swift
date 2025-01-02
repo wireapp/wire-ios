@@ -22,7 +22,7 @@ import Foundation
 
 extension SegmentationEntry {
 
-    /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
+    /// Creates a `SegmentationEntry` for indicating the device OS version of the user.
     ///
     /// - Parameter value: A string indicating device OS version of the user
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
@@ -31,7 +31,7 @@ extension SegmentationEntry {
         .init(key: "os_version", value: value)
     }
 
-    /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
+    /// Creates a `SegmentationEntry` for indicating the device model of the user
     ///
     /// - Parameter value: A string indicating device model of the user
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
@@ -40,7 +40,7 @@ extension SegmentationEntry {
         .init(key: "device_model", value: value)
     }
 
-    /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
+    /// Creates a `SegmentationEntry` for indicating whether the self user is a team member.
     ///
     /// - Parameter value: A boolean indicating if the self user is a team member.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
@@ -55,7 +55,13 @@ extension SegmentationEntry {
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
     static func isVideoCall(_ value: Bool) -> Self {
-        .init(key: "is_video_call", value: value)
+        .init(key: "call_video", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` for the type of conversation.
+
+    static func conversationType(_ value: SegmentationEntry.Conversation.ConversationType) -> Self {
+        .init(key: "conversation_type", value: value.rawValue)
     }
 
     /// Creates a `SegmentationEntry` for the type of group in a conversation.
@@ -63,8 +69,10 @@ extension SegmentationEntry {
     /// - Parameter value: The `ConversationType` of the conversation.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func groupType(_ value: ConversationType) -> Self {
-        .init(key: "group_type", value: value.analyticsValue)
+    // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
+    @available(*, deprecated, renamed: "conversationType")
+    static func groupType(_ value: SegmentationEntry.Conversation.LegacyConversationType) -> Self {
+        .init(key: "group_type", value: value.rawValue)
     }
 
     /// Creates a `SegmentationEntry` for the type of contribution in a conversation.
@@ -81,8 +89,11 @@ extension SegmentationEntry {
     /// - Parameter value: The number of participants in the conversation.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func conversationSize(_ value: UInt) -> Self {
-        .init(key: "conversation_size", value: value.analyticsValue)
+    static func conversationSize(_ value: Int) -> Self {
+        .init(
+            key: "conversation_size",
+            value: UInt(value).analyticsValue // TODO: [WPB-12199] is `.analyticsValue` needed?
+        )
     }
 
     /// Creates a `SegmentationEntry` for the score of the calling survey

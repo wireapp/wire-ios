@@ -51,7 +51,7 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
                     .Contributed.conversationContribution(
                         .likeMessage,
                         conversationType: .init(conversation.conversationType),
-                        conversationSize: UInt(conversation.localParticipants.count)
+                        conversationSize: conversation.localParticipants.count
                     )
                 )
             }

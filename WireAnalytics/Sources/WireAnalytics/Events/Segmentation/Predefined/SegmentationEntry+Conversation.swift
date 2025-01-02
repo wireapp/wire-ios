@@ -16,19 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+public extension SegmentationEntry {
 
-extension SegmentationEntry.Conversation.LegacyConversationType {
+    enum Conversation {
 
-    init(_ conversationType: ZMConversationType) {
-        switch conversationType {
-        case .group:
-            self = .group
-        case .oneOnOne:
-            self = .oneOnOne
-        default:
-            self = .unknown
+        public enum ConversationType: String {
+            case group
+            case oneOnOne = "one_to_one"
+        }
+
+        // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
+        @available(*, deprecated, message: "Use `ConversationType`.")
+        public enum LegacyConversationType: String {
+            case group
+            case oneOnOne = "one_on_one"
+            case unknown
         }
     }
+}
 
+extension SegmentationEntry.Conversation.ConversationType {
+
+    func mapToConversationType() -> SegmentationEntry.Conversation.LegacyConversationType {
+        switch self {
+        case .group:
+            .group
+        case .oneOnOne:
+            .oneOnOne
+        }
+    }
 }

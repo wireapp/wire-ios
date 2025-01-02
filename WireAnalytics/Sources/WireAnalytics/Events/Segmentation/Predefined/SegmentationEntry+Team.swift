@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Types of conversations.
+public extension SegmentationEntry {
 
-public enum ConversationType: String, AnalyticsValue {
+    enum Team {
 
-    case group
-    case oneOnOne = "one_on_one"
-    case unknown
+        /// Creates a `SegmentationEntry` providing the information if the user is part of a team (redundant to
+        /// `is_team_member`).
 
-    public var analyticsValue: String {
-        rawValue
+        static func teamIsTeam(_ value: Bool) -> SegmentationEntry {
+            .init(key: "team_is_team", value: value)
+        }
     }
-
 }

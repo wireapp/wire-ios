@@ -16,29 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents a key-value pair for analytics event segmentation.
-///
-/// This struct is used to provide additional, structured information about an analytics event.
-/// Each `SegmentationEntry` consists of a key (identifying the type of information) and a value
-/// (the actual data point).
+// The segmentation entries in this file are not to be used anymore.
+// As soon as we get the confirmation that these are not used anymore, we should delete this file.
 
-public struct SegmentationEntry: Hashable, Sendable {
+public extension SegmentationEntry {
 
-    let key: String
-    let value: String
-
-    init(key: String, value: String) {
-        self.key = key
-        self.value = value
-    }
-
-    init(key: String, value: Int) {
-        self.key = key
-        self.value = "\(value)"
-    }
-
-    init(key: String, value: Bool) {
-        self.key = key
-        self.value = value ? "True" : "False"
+    enum Removed {
+        // TODO: move these here
+//        reason
+//        group_type
+//        AV_switch_toggled
+//        direction
+//        duration
+//        ignore-reason
+//        app_name
+//        is_call_video
     }
 }
