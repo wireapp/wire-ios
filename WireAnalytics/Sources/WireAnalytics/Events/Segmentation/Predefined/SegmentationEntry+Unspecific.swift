@@ -69,10 +69,10 @@ extension SegmentationEntry {
     /// - Parameter value: The `ConversationType` of the conversation.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
     @available(*, deprecated, renamed: "conversationType")
     static func groupType(_ value: SegmentationEntry.Conversation.LegacyConversationType) -> Self {
         .init(key: "group_type", value: value.rawValue)
+        // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
     }
 
     /// Creates a `SegmentationEntry` for the type of contribution in a conversation.

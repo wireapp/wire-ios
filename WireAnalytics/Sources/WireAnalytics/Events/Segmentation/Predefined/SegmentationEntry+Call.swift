@@ -27,7 +27,8 @@ public extension SegmentationEntry {
             .init(key: "call_screen_share", value: value)
         }
 
-        /// Creates a `SegmentationEntry` for providing the total time in seconds any screen sharing happened in the call.
+        /// Creates a `SegmentationEntry` for providing the total time in seconds any screen sharing happened in the
+        /// call.
 
         static func totalScreenSharingDuration(_ value: Int) -> SegmentationEntry {
             .init(key: "call_screen_share_duration", value: value)
