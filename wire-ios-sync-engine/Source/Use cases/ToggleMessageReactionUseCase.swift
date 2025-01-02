@@ -58,7 +58,7 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
                 guard let conversationType else {
                     return analyticsLogger.error(
                         "ToggleMessageReactionUseCase.invoke: conversation type \(conversation.conversationType) cannot be " +
-                            "converted to SegmentationEntry.Conversation.ConversationType."
+                            "converted to Segmentation.Conversation.ConversationType."
                     )
                 }
 
