@@ -20,6 +20,21 @@ extension AnalyticsEvent.Segmentation {
 
     enum Call {
 
+        /// Creates a ``Segmentation`` for indicating whether a call is a video call.
+        ///
+        /// - Parameter value: A boolean indicating if the call is a video call.
+        /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
+
+        static func isVideoCall(_ value: Bool) -> AnalyticsEvent.Segmentation {
+            .init(key: "call_video", value: value)
+        }
+
+        /// Creates a ``Segmentation`` providing the information if the user has toggled the video during the call.
+
+        static func callAVSwitchToggled(_ value: Bool) -> AnalyticsEvent.Segmentation {
+            .init(key: "call_av_switch_toggle", value: value)
+        }
+
         /// Creates a ``AnalyticsEvent.Segmentation`` for indicating whether any screen sharing happened during the
         /// call. (including
         /// other participants)
@@ -63,12 +78,6 @@ extension AnalyticsEvent.Segmentation {
 
         static func callEndReason(_ value: String) -> AnalyticsEvent.Segmentation {
             .init(key: "call_end_reason", value: value)
-        }
-
-        /// Creates a ``Segmentation`` providing the information if the user has toggled the video during the call.
-
-        static func callAVSwitchToggled(_ value: Bool) -> AnalyticsEvent.Segmentation {
-            .init(key: "call_av_switch_toggle", value: value)
         }
     }
 }

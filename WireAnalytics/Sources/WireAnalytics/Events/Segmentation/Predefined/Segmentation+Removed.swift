@@ -33,8 +33,8 @@ extension AnalyticsEvent.Segmentation {
 
         @available(*, deprecated, renamed: "conversationType")
         static func groupType(_ value: Conversation.LegacyConversationType) -> AnalyticsEvent.Segmentation {
-            .init(key: "group_type", value: value.rawValue)
             // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
+            .init(key: "group_type", value: value.rawValue)
         }
 
         /// Creates a ``Segmentation`` for the duration of the calling survey

@@ -49,15 +49,6 @@ extension AnalyticsEvent.Segmentation {
         .init(key: "is_team_member", value: value)
     }
 
-    /// Creates a ``Segmentation`` for indicating whether a call is a video call.
-    ///
-    /// - Parameter value: A boolean indicating if the call is a video call.
-    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
-
-    static func isVideoCall(_ value: Bool) -> Self {
-        .init(key: "call_video", value: value)
-    }
-
     /// Creates a ``Segmentation`` for the type of conversation.
 
     static func conversationType(_ value: Conversation.ConversationType) -> Self {
