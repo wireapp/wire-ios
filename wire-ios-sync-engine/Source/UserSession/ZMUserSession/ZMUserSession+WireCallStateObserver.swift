@@ -34,7 +34,7 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
         guard callState != previousCallState else { return }
 
         let isVideo = conversation.voiceChannel?.isVideoCall ?? false
-        let conversationType = SegmentationEntry.Conversation.ConversationType(conversation.conversationType)
+        let conversationType = AnalyticsEvent.Segmentation.Conversation.ConversationType(conversation.conversationType)
         guard let conversationType else {
             return analyiticsLogger.error(
                 "ZMUserSession.callCenterDidChange: unexpected conversation type: \(conversation.conversationType)"

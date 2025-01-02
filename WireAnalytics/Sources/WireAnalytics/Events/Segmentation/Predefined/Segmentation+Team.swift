@@ -16,18 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
-
-public extension SegmentationEntry.Conversation.ConversationType {
-
-    init?(_ conversationType: ZMConversationType) {
-        switch conversationType {
-        case .oneOnOne:
-            self = .oneOnOne
-        case .group:
-            self = .group
-        case .invalid, .self, .connection:
-            return nil
+extension AnalyticsEvent.Segmentation {
+    
+    enum Team {
+        
+        /// Creates a ``Segmentation`` providing the information if the user is part of a team (redundant to
+        /// `is_team_member`).
+        
+        static func teamIsTeam(_ value: Bool) -> AnalyticsEvent.Segmentation {
+            .init(key: "team_is_team", value: value)
         }
     }
 }

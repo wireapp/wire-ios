@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension SegmentationEntry {
+public extension AnalyticsEvent.Segmentation {
 
     enum Conversation {
 
@@ -27,7 +27,7 @@ public extension SegmentationEntry {
 
         // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
         @available(*, deprecated, message: "Use `ConversationType`.")
-        public enum LegacyConversationType: String {
+        enum LegacyConversationType: String {
             case group
             case oneOnOne = "one_on_one"
             case unknown
@@ -35,9 +35,9 @@ public extension SegmentationEntry {
     }
 }
 
-extension SegmentationEntry.Conversation.ConversationType {
+extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
 
-    func mapToConversationType() -> SegmentationEntry.Conversation.LegacyConversationType {
+    func mapToConversationType() -> AnalyticsEvent.Segmentation.Conversation.LegacyConversationType {
         switch self {
         case .group:
             .group

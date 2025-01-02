@@ -31,7 +31,7 @@ public extension AnalyticsEvent {
 
         public static func conversationContribution(
             _ contributionType: ConversationContributionType,
-            conversationType: SegmentationEntry.Conversation.ConversationType,
+            conversationType: Segmentation.Conversation.ConversationType?,
             conversationSize: Int
         ) -> AnalyticsEvent {
             AnalyticsEvent(
@@ -40,6 +40,7 @@ public extension AnalyticsEvent {
                     .contributionType(contributionType),
                     .conversationType(conversationType),
                     .groupType(conversationType.mapToConversationType()),
+                    .Removed.groupType(conversationType?.mapToConversationType() ?? .unknown),
                     .conversationSize(conversationSize)
                 ]
             )

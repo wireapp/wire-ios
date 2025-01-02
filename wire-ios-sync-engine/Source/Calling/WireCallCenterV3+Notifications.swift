@@ -208,7 +208,10 @@ extension WireCallCenterV3 {
         )
     }
 
-    class func addCallErrorObserver(observer: WireCallCenterCallErrorObserver, context: NSManagedObjectContext) -> AnyObject {
+    class func addCallErrorObserver(
+        observer: WireCallCenterCallErrorObserver,
+        context: NSManagedObjectContext
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterCallErrorNotification.notificationName,
             context: context.notificationContext,

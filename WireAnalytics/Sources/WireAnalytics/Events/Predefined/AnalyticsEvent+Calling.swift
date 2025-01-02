@@ -30,14 +30,14 @@ public extension AnalyticsEvent {
 
         public static func initiatedCall(
             isVideo: Bool,
-            conversationType: SegmentationEntry.Conversation.ConversationType
+            conversationType: Segmentation.Conversation.ConversationType
         ) -> AnalyticsEvent {
             AnalyticsEvent(
                 name: "calling.initiated_call",
                 segmentation: [
-                    .isVideoCall(isVideo),
+                    .Call.isVideoCall(isVideo),
                     .conversationType(conversationType),
-                    .groupType(conversationType.mapToConversationType())
+                    .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
         }
@@ -52,14 +52,14 @@ public extension AnalyticsEvent {
 
         public static func joinedCall(
             isVideo: Bool,
-            conversationType: SegmentationEntry.Conversation.ConversationType
+            conversationType: Segmentation.Conversation.ConversationType
         ) -> AnalyticsEvent {
             AnalyticsEvent(
                 name: "calling.joined_call",
                 segmentation: [
-                    .isVideoCall(isVideo),
+                    .Call.isVideoCall(isVideo),
                     .conversationType(conversationType),
-                    .groupType(conversationType.mapToConversationType())
+                    .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
         }
