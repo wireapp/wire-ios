@@ -86,4 +86,3 @@ jobs:
         run: |
           echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
           echo "changelog-name=CHANGELOG-${{ github.run_number }}-${{ steps.date.outputs.date }}.md" >> $GITHUB_OUTPUT
-
