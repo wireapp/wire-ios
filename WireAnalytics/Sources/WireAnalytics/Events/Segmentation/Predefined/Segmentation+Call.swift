@@ -20,7 +20,8 @@ extension AnalyticsEvent.Segmentation {
 
     enum Call {
 
-        /// Creates a ``AnalyticsEvent.Segmentation`` for indicating whether any screen sharing happened during the call. (including
+        /// Creates a ``AnalyticsEvent.Segmentation`` for indicating whether any screen sharing happened during the
+        /// call. (including
         /// other participants)
 
         static func wasScreenShared(_ value: Bool) -> AnalyticsEvent.Segmentation {
