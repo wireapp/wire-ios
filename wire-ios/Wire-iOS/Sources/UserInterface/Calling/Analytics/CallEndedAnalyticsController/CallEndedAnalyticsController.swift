@@ -28,7 +28,6 @@ final class CallEndedAnalyticsController {
     private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     private var eventInfo: EventInfo?
-    private var screenSharingStart: Date? // TODO: move into EventInfo
     private var callStateObserverToken: AnyObject!
     private var callParticipantObsererToken: AnyObject!
     private var setVideoCancellable = Set<AnyCancellable>()
@@ -114,7 +113,6 @@ final class CallEndedAnalyticsController {
         callParticipantObsererToken = nil
 
         guard let eventInfo, let context = conversation.managedObjectContext else { return }
-        // TODO: consider that we want to track the event even when no call was established
 
         let (
             isTeamMember,
@@ -184,6 +182,7 @@ private extension CallEndedAnalyticsController {
         var deviceOS = UIDevice.current.systemVersion
         var callDirection: AnalyticsEvent.Calling.CallDirection = .incoming
         var callStart = Date.now
+        var screenSharingStart: Date?
         var conversationType: AnalyticsEvent.Segmentation.Conversation.ConversationType = .oneOnOne
         var totalScreenSharingDuration = 0
         var uniqueScreenSharingUsers = Set<UUID>()
@@ -237,19 +236,21 @@ extension CallEndedAnalyticsController: WireCallCenterCallParticipantObserver {
         conversation: ZMConversation,
         participants: [CallParticipant]
     ) {
+        let eventInfo = eventInfo
+
         // if there is anybody sharing the screen take a note and also remember the time if needed
         let screenSharingParticipants = participants
             .filter { participant in participant.state.videoState == .screenSharing }
             .map(\.userId.identifier)
-        eventInfo?.uniqueScreenSharingUsers.formUnion(screenSharingParticipants)
+        self.eventInfo?.uniqueScreenSharingUsers.formUnion(screenSharingParticipants)
 
         if !screenSharingParticipants.isEmpty {
-            screenSharingStart = screenSharingStart ?? .now
-        } else if let screenSharingStart {
+            self.eventInfo?.screenSharingStart = eventInfo?.screenSharingStart ?? .now
+        } else if let screenSharingStart = eventInfo?.screenSharingStart {
             // screen sharing just stopped
             let duration = screenSharingStart.distance(to: .now)
-            eventInfo?.totalScreenSharingDuration += Int(round(duration))
-            self.screenSharingStart = nil
+            self.eventInfo?.totalScreenSharingDuration += Int(round(duration))
+            self.eventInfo?.screenSharingStart = nil
         }
     }
 

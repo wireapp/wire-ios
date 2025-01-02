@@ -72,15 +72,7 @@ public extension AnalyticsEvent {
             .init(name: "calling.call_quality_review", segmentation: review.segmentation)
         }
 
-        // TODO: fix doc
         /// An event tracking when a call ends.
-        /// - Parameters:
-        ///   - deviceModel: <#deviceModel description#>
-        ///   - deviceOS: <#deviceOS description#>
-        ///   - callEndReason: <#callEndReason description#>
-        ///   - callDetails: <#callDetails description#>
-        ///   - conversationDetails: <#conversationDetails description#>
-        ///   - isTeamMember: <#isTeamMember description#>
 
         public static func endedCall(
             deviceModel: String,
