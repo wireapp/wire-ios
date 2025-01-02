@@ -38,7 +38,10 @@ final class AppendFileMessageUseCaseTests: XCTestCase {
     override func setUp() {
         analyticsEventTracker = .init()
         mockConversation = .init()
-        sut = AppendFileMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+        sut = AppendFileMessageUseCase(
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsLogger: .init(tag: "mock")
+        )
     }
 
     // MARK: - tearDown

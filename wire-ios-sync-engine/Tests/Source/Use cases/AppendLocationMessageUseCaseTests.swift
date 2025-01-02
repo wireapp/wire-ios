@@ -38,7 +38,10 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
     override func setUp() {
         analyticsEventTracker = .init()
         mockConversation = .init()
-        sut = AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+        sut = AppendLocationMessageUseCase(
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsLogger: .init(tag: "mock")
+        )
     }
 
     // MARK: - tearDown

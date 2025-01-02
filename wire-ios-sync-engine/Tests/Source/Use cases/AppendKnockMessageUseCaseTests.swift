@@ -38,7 +38,10 @@ final class AppendKnockMessageUseCaseTests: XCTest {
     override func setUp() {
         analyticsEventTracker = .init()
         mockConversation = .init()
-        sut = AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+        sut = AppendKnockMessageUseCase(
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsLogger: .init(tag: "mock")
+        )
     }
 
     // MARK: - tearDown
