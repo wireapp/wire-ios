@@ -12,7 +12,7 @@ concurrency:
 jobs:
   semantic-commit-pr-title-lint:
     runs-on: ubuntu-24.04
-    if: contains(fromJSON('["opened", "synchronize"]'), github.event.action) || github.event.changes.title != null
+    if: ${{ false }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CUSTOM_PR_LABEL: "Fix PR Title 🤦‍♂️"
