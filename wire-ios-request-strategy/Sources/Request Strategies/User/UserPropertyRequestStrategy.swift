@@ -333,7 +333,6 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
             )
         default:
             logger.warn("unhandled user property (\(property.propertyName)) response: \(response.result)")
-            break
         }
     }
 }
