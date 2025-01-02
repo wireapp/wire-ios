@@ -27,8 +27,8 @@ extension AnalyticsEvent.Segmentation {
     enum Removed {
 
         // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
-        @available(*, deprecated, message: "Use `ConversationType`.")
-        enum LegacyConversationType: String {
+        @available(*, deprecated, message: "Use `AnalyticsEvent.Segmentation.Conversation.ConversationType`.")
+        enum ConversationType: String {
             case group
             case oneOnOne = "one_on_one"
             case unknown
@@ -40,7 +40,7 @@ extension AnalyticsEvent.Segmentation {
         /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
         @available(*, deprecated, renamed: "conversationType")
-        static func groupType(_ value: LegacyConversationType) -> AnalyticsEvent.Segmentation {
+        static func groupType(_ value: ConversationType) -> AnalyticsEvent.Segmentation {
             // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
             .init(key: "group_type", value: value.rawValue)
         }
@@ -66,7 +66,7 @@ extension AnalyticsEvent.Segmentation {
 
 extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
 
-    func mapToConversationType() -> AnalyticsEvent.Segmentation.Removed.LegacyConversationType {
+    func mapToConversationType() -> AnalyticsEvent.Segmentation.Removed.ConversationType {
         switch self {
         case .group:
             .group
