@@ -18,19 +18,56 @@
 
 import WireAPISupport
 import XCTest
+import WireDataModel
+import WireDataModelSupport
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
 
 final class NotificationSessionTests: XCTestCase {
     private var sut: NotificationSession!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var userRepository: MockUserRepositoryProtocol!
+    
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
+    private var context: NSManagedObjectContext {
+        stack.syncContext
+    }
+    
+    override func setUp() async throws {
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+        userRepository = MockUserRepositoryProtocol()
+        modelHelper = ModelHelper()
+        coreDataStackHelper = CoreDataStackHelper()
+        stack = try await coreDataStackHelper.createStack()
+        registerDependencies()
+    }
+    
     override func tearDown() async throws {
+        stack = nil
         sut = nil
+        conversationLocalStore = nil
+        userRepository = nil
+        try coreDataStackHelper.cleanupDirectory()
+        modelHelper = nil
+        coreDataStackHelper = nil
+    }
+    
+    private func registerDependencies() {
+        Injector.register(ConversationLocalStoreProtocol.self) {
+            self.conversationLocalStore
+        }
+        
+        Injector.register(UserRepositoryProtocol.self) {
+            self.userRepository
+        }
     }
 
     func testNotificationSession_It_Triggers_Callback_When_Pulling_Pending_Events() async throws {
-
+        
         // Given
 
         let expectation = XCTestExpectation()
@@ -61,6 +98,12 @@ final class NotificationSessionTests: XCTestCase {
         updateEventsLocalStore.indexOfLastEventEnvelope_MockValue = 1
         updateEventsLocalStore.persistEventEnvelopeIndex_MockMethod = { _, _ in }
         updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
+        userRepository.isSelfUserIdDomain_MockValue = false
+        conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = await context.perform({ [self] in
+            modelHelper.createGroupConversation(in: context)
+        })
+        conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
+        conversationLocalStore.lastReadServerTimestamp_MockValue = .now
 
         let updateEventsRepository = UpdateEventsRepository(
             userID: .mockID1,
@@ -73,7 +116,7 @@ final class NotificationSessionTests: XCTestCase {
 
         sut = NotificationSession(
             updateEventsRepository: updateEventsRepository,
-            onNotificationContent: { _ in
+            onNotificationContent: { notification in
                 // Then, all 3 events batches have been received
                 expectation.fulfill()
             }
@@ -102,14 +145,15 @@ final class NotificationSessionTests: XCTestCase {
             conversationID: ConversationID(uuid: .mockID1, domain: ""),
             senderID: UserID(uuid: .mockID2, domain: ""),
             subconversation: "subconversation",
-            message: "message"
+            message: "message",
+            timestamp: .now
         )
         static let proteusMessageAddEvent = ConversationProteusMessageAddEvent(
             conversationID: ConversationID(uuid: .mockID1, domain: ""),
             senderID: UserID(uuid: .mockID2, domain: ""),
             timestamp: .now,
-            message: .ciphertext("foo"),
-            externalData: .ciphertext("bar"),
+            message: .init(encryptedMessage: "foo"),
+            externalData: .init(encryptedMessage: "bar"),
             messageSenderClientID: "abc123",
             messageRecipientClientID: "def456"
         )
