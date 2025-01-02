@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct TeamMemberInfo: Sendable {
+public struct TeamMemberInfo: Equatable, Sendable {
     let id: UUID
     let selfPermission: Int64?
     let creatorID: UUID?

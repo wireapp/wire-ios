@@ -33,9 +33,13 @@ public extension SessionManager {
         return nil
     }
 
-    func switchBackend(to environment: BackendEnvironment) {
+    func switchBackend(
+        to environment: BackendEnvironment,
+        completion: @escaping ((any Error)?) -> Void = { _ in }
+    ) {
         self.environment = environment
         unauthenticatedSession = nil
+        resolveAPIVersion(completion: completion)
     }
 
     func fetchBackendEnvironment(

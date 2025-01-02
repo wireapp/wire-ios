@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
+
 struct TeamListPayload: Decodable {
     let hasMore: Bool
     let teams: [TeamPayload]
@@ -31,17 +33,17 @@ struct TeamPayload: Decodable {
     let identifier: UUID
     let name: String
     let creator: UUID
-    let binding: Bool
     let icon: String
     let iconKey: String?
+    let splashScreen: String?
 
     private enum CodingKeys: String, CodingKey {
         case identifier = "id"
         case name
         case creator
-        case binding
         case icon
         case iconKey = "icon_key"
+        case splashScreen = "splash_screen"
     }
 
 }
@@ -67,10 +69,6 @@ extension TeamPayload {
         team.creator = ZMUser.fetchOrCreate(with: creator, domain: nil, in: managedObjectContext)
         team.pictureAssetId = icon
         team.pictureAssetKey = iconKey
-
-        if !binding {
-            managedObjectContext.delete(team)
-        }
     }
 
 }
@@ -155,10 +153,15 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     private func createTeam(with event: ZMUpdateEvent) {
-        // With the new multi-account model this event should not be sent anymore,
-        // and if it is we should not act on it.
-        // An account will either have a team since registration or not,
-        // currently there is no way to get added to a team after registering.
+        guard
+            let data = event.dataPayload,
+            let team = TeamPayload(data)
+        else {
+            WireLogger.updateEvent.error("failed to process team.create event")
+            return
+        }
+
+        _ = team.createOrUpdateTeam(in: managedObjectContext)
     }
 
     private func deleteTeam(with event: ZMUpdateEvent) {

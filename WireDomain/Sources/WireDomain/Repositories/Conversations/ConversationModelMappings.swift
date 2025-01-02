@@ -121,7 +121,7 @@ extension WireAPI.Conversation.Member {
             qualifiedTarget: qualifiedTarget?.toDomainModel(),
             target: target,
             conversationRole: conversationRole,
-            service: (service != nil) ? (service!.id, service!.provider) : nil,
+            service: service.map { .init(id: $0.id, provider: $0.provider) },
             archived: archived,
             archivedReference: archivedReference,
             hidden: hidden,
