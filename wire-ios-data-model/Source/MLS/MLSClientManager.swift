@@ -68,7 +68,6 @@ public final class MLSClientManager: MLSClientManagerProtocol {
     // MARK: - Private Implentation
 
     private func performsMLSClientUpdates() async {
-        // these operations are not dependent and should not be executed in same do/catch
         do {
             try await mlsService.performPendingJoins()
         } catch {
