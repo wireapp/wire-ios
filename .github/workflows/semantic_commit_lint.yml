@@ -16,7 +16,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CUSTOM_PR_LABEL: "Fix PR Title 🤦‍♂️"
-      HEAD: ${{github.head_ref}}
+      HEAD: ${{ github.head_ref }}
     steps:
       # Please look up the latest version from
       # https://github.com/amannn/action-semantic-pull-request/releases

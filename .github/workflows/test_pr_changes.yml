@@ -34,6 +34,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        # not sure if checkout is needed for the merge queue, for pull requests it doesn't seem to be needed
+        # https://github.com/dorny/paths-filter#supported-workflows
+        if: ${{ github.event_name == 'merge_group' }}
         with:
           lfs: 'false' # as long as we use lfs only for snapshotTesting it should not be useful here
       - uses: dorny/paths-filter@v2
