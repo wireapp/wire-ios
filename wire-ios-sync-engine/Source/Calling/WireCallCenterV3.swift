@@ -564,8 +564,6 @@ public extension WireCallCenterV3 {
     ) throws {
         Self.logger.info("answering call")
 
-        // TODO: start analytics?
-
         guard let conversationId = conversation.avsIdentifier else {
             throw Failure.missingAVSIdentifier
         }
@@ -632,8 +630,6 @@ public extension WireCallCenterV3 {
 
     func startCall(in conversation: ZMConversation, isVideo: Bool) throws {
         Self.logger.info("starting call")
-
-        // TODO: start analytics?
 
         guard let conversationId = conversation.avsIdentifier else {
             throw Failure.missingAVSIdentifier
@@ -1131,8 +1127,6 @@ extension WireCallCenterV3 {
             callState: callState,
             callSnapshot: callSnapshots[conversationId]
         )
-
-        // TODO: extract data?
 
         if case .terminating = callState {
             clearSnapshot(conversationId: conversationId)

@@ -201,7 +201,7 @@ extension WireCallCenterV3 {
     public class func addCallErrorObserver(
         observer: WireCallCenterCallErrorObserver,
         contextProvider: ContextProvider
-    ) -> Any {
+    ) -> AnyObject {
         addCallErrorObserver(
             observer: observer,
             context: contextProvider.viewContext
