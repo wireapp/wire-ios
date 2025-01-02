@@ -23,6 +23,8 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
+    let mlsClientManager: MLSClientManagerProtocol
+
     // Slow Sync
 
     private unowned var syncStatus: SyncProgress
@@ -43,11 +45,13 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncProgress: SyncProgress
+        syncProgress: SyncProgress,
+        mlsClientManager: MLSClientManagerProtocol
     ) {
         self.actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
         self.syncStatus = syncProgress
+        self.mlsClientManager = mlsClientManager
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -138,7 +142,9 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             try processor.processEventPayload(
                 data: payloadData,
                 featureName: featureName,
-                repository: repository
+                repository: repository,
+                mlsClientManager: mlsClientManager,
+                in: managedObjectContext
             )
 
             WireLogger.featureConfigs.info("Finished processing update event \(name)")
