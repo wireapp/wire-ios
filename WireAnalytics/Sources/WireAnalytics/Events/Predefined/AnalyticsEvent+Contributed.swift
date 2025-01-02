@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension AnalyticsEvent {
+extension AnalyticsEvent {
 
     enum Contributed {
 
@@ -29,9 +29,9 @@ public extension AnalyticsEvent {
         ///
         /// - Returns: A conversation contribution analytics event.
 
-        public static func conversationContribution(
+        static func conversationContribution(
             _ contributionType: ConversationContributionType,
-            conversationType: SegmentationEntry.Conversation.ConversationType?,
+            conversationType: Segmentation.Conversation.ConversationType?,
             conversationSize: Int
         ) -> AnalyticsEvent {
             AnalyticsEvent(

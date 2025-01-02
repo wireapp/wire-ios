@@ -20,7 +20,7 @@ import Foundation
 
 // MARK: - Predefined entries
 
-extension SegmentationEntry {
+extension AnalyticsEvent.Segmentation {
 
     /// Creates a `SegmentationEntry` for indicating the device OS version of the user.
     ///
@@ -60,7 +60,7 @@ extension SegmentationEntry {
 
     /// Creates a `SegmentationEntry` for the type of conversation.
 
-    static func conversationType(_ value: SegmentationEntry.Conversation.ConversationType) -> Self {
+    static func conversationType(_ value: Conversation.ConversationType) -> Self {
         .init(key: "conversation_type", value: value.rawValue)
     }
 

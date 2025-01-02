@@ -16,57 +16,57 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension SegmentationEntry {
+extension AnalyticsEvent.Segmentation {
 
     enum Call {
 
-        /// Creates a `SegmentationEntry` for indicating whether any screen sharing happened during the call. (including
+        /// Creates a ``AnalyticsEvent.Segmentation`` for indicating whether any screen sharing happened during the call. (including
         /// other participants)
 
-        static func wasScreenShared(_ value: Bool) -> SegmentationEntry {
+        static func wasScreenShared(_ value: Bool) -> AnalyticsEvent.Segmentation {
             .init(key: "call_screen_share", value: value)
         }
 
         /// Creates a `SegmentationEntry` for providing the total time in seconds any screen sharing happened in the
         /// call.
 
-        static func totalScreenSharingDuration(_ value: Int) -> SegmentationEntry {
+        static func totalScreenSharingDuration(_ value: Int) -> AnalyticsEvent.Segmentation {
             .init(key: "call_screen_share_duration", value: value)
         }
 
         /// Creates a `SegmentationEntry` for the number of unique users who shared the screen during the call.
 
-        static func uniqueScreenSharingUsers(_ value: Int) -> SegmentationEntry {
+        static func uniqueScreenSharingUsers(_ value: Int) -> AnalyticsEvent.Segmentation {
             .init(key: "call_screen_share_unique", value: value)
         }
 
         /// Creates a `SegmentationEntry` providing the information if the call was incoming or outgoing.
 
-        static func callDirection(_ value: String) -> SegmentationEntry {
+        static func callDirection(_ value: String) -> AnalyticsEvent.Segmentation {
             .init(key: "call_direction", value: value)
         }
 
         /// Creates a `SegmentationEntry` for the length of the call in seconds.
 
-        static func callDuration(_ value: Int) -> SegmentationEntry {
+        static func callDuration(_ value: Int) -> AnalyticsEvent.Segmentation {
             .init(key: "call_duration", value: value)
         }
 
         /// Creates a `SegmentationEntry` for the maximum number of users in the call.
 
-        static func callParticipants(_ value: Int) -> SegmentationEntry {
+        static func callParticipants(_ value: Int) -> AnalyticsEvent.Segmentation {
             .init(key: "call_participants", value: value)
         }
 
         /// Creates a `SegmentationEntry` for the reason a call has ended.
 
-        static func callEndReason(_ value: String) -> SegmentationEntry {
+        static func callEndReason(_ value: String) -> AnalyticsEvent.Segmentation {
             .init(key: "call_end_reason", value: value)
         }
 
         /// Creates a `SegmentationEntry` providing the information if the user has toggled the video during the call.
 
-        static func callAVSwitchToggled(_ value: Bool) -> SegmentationEntry {
+        static func callAVSwitchToggled(_ value: Bool) -> AnalyticsEvent.Segmentation {
             .init(key: "call_av_switch_toggle", value: value)
         }
     }

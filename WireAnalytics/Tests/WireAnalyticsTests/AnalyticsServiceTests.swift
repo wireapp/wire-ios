@@ -359,12 +359,12 @@ private enum Scaffolding {
         segmentation: [segmentationEntry]
     )
 
-    static let segmentationEntry = SegmentationEntry(
+    static let segmentationEntry = AnalyticsEvent.Segmentation(
         key: "bar",
         value: "car"
     )
 
-    static let baseSegmentation: Set<SegmentationEntry> = [
+    static let baseSegmentation: Set<AnalyticsEvent.Segmentation> = [
         .deviceModel("simulator"),
         .deviceOS("iOS")
     ]

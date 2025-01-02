@@ -30,7 +30,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     private let countlyProvider: () -> any CountlyProtocol
     private var countly: (any CountlyProtocol)?
     private var currentUser: AnalyticsUser?
-    private let baseSegmentation: Set<SegmentationEntry>
+    private let baseSegmentation: Set<AnalyticsEvent.Segmentation>
     private let logger: WireLogger
 
     // MARK: - Life cycle
@@ -57,7 +57,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
     init(
         config: Config?,
-        baseSegmentation: Set<SegmentationEntry>,
+        baseSegmentation: Set<AnalyticsEvent.Segmentation>,
         countlyProvider: @escaping () -> any CountlyProtocol
     ) {
         self.config = config

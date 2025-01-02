@@ -22,7 +22,7 @@ import struct Foundation.TimeInterval
 // As soon as we get the confirmation that these are not used anymore, we should delete this file.
 // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1364262933/Appendix+Countly+segmentation+values
 
-extension SegmentationEntry {
+extension AnalyticsEvent.Segmentation {
 
     enum Removed {
 
@@ -32,7 +32,7 @@ extension SegmentationEntry {
         /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
         @available(*, deprecated, renamed: "conversationType")
-        static func groupType(_ value: SegmentationEntry.Conversation.LegacyConversationType) -> SegmentationEntry {
+        static func groupType(_ value: Conversation.LegacyConversationType) -> AnalyticsEvent.Segmentation {
             .init(key: "group_type", value: value.rawValue)
             // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
         }
@@ -42,7 +42,7 @@ extension SegmentationEntry {
         /// - Parameter value: The duration of the call.
         /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-        static func callDuration(_ value: TimeInterval) -> SegmentationEntry {
+        static func callDuration(_ value: TimeInterval) -> AnalyticsEvent.Segmentation {
             .init(key: "duration", value: String(value))
         }
 
@@ -50,7 +50,7 @@ extension SegmentationEntry {
         /// - Parameter value: the ignore reason
         /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-        static func callIgnoreReason(_ value: String) -> SegmentationEntry {
+        static func callIgnoreReason(_ value: String) -> AnalyticsEvent.Segmentation {
             .init(key: "ignore-reason", value: value)
         }
     }

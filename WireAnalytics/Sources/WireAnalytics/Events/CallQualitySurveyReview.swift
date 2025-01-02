@@ -36,26 +36,26 @@ public enum CallQualitySurveyReview {
         case muted
     }
 
-    var segmentation: Set<SegmentationEntry> {
+    var segmentation: Set<AnalyticsEvent.Segmentation> {
         switch self {
         case let .notDisplayed(reason, duration):
             [
-                .callLabel("not-displayed"),
-                .Removed.callDuration(duration),
-                .Removed.callIgnoreReason(reason.rawValue)
+                AnalyticsEvent.Segmentation.callLabel("not-displayed"),
+                AnalyticsEvent.Segmentation.Removed.callDuration(duration),
+                AnalyticsEvent.Segmentation.Removed.callIgnoreReason(reason.rawValue)
             ]
 
         case let .answered(score, duration):
             [
-                .callLabel("answered"),
-                .callScore(score),
-                .Removed.callDuration(duration)
+                AnalyticsEvent.Segmentation.callLabel("answered"),
+                AnalyticsEvent.Segmentation.callScore(score),
+                AnalyticsEvent.Segmentation.Removed.callDuration(duration)
             ]
 
         case let .dismissed(duration):
             [
-                .callLabel("dismissed"),
-                .Removed.callDuration(duration)
+                AnalyticsEvent.Segmentation.callLabel("dismissed"),
+                AnalyticsEvent.Segmentation.Removed.callDuration(duration)
             ]
         }
     }
