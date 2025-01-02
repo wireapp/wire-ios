@@ -22,61 +22,61 @@ import Foundation
 
 extension AnalyticsEvent.Segmentation {
 
-    /// Creates a `SegmentationEntry` for indicating the device OS version of the user.
+    /// Creates a ``Segmentation`` for indicating the device OS version of the user.
     ///
     /// - Parameter value: A string indicating device OS version of the user
-    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
     static func deviceOS(_ value: String) -> Self {
         .init(key: "os_version", value: value)
     }
 
-    /// Creates a `SegmentationEntry` for indicating the device model of the user
+    /// Creates a ``Segmentation`` for indicating the device model of the user
     ///
     /// - Parameter value: A string indicating device model of the user
-    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
     static func deviceModel(_ value: String) -> Self {
         .init(key: "device_model", value: value)
     }
 
-    /// Creates a `SegmentationEntry` for indicating whether the self user is a team member.
+    /// Creates a ``Segmentation`` for indicating whether the self user is a team member.
     ///
     /// - Parameter value: A boolean indicating if the self user is a team member.
-    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
     static func isSelfTeamMember(_ value: Bool) -> Self {
         .init(key: "is_team_member", value: value)
     }
 
-    /// Creates a `SegmentationEntry` for indicating whether a call is a video call.
+    /// Creates a ``Segmentation`` for indicating whether a call is a video call.
     ///
     /// - Parameter value: A boolean indicating if the call is a video call.
-    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
     static func isVideoCall(_ value: Bool) -> Self {
         .init(key: "call_video", value: value)
     }
 
-    /// Creates a `SegmentationEntry` for the type of conversation.
+    /// Creates a ``Segmentation`` for the type of conversation.
 
     static func conversationType(_ value: Conversation.ConversationType) -> Self {
         .init(key: "conversation_type", value: value.rawValue)
     }
 
-    /// Creates a `SegmentationEntry` for the type of contribution in a conversation.
+    /// Creates a ``Segmentation`` for the type of contribution in a conversation.
     ///
     /// - Parameter value: The `ContributionType` of the contribution.
-    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
     static func contributionType(_ value: ConversationContributionType) -> Self {
         .init(key: "contribution_type", value: value.analyticsValue)
     }
 
-    /// Creates a `SegmentationEntry` for the size of a conversation.
+    /// Creates a ``Segmentation`` for the size of a conversation.
     ///
     /// - Parameter value: The number of participants in the conversation.
-    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
     static func conversationSize(_ value: Int) -> Self {
         .init(
@@ -85,18 +85,18 @@ extension AnalyticsEvent.Segmentation {
         )
     }
 
-    /// Creates a `SegmentationEntry` for the score of the calling survey
+    /// Creates a ``Segmentation`` for the score of the calling survey
     ///
     /// - Parameter value: The score from 1 to 5.
-    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
     static func callScore(_ value: Int) -> Self {
         .init(key: "score", value: String(value))
     }
 
-    /// Creates a `SegmentationEntry` for the label of the calling survey
+    /// Creates a ``Segmentation`` for the label of the calling survey
     /// - Parameter value: The label
-    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
     static func callLabel(_ value: String) -> Self {
         .init(key: "label", value: value)

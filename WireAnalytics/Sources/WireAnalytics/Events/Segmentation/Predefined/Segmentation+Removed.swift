@@ -26,10 +26,10 @@ extension AnalyticsEvent.Segmentation {
 
     enum Removed {
 
-        /// Creates a `SegmentationEntry` for the type of group in a conversation.
+        /// Creates a ``Segmentation`` for the type of group in a conversation.
         ///
         /// - Parameter value: The `ConversationType` of the conversation.
-        /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+        /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
         @available(*, deprecated, renamed: "conversationType")
         static func groupType(_ value: Conversation.LegacyConversationType) -> AnalyticsEvent.Segmentation {
@@ -37,18 +37,18 @@ extension AnalyticsEvent.Segmentation {
             // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
         }
 
-        /// Creates a `SegmentationEntry` for the duration of the calling survey
+        /// Creates a ``Segmentation`` for the duration of the calling survey
         ///
         /// - Parameter value: The duration of the call.
-        /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+        /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
         static func callDuration(_ value: TimeInterval) -> AnalyticsEvent.Segmentation {
             .init(key: "duration", value: String(value))
         }
 
-        /// Creates a `SegmentationEntry` for the ignore reason of the calling survey
+        /// Creates a ``Segmentation`` for the ignore reason of the calling survey
         /// - Parameter value: the ignore reason
-        /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+        /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
         static func callIgnoreReason(_ value: String) -> AnalyticsEvent.Segmentation {
             .init(key: "ignore-reason", value: value)

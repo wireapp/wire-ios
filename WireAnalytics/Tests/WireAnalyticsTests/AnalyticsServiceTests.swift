@@ -356,10 +356,10 @@ private enum Scaffolding {
 
     static let event = AnalyticsEvent(
         name: "foo",
-        segmentation: [segmentationEntry]
+        segmentation: [segmentation]
     )
 
-    static let segmentationEntry = AnalyticsEvent.Segmentation(
+    static let segmentation = AnalyticsEvent.Segmentation(
         key: "bar",
         value: "car"
     )
@@ -372,7 +372,7 @@ private enum Scaffolding {
     static func expectedSegmentation(for user: AnalyticsUser) -> [String: String] {
         let segmentation = baseSegmentation.union([
             .isSelfTeamMember(user.teamInfo != nil),
-            segmentationEntry
+            segmentation
         ])
 
         return Dictionary(uniqueKeysWithValues: segmentation.map {

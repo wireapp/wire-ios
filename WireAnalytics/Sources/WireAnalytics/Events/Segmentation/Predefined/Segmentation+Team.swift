@@ -20,7 +20,7 @@ extension AnalyticsEvent.Segmentation {
 
     enum Team {
 
-        /// Creates a `SegmentationEntry` providing the information if the user is part of a team (redundant to
+        /// Creates a ``Segmentation`` providing the information if the user is part of a team (redundant to
         /// `is_team_member`).
 
         static func teamIsTeam(_ value: Bool) -> AnalyticsEvent.Segmentation {
