@@ -64,12 +64,12 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
         default:
         {
             self = [self initWithPayload:nil HTTPStatus:HTTPResponse.statusCode transportSessionError:error headers:HTTPResponse.allHeaderFields apiVersion:apiVersion];
-            self.rawData = data;
             break;
         }
     }
     
     self.rawResponse = HTTPResponse;
+    self.rawData = data;
     return self;
 }
 

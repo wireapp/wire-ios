@@ -325,7 +325,7 @@ extension SettingsTableViewController {
 
 extension SettingsTableViewController: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
-        if note.accentColorValueChanged {
+        if note.accentColorValueChanged || note.readReceiptsEnabledChanged {
             refreshData()
         }
 
