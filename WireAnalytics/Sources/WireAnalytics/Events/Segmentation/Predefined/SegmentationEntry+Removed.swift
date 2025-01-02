@@ -16,20 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import struct Foundation.TimeInterval
+
 // The segmentation entries in this file are not to be used anymore.
 // As soon as we get the confirmation that these are not used anymore, we should delete this file.
+// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1364262933/Appendix+Countly+segmentation+values
 
-public extension SegmentationEntry {
+extension SegmentationEntry {
 
     enum Removed {
-        // TODO: move these here
-//        reason
-//        group_type
-//        AV_switch_toggled
-//        direction
-//        duration
-//        ignore-reason
-//        app_name
-//        is_call_video
+
+        /// Creates a `SegmentationEntry` for the type of group in a conversation.
+        ///
+        /// - Parameter value: The `ConversationType` of the conversation.
+        /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+
+        @available(*, deprecated, renamed: "conversationType")
+        static func groupType(_ value: SegmentationEntry.Conversation.LegacyConversationType) -> SegmentationEntry {
+            .init(key: "group_type", value: value.rawValue)
+            // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
+        }
+
+        /// Creates a `SegmentationEntry` for the duration of the calling survey
+        ///
+        /// - Parameter value: The duration of the call.
+        /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+
+        static func callDuration(_ value: TimeInterval) -> SegmentationEntry {
+            .init(key: "duration", value: String(value))
+        }
+
+        /// Creates a `SegmentationEntry` for the ignore reason of the calling survey
+        /// - Parameter value: the ignore reason
+        /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+
+        static func callIgnoreReason(_ value: String) -> SegmentationEntry {
+            .init(key: "ignore-reason", value: value)
+        }
     }
 }

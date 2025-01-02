@@ -27,7 +27,7 @@ public extension SegmentationEntry {
 
         // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
         @available(*, deprecated, message: "Use `ConversationType`.")
-        public enum LegacyConversationType: String {
+        public enum LegacyConversationType: String { // TODO: make internal
             case group
             case oneOnOne = "one_on_one"
             case unknown

@@ -37,7 +37,7 @@ public extension AnalyticsEvent {
                 segmentation: [
                     .isVideoCall(isVideo),
                     .conversationType(conversationType),
-                    .groupType(conversationType.mapToConversationType())
+                    .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
         }
@@ -59,7 +59,7 @@ public extension AnalyticsEvent {
                 segmentation: [
                     .isVideoCall(isVideo),
                     .conversationType(conversationType),
-                    .groupType(conversationType.mapToConversationType())
+                    .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
         }

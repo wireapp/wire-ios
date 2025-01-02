@@ -38,7 +38,7 @@ public extension AnalyticsEvent {
                 name: "contributed",
                 segmentation: [
                     .contributionType(contributionType),
-                    .groupType(conversationType),
+                    .Removed.groupType(conversationType),
                     .conversationSize(conversationSize)
                 ]
             )
