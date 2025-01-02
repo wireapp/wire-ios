@@ -35,9 +35,9 @@ public extension AnalyticsEvent {
             AnalyticsEvent(
                 name: "calling.initiated_call",
                 segmentation: [
-                    AnalyticsEvent.Segmentation.isVideoCall(isVideo),
-                    AnalyticsEvent.Segmentation.conversationType(conversationType),
-                    AnalyticsEvent.Segmentation.Removed.groupType(conversationType.mapToConversationType())
+                    .isVideoCall(isVideo),
+                    .conversationType(conversationType),
+                    .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
         }
@@ -57,9 +57,9 @@ public extension AnalyticsEvent {
             AnalyticsEvent(
                 name: "calling.joined_call",
                 segmentation: [
-                    AnalyticsEvent.Segmentation.isVideoCall(isVideo),
-                    AnalyticsEvent.Segmentation.conversationType(conversationType),
-                    AnalyticsEvent.Segmentation.Removed.groupType(conversationType.mapToConversationType())
+                    .isVideoCall(isVideo),
+                    .conversationType(conversationType),
+                    .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
         }

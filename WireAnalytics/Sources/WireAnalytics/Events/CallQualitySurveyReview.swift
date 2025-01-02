@@ -40,22 +40,22 @@ public enum CallQualitySurveyReview {
         switch self {
         case let .notDisplayed(reason, duration):
             [
-                AnalyticsEvent.Segmentation.callLabel("not-displayed"),
-                AnalyticsEvent.Segmentation.Removed.callDuration(duration),
-                AnalyticsEvent.Segmentation.Removed.callIgnoreReason(reason.rawValue)
+                .callLabel("not-displayed"),
+                .Removed.callDuration(duration),
+                .Removed.callIgnoreReason(reason.rawValue)
             ]
 
         case let .answered(score, duration):
             [
-                AnalyticsEvent.Segmentation.callLabel("answered"),
-                AnalyticsEvent.Segmentation.callScore(score),
-                AnalyticsEvent.Segmentation.Removed.callDuration(duration)
+                .callLabel("answered"),
+                .callScore(score),
+                .Removed.callDuration(duration)
             ]
 
         case let .dismissed(duration):
             [
-                AnalyticsEvent.Segmentation.callLabel("dismissed"),
-                AnalyticsEvent.Segmentation.Removed.callDuration(duration)
+                .callLabel("dismissed"),
+                .Removed.callDuration(duration)
             ]
         }
     }

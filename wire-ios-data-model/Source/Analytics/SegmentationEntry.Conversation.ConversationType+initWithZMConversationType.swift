@@ -18,7 +18,7 @@
 
 import WireAnalytics
 
-public extension SegmentationEntry.Conversation.ConversationType {
+public extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
 
     init?(_ conversationType: ZMConversationType) {
         switch conversationType {
