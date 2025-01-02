@@ -65,7 +65,7 @@ extension NotificationBody {
         case sharedFile(senderName: String?)
         /// `[sender name] shared a location` or `Shared a location` if sender is nil.
         case sharedLocation(senderName: String?)
-        /// `[sender name] pinged you`
+        /// `[sender name] pinged you` or `Pinged you` if sender is nil
         case ping(senderName: String?)
         /// `New message`
         case hidden

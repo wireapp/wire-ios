@@ -45,7 +45,7 @@ final class NotificationSession {
             .collect() // Collects all the events batches.
             .map { $0.flatMap { $0 } }
             .map { events in
-                // Uses a Future to bridge between Combine / async await
+                // Uses a Future to bridge between Combine and async/await
                 Future<UNMutableNotificationContent, Never> { [self] promise in
                     Task {
                         let notification = await generateNotificationContent(for: events)
@@ -96,6 +96,7 @@ final class NotificationSession {
                     event: conversationEvent
                 )
             default:
+                // TODO: [WPB-10218] - Generate notif for other update events
                 continue
             }
 

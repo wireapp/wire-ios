@@ -39,7 +39,6 @@ struct ConversationNotificationBuilder: NotificationBuilder {
     ) async {
         self.event = event
         
-        let conversationRepository: ConversationRepositoryProtocol = Injector.resolve()
         let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
         let userRepository: UserRepositoryProtocol = Injector.resolve()
         
@@ -48,7 +47,7 @@ struct ConversationNotificationBuilder: NotificationBuilder {
             domain: event.senderID.domain
         )
         
-        let conversation = await conversationRepository.fetchOrCreateConversation(
+        let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: event.conversationID.uuid,
             domain: event.conversationID.domain
         )

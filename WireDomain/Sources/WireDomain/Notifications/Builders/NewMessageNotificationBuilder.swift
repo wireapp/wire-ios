@@ -141,21 +141,21 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = switch assetType {
+        let body: NotificationBody = switch assetType {
         case .image:
-            NotificationBody.newMessage(
+            .newMessage(
                 .sharedPicture(senderName: isGroupConversation ? senderName : nil)
             )
         case .video:
-            NotificationBody.newMessage(
+            .newMessage(
                 .sharedVideo(senderName: isGroupConversation ? senderName : nil)
             )
         case .audio:
-            NotificationBody.newMessage(
+            .newMessage(
                 .sharedAudio(senderName: isGroupConversation ? senderName : nil)
             )
         case .fileUpload:
-            NotificationBody.newMessage(
+            .newMessage(
                 .sharedFile(senderName: isGroupConversation ? senderName : nil)
             )
         }
@@ -164,13 +164,13 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
 
         return content
     }
 
     private func buildPingNotification() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        let isGroupConversation = context.isGroupConversation
         let senderName = context.senderName
 
         if let title = makeTitle() {
@@ -178,30 +178,28 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         }
         
         let body = NotificationBody.newMessage(
-            .ping(senderName: senderName)
+            .ping(senderName: context.isGroupConversation ? senderName : nil)
         )
 
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound(type: .ping)
         content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
 
         return content
     }
 
     private func buildHiddenNotification() -> UNMutableNotificationContent {
-        let selfUser = ZMUser.selfUser(
-            in: NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        )
-
         let content = UNMutableNotificationContent()
         
         // No title for hidden message, only a body.
-        let body = NotificationBody.newMessage(.hidden)
+        let body: NotificationBody = .newMessage(.hidden)
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
 
         return content
     }
@@ -230,6 +228,10 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         let senderName = context.senderName
 
         let content = UNMutableNotificationContent()
+        
+        if let title = makeTitle() {
+            content.title = title
+        }
 
         let format: NotificationBody.MessageBodyFormat = if isMention {
             .textWithMention(content: text, senderName: senderName)
@@ -247,6 +249,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
 
         return content
     }
@@ -268,6 +271,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
 
         return content
     }
@@ -310,12 +314,11 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
             format
         )
 
+        // No thread identifier for ephemeral messages as we only want to group non ephemeral ones.
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
-        // only group non ephemeral messages
-        content.threadIdentifier = context.conversationID.uuid.transportString()
 
         return content
     }

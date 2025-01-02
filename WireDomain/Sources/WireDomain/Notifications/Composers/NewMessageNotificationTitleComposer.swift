@@ -21,6 +21,7 @@ import Foundation
 struct NewMessageNotificationTitleComposer {
     let format: NotificationTitle.MessageTitleFormat
 
+    // TODO: [WPB-15153] - Localize strings
     func make() -> String {
         switch format {
         case let .sender(sender):

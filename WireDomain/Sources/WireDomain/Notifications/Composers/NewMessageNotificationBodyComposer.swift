@@ -21,6 +21,7 @@ import Foundation
 struct NewMessageNotificationBodyComposer {
     let format: NotificationBody.MessageBodyFormat
 
+    // TODO: [WPB-15153] - Localize strings
     func make() -> String {
         switch format {
         case .sentWithUnknownSender:
@@ -46,7 +47,7 @@ struct NewMessageNotificationBodyComposer {
         case let .sharedLocation(senderName):
             senderName != nil ? "\(senderName!) shared a location" : "Shared a location"
         case let .ping(senderName):
-            senderName != nil ? "\(senderName!) pinged you" : "You were pinged"
+            senderName != nil ? "\(senderName!) pinged you" : "Pinged you"
         case .hidden:
             "New message"
         }
