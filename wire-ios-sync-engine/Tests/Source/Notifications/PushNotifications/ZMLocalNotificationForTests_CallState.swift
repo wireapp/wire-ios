@@ -54,7 +54,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     func testIncomingAudioCall() {
 
         // given
-        let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
 
         syncMOC.performAndWait {
             // when
@@ -76,7 +76,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             selfUser.availability = .away
         }
 
-        let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
 
         // then
         syncMOC.performAndWait {
@@ -91,7 +91,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             self.conversation.mutedMessageTypes = .all
         }
 
-        let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
 
         // then
         syncMOC.performAndWait {
@@ -102,7 +102,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     func testIncomingAudioCall_ShouldRing_False() {
 
         // given
-        let state: CallState = .incoming(video: false, shouldRing: false, degraded: false)
+        let state: CallState = .incoming(isVideo: false, shouldRing: false, degraded: false)
 
         // then
         syncMOC.performAndWait {
@@ -113,7 +113,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     func testIncomingVideoCall() {
 
         // given
-        let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
 
         // when
         syncMOC.performAndWait {
@@ -130,7 +130,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     func testIncomingVideoCall_ShouldRing_False() {
 
         // given
-        let state: CallState = .incoming(video: true, shouldRing: false, degraded: false)
+        let state: CallState = .incoming(isVideo: true, shouldRing: false, degraded: false)
 
         // then
         syncMOC.performAndWait {
@@ -223,7 +223,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
 
             XCTAssertNotNil(user.team)
 
-            let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
+            let state: CallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
 
             // when
             guard let note = self.note(for: state) else { return XCTFail("Did not create notification") }
@@ -236,7 +236,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     func testThatItDoesNotAddATitleIfTheUserIsNotPartOfATeam() {
 
         // given
-        let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
 
         syncMOC.performAndWait {
             // when

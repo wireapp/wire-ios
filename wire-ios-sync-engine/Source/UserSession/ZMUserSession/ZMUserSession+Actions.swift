@@ -47,7 +47,7 @@ public extension ZMUserSession {
 
         guard let callState = conversation.voiceChannel?.state else { return }
 
-        if case let .incoming(video: video, shouldRing: _, degraded: _) = callState,
+        if case let .incoming(isVideo: video, shouldRing: _, degraded: _) = callState,
            callCenter?.activeCallConversations(in: self).isEmpty == true {
             _ = conversation.voiceChannel?.join(video: video, userSession: self)
         }

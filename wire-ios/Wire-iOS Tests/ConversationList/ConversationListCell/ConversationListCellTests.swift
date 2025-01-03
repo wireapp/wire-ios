@@ -542,7 +542,7 @@ final class ConversationListCellTests: XCTestCase {
     func testThatItRendersGroupConversationWithIncomingCall() {
         let conversation = createGroupConversation()
         let icon = CallingMatcher.icon(
-            for: .incoming(video: false, shouldRing: true, degraded: false),
+            for: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation
         )
         verify(conversation, icon: icon)
@@ -552,7 +552,7 @@ final class ConversationListCellTests: XCTestCase {
         let conversation = createGroupConversation()
         conversation.mutedMessageTypes = .mentionsAndReplies
         let icon = CallingMatcher.icon(
-            for: .incoming(video: false, shouldRing: true, degraded: false),
+            for: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation
         )
         verify(conversation, icon: icon)
@@ -562,7 +562,7 @@ final class ConversationListCellTests: XCTestCase {
         let conversation = createGroupConversation()
         conversation.mutedMessageTypes = .all
         let icon = CallingMatcher.icon(
-            for: .incoming(video: false, shouldRing: true, degraded: false),
+            for: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation
         )
         verify(conversation, icon: icon)
@@ -570,7 +570,7 @@ final class ConversationListCellTests: XCTestCase {
 
     func testThatItRendersGroupConversationWithOngoingCall() {
         let conversation = createGroupConversation()
-        let icon = CallingMatcher.icon(for: .outgoing(degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(for: .outgoing(isVideo: false, degraded: false), conversation: conversation)
         verify(conversation, icon: icon)
     }
 
@@ -602,7 +602,7 @@ final class ConversationListCellTests: XCTestCase {
     func testThatItRendersOneOnOneConversationWithIncomingCall() {
         let conversation = otherUserConversation
         let icon = CallingMatcher.icon(
-            for: .incoming(video: false, shouldRing: true, degraded: false),
+            for: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation
         )
         verify(conversation!, icon: icon)
@@ -612,7 +612,7 @@ final class ConversationListCellTests: XCTestCase {
         let conversation = otherUserConversation
         conversation?.mutedMessageTypes = .mentionsAndReplies
         let icon = CallingMatcher.icon(
-            for: .incoming(video: false, shouldRing: true, degraded: false),
+            for: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation
         )
         verify(conversation!, icon: icon)
@@ -622,7 +622,7 @@ final class ConversationListCellTests: XCTestCase {
         let conversation = otherUserConversation
         conversation?.mutedMessageTypes = .all
         let icon = CallingMatcher.icon(
-            for: .incoming(video: false, shouldRing: true, degraded: false),
+            for: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation
         )
         verify(conversation!, icon: icon)
@@ -630,7 +630,7 @@ final class ConversationListCellTests: XCTestCase {
 
     func testThatItRendersOneOnOneConversationWithOngoingCall() {
         let conversation = otherUserConversation
-        let icon = CallingMatcher.icon(for: .outgoing(degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(for: .outgoing(isVideo: false, degraded: false), conversation: conversation)
         verify(conversation!, icon: icon)
     }
 

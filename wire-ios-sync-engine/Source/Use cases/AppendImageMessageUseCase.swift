@@ -44,7 +44,7 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
             .Contributed.conversationContribution(
                 .imageMessage,
                 conversationType: .init(conversation.conversationType),
-                conversationSize: UInt(conversation.localParticipants.count)
+                conversationSize: conversation.localParticipants.count
             )
         )
     }

@@ -153,7 +153,7 @@ extension WireCallCenterV3 {
     ) {
         handleEvent("incoming-call") {
             let isDegraded = self.isDegraded(conversationId: conversationId)
-            let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
+            let callState = CallState.incoming(isVideo: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
             let members = [AVSCallMember(client: client)]
 
             self.createSnapshot(

@@ -41,7 +41,6 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
 
@@ -51,7 +50,6 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         sut = ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
 
         (conversation, firstMessage) = try await setupConversationWithMessage()
-
     }
 
     // MARK: - tearDown
@@ -63,8 +61,6 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         coreDataStackHelper = nil
         conversation = nil
         firstMessage = nil
-
-        super.tearDown()
     }
 
     // MARK: - Helper Methods
