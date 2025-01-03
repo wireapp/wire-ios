@@ -88,80 +88,141 @@ public extension CoreDataStack {
     ///   - dispatchGroup: group for testing
     ///   - databaseKey: EAR database key
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
+//    static func backupLocalStorage(
+//        accountIdentifier: UUID,
+//        clientIdentifier: String,
+//        applicationContainer: URL,
+//        dispatchGroup: ZMSDispatchGroup,
+//        databaseKey: VolatileData? = nil,
+//        completion: @escaping (Result<BackupInfo, Error>) -> Void
+//    ) {
+//        func fail(_ error: BackupError) {
+//            log.debug("error backing up local store: \(error)")
+//            DispatchQueue.main.async(group: dispatchGroup) {
+//                completion(.failure(error))
+//            }
+//        }
+//
+//        let accountDirectory = Self.accountDataFolder(
+//            accountIdentifier: accountIdentifier,
+//            applicationContainer: applicationContainer
+//        )
+//        let storeFile = accountDirectory.appendingPersistentStoreLocation()
+//
+//        guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.failedToRead) }
+//
+//        let backupDirectory = backupsDirectory.appendingPathComponent(UUID().uuidString)
+//        let databaseDirectory = backupDirectory.appendingPathComponent(databaseDirectoryName)
+//        let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
+//
+//        workQueue.async(group: dispatchGroup) {
+//            do {
+//                let model = CoreDataStack.loadMessagingModel()
+//                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+//
+//                // Create target directory
+//                try fileManager.createDirectory(
+//                    at: databaseDirectory,
+//                    withIntermediateDirectories: true,
+//                    attributes: nil
+//                )
+//                let backupLocation = databaseDirectory.appendingStoreFile()
+//                let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
+//
+//                // Recreate the persistent store inside a new location
+//                WireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
+//                try coordinator.replacePersistentStore(
+//                    at: backupLocation,
+//                    destinationOptions: options,
+//                    withPersistentStoreFrom: storeFile,
+//                    sourceOptions: options,
+//                    ofType: NSSQLiteStoreType
+//                )
+//
+//                WireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
+//                try prepareStoreForBackupExport(
+//                    coordinator: coordinator,
+//                    location: backupLocation,
+//                    options: options,
+//                    databaseKey: databaseKey
+//                )
+//
+//                // Create & write metadata
+//                WireLogger.localStorage.debug("backup: Create & write metadata")
+//                let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
+//                try metadata.write(to: metadataURL)
+//                log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
+//
+//                DispatchQueue.main.async(group: dispatchGroup) {
+//                    completion(.success(.init(url: backupDirectory, metadata: metadata)))
+//                }
+//            } catch {
+//                fail(.failedToWrite(error))
+//            }
+//        }
+//    }
     static func backupLocalStorage(
         accountIdentifier: UUID,
         clientIdentifier: String,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup,
-        databaseKey: VolatileData? = nil,
-        completion: @escaping (Result<BackupInfo, Error>) -> Void
-    ) {
-        func fail(_ error: BackupError) {
-            log.debug("error backing up local store: \(error)")
-            DispatchQueue.main.async(group: dispatchGroup) {
-                completion(.failure(error))
-            }
-        }
-
+        databaseKey: VolatileData? = nil
+    ) throws -> BackupInfo {
         let accountDirectory = Self.accountDataFolder(
             accountIdentifier: accountIdentifier,
             applicationContainer: applicationContainer
         )
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
-        guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.failedToRead) }
+        guard fileManager.fileExists(atPath: accountDirectory.path) else {
+            throw BackupError.failedToRead
+        }
 
         let backupDirectory = backupsDirectory.appendingPathComponent(UUID().uuidString)
         let databaseDirectory = backupDirectory.appendingPathComponent(databaseDirectoryName)
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
 
-        workQueue.async(group: dispatchGroup) {
-            do {
-                let model = CoreDataStack.loadMessagingModel()
-                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+        return try workQueue.sync {
+            let model = CoreDataStack.loadMessagingModel()
+            let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
-                // Create target directory
-                try fileManager.createDirectory(
-                    at: databaseDirectory,
-                    withIntermediateDirectories: true,
-                    attributes: nil
-                )
-                let backupLocation = databaseDirectory.appendingStoreFile()
-                let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
+            // Create target directory
+            try fileManager.createDirectory(
+                at: databaseDirectory,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            let backupLocation = databaseDirectory.appendingStoreFile()
+            let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
-                // Recreate the persistent store inside a new location
-                WireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
-                try coordinator.replacePersistentStore(
-                    at: backupLocation,
-                    destinationOptions: options,
-                    withPersistentStoreFrom: storeFile,
-                    sourceOptions: options,
-                    ofType: NSSQLiteStoreType
-                )
+            // Recreate the persistent store inside a new location
+            WireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
+            try coordinator.replacePersistentStore(
+                at: backupLocation,
+                destinationOptions: options,
+                withPersistentStoreFrom: storeFile,
+                sourceOptions: options,
+                ofType: NSSQLiteStoreType
+            )
 
-                WireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
-                try prepareStoreForBackupExport(
-                    coordinator: coordinator,
-                    location: backupLocation,
-                    options: options,
-                    databaseKey: databaseKey
-                )
+            WireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
+            try prepareStoreForBackupExport(
+                coordinator: coordinator,
+                location: backupLocation,
+                options: options,
+                databaseKey: databaseKey
+            )
 
-                // Create & write metadata
-                WireLogger.localStorage.debug("backup: Create & write metadata")
-                let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
-                try metadata.write(to: metadataURL)
-                log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
+            // Create & write metadata
+            WireLogger.localStorage.debug("backup: Create & write metadata")
+            let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
+            try metadata.write(to: metadataURL)
+            log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
 
-                DispatchQueue.main.async(group: dispatchGroup) {
-                    completion(.success(.init(url: backupDirectory, metadata: metadata)))
-                }
-            } catch {
-                fail(.failedToWrite(error))
-            }
+            return BackupInfo(url: backupDirectory, metadata: metadata)
         }
     }
-
+    
     /// Will import a backup for a given account
     ///
     /// - Parameters:

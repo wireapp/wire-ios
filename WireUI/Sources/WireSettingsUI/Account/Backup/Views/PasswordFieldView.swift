@@ -26,16 +26,13 @@ struct PasswordFieldView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("passwordField.title", tableName: "Localizable", bundle: .module)
+            Text(L10n.PasswordField.title)
                 .font(.subheadline)
                 .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color)
 
             ZStack {
                 if isPasswordVisible {
-                    TextField(String(
-                        localized: "passwordField.placeholder",
-                        table: "Localizable",
-                        bundle: .module),
+                    TextField(L10n.PasswordField.placeholder,
                               text: $password)
                         .font(.textStyle(.body1))
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -44,10 +41,7 @@ struct PasswordFieldView: View {
                                 .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
                         )
                 } else {
-                    SecureField(String(
-                        localized: "passwordField.placeholder",
-                        table: "Localizable",
-                        bundle: .module),
+                    SecureField(L10n.PasswordField.placeholder,
                                 text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .overlay(
@@ -68,7 +62,7 @@ struct PasswordFieldView: View {
                 }
             }
 
-            Text("passwordField.rules", tableName: "Localizable", bundle: .module)
+            Text(L10n.PasswordField.rules)
                 .font(.caption)
                 .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color)
         }

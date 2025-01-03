@@ -29,18 +29,18 @@ struct BackupActionsSection: Identifiable {
         var title: Text {
             switch self {
             case .backup:
-                return Text("historyBackup.action", tableName: "Localizable", bundle: .module)
+                return Text(L10n.HistoryBackup.action)
             case .restore:
-                return Text("restoreFromBackup.action", tableName: "Localizable", bundle: .module)
+                return Text(L10n.RestoreFromBackup.action)
             }
         }
 
         var footer: Text {
             switch self {
             case .backup:
-                return Text("historyBackup.description", tableName: "Localizable", bundle: .module)
+                return Text(L10n.HistoryBackup.description)
             case .restore:
-                return Text("restoreFromBackup.description", tableName: "Localizable", bundle: .module)
+                return Text(L10n.RestoreFromBackup.description)
             }
         }
     }

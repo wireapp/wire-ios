@@ -53,7 +53,7 @@ public struct BackupActionsView: View {
                                 .font(.textStyle(.body2))
                                 .foregroundStyle(Color.primaryText)
                             Spacer()
-                            Image("chevron.right").foregroundStyle(Color.primary)
+                            Image(systemName: "chevron.right").foregroundStyle(Color.primary)
                         }
                     }
                     .sheet(isPresented: $isBackupPresented) {

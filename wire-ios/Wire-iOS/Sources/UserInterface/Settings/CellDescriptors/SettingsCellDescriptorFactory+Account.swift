@@ -375,7 +375,7 @@ extension SettingsCellDescriptorFactory {
             presentationAction: {
                 guard let selfUser = ZMUser.selfUser() else {
                     assertionFailure("ZMUser.selfUser() is nil")
-                    return UIViewController()
+                    return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     let viewModel = BackupActionsViewModel(
@@ -385,7 +385,6 @@ extension SettingsCellDescriptorFactory {
                     let backupActionsController = BackupActionsHostingController(viewModel: viewModel)
                     backupActionsController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
                     return backupActionsController
-//                    return BackupViewController(backupSource: SessionManager.shared!)
                 } else {
                     let alert = UIAlertController(
                         title: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.title,
