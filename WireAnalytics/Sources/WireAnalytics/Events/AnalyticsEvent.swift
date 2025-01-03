@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ public struct AnalyticsEvent: Equatable, Sendable {
 
     /// Additional metadata.
 
-    let segmentation: Set<SegmentationEntry>
+    let segmentation: Set<Segmentation>
 
     /// Create a new `AnalyticsEvent`.
     ///
@@ -37,7 +37,7 @@ public struct AnalyticsEvent: Equatable, Sendable {
     init<Collection>(
         name: String,
         segmentation: Collection = []
-    ) where Collection: Swift.Collection, Collection.Element == SegmentationEntry {
+    ) where Collection: Swift.Collection, Collection.Element == Segmentation {
         self.name = name
         self.segmentation = Set(segmentation)
     }

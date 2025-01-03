@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ final class ProximityMonitorManager: NSObject {
 
         let ongoingCalls = callCenter.nonIdleCalls.filter { (_, callState: CallState) -> Bool in
             switch callState {
-            case .established, .establishedDataChannel, .answered(degraded: false), .outgoing(degraded: false):
+            case .established, .establishedDataChannel, .answered(degraded: false), .outgoing(_, degraded: false):
                 return true
             default:
                 return false
