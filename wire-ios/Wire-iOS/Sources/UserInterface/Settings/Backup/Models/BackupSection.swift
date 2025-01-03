@@ -16,54 +16,49 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/// The section that will be displayed in the backup settings
-struct BackupSection: Identifiable {
-
-    typealias SettingsString = L10n.Localizable.Self.Settings
-
-    enum Section {
-        case backup
-        case restore
-
-        var title: String {
-            switch self {
-            case .backup:
-                return SettingsString.HistoryBackup.action
-            case .restore:
-                return SettingsString.RestoreFromBackup.action
-            }
-        }
-
-        var footer: String {
-            switch self {
-            case .backup:
-                return SettingsString.HistoryBackup.description
-            case .restore:
-                return SettingsString.RestoreFromBackup.description
-            }
-        }
-    }
-
-    /// Unique identifier for the section
-    let id: UUID
-
-    /// The section type
-    let type: Section
-
-    /// OnTap section action
-    let action: () -> Void
-
-    init(
-        id: UUID = UUID(),
-        type: Section,
-        action: @escaping () -> Void
-    ) {
-        self.id = id
-        self.type = type
-        self.action = action
-    }
-
-}
-
+//import Foundation
+//
+///// The section that will be displayed in the backup actions
+//struct BackupActionsSection: Identifiable {
+//
+//    typealias SettingsString = L10n.Localizable.Self.Settings
+//
+//    enum Section {
+//        case backup
+//        case restore
+//
+//        var title: String {
+//            switch self {
+//            case .backup:
+//                return SettingsString.HistoryBackup.action
+//            case .restore:
+//                return SettingsString.RestoreFromBackup.action
+//            }
+//        }
+//
+//        var footer: String {
+//            switch self {
+//            case .backup:
+//                return SettingsString.HistoryBackup.description
+//            case .restore:
+//                return SettingsString.RestoreFromBackup.description
+//            }
+//        }
+//    }
+//
+//    /// Unique identifier for the section
+//    let id: UUID
+//
+//    /// The section type
+//    let type: Section
+//
+//    init(
+//        id: UUID = UUID(),
+//        type: Section
+//    ) {
+//        self.id = id
+//        self.type = type
+//    }
+//
+//}
+//

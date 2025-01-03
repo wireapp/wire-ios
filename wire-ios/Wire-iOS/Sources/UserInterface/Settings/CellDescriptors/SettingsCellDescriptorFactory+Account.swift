@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireSettingsUI
 
 extension ZMUser {
     var hasValidEmail: Bool {
@@ -374,14 +375,17 @@ extension SettingsCellDescriptorFactory {
             presentationAction: {
                 guard let selfUser = ZMUser.selfUser() else {
                     assertionFailure("ZMUser.selfUser() is nil")
-                    return .none
+                    return UIViewController()
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-                    let viewModel = BackupViewModel()
-                    let backupController = BackupHostingController(viewModel: viewModel)
-                    backupController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
-                    return backupController
-                    //return BackupViewController(backupSource: SessionManager.shared!)
+                    let viewModel = BackupActionsViewModel(
+                        backupSource: SessionManager.shared!,
+                        onSuccessHandler: presentShareSheet,
+                        onFailureHandler: presentAlert)
+                    let backupActionsController = BackupActionsHostingController(viewModel: viewModel)
+                    backupActionsController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
+                    return backupActionsController
+//                    return BackupViewController(backupSource: SessionManager.shared!)
                 } else {
                     let alert = UIAlertController(
                         title: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.title,
@@ -446,6 +450,42 @@ extension SettingsCellDescriptorFactory {
 
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
+    }
+
+}
+
+// TODO: 1. Change names, 2. Move somewhere
+extension SettingsCellDescriptorFactory {
+
+    private func presentAlert(for error: Error) {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: L10n.Localizable.Self.Settings.HistoryBackup.Error.title,
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
+        controller.present(alert, animated: true)
+    }
+
+    private func presentShareSheet(with url: URL, completion: @escaping Completion) {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+
+        let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        activityController.completionWithItemsHandler = { _, _, _, _ in
+            //self?.backupSource.clearPreviousBackups()
+            completion()
+        }
+        controller.present(activityController, animated: true)
     }
 
 }

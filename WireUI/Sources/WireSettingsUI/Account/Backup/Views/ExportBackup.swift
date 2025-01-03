@@ -21,20 +21,25 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
-/// A view that allows to set a password for the backup.
+/// A view that allows to export the backup.
 
-public struct SetBackupPassword: View {
+public struct ExportBackup: View {
 
     @Environment(\.dismiss) private var dismiss
+    private let onAction: (String) -> Void
 
-    public init(){}
+    public init(onAction: @escaping (String) -> Void) {
+        self.onAction = onAction
+    }
 
     public var body: some View {
-        BackupSheetView()
+        SetBackupPasswordView(onAction: onAction)
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
-                Text("setBackupPassword.title", tableName: "Localizable", bundle: .module)
+                Text("setBackupPassword.title",
+                     tableName: "Localizable",
+                     bundle: .module)
             )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -57,10 +62,16 @@ public struct SetBackupPassword: View {
 
 }
 
-struct BackupSheetView: View {
+private struct SetBackupPasswordView: View {
     @Environment(\.dismiss) var dismiss
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
+
+    private let onAction: (String) -> Void
+
+    init(onAction: @escaping (String) -> Void) {
+        self.onAction = onAction
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -79,6 +90,7 @@ struct BackupSheetView: View {
 
             Button(
                 action: {
+                    onAction(password)
                     dismiss()
                 },
                 label: {
@@ -105,20 +117,25 @@ struct BackupSheetView: View {
 // MARK: - Previews
 
 @available(iOS 17.0, *)
-#Preview("Set password sheet") {
-    SetBackupPasswordPreview()
+#Preview("Export Backup sheet") {
+    ExportBackupPreview()
 }
 
-private struct SetBackupPasswordPreview: View {
+private struct ExportBackupPreview: View {
     @State private var isPresented = true
 
     var body: some View {
-        Button("Back Up Now") {
-            isPresented.toggle()
-        }
+        Button(
+            action: {
+                isPresented.toggle()
+            },
+            label: {
+                Text("setBackupPassword.button", tableName: "Localizable", bundle: .module)
+            }
+        )
         .sheet(isPresented: $isPresented) {
             NavigationStack {
-                SetBackupPassword()
+                ExportBackup(onAction: {_ in })
             }
             .presentationDragIndicator(.visible)
             .presentationDetents([.medium, .large])

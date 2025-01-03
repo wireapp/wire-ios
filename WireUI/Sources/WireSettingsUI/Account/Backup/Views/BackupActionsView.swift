@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,13 +19,15 @@
 import SwiftUI
 import WireDesign
 import WireReusableUIComponents
-import WireSettingsUI
 
-public struct BackupView: View {
-    @ObservedObject private var viewModel: BackupViewModel
-    @State private var isSheetPresented: Bool = false
+public struct BackupActionsView: View {
+    // TODO: or  @StateObject
+    @ObservedObject private var viewModel: BackupActionsViewModel
+    @State private var isBackupPresented: Bool = false
+    //TODO: use `isRestorePresented`
+    @State private var isRestorePresented: Bool = false
 
-    public init(viewModel: BackupViewModel) {
+    public init(viewModel: BackupActionsViewModel) {
         self.viewModel = viewModel
     }
 
@@ -33,23 +35,32 @@ public struct BackupView: View {
         List {
             ForEach(viewModel.sections) { section in
                 Section(
-                    footer: Text(section.type.footer)
+                    footer: section.type.footer
                 ) {
                     Button(action: {
-                        print("Action for Section!")
-                        isSheetPresented.toggle()
+                        switch section.type {
+                        case .backup:
+                            isRestorePresented = false
+                            isBackupPresented.toggle()
+                        case .restore:
+                            isBackupPresented = false
+                            isRestorePresented.toggle()
+                        }
+
                     }) {
                         HStack {
-                            Text(section.type.title)
+                            section.type.title
                                 .font(.textStyle(.body2))
                                 .foregroundStyle(Color.primaryText)
                             Spacer()
-                            Image(.chevronRight).foregroundStyle(Color.primary)
+                            Image("chevron.right").foregroundStyle(Color.primary)
                         }
                     }
-                    .sheet(isPresented: $isSheetPresented) {
+                    .sheet(isPresented: $isBackupPresented) {
                         NavigationStack {
-                            SetBackupPassword()
+                            ExportBackup { password in
+                                viewModel.backupActiveAccount(password: password)
+                            }
                         }
                         .presentationDetents([.medium, .large])
                     }
@@ -62,5 +73,16 @@ public struct BackupView: View {
 }
 
 #Preview {
-    BackupView(viewModel: BackupViewModel())
+    BackupActionsView(viewModel: BackupActionsViewModel(
+        backupSource: MockBackupSource(),
+        onSuccessHandler: {_,_  in},
+        onFailureHandler: {_ in}))
+}
+
+private class MockBackupSource: BackupSource {
+    func backupActiveAccount(password: String) throws -> URL {
+        return URL(fileURLWithPath: "path")
+    }
+
+    func clearPreviousBackups() {}
 }

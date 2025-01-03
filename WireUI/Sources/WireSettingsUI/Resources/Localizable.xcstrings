@@ -1,8 +1,27 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Open Sheet" : {
-
+    "historyBackup.action" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back Up Now"
+          }
+        }
+      }
+    },
+    "historyBackup.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place."
+          }
+        }
+      }
     },
     "passwordField.placeholder" : {
       "extractionState" : "manual",
@@ -33,6 +52,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Password (OPTIONAL)"
+          }
+        }
+      }
+    },
+    "restoreFromBackup.action" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore from Backup"
+          }
+        }
+      }
+    },
+    "restoreFromBackup.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account."
           }
         }
       }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import class WireSyncEngine.SessionManager
-import WireSettingsUI
+import SwiftUI
+import UIKit
 
-// TODO: replace it
-// sourcery: AutoMockable
-//protocol BackupSource {
-//    func backupActiveAccount(
-//        password: String,
-//        completion: @escaping (Result<URL, Error>) -> Void
-//    )
-//
-//    func clearPreviousBackups()
-//}
+public final class BackupActionsHostingController: UIHostingController<BackupActionsView> {
+    private let viewModel: BackupActionsViewModel
 
-extension SessionManager: BackupSource {}
+    public init(viewModel: BackupActionsViewModel) {
+        self.viewModel = viewModel
+        super.init(rootView: BackupActionsView(viewModel: viewModel))
+    }
+
+    @available(*, unavailable)
+    dynamic required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

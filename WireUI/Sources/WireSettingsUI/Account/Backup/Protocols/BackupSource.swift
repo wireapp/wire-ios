@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import UIKit
+import Foundation
 
-public final class BackupHostingController: UIHostingController<BackupView> {
-    private let viewModel: BackupViewModel
+public protocol BackupSource {
+    // TODO: make password optional
+    func backupActiveAccount(password: String) throws -> URL
 
-    public init(viewModel: BackupViewModel) {
-        self.viewModel = viewModel
-        super.init(rootView: BackupView(viewModel: viewModel))
-    }
-
-    @available(*, unavailable)
-    dynamic required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    func clearPreviousBackups()
 }
