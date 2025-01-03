@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     private let countlyProvider: () -> any CountlyProtocol
     private var countly: (any CountlyProtocol)?
     private var currentUser: AnalyticsUser?
-    private let baseSegmentation: Set<SegmentationEntry>
+    private let baseSegmentation: Set<AnalyticsEvent.Segmentation>
     private let logger: WireLogger
 
     // MARK: - Life cycle
@@ -57,7 +57,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
     init(
         config: Config?,
-        baseSegmentation: Set<SegmentationEntry>,
+        baseSegmentation: Set<AnalyticsEvent.Segmentation>,
         countlyProvider: @escaping () -> any CountlyProtocol
     ) {
         self.config = config
@@ -215,12 +215,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// - Parameter event: The event to track.
 
     public func trackEvent(_ event: AnalyticsEvent) {
-        guard
-            let countly,
-            let currentUser
-        else {
-            return
-        }
+        guard let countly, let currentUser else { return }
 
         var segmentation = event.segmentation.union(baseSegmentation)
         segmentation.insert(.isSelfTeamMember(currentUser.teamInfo != nil))
