@@ -284,6 +284,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var environment: BackendEnvironment {
         didSet {
+            apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
             authenticatedSessionFactory.environment = environment
@@ -1510,9 +1511,9 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
             switch session.backupImportDidSucceed {
             case true?:
-                userSession.trackAnalyticsEvent(.backupRestored)
+                userSession.trackAnalyticsEvent(.Backup.restored)
             case false?:
-                userSession.trackAnalyticsEvent(.backupRestoredFailed)
+                userSession.trackAnalyticsEvent(.Backup.restoredFailed)
             case nil:
                 break
             }

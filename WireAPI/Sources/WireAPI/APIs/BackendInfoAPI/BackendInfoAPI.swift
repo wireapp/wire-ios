@@ -18,10 +18,15 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol BackendInfoAPI {
 
     /// Fetch the info of the local backend.
 
     func getBackendInfo() async throws -> BackendInfo
+
+    /// Fetch the info of MLS support on the backend available from ``APIVersion`` v5.
+
+    func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys
 
 }

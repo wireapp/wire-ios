@@ -16,30 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-@testable import WireFoundation
-
-final class SecureRandomByteGeneratorTests: XCTestCase {
-
-    func testByteGenerationIsRandom() throws {
-        // When
-        let randomBytes1 = try SecureRandomByteGenerator.generateBytes(count: 10)
-        let randomBytes2 = try SecureRandomByteGenerator.generateBytes(count: 10)
-
-        // Then
-        XCTAssertNotEqual(randomBytes1, randomBytes2)
-    }
-
-    func testCorrectNumberOfBytesAreGenerated() throws {
-        // Given
-        let count = UInt.random(in: 0 ... 1000)
-
-        // When
-        let bytes = try SecureRandomByteGenerator.generateBytes(count: count)
-
-        // Then
-        XCTAssertEqual(bytes.count, Int(count))
-    }
-
+class BackendInfoAPIV7: BackendInfoAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
 }

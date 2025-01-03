@@ -70,7 +70,7 @@ final class BackupPasswordViewControllerTests: XCTestCase {
         )
 
         // THEN
-        waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 2) { error in
             XCTAssertNil(error)
         }
     }

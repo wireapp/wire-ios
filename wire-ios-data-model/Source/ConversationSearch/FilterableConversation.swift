@@ -24,4 +24,7 @@ public protocol FilterableConversation {
 
     /// All participants of the conversation except the self user.
     var otherParticipants: [Participant] { get }
+
+    /// True if `self` is a one-on-one conversation, otherwise false.
+    var isOneOnOne: Bool { get }
 }

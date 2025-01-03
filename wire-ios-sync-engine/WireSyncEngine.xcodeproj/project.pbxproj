@@ -420,6 +420,7 @@
 		BFCE9A5B1C4E4C4D00951B3D /* store124.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BFCE9A581C4E4C4D00951B3D /* store124.wiredatabase */; };
 		BFE7FCBF2101E50700D1165F /* CompanyLoginVerificationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7FCBE2101E50700D1165F /* CompanyLoginVerificationToken.swift */; };
 		CB4895532C4FB77C00CA2C25 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4895522C4FB77C00CA2C25 /* WireTesting.framework */; };
+		CBD35F2A2D09EBA50080DA37 /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = CBD35F292D09EBA50080DA37 /* WireCrypto */; };
 		CBD3AED02C4A742B007643A0 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD3AECF2C4A742B007643A0 /* TestSetup.swift */; };
 		D522571E2062552800562561 /* AssetDeletionRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D522571D2062552800562561 /* AssetDeletionRequestStrategy.swift */; };
 		D5225720206261AA00562561 /* AssetDeletionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D522571F206261AA00562561 /* AssetDeletionStatus.swift */; };
@@ -464,7 +465,7 @@
 		E998FE8E2C184C9800EAA672 /* UserCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = E998FE8D2C184C9800EAA672 /* UserCredentials.swift */; };
 		E9A71BD32C32EA8B0027EC01 /* AppendTextMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A71BD22C32EA8B0027EC01 /* AppendTextMessageUseCase.swift */; };
 		E9A71BD52C33EE080027EC01 /* AppendImageMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A71BD42C33EE080027EC01 /* AppendImageMessageUseCase.swift */; };
-		E9A71BD72C33F4850027EC01 /* AppendKnockMessagekUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A71BD62C33F4850027EC01 /* AppendKnockMessagekUseCase.swift */; };
+		E9A71BD72C33F4850027EC01 /* AppendKnockMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A71BD62C33F4850027EC01 /* AppendKnockMessageUseCase.swift */; };
 		E9A96E7E2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */; };
 		E9ACAED12CBE43C2000E13B5 /* ZMUserSession+WireCallStateObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9ACAED02CBE43C2000E13B5 /* ZMUserSession+WireCallStateObserver.swift */; };
 		E9AD0A362C2AF9B300CA88DF /* AnalyticsServiceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AD0A352C2AF9B300CA88DF /* AnalyticsServiceConfiguration.swift */; };
@@ -1161,7 +1162,7 @@
 		E998FE8D2C184C9800EAA672 /* UserCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCredentials.swift; sourceTree = "<group>"; };
 		E9A71BD22C32EA8B0027EC01 /* AppendTextMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendTextMessageUseCase.swift; sourceTree = "<group>"; };
 		E9A71BD42C33EE080027EC01 /* AppendImageMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendImageMessageUseCase.swift; sourceTree = "<group>"; };
-		E9A71BD62C33F4850027EC01 /* AppendKnockMessagekUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendKnockMessagekUseCase.swift; sourceTree = "<group>"; };
+		E9A71BD62C33F4850027EC01 /* AppendKnockMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendKnockMessageUseCase.swift; sourceTree = "<group>"; };
 		E9A96E7D2B88E0EA00914FDD /* ResolveOneOnOneConversationsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCase.swift; sourceTree = "<group>"; };
 		E9ACAED02CBE43C2000E13B5 /* ZMUserSession+WireCallStateObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+WireCallStateObserver.swift"; sourceTree = "<group>"; };
 		E9AD0A352C2AF9B300CA88DF /* AnalyticsServiceConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceConfiguration.swift; sourceTree = "<group>"; };
@@ -1398,6 +1399,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E9816C8E2CC9231500D77F22 /* WireAPI in Frameworks */,
+				CBD35F2A2D09EBA50080DA37 /* WireCrypto in Frameworks */,
 				E9C60E922C259F3C004E5F13 /* WireAnalytics in Frameworks */,
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
 				015519462C20D20800037358 /* WireDomain.framework in Frameworks */,
@@ -2544,7 +2546,7 @@
 				06ADEA032BD15383008BA0B3 /* RemoveUserClientUseCase.swift */,
 				E9A71BD22C32EA8B0027EC01 /* AppendTextMessageUseCase.swift */,
 				E9A71BD42C33EE080027EC01 /* AppendImageMessageUseCase.swift */,
-				E9A71BD62C33F4850027EC01 /* AppendKnockMessagekUseCase.swift */,
+				E9A71BD62C33F4850027EC01 /* AppendKnockMessageUseCase.swift */,
 				E965B10B2C3431EC009BEAB3 /* AppendLocationMessageUseCase.swift */,
 				E96970552C8F2F68009F037C /* AppendFileMessageUseCase.swift */,
 				63C4B3C12C35B07A00C09A93 /* FetchShareableConversationUseCase.swift */,
@@ -2833,6 +2835,7 @@
 				59B99FAD2C89DF7B00201827 /* WireDomainPackage */,
 				E9C60E912C259F3C004E5F13 /* WireAnalytics */,
 				59537D882CFF9E7700920B59 /* WireLogging */,
+				CBD35F292D09EBA50080DA37 /* WireCrypto */,
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -3335,7 +3338,7 @@
 				54A170651B300696001B41A5 /* ProxiedRequestStrategy.swift in Sources */,
 				160C31441E8049320012E4BC /* ApplicationStatusDirectory.swift in Sources */,
 				7CD279862338E31D00E638CD /* SessionManager+Authentication.swift in Sources */,
-				E9A71BD72C33F4850027EC01 /* AppendKnockMessagekUseCase.swift in Sources */,
+				E9A71BD72C33F4850027EC01 /* AppendKnockMessageUseCase.swift in Sources */,
 				16FF474C1F0D54B20044C491 /* SessionManager+Logs.swift in Sources */,
 				F19F1D281EFBC34E00275E27 /* ZMUserSessionRegistrationNotification.m in Sources */,
 				A93B528B250101AC0061255E /* ZMUserSession+Debugging.swift in Sources */,
@@ -3679,10 +3682,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3751,10 +3750,8 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSyncEngineSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -3770,10 +3767,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3839,7 +3832,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSyncEngineSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -3855,10 +3847,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0994E1DD1B835C4900A51721 /* ios-test-host.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				CODE_SIGN_ENTITLEMENTS = "WireSyncEngine Test Host.entitlements";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tests/iOS Test Host/Test-Host-Prefix.pch";
@@ -3867,7 +3855,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -3878,10 +3865,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0994E1DD1B835C4900A51721 /* ios-test-host.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				CODE_SIGN_ENTITLEMENTS = "WireSyncEngine Test Host.entitlements";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tests/iOS Test Host/Test-Host-Prefix.pch";
@@ -3900,10 +3883,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0994E1DE1B835C4900A51721 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/UnitTests-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.WireSyncEngine-Test-Host";
@@ -3919,10 +3898,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0994E1DE1B835C4900A51721 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/UnitTests-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.WireSyncEngine-Test-Host";
@@ -3939,6 +3914,8 @@
 			baseConfigurationReference = 0994E1E31B835C4900A51721 /* project-debug.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Debug;
@@ -3948,6 +3925,7 @@
 			baseConfigurationReference = 0994E1E41B835C4900A51721 /* project.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
+				SDKROOT = iphoneos;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
@@ -3956,14 +3934,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0994E1F01B835C4900A51721 /* WireSyncEngine.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Source/WireSyncEngine-iOS.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSyncEngine-ios-Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};
@@ -3973,10 +3946,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0994E1F01B835C4900A51721 /* WireSyncEngine.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Source/WireSyncEngine-iOS.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSyncEngine-ios-Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
@@ -4063,6 +4032,10 @@
 		59B99FAD2C89DF7B00201827 /* WireDomainPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDomainPackage;
+		};
+		CBD35F292D09EBA50080DA37 /* WireCrypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCrypto;
 		};
 		E9C60E912C259F3C004E5F13 /* WireAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

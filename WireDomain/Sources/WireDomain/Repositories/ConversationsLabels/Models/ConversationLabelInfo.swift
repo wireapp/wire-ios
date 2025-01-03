@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct ConversationLabelInfo: Sendable {
+public struct ConversationLabelInfo: Equatable, Sendable {
     let id: UUID
     let name: String?
     let type: Int16
