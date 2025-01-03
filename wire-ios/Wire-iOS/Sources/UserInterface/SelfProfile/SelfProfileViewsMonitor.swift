@@ -20,7 +20,7 @@ import WireFoundation
 import WireLogging
 import WireSyncEngine
 
-public protocol SelfProfileViewsMonitor {
+protocol SelfProfileViewsMonitor {
     var didViewSelfProfile: Bool { get }
 
     func onDidViewSelfProfile()
