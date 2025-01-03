@@ -18,6 +18,7 @@
 
 import WireRequestStrategySupport
 import XCTest
+@testable import WireDataModelSupport
 @testable import WireRequestStrategy
 
 final class FeatureConfigRequestStrategyTests: MessagingTestBase {
@@ -26,6 +27,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     var sut: FeatureConfigRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
+    var mockMLSClientManager: MockMLSClientManagerProtocol!
     var featureRepository: FeatureRepository!
 
     // MARK: - Life cycle
@@ -33,12 +35,14 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
+        mockMLSClientManager = MockMLSClientManagerProtocol()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
 
         sut = FeatureConfigRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
-            syncProgress: MockSyncProgress()
+            syncProgress: MockSyncProgress(),
+            mlsClientManager: mockMLSClientManager
         )
 
         featureRepository = .init(context: syncMOC)
@@ -54,6 +58,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     // MARK: - Processing events
 
     func test_ItProcessesEvent_AppLock() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             let appLock = Feature.AppLock(
@@ -96,6 +103,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_FileSharing() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeFileSharing(.init(status: .disabled))
@@ -127,6 +137,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_SelfDeletingMessages() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             let selfDeletingMessages = Feature.SelfDeletingMessages(
@@ -168,6 +181,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_ConferenceCalling() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeConferenceCalling(.init(status: .disabled))
@@ -199,6 +215,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_ConversationGuestLinks() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeConversationGuestLinks(.init(status: .disabled))
@@ -230,6 +249,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_DigitalSignature() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeDigitalSignature(.init(status: .disabled))
@@ -261,6 +283,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_ClassifiedDomains() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             let classifiedDomains = Feature.ClassifiedDomains(status: .disabled, config: .init())
@@ -298,6 +323,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_MLS() throws {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         // Given
         try syncMOC.performAndWait {
             let mls = Feature.MLS(status: .disabled, config: .init())
@@ -337,6 +365,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_MLS_defaultProtocolIsMLS() throws {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         // Given
         try syncMOC.performAndWait {
             let mls = Feature.MLS(status: .disabled, config: .init())
@@ -376,6 +407,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_MLSMigration() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         // Given
         let startTime = "2023-10-27T12:43:48.000Z"
         let finaliseTime = "2023-11-02T12:43:48.000Z"

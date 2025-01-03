@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireTransport
 
 private enum UserProperty: CaseIterable {
@@ -128,6 +129,7 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
     var downstreamSync: ZMSingleRequestSync!
     fileprivate var propertiesToFetch: Set<UserProperty> = Set()
     fileprivate var fetchedProperty: UserProperty?
+    private let logger = WireLogger(tag: "user-properties")
 
     public override init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -304,18 +306,33 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
             return
         }
 
-        if response.result == .permanentError {
-            property.parseUpdate(
-                for: ZMUser.selfUser(in: managedObjectContext),
-                updateType: (.slowSync, .delete),
-                payload: nil
-            )
-        } else if response.result == .success, let payload = response.payload {
+        switch response.result {
+        case .success:
+            guard
+                let data = response.rawData,
+                let payload = try? JSONSerialization.jsonObject(
+                    with: data,
+                    options: .fragmentsAllowed
+                )
+            else {
+                logger.error("failed to parse user property (\(property.propertyName)) response")
+                return
+            }
+
             property.parseUpdate(
                 for: ZMUser.selfUser(in: managedObjectContext),
                 updateType: (.slowSync, .set),
                 payload: payload
             )
+        case .permanentError:
+            logger.error("failed to parse user property (\(property.propertyName)) response due to permanent error")
+            property.parseUpdate(
+                for: ZMUser.selfUser(in: managedObjectContext),
+                updateType: (.slowSync, .delete),
+                payload: nil
+            )
+        default:
+            logger.warn("unhandled user property (\(property.propertyName)) response: \(response.result)")
         }
     }
 }
