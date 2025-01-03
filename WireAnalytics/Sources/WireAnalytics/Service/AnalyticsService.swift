@@ -42,14 +42,14 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     public convenience init(
         config: Config?,
         deviceModel: String,
-        deviceOS: String,
+        osVersion: String,
         countlyProvider: @escaping () -> any CountlyProtocol
     ) {
         self.init(
             config: config,
             baseSegmentation: [
                 .deviceModel(deviceModel),
-                .deviceOS(deviceOS)
+                .osVersion(osVersion)
             ],
             countlyProvider: countlyProvider
         )

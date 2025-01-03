@@ -553,7 +553,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
             deviceModel: UIDevice.current.model,
-            deviceOS: UIDevice.current.systemVersion,
+            osVersion: UIDevice.current.systemVersion,
             countlyProvider: countlyProvider
         )
 

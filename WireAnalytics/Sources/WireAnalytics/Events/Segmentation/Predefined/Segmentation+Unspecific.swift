@@ -27,7 +27,7 @@ extension AnalyticsEvent.Segmentation {
     /// - Parameter value: A string indicating device OS version of the user
     /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
-    static func deviceOS(_ value: String) -> Self {
+    static func osVersion(_ value: String) -> Self {
         .init(key: "os_version", value: value)
     }
 

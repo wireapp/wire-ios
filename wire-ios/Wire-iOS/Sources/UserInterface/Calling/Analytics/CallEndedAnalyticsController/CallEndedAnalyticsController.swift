@@ -144,7 +144,7 @@ final class CallEndedAnalyticsController {
         analyticsEventTracker?.trackEvent(
             .Calling.endedCall(
                 deviceModel: eventInfo.deviceModel,
-                deviceOS: eventInfo.deviceOS,
+                osVersion: eventInfo.osVersion,
                 callEndReason: reason.analyticsValue,
                 callDetails: .init(
                     wasScreenShared: !eventInfo.uniqueScreenSharingUsers.isEmpty,
@@ -179,7 +179,7 @@ private extension CallEndedAnalyticsController {
     struct EventInfo {
 
         var deviceModel = UIDevice.current.model
-        var deviceOS = UIDevice.current.systemVersion
+        var osVersion = UIDevice.current.systemVersion
         var callDirection: AnalyticsEvent.Calling.CallDirection = .incoming
         var callStart = Date.now
         var screenSharingStart: Date?

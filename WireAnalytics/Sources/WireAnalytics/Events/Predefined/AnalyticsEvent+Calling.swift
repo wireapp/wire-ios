@@ -76,7 +76,7 @@ public extension AnalyticsEvent {
 
         public static func endedCall(
             deviceModel: String,
-            deviceOS: String,
+            osVersion: String,
             callEndReason: String,
             callDetails: CallDetails,
             conversationDetails: ConversationDetails,
@@ -84,7 +84,7 @@ public extension AnalyticsEvent {
         ) -> AnalyticsEvent {
             AnalyticsEvent(name: "calling.ended_call", segmentation: [
                 .deviceModel(deviceModel),
-                .deviceOS(deviceOS),
+                .osVersion(osVersion),
                 .Call.wasScreenShared(callDetails.wasScreenShared),
                 .Call.totalScreenSharingDuration(callDetails.totalScreenSharingDuration),
                 .Call.uniqueScreenSharingUsers(callDetails.uniqueScreenSharingUsers),
