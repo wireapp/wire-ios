@@ -18,6 +18,7 @@
 
 extension WireCallCenterV3 {
 
+    /// A notification that posts when `setVideoState(conversationId:videoState:)` is called on ``WireCallCenterV3``.
     nonisolated public class var didToggleVideoNotification: Notification.Name {
         .init(rawValue: "WireCallCenterV3DidToggleVideoNotification")
     }
@@ -25,6 +26,7 @@ extension WireCallCenterV3 {
     nonisolated static var videoStateUserInfoKey: String { "videoState" }
 
     func postDidToggleVideoNotification(
+        _ notificationCenter: NotificationCenter,
         _ conversationID: AVSIdentifier,
         _ videoState: VideoState
     ) {
