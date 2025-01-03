@@ -37,10 +37,10 @@ public extension AnalyticsEvent {
             AnalyticsEvent(name: "contributed") {
                 Segmentation.contributionType(contributionType)
                 if let conversationType {
-                    Segmentation.conversationType(conversationType)
+                    Segmentation.Conversation.conversationType(conversationType)
                 }
                 Segmentation.Removed.groupType(conversationType?.mapToConversationType() ?? .unknown)
-                Segmentation.conversationSize(conversationSize)
+                Segmentation.Conversation.conversationSize(conversationSize)
             }
         }
 

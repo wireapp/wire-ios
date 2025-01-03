@@ -36,7 +36,7 @@ public extension AnalyticsEvent {
                 name: "calling.initiated_call",
                 segmentation: [
                     .Call.isVideoCall(isVideo),
-                    .conversationType(conversationType),
+                    .Conversation.conversationType(conversationType),
                     .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
@@ -58,7 +58,7 @@ public extension AnalyticsEvent {
                 name: "calling.joined_call",
                 segmentation: [
                     .Call.isVideoCall(isVideo),
-                    .conversationType(conversationType),
+                    .Conversation.conversationType(conversationType),
                     .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
@@ -90,8 +90,8 @@ public extension AnalyticsEvent {
                 .Call.uniqueScreenSharingUsers(callDetails.uniqueScreenSharingUsers),
                 .Call.callDirection(callDetails.callDirection.rawValue),
                 .Call.callDuration(callDetails.callDuration),
-                .conversationType(conversationDetails.conversationType),
-                .conversationSize(conversationDetails.conversationSize),
+                .Conversation.conversationType(conversationDetails.conversationType),
+                .Conversation.conversationSize(conversationDetails.conversationSize),
                 .Conversation.conversationGuestsNonTeam(conversationDetails.conversationGuestsNonTeam),
                 .Conversation.conversationGuestsTeam(conversationDetails.conversationGuestsTeam),
                 .Call.callParticipants(callDetails.callParticipantCount),

@@ -371,7 +371,7 @@ private enum Scaffolding {
 
     static func expectedSegmentation(for user: AnalyticsUser) -> [String: String] {
         let segmentation = baseSegmentation.union([
-            .isSelfTeamMember(user.teamInfo != nil),
+            .Team.isSelfTeamMember(user.teamInfo != nil),
             segmentation
         ])
 

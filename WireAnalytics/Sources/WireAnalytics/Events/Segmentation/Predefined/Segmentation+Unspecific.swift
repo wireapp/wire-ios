@@ -40,21 +40,6 @@ extension AnalyticsEvent.Segmentation {
         .init(key: "device_model", value: value)
     }
 
-    /// Creates a ``Segmentation`` for indicating whether the self user is a team member.
-    ///
-    /// - Parameter value: A boolean indicating if the self user is a team member.
-    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
-
-    static func isSelfTeamMember(_ value: Bool) -> Self {
-        .init(key: "is_team_member", value: value)
-    }
-
-    /// Creates a ``Segmentation`` for the type of conversation.
-
-    static func conversationType(_ value: Conversation.ConversationType) -> Self {
-        .init(key: "conversation_type", value: value.rawValue)
-    }
-
     /// Creates a ``Segmentation`` for the type of contribution in a conversation.
     ///
     /// - Parameter value: The `ContributionType` of the contribution.
@@ -62,18 +47,6 @@ extension AnalyticsEvent.Segmentation {
 
     static func contributionType(_ value: ConversationContributionType) -> Self {
         .init(key: "contribution_type", value: value.analyticsValue)
-    }
-
-    /// Creates a ``Segmentation`` for the size of a conversation.
-    ///
-    /// - Parameter value: The number of participants in the conversation.
-    /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
-
-    static func conversationSize(_ value: Int) -> Self {
-        .init(
-            key: "conversation_size",
-            value: UInt(value).analyticsValue // TODO: [WPB-12199] is `.analyticsValue` needed?
-        )
     }
 
     /// Creates a ``Segmentation`` for the score of the calling survey

@@ -20,6 +20,15 @@ extension AnalyticsEvent.Segmentation {
 
     enum Team {
 
+        /// Creates a ``Segmentation`` for indicating whether the self user is a team member.
+        ///
+        /// - Parameter value: A boolean indicating if the self user is a team member.
+        /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
+
+        static func isSelfTeamMember(_ value: Bool) -> AnalyticsEvent.Segmentation {
+            .init(key: "is_team_member", value: value)
+        }
+
         /// Creates a ``Segmentation`` providing the information if the user is part of a team (redundant to
         /// `is_team_member`).
 

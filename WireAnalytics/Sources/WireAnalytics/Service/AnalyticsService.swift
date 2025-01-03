@@ -218,7 +218,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         guard let countly, let currentUser else { return }
 
         var segmentation = event.segmentation.union(baseSegmentation)
-        segmentation.insert(.isSelfTeamMember(currentUser.teamInfo != nil))
+        segmentation.insert(.Team.isSelfTeamMember(currentUser.teamInfo != nil))
 
         let rawSegmentation = Dictionary(uniqueKeysWithValues: segmentation.map {
             ($0.key, $0.value)

@@ -20,9 +20,22 @@ public extension AnalyticsEvent.Segmentation {
 
     enum Conversation {
 
-        public enum ConversationType: String {
-            case group
-            case oneOnOne = "one_to_one"
+        /// Creates a ``Segmentation`` for the type of conversation.
+
+        static func conversationType(_ value: Conversation.ConversationType) -> AnalyticsEvent.Segmentation {
+            .init(key: "conversation_type", value: value.rawValue)
+        }
+
+        /// Creates a ``Segmentation`` for the size of a conversation.
+        ///
+        /// - Parameter value: The number of participants in the conversation.
+        /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
+
+        static func conversationSize(_ value: Int) -> AnalyticsEvent.Segmentation {
+            .init(
+                key: "conversation_size",
+                value: UInt(value).analyticsValue // TODO: [WPB-12199] is `.analyticsValue` needed?
+            )
         }
 
         /// Creates a ``Segmentation`` for the number of guests in a conversation which are not members of any team
@@ -42,6 +55,11 @@ public extension AnalyticsEvent.Segmentation {
 
         static func conversationServices(_ value: Int) -> AnalyticsEvent.Segmentation {
             .init(key: "conversation_services", value: value)
+        }
+
+        public enum ConversationType: String {
+            case group
+            case oneOnOne = "one_to_one"
         }
     }
 }
