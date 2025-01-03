@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
@@ -39,7 +39,7 @@ final class AuthenticatedRouter {
 
     private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
-    private let callEndedAnalyticsController: CallEndedAnalyticsController // TODO: find a proper place (user session?)
+    private let callEndedAnalyticsController: CallEndedAnalyticsController // TODO: find a proper place (user session?) TODO
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -82,7 +82,7 @@ final class AuthenticatedRouter {
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
-        callEndedAnalyticsController = .init(
+        self.callEndedAnalyticsController = .init(
             contextProvider: userSession.contextProvider,
             callCenterType: WireCallCenterV3.self,
             toggleVideoPublisher: WireCallCenterV3.setVideoStatePublisher().map { _, _, _ in }.eraseToAnyPublisher(),

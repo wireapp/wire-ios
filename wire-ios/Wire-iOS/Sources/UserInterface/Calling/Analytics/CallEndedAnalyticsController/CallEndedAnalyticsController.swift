@@ -46,13 +46,12 @@ final class CallEndedAnalyticsController {
         self.analyticsEventTracker = analyticsEventTracker
         self.logger = logger
 
-        // TODO: can't we have a protocol instead of using static/class methods?
+        // TODO: can't we have a protocol instead of using static/class methods? TODO
         self.callStateObserverToken = callCenterType.addCallStateObserver(
             observer: self,
             contextProvider: contextProvider
         )
 
-        // setVideoCancellable = callCenter.setVideoStatePublisher()
         toggleVideoPublisher.sink { [weak self] in
             self?.eventInfo?.hasAVSwitchToggled = true
             self?.setVideoCancellable.removeAll()
