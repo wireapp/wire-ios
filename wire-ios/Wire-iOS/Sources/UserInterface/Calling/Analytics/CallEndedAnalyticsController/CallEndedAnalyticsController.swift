@@ -144,7 +144,7 @@ final class CallEndedAnalyticsController {
             .Calling.endedCall(
                 deviceModel: eventInfo.deviceModel,
                 osVersion: eventInfo.osVersion,
-                callEndReason: reason.analyticsValue,
+                callEndReason: .init(reason),
                 callDetails: .init(
                     wasScreenShared: !eventInfo.uniqueScreenSharingUsers.isEmpty,
                     totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,

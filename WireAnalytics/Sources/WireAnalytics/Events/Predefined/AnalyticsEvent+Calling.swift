@@ -77,7 +77,7 @@ public extension AnalyticsEvent {
         public static func endedCall(
             deviceModel: String,
             osVersion: String,
-            callEndReason: String,
+            callEndReason: CallEndedReason,
             callDetails: CallDetails,
             conversationDetails: ConversationDetails,
             isTeamMember: Bool
@@ -95,7 +95,7 @@ public extension AnalyticsEvent {
                 .Conversation.conversationGuestsNonTeam(conversationDetails.conversationGuestsNonTeam),
                 .Conversation.conversationGuestsTeam(conversationDetails.conversationGuestsTeam),
                 .Call.callParticipants(callDetails.callParticipantCount),
-                .Call.callEndReason(callEndReason),
+                .Call.callEndReason(callEndReason.value),
                 .Conversation.conversationServices(callDetails.conversationServiceCount),
                 .Call.callAVSwitchToggled(callDetails.hasAVSwitchToggled),
                 .Call.isVideoCall(callDetails.isVideoCall),
@@ -106,6 +106,17 @@ public extension AnalyticsEvent {
         public enum CallDirection: String {
             case outgoing
             case incoming
+        }
+
+        public struct CallEndedReason {
+
+            /// The value AVS uses.
+            var value: Int
+
+            /// - Parameter value: The value AVS uses.
+            public init(value: Int) {
+                self.value = value
+            }
         }
 
         public struct CallDetails {

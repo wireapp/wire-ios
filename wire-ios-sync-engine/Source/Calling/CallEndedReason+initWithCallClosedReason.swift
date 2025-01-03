@@ -18,9 +18,9 @@
 
 import WireAnalytics
 
-extension CallClosedReason: AnalyticsValue {
+public extension AnalyticsEvent.Calling.CallEndedReason {
 
-    public var analyticsValue: String {
-        "\(wcall_reason)"
+    init (_ reason: CallClosedReason) {
+        self.init(value: Int(reason.wcall_reason))
     }
 }
