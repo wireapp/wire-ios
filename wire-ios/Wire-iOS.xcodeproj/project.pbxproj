@@ -3823,6 +3823,7 @@
 		597FD93A2D0C5AAE0023B520 /* SelfProfile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SelfProfile; sourceTree = "<group>"; };
 		5983A3EE2CF86F9A002006F6 /* Logging */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logging; sourceTree = "<group>"; };
 		59C4D4202D119FC300F3047B /* Analytics */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Analytics; sourceTree = "<group>"; };
+		59E03C962D282B28006DF211 /* Analytics */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Analytics; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5238,6 +5239,7 @@
 		6340EF8E237AE90700EF8506 /* Calling */ = {
 			isa = PBXGroup;
 			children = (
+				59E03C962D282B28006DF211 /* Analytics */,
 				638C88C42680F8DD0074D512 /* Mocks */,
 				87D7E1C420CACA820064C03D /* CallViewControllerTests.swift */,
 				EF6251D521395F7E00943708 /* CallGridViewControllerSnapshotTests.swift */,
@@ -8463,6 +8465,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				595C04172CDE85E800DF6C57 /* MainController */,
+				59E03C962D282B28006DF211 /* Analytics */,
 			);
 			name = "Wire-iOS-Tests";
 			packageProductDependencies = (
