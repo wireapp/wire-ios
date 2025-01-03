@@ -112,8 +112,7 @@ final class SelfProfileViewController: UIViewController {
             userSession.enqueue {
                 selfUser.refreshTeamData()
             }
-        }
-        else if
+        } else if
             let backendInfoApiVersion = BackendInfo.apiVersion,
             let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
