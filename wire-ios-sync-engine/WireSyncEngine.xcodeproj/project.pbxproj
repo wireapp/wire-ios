@@ -1352,6 +1352,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		591E5E252D28084200284F11 /* WireCallCenterNotifications */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCallCenterNotifications; sourceTree = "<group>"; };
 		59C60D1A2D00672300CAC544 /* Transcoders */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Transcoders; sourceTree = "<group>"; };
 		59D0583B2D158D0D00B687F2 /* Analytics */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Analytics; sourceTree = "<group>"; };
 		59D264272CF722430005317F /* TestsPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestsPlans; sourceTree = "<group>"; };
@@ -1692,6 +1693,7 @@
 		3EAD6A08199BB6C800D519DB /* Calling */ = {
 			isa = PBXGroup;
 			children = (
+				591E5E252D28084200284F11 /* WireCallCenterNotifications */,
 				16A764601F3E0B0B00564F21 /* CallKitManager.swift */,
 				EE2DE5E7292519EC00F42F4C /* CallKitCallRegister.swift */,
 				EE2DE5E329250CC400F42F4C /* CallKitCall.swift */,
@@ -2830,6 +2832,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				591E5E252D28084200284F11 /* WireCallCenterNotifications */,
 				59D0583B2D158D0D00B687F2 /* Analytics */,
 			);
 			name = "WireSyncEngine-ios";
