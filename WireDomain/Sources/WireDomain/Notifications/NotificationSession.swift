@@ -89,9 +89,9 @@ final class NotificationSession {
 
         for event in events {
             var notificationBuilder: NotificationBuilder
-            
+
             switch event {
-            case .conversation(let conversationEvent):
+            case let .conversation(conversationEvent):
                 notificationBuilder = await ConversationNotificationBuilder(
                     event: conversationEvent
                 )
@@ -115,16 +115,16 @@ final class NotificationSession {
             let notificationContent = await notificationBuilder.buildContent()
             notifications.append(notificationContent)
         }
-        
+
         var notification = UNMutableNotificationContent()
-        
+
         if notifications.count > 1 {
             let body = NotificationBody.bundled(messagesCount: notifications.count)
             notification.body = body.make()
         } else if let singleNotification = notifications.first {
             notification = singleNotification
         }
-        
+
         return notification
     }
 }

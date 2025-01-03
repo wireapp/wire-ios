@@ -31,8 +31,8 @@ enum NotificationBody {
             )
 
             return newMessageBodyComposer.make()
-            
-        case .bundled(let count):
+
+        case let .bundled(count):
             return "\(count) new messages."
         }
     }

@@ -188,17 +188,17 @@ public protocol MessageLocalStoreProtocol {
         genericMessage: GenericMessage,
         date: Date
     ) async
-    
+
     func fetchMessage(
         id: UUID?,
         conversationID: UUID,
         conversationDomain: String?
     ) async -> ZMOTRMessage?
-    
+
     func isMessageMentioningSelf(
         text: Text
     ) async -> Bool
-    
+
     func isMessageQuotingSelf(
         quotedMessage: ZMOTRMessage?
     ) async -> Bool
@@ -237,20 +237,20 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     // MARK: - Public
-    
+
     public func fetchMessage(
         id: UUID?,
         conversationID: UUID,
         conversationDomain: String?
     ) async -> ZMOTRMessage? {
-        
+
         guard let conversation = await conversationLocalStore.fetchConversation(
             id: conversationID,
             domain: conversationDomain
         ) else {
             return nil
         }
-        
+
         return await context.perform { [context] in
             ZMOTRMessage.fetch(
                 withNonce: id,
@@ -258,19 +258,19 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 in: context
             )
         }
-        
+
     }
-    
+
     public func isMessageMentioningSelf(
         text: Text
     ) async -> Bool {
         let selfUser = await userLocalStore.fetchSelfUser()
-        
+
         return await context.perform {
             text.mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
         }
     }
-    
+
     public func isMessageQuotingSelf(
         quotedMessage: ZMOTRMessage?
     ) async -> Bool {

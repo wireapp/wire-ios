@@ -19,9 +19,9 @@
 import WireProtos
 
 struct ProtobufMessageHelper {
-    
+
     private init() {}
-    
+
     static func getProtobufMessage(
         from base64Message: String,
         externalData: String? = nil
@@ -79,5 +79,5 @@ struct ProtobufMessageHelper {
 
         return message
     }
-    
+
 }

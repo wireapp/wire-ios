@@ -190,7 +190,7 @@ public protocol ConversationLocalStoreProtocol {
         hasReadReceiptsEnabled: Bool,
         for conversation: ZMConversation
     ) async
-    
+
     /// The display name for a given conversation.
     /// - parameter conversation: The conversation to fetch the name for.
     /// - returns: The conversation display name.
@@ -315,7 +315,7 @@ public protocol ConversationLocalStoreProtocol {
         in conversation: ZMConversation,
         date: Date
     ) async
-    
+
     func lastReadServerTimestamp(
         _ conversation: ZMConversation
     ) async -> Date?
@@ -407,17 +407,17 @@ public protocol ConversationLocalStoreProtocol {
     func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
-    
+
     func conversationMutedMessageTypesIncludingAvailability(
         _ conversation: ZMConversation
     ) async -> MutedMessageTypes
-    
+
     func isMessageSilenced(
         _ message: GenericMessage,
         senderID: UUID?,
         conversation: ZMConversation
     ) async -> Bool
-    
+
     func shouldHideNotification() async -> Bool
 }
 
@@ -898,7 +898,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.isForcedReadOnly
         }
     }
-    
+
     public func isMessageSilenced(
         _ message: GenericMessage,
         senderID: UUID?,
@@ -908,14 +908,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.isMessageSilenced(message, senderID: senderID)
         }
     }
-    
+
     public func shouldHideNotification() async -> Bool {
         await context.perform { [context] in
             let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
             let value = context.persistentStoreMetadata(
                 forKey: ZMShouldHideNotificationContentKey
             ) as? NSNumber
-            
+
             return value?.boolValue ?? false
         }
     }
@@ -976,7 +976,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.mutedMessageTypes
         }
     }
-    
+
     public func conversationMutedMessageTypesIncludingAvailability(
         _ conversation: ZMConversation
     ) async -> MutedMessageTypes {
@@ -985,7 +985,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             return selfUser.mutedMessagesTypes.union(conversation.mutedMessageTypes)
         }
     }
-    
+
     public func lastReadServerTimestamp(
         _ conversation: ZMConversation
     ) async -> Date? {
@@ -1038,7 +1038,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.conversationType == .group
         }
     }
-    
+
     public func name(
         for conversation: ZMConversation
     ) async -> String? {

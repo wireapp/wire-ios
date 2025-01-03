@@ -17,9 +17,9 @@
 //
 
 import WireAPISupport
-import XCTest
 import WireDataModel
 import WireDataModelSupport
+import XCTest
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -28,7 +28,7 @@ final class NotificationSessionTests: XCTestCase {
     private var sut: NotificationSession!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var userRepository: MockUserRepositoryProtocol!
-    
+
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -36,7 +36,7 @@ final class NotificationSessionTests: XCTestCase {
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
-    
+
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
         userRepository = MockUserRepositoryProtocol()
@@ -45,7 +45,7 @@ final class NotificationSessionTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         registerDependencies()
     }
-    
+
     override func tearDown() async throws {
         stack = nil
         sut = nil
@@ -55,12 +55,12 @@ final class NotificationSessionTests: XCTestCase {
         modelHelper = nil
         coreDataStackHelper = nil
     }
-    
+
     private func registerDependencies() {
         Injector.register(ConversationLocalStoreProtocol.self) {
             self.conversationLocalStore
         }
-        
+
         Injector.register(UserRepositoryProtocol.self) {
             self.userRepository
         }
@@ -99,9 +99,9 @@ final class NotificationSessionTests: XCTestCase {
         updateEventsLocalStore.persistEventEnvelopeIndex_MockMethod = { _, _ in }
         updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
         userRepository.isSelfUserIdDomain_MockValue = false
-        conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = await context.perform({ [self] in
+        conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
-        })
+        }
         conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
         conversationLocalStore.lastReadServerTimestamp_MockValue = .now
 
@@ -116,7 +116,7 @@ final class NotificationSessionTests: XCTestCase {
 
         sut = NotificationSession(
             updateEventsRepository: updateEventsRepository,
-            onNotificationContent: { notification in
+            onNotificationContent: { _ in
                 // Then, all 3 events batches have been received
                 expectation.fulfill()
             }

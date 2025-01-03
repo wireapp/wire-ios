@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 struct NewMessageNotificationBuilder: NotificationBuilder {
 
@@ -27,7 +27,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         case audio
         case fileUpload
     }
-    
+
     struct Context {
         let senderName: String?
         let conversationName: String?
@@ -49,20 +49,20 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         senderID: UserID
     ) async {
         self.message = message
-        
+
         let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
         let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
-        
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
         )
-        
+
         let sender = await userLocalStore.fetchOrCreateUser(
             id: senderID.uuid,
             domain: senderID.domain
         )
-        
+
         let senderName = await userLocalStore.name(for: sender)
         let conversationName = await conversationLocalStore.name(for: conversation)
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
@@ -75,7 +75,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         )
         let selfUserID = await userLocalStore.id(for: selfUser)
         let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
-        
+
         self.context = Context(
             senderName: senderName,
             conversationName: conversationName,
@@ -90,14 +90,14 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
     }
 
     func shouldBuildNotification() async -> Bool {
-        return !context.isMessageSilenced
+        !context.isMessageSilenced
     }
 
     func buildContent() async -> UNMutableNotificationContent {
         guard !context.hidesNotificationContent else {
             return buildHiddenNotification()
         }
-        
+
         switch message.content {
         case .location:
             return buildLocationNotification()
@@ -176,7 +176,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         if let title = makeTitle() {
             content.title = title
         }
-        
+
         let body = NotificationBody.newMessage(
             .ping(senderName: context.isGroupConversation ? senderName : nil)
         )
@@ -192,7 +192,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
 
     private func buildHiddenNotification() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        
+
         // No title for hidden message, only a body.
         let body: NotificationBody = .newMessage(.hidden)
         content.body = body.make()
@@ -228,7 +228,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         let senderName = context.senderName
 
         let content = UNMutableNotificationContent()
-        
+
         if let title = makeTitle() {
             content.title = title
         }
@@ -331,7 +331,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         let teamName = context.teamName
         let conversationName = context.conversationName
         let senderName = context.senderName
-        
+
         guard let conversationName, let senderName else {
             return nil
         }
@@ -349,17 +349,17 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
                 .sender(sender: senderName)
             }
         }
-        
+
         return NotificationTitle
             .newMessage(format)
             .make()
     }
-    
+
     private func makeSound(type: NotificationSound = .default) -> UNNotificationSound {
         let notificationSoundName = UNNotificationSoundName(type.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
-    
+
     private func makeCategory() -> String {
         let category = NotificationCategory.unmutedConversation
         return category.rawValue

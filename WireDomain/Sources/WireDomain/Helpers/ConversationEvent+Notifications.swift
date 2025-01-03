@@ -16,102 +16,102 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import Foundation
+import WireAPI
 
 extension ConversationEvent {
     var senderID: UserID {
         switch self {
-        case .accessUpdate(let conversationAccessUpdateEvent):
-            return conversationAccessUpdateEvent.senderID
-        case .codeUpdate(let conversationCodeUpdateEvent):
-            return conversationCodeUpdateEvent.senderID
-        case .create(let conversationCreateEvent):
-            return conversationCreateEvent.senderID
-        case .delete(let conversationDeleteEvent):
-            return conversationDeleteEvent.senderID
-        case .memberJoin(let conversationMemberJoinEvent):
-            return conversationMemberJoinEvent.senderID
-        case .memberLeave(let conversationMemberLeaveEvent):
-            return conversationMemberLeaveEvent.senderID
-        case .memberUpdate(let conversationMemberUpdateEvent):
-            return conversationMemberUpdateEvent.senderID
-        case .messageTimerUpdate(let conversationMessageTimerUpdateEvent):
-            return conversationMessageTimerUpdateEvent.senderID
-        case .mlsMessageAdd(let conversationMLSMessageAddEvent):
-            return conversationMLSMessageAddEvent.senderID
-        case .mlsWelcome(let conversationMLSWelcomeEvent):
-            return conversationMLSWelcomeEvent.senderID
-        case .proteusMessageAdd(let conversationProteusMessageAddEvent):
-            return conversationProteusMessageAddEvent.senderID
-        case .protocolUpdate(let conversationProtocolUpdateEvent):
-            return conversationProtocolUpdateEvent.senderID
-        case .receiptModeUpdate(let conversationReceiptModeUpdateEvent):
-            return conversationReceiptModeUpdateEvent.senderID
-        case .rename(let conversationRenameEvent):
-            return conversationRenameEvent.senderID
-        case .typing(let conversationTypingEvent):
-            return conversationTypingEvent.senderID
+        case let .accessUpdate(conversationAccessUpdateEvent):
+            conversationAccessUpdateEvent.senderID
+        case let .codeUpdate(conversationCodeUpdateEvent):
+            conversationCodeUpdateEvent.senderID
+        case let .create(conversationCreateEvent):
+            conversationCreateEvent.senderID
+        case let .delete(conversationDeleteEvent):
+            conversationDeleteEvent.senderID
+        case let .memberJoin(conversationMemberJoinEvent):
+            conversationMemberJoinEvent.senderID
+        case let .memberLeave(conversationMemberLeaveEvent):
+            conversationMemberLeaveEvent.senderID
+        case let .memberUpdate(conversationMemberUpdateEvent):
+            conversationMemberUpdateEvent.senderID
+        case let .messageTimerUpdate(conversationMessageTimerUpdateEvent):
+            conversationMessageTimerUpdateEvent.senderID
+        case let .mlsMessageAdd(conversationMLSMessageAddEvent):
+            conversationMLSMessageAddEvent.senderID
+        case let .mlsWelcome(conversationMLSWelcomeEvent):
+            conversationMLSWelcomeEvent.senderID
+        case let .proteusMessageAdd(conversationProteusMessageAddEvent):
+            conversationProteusMessageAddEvent.senderID
+        case let .protocolUpdate(conversationProtocolUpdateEvent):
+            conversationProtocolUpdateEvent.senderID
+        case let .receiptModeUpdate(conversationReceiptModeUpdateEvent):
+            conversationReceiptModeUpdateEvent.senderID
+        case let .rename(conversationRenameEvent):
+            conversationRenameEvent.senderID
+        case let .typing(conversationTypingEvent):
+            conversationTypingEvent.senderID
         }
     }
-    
+
     var conversationID: WireAPI.QualifiedID {
         switch self {
-        case .accessUpdate(let conversationAccessUpdateEvent):
-            return conversationAccessUpdateEvent.conversationID
-        case .codeUpdate(let conversationCodeUpdateEvent):
-            return conversationCodeUpdateEvent.conversationID
-        case .create(let conversationCreateEvent):
-            return conversationCreateEvent.conversationID
-        case .delete(let conversationDeleteEvent):
-            return conversationDeleteEvent.conversationID
-        case .memberJoin(let conversationMemberJoinEvent):
-            return conversationMemberJoinEvent.conversationID
-        case .memberLeave(let conversationMemberLeaveEvent):
-            return conversationMemberLeaveEvent.conversationID
-        case .memberUpdate(let conversationMemberUpdateEvent):
-            return conversationMemberUpdateEvent.conversationID
-        case .messageTimerUpdate(let conversationMessageTimerUpdateEvent):
-            return conversationMessageTimerUpdateEvent.conversationID
-        case .mlsMessageAdd(let conversationMLSMessageAddEvent):
-            return conversationMLSMessageAddEvent.conversationID
-        case .mlsWelcome(let conversationMLSWelcomeEvent):
-            return conversationMLSWelcomeEvent.conversationID
-        case .proteusMessageAdd(let conversationProteusMessageAddEvent):
-            return conversationProteusMessageAddEvent.conversationID
-        case .protocolUpdate(let conversationProtocolUpdateEvent):
-            return conversationProtocolUpdateEvent.conversationID
-        case .receiptModeUpdate(let conversationReceiptModeUpdateEvent):
-            return conversationReceiptModeUpdateEvent.conversationID
-        case .rename(let conversationRenameEvent):
-            return conversationRenameEvent.conversationID
-        case .typing(let conversationTypingEvent):
-            return conversationTypingEvent.conversationID
+        case let .accessUpdate(conversationAccessUpdateEvent):
+            conversationAccessUpdateEvent.conversationID
+        case let .codeUpdate(conversationCodeUpdateEvent):
+            conversationCodeUpdateEvent.conversationID
+        case let .create(conversationCreateEvent):
+            conversationCreateEvent.conversationID
+        case let .delete(conversationDeleteEvent):
+            conversationDeleteEvent.conversationID
+        case let .memberJoin(conversationMemberJoinEvent):
+            conversationMemberJoinEvent.conversationID
+        case let .memberLeave(conversationMemberLeaveEvent):
+            conversationMemberLeaveEvent.conversationID
+        case let .memberUpdate(conversationMemberUpdateEvent):
+            conversationMemberUpdateEvent.conversationID
+        case let .messageTimerUpdate(conversationMessageTimerUpdateEvent):
+            conversationMessageTimerUpdateEvent.conversationID
+        case let .mlsMessageAdd(conversationMLSMessageAddEvent):
+            conversationMLSMessageAddEvent.conversationID
+        case let .mlsWelcome(conversationMLSWelcomeEvent):
+            conversationMLSWelcomeEvent.conversationID
+        case let .proteusMessageAdd(conversationProteusMessageAddEvent):
+            conversationProteusMessageAddEvent.conversationID
+        case let .protocolUpdate(conversationProtocolUpdateEvent):
+            conversationProtocolUpdateEvent.conversationID
+        case let .receiptModeUpdate(conversationReceiptModeUpdateEvent):
+            conversationReceiptModeUpdateEvent.conversationID
+        case let .rename(conversationRenameEvent):
+            conversationRenameEvent.conversationID
+        case let .typing(conversationTypingEvent):
+            conversationTypingEvent.conversationID
         }
     }
-    
+
     var timestamp: Date? {
         switch self {
-        case .create(let conversationCreateEvent):
-            return conversationCreateEvent.timestamp
-        case .delete(let conversationDeleteEvent):
-            return conversationDeleteEvent.timestamp
-        case .memberJoin(let conversationMemberJoinEvent):
-            return conversationMemberJoinEvent.timestamp
-        case .memberLeave(let conversationMemberLeaveEvent):
-            return conversationMemberLeaveEvent.timestamp
-        case .memberUpdate(let conversationMemberUpdateEvent):
-            return conversationMemberUpdateEvent.timestamp
-        case .messageTimerUpdate(let conversationMessageTimerUpdateEvent):
-            return conversationMessageTimerUpdateEvent.timestamp
-        case .mlsMessageAdd(let conversationMLSMessageAddEvent):
-            return conversationMLSMessageAddEvent.timestamp
-        case .proteusMessageAdd(let conversationProteusMessageAddEvent):
-            return conversationProteusMessageAddEvent.timestamp
-        case .rename(let conversationRenameEvent):
-            return conversationRenameEvent.timestamp
+        case let .create(conversationCreateEvent):
+            conversationCreateEvent.timestamp
+        case let .delete(conversationDeleteEvent):
+            conversationDeleteEvent.timestamp
+        case let .memberJoin(conversationMemberJoinEvent):
+            conversationMemberJoinEvent.timestamp
+        case let .memberLeave(conversationMemberLeaveEvent):
+            conversationMemberLeaveEvent.timestamp
+        case let .memberUpdate(conversationMemberUpdateEvent):
+            conversationMemberUpdateEvent.timestamp
+        case let .messageTimerUpdate(conversationMessageTimerUpdateEvent):
+            conversationMessageTimerUpdateEvent.timestamp
+        case let .mlsMessageAdd(conversationMLSMessageAddEvent):
+            conversationMLSMessageAddEvent.timestamp
+        case let .proteusMessageAdd(conversationProteusMessageAddEvent):
+            conversationProteusMessageAddEvent.timestamp
+        case let .rename(conversationRenameEvent):
+            conversationRenameEvent.timestamp
         default:
-            return nil
+            nil
         }
     }
 }

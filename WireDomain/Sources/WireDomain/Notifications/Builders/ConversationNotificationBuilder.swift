@@ -21,7 +21,7 @@ import WireAPI
 import WireDataModel
 
 struct ConversationNotificationBuilder: NotificationBuilder {
-    
+
     private struct Context {
         let senderID: UserID
         let conversationID: ConversationID
@@ -38,29 +38,29 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         event: ConversationEvent
     ) async {
         self.event = event
-        
+
         let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
         let userRepository: UserRepositoryProtocol = Injector.resolve()
-        
+
         let isSelfUser = try? await userRepository.isSelfUser(
             id: event.senderID.uuid,
             domain: event.senderID.domain
         )
-        
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: event.conversationID.uuid,
             domain: event.conversationID.domain
         )
-        
+
         let conversationMutedMessages = await conversationLocalStore.conversationMutedMessageTypesIncludingAvailability(
             conversation
         )
-        
+
         let isConversationMuted = conversationMutedMessages != .none
-        
+
         let eventTimeStamp = event.timestamp
         let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
-        
+
         self.context = Context(
             senderID: event.senderID,
             conversationID: event.conversationID,
@@ -73,14 +73,14 @@ struct ConversationNotificationBuilder: NotificationBuilder {
 
     func buildContent() async -> UNMutableNotificationContent {
         let builder: NotificationBuilder
-        
+
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
             let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
-            
+
             guard let decryptedMessage,
                   let (genericMessage, _) = ProtobufMessageHelper.getProtobufMessage(
-                    from: decryptedMessage
+                      from: decryptedMessage
                   ) else {
                 return UNMutableNotificationContent()
             }
@@ -94,11 +94,11 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         case let .proteusMessageAdd(proteusMessageEvent):
             let decryptedMessage = proteusMessageEvent.message.decryptedMessage
             let externalEncryptedMessage = proteusMessageEvent.externalData?.encryptedMessage
-            
-            guard let decryptedMessage = decryptedMessage,
+
+            guard let decryptedMessage,
                   let (genericMessage, _) = ProtobufMessageHelper.getProtobufMessage(
-                    from: decryptedMessage,
-                    externalData: externalEncryptedMessage
+                      from: decryptedMessage,
+                      externalData: externalEncryptedMessage
                   ) else {
                 return UNMutableNotificationContent()
             }
@@ -112,20 +112,20 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         default: // TODO: [WPB-11175] - Generate notifications for other events
             return UNMutableNotificationContent()
         }
-        
+
         guard await builder.shouldBuildNotification() else {
             return UNMutableNotificationContent()
         }
-        
+
         return await builder.buildContent()
     }
-    
+
     func shouldBuildNotification() async -> Bool {
         let isSelfUser = context.isSelfUser
         let isConversationMuted = context.isConversationMuted
         let eventTimeStamp = context.eventTimeStamp
         let lastReadTimestamp = context.lastReadTimestamp
-        
+
         guard !isSelfUser,
               !isConversationMuted,
               let eventTimeStamp,
@@ -134,7 +134,7 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         else {
             return false
         }
-        
+
         return true
     }
 
