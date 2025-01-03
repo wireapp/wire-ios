@@ -435,7 +435,7 @@ class CallKitManagerTest: DatabaseTest {
         let conversation = otherUser.oneToOneConversation!
         uiMOC.saveOrRollback()
 
-        let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockWireCallCenterV3.setMockCallState(
             state,
             conversationId: conversation.avsIdentifier!,
@@ -678,7 +678,7 @@ class CallKitManagerTest: DatabaseTest {
         let conversation = conversation(type: .oneOnOne)
         let otherUser = otherUser(moc: uiMOC)
 
-        let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockWireCallCenterV3.setMockCallState(
             state,
             conversationId: conversation.avsIdentifier!,
@@ -712,7 +712,7 @@ class CallKitManagerTest: DatabaseTest {
         let conversation = conversation(type: .group)
         let otherUser = otherUser(moc: uiMOC)
 
-        let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockWireCallCenterV3.setMockCallState(
             state,
             conversationId: conversation.avsIdentifier!,
@@ -744,7 +744,7 @@ class CallKitManagerTest: DatabaseTest {
         let conversation = conversation(type: .group)
         let otherUser = otherUser(moc: uiMOC)
 
-        let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockWireCallCenterV3.setMockCallState(
             state,
             conversationId: conversation.avsIdentifier!,
@@ -912,7 +912,7 @@ class CallKitManagerTest: DatabaseTest {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
@@ -934,7 +934,7 @@ class CallKitManagerTest: DatabaseTest {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
@@ -956,7 +956,7 @@ class CallKitManagerTest: DatabaseTest {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
@@ -977,7 +977,7 @@ class CallKitManagerTest: DatabaseTest {
 
         // report the call a first time
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
@@ -986,7 +986,7 @@ class CallKitManagerTest: DatabaseTest {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
@@ -1053,7 +1053,7 @@ class CallKitManagerTest: DatabaseTest {
         let conversation = conversation()
         let otherUser = otherUser(moc: uiMOC)
 
-        let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockWireCallCenterV3.setMockCallState(
             state,
             conversationId: conversation.avsIdentifier!,
@@ -1086,7 +1086,7 @@ class CallKitManagerTest: DatabaseTest {
         let conversation = conversation()
         let otherUser = otherUser(moc: uiMOC)
 
-        let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockWireCallCenterV3.setMockCallState(
             state,
             conversationId: conversation.avsIdentifier!,
@@ -1119,7 +1119,7 @@ class CallKitManagerTest: DatabaseTest {
         let conversation = conversation()
         let otherUser = otherUser(moc: uiMOC)
 
-        let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
+        let state: CallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockWireCallCenterV3.setMockCallState(
             state,
             conversationId: conversation.avsIdentifier!,

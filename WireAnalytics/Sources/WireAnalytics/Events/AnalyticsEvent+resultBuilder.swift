@@ -21,29 +21,29 @@
 extension AnalyticsEvent {
 
     @resultBuilder
-    struct SegmentationEntryBuilder {
+    struct SegmentationBuilder {
 
-        static func buildBlock(_ components: [SegmentationEntry]...) -> [SegmentationEntry] {
+        static func buildBlock(_ components: [Segmentation]...) -> [Segmentation] {
             components.flatMap { $0 }
         }
 
-        static func buildExpression(_ expression: SegmentationEntry) -> [SegmentationEntry] {
+        static func buildExpression(_ expression: Segmentation) -> [Segmentation] {
             [expression]
         }
 
-        static func buildExpression(_ expression: [SegmentationEntry]) -> [SegmentationEntry] {
+        static func buildExpression(_ expression: [Segmentation]) -> [Segmentation] {
             expression
         }
 
-        static func buildOptional(_ components: [SegmentationEntry]?) -> [SegmentationEntry] {
+        static func buildOptional(_ components: [Segmentation]?) -> [Segmentation] {
             components ?? []
         }
 
-        static func buildEither(first components: [SegmentationEntry]) -> [SegmentationEntry] {
+        static func buildEither(first components: [Segmentation]) -> [Segmentation] {
             components
         }
 
-        static func buildEither(second components: [SegmentationEntry]) -> [SegmentationEntry] {
+        static func buildEither(second components: [Segmentation]) -> [Segmentation] {
             components
         }
     }
@@ -56,7 +56,7 @@ extension AnalyticsEvent {
 
     init(
         name: String,
-        @SegmentationEntryBuilder segmentation: () -> [SegmentationEntry]
+        @SegmentationBuilder segmentation: () -> [Segmentation]
     ) {
         self.init(
             name: name,

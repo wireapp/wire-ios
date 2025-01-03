@@ -72,7 +72,7 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
 
         // when
         let msg1 = sut.appendSystemMessageIfNeeded(
-            callState: .outgoing(degraded: false),
+            callState: .outgoing(isVideo: false, degraded: false),
             conversation: conversation,
             caller: selfUser,
             timestamp: nil,
@@ -108,7 +108,7 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
 
         // when
         let msg1 = sut.appendSystemMessageIfNeeded(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: user,
             timestamp: nil,
@@ -143,7 +143,7 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
 
         // when
         let msg1 = sut.appendSystemMessageIfNeeded(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: selfUser,
             timestamp: nil,
@@ -170,7 +170,7 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
 
         // when
         let msg1 = sut.appendSystemMessageIfNeeded(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversation,
             caller: user,
             timestamp: nil,

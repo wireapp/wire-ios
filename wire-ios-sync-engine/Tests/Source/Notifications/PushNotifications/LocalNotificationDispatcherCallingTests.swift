@@ -83,7 +83,7 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
         // when
         syncMOC.performAndWait {
             sut.process(
-                callState: .incoming(video: false, shouldRing: true, degraded: false),
+                callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
                 in: conversation,
                 caller: sender
             )
@@ -99,7 +99,7 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
         let ignoredCallStates: [CallState] = [
             .established,
             .answered(degraded: false),
-            .outgoing(degraded: false),
+            .outgoing(isVideo: false, degraded: false),
             .none,
             .unknown
         ]
@@ -120,7 +120,7 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
         // given
         syncMOC.performAndWait {
             sut.process(
-                callState: .incoming(video: false, shouldRing: true, degraded: false),
+                callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
                 in: conversation,
                 caller: sender
             )
@@ -145,7 +145,7 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
         // given
         syncMOC.performAndWait {
             sut.process(
-                callState: .incoming(video: false, shouldRing: true, degraded: false),
+                callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
                 in: conversation,
                 caller: sender
             )
