@@ -40,7 +40,7 @@ final class NotificationService: UNNotificationServiceExtension {
     // MARK: - Object lifecycle
 
     override init() {
-        logger.info("initializing new legacy notification service")
+        logger.info("initializing notification service")
         super.init()
     }
 
