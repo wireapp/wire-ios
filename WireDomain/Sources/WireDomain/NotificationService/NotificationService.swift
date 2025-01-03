@@ -126,6 +126,9 @@ final class NotificationService: UNNotificationServiceExtension {
     private func finishWithEmptyNotification() {
         logger.info("finishing without showing notification")
         let emptyNotification = UNNotificationContent()
+    // With the "filtering" entitlement, we can tell iOS to not display a user notification by
+    // passing empty content to the content handler.
+    // See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
         contentHandler?(emptyNotification)
         terminate()
     }
