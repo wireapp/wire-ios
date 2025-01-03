@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireRequestStrategy
 import WireSyncEngineSupport
 import WireTransport
+
 @testable import WireSyncEngine
 
 class CallingRequestStrategyTests: MessagingTest {
@@ -33,6 +34,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     override class func setUp() {
         super.setUp()
+
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
@@ -73,6 +75,7 @@ class CallingRequestStrategyTests: MessagingTest {
         mockRegistrationDelegate = nil
         mockApplicationStatus = nil
         mockFetchUserClientsUseCase = nil
+
         super.tearDown()
     }
 

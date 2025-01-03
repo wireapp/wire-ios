@@ -37,9 +37,10 @@ final class AuthenticatedRouter {
 
     // MARK: - Private Property
 
+    private let notificationCenter: NotificationCenter
     private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
-    private let callEndedAnalyticsController: CallEndedAnalyticsController // TODO: find a proper place (user session?) TODO
+    private let callEndedAnalyticsController: CallEndedAnalyticsController<WireCallCenterV3> // TODO: find a proper place (user session?) TODO
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -62,6 +63,7 @@ final class AuthenticatedRouter {
         mainWindow: UIWindow,
         account: Account,
         userSession: UserSession,
+        notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
         featureRepositoryProvider: any FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
@@ -78,19 +80,19 @@ final class AuthenticatedRouter {
             trackingManager: trackingManager
         )
 
+        self.notificationCenter = notificationCenter
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
         self.callEndedAnalyticsController = .init(
             contextProvider: userSession.contextProvider,
-            callCenterType: WireCallCenterV3.self,
-            toggleVideoPublisher: WireCallCenterV3.setVideoStatePublisher().map { _, _, _ in }.eraseToAnyPublisher(),
+            notificationCenter: notificationCenter,
             analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
             logger: WireLogger.analytics
         )
 
-        self.featureChangeObserverToken = NotificationCenter.default.addObserver(
+        self.featureChangeObserverToken = notificationCenter.addObserver(
             forName: .featureDidChangeNotification,
             object: nil,
             queue: .main
@@ -98,7 +100,7 @@ final class AuthenticatedRouter {
             self?.notifyFeatureChange(notification)
         }
 
-        self.revokedCertificateObserverToken = NotificationCenter.default.addObserver(
+        self.revokedCertificateObserverToken = notificationCenter.addObserver(
             forName: .presentRevokedCertificateWarningAlert,
             object: nil,
             queue: .main
@@ -109,11 +111,11 @@ final class AuthenticatedRouter {
 
     deinit {
         if let featureChangeObserverToken {
-            NotificationCenter.default.removeObserver(featureChangeObserverToken)
+            notificationCenter.removeObserver(featureChangeObserverToken)
         }
 
         if let revokedCertificateObserverToken {
-            NotificationCenter.default.removeObserver(revokedCertificateObserverToken)
+            notificationCenter.removeObserver(revokedCertificateObserverToken)
         }
     }
 

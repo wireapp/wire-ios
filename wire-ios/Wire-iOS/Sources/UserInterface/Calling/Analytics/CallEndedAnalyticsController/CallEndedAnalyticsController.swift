@@ -16,46 +16,54 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import WireAnalytics
 import WireLogging
 import WireSyncEngine
 
-final class CallEndedAnalyticsController {
+final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
     private let contextProvider: ContextProvider
-    private let callCenterType: WireCallCenterV3.Type
+    private let notificationCenter: NotificationCenter
     private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     private var eventInfo: EventInfo?
-    private var callStateObserverToken: AnyObject!
+    private var callStateObservationToken: AnyObject!
+    private var toggleVideoObservationToken: AnyObject!
     private var callParticipantObsererToken: AnyObject!
-    private var setVideoCancellable = Set<AnyCancellable>()
 
     private let logger: LoggerProtocol
 
     init(
         contextProvider: ContextProvider,
-        callCenterType: WireCallCenterV3.Type,
-        toggleVideoPublisher: AnyPublisher<Void, Never>,
+        notificationCenter: NotificationCenter,
         analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?,
         logger: LoggerProtocol
     ) {
         self.contextProvider = contextProvider
-        self.callCenterType = callCenterType
+        self.notificationCenter = notificationCenter
         self.analyticsEventTracker = analyticsEventTracker
         self.logger = logger
 
         // TODO: can't we have a protocol instead of using static/class methods? TODO
-        self.callStateObserverToken = callCenterType.addCallStateObserver(
+        self.callStateObservationToken = CallCenter.addCallStateObserver(
             observer: self,
             contextProvider: contextProvider
         )
 
-        toggleVideoPublisher.sink { [weak self] in
-            self?.eventInfo?.hasAVSwitchToggled = true
-            self?.setVideoCancellable.removeAll()
-        }.store(in: &setVideoCancellable)
+        toggleVideoObservationToken = notificationCenter.addObserver(
+            forName: WireCallCenterV3.didToggleVideoNotification,
+            object: .none, // TODO: pass actual instance?
+            queue: .none
+        ) { [weak self] notification in
+            self?.handleToggleVideoNotification(notification)
+        }
+    }
+
+    deinit {
+        let notificationCenter = notificationCenter
+        if let toggleVideoObservationToken {
+            notificationCenter.removeObserver(toggleVideoObservationToken)
+        }
     }
 
     private func handleIncomingCall(
@@ -93,11 +101,18 @@ final class CallEndedAnalyticsController {
             eventInfo = .init()
         }
 
-        callParticipantObsererToken = callCenterType.addCallParticipantObserver(
+        callParticipantObsererToken = CallCenter.addCallParticipantObserver(
             observer: self,
             for: conversation,
             contextProvider: contextProvider
         )
+    }
+
+    private func handleToggleVideoNotification(_ notification: Notification) {
+        eventInfo?.hasAVSwitchToggled = true
+        // unsubscribe
+        toggleVideoObservationToken.map { notificationCenter.removeObserver($0) }
+        toggleVideoObservationToken = nil
     }
 
     private func handleCallTerminating(
