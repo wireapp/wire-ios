@@ -16,14 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
+import XCTest
+import WireLogging
+import WireAnalytics
+import WireDataModelSupport
 
 @testable import Wire
 
-struct CallEndedAnalyticsControllerTests {
+final class CallEndedAnalyticsControllerTests: XCTestCase {
 
-    @Test func testFunctionName() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    private var notificationCenter: NotificationCenter!
+    private var coreDataStack: CoreDataStack!
+    private var analyticsEventTracker: AnalyticsEventTracker!
+    private var sut: CallEndedAnalyticsController<WireCallCenterV3>! // TODO: mock call center?
+
+    override func setUp() async throws {
+        notificationCenter = .init()
+        coreDataStack = try await CoreDataStackHelper().createStack()
+        sut = .init(
+            contextProvider: coreDataStack,
+            notificationCenter: notificationCenter,
+            analyticsEventTracker: { self.analyticsEventTracker },
+            logger: WireLogger(tag: "mock")
+        )
     }
 
+    override func tearDown() {
+        sut = nil
+        analyticsEventTracker = nil
+        coreDataStack = nil
+        notificationCenter = nil
+    }
+
+    func testExample() throws {
+        print(sut!)
+    }
 }
