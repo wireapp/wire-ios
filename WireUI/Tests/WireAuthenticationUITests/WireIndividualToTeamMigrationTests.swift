@@ -21,6 +21,6 @@ import XCTest
 
 class WireAuthenticationUITests: XCTestCase {
     func testExample() throws {
-        throw XCTSkip("[WPB-XXXXX] Not yet implemented")
+        throw XCTSkip("[WPB-15229] Not yet implemented")
     }
 }
