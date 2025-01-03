@@ -42,33 +42,47 @@ public struct FilterConversationsUseCase<ConversationContainer>: FilterConversat
             return conversationContainers
         }
 
-        // Iterate through the grouped conversations and remove the conversations which don't match the query.
-        // Empty containers (conversation groups) will be kept in the result.
-        var containers = conversationContainers
-        for containerIndex in containers.indices {
-            conversationLoop:
-                for conversationIndex in containers[containerIndex].conversations.indices.reversed() {
+        var containers: [ConversationContainer] = []
+        for container in conversationContainers {
+            var oneOnOneMatches: [ConversationContainer.Conversation] = []
+            var nameMatches: [ConversationContainer.Conversation] = []
+            var participantMatches: [ConversationContainer.Conversation] = []
 
-                let conversation = containers[containerIndex].conversations[conversationIndex]
-
-                // don't remove the conversation from the results if conversation name matches
-                let conversationName = conversation.name.normalizedForSearch() as String
-                if conversationName.lowercased().contains(query) {
-                    continue
-                }
-
-                // don't remove the conversation from the results if any participant's name matches
-                for participant in conversation.otherParticipants {
-                    let participantName = participant.name.normalizedForSearch() as String
-                    if participantName.lowercased().contains(query) {
-                        continue conversationLoop
+            for conversation in container.conversations {
+                if conversation.nameMatches(query: query) {
+                    if conversation.isOneOnOne {
+                        oneOnOneMatches.append(conversation)
+                    } else {
+                        nameMatches.append(conversation)
+                    }
+                } else if conversation.participantsMatch(query: query) {
+                    if conversation.isOneOnOne {
+                        oneOnOneMatches.append(conversation)
+                    } else {
+                        participantMatches.append(conversation)
                     }
                 }
-
-                // no match, remove conversation from results
-                containers[containerIndex].removeConversation(at: conversationIndex)
             }
+
+            var filteredContainer = container
+            filteredContainer.conversations = oneOnOneMatches + nameMatches + participantMatches
+            containers.append(filteredContainer)
         }
+
         return containers
+    }
+}
+
+private extension FilterableConversation {
+    func nameMatches(query: String) -> Bool {
+        let conversationName = name.normalizedForSearch() as String
+        return conversationName.lowercased().contains(query)
+    }
+
+    func participantsMatch(query: String) -> Bool {
+        otherParticipants.contains { participant in
+            let participantName = participant.name.normalizedForSearch() as String
+            return participantName.lowercased().contains(query)
+        }
     }
 }

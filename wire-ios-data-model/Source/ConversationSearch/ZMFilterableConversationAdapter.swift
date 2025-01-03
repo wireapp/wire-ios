@@ -20,7 +20,7 @@ import WireUtilities
 
 public struct ZMFilterableConversationAdapter: FilterableConversation {
 
-    private let conversation: ZMConversation
+    public let conversation: ZMConversation
 
     public var name: String {
         conversation.normalizedUserDefinedName ?? conversation.displayName?.normalizedForSearch() as String? ?? ""
@@ -35,6 +35,10 @@ public struct ZMFilterableConversationAdapter: FilterableConversation {
                         .normalizedForSearch() as String? ?? ""
                 )
             }
+    }
+
+    public var isOneOnOne: Bool {
+        conversation.conversationType == .oneOnOne && conversation.oneOnOneUser != nil
     }
 
     public init(conversation: ZMConversation) {

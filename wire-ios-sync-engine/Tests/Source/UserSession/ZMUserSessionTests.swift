@@ -482,6 +482,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             let selfUserClient = createSelfClient()
             selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
             selfUserClient.needsToUploadMLSPublicKeys = false
+            ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
             syncMOC.saveOrRollback()
 
             // WHEN
