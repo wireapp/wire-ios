@@ -18,5 +18,7 @@
 
 extension WireCallCenterV3 {
 
-    nonisolated static var conversationIDUserInfoKey: String { "conversationID" }
+    /// The key of the conversation ID value in a notification's `userInfo` dictionary.
+    /// The type of the value is ``AVSIdentifier``.
+    nonisolated public static var conversationIDUserInfoKey: String { "conversationID" }
 }

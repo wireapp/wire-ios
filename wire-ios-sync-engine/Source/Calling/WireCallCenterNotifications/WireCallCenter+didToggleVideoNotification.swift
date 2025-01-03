@@ -23,6 +23,8 @@ extension WireCallCenterV3 {
         .init(rawValue: "WireCallCenterV3DidToggleVideoNotification")
     }
 
+    /// The key of the video state value in a notification's `userInfo` dictionary.
+    /// The type of the value is ``VideoState``.
     nonisolated static var videoStateUserInfoKey: String { "videoState" }
 
     func postDidToggleVideoNotification(

@@ -75,6 +75,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         }
 
         eventInfo = .init(
+            conversationID: conversation.avsIdentifier,
             conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
             isVideoCall: isVideoCall
         )
@@ -109,7 +110,13 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     }
 
     private func handleToggleVideoNotification(_ notification: Notification) {
+        guard
+            let conversationID = notification.userInfo?[CallCenter.conversationIDUserInfoKey] as? AVSIdentifier,
+            conversationID == eventInfo?.conversationID
+        else { return }
+
         eventInfo?.hasAVSwitchToggled = true
+
         // unsubscribe
         toggleVideoObservationToken.map { notificationCenter.removeObserver($0) }
         toggleVideoObservationToken = nil
@@ -197,6 +204,7 @@ private extension CallEndedAnalyticsController {
         var callDirection: AnalyticsEvent.Calling.CallDirection = .incoming
         var callStart = Date.now
         var screenSharingStart: Date?
+        var conversationID: AVSIdentifier?
         var conversationType: AnalyticsEvent.Segmentation.Conversation.ConversationType = .oneOnOne
         var totalScreenSharingDuration = 0
         var uniqueScreenSharingUsers = Set<UUID>()
