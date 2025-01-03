@@ -19,39 +19,39 @@
 import UIKit
 import WireDesign
 
-final class BackupActionCell: UITableViewCell {
-    let actionTitleLabel: DynamicFontLabel = {
-        let text = L10n.Localizable.Self.Settings.HistoryBackup.action
-        let label = DynamicFontLabel(
-            text: text,
-            style: .body2,
-            color: SemanticColors.Label.textDefault
-        )
-        label.textAlignment = .left
-        return label
-    }()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .none
-        backgroundColor = SemanticColors.View.backgroundUserCell
-        accessibilityTraits = .button
-        contentView.backgroundColor = .clear
-
-        actionTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(actionTitleLabel)
-        NSLayoutConstraint.activate([
-            actionTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            actionTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            actionTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            actionTitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0)
-        ])
-        actionTitleLabel.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        addBorder(for: .bottom)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
+//final class BackupActionCell: UITableViewCell {
+//    let actionTitleLabel: DynamicFontLabel = {
+//        let text = L10n.Localizable.Self.Settings.HistoryBackup.action
+//        let label = DynamicFontLabel(
+//            text: text,
+//            style: .body2,
+//            color: SemanticColors.Label.textDefault
+//        )
+//        label.textAlignment = .left
+//        return label
+//    }()
+//
+//    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+//        super.init(style: style, reuseIdentifier: reuseIdentifier)
+//        selectionStyle = .none
+//        backgroundColor = SemanticColors.View.backgroundUserCell
+//        accessibilityTraits = .button
+//        contentView.backgroundColor = .clear
+//
+//        actionTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+//        contentView.addSubview(actionTitleLabel)
+//        NSLayoutConstraint.activate([
+//            actionTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+//            actionTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
+//            actionTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
+//            actionTitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0)
+//        ])
+//        actionTitleLabel.heightAnchor.constraint(equalToConstant: 44).isActive = true
+//        addBorder(for: .bottom)
+//    }
+//
+//    @available(*, unavailable)
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//}

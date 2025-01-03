@@ -1357,22 +1357,9 @@
 
 "self.settings.conversations.title" = "History";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.";
-"self.settings.history_backup.action" = "Back Up Now";
-"self.settings.restore_from_backup.description" = "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.";
-"self.settings.restore_from_backup.action" = "Restore from Backup";
 "self.settings.history_backup.error.title" = "Error";
-
 "self.settings.history_backup.set_email.title" = "Set an email and password.";
 "self.settings.history_backup.set_email.message" = "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Set Password";
-"self.settings.history_backup.password.cancel" = "Cancel";
-"self.settings.history_backup.password.next" = "Next";
-"self.settings.history_backup.password.placeholder" = "Password";
-"self.settings.history_backup.password.description" = "The backup will be compressed and encrypted with the password you set here.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status

@@ -19,53 +19,53 @@
 import UIKit
 import WireDesign
 
-final class BackupStatusCell: UITableViewCell {
-
-    let descriptionLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(
-            style: .body1,
-            color: SemanticColors.Label.textDefault
-        )
-        label.textAlignment = .left
-        label.numberOfLines = 0
-        return label
-    }()
-
-    let iconView = UIImageView()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        selectionStyle = .none
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
-
-        iconView.setTemplateIcon(.restore, size: .large)
-        iconView.tintColor = SemanticColors.Label.textDefault
-        iconView.contentMode = .center
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(iconView)
-
-        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(descriptionLabel)
-
-        NSLayoutConstraint.activate([
-            iconView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-            iconView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            iconView.heightAnchor.constraint(equalTo: iconView.widthAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 48),
-            descriptionLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 24),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
-        ])
-
-        let description = L10n.Localizable.Self.Settings.HistoryBackup.description
-        descriptionLabel.attributedText = description && .paragraphSpacing(2)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
+//final class BackupStatusCell: UITableViewCell {
+//
+//    let descriptionLabel: DynamicFontLabel = {
+//        let label = DynamicFontLabel(
+//            style: .body1,
+//            color: SemanticColors.Label.textDefault
+//        )
+//        label.textAlignment = .left
+//        label.numberOfLines = 0
+//        return label
+//    }()
+//
+//    let iconView = UIImageView()
+//
+//    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+//        super.init(style: style, reuseIdentifier: reuseIdentifier)
+//
+//        selectionStyle = .none
+//        backgroundColor = .clear
+//        contentView.backgroundColor = .clear
+//
+//        iconView.setTemplateIcon(.restore, size: .large)
+//        iconView.tintColor = SemanticColors.Label.textDefault
+//        iconView.contentMode = .center
+//        iconView.translatesAutoresizingMaskIntoConstraints = false
+//        contentView.addSubview(iconView)
+//
+//        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+//        contentView.addSubview(descriptionLabel)
+//
+//        NSLayoutConstraint.activate([
+//            iconView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+//            iconView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+//            iconView.heightAnchor.constraint(equalTo: iconView.widthAnchor),
+//            iconView.widthAnchor.constraint(equalToConstant: 48),
+//            descriptionLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 24),
+//            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+//            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
+//            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
+//        ])
+//
+//        let description = L10n.Localizable.Self.Settings.HistoryBackup.description
+//        descriptionLabel.attributedText = description && .paragraphSpacing(2)
+//    }
+//
+//    @available(*, unavailable)
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//}

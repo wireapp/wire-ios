@@ -5558,27 +5558,11 @@ internal enum L10n {
           internal static let header = L10n.tr("Localizable", "self.settings.external_apps.header", fallback: "Open With")
         }
         internal enum HistoryBackup {
-          /// Back Up Now
-          internal static let action = L10n.tr("Localizable", "self.settings.history_backup.action", fallback: "Back Up Now")
-          /// Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.
-          internal static let description = L10n.tr("Localizable", "self.settings.history_backup.description", fallback: "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.")
           /// Back up or Restore
           internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back up or Restore")
           internal enum Error {
             /// Error
             internal static let title = L10n.tr("Localizable", "self.settings.history_backup.error.title", fallback: "Error")
-          }
-          internal enum Password {
-            /// Cancel
-            internal static let cancel = L10n.tr("Localizable", "self.settings.history_backup.password.cancel", fallback: "Cancel")
-            /// The backup will be compressed and encrypted with the password you set here.
-            internal static let description = L10n.tr("Localizable", "self.settings.history_backup.password.description", fallback: "The backup will be compressed and encrypted with the password you set here.")
-            /// Next
-            internal static let next = L10n.tr("Localizable", "self.settings.history_backup.password.next", fallback: "Next")
-            /// Password
-            internal static let placeholder = L10n.tr("Localizable", "self.settings.history_backup.password.placeholder", fallback: "Password")
-            /// Set Password
-            internal static let title = L10n.tr("Localizable", "self.settings.history_backup.password.title", fallback: "Set Password")
           }
           internal enum SetEmail {
             /// You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.
@@ -5760,12 +5744,6 @@ internal enum L10n {
             /// Receive news and product updates from Wire via email.
             internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.description.title", fallback: "Receive news and product updates from Wire via email.")
           }
-        }
-        internal enum RestoreFromBackup {
-          /// Restore from Backup
-          internal static let action = L10n.tr("Localizable", "self.settings.restore_from_backup.action", fallback: "Restore from Backup")
-          /// The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.
-          internal static let description = L10n.tr("Localizable", "self.settings.restore_from_backup.description", fallback: "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.")
         }
         internal enum SoundMenu {
           /// Sound Alerts

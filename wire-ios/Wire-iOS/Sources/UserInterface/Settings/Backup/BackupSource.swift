@@ -20,15 +20,4 @@ import Foundation
 import class WireSyncEngine.SessionManager
 import WireSettingsUI
 
-// TODO: replace it
-// sourcery: AutoMockable
-//protocol BackupSource {
-//    func backupActiveAccount(
-//        password: String,
-//        completion: @escaping (Result<URL, Error>) -> Void
-//    )
-//
-//    func clearPreviousBackups()
-//}
-
 extension SessionManager: BackupSource {}
