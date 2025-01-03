@@ -88,15 +88,23 @@ final class NotificationSession {
         var notifications: [UNMutableNotificationContent] = []
 
         for event in events {
-            let notificationBuilder: NotificationBuilder
+            var notificationBuilder: NotificationBuilder
             
             switch event {
             case .conversation(let conversationEvent):
                 notificationBuilder = await ConversationNotificationBuilder(
                     event: conversationEvent
                 )
-            default:
-                // TODO: [WPB-10218] - Generate notif for other update events
+            // TODO: [WPB-10218] - Generate notif for other update events
+            case let .featureConfig(featureConfigEvent):
+                continue
+            case let .federation(federationEvent):
+                continue
+            case let .user(userEvent):
+                continue
+            case let .team(teamEvent):
+                continue
+            case let .unknown(eventType):
                 continue
             }
 

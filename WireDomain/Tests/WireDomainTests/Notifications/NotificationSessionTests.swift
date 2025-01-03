@@ -67,7 +67,7 @@ final class NotificationSessionTests: XCTestCase {
     }
 
     func testNotificationSession_It_Triggers_Callback_When_Pulling_Pending_Events() async throws {
-        
+
         // Given
 
         let expectation = XCTestExpectation()
