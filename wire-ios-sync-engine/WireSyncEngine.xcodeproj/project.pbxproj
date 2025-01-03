@@ -759,7 +759,7 @@
 		1658C2361F503CF800889F22 /* FlowManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlowManager.swift; sourceTree = "<group>"; };
 		1658C2381F5404ED00889F22 /* FlowManagerMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlowManagerMock.swift; sourceTree = "<group>"; };
 		1659114E1DEF1F6E007FA847 /* LocalNotificationDispatcher+Calling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LocalNotificationDispatcher+Calling.swift"; sourceTree = "<group>"; };
-		165911521DEF38EC007FA847 /* CallStateObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CallStateObserver.swift; path = ../UserSession/CallStateObserver.swift; sourceTree = "<group>"; };
+		165911521DEF38EC007FA847 /* CallStateObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallStateObserver.swift; sourceTree = "<group>"; };
 		165BB94B2004D6490077EFD5 /* SessionManager+UserActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+UserActivity.swift"; sourceTree = "<group>"; };
 		165D3A141E1D3EF30052E654 /* WireCallCenterV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WireCallCenterV3.swift; sourceTree = "<group>"; };
 		165D3A171E1D43870052E654 /* VoiceChannelV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceChannelV3.swift; sourceTree = "<group>"; };
