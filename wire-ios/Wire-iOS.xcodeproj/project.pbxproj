@@ -318,6 +318,8 @@
 		590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */; };
 		590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebarUI */; };
 		590DCA0A2C971AFF002D0A2C /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA092C971AFF002D0A2C /* WireFoundation */; };
+		59152B392D2841E7004425A0 /* WireAnalyticsSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59152B382D2841E7004425A0 /* WireAnalyticsSupport */; };
+		59152B3B2D284222004425A0 /* WireAnalyticsSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59152B3A2D284222004425A0 /* WireAnalyticsSupport */; };
 		5915B94B2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */; };
 		5915B94D2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94C2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift */; };
 		5915B9562BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9552BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift */; };
@@ -3902,6 +3904,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59152B392D2841E7004425A0 /* WireAnalyticsSupport in Frameworks */,
 				59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */,
 				59076F972C934AA100AE7529 /* WireAccountImageUI in Frameworks */,
 				59B4046E2CAB141000CC33BF /* WireSettingsUI in Frameworks */,
@@ -3929,6 +3932,7 @@
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				59B4046C2CAB140A00CC33BF /* WireSettingsUI in Frameworks */,
 				59B48C602C89CCCC00EA7999 /* WireFoundation in Frameworks */,
+				59152B3B2D284222004425A0 /* WireAnalyticsSupport in Frameworks */,
 				5977ED1F2D26747900F5C78E /* WireLogging in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
@@ -8477,6 +8481,7 @@
 				59C2F09E2CA54E4900B25E5D /* WireMainNavigationUI */,
 				59B4046D2CAB141000CC33BF /* WireSettingsUI */,
 				59191A642D0051C7001AB388 /* WireLogging */,
+				59152B382D2841E7004425A0 /* WireAnalyticsSupport */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -8501,6 +8506,7 @@
 				59B4046B2CAB140A00CC33BF /* WireSettingsUI */,
 				59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */,
 				5977ED1E2D26747900F5C78E /* WireLogging */,
+				59152B3A2D284222004425A0 /* WireAnalyticsSupport */,
 			);
 			productName = "Wire-iOS UnitTests";
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
@@ -11423,6 +11429,14 @@
 		590DCA092C971AFF002D0A2C /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
+		};
+		59152B382D2841E7004425A0 /* WireAnalyticsSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalyticsSupport;
+		};
+		59152B3A2D284222004425A0 /* WireAnalyticsSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalyticsSupport;
 		};
 		59191A642D0051C7001AB388 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;

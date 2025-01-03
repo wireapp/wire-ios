@@ -19,36 +19,48 @@
 import XCTest
 import WireLogging
 import WireAnalytics
+import WireAnalyticsSupport
 import WireDataModelSupport
 
 @testable import Wire
+@testable import WireSyncEngine
 
 final class CallEndedAnalyticsControllerTests: XCTestCase {
 
     private var notificationCenter: NotificationCenter!
     private var coreDataStack: CoreDataStack!
-    private var analyticsEventTracker: AnalyticsEventTracker!
-    private var sut: CallEndedAnalyticsController<WireCallCenterV3>! // TODO: mock call center?
+    private var mockAnalyticsEventTracker: MockAnalyticsEventTracker!
+    private var sut: CallEndedAnalyticsController<MockCallCenter>!
 
     override func setUp() async throws {
         notificationCenter = .init()
         coreDataStack = try await CoreDataStackHelper().createStack()
+        mockAnalyticsEventTracker = .init()
         sut = .init(
             contextProvider: coreDataStack,
             notificationCenter: notificationCenter,
-            analyticsEventTracker: { self.analyticsEventTracker },
+            analyticsEventTracker: { self.mockAnalyticsEventTracker },
             logger: WireLogger(tag: "mock")
         )
     }
 
     override func tearDown() {
         sut = nil
-        analyticsEventTracker = nil
+        mockAnalyticsEventTracker = nil
         coreDataStack = nil
         notificationCenter = nil
     }
 
     func testExample() throws {
-        print(sut!)
+        // When
+        // TODO: send call started event + call cancelled event
+
+        // Then
+        // ensure the correct event has been sent to the analytics backend
+        // ensure the logger logged the event as well
     }
 }
+
+// MARK: -
+
+private final class MockCallCenter: WireCallCenterV3 {}
