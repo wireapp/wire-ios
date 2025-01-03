@@ -27,9 +27,9 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     private var eventInfo: EventInfo?
-    private var callStateObservationToken: AnyObject!
-    private var toggleVideoObservationToken: AnyObject!
-    private var callParticipantObsererToken: AnyObject!
+    private var callStateObservationToken: AnyObject?
+    private var toggleVideoObservationToken: AnyObject?
+    private var callParticipantObsererToken: AnyObject?
 
     private let logger: LoggerProtocol
 
@@ -44,25 +44,27 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         self.analyticsEventTracker = analyticsEventTracker
         self.logger = logger
 
-        // TODO: can't we have a protocol instead of using static/class methods? TODO
-        self.callStateObservationToken = CallCenter.addCallStateObserver(
-            observer: self,
-            contextProvider: contextProvider
-        )
-
-        self.toggleVideoObservationToken = notificationCenter.addObserver(
-            forName: WireCallCenterV3.didToggleVideoNotification,
-            object: .none, // TODO: pass actual instance?
-            queue: .none
-        ) { [weak self] notification in
-            self?.handleToggleVideoNotification(notification)
-        }
+        setupObservations()
     }
 
     deinit {
         let notificationCenter = notificationCenter
         if let toggleVideoObservationToken {
             notificationCenter.removeObserver(toggleVideoObservationToken)
+        }
+    }
+
+    private func setupObservations() {
+
+        callStateObservationToken = CallCenter.addCallStateObserver(
+            observer: self,
+            contextProvider: contextProvider
+        )
+
+        toggleVideoObservationToken = notificationCenter.addObserver(
+            forName: WireCallCenterV3.didToggleVideoNotification, object: .none, queue: .none
+        ) { [weak self] notification in
+            self?.handleToggleVideoNotification(notification)
         }
     }
 
@@ -142,16 +144,20 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
             conversationGuestsNonTeam,
             conversationServices
         ) = context.performAndWait {
+
             let isTeamMember = conversation.participants
                 .first { $0.isSelfUser }
                 .map(\.hasTeam) ?? false
+
             let conversationSize = conversation.localParticipants.count
+
             let guestsWithTeam = conversation.participants
                 .filter { $0.isGuest(in: conversation) }
                 .map(\.hasTeam)
             let conversationGuestsTeam = guestsWithTeam.count { $0 }
             let conversationGuestsNonTeam = guestsWithTeam.count { !$0 }
             let conversationServices = conversation.sortedServiceUsers.count
+
             return (
                 isTeamMember,
                 conversationSize,

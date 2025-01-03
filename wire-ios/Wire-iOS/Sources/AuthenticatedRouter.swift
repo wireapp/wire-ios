@@ -40,7 +40,7 @@ final class AuthenticatedRouter {
     private let notificationCenter: NotificationCenter
     private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
-    private let callEndedAnalyticsController: CallEndedAnalyticsController<WireCallCenterV3> // TODO: find a proper place (user session?) TODO
+    private let callEndedAnalyticsController: CallEndedAnalyticsController<WireCallCenterV3>
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
