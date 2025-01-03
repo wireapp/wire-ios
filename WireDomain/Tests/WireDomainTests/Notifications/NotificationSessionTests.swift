@@ -102,14 +102,15 @@ final class NotificationSessionTests: XCTestCase {
             conversationID: ConversationID(uuid: .mockID1, domain: ""),
             senderID: UserID(uuid: .mockID2, domain: ""),
             subconversation: "subconversation",
-            message: "message"
+            message: "message",
+            timestamp: .now
         )
         static let proteusMessageAddEvent = ConversationProteusMessageAddEvent(
             conversationID: ConversationID(uuid: .mockID1, domain: ""),
             senderID: UserID(uuid: .mockID2, domain: ""),
             timestamp: .now,
-            message: .ciphertext("foo"),
-            externalData: .ciphertext("bar"),
+            message: .init(encryptedMessage: "foo"),
+            externalData: .init(encryptedMessage: "bar"),
             messageSenderClientID: "abc123",
             messageRecipientClientID: "def456"
         )
