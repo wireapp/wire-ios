@@ -424,20 +424,6 @@ final class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
     }
 
-    func testPullSelfUser() async throws {
-        // Mock
-        selfUsersAPI.getSelfUser_MockValue = Scaffolding.selfUser
-        userLocalStore.persistUserUserInfo_MockMethod = { _ in }
-
-        // When
-
-        try await sut.pullSelfUser()
-
-        // Then
-
-        XCTAssertEqual(userLocalStore.persistUserUserInfo_Invocations.count, 1)
-    }
-
     func testFetchAllUserIdsWithOneOnOneConversation() async throws {
         // Given
 

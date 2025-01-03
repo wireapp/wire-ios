@@ -1195,7 +1195,7 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("checking if group (\(groupID)) exists...")
         let result = try await coreCrypto.perform { coreCrypto in
-            await coreCrypto.conversationExists(conversationId: groupID.data)
+            try await coreCrypto.conversationExists(conversationId: groupID.data)
         }
         logger.info("... group (\(groupID)) " + (result ? "exists!" : "does not exist!"))
         return result

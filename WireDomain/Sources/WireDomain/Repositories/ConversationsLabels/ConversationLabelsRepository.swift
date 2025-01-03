@@ -45,6 +45,8 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
     private let conversationLabelsLocalStore: any ConversationLabelsLocalStoreProtocol
     private let logger = WireLogger(tag: "conversation-labels")
 
+    private let pullConversationLabelsSync: PullConversationLabelsSync
+
     // MARK: - Object lifecycle
 
     init(
@@ -53,56 +55,26 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
     ) {
         self.userPropertiesAPI = userPropertiesAPI
         self.conversationLabelsLocalStore = conversationLabelsLocalStore
+        self.pullConversationLabelsSync = PullConversationLabelsSync(
+            api: userPropertiesAPI,
+            store: conversationLabelsLocalStore
+        )
     }
 
     // MARK: - Public
 
     public func pullConversationLabels() async throws {
-        let conversationLabels = try await userPropertiesAPI.getLabels()
-        try await updateConversationLabels(conversationLabels)
+        try await pullConversationLabelsSync.pull()
     }
 
     public func updateConversationLabels(
         _ conversationLabels: [ConversationLabel]
     ) async throws {
-        await storeLabelsLocally(conversationLabels)
-
-        try await conversationLabelsLocalStore.deleteOldLabelsLocally(
-            excludedLabels: conversationLabels.map { $0.toDomainModel() }
-        )
-    }
-
-    // MARK: - Private
-
-    private func storeLabelsLocally(
-        _ conversationLabels: [ConversationLabel]
-    ) async {
-        await withThrowingTaskGroup(of: Void.self) { taskGroup in
-            for conversationLabel in conversationLabels {
-                taskGroup.addTask { [self] in
-                    try await conversationLabelsLocalStore.storeLabel(
-                        conversationLabel.toDomainModel()
-                    )
-                }
-            }
-
-            /// Iterates through the group child tasks results and logs the error if any.
-            while let result = await taskGroup.nextResult() {
-                switch result {
-                case .success:
-                    continue
-                case let .failure(error):
-                    let repoError = error as? ConversationLabelsLocalStore.Failure
-                    if case let .failedToStoreLabelLocally(id) = repoError {
-                        logger
-                            .error(
-                                "Failed to store conversation label with id \(id.safeForLoggingDescription): \(error)"
-                            )
-                    } else {
-                        logger.error("Failed to store conversation with error: \(error)")
-                    }
-                }
-            }
+        let localLabels = conversationLabels.map {
+            $0.toDomainModel()
         }
+
+        try await conversationLabelsLocalStore.setLabels(localLabels)
     }
+
 }

@@ -22,9 +22,23 @@
 /// Each `SegmentationEntry` consists of a key (identifying the type of information) and a value
 /// (the actual data point).
 
-public struct SegmentationEntry: Hashable, Sendable {
+struct SegmentationEntry: Hashable, Sendable {
 
     let key: String
     let value: String
 
+    init(key: String, value: String) {
+        self.key = key
+        self.value = value
+    }
+
+    init(key: String, value: Int) {
+        self.key = key
+        self.value = "\(value)"
+    }
+
+    init(key: String, value: Bool) {
+        self.key = key
+        self.value = value ? "True" : "False"
+    }
 }

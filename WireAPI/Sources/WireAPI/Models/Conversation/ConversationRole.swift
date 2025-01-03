@@ -23,7 +23,7 @@ import Foundation
 /// Each member of a conversation is assigned a role which allows them
 /// to perform a specific set of actions in that conversation.
 
-public struct ConversationRole: Equatable {
+public struct ConversationRole: Equatable, Sendable {
 
     /// The name of the role.
 

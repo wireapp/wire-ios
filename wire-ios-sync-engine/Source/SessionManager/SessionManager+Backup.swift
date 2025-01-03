@@ -18,7 +18,7 @@
 
 import Foundation
 import WireAnalytics
-import WireCryptobox
+import WireCrypto
 import WireDataModel
 import WireLogging
 import WireUtilities
@@ -61,7 +61,7 @@ extension SessionManager {
                 case .success:
                     break
                 case .failure:
-                    activeUserSession.analyticsEventTracker?.trackEvent(.backupExportFailed)
+                    activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)
                 }
 
                 SessionManager.handle(

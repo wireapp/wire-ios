@@ -23,7 +23,7 @@ import WireFoundation
 func SidebarViewControllerPreview() -> UIViewController {
     let splitViewController = UISplitViewController(style: .tripleColumn)
     let sidebarViewController = SidebarViewController(
-        accountImageView: { _, _ in MockAccountImageView() },
+        accountImageView: { _, _, _ in MockAccountImageView() },
         legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
     )
     sidebarViewController.accountInfo.displayName = "Firstname Lastname"

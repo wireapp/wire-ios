@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An event that can be tracked..
+/// An event that can be tracked.
 
-public struct AnalyticsEvent: Sendable, Equatable {
+public struct AnalyticsEvent: Equatable, Sendable {
 
     /// A unique name.
 
@@ -34,14 +34,13 @@ public struct AnalyticsEvent: Sendable, Equatable {
     ///   - name: A unique name.
     ///   - segmentation: Additional metadata.
 
-    init(
+    init<Collection>(
         name: String,
-        segmentation: Set<SegmentationEntry> = []
-    ) {
+        segmentation: Collection = []
+    ) where Collection: Swift.Collection, Collection.Element == SegmentationEntry {
         self.name = name
-        self.segmentation = segmentation
+        self.segmentation = Set(segmentation)
     }
-
 }
 
 extension AnalyticsEvent: CustomDebugStringConvertible {

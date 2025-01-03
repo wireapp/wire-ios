@@ -148,16 +148,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		165EA0C01DB67C3B008ECC60 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		01E9445F2D01805B006921E4 /* WireCanvasTests */ = {
 			isa = PBXNativeTarget;
@@ -186,7 +176,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 165EA0D71DB67C3B008ECC60 /* Build configuration list for PBXNativeTarget "WireCanvas" */;
 			buildPhases = (
-				165EA0C01DB67C3B008ECC60 /* Headers */,
 				165EA0BE1DB67C3B008ECC60 /* Sources */,
 				165EA0BF1DB67C3B008ECC60 /* Frameworks */,
 				165EA0C11DB67C3B008ECC60 /* Resources */,
@@ -317,11 +306,9 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = EDF3JCE8BC;
@@ -343,7 +330,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -356,7 +342,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -390,11 +375,9 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = EDF3JCE8BC;
@@ -410,7 +393,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -421,7 +403,6 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -430,6 +411,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */;
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -437,6 +420,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A411DBA73B900B5BC47 /* project.xcconfig */;
 			buildSettings = {
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
@@ -444,12 +428,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				INFOPLIST_FILE = Sources/Info.plist;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
 				SKIP_INSTALL = YES;
 			};
@@ -459,10 +438,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
 				SKIP_INSTALL = YES;

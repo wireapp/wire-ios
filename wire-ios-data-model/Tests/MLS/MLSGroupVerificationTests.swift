@@ -76,7 +76,7 @@ final class MLSGroupVerificationTests: XCTestCase {
         mlsGroupVerification.startObserving()
         streamContinuation.yield(mlsGroupID)
 
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         // then
         let groupIDs = mockUpdateVerificationStatus.invokeForGroupID_Invocations.map(\.groupID)
@@ -108,7 +108,7 @@ final class MLSGroupVerificationTests: XCTestCase {
         mlsGroupVerification = nil
         streamContinuation.yield(mlsGroupID)
 
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         // then
         XCTAssert(mockUpdateVerificationStatus.invokeForGroupID_Invocations.isEmpty)

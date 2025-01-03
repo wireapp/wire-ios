@@ -28,7 +28,7 @@ enum EncryptionSessionError: Int {
     case decryptionFailed
 
     var userInfo: [String: AnyObject] {
-        var info = switch self {
+        let info = switch self {
         case .unknown:
             "Unknown EncryptionSessionError"
         case .encryptionFailed:

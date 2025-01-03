@@ -524,11 +524,11 @@
 				3E88BE121B1F478200232589 /* ZMTimer.m */,
 				09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */,
 				097E36C21B7B62150039CC4C /* NSLocale+Internal.m */,
-				54181A4F1F594E4100155ABC /* FileManager+Move.swift */,
 				54181A531F594F6B00155ABC /* FileManager+Protection.swift */,
 				EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */,
 				5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */,
 				5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */,
+				54181A4F1F594E4100155ABC /* FileManager+Move.swift */,
 				5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */,
 				16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */,
 				EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */,
@@ -1288,6 +1288,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E148C4207BAED000F81833 /* project-debug.xcconfig */;
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Debug;
@@ -1296,6 +1298,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E148CC207BAED000F81833 /* project.xcconfig */;
 			buildSettings = {
+				SDKROOT = iphoneos;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
@@ -1306,7 +1309,6 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};
@@ -1420,10 +1422,8 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireUtilitiesSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1504,7 +1504,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireUtilitiesSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;

@@ -40,20 +40,27 @@ struct PageContainer<Content: View>: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack {
-                Text(String.formated(key: "individualToTeam.progressCount", bundle: .module, step, stepCount))
-                    .wireTextStyle(.subline1)
-                    .foregroundStyle(Color(uiColor: ColorTheme.Base.secondaryText))
-                Spacer()
-                    .frame(height: 12)
-                Text(stepTitle)
-                    .wireTextStyle(.h2)
-                Spacer(minLength: 36)
-                content
+        GeometryReader { proxy in
+            ScrollView {
+                VStack {
+                    Text(String.formated(key: "individualToTeam.progressCount", bundle: .module, step, stepCount))
+                        .wireTextStyle(.subline1)
+                        .foregroundStyle(Color(uiColor: ColorTheme.Base.secondaryText))
+                    Spacer()
+                        .frame(height: 12)
+                    Text(stepTitle)
+                        .wireTextStyle(.h2)
+                    Spacer(minLength: 36)
+                    content
+                }
+                .padding(.horizontal, 16)
+                // Ensure there is a minimum of 16 points space to the bottom of the screen.
+                .padding(.bottom, max(16 - proxy.safeAreaInsets.bottom, 0))
+                .frame(
+                    minHeight: proxy.size.height
+                )
             }
+            .scrollIndicators(.hidden)
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 24)
     }
 }

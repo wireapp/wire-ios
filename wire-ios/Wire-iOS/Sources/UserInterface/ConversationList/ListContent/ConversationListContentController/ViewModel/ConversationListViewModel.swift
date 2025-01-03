@@ -347,16 +347,15 @@ final class ConversationListViewModel: NSObject {
         case .favorites:
             [.favorites]
         case .oneOnOne:
-            [.contacts, .contactRequests]
+            [.contactRequests, .contacts]
         case let .folder(id, _):
             if let folder = conversationDirectory.nonDeletedFolders.first(where: { $0.remoteIdentifier == id }) {
                 [.folder(label: folder)]
             } else {
-                // FIXME: [WPB-13905] Log invalid state once WPB-13905 is implemented
                 []
             }
         case .none:
-            [.conversations, .contactRequests]
+            [.contactRequests, .conversations]
         }
 
         let sections = kinds.map { kind in
@@ -502,12 +501,13 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
 extension ConversationListViewModel.Section: MutableConversationContainer {
 
     var conversations: [ZMFilterableConversationAdapter] {
-        items
-            .compactMap { $0.item as? ZMConversation }
-            .map(ZMFilterableConversationAdapter.init(conversation:))
-    }
-
-    mutating func removeConversation(at index: Int) {
-        items.remove(at: index)
+        get {
+            items
+                .compactMap { $0.item as? ZMConversation }
+                .map(ZMFilterableConversationAdapter.init(conversation:))
+        }
+        set {
+            items = newValue.map { ConversationListViewModel.SectionItem(item: $0.conversation, kind: kind) }
+        }
     }
 }

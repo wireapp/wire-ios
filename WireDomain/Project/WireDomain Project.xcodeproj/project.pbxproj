@@ -13,6 +13,7 @@
 		01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */; };
 		591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */; };
 		591B6E472C8B09BD009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01BDA5442C20762200636E50 /* WireDataModelSupport.framework */; };
+		594904952D0710BF00238104 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 594904942D0710BF00238104 /* WireAnalytics */; };
 		598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042C2C89C63100B64D71 /* WireFoundation */; };
 		59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A5D2C5BBEA8009C41DE /* WireAPI */; };
 		59909A692C5BC001009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A682C5BC001009C41DE /* WireAPI */; };
@@ -86,6 +87,7 @@
 				766BE3C52D036D5000148CB6 /* WireDomainAPI in Frameworks */,
 				598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */,
 				591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */,
+				594904952D0710BF00238104 /* WireAnalytics in Frameworks */,
 				59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */,
 				59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */,
 				01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */,
@@ -162,30 +164,12 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		017F677D2C207A3200B6E02D /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01D0DCA12C1C8C870076CB1C /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		017F67812C207A3200B6E02D /* WireDomainSupport */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 017F67882C207A3200B6E02D /* Build configuration list for PBXNativeTarget "WireDomainSupport" */;
 			buildPhases = (
 				017F67912C207A7E00B6E02D /* Sourcery */,
-				017F677D2C207A3200B6E02D /* Headers */,
 				017F677E2C207A3200B6E02D /* Sources */,
 				017F677F2C207A3200B6E02D /* Frameworks */,
 				017F67802C207A3200B6E02D /* Resources */,
@@ -207,7 +191,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01D0DCBA2C1C8C880076CB1C /* Build configuration list for PBXNativeTarget "WireDomain" */;
 			buildPhases = (
-				01D0DCA12C1C8C870076CB1C /* Headers */,
 				01D0DCA22C1C8C870076CB1C /* Sources */,
 				01D0DCA32C1C8C870076CB1C /* Frameworks */,
 				01D0DCA42C1C8C870076CB1C /* Resources */,
@@ -225,6 +208,7 @@
 				598D042C2C89C63100B64D71 /* WireFoundation */,
 				59EA774E2D00CE0C002CA0B8 /* WireLogging */,
 				766BE3C42D036D5000148CB6 /* WireDomainAPI */,
+				594904942D0710BF00238104 /* WireAnalytics */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -410,7 +394,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -448,7 +431,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -613,7 +595,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -652,7 +633,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -674,7 +654,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -695,7 +674,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -747,6 +725,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		594904942D0710BF00238104 /* WireAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalytics;
+		};
 		598D042C2C89C63100B64D71 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;

@@ -52,7 +52,7 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
     }
 
     private func trackCallInitialized(isVideo: Bool, conversationType: ZMConversationType) {
-        let event = AnalyticsEvent.callInitialized(
+        let event = AnalyticsEvent.Calling.initiatedCall(
             isVideo: isVideo,
             conversationType: mapConversationType(conversationType)
         )
@@ -60,7 +60,10 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
     }
 
     private func trackCallJoined(isVideo: Bool, conversationType: ZMConversationType) {
-        let event = AnalyticsEvent.callJoined(isVideo: isVideo, conversationType: mapConversationType(conversationType))
+        let event = AnalyticsEvent.Calling.joinedCall(
+            isVideo: isVideo,
+            conversationType: mapConversationType(conversationType)
+        )
         trackAnalyticsEvent(event)
     }
 

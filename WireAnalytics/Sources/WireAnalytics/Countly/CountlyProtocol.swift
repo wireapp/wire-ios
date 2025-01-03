@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 // sourcery: AutoMockable
-/// Abstraction around `Countly`.
-protocol CountlyProtocol {
+/// Mirrors the API of `Countly`.
+public protocol CountlyProtocol {
 
     func resetInstance()
 

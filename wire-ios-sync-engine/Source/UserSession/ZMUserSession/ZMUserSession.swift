@@ -45,7 +45,13 @@ public final class ZMUserSession: NSObject {
 
     private(set) var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
-    private(set) var apiService: APIServiceProtocol?
+    var apiService: APIServiceProtocol? {
+        guard let clientId = selfUserClient?.remoteIdentifier else {
+            return nil
+        }
+        return apiServiceFactory(clientId, userId)
+    }
+
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
@@ -84,7 +90,7 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    public private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
     private var pendingAnalyticsEvents = [AnalyticsEvent]()
 
     public internal(set) var appLockController: AppLockType
@@ -346,6 +352,11 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
+    private lazy var  mlsClientManager = MLSClientManager(
+        coreCryptoProvider: coreCryptoProvider,
+        mlsService: mlsService
+    )
+
     // MARK: Dependency Injection
 
     let dependencies: UserSessionDependencies
@@ -423,7 +434,7 @@ public final class ZMUserSession: NSObject {
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
-        analyticsEventTracker?.trackEvent(.appOpen)
+        analyticsEventTracker?.trackEvent(.App.open)
     }
 
     func setup(
@@ -492,6 +503,12 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+
+        // Proactively keep the self user in sync, which helps add resilience
+        // in cases where the self client may otherwise only have limited
+        // one time opportunities to discover important changes.
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        selfUser.needsToBeUpdatedFromBackend = true
 
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
@@ -925,28 +942,30 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: notificationContext
         ).post()
 
-        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-        if selfClient?.hasRegisteredMLSClient == true {
-
-            WaitingGroupTask(context: syncContext) { [self] in
-                // these operations are not dependent and should not be executed in same do/catch
-                do {
-                    // rework implementation of following method - WPB-6053
-                    try await mlsService.performPendingJoins()
-                } catch {
-                    WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
-                }
-                await mlsService.uploadKeyPackagesIfNeeded()
-                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
-            }
-        }
-
-        if mlsFeature.isEnabled {
-            mlsService.commitPendingProposalsIfNeeded()
-        }
-
         WaitingGroupTask(context: syncContext) { [self] in
+            await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
+
+            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
+                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+                let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
+                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
+            }
+
+            if let qualifiedSelfClientID {
+                await mlsClientManager.initializeMLSClientIfNeeded(
+                    for: qualifiedSelfClientID,
+                    hasRegisteredMLSClient: hasRegisteredMLSClient,
+                    mlsFeature: mlsFeature
+                )
+            } else {
+                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
+            }
+
+            if mlsFeature.isEnabled {
+                mlsService.commitPendingProposalsIfNeeded()
+            }
+
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
         }
@@ -1011,6 +1030,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
             try await getFeatureConfigAction.perform(in: notificationContext)
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
+        }
+    }
+
+    private func fetchBackendMLSPublicKeys() async {
+        do {
+            var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
+            let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
+            let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+            BackendInfo.isMLSEnabled = hasValidKeys
+        } catch {
+            WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")
         }
     }
 
@@ -1092,11 +1122,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
         WireLogger.authentication.addTag(.selfClientId, value: clientId)
-        guard  let selfUserId = ZMUser.selfUser(in: syncContext).remoteIdentifier else {
-            assertionFailure("unable to find selfUser from syncContext,")
-            return
-        }
-        apiService = apiServiceFactory(clientId, selfUserId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {

@@ -733,14 +733,19 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
     // MARK: - conversationExists
 
     public var conversationExistsConversationId_Invocations: [Data] = []
-    public var conversationExistsConversationId_MockMethod: ((Data) async -> Bool)?
+    public var conversationExistsConversationId_MockError: Error?
+    public var conversationExistsConversationId_MockMethod: ((Data) async throws -> Bool)?
     public var conversationExistsConversationId_MockValue: Bool?
 
-    public func conversationExists(conversationId: Data) async -> Bool {
+    public func conversationExists(conversationId: Data) async throws -> Bool {
         conversationExistsConversationId_Invocations.append(conversationId)
 
+        if let error = conversationExistsConversationId_MockError {
+            throw error
+        }
+
         if let mock = conversationExistsConversationId_MockMethod {
-            return await mock(conversationId)
+            return try await mock(conversationId)
         } else if let mock = conversationExistsConversationId_MockValue {
             return mock
         } else {
@@ -1122,6 +1127,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `e2eiRotateAllEnrollmentCertificateChainNewKeyPackagesCount`")
+        }
+    }
+
+    // MARK: - e2eiRotate
+
+    public var e2eiRotateConversationId_Invocations: [Data] = []
+    public var e2eiRotateConversationId_MockError: Error?
+    public var e2eiRotateConversationId_MockMethod: ((Data) async throws -> WireCoreCrypto.CommitBundle)?
+    public var e2eiRotateConversationId_MockValue: WireCoreCrypto.CommitBundle?
+
+    public func e2eiRotate(conversationId: Data) async throws -> WireCoreCrypto.CommitBundle {
+        e2eiRotateConversationId_Invocations.append(conversationId)
+
+        if let error = e2eiRotateConversationId_MockError {
+            throw error
+        }
+
+        if let mock = e2eiRotateConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = e2eiRotateConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eiRotateConversationId`")
         }
     }
 
@@ -1734,10 +1762,10 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
     // MARK: - proteusLastErrorCode
 
     public var proteusLastErrorCode_Invocations: [Void] = []
-    public var proteusLastErrorCode_MockMethod: (() -> UInt32)?
-    public var proteusLastErrorCode_MockValue: UInt32?
+    public var proteusLastErrorCode_MockMethod: (() -> UInt16?)?
+    public var proteusLastErrorCode_MockValue: UInt16??
 
-    public func proteusLastErrorCode() -> UInt32 {
+    public func proteusLastErrorCode() -> UInt16? {
         proteusLastErrorCode_Invocations.append(())
 
         if let mock = proteusLastErrorCode_MockMethod {
@@ -2051,6 +2079,26 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
 
         try await mock(callbacks)
+    }
+
+    // MARK: - transaction
+
+    public var transactionCommand_Invocations: [any WireCoreCrypto.CoreCryptoCommand] = []
+    public var transactionCommand_MockError: Error?
+    public var transactionCommand_MockMethod: ((any WireCoreCrypto.CoreCryptoCommand) async throws -> Void)?
+
+    public func transaction(command: any WireCoreCrypto.CoreCryptoCommand) async throws {
+        transactionCommand_Invocations.append(command)
+
+        if let error = transactionCommand_MockError {
+            throw error
+        }
+
+        guard let mock = transactionCommand_MockMethod else {
+            fatalError("no mock for `transactionCommand`")
+        }
+
+        try await mock(command)
     }
 
     // MARK: - unload
@@ -3998,6 +4046,30 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
         }
 
         try await mock(qualifiedIDs, context)
+    }
+
+}
+
+public class MockMLSClientManagerProtocol: MLSClientManagerProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - initializeMLSClientIfNeeded
+
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_Invocations: [(qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS)] = []
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod: ((QualifiedClientID, Bool, Feature.MLS) async -> Void)?
+
+    public func initializeMLSClientIfNeeded(for qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS) async {
+        initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_Invocations.append((qualifiedClientID: qualifiedClientID, hasRegisteredMLSClient: hasRegisteredMLSClient, mlsFeature: mlsFeature))
+
+        guard let mock = initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod else {
+            fatalError("no mock for `initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature`")
+        }
+
+        await mock(qualifiedClientID, hasRegisteredMLSClient, mlsFeature)
     }
 
 }

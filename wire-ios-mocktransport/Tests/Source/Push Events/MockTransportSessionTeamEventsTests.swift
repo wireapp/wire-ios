@@ -277,6 +277,7 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
             let user2 = session.insertUser(withName: "some user")
             _ = session.insertTeamConversation(to: team, with: [user1, user2, self.sut.selfUser], creator: user1)
         }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
@@ -301,6 +302,7 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
             team.hasLegalHoldService = true
             XCTAssertTrue(user.requestLegalHold())
         }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         let events = pushChannelReceivedEvents as! [TestPushChannelEvent]

@@ -109,6 +109,8 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let decoder = JSONDecoder()
     private var onDecryptedEvents = PassthroughSubject<[UpdateEvent], Never>()
 
+    private let pullLastUpdateEventIDSync: PullLastUpdateEventIDSync
+
     // MARK: - Object lifecycle
 
     init(
@@ -125,6 +127,11 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         self.pushChannel = pushChannel
         self.updateEventDecryptor = updateEventDecryptor
         self.updateEventsLocalStore = updateEventsLocalStore
+        self.pullLastUpdateEventIDSync = PullLastUpdateEventIDSync(
+            selfClientID: selfClientID,
+            api: updateEventsAPI,
+            store: updateEventsLocalStore
+        )
     }
 
     // MARK: - Pull pending events
@@ -198,11 +205,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
     func pullLastEventID() async throws {
-        let lastEvent = try await updateEventsAPI.getLastUpdateEvent(
-            selfClientID: selfClientID
-        )
-
-        storeLastEventEnvelopeID(lastEvent.id)
+        try await pullLastUpdateEventIDSync.pull()
     }
 
     // MARK: - Fetch pending events

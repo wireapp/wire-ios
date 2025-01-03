@@ -39,16 +39,12 @@ final class StartUIViewController: UIViewController {
 
     let searchResultsViewController: SearchResultsViewController
 
-    var addressBookHelperType: AddressBookHelperProtocol.Type
-
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
 
     let isFederationEnabled: Bool
-
-    let quickActionsBar = StartUIInviteActionBar()
 
     let profilePresenter: ProfilePresenter
     private var emptyResultView: EmptySearchResultsView!
@@ -79,11 +75,7 @@ final class StartUIViewController: UIViewController {
         return nil
     }
 
-    /// init method for injecting mock addressBookHelper
-    ///
-    /// - Parameter addressBookHelperType: a class type conforms AddressBookHelperProtocol
     init(
-        addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
@@ -91,7 +83,6 @@ final class StartUIViewController: UIViewController {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
-        self.addressBookHelperType = addressBookHelperType
         self.searchResultsViewController = SearchResultsViewController(
             userSelection: UserSelection(),
             userSession: userSession,
@@ -168,10 +159,7 @@ final class StartUIViewController: UIViewController {
         searchResults.searchResultsView.emptyResultView = emptyResultView
         searchResults.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
-        quickActionsBar.inviteButton.addTarget(self, action: #selector(inviteMoreButtonTapped(_:)), for: .touchUpInside)
-
         createConstraints()
-        updateActionBar()
         searchResults.searchContactList()
 
         view.accessibilityViewIsModal = true
@@ -256,27 +244,6 @@ final class StartUIViewController: UIViewController {
         )
     }
 
-    // MARK: - Action bar
-
-    @objc
-    func inviteMoreButtonTapped(_ sender: UIButton?) {
-        if needsAddressBookPermission {
-            presentShareContactsViewController()
-        } else {
-            navigationController?.pushViewController(ContactsViewController(), animated: true)
-        }
-    }
-
-    func updateActionBar() {
-        if !(searchController.searchBar.text?.isEmpty ?? true) || userSession.selfUser.hasTeam {
-            searchResults.searchResultsView.accessoryView = nil
-        } else {
-            searchResults.searchResultsView.accessoryView = quickActionsBar
-        }
-
-        view.setNeedsLayout()
-    }
-
 }
 
 // MARK: - UISearchResultsUpdating, UISearchBarDelegate
@@ -298,4 +265,5 @@ extension StartUIViewController: UISearchResultsUpdating, UISearchBarDelegate {
         searchBar.text = ""
         performSearch()
     }
+
 }
