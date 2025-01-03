@@ -18,6 +18,7 @@
 
 import WireSyncEngine
 import XCTest
+
 @testable import Wire
 
 func == (lhs: CallInfoViewControllerInput, rhs: CallInfoViewControllerInput) -> Bool {
@@ -116,7 +117,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
             mockUsers: [otherUser]
         )
 
-        mockVoiceChannel.mockCallState = .incoming(video: false, shouldRing: true, degraded: false)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
         mockVoiceChannel.mockInitiator = otherUser
 
         // when
@@ -144,7 +145,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
             mockUsers: mockUsers
         )
 
-        mockVoiceChannel.mockCallState = .outgoing(degraded: false)
+        mockVoiceChannel.mockCallState = .outgoing(isVideo: false, degraded: false)
         mockVoiceChannel.mockInitiator = selfUser
 
         // when
@@ -173,7 +174,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         )
 
         ((mockConversation.sortedActiveParticipants.first as Any) as? MockUser)?.isTrusted = true
-        mockVoiceChannel.mockCallState = .incoming(video: false, shouldRing: true, degraded: true)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: false, shouldRing: true, degraded: true)
         mockVoiceChannel.mockInitiator = otherUser
         mockVoiceChannel.mockFirstDegradedUser = otherUser
 
@@ -204,7 +205,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         )
 
         ((mockConversation.sortedActiveParticipants.first as Any) as? MockUser)?.isTrusted = true
-        mockVoiceChannel.mockCallState = .outgoing(degraded: true)
+        mockVoiceChannel.mockCallState = .outgoing(isVideo: false, degraded: true)
         mockVoiceChannel.mockInitiator = selfUser
         mockVoiceChannel.mockFirstDegradedUser = otherUser
 
@@ -234,7 +235,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
             mockUsers: [otherUser]
         )
 
-        mockVoiceChannel.mockCallState = .outgoing(degraded: true)
+        mockVoiceChannel.mockCallState = .outgoing(isVideo: false, degraded: true)
         mockVoiceChannel.mockInitiator = selfUser
         mockVoiceChannel.mockFirstDegradedUser = otherUser
 
@@ -432,7 +433,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
             mockUsers: mockUsers
         )
 
-        mockVoiceChannel.mockCallState = .incoming(video: true, shouldRing: true, degraded: false)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockVoiceChannel.mockInitiator = otherUser
         mockVoiceChannel.mockIsVideoCall = true
         mockVoiceChannel.mockVideoState = .started
@@ -462,7 +463,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
             mockUsers: [otherUser]
         )
 
-        mockVoiceChannel.mockCallState = .incoming(video: true, shouldRing: true, degraded: false)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockVoiceChannel.mockInitiator = otherUser
         mockVoiceChannel.mockIsVideoCall = true
         mockVoiceChannel.mockVideoState = .stopped
@@ -492,7 +493,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
             mockUsers: mockUsers
         )
 
-        mockVoiceChannel.mockCallState = .outgoing(degraded: false)
+        mockVoiceChannel.mockCallState = .outgoing(isVideo: true, degraded: false)
         mockVoiceChannel.mockInitiator = selfUser
         mockVoiceChannel.mockIsVideoCall = true
         mockVoiceChannel.mockVideoState = .started
@@ -666,7 +667,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: otherUser, selfUser: selfUser, mockUsers: mockUsers)
 
-        mockVoiceChannel.mockCallState = .incoming(video: false, shouldRing: true, degraded: false)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
         mockVoiceChannel.mockInitiator = otherUser
         mockVoiceChannel.mockIsConferenceCall = true
 
@@ -691,7 +692,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: otherUser, selfUser: selfUser, mockUsers: mockUsers)
 
-        mockVoiceChannel.mockCallState = .outgoing(degraded: false)
+        mockVoiceChannel.mockCallState = .outgoing(isVideo: false, degraded: false)
         mockVoiceChannel.mockInitiator = selfUser
         mockVoiceChannel.mockIsConferenceCall = true
 
@@ -882,7 +883,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
             mockUsers: mockUsers
         )
 
-        mockVoiceChannel.mockCallState = .incoming(video: true, shouldRing: true, degraded: false)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockVoiceChannel.mockInitiator = otherUser
         mockVoiceChannel.mockIsVideoCall = true
         mockVoiceChannel.mockVideoState = .started
@@ -912,7 +913,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
             mockUsers: mockUsers
         )
 
-        mockVoiceChannel.mockCallState = .incoming(video: true, shouldRing: true, degraded: false)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockVoiceChannel.mockInitiator = otherUser
         mockVoiceChannel.mockIsVideoCall = true
         mockVoiceChannel.mockVideoState = .started
@@ -940,7 +941,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: otherUser, selfUser: selfUser, mockUsers: mockUsers)
 
-        mockVoiceChannel.mockCallState = .incoming(video: true, shouldRing: true, degraded: false)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockVoiceChannel.mockInitiator = otherUser
         mockVoiceChannel.mockIsVideoCall = true
         mockVoiceChannel.videoState = .started
@@ -966,7 +967,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: otherUser, selfUser: selfUser, mockUsers: mockUsers)
 
-        mockVoiceChannel.mockCallState = .outgoing(degraded: false)
+        mockVoiceChannel.mockCallState = .outgoing(isVideo: true, degraded: false)
         mockVoiceChannel.mockInitiator = selfUser
         mockVoiceChannel.mockIsVideoCall = true
         mockVoiceChannel.videoState = .started
@@ -1052,7 +1053,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: otherUser, selfUser: selfUser, mockUsers: mockUsers)
 
-        mockVoiceChannel.mockCallState = .incoming(video: true, shouldRing: true, degraded: false)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: true, shouldRing: true, degraded: false)
         mockVoiceChannel.mockInitiator = otherUser
         mockVoiceChannel.mockIsVideoCall = true
         mockVoiceChannel.mockParticipants = mockCallParticipants(
@@ -1082,7 +1083,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let fixture = CallInfoTestFixture(otherUser: otherUser, selfUser: selfUser, mockUsers: mockUsers)
 
-        mockVoiceChannel.mockCallState = .incoming(video: false, shouldRing: true, degraded: false)
+        mockVoiceChannel.mockCallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
         mockVoiceChannel.mockInitiator = otherUser
         mockVoiceChannel.mockIsVideoCall = false
         mockVoiceChannel.mockParticipants = mockCallParticipants(

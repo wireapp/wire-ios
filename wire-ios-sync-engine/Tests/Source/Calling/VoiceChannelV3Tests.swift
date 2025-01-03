@@ -72,7 +72,7 @@ class VoiceChannelV3Tests: MessagingTest {
     func testThatItAnswers_whenTheresAnIncomingCall() {
         // given
         wireCallCenterMock?.setMockCallState(
-            .incoming(video: false, shouldRing: false, degraded: false),
+            .incoming(isVideo: false, shouldRing: false, degraded: false),
             conversationId: conversation!.avsIdentifier!,
             callerId: AVSIdentifier.stub,
             isVideo: false

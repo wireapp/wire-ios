@@ -73,7 +73,7 @@ final class CallSystemMessageGenerator: NSObject {
             log.info("Appending missed call message: \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
 
             var isRelevant = true
-            if case .incoming(video: _, shouldRing: false, degraded: _)? = previousCallState {
+            if case .incoming(isVideo: _, shouldRing: false, degraded: _)? = previousCallState {
                 // Call was ignored by recipient
                 isRelevant = false
             }

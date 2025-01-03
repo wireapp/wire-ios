@@ -203,7 +203,7 @@ extension CallController: WireCallCenterCallStateObserver {
         switch (degradationState, callState) {
         case (
             .incoming(reason: let degradationReason),
-            .incoming(video: _, shouldRing: true, degraded: true)
+            .incoming(isVideo: _, shouldRing: true, degraded: true)
         ):
             router?.presentIncomingSecurityDegradedAlert(
                 for: degradationReason,

@@ -174,7 +174,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
         previousCallStates[conversationId] = callState
 
         switch callState {
-        case .incoming(video: _, shouldRing: true, degraded: _):
+        case .incoming(isVideo: _, shouldRing: true, degraded: _):
             guard let sessionManager = SessionManager.shared,
                   conversation.mutedMessageTypesIncludingAvailability == .none else { return }
 
@@ -187,7 +187,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
             } else if sessionManager.callNotificationStyle != .callKit {
                 playSoundIfAllowed(.ringingFromThemSound)
             }
-        case .incoming(video: _, shouldRing: false, degraded: _):
+        case .incoming(isVideo: _, shouldRing: false, degraded: _):
             mediaManager.stop(sound: .ringingFromThemInCallSound)
             mediaManager.stop(sound: .ringingFromThemSound)
         case let .terminating(reason: reason):

@@ -393,10 +393,9 @@ final class CallViewController: UIViewController {
 
     func toggleVideoState() {
         if !permissions.canAcceptVideoCalls {
-            permissions.requestOrWarnAboutVideoPermission { isVideoPermissionGranted in
+            permissions.requestOrWarnAboutVideoPermission { _ in
                 self.disableVideoIfNeeded()
                 self.updateVideoStatusPlaceholder()
-                guard isVideoPermissionGranted else { return }
             }
         }
 

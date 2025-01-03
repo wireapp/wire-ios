@@ -25,7 +25,7 @@ public extension AnalyticsEvent {
         public static func openSelfProfile(isMigrationDotActive: Bool) -> AnalyticsEvent {
             AnalyticsEvent(name: "ui.clicked-profile") {
                 if isMigrationDotActive {
-                    SegmentationEntry(key: "migration_dot_active", value: true)
+                    Segmentation(key: "migration_dot_active", value: true)
                 }
             }
         }
@@ -51,9 +51,9 @@ public extension AnalyticsEvent {
         ) -> AnalyticsEvent {
             AnalyticsEvent(name: "ui.clicked-personal-migration-cta") {
                 if isCreateTeamButtonUsed {
-                    SegmentationEntry(key: "clicked_create_team", value: true)
+                    Segmentation(key: "clicked_create_team", value: true)
                 } else {
-                    SegmentationEntry(key: "clicked_dismiss_cta", value: true)
+                    Segmentation(key: "clicked_dismiss_cta", value: true)
                 }
             }
         }

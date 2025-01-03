@@ -96,7 +96,7 @@ final class AudioMessageViewTests: XCTestCase {
         XCTAssert((sut.audioTrackPlayer?.isPlaying)!)
 
         // THEN
-        let incomingState = CallState.incoming(video: false, shouldRing: true, degraded: false)
+        let incomingState = CallState.incoming(isVideo: false, shouldRing: true, degraded: false)
         sut.callCenterDidChange(
             callState: incomingState,
             conversation: ZMConversation(context: coreDataStack.viewContext),
@@ -130,7 +130,7 @@ final class AudioMessageViewTests: XCTestCase {
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
 
         // THEN
-        let incomingState = CallState.incoming(video: false, shouldRing: true, degraded: false)
+        let incomingState = CallState.incoming(isVideo: false, shouldRing: true, degraded: false)
         sut.callCenterDidChange(
             callState: incomingState,
             conversation: ZMConversation(context: coreDataStack.viewContext),

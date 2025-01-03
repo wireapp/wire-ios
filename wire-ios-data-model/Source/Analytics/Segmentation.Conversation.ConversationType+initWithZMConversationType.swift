@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Types of conversations.
+import WireAnalytics
 
-public enum ConversationType: String, AnalyticsValue {
+public extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
 
-    case group
-    case oneOnOne = "one_on_one"
-    case unknown
-
-    public var analyticsValue: String {
-        rawValue
+    init?(_ conversationType: ZMConversationType) {
+        switch conversationType {
+        case .oneOnOne:
+            self = .oneOnOne
+        case .group:
+            self = .group
+        case .invalid, .self, .connection:
+            return nil
+        }
     }
-
 }

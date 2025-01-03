@@ -57,7 +57,7 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
             .Contributed.conversationContribution(
                 contributionType,
                 conversationType: .init(conversation.conversationType),
-                conversationSize: UInt(conversation.localParticipants.count)
+                conversationSize: conversation.localParticipants.count
             )
         )
     }

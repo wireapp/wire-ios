@@ -242,7 +242,7 @@ final class CallingV3Tests: IntegrationTest {
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 1)
-        stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: false, degraded: false))
+        stateObserver.checkLastNotificationHasCallState(.incoming(isVideo: false, shouldRing: false, degraded: false))
 
         // and when
         closeCall(user: localSelfUser, reason: .canceled)
@@ -270,7 +270,7 @@ final class CallingV3Tests: IntegrationTest {
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 1)
-        stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: false, degraded: false))
+        stateObserver.checkLastNotificationHasCallState(.incoming(isVideo: false, shouldRing: false, degraded: false))
 
         // and when
         closeCall(user: localSelfUser, reason: .canceled)
@@ -385,7 +385,7 @@ final class CallingV3Tests: IntegrationTest {
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 1)
-        stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: true, degraded: false))
+        stateObserver.checkLastNotificationHasCallState(.incoming(isVideo: false, shouldRing: true, degraded: false))
 
         // (2) we join
         // when
@@ -427,7 +427,7 @@ final class CallingV3Tests: IntegrationTest {
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 1)
-        stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: true, degraded: false))
+        stateObserver.checkLastNotificationHasCallState(.incoming(isVideo: false, shouldRing: true, degraded: false))
 
         // (2) we join
         // when
@@ -470,7 +470,7 @@ final class CallingV3Tests: IntegrationTest {
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 1)
-        stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: true, degraded: false))
+        stateObserver.checkLastNotificationHasCallState(.incoming(isVideo: false, shouldRing: true, degraded: false))
 
         // (2) we ignore
         // when
@@ -478,7 +478,7 @@ final class CallingV3Tests: IntegrationTest {
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 2)
-        stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: false, degraded: false))
+        stateObserver.checkLastNotificationHasCallState(.incoming(isVideo: false, shouldRing: false, degraded: false))
 
         // (3) the call is closed
         // when
@@ -503,7 +503,7 @@ final class CallingV3Tests: IntegrationTest {
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 2)
-        stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: false, degraded: false))
+        stateObserver.checkLastNotificationHasCallState(.incoming(isVideo: false, shouldRing: false, degraded: false))
 
         // (2) we join
         // when
@@ -655,7 +655,7 @@ final class CallingV3Tests: IntegrationTest {
         // then
         XCTAssertEqual(
             conversationUnderTest.voiceChannel?.state,
-            .incoming(video: false, shouldRing: true, degraded: false)
+            .incoming(isVideo: false, shouldRing: true, degraded: false)
         )
     }
 

@@ -57,7 +57,7 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
             .Contributed.conversationContribution(
                 .textMessage,
                 conversationType: .init(conversation.conversationType),
-                conversationSize: UInt(conversation.localParticipants.count)
+                conversationSize: conversation.localParticipants.count
             )
         )
     }

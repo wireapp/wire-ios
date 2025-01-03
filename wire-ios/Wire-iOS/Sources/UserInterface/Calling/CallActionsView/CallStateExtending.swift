@@ -42,14 +42,14 @@ extension CallState: CallStateExtending {
 
     var isTerminating: Bool {
         switch self {
-        case .terminating, .incoming(video: _, shouldRing: false, degraded: _): true
+        case .terminating, .incoming(isVideo: _, shouldRing: false, degraded: _): true
         default: false
         }
     }
 
     var canAccept: Bool {
         switch self {
-        case .incoming(video: _, shouldRing: true, degraded: _): true
+        case .incoming(isVideo: _, shouldRing: true, degraded: _): true
         default: false
         }
     }

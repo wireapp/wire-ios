@@ -16,29 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Represents a key-value pair for analytics event segmentation.
-///
-/// This struct is used to provide additional, structured information about an analytics event.
-/// Each `SegmentationEntry` consists of a key (identifying the type of information) and a value
-/// (the actual data point).
+extension AnalyticsEvent.Segmentation {
 
-struct SegmentationEntry: Hashable, Sendable {
+    enum Team {
 
-    let key: String
-    let value: String
+        /// Creates a ``Segmentation`` providing the information if the user is part of a team (redundant to
+        /// `is_team_member`).
 
-    init(key: String, value: String) {
-        self.key = key
-        self.value = value
-    }
-
-    init(key: String, value: Int) {
-        self.key = key
-        self.value = "\(value)"
-    }
-
-    init(key: String, value: Bool) {
-        self.key = key
-        self.value = value ? "True" : "False"
+        static func teamIsTeam(_ value: Bool) -> AnalyticsEvent.Segmentation {
+            .init(key: "team_is_team", value: value)
+        }
     }
 }

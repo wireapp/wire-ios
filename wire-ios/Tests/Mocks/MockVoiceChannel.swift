@@ -20,7 +20,7 @@ import Foundation
 
 final class MockVoiceChannel: NSObject, VoiceChannel {
     var conversation: ZMConversation?
-    var mockCallState: CallState = .incoming(video: false, shouldRing: true, degraded: false)
+    var mockCallState: CallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
     var mockCallDuration: TimeInterval?
     var mockParticipants: [CallParticipant] = []
     var mockIsConstantBitRateAudioActive: Bool = false

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,18 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+public extension AnalyticsEvent.Segmentation {
+
+    enum Conversation {
+
+        public enum ConversationType: String {
+            case group
+            case oneOnOne = "one_to_one"
+        }
+
+        // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
+        @available(*, deprecated, message: "Use `ConversationType`.")
+        enum LegacyConversationType: String {
+            case group
+            case oneOnOne = "one_on_one"
+            case unknown
+        }
+    }
+}
 
 extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
 
-    init?(_ conversationType: ZMConversationType) {
-        switch conversationType {
+    func mapToConversationType() -> AnalyticsEvent.Segmentation.Conversation.LegacyConversationType {
+        switch self {
         case .group:
-            self = .group
+            .group
         case .oneOnOne:
-            self = .oneOnOne
-        default:
-            return nil
+            .oneOnOne
         }
     }
 }

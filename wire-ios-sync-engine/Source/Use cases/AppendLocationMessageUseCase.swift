@@ -47,7 +47,7 @@ public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtoco
             .Contributed.conversationContribution(
                 .locationMessage,
                 conversationType: .init(conversation.conversationType),
-                conversationSize: UInt(conversation.localParticipants.count)
+                conversationSize: conversation.localParticipants.count
             )
         )
     }
