@@ -18,6 +18,7 @@
 
 import UIKit
 import WireSyncEngine
+import WireLogging
 
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
@@ -38,7 +39,7 @@ final class AuthenticatedRouter {
 
     private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
-    // TODO: move call end analytics here?
+    private let callEndedAnalyticsController: CallEndedAnalyticsController // TODO: find a proper place (user session?)
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -69,7 +70,6 @@ final class AuthenticatedRouter {
         self.activeCallRouter = ActiveCallRouter(
             mainWindow: mainWindow,
             userSession: userSession,
-            toggleVideoPublisher: WireCallCenterV3.setVideoStatePublisher().map { _, _, _ in }.eraseToAnyPublisher(),
             topOverlayPresenter: .init(mainWindow: mainWindow)
         )
         self.zClientControllerBuilder = .init(
@@ -81,6 +81,14 @@ final class AuthenticatedRouter {
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
+
+        callEndedAnalyticsController = .init(
+            contextProvider: userSession.contextProvider,
+            callCenterType: WireCallCenterV3.self,
+            toggleVideoPublisher: WireCallCenterV3.setVideoStatePublisher().map { _, _, _ in }.eraseToAnyPublisher(),
+            analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
+            logger: WireLogger.analytics
+        )
 
         self.featureChangeObserverToken = NotificationCenter.default.addObserver(
             forName: .featureDidChangeNotification,

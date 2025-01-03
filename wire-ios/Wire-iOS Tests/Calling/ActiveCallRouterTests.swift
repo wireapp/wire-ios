@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import XCTest
 
 @testable import Wire
@@ -35,7 +34,6 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         sut = ActiveCallRouter(
             mainWindow: .init(),
             userSession: userSession,
-            toggleVideoPublisher: Empty().eraseToAnyPublisher(),
             topOverlayPresenter: mockTopOverlayPresenter
         )
     }

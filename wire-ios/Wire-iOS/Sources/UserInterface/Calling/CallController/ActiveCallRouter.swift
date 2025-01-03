@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import UIKit
 import WireCommonComponents
-import WireLogging
 import WireSyncEngine
 
 enum AlertChoice {
@@ -85,7 +83,6 @@ final class ActiveCallRouter<TopOverlayPresenter>
     private let mainWindow: UIWindow
     private let callController: CallController
     private let callQualityController: CallQualityController
-    private let callEndedAnalyticsController: CallEndedAnalyticsController
     private var transitioningDelegate: CallQualityAnimator
 
     private var isCallQualityShown = false
@@ -96,7 +93,6 @@ final class ActiveCallRouter<TopOverlayPresenter>
     init(
         mainWindow: UIWindow,
         userSession: UserSession,
-        toggleVideoPublisher: AnyPublisher<Void, Never>,
         topOverlayPresenter: TopOverlayPresenter
     ) {
         self.mainWindow = mainWindow
@@ -111,14 +107,6 @@ final class ActiveCallRouter<TopOverlayPresenter>
             submitCallQualitySurvey: userSession.makeCallQualitySurveyUseCase()
         )
         self.transitioningDelegate = CallQualityAnimator()
-
-        self.callEndedAnalyticsController = .init(
-            contextProvider: userSession.contextProvider,
-            callCenterType: WireCallCenterV3.self,
-            toggleVideoPublisher: toggleVideoPublisher,
-            analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
-            logger: WireLogger.analytics
-        )
 
         callController.router = self
         callQualityController.router = self
