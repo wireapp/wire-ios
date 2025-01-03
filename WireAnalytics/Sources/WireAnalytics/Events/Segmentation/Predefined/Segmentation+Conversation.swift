@@ -32,10 +32,7 @@ public extension AnalyticsEvent.Segmentation {
         /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
 
         static func conversationSize(_ value: Int) -> AnalyticsEvent.Segmentation {
-            .init(
-                key: "conversation_size",
-                value: UInt(value).analyticsValue // TODO: [WPB-12199] is `.analyticsValue` needed?
-            )
+            .init(key: "conversation_size", value: value)
         }
 
         /// Creates a ``Segmentation`` for the number of guests in a conversation which are not members of any team
