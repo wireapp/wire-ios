@@ -22,7 +22,7 @@ struct DeveloperDebugActionsView: View {
 
     @ObservedObject var viewModel: DeveloperDebugActionsViewModel
 
-    var body: some View {//
+    var body: some View {
         List(viewModel.buttons) { button in
             Button(action: button.action) {
                 Text(button.title)
