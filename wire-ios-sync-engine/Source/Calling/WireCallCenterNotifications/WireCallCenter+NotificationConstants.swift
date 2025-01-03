@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension WireCallCenterV3 {
+public extension WireCallCenterV3 {
 
     /// The key of the conversation ID value in a notification's `userInfo` dictionary.
     /// The type of the value is ``AVSIdentifier``.
-    nonisolated public static var conversationIDUserInfoKey: String { "conversationID" }
+    nonisolated static var conversationIDUserInfoKey: String { "conversationID" }
 }

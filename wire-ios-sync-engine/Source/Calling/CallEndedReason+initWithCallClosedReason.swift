@@ -20,7 +20,7 @@ import WireAnalytics
 
 public extension AnalyticsEvent.Calling.CallEndedReason {
 
-    init (_ reason: CallClosedReason) {
+    init(_ reason: CallClosedReason) {
         self.init(value: Int(reason.wcall_reason))
     }
 }

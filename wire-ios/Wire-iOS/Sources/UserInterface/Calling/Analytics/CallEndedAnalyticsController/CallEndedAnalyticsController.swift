@@ -50,7 +50,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
             contextProvider: contextProvider
         )
 
-        toggleVideoObservationToken = notificationCenter.addObserver(
+        self.toggleVideoObservationToken = notificationCenter.addObserver(
             forName: WireCallCenterV3.didToggleVideoNotification,
             object: .none, // TODO: pass actual instance?
             queue: .none
