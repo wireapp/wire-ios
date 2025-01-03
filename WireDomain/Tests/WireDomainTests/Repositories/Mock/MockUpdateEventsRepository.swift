@@ -21,6 +21,7 @@ import Foundation
 import WireAPI
 @testable import WireDomain
 
+/// Since stencil does not handle Combine code properly, we need to create this mock manually.
 class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
 
     // MARK: - Life cycle
