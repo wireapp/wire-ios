@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -358,7 +358,7 @@ extension SettingsTableViewController {
 
 extension SettingsTableViewController: UserObserving {
     func userDidChange(_ note: UserChangeInfo) {
-        if note.accentColorValueChanged {
+        if note.accentColorValueChanged || note.readReceiptsEnabledChanged {
             refreshData()
         }
 

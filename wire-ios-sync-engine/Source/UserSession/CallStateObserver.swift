@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             else { return }
 
             switch callState {
-            case .incoming(video: _, shouldRing: let shouldRing, degraded: _):
+            case .incoming(isVideo: _, shouldRing: let shouldRing, degraded: _):
                 uiConv.isIgnoringCall = uiConv.mutedMessageTypesIncludingAvailability != .none || !shouldRing
                 uiConv.isCallDeviceActive = false
             case .terminating, .none, .mediaStopped:
