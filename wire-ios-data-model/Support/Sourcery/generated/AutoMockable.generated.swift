@@ -4050,6 +4050,30 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
 }
 
+public class MockMLSClientManagerProtocol: MLSClientManagerProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - initializeMLSClientIfNeeded
+
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_Invocations: [(qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS)] = []
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod: ((QualifiedClientID, Bool, Feature.MLS) async -> Void)?
+
+    public func initializeMLSClientIfNeeded(for qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS) async {
+        initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_Invocations.append((qualifiedClientID: qualifiedClientID, hasRegisteredMLSClient: hasRegisteredMLSClient, mlsFeature: mlsFeature))
+
+        guard let mock = initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod else {
+            fatalError("no mock for `initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature`")
+        }
+
+        await mock(qualifiedClientID, hasRegisteredMLSClient, mlsFeature)
+    }
+
+}
+
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - Life cycle
