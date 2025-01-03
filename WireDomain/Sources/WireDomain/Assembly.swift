@@ -62,11 +62,6 @@ public final class Assembly {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var updateEventDecryptor = UpdateEventDecryptor(
-        proteusService: proteusService,
-        context: context
-    )
-
     // MARK: - Repositories and local stores Init
 
     private lazy var userLocalStore = UserLocalStore(context: context)
@@ -96,10 +91,6 @@ extension Assembly {
 
         Injector.register(PushChannelProtocol.self) {
             self.pushChannel
-        }
-
-        Injector.register(UpdateEventDecryptorProtocol.self) {
-            self.updateEventDecryptor
         }
 
         Injector.register(UpdateEventsLocalStoreProtocol.self) {

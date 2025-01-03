@@ -50,7 +50,7 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        ongoingTask?.cancel()
+        onGoingTask?.cancel()
         let cookieStorage: ZMPersistentCookieStorage = Injector.resolve()
         let isAuthenticated = cookieStorage.isAuthenticated
 
@@ -64,7 +64,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
         self.contentHandler = contentHandler
 
-        ongoingTask = Task {
+        onGoingTask = Task {
             do {
                 let notificationUserInfo = request.content.userInfo
 
@@ -175,6 +175,6 @@ final class NotificationService: UNNotificationServiceExtension {
         // Content handler should only be consumed once.
         contentHandler = nil
         notificationSession = nil
-        ongoingTask = nil
+        onGoingTask = nil
     }
 }
