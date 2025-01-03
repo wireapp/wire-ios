@@ -37,7 +37,7 @@ public class WireCallCenterV3: NSObject {
 
     // MARK: - Properties
 
-    private let notificationCenter: NotificationCenter = .default
+    private let notificationCenter: NotificationCenter
 
     /// The selfUser remoteIdentifier
     let selfUserId: AVSIdentifier
@@ -128,12 +128,14 @@ public class WireCallCenterV3: NSObject {
         avsWrapper: AVSWrapperType? = nil,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        notificationCenter: NotificationCenter
     ) {
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
+        self.notificationCenter = notificationCenter
 
         super.init()
 

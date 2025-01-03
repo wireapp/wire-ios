@@ -61,7 +61,8 @@ class CallingRequestStrategyTests: MessagingTest {
                 clientId: UUID().transportString(),
                 uiMOC: uiMOC,
                 flowManager: FlowManagerMock(),
-                transport: WireCallCenterTransportMock()
+                transport: WireCallCenterTransportMock(),
+                notificationCenter: .init()
             )
         }
         setupMockMessageSyncForMLSSuccessfully()
