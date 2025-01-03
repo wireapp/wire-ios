@@ -35,7 +35,7 @@ final class NotificationService: UNNotificationServiceExtension {
     private let logger = WireLogger.notifications
     private var notificationSession: NotificationSession?
     private var contentHandler: ((UNNotificationContent) -> Void)?
-    private var ongoingTask: Task<Void, Never>?
+    private var onGoingTask: Task<Void, Never>?
 
     // MARK: - Object lifecycle
 
