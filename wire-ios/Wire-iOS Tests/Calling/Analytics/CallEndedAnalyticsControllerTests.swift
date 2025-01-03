@@ -54,6 +54,9 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
     func testExample() throws {
         // When
         // TODO: send call started event + call cancelled event
+        // - trigger WireCallCenterCallStateNotification and others from here?
+        // - create copies of the notifications?
+        // - is there another way to mock the call center?
 
         // Then
         // ensure the correct event has been sent to the analytics backend
