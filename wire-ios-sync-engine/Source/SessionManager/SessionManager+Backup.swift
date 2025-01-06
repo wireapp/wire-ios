@@ -79,9 +79,9 @@ extension SessionManager {
         dispatchGroup: ZMSDispatchGroup,
         handle: String
     ) throws -> URL {
-        return try workerQueue.sync {
+        try workerQueue.sync {
             switch result {
-            case .success(let info):
+            case let .success(info):
                 do {
                     // 1. Compress the backup
                     let compressed = try compress(backup: info)
@@ -93,7 +93,7 @@ extension SessionManager {
                 } catch {
                     throw error
                 }
-            case .failure(let error):
+            case let .failure(error):
                 throw error
             }
         }

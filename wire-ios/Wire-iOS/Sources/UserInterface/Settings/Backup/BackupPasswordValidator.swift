@@ -34,7 +34,7 @@ struct BackupPasswordValidator: BackupPasswordValidatorProtocol {
     }
 
     var localizedRulesDescription: String {
-        return PasswordRuleSet.localizedErrorMessage
+        PasswordRuleSet.localizedErrorMessage
     }
 
 }

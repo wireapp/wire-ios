@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import class WireSyncEngine.SessionManager
 import WireSettingsUI
+import class WireSyncEngine.SessionManager
 
 extension SessionManager: BackupSource {}
