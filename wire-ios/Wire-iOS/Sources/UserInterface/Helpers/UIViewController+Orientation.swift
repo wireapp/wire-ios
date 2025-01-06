@@ -25,9 +25,9 @@ extension UIViewController {
     var wr_supportedInterfaceOrientations: UIInterfaceOrientationMask {
         switch UIDevice.current.userInterfaceIdiom {
         case .pad:
-            return .all
+            .all
         default:
-            return .portrait
+            .portrait
         }
     }
 }
