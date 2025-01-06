@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@ final class SyncManager: SyncManagerProtocol {
     private let userRepository: any UserRepositoryProtocol
     private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
     private let featureConfigsRepository: any FeatureConfigRepositoryProtocol
+    private let backendConfigRepository: any BackendConfigRepositoryProtocol
     private let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
     private let mlsProvider: MLSProvider
     private let context: NSManagedObjectContext
@@ -77,6 +78,7 @@ final class SyncManager: SyncManagerProtocol {
         userRepository: any UserRepositoryProtocol,
         conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
         featureConfigsRepository: any FeatureConfigRepositoryProtocol,
+        backendConfigRepository: any BackendConfigRepositoryProtocol,
         updateEventProcessor: any UpdateEventProcessorProtocol,
         pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol,
         mlsProvider: MLSProvider,
@@ -89,6 +91,7 @@ final class SyncManager: SyncManagerProtocol {
         self.userRepository = userRepository
         self.conversationLabelsRepository = conversationLabelsRepository
         self.featureConfigsRepository = featureConfigsRepository
+        self.backendConfigRepository = backendConfigRepository
         self.updateEventProcessor = updateEventProcessor
         self.pushSupportedProtocolsUseCase = pushSupportedProtocolsUseCase
         self.mlsProvider = mlsProvider
@@ -108,6 +111,7 @@ final class SyncManager: SyncManagerProtocol {
             try await teamRepository.pullSelfLegalholdInfo()
             try await conversationLabelsRepository.pullConversationLabels()
             try await featureConfigsRepository.pullFeatureConfigs()
+            await backendConfigRepository.pullMLSBackendStatus()
             try await pushSupportedProtocolsUseCase.invoke()
             let oneOnOneResolver = makeOneOnOneResolver()
             try await oneOnOneResolver.resolveAllOneOnOneConversations()

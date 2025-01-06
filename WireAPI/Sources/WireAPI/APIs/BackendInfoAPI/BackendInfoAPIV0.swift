@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,19 @@
 
 import Foundation
 
-class BackendInfoAPIImpl: BackendInfoAPI {
+class BackendInfoAPIV0: BackendInfoAPI, VersionedAPI {
+
+    // MARK: - Properties
 
     let apiService: any APIServiceProtocol
+
+    var apiVersion: APIVersion { .v0 }
 
     init(apiService: any APIServiceProtocol) {
         self.apiService = apiService
     }
 
+    // 'api-version` is a not a versioned endpoint, no version prefix is ​​needed.
     func getBackendInfo() async throws -> BackendInfo {
         let request = try URLRequestBuilder(path: "/api-version")
             .withMethod(.get)
@@ -40,6 +45,10 @@ class BackendInfoAPIImpl: BackendInfoAPI {
         return try ResponseParser()
             .success(code: .ok, type: BackendInfoResponse.self)
             .parse(code: response.statusCode, data: data)
+    }
+
+    func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys {
+        throw BackendInfoAPIError.unsupportedEndpointForAPIVersion
     }
 
 }
