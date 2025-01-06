@@ -24,19 +24,19 @@ import XCTest
 final class PrivateUserDefaultsTests: XCTestCase {
     var sut: PrivateUserDefaults<String>!
     var mockUserDefaults: UserDefaults!
-    
+
     override func setUp() {
         super.setUp()
         mockUserDefaults = UserDefaults(
             suiteName: Scaffolding.defaultsTestSuiteName
         )
-        
+
         sut = PrivateUserDefaults(
             userID: Scaffolding.userID,
             storage: mockUserDefaults
         )
     }
-    
+
     override func tearDown() {
         mockUserDefaults.removePersistentDomain(
             forName: Scaffolding.defaultsTestSuiteName
@@ -45,13 +45,9 @@ final class PrivateUserDefaultsTests: XCTestCase {
         sut = nil
         super.tearDown()
     }
-    
+
     // MARK: - Tests
-    func test_example() {
-        
-        XCTFail("this is an example failure")
-    }
-    
+
     func test_setUUID() throws {
         // Given
         let uuid = UUID()
