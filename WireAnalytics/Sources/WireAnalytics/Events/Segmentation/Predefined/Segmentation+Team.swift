@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Types of conversations.
+extension AnalyticsEvent.Segmentation {
 
-public enum ConversationType: String, AnalyticsValue {
+    enum Team {
 
-    case group
-    case oneOnOne = "one_on_one"
-    case unknown
+        /// Creates a ``Segmentation`` providing the information if the user is part of a team (redundant to
+        /// `is_team_member`).
 
-    public var analyticsValue: String {
-        rawValue
+        static func teamIsTeam(_ value: Bool) -> AnalyticsEvent.Segmentation {
+            .init(key: "team_is_team", value: value)
+        }
     }
-
 }
