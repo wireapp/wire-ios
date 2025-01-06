@@ -16,20 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Text styles defined in Wire's design system.
+import SwiftUI
+import WireTestingPackage
+import XCTest
 
-public enum WireTextStyle: CaseIterable, Sendable {
+@testable import WireDesign
 
-    case largeTitle
-    case h1
-    case h2
-    case h3
-    case h4
-    case h5
-    case body1
-    case body2
-    case body3
-    case subline1
-    case buttonSmall
-    case buttonBig
+final class LinkButtonStyleSnapshotTests: XCTestCase {
+
+    private var snapshotHelper: SnapshotHelper!
+
+    @MainActor
+    func test() {
+        // TODO: [WPB-14957] implement snapshot tests
+    }
 }
