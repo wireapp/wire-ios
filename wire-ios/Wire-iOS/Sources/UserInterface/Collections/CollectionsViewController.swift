@@ -220,7 +220,6 @@ final class CollectionsViewController: UIViewController {
 
     // MARK: - device orientation
 
-    /// Notice: for iPad with iOS9 in landscape mode, horizontalSizeClass is .unspecified (.regular in iOS11).
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         wr_supportedInterfaceOrientations
     }
