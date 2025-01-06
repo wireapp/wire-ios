@@ -27,7 +27,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     public enum Action: Sendable {
         case cancel
         case toLearnMoreAboutPlans
-        case completionGoToApp
+        case completionDismiss
+        case completionGoToConversations
         case completionGoToTeamManagement
     }
 
@@ -94,7 +95,8 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case toTeamCreation(teamName: String)
         case toError(error: any Error)
         case toCompletion(teamName: String)
-        case toApp
+        case toCompletionDismiss
+        case toConversations
         case toTeamManagement
     }
 
@@ -110,6 +112,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     let privacyPolicyURL: String
     let useCase: any IndividualToTeamMigrationUseCase
     let userProfileName: String
+    private var analyticsFlowCompletionAction: AnalyticsEvent.User.IndividualToTeamMigration.CompletedAction?
     private let analyticsEventTracker: (any AnalyticsEventTracker)?
 
     public init(
@@ -166,6 +169,14 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         transition(to: .toPlans)
     }
 
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if isBeingDismissed {
+            analyticsEventTracker?
+                .trackEvent(.User.personalTeamCreationFlowCompleted(action: analyticsFlowCompletionAction))
+        }
+    }
+
     @MainActor
     func transition(to transition: Transition) {
         switch transition {
@@ -217,7 +228,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             currentStep = step
             let vc = hostedView(
                 for: step,
-                stepIndex: 4,
+                stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
@@ -236,17 +247,20 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             currentStep = step
             let vc = hostedView(
                 for: step,
-                stepIndex: childController.viewControllers.count + 1,
+                stepIndex: 4,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.setViewControllers([vc], animated: true)
-            isModalInPresentation = false
-        case .toApp:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .backToWire))
-            actionCallback(.completionGoToApp)
+            isModalInPresentation = true
+        case .toCompletionDismiss:
+            analyticsFlowCompletionAction = nil
+            actionCallback(.completionDismiss)
+        case .toConversations:
+            analyticsFlowCompletionAction = .backToWire
+            actionCallback(.completionGoToConversations)
         case .toTeamManagement:
-            analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowCompleted(action: .openTeamManagement))
+            analyticsFlowCompletionAction = .openTeamManagement
             actionCallback(.completionGoToTeamManagement)
         }
     }
@@ -337,17 +351,21 @@ private func hostedView(
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     )
     vc.title = step.title
-    vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
-        action: UIAction { _ in
-            switch step {
-            case .teamPlanSelection, .teamName, .confirmation:
-                transitionCallback(.toCancellationAlert)
-            case .completion:
-                transitionCallback(.toApp)
-            }
-        },
-        accessibilityLabel: step.closeButtonAccessibilityLabel
-    )
+    if case .completion = step {
+        vc.navigationItem.rightBarButtonItem = nil
+    } else {
+        vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { _ in
+                switch step {
+                case .teamPlanSelection, .teamName, .confirmation:
+                    transitionCallback(.toCancellationAlert)
+                case .completion:
+                    transitionCallback(.toCompletionDismiss)
+                }
+            },
+            accessibilityLabel: step.closeButtonAccessibilityLabel
+        )
+    }
     // Hide navigation bar title
     vc.navigationItem.titleView = UIView()
     vc.navigationItem.rightBarButtonItem?.tintColor = ColorTheme.Backgrounds.onBackground
@@ -397,7 +415,7 @@ private func viewFor(
         CompletionView(profileName: profileName, teamName: teamName) { action in
             switch action {
             case .goBack:
-                transitionCallback(.toApp)
+                transitionCallback(.toConversations)
             case .goToTeamManagement:
                 transitionCallback(.toTeamManagement)
             }

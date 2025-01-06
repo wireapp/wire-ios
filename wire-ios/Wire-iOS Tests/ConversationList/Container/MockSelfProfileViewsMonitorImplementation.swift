@@ -16,15 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A protocol which represents a conversation that can be filtered by query.
-public protocol FilterableConversation {
-    associatedtype Participant: FilterableConversationParticipant
+@testable import Wire
 
-    var name: String { get }
+class MockSelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor {
 
-    /// All participants of the conversation except the self user.
-    var otherParticipants: [Participant] { get }
+    private(set) var didViewSelfProfile: Bool
+    private let onDidViewSelfProfileCallback: @Sendable () -> Void
 
-    /// True if `self` is a one-on-one conversation, otherwise false.
-    var isOneOnOne: Bool { get }
+    init(didViewSelfProfile: Bool, onDidViewSelfProfileCallback: @escaping @Sendable () -> Void = {}) {
+        self.didViewSelfProfile = didViewSelfProfile
+        self.onDidViewSelfProfileCallback = onDidViewSelfProfileCallback
+    }
+
+    func onDidViewSelfProfile() {
+        didViewSelfProfile = true
+        onDidViewSelfProfileCallback()
+    }
 }

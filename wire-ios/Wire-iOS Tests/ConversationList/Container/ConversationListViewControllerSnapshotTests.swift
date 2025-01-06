@@ -67,6 +67,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
         zClientViewController = ZClientViewController(
             account: coreDataStack.account,
+            selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: nil
         )
