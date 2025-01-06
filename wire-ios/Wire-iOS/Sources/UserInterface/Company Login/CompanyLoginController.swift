@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 import WireTransport
 
@@ -330,9 +331,17 @@ extension CompanyLoginController {
             case let .success(backendEnvironment):
                 requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
                     guard didConfirm else { return }
-                    sessionManager.switchBackend(to: backendEnvironment)
-                    BackendEnvironment.shared = backendEnvironment
-                    self.startAutomaticSSOFlow(promptOnError: false)
+                    sessionManager.switchBackend(to: backendEnvironment) { error in
+                        if let error {
+                            WireLogger.authentication.error(
+                                "sso login flow failed due to backend switch error: \(String(describing: error))"
+                            )
+                            self.presentCompanyLoginAlert(error: .unknown)
+                        }
+
+                        BackendEnvironment.shared = backendEnvironment
+                        self.startAutomaticSSOFlow(promptOnError: false)
+                    }
                 }
             case let .failure(error):
                 if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
