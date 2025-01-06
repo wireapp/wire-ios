@@ -81,7 +81,9 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             messageTime: mockDateProvider.now,
             previousCallState: nil
         ).post(in: viewContext.notificationContext)
+
         mockDateProvider.now.addTimeInterval(3)
+
         WireCallCenterCallStateNotification(
             context: viewContext,
             callState: .terminating(reason: .canceled),
@@ -102,6 +104,65 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         XCTAssertEqual(segmentation["call_screen_share_unique"], "0")
         XCTAssertEqual(segmentation["call_direction"], "incoming")
         XCTAssertEqual(segmentation["call_duration"], "0")
+        XCTAssertEqual(segmentation["conversation_type"], "group")
+        XCTAssertEqual(segmentation["conversation_size"], "2")
+        XCTAssertEqual(segmentation["conversation_guests"], "0")
+        XCTAssertEqual(segmentation["conversation_guests_pro"], "0")
+        XCTAssertEqual(segmentation["call_participants"], "0")
+        XCTAssertEqual(segmentation["call_end_reason"], "4") // WCALL_REASON_CANCELED = 4
+        XCTAssertEqual(segmentation["conversation_services"], "0")
+        XCTAssertEqual(segmentation["call_av_switch_toggle"], "False")
+        XCTAssertEqual(segmentation["call_video"], "True")
+        XCTAssertEqual(segmentation["team_is_team"], "False")
+    }
+
+    func testOutgoingOneOnOneCall() throws {
+        // Given
+        let conversationID = setupOneOnOneConversation()
+
+        // When
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .outgoing(isVideo: false, degraded: false),
+            conversationId: conversationID,
+            callerId: otherUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+
+        mockDateProvider.now.addTimeInterval(1)
+
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .established,
+            conversationId: conversationID,
+            callerId: otherUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: .outgoing(isVideo: false, degraded: false)
+        ).post(in: viewContext.notificationContext)
+
+        mockDateProvider.now.addTimeInterval(3)
+
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .terminating(reason: .everyoneLeft),
+            conversationId: conversationID,
+            callerId: otherUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: .outgoing(isVideo: false, degraded: false)
+        ).post(in: viewContext.notificationContext)
+
+        // Then
+        let event = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.last)
+        let segmentation = event.segmentation
+        XCTAssertEqual(event.name, "calling.ended_call")
+        XCTAssert(segmentation.contains { $0.key == "device_model" })
+        XCTAssert(segmentation.contains { $0.key == "os_version" })
+        XCTAssertEqual(segmentation["call_screen_share"], "False")
+        XCTAssertEqual(segmentation["call_screen_share_duration"], "0")
+        XCTAssertEqual(segmentation["call_screen_share_unique"], "0")
+        XCTAssertEqual(segmentation["call_direction"], "outgoing")
+        XCTAssertEqual(segmentation["call_duration"], "3")
         XCTAssertEqual(segmentation["conversation_type"], "group")
         XCTAssertEqual(segmentation["conversation_size"], "2")
         XCTAssertEqual(segmentation["conversation_guests"], "0")
@@ -144,6 +205,20 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
                 team: nil,
                 domain: "wire.com",
                 in: viewContext
+            ).avsIdentifier!
+        }
+    }
+
+    private func setupOneOnOneConversation() -> AVSIdentifier {
+        syncContext.performAndWait { [syncContext] in
+            defer { try! syncContext.save() }
+            let team = Team.fetchOrCreate(with: .init(), in: syncContext)
+            return ModelHelper().createOneOnOne(
+                id: .init(),
+                domain: "wire.com",
+                with: otherUser,
+                team: team,
+                in: syncContext
             ).avsIdentifier!
         }
     }
