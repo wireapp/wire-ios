@@ -430,9 +430,9 @@ final class CallGridViewController: UIViewController {
                     quality: oneStreamDisplayedExcludingSelf ? .high : .low
                 )
             }
-        
+
         let newVisibleClientsSharingVideo = Set(clientStreams)
-        
+
         guard newVisibleClientsSharingVideo != visibleClientsSharingVideo else { return }
         delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clientStreams))
         visibleClientsSharingVideo = newVisibleClientsSharingVideo
