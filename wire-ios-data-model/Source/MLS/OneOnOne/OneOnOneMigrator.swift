@@ -151,13 +151,22 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
+
+            // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both conversations here.
+            let proteusConversations: [ZMConversation] = fetchAllOneOnOneProteusConversations(otherUserID: userID, in: context)
+            var allProteusConversations = Set(proteusConversations)
+            if let oneOnOneConservsation = otherUser.oneOnOneConversation {
+                allProteusConversations.insert(oneOnOneConservsation)
+            }
+            
             // move local messages from proteus conversation if it exists
-            if let existingConversation = otherUser.oneOnOneConversation,
-               existingConversation.messageProtocol == .proteus {
+            for proteusConversation in allProteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(existingConversation.allMessages)
+                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
 
+            }
+            if proteusConversations.count > 0 {
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }
@@ -166,26 +175,47 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             otherUser.oneOnOneConversation = mlsConversation
         }
     }
-
-    private func createOrJoinMLSConversationIfNeeded(
-        userID: QualifiedID,
-        mlsGroupID: MLSGroupID,
-        removalKeys: BackendMLSPublicKeys?,
-        in context: NSManagedObjectContext
-    ) async throws {
-        guard let epoch = await fetchMLSConversationEpoch(mlsGroupID: mlsGroupID, in: context) else {
-            throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
+    
+    func fetchAllOneOnOneProteusConversations(otherUserID: QualifiedID, in context: NSManagedObjectContext) -> [ZMConversation] {
+        guard let otherUser = ZMUser.fetch(with: otherUserID.uuid, domain: otherUserID.domain, in: context) else {
+            return []
         }
-
-        if epoch == 0 {
-            try await establishMLSGroupIfNeeded(
-                userID: userID,
-                mlsGroupID: mlsGroupID,
-                removalKeys: removalKeys,
-                in: context
-            )
-        } else {
-            try await mlsService.joinGroup(with: mlsGroupID)
+        let selfUser = ZMUser.selfUser(in: context)
+        guard let selfTeam = selfUser.team else {
+            return []
         }
+        
+        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        request.predicate = ZMConversation.predicateForTeamOneToOneConversation()
+
+        // We consider a conversation being an existing 1:1 team conversation in case the following points are true:
+        //  1. It is a conversation inside the team
+        //  2. The only participants are the current user and the selected user
+        //  3. It does not have a custom display name
+        let sameTeam = NSPredicate(format: "team == %@", selfTeam)
+        let groupConversation = NSPredicate(
+            format: "%K == %d",
+            ZMConversationConversationTypeKey,
+            ZMConversationType.group.rawValue
+        )
+        let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
+        let sameParticipant = NSPredicate(
+            format: "%K.@count == 2 AND ANY %K.user == %@ AND ANY %K.user == %@",
+            ZMConversationParticipantRolesKey,
+            ZMConversationParticipantRolesKey,
+            otherUser,
+            ZMConversationParticipantRolesKey,
+            selfUser
+        )
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            sameTeam,
+            groupConversation,
+            noUserDefinedName,
+            sameParticipant
+        ])
+
+        
+        return context.fetchOrAssert(request: request)
     }
 }
