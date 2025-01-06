@@ -337,7 +337,6 @@
 		63CD5959296442D800385037 /* AccessTokenMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CD59542964332B00385037 /* AccessTokenMigrationTests.swift */; };
 		63CDCA772BCD8AB500DA0F0A /* CheckOneOnOneConversationIsReadyUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CDCA762BCD8AB500DA0F0A /* CheckOneOnOneConversationIsReadyUseCase.swift */; };
 		63CDCA792BD157E100DA0F0A /* CheckOneOnOneConversationIsReadyUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CDCA782BD157E100DA0F0A /* CheckOneOnOneConversationIsReadyUseCaseTests.swift */; };
-		63CF4000276B4D110079FF2B /* AVSIdentifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CF3FFF276B4D110079FF2B /* AVSIdentifierTests.swift */; };
 		63E313D627553CA0002EAF1D /* ZMConversation+AVSIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E313D527553CA0002EAF1D /* ZMConversation+AVSIdentifier.swift */; };
 		63EB9B2D258131F700B44635 /* AVSActiveSpeakerChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EB9B2C258131F700B44635 /* AVSActiveSpeakerChange.swift */; };
 		63F1DF1F294B68380061565E /* APIMigrationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1DF1E294B68380061565E /* APIMigrationManager.swift */; };
@@ -986,7 +985,6 @@
 		63CDCA762BCD8AB500DA0F0A /* CheckOneOnOneConversationIsReadyUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckOneOnOneConversationIsReadyUseCase.swift; sourceTree = "<group>"; };
 		63CDCA782BD157E100DA0F0A /* CheckOneOnOneConversationIsReadyUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckOneOnOneConversationIsReadyUseCaseTests.swift; sourceTree = "<group>"; };
 		63CF3FFD2768DF8C0079FF2B /* AVSIdentifier+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSIdentifier+Stub.swift"; sourceTree = "<group>"; };
-		63CF3FFF276B4D110079FF2B /* AVSIdentifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSIdentifierTests.swift; sourceTree = "<group>"; };
 		63E313D527553CA0002EAF1D /* ZMConversation+AVSIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+AVSIdentifier.swift"; sourceTree = "<group>"; };
 		63EB9B2C258131F700B44635 /* AVSActiveSpeakerChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSActiveSpeakerChange.swift; sourceTree = "<group>"; };
 		63F1DF1E294B68380061565E /* APIMigrationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIMigrationManager.swift; sourceTree = "<group>"; };
@@ -1742,7 +1740,6 @@
 				A901FE9A258B562F003EAF5C /* CallParticipantTests.swift */,
 				632A582125CD9DF900F0C4BD /* CallParticipantsKindTests.swift */,
 				6349771D268B7C4300824A05 /* AVSVideoStreamsTest.swift */,
-				63CF3FFF276B4D110079FF2B /* AVSIdentifierTests.swift */,
 				63A8F575276B7B3100513750 /* AVSClientTests.swift */,
 				6391A8002A7A529000832665 /* MLSConferenceStaleParticipantsRemoverTests.swift */,
 			);
@@ -3051,7 +3048,6 @@
 				EE3E43F92BF62BF6001A43A1 /* SelfSupportedProtocolsRequestStrategyTests.swift in Sources */,
 				E6C6C6B62B877429007585DF /* TeamMembersDownloadRequestStrategyTests.swift in Sources */,
 				879634421F7BEC5100FC79BA /* DispatchQueueSerialAsyncTests.swift in Sources */,
-				63CF4000276B4D110079FF2B /* AVSIdentifierTests.swift in Sources */,
 				54AB428E1DF5C5B400381F2C /* TopConversationsDirectoryTests.swift in Sources */,
 				EE9CDE9227DA05D100C4DAC8 /* APIVersionResolverTests.swift in Sources */,
 				636826F82953465F00D904C2 /* ZMUserSessionTests+AccessToken.swift in Sources */,
