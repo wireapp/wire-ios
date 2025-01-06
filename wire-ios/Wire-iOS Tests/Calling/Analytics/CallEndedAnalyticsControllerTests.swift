@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireLogging
-import WireAnalytics
 import WireAnalyticsSupport
 import WireDataModelSupport
+import WireLogging
 import WireSystemSupport
+import XCTest
 
 @testable import Wire
-@testable import WireSyncEngine
 @testable import WireAnalytics
+@testable import WireSyncEngine
 
 final class CallEndedAnalyticsControllerTests: XCTestCase {
 
@@ -159,7 +158,7 @@ private class MockAnalyticsEventTracker: AnalyticsEventTracker {
     }
 }
 
-private extension Set where Element == AnalyticsEvent.Segmentation {
+private extension Set<AnalyticsEvent.Segmentation> {
 
     subscript(key: String) -> String? {
         first { $0.key == key }?.value

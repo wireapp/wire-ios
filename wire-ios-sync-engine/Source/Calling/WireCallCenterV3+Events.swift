@@ -52,7 +52,7 @@ extension WireCallCenterV3: ZMConversationObserver {
             callSnapshots[conversationId] = previousSnapshot.update(with: updatedCallState)
 
             if let context = uiMOC, let callerId = initiatorForCall(conversationId: conversationId) {
-                let notification = WireCallCenterCallStateNotification( // TODO: here
+                let notification = WireCallCenterCallStateNotification(
                     context: context,
                     callState: updatedCallState,
                     conversationId: conversationId,

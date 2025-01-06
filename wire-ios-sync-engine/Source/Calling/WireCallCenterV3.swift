@@ -586,7 +586,7 @@ public extension WireCallCenterV3 {
         }
 
         if let context = uiMOC, let callerId = initiatorForCall(conversationId: conversationId) {
-            WireCallCenterCallStateNotification( // TODO: here
+            WireCallCenterCallStateNotification(
                 context: context,
                 callState: callState,
                 conversationId: conversationId,
@@ -673,7 +673,7 @@ public extension WireCallCenterV3 {
         )
 
         if let context = uiMOC {
-            WireCallCenterCallStateNotification( // TODO: here
+            WireCallCenterCallStateNotification(
                 context: context,
                 callState: callState,
                 conversationId: conversationId,
@@ -1124,7 +1124,7 @@ extension WireCallCenterV3 {
         }
 
         if let context = uiMOC, let callerId {
-            let notification = WireCallCenterCallStateNotification( // TODO: here
+            let notification = WireCallCenterCallStateNotification(
                 context: context,
                 callState: callState,
                 conversationId: conversationId,
