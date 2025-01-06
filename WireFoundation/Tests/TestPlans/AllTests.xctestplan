@@ -28,7 +28,6 @@
     {
       "target" : {
         "containerPath" : "container:WireFoundation",
-<<<<<<< HEAD
         "identifier" : "WireCryptoTests",
         "name" : "WireCryptoTests"
       }
@@ -36,8 +35,6 @@
     {
       "target" : {
         "containerPath" : "container:WireFoundation",
-=======
->>>>>>> 2a7bf0f059 (feat(CI): report failed job - WPB-15166 (#2322))
         "identifier" : "WireFoundationTests",
         "name" : "WireFoundationTests"
       }
