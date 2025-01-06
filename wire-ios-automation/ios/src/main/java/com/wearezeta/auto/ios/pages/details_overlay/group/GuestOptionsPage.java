@@ -17,6 +17,21 @@ public class GuestOptionsPage extends IOSPage {
     @iOSXCUITFindBy(accessibility = "Create Link")
     private WebElement createLinkButton;
 
+    @iOSXCUITFindBy(accessibility = "Create link without password")
+    private WebElement linkWithoutPassword;
+
+    @iOSXCUITFindBy(accessibility = "Create password secured link")
+    private WebElement linkWithPassword;
+
+    @iOSXCUITFindBy(iOSClassChain = "**/XCUIElementTypeStaticText[`name == \"Copy Link\"`]")
+    private WebElement copyLink;
+
+    @iOSXCUITFindBy(iOSClassChain = "**/XCUIElementTypeStaticText[`name == \"Share Link\"`]")
+    private WebElement shareLink;
+
+    @iOSXCUITFindBy(iOSClassChain = "**/XCUIElementTypeStaticText[`name == \"Revoke Link…\"`]")
+    private WebElement revokeLink;
+
     private static final Function<String, By> predicateStrAllowGuestsByValue = text ->
             MobileBy.iOSNsPredicateString(String.format("name == 'toggle.guestoptions.allowguests' AND value == '%s'", text));
 
@@ -41,4 +56,16 @@ public class GuestOptionsPage extends IOSPage {
         return isLocatorDisplayed(locator);
     }
 
+    public void createLink() {
+        createLinkButton.click();
+    }
+
+    public void createLinkWithoutPassword() {
+        createLink();
+        linkWithoutPassword.click();
+    }
+
+    public void copyLink() {
+        copyLink.click();
+    }
 }

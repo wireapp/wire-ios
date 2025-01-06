@@ -18,6 +18,12 @@ Feature: Video Calls
     And I accept alert if visible
     And I open group conversation "<ConversationTitle>" in conversation list
     And I copy the group invite link
+    And I close Group Details
+    And I navigate back to conversations list
+    And I open conversation "<TeamGuest>" in conversation list
+    And I send what is in my pasteboard
+    And I navigate back to conversations list
+    And I open conversation "<ConversationTitle>" in conversation list
     # Enabling calling needs to happen away from team creation to avoid iblis
     And I tap Video Call button
     And I tap call button on start call alert
