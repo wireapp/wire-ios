@@ -70,7 +70,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
 
     func testMissedGroupVideoCall() throws {
         // Given
-        let conversationID = setupConversation()
+        let conversationID = setupGroupConversation()
 
         // When
         WireCallCenterCallStateNotification(
@@ -101,13 +101,13 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         XCTAssertEqual(segmentation["call_screen_share_duration"], "0")
         XCTAssertEqual(segmentation["call_screen_share_unique"], "0")
         XCTAssertEqual(segmentation["call_direction"], "incoming")
-        XCTAssertEqual(segmentation["call_duration"], "3")
+        XCTAssertEqual(segmentation["call_duration"], "0")
         XCTAssertEqual(segmentation["conversation_type"], "group")
         XCTAssertEqual(segmentation["conversation_size"], "2")
         XCTAssertEqual(segmentation["conversation_guests"], "0")
         XCTAssertEqual(segmentation["conversation_guests_pro"], "0")
         XCTAssertEqual(segmentation["call_participants"], "0")
-        XCTAssertEqual(segmentation["call_end_reason"], "4") // WCALL_REASON_CANCELED
+        XCTAssertEqual(segmentation["call_end_reason"], "4") // WCALL_REASON_CANCELED = 4
         XCTAssertEqual(segmentation["conversation_services"], "0")
         XCTAssertEqual(segmentation["call_av_switch_toggle"], "False")
         XCTAssertEqual(segmentation["call_video"], "True")
@@ -136,7 +136,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         }
     }
 
-    private func setupConversation() -> AVSIdentifier {
+    private func setupGroupConversation() -> AVSIdentifier {
         viewContext.performAndWait { [viewContext] in
             ModelHelper().createGroupConversation(
                 id: .init(),

@@ -80,7 +80,6 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         }
 
         eventInfo = .init(
-            callStart: currentDateProvider.now,
             conversationID: conversation.avsIdentifier,
             conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
             isVideoCall: isVideoCall
@@ -97,7 +96,6 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
         eventInfo = .init(
             callDirection: .outgoing,
-            callStart: currentDateProvider.now,
             conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
             isVideoCall: isVideoCall
         )
@@ -108,6 +106,8 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
             logger.error("handleCallEstablished: expected eventInfo to be non-nil")
             eventInfo = .init(callStart: currentDateProvider.now)
         }
+
+        eventInfo?.callStart = currentDateProvider.now
 
         callParticipantObsererToken = CallCenter.addCallParticipantObserver(
             observer: self,
@@ -135,7 +135,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     ) {
         if eventInfo == nil {
             logger.error("handleCallTerminating: expected eventInfo to be non-nil")
-            eventInfo = .init(callStart: currentDateProvider.now)
+            eventInfo = .init()
         }
 
         callParticipantObsererToken = nil
@@ -213,7 +213,7 @@ private extension CallEndedAnalyticsController {
         var deviceModel = UIDevice.current.model
         var osVersion = UIDevice.current.systemVersion
         var callDirection: AnalyticsEvent.Calling.CallDirection = .incoming
-        var callStart: Date
+        var callStart: Date?
         var screenSharingStart: Date?
         var conversationID: AVSIdentifier?
         var conversationType: AnalyticsEvent.Segmentation.Conversation.ConversationType = .oneOnOne
@@ -224,7 +224,8 @@ private extension CallEndedAnalyticsController {
         var hasAVSwitchToggled = false
 
         func callDuration(at callEnd: Date) -> Int {
-            Int(round(callEnd.timeIntervalSince(callStart)))
+            guard let callStart else { return 0 }
+            return Int(round(callEnd.timeIntervalSince(callStart)))
         }
     }
 
