@@ -21,11 +21,9 @@ import WireDesign
 import WireReusableUIComponents
 
 public struct BackupActionsView: View {
-    // TODO: or  @StateObject
     @ObservedObject private var viewModel: BackupActionsViewModel
-    @State private var isBackupPresented: Bool = false
-    //TODO: use `isRestorePresented`
-    @State private var isRestorePresented: Bool = false
+    @State private var isBackupSheetPresented: Bool = false
+    @State private var isRestoreSheetPresented: Bool = false
 
     public init(viewModel: BackupActionsViewModel) {
         self.viewModel = viewModel
@@ -40,11 +38,11 @@ public struct BackupActionsView: View {
                     Button(action: {
                         switch section.type {
                         case .backup:
-                            isRestorePresented = false
-                            isBackupPresented.toggle()
+                            isRestoreSheetPresented = false
+                            isBackupSheetPresented.toggle()
                         case .restore:
-                            isBackupPresented = false
-                            isRestorePresented.toggle()
+                            isBackupSheetPresented = false
+                            isRestoreSheetPresented.toggle()
                         }
 
                     }) {
@@ -56,7 +54,7 @@ public struct BackupActionsView: View {
                             Image(systemName: "chevron.right").foregroundStyle(Color.primary)
                         }
                     }
-                    .sheet(isPresented: $isBackupPresented) {
+                    .sheet(isPresented: $isBackupSheetPresented) {
                         NavigationStack {
                             ExportBackup { password in
                                 viewModel.backupActiveAccount(password: password)

@@ -456,7 +456,7 @@ extension SettingsCellDescriptorFactory {
 
 }
 
-// TODO: Backup action handler
+// MARK: - Backup action handler
 
 extension SettingsCellDescriptorFactory {
 

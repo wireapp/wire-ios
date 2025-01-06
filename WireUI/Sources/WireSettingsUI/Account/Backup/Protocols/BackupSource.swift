@@ -19,7 +19,6 @@
 import Foundation
 
 public protocol BackupSource {
-    // TODO: make password optional
     func backupActiveAccount(password: String) throws -> URL
 
     func clearPreviousBackups()
