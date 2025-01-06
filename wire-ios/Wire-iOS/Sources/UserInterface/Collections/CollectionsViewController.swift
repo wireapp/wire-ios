@@ -224,15 +224,6 @@ final class CollectionsViewController: UIViewController {
         wr_supportedInterfaceOrientations
     }
 
-    override var shouldAutorotate: Bool {
-        switch traitCollection.horizontalSizeClass {
-        case .compact:
-            false
-        default:
-            true
-        }
-    }
-
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         .portrait
     }
