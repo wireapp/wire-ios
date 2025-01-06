@@ -157,12 +157,14 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 otherUserID: userID,
                 in: context
             )
+
             var allProteusConversations = Set(proteusConversations)
-            if let oneOnOneConservsation = otherUser.oneOnOneConversation {
-                allProteusConversations.insert(oneOnOneConservsation)
+            if let existingConversation = otherUser.oneOnOneConversation,
+               existingConversation.messageProtocol == .proteus {
+                allProteusConversations.insert(existingConversation)
             }
 
-            // move local messages from proteus conversation if it exists
+            // move local messages from proteus conversations if they exist
             for proteusConversation in allProteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
@@ -187,7 +189,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             return []
         }
         let selfUser = ZMUser.selfUser(in: context)
-        guard let selfTeam = selfUser.team else {
+        guard selfUser.team != nil else {
             return []
         }
 
@@ -208,5 +210,27 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         ])
 
         return context.fetchOrAssert(request: request)
+    }
+
+    private func createOrJoinMLSConversationIfNeeded(
+        userID: QualifiedID,
+        mlsGroupID: MLSGroupID,
+        removalKeys: BackendMLSPublicKeys?,
+        in context: NSManagedObjectContext
+    ) async throws {
+        guard let epoch = await fetchMLSConversationEpoch(mlsGroupID: mlsGroupID, in: context) else {
+            throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
+        }
+
+        if epoch == 0 {
+            try await establishMLSGroupIfNeeded(
+                userID: userID,
+                mlsGroupID: mlsGroupID,
+                removalKeys: removalKeys,
+                in: context
+            )
+        } else {
+            try await mlsService.joinGroup(with: mlsGroupID)
+        }
     }
 }
