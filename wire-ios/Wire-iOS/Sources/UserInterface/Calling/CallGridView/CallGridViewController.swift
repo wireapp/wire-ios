@@ -53,7 +53,7 @@ final class CallGridViewController: UIViewController {
         PinchToZoomRule(isOneToOneCall: configuration.callHasTwoParticipants)
     }
 
-    private var visibleClientsSharingVideo: [AVSClientVideoStream] = []
+    private var visibleClientsSharingVideo: Set<AVSClientVideoStream> = []
     private var dataSource: [Stream] = []
     private let gridView = GridView(maxItemsPerPage: maxItemsPerPage)
     private let thumbnailViewController = PinnableThumbnailViewController()
@@ -430,10 +430,12 @@ final class CallGridViewController: UIViewController {
                     quality: oneStreamDisplayedExcludingSelf ? .high : .low
                 )
             }
-
-        guard Set(clientStreams) != Set(visibleClientsSharingVideo) else { return }
+        
+        let newVisibleClientsSharingVideo = Set(clientStreams)
+        
+        guard newVisibleClientsSharingVideo != visibleClientsSharingVideo else { return }
         delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clientStreams))
-        visibleClientsSharingVideo = clientStreams
+        visibleClientsSharingVideo = newVisibleClientsSharingVideo
     }
 
     // MARK: - Grid View Axis
