@@ -94,8 +94,25 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
 
         // Then
         let event = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.last)
+        let segmentation = event.segmentation
         XCTAssertEqual(event.name, "calling.ended_call")
-        XCTAssert(event.segmentation.contains { $0.key == "device_model" })
+        XCTAssert(segmentation.contains { $0.key == "device_model" })
+        XCTAssert(segmentation.contains { $0.key == "os_version" })
+        XCTAssertEqual(segmentation["call_screen_share"], "False")
+        XCTAssertEqual(segmentation["call_screen_share_duration"], "todo")
+        XCTAssertEqual(segmentation["call_screen_share_unique"], "todo")
+        XCTAssertEqual(segmentation["call_direction"], "todo")
+        XCTAssertEqual(segmentation["call_duration"], "todo")
+        XCTAssertEqual(segmentation["conversation_type"], "todo")
+        XCTAssertEqual(segmentation["conversation_size"], "todo")
+        XCTAssertEqual(segmentation["conversation_guests"], "todo")
+        XCTAssertEqual(segmentation["conversation_guests_pro"], "todo")
+        XCTAssertEqual(segmentation["call_participants"], "todo")
+        XCTAssertEqual(segmentation["call_end_reason"], "todo")
+        XCTAssertEqual(segmentation["conversation_services"], "todo")
+        XCTAssertEqual(segmentation["call_av_switch_toggle"], "todo")
+        XCTAssertEqual(segmentation["call_video"], "todo")
+        XCTAssertEqual(segmentation["team_is_team"], "todo")
     }
 
     // MARK: - Helpers
@@ -142,3 +159,9 @@ private class MockAnalyticsEventTracker: AnalyticsEventTracker {
     }
 }
 
+private extension Set where Element == AnalyticsEvent.Segmentation {
+
+    subscript(key: String) -> String? {
+        first { $0.key == "call_screen_share" }?.value
+    }
+}
