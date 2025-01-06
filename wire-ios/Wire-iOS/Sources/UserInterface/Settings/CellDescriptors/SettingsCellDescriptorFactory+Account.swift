@@ -380,8 +380,11 @@ extension SettingsCellDescriptorFactory {
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     let viewModel = BackupActionsViewModel(
                         backupSource: SessionManager.shared!,
-                        onSuccessHandler: presentShareSheet,
-                        onFailureHandler: presentAlert)
+                        backupHandler: BackupHandler(
+                            onSuccess: presentShareSheet,
+                            onFailure: presentAlert
+                        )
+                    )
                     let backupActionsController = BackupActionsHostingController(viewModel: viewModel)
                     backupActionsController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
                     return backupActionsController
@@ -453,7 +456,8 @@ extension SettingsCellDescriptorFactory {
 
 }
 
-// TODO: 1. Change names, 2. Move somewhere
+// TODO: Backup action handler
+
 extension SettingsCellDescriptorFactory {
 
     private func presentAlert(for error: Error) {
@@ -481,7 +485,6 @@ extension SettingsCellDescriptorFactory {
 
         let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         activityController.completionWithItemsHandler = { _, _, _, _ in
-            //self?.backupSource.clearPreviousBackups()
             completion()
         }
         controller.present(activityController, animated: true)

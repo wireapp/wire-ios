@@ -75,8 +75,10 @@ public struct BackupActionsView: View {
 #Preview {
     BackupActionsView(viewModel: BackupActionsViewModel(
         backupSource: MockBackupSource(),
-        onSuccessHandler: {_,_  in},
-        onFailureHandler: {_ in}))
+        backupHandler: BackupHandler(
+            onSuccess: {_,_  in},
+            onFailure: {_ in})
+    ))
 }
 
 private class MockBackupSource: BackupSource {

@@ -26,14 +26,14 @@ import WireReusableUIComponents
 public struct ExportBackup: View {
 
     @Environment(\.dismiss) private var dismiss
-    private let onAction: (String) -> Void
+    private let exportBackup: (String) -> Void
 
-    public init(onAction: @escaping (String) -> Void) {
-        self.onAction = onAction
+    public init(exportBackup: @escaping (String) -> Void) {
+        self.exportBackup = exportBackup
     }
 
     public var body: some View {
-        SetBackupPasswordView(onAction: onAction)
+        SetBackupPasswordView(exportBackup: exportBackup)
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
@@ -65,10 +65,10 @@ private struct SetBackupPasswordView: View {
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
 
-    private let onAction: (String) -> Void
+    private let exportBackup: (String) -> Void
 
-    init(onAction: @escaping (String) -> Void) {
-        self.onAction = onAction
+    init(exportBackup: @escaping (String) -> Void) {
+        self.exportBackup = exportBackup
     }
 
     var body: some View {
@@ -88,7 +88,7 @@ private struct SetBackupPasswordView: View {
 
             Button(
                 action: {
-                    onAction(password)
+                    exportBackup(password)
                     dismiss()
                 },
                 label: {
@@ -133,7 +133,7 @@ private struct ExportBackupPreview: View {
         )
         .sheet(isPresented: $isPresented) {
             NavigationStack {
-                ExportBackup(onAction: {_ in })
+                ExportBackup(exportBackup: {_ in })
             }
             .presentationDragIndicator(.visible)
             .presentationDetents([.medium, .large])

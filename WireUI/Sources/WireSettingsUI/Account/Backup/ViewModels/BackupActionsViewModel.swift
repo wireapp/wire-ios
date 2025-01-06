@@ -22,17 +22,14 @@ public final class BackupActionsViewModel: ObservableObject {
     @Published var sections: [BackupActionsSection] = []
 
     private let backupSource: any BackupSource
-    private let onSuccessHandler: ((URL, @escaping () -> Void) -> Void)
-    private let onFailureHandler: ((any Error) -> Void)
+    private var backupHandler: BackupHandler
 
     public init(
         backupSource: any BackupSource,
-        onSuccessHandler: @escaping ((URL, @escaping () -> Void) -> Void),
-        onFailureHandler: @escaping ((any Error) -> Void)
+        backupHandler: BackupHandler
     ) {
         self.backupSource = backupSource
-        self.onSuccessHandler = onSuccessHandler
-        self.onFailureHandler = onFailureHandler
+        self.backupHandler = backupHandler
 
         sections = [
             BackupActionsSection(type: .backup)
@@ -43,11 +40,11 @@ public final class BackupActionsViewModel: ObservableObject {
     func backupActiveAccount(password: String) {
         do {
             let backupPath = try backupSource.backupActiveAccount(password: password)
-            onSuccessHandler(backupPath) { [weak self] in
+            backupHandler.onSuccess(backupPath) { [weak self] in
                 self?.backupSource.clearPreviousBackups()
             }
         } catch {
-            onFailureHandler(error)
+            backupHandler.onFailure(error)
         }
     }
 }

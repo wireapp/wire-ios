@@ -149,7 +149,7 @@ public extension CoreDataStack {
             return BackupInfo(url: backupDirectory, metadata: metadata)
         }
     }
-    
+
     /// Will import a backup for a given account
     ///
     /// - Parameters:
