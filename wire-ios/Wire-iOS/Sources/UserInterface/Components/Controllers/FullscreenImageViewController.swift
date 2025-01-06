@@ -166,10 +166,6 @@ final class FullscreenImageViewController: UIViewController {
         .all
     }
 
-    override var shouldAutorotate: Bool {
-        true
-    }
-
     override var canBecomeFirstResponder: Bool {
         true
     }
