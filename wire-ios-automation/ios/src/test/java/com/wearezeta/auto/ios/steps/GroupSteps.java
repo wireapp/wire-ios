@@ -2,70 +2,12 @@ package com.wearezeta.auto.ios.steps;
 
 import com.wearezeta.auto.common.usrmgmt.ClientUsersManager;
 import com.wearezeta.auto.ios.common.IOSTestContext;
-import com.wearezeta.auto.ios.pages.*;
-import com.wearezeta.auto.ios.pages.details_overlay.group.GroupAddPeoplePage;
-import com.wearezeta.auto.ios.pages.details_overlay.group.GroupConnectedParticipantProfilePage;
-import com.wearezeta.auto.ios.pages.details_overlay.group.GroupDetailsPage;
-import com.wearezeta.auto.ios.pages.details_overlay.single.SinglePendingUserIncomingConnectionProfilePage;
-import com.wearezeta.auto.ios.pages.linear_groupcreation.AddPeoplePage;
-import com.wearezeta.auto.ios.pages.linear_groupcreation.NewGroupPage;
-import com.wearezeta.auto.ios.pages.webview.WebViewPage;
 import io.cucumber.java.en.When;
 
-public class GroupSteps {
-  IOSTestContext context;
+public class GroupSteps extends IOSSteps {
 
   public GroupSteps(IOSTestContext context) {
-    this.context = context;
-  }
-
-  private NewGroupPage getNewGroupPage() {
-    return context.getPagesCollection().getPage(NewGroupPage.class);
-  }
-
-  private SearchUIPage getSearchUIPage() {
-    return context.getPagesCollection()
-        .getPage(SearchUIPage.class);
-  }
-
-  private GroupAddPeoplePage getGroupAddPeoplePage() {
-    return context.getPagesCollection().getPage(GroupAddPeoplePage.class);
-  }
-
-  private GroupConnectedParticipantProfilePage getGroupParticipantProfilePage() {
-    return context.getPagesCollection().getPage(GroupConnectedParticipantProfilePage.class);
-  }
-
-  private FileInspectionPage getFileInspectionPage()  {
-    return context.getPagesCollection().getPage(FileInspectionPage.class);
-  }
-
-  private AddPeoplePage getAddPeoplePage()  {
-    return context.getPagesCollection().getPage(AddPeoplePage.class);
-  }
-
-  private GroupDetailsPage getGroupDetailsPage() {
-    return context.getPagesCollection().getPage(GroupDetailsPage.class);
-  }
-
-  private TeamSearchUIPage getTeamSearchUIPage() {
-    return context.getPagesCollection().getPage(TeamSearchUIPage.class);
-  }
-
-  private ServiceDetailPage getServiceDetailPage() {
-    return context.getPagesCollection().getPage(ServiceDetailPage.class);
-  }
-
-  private ConversationsListPage getConversationListPage() {
-    return context.getPagesCollection().getPage(ConversationsListPage.class);
-  }
-
-  private SinglePendingUserIncomingConnectionProfilePage getSinglePendingUserIncomingConnectionProfilePage() {
-    return context.getPagesCollection().getPage(SinglePendingUserIncomingConnectionProfilePage.class);
-  }
-
-  private WebViewPage getWebView() {
-    return context.getPagesCollection().getPage(WebViewPage.class);
+    super(context);
   }
 
   @When("^I create new group \"(.*)\"$")
@@ -150,5 +92,11 @@ public class GroupSteps {
     getWebView().selectConversationInShareExt(conversationName);
     getWebView().tapSendButtonShareExt();
     getFileInspectionPage().tapDoneButton();
+  }
+
+  @When("I copy the group invite link")
+  public void iCopyTheGroupInviteLink() {
+    getConversationViewPage().openConversationDetails();
+    getGroupDetailsPage().openGuestOptions();
   }
 }
