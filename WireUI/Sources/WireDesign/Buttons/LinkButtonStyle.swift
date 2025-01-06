@@ -20,7 +20,7 @@ import SwiftUI
 
 struct LinkButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
-    @Environment(\.isFocused) var isFocused
+    @Environment(\.isFocused) private var isFocused
 
     typealias Theme = ColorTheme.Buttons.Link
 
