@@ -120,11 +120,11 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         // Given
         setupTeam()
         let conversationID = setupOneOnOneConversation()
-        let c_ = syncContext.performAndWait { ZMConversation.fetchOrCreate(with: conversationID.identifier, domain: conversationID.domain, in: syncContext)
-        }
-        let c = viewContext.object(with: c_.objectID) as! ZMConversation
-        print(selfUser.isGuest(in: c))
-        print(otherUser.isGuest(in: c))
+//        let c_ = syncContext.performAndWait { ZMConversation.fetchOrCreate(with: conversationID.identifier, domain: conversationID.domain, in: syncContext)
+//        }
+//        let c = viewContext.object(with: c_.objectID) as! ZMConversation
+//        print(selfUser.isGuest(in: c))
+//        print(otherUser.isGuest(in: c))
 
         // When
         WireCallCenterCallStateNotification(
@@ -226,6 +226,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
     }
 
     private func setupOneOnOneConversation() -> AVSIdentifier {
+        defer { try! viewContext.save() }
         let conversation = ModelHelper().createOneOnOne(
             id: .init(),
             domain: "wire.com",

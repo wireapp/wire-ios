@@ -159,7 +159,6 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
             let guestsHasTeam = conversation.participants
                 .filter { $0.isGuest(in: conversation) }
                 .map(\.hasTeam)
-            print(conversation.participants, conversation.participants.map(\.isSelfUser))
             let conversationGuestsTeam = guestsHasTeam.count { $0 }
             let conversationGuestsNonTeam = guestsHasTeam.count { !$0 }
             let conversationServices = conversation.sortedServiceUsers.count
