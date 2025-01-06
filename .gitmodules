@@ -1,3 +1,6 @@
 [submodule "wire-ios-build-assets"]
 	path = wire-ios-build-assets
 	url = git@github.com:wireapp/wire-ios-build-assets.git
+[submodule "wire-ios-automation/ios-automation-assets"]
+	path = wire-ios-automation/ios-automation-assets
+	url = https://github.com/wireapp/ios-automation-assets

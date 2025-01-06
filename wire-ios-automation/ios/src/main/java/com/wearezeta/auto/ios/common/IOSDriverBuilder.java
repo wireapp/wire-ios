@@ -5,6 +5,11 @@ import com.wearezeta.auto.common.Config;
 import com.wearezeta.auto.common.log.ZetaLogger;
 import com.wearezeta.auto.common.usrmgmt.ClientUser;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.logging.Logger;
 
@@ -15,7 +20,6 @@ import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebDriver;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,24 +43,24 @@ public class IOSDriverBuilder {
     private Boolean allowAccessToAllPhotos = false;
     private Boolean allowNotifications = false;
     private Boolean uninstallAllOtherVersions = false;
-    private static final String[] bundleIDs = {
-            "com.wearezeta.zclient.development",
-            "com.wearezeta.zclient.rc",
-            "com.wearezeta.zclient.ios-release",
-            "com.wearezeta.zclient.internal",
-            "com.wire.ios.bund.columnf.release",
-            "com.wire.bund.ios.c3",
-            "com.wearezeta.zclient.ios-playground",
-            "com.wire.bund.ios.beta.column3",
-            "com.wearezeta.zclient.alpha",
-            "com.wire.bund.ios.beta",
-            "com.wire.bund.ios.column3",
-            "com.wearezeta.zclient.ios.beta"
-    };
+    private static final String[] bundleIDs = loadBundleIDs();
 
     public IOSDriverBuilder withCapabilities(Capabilities capabilities) {
         this.capabilities = capabilities;
         return this;
+    }
+
+    private static String[] loadBundleIDs() {
+        Path filePath = new File(System.getProperty("user.dir") + "/../ios-automation-assets/bundleIDs").toPath();
+        Charset charset = Charset.defaultCharset();
+        List<String> stringList = null;
+        try {
+            stringList = Files.readAllLines(filePath, charset);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String[] stringArray = stringList.toArray(new String[]{});
+        return stringArray;
     }
 
     public IOSDriverBuilder withProcessArgs(String... args) {
