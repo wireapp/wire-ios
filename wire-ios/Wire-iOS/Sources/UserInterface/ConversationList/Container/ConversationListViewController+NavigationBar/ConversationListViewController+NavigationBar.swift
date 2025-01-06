@@ -348,7 +348,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         // analytics
         let isNotificationsBadgeVisible = viewModel.hideProfileNotificationsBadge
         let analyticsEventTracker = viewModel.userSession.analyticsEventTracker
-        analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+        #if false // [WPB-15245] This event has temporarily been disabled.
+            analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+        #endif
 
         // open profile
         Task {
