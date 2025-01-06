@@ -31,7 +31,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
     private var notificationCenter: NotificationCenter!
     private var coreDataStack: CoreDataStack!
     private var selfUser: ZMUser!
-    private var otherUser: ZMUser!
+    private var secondUser: ZMUser!
+    private var thirdUser: ZMUser!
     private var mockAnalyticsEventTracker: MockAnalyticsEventTracker!
     private var mockDateProvider: MockCurrentDateProviding!
     private var sut: CallEndedAnalyticsController<WireCallCenterV3>!
@@ -45,7 +46,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
 
         coreDataStack = try await CoreDataStackHelper().createStack()
         selfUser = await setupSelfUser()
-        otherUser = await setupOtherUser()
+        secondUser = await setupOtherUser()
+        thirdUser = await setupOtherUser()
 
         mockAnalyticsEventTracker = .init()
 
@@ -63,21 +65,28 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        mockDateProvider = nil
         mockAnalyticsEventTracker = nil
+        thirdUser = nil
+        secondUser = nil
+        selfUser = nil
         coreDataStack = nil
         notificationCenter = nil
     }
 
     func testMissedGroupVideoCall() throws {
         // Given
-        let conversationID = setupGroupConversation()
+        let conversationID = setupGroupConversation(
+            team: nil,
+            participants: [selfUser, secondUser]
+        )
 
         // When
         WireCallCenterCallStateNotification(
             context: viewContext,
             callState: .incoming(isVideo: true, shouldRing: true, degraded: false),
             conversationId: conversationID,
-            callerId: otherUser.avsIdentifier,
+            callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
             previousCallState: nil
         ).post(in: viewContext.notificationContext)
@@ -88,9 +97,9 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             context: viewContext,
             callState: .terminating(reason: .canceled),
             conversationId: conversationID,
-            callerId: otherUser.avsIdentifier,
+            callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: .incoming(isVideo: true, shouldRing: true, degraded: false)
+            previousCallState: nil
         ).post(in: viewContext.notificationContext)
 
         // Then
@@ -118,20 +127,16 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
 
     func testOutgoingOneOnOneCall() throws {
         // Given
-        setupTeam()
+        setupSelfTeam()
+        setupTeam(selfUser.team!, for: secondUser)
         let conversationID = setupOneOnOneConversation()
-//        let c_ = syncContext.performAndWait { ZMConversation.fetchOrCreate(with: conversationID.identifier, domain: conversationID.domain, in: syncContext)
-//        }
-//        let c = viewContext.object(with: c_.objectID) as! ZMConversation
-//        print(selfUser.isGuest(in: c))
-//        print(otherUser.isGuest(in: c))
 
         // When
         WireCallCenterCallStateNotification(
             context: viewContext,
             callState: .outgoing(isVideo: false, degraded: false),
             conversationId: conversationID,
-            callerId: otherUser.avsIdentifier,
+            callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
             previousCallState: nil
         ).post(in: viewContext.notificationContext)
@@ -142,9 +147,9 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             context: viewContext,
             callState: .established,
             conversationId: conversationID,
-            callerId: otherUser.avsIdentifier,
+            callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: .outgoing(isVideo: false, degraded: false)
+            previousCallState: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(3)
@@ -153,9 +158,9 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             context: viewContext,
             callState: .terminating(reason: .everyoneLeft),
             conversationId: conversationID,
-            callerId: otherUser.avsIdentifier,
+            callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: .outgoing(isVideo: false, degraded: false)
+            previousCallState: nil
         ).post(in: viewContext.notificationContext)
 
         // Then
@@ -180,6 +185,87 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         XCTAssertEqual(segmentation["call_video"], "False")
         XCTAssertEqual(segmentation["team_is_team"], "True")
     }
+    
+    /// A group conversation with three users.
+    /// The conversation is from the team of the third user, the second user is a personal user, the self user is from a different team.
+    /// The self user toggles its video.
+    func testIncomingOneOnOneCallWithToggledVideo() throws {
+        // Given
+        setupSelfTeam()
+        let otherTeam = setupOtherTeam()
+        setupTeam(otherTeam, for: thirdUser)
+        let conversationID = setupGroupConversation(
+            team: otherTeam,
+            participants: [selfUser, secondUser, thirdUser]
+        )
+
+//        let c_ = syncContext.performAndWait { ZMConversation.fetchOrCreate(with: conversationID.identifier, domain: conversationID.domain, in: syncContext)
+//        }
+//        let c = viewContext.object(with: c_.objectID) as! ZMConversation
+//        print(selfUser.isGuest(in: c))
+//        print(secondUser.isGuest(in: c))
+//        print(thirdUser.isGuest(in: c))
+
+        // When
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .outgoing(isVideo: false, degraded: false),
+            conversationId: conversationID,
+            callerId: secondUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+
+        mockDateProvider.now.addTimeInterval(1)
+
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .established,
+            conversationId: conversationID,
+            callerId: secondUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+
+        mockDateProvider.now.addTimeInterval(3)
+
+        notificationCenter.post(
+            name: WireCallCenterV3.didToggleVideoNotification,
+            object: nil,
+            userInfo: [WireCallCenterV3.conversationIDUserInfoKey: conversationID]
+        )
+
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .terminating(reason: .unknown),
+            conversationId: conversationID,
+            callerId: secondUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+
+        // Then
+        let event = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.last)
+        let segmentation = event.segmentation
+        XCTAssertEqual(event.name, "calling.ended_call")
+        XCTAssert(segmentation.contains { $0.key == "device_model" })
+        XCTAssert(segmentation.contains { $0.key == "os_version" })
+        XCTAssertEqual(segmentation["call_screen_share"], "False")
+        XCTAssertEqual(segmentation["call_screen_share_duration"], "0")
+        XCTAssertEqual(segmentation["call_screen_share_unique"], "0")
+        XCTAssertEqual(segmentation["call_direction"], "outgoing")
+        XCTAssertEqual(segmentation["call_duration"], "3")
+        XCTAssertEqual(segmentation["conversation_type"], "group")
+        XCTAssertEqual(segmentation["conversation_size"], "3")
+        XCTAssertEqual(segmentation["conversation_guests"], "1") // `secondUser`
+        XCTAssertEqual(segmentation["conversation_guests_pro"], "1") // `selfUser`
+        XCTAssertEqual(segmentation["call_participants"], "0")
+        XCTAssertEqual(segmentation["call_end_reason"], "1") // WCALL_REASON_ERROR = 1
+        XCTAssertEqual(segmentation["conversation_services"], "0")
+        XCTAssertEqual(segmentation["call_av_switch_toggle"], "True")
+        XCTAssertEqual(segmentation["call_video"], "True")
+        XCTAssertEqual(segmentation["team_is_team"], "True")
+    }
 
     // MARK: - Helpers
 
@@ -194,35 +280,46 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
     }
 
     private func setupOtherUser() async -> ZMUser {
-        let otherUser = await syncContext.perform { [syncContext] in
+        let secondUser = await syncContext.perform { [syncContext] in
             defer { try! syncContext.save() }
             return ZMUser.fetchOrCreate(with: .init(), domain: "wire.com", in: syncContext)
         }
         return await viewContext.perform { [viewContext] in
-            viewContext.object(with: otherUser.objectID) as! ZMUser
+            viewContext.object(with: secondUser.objectID) as! ZMUser
         }
     }
 
-    private func setupTeam() {
+    private func setupSelfTeam() {
         syncContext.performAndWait {
-            let otherUser = syncContext.object(with: otherUser.objectID) as! ZMUser
+            let secondUser = syncContext.object(with: secondUser.objectID) as! ZMUser
             let modelHelper = ModelHelper()
             let (team, _, _) = modelHelper.createSelfTeam(numberOfUsers: 0, in: syncContext)
-            modelHelper.addUser(otherUser, to: team, in: syncContext)
             try! syncContext.save()
         }
     }
 
-    private func setupGroupConversation() -> AVSIdentifier {
-        viewContext.performAndWait { [viewContext] in
-            ModelHelper().createGroupConversation(
-                id: .init(),
-                with: [selfUser, otherUser],
-                team: selfUser.team,
-                domain: "wire.com",
-                in: viewContext
-            ).avsIdentifier!
+    private func setupOtherTeam() -> Team {
+        let team = syncContext.performAndWait {
+            defer { try! syncContext.save() }
+            return Team.fetchOrCreate(with: .init(), in: syncContext)
         }
+        return viewContext.object(with: team.objectID) as! Team
+    }
+
+    private func setupTeam(_ team: Team, for user: ZMUser) {
+        ModelHelper().addUser(user, to: team, in: viewContext)
+        try! viewContext.save()
+    }
+
+    private func setupGroupConversation(team: Team?, participants: Set<ZMUser>) -> AVSIdentifier {
+        defer { try! viewContext.save() }
+        return ModelHelper().createGroupConversation(
+            id: .init(),
+            with: participants,
+            team: team,
+            domain: "wire.com",
+            in: viewContext
+        ).avsIdentifier!
     }
 
     private func setupOneOnOneConversation() -> AVSIdentifier {
@@ -230,7 +327,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         let conversation = ModelHelper().createOneOnOne(
             id: .init(),
             domain: "wire.com",
-            with: otherUser,
+            with: secondUser,
             team: selfUser.team,
             in: viewContext
         )
