@@ -554,8 +554,8 @@ platform :ios do
 
         ci_args = is_running_on_ci ? "CI=1" : nil
         
-        UI.message "🧪 Running tests for scheme: #{scheme}"
         run_tests(
+            step_name: "🧪 Running tests for scheme: #{scheme}",
             testplan: testplan,
             scheme: scheme,
             skip_detect_devices: true,
