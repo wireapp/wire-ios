@@ -269,10 +269,6 @@ final class MessageDetailsViewController: UIViewController {
 
     // MARK: - Orientation
 
-    override var shouldAutorotate: Bool {
-        false
-    }
-
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         wr_supportedInterfaceOrientations
     }
