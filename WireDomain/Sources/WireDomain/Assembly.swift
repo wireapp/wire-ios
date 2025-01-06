@@ -92,7 +92,7 @@ extension Assembly {
         Injector.register(PushChannelProtocol.self) {
             self.pushChannel
         }
-        
+
         Injector.register(BackendEnvironmentProvider.self) {
             self.backendEnvironmentProvider
         }
