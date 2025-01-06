@@ -86,7 +86,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
             QualifiedClientID(
                 userID: selfUser.remoteIdentifier,
                 domain: selfUser.domain ?? "",
-                clientID: selfClient.remoteIdentifier ?? "")
+                clientID: selfClient.remoteIdentifier ?? ""
+            )
         }
 
         // When
@@ -135,7 +136,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
             QualifiedClientID(
                 userID: selfUser.remoteIdentifier,
                 domain: selfUser.domain ?? "",
-                clientID: selfClient.remoteIdentifier ?? "")
+                clientID: selfClient.remoteIdentifier ?? ""
+            )
         }
 
         // When
@@ -180,7 +182,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
             QualifiedClientID(
                 userID: selfUser.remoteIdentifier,
                 domain: selfUser.domain ?? "",
-                clientID: selfClient.remoteIdentifier ?? "")
+                clientID: selfClient.remoteIdentifier ?? ""
+            )
         }
 
         // When
@@ -235,7 +238,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
             QualifiedClientID(
                 userID: selfUser.remoteIdentifier,
                 domain: selfUser.domain ?? "",
-                clientID: selfClient.remoteIdentifier ?? "")
+                clientID: selfClient.remoteIdentifier ?? ""
+            )
         }
 
         // When
