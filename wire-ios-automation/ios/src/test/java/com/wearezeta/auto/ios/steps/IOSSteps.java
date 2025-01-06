@@ -5,6 +5,7 @@ import com.wearezeta.auto.ios.pages.*;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupAddPeoplePage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupConnectedParticipantProfilePage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupDetailsPage;
+import com.wearezeta.auto.ios.pages.details_overlay.group.GuestOptionsPage;
 import com.wearezeta.auto.ios.pages.details_overlay.single.SinglePendingUserIncomingConnectionProfilePage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.AddPeoplePage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.NewGroupPage;
@@ -64,6 +65,10 @@ public class IOSSteps {
 
   SinglePendingUserIncomingConnectionProfilePage getSinglePendingUserIncomingConnectionProfilePage() {
     return context.getPagesCollection().getPage(SinglePendingUserIncomingConnectionProfilePage.class);
+  }
+
+  GuestOptionsPage getGuestOptionsPage() {
+    return context.getPagesCollection().getPage(GuestOptionsPage.class);
   }
 
   WebViewPage getWebView() {

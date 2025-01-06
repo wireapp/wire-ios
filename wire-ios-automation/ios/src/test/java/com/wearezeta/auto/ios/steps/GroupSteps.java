@@ -2,6 +2,7 @@ package com.wearezeta.auto.ios.steps;
 
 import com.wearezeta.auto.common.usrmgmt.ClientUsersManager;
 import com.wearezeta.auto.ios.common.IOSTestContext;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 
 public class GroupSteps extends IOSSteps {
@@ -98,5 +99,12 @@ public class GroupSteps extends IOSSteps {
   public void iCopyTheGroupInviteLink() {
     getConversationViewPage().openConversationDetails();
     getGroupDetailsPage().openGuestOptions();
+    getGuestOptionsPage().createLinkWithoutPassword();
+    getGuestOptionsPage().copyLink();
+  }
+
+  @When("I send what is in my pasteboard")
+  public void iSendWhatIsInMyPasteboard() {
+    getConversationViewPage().sendMessage(context.getDriver().getClipboardText());
   }
 }
