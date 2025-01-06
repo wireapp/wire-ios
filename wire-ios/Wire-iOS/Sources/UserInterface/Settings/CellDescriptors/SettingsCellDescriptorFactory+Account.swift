@@ -383,7 +383,8 @@ extension SettingsCellDescriptorFactory {
                         backupHandler: BackupHandler(
                             onSuccess: presentShareSheet,
                             onFailure: presentAlert
-                        )
+                        ),
+                        passwordValidator: BackupPasswordValidator()
                     )
                     let backupActionsController = BackupActionsHostingController(viewModel: viewModel)
                     backupActionsController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)

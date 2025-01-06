@@ -47,6 +47,7 @@
 		060A36902CBCF1010066908C /* ConversationListViewController+EmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060A368F2CBCF1010066908C /* ConversationListViewController+EmptyState.swift */; };
 		060C06652B73DFC700B484C6 /* E2EINotificationActionsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06642B73DFC700B484C6 /* E2EINotificationActionsHandler.swift */; };
 		060E5336257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */; };
+		060F032B2D2C12930016431F /* BackupPasswordValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060F032A2D2C12910016431F /* BackupPasswordValidator.swift */; };
 		061275DE26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */; };
 		0617001523E48B66005C262D /* VerticalTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0617001423E48B66005C262D /* VerticalTransition.swift */; };
 		0619FBBB258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0619FBBA258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift */; };
@@ -1981,6 +1982,7 @@
 		060A368F2CBCF1010066908C /* ConversationListViewController+EmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+EmptyState.swift"; sourceTree = "<group>"; };
 		060C06642B73DFC700B484C6 /* E2EINotificationActionsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EINotificationActionsHandler.swift; sourceTree = "<group>"; };
 		060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPropertyFactory+AppLock.swift"; sourceTree = "<group>"; };
+		060F032A2D2C12910016431F /* BackupPasswordValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupPasswordValidator.swift; sourceTree = "<group>"; };
 		061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragInteractionRestrictionTextView.swift; sourceTree = "<group>"; };
 		061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+ReplaceTests.swift"; sourceTree = "<group>"; };
 		0617001423E48B66005C262D /* VerticalTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalTransition.swift; sourceTree = "<group>"; };
@@ -7502,6 +7504,7 @@
 		E666EDD42B73E5F500C03E2B /* Backup */ = {
 			isa = PBXGroup;
 			children = (
+				060F032A2D2C12910016431F /* BackupPasswordValidator.swift */,
 				E666EDD52B73E62800C03E2B /* BackupSource.swift */,
 				E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */,
 				E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */,
@@ -9742,6 +9745,7 @@
 				8750B1CB2124236200B807A9 /* SecondaryTextButton.swift in Sources */,
 				5E62802A2224090D0039A8AB /* SeparatorTableViewCell.swift in Sources */,
 				596841CC2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift in Sources */,
+				060F032B2D2C12930016431F /* BackupPasswordValidator.swift in Sources */,
 				EF25F7DE1FC45F8E0040C3CC /* ValidatedTextField.swift in Sources */,
 				F15650DA21DD107B00210504 /* RoundedView.swift in Sources */,
 				BFE65AB320A047EB00689063 /* CallAccessoryViewController.swift in Sources */,

@@ -56,9 +56,10 @@ public struct BackupActionsView: View {
                     }
                     .sheet(isPresented: $isBackupSheetPresented) {
                         NavigationStack {
-                            ExportBackup { password in
-                                viewModel.backupActiveAccount(password: password)
-                            }
+                            ExportBackup(
+                                passwordValidator: viewModel.passwordValidator) { password in
+                                    viewModel.backupActiveAccount(password: password)
+                                }
                         }
                         .presentationDetents([.medium, .large])
                     }
@@ -75,7 +76,8 @@ public struct BackupActionsView: View {
         backupSource: MockBackupSource(),
         backupHandler: BackupHandler(
             onSuccess: {_,_  in},
-            onFailure: {_ in})
+            onFailure: {_ in}),
+        passwordValidator: MockBackupPasswordValidator()
     ))
 }
 
@@ -85,4 +87,14 @@ private class MockBackupSource: BackupSource {
     }
 
     func clearPreviousBackups() {}
+}
+
+class MockBackupPasswordValidator: BackupPasswordValidatorProtocol {
+    func isValid(password: String) -> Bool {
+        true
+    }
+
+    var localizedRulesDescription: String {
+        "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."
+    }
 }

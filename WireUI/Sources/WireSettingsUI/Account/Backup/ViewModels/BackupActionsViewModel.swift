@@ -22,14 +22,17 @@ public final class BackupActionsViewModel: ObservableObject {
     @Published var sections: [BackupActionsSection] = []
 
     private let backupSource: any BackupSource
-    private var backupHandler: BackupHandler
+    private let backupHandler: BackupHandler
+    let passwordValidator: any BackupPasswordValidatorProtocol
 
     public init(
         backupSource: any BackupSource,
-        backupHandler: BackupHandler
+        backupHandler: BackupHandler,
+        passwordValidator: any BackupPasswordValidatorProtocol
     ) {
         self.backupSource = backupSource
         self.backupHandler = backupHandler
+        self.passwordValidator = passwordValidator
 
         sections = [
             BackupActionsSection(type: .backup)

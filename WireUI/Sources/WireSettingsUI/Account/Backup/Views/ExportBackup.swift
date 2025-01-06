@@ -27,13 +27,20 @@ public struct ExportBackup: View {
 
     @Environment(\.dismiss) private var dismiss
     private let exportBackup: (String) -> Void
+    private let passwordValidator: any BackupPasswordValidatorProtocol
 
-    public init(exportBackup: @escaping (String) -> Void) {
+    public init(
+        passwordValidator: any BackupPasswordValidatorProtocol,
+        exportBackup: @escaping (String) -> Void
+    ) {
         self.exportBackup = exportBackup
+        self.passwordValidator = passwordValidator
     }
 
     public var body: some View {
-        SetBackupPasswordView(exportBackup: exportBackup)
+        SetBackupPasswordView(
+            passwordValidator: passwordValidator,
+            exportBackup: exportBackup)
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
@@ -65,9 +72,14 @@ private struct SetBackupPasswordView: View {
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
 
+    private let passwordValidator: any BackupPasswordValidatorProtocol
     private let exportBackup: (String) -> Void
 
-    init(exportBackup: @escaping (String) -> Void) {
+    init(
+        passwordValidator: any BackupPasswordValidatorProtocol,
+        exportBackup: @escaping (String) -> Void
+    ) {
+        self.passwordValidator = passwordValidator
         self.exportBackup = exportBackup
     }
 
@@ -81,8 +93,9 @@ private struct SetBackupPasswordView: View {
 
             PasswordFieldView(
                 password: $password,
-                isPasswordValid: isPasswordValid(),
-                isPasswordVisible: $isPasswordVisible)
+                isPasswordValid: passwordValidator.isValid(password: password),
+                isPasswordVisible: $isPasswordVisible,
+                passwordRules: Text(passwordValidator.localizedRulesDescription))
 
             Spacer()
 
@@ -101,15 +114,6 @@ private struct SetBackupPasswordView: View {
         .frame(maxHeight: .infinity)
     }
 
-    // TODO: remove it
-    private func isPasswordValid() -> Bool {
-        guard !password.isEmpty else {
-            return true
-        }
-        let passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+{}:<>?]).{8,}$"
-        let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
-        return predicate.evaluate(with: password)
-    }
 }
 
 // MARK: - Previews
@@ -133,7 +137,10 @@ private struct ExportBackupPreview: View {
         )
         .sheet(isPresented: $isPresented) {
             NavigationStack {
-                ExportBackup(exportBackup: {_ in })
+                ExportBackup(
+                    passwordValidator: MockBackupPasswordValidator(),
+                    exportBackup:  {_ in }
+                )
             }
             .presentationDragIndicator(.visible)
             .presentationDetents([.medium, .large])

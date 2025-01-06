@@ -21,8 +21,9 @@ import WireDesign
 
 struct PasswordFieldView: View {
     @Binding var password: String
-    var isPasswordValid: Bool
+    let isPasswordValid: Bool
     @Binding var isPasswordVisible: Bool
+    let passwordRules: Text
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -62,7 +63,7 @@ struct PasswordFieldView: View {
                 }
             }
 
-            Text(L10n.PasswordField.rules)
+            passwordRules
                 .font(.caption)
                 .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color)
         }
@@ -77,7 +78,8 @@ struct PasswordFieldView: View {
     PasswordFieldView(
         password: .constant(""),
         isPasswordValid: false,
-        isPasswordVisible: .constant(false)
+        isPasswordVisible: .constant(false),
+        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
     )
 }
 
@@ -86,7 +88,8 @@ struct PasswordFieldView: View {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
         isPasswordValid: false,
-        isPasswordVisible: .constant(true)
+        isPasswordVisible: .constant(true),
+        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
     )
 }
 
@@ -95,7 +98,8 @@ struct PasswordFieldView: View {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
         isPasswordValid: true,
-        isPasswordVisible: .constant(false)
+        isPasswordVisible: .constant(false),
+        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
     )
 }
 
@@ -104,6 +108,7 @@ struct PasswordFieldView: View {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
         isPasswordValid: true,
-        isPasswordVisible: .constant(true)
+        isPasswordVisible: .constant(true),
+        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
     )
 }
