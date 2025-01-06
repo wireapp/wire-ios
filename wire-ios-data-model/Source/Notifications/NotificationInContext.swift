@@ -31,6 +31,8 @@ import WireUtilities
 @objcMembers
 public class NotificationInContext: NSObject {
 
+    private let notificationCenter: NotificationCenter
+
     static let objectInNotificationKey = "objectInNotification"
 
     /// Name of the notification
@@ -56,11 +58,14 @@ public class NotificationInContext: NSObject {
     private let notification: Notification
 
     public init(
+        notificationCenter: NotificationCenter = .default,
         name: Notification.Name,
         context: NotificationContext,
         object: AnyObject? = nil,
         userInfo: [String: Any]? = nil
     ) {
+        self.notificationCenter = notificationCenter
+
         var userInfo = userInfo ?? [:]
         if let object {
             userInfo[NotificationInContext.objectInNotificationKey] = object
@@ -72,39 +77,52 @@ public class NotificationInContext: NSObject {
         )
     }
 
-    private init(notification: Notification) {
+    private init(
+        notificationCenter: NotificationCenter = .default,
+        notification: Notification
+    ) {
+        self.notificationCenter = notificationCenter
         self.notification = notification
     }
 
     /// Post notification in default notification center
     public func post() {
-        NotificationCenter.default.post(notification)
+        notificationCenter.post(notification)
     }
 
     /// Register for observer
     public static func addObserver(
+        notificationCenter: NotificationCenter = .default,
         name: Notification.Name,
         context: NotificationContext,
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
         using: @escaping (NotificationInContext) -> Void
     ) -> SelfUnregisteringNotificationCenterToken {
-        addUnboundedObserver(name: name, context: context, object: object, queue: queue, using: using)
+        addUnboundedObserver(
+            notificationCenter: notificationCenter,
+            name: name,
+            context: context,
+            object: object,
+            queue: queue,
+            using: using
+        )
     }
 
     public static func addUnboundedObserver(
+        notificationCenter: NotificationCenter = .default,
         name: Notification.Name,
         context: NotificationContext?,
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
         using: @escaping (NotificationInContext) -> Void
     ) -> SelfUnregisteringNotificationCenterToken {
-        SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(
+        SelfUnregisteringNotificationCenterToken(notificationCenter.addObserver(
             forName: name,
             object: context,
             queue: queue
         ) { note in
-            let notificationInContext = NotificationInContext(notification: note)
+            let notificationInContext = NotificationInContext(notificationCenter: notificationCenter, notification: note)
             guard object == nil || object! === notificationInContext.object else { return }
             using(notificationInContext)
         })
@@ -119,6 +137,7 @@ public extension NotificationInContext {
     }
 
     convenience init(
+        notificationCenter: NotificationCenter = .default,
         name: Notification.Name,
         context: NotificationContext,
         object: AnyObject? = nil,
@@ -129,6 +148,7 @@ public extension NotificationInContext {
         userInfo[UserInfoKeys.changeInfo.rawValue] = changeInfo
 
         self.init(
+            notificationCenter: notificationCenter,
             name: name,
             context: context,
             object: object,
@@ -137,6 +157,7 @@ public extension NotificationInContext {
     }
 
     convenience init(
+        notificationCenter: NotificationCenter = .default,
         name: Notification.Name,
         context: NotificationContext,
         object: AnyObject? = nil,
@@ -147,6 +168,7 @@ public extension NotificationInContext {
         userInfo[UserInfoKeys.changedKeys.rawValue] = changedKeys
 
         self.init(
+            notificationCenter: notificationCenter,
             name: name,
             context: context,
             object: object,

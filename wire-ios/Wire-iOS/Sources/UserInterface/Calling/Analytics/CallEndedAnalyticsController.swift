@@ -32,17 +32,20 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     private var callParticipantObsererToken: AnyObject?
 
     private let logger: LoggerProtocol
+    private let currentDateProvider: CurrentDateProviding
 
     init(
         contextProvider: ContextProvider,
         notificationCenter: NotificationCenter,
         analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?,
-        logger: LoggerProtocol
+        logger: LoggerProtocol,
+        currentDateProvider: CurrentDateProviding
     ) {
         self.contextProvider = contextProvider
         self.notificationCenter = notificationCenter
         self.analyticsEventTracker = analyticsEventTracker
         self.logger = logger
+        self.currentDateProvider = currentDateProvider
 
         setupObservations()
     }
@@ -77,6 +80,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         }
 
         eventInfo = .init(
+            callStart: currentDateProvider.now,
             conversationID: conversation.avsIdentifier,
             conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
             isVideoCall: isVideoCall
@@ -93,6 +97,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
         eventInfo = .init(
             callDirection: .outgoing,
+            callStart: currentDateProvider.now,
             conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
             isVideoCall: isVideoCall
         )
@@ -101,7 +106,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     private func handleCallEstablished(_ conversation: ZMConversation) {
         if eventInfo == nil {
             logger.error("handleCallEstablished: expected eventInfo to be non-nil")
-            eventInfo = .init()
+            eventInfo = .init(callStart: currentDateProvider.now)
         }
 
         callParticipantObsererToken = CallCenter.addCallParticipantObserver(
@@ -130,7 +135,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     ) {
         if eventInfo == nil {
             logger.error("handleCallTerminating: expected eventInfo to be non-nil")
-            eventInfo = .init()
+            eventInfo = .init(callStart: currentDateProvider.now)
         }
 
         callParticipantObsererToken = nil
@@ -178,7 +183,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
                     totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,
                     uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers.count,
                     callDirection: eventInfo.callDirection,
-                    callDuration: eventInfo.callDuration(),
+                    callDuration: eventInfo.callDuration(at: currentDateProvider.now),
                     callParticipantCount: eventInfo.participantCount,
                     conversationServiceCount: conversationServices,
                     hasAVSwitchToggled: eventInfo.hasAVSwitchToggled,
@@ -208,7 +213,7 @@ private extension CallEndedAnalyticsController {
         var deviceModel = UIDevice.current.model
         var osVersion = UIDevice.current.systemVersion
         var callDirection: AnalyticsEvent.Calling.CallDirection = .incoming
-        var callStart = Date.now
+        var callStart: Date
         var screenSharingStart: Date?
         var conversationID: AVSIdentifier?
         var conversationType: AnalyticsEvent.Segmentation.Conversation.ConversationType = .oneOnOne
@@ -218,7 +223,7 @@ private extension CallEndedAnalyticsController {
         var isVideoCall = false
         var hasAVSwitchToggled = false
 
-        func callDuration(at callEnd: Date = .now) -> Int {
+        func callDuration(at callEnd: Date) -> Int {
             Int(round(callEnd.timeIntervalSince(callStart)))
         }
     }
@@ -271,10 +276,10 @@ extension CallEndedAnalyticsController: WireCallCenterCallParticipantObserver {
         self.eventInfo?.uniqueScreenSharingUsers.formUnion(screenSharingParticipants)
 
         if !screenSharingParticipants.isEmpty {
-            self.eventInfo?.screenSharingStart = eventInfo?.screenSharingStart ?? .now
+            self.eventInfo?.screenSharingStart = eventInfo?.screenSharingStart ?? currentDateProvider.now
         } else if let screenSharingStart = eventInfo?.screenSharingStart {
             // screen sharing just stopped
-            let duration = screenSharingStart.distance(to: .now)
+            let duration = screenSharingStart.distance(to: currentDateProvider.now)
             self.eventInfo?.totalScreenSharingDuration += Int(round(duration))
             self.eventInfo?.screenSharingStart = nil
         }

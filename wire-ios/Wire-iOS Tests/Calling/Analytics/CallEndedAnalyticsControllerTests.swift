@@ -21,26 +21,44 @@ import WireLogging
 import WireAnalytics
 import WireAnalyticsSupport
 import WireDataModelSupport
+import WireSystemSupport
 
 @testable import Wire
 @testable import WireSyncEngine
+@testable import WireAnalytics
 
 final class CallEndedAnalyticsControllerTests: XCTestCase {
 
     private var notificationCenter: NotificationCenter!
     private var coreDataStack: CoreDataStack!
+    private var selfUser: ZMUser!
+    private var otherUser: ZMUser!
     private var mockAnalyticsEventTracker: MockAnalyticsEventTracker!
-    private var sut: CallEndedAnalyticsController<MockCallCenter>!
+    private var mockDateProvider: MockCurrentDateProviding!
+    private var sut: CallEndedAnalyticsController<WireCallCenterV3>!
+
+    var syncContext: NSManagedObjectContext { coreDataStack.syncContext }
+    var viewContext: NSManagedObjectContext { coreDataStack.viewContext }
 
     override func setUp() async throws {
+
         notificationCenter = .init()
+
         coreDataStack = try await CoreDataStackHelper().createStack()
+        selfUser = await setupSelfUser()
+        otherUser = await setupOtherUser()
+
         mockAnalyticsEventTracker = .init()
+
+        mockDateProvider = .init()
+        mockDateProvider.now = ISO8601DateFormatter().date(from: "2025-01-06T12:00:27+01:00")!
+
         sut = .init(
             contextProvider: coreDataStack,
             notificationCenter: notificationCenter,
             analyticsEventTracker: { self.mockAnalyticsEventTracker },
-            logger: WireLogger(tag: "mock")
+            logger: WireLogger(tag: "mock"),
+            currentDateProvider: mockDateProvider
         )
     }
 
@@ -51,19 +69,76 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         notificationCenter = nil
     }
 
-    func testExample() throws {
+    func testMissedCall() throws {
+        // Given
+        let conversationID = setupConversation()
+
         // When
-        // TODO: send call started event + call cancelled event
-        // - trigger WireCallCenterCallStateNotification and others from here?
-        // - create copies of the notifications?
-        // - is there another way to mock the call center?
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .incoming(isVideo: true, shouldRing: true, degraded: false),
+            conversationId: conversationID,
+            callerId: otherUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+        mockDateProvider.now.addTimeInterval(3)
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .terminating(reason: .canceled),
+            conversationId: conversationID,
+            callerId: otherUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: .incoming(isVideo: true, shouldRing: true, degraded: false)
+        ).post(in: viewContext.notificationContext)
 
         // Then
-        // ensure the correct event has been sent to the analytics backend
-        // ensure the logger logged the event as well
+        let event = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.last)
+        XCTAssertEqual(event.name, "calling.ended_call")
+        XCTAssert(event.segmentation.contains { $0.key == "device_model" })
+    }
+
+    // MARK: - Helpers
+
+    private func setupSelfUser() async -> ZMUser {
+        let selfUser = await syncContext.perform { [syncContext] in
+            defer { try! syncContext.save() }
+            return ModelHelper().createSelfUser(id: .init(), domain: "wire.com", in: syncContext)
+        }
+        return await viewContext.perform { [viewContext] in
+            viewContext.object(with: selfUser.objectID) as! ZMUser
+        }
+    }
+
+    private func setupOtherUser() async -> ZMUser {
+        let otherUser = await syncContext.perform { [syncContext] in
+            defer { try! syncContext.save() }
+            return ZMUser.fetchOrCreate(with: .init(), domain: "wire.com", in: syncContext)
+        }
+        return await viewContext.perform { [viewContext] in
+            viewContext.object(with: otherUser.objectID) as! ZMUser
+        }
+    }
+
+    private func setupConversation() -> AVSIdentifier {
+        viewContext.performAndWait { [viewContext] in
+            ModelHelper().createGroupConversation(
+                id: .init(),
+                with: [selfUser, otherUser],
+                team: nil,
+                domain: "wire.com",
+                in: viewContext
+            ).avsIdentifier!
+        }
     }
 }
 
-// MARK: -
+private class MockAnalyticsEventTracker: AnalyticsEventTracker {
 
-private final class MockCallCenter: WireCallCenterV3 {}
+    var trackedEvents = [AnalyticsEvent]()
+
+    func trackEvent(_ event: AnalyticsEvent) {
+        trackedEvents += [event]
+    }
+}
+

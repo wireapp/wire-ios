@@ -89,7 +89,8 @@ final class AuthenticatedRouter {
             contextProvider: userSession.contextProvider,
             notificationCenter: notificationCenter,
             analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
-            logger: WireLogger.analytics
+            logger: WireLogger.analytics,
+            currentDateProvider: SystemDateProvider()
         )
 
         self.featureChangeObserverToken = notificationCenter.addObserver(
