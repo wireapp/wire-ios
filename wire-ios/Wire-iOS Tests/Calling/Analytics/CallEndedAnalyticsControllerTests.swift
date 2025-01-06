@@ -118,6 +118,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
 
     func testOutgoingOneOnOneCall() throws {
         // Given
+        setupTeam()
         let conversationID = setupOneOnOneConversation()
 
         // When
@@ -163,16 +164,16 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         XCTAssertEqual(segmentation["call_screen_share_unique"], "0")
         XCTAssertEqual(segmentation["call_direction"], "outgoing")
         XCTAssertEqual(segmentation["call_duration"], "3")
-        XCTAssertEqual(segmentation["conversation_type"], "group")
+        XCTAssertEqual(segmentation["conversation_type"], "one_to_one")
         XCTAssertEqual(segmentation["conversation_size"], "2")
         XCTAssertEqual(segmentation["conversation_guests"], "0")
         XCTAssertEqual(segmentation["conversation_guests_pro"], "0")
         XCTAssertEqual(segmentation["call_participants"], "0")
-        XCTAssertEqual(segmentation["call_end_reason"], "4") // WCALL_REASON_CANCELED = 4
+        XCTAssertEqual(segmentation["call_end_reason"], "13") // WCALL_REASON_EVERYONE_LEFT = 13
         XCTAssertEqual(segmentation["conversation_services"], "0")
         XCTAssertEqual(segmentation["call_av_switch_toggle"], "False")
-        XCTAssertEqual(segmentation["call_video"], "True")
-        XCTAssertEqual(segmentation["team_is_team"], "False")
+        XCTAssertEqual(segmentation["call_video"], "False")
+        XCTAssertEqual(segmentation["team_is_team"], "True")
     }
 
     // MARK: - Helpers
@@ -197,12 +198,22 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         }
     }
 
+    private func setupTeam() {
+        syncContext.performAndWait {
+            let otherUser = syncContext.object(with: otherUser.objectID) as! ZMUser
+            let modelHelper = ModelHelper()
+            let (team, _, _) = modelHelper.createSelfTeam(numberOfUsers: 0, in: syncContext)
+            modelHelper.addUser(otherUser, to: team, in: syncContext)
+            try! syncContext.save()
+        }
+    }
+
     private func setupGroupConversation() -> AVSIdentifier {
         viewContext.performAndWait { [viewContext] in
             ModelHelper().createGroupConversation(
                 id: .init(),
                 with: [selfUser, otherUser],
-                team: nil,
+                team: selfUser.team,
                 domain: "wire.com",
                 in: viewContext
             ).avsIdentifier!
@@ -210,17 +221,13 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
     }
 
     private func setupOneOnOneConversation() -> AVSIdentifier {
-        syncContext.performAndWait { [syncContext] in
-            defer { try! syncContext.save() }
-            let team = Team.fetchOrCreate(with: .init(), in: syncContext)
-            return ModelHelper().createOneOnOne(
-                id: .init(),
-                domain: "wire.com",
-                with: otherUser,
-                team: team,
-                in: syncContext
-            ).avsIdentifier!
-        }
+        ModelHelper().createOneOnOne(
+            id: .init(),
+            domain: "wire.com",
+            with: otherUser,
+            team: selfUser.team,
+            in: viewContext
+        ).avsIdentifier!
     }
 }
 
