@@ -16,25 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSettingsUI
+import SwiftUI
 
-struct BackupPasswordValidator: BackupPasswordValidatorProtocol {
+@ViewBuilder @MainActor
+func BackupActionsPreview() -> some View {
+    BackupActionsView(viewModel: BackupActionsViewModel(
+        backupSource: MockBackupSource(),
+        backupResultHandler: BackupResultHandler(
+            onSuccess: { _, _  in },
+            onFailure: { _ in }
+        ),
+        passwordValidator: MockBackupPasswordValidator()
+    ))
+}
 
+private class MockBackupSource: BackupSourceProtocol {
+    func backupActiveAccount(password: String) throws -> URL {
+        URL(fileURLWithPath: "path")
+    }
+
+    func clearPreviousBackups() {}
+}
+
+class MockBackupPasswordValidator: BackupPasswordValidatorProtocol {
     func isPasswordValid(_ password: String) -> Bool {
-        guard !password.isEmpty else {
-            return true
-        }
-
-        switch PasswordRuleSet.shared.validatePassword(password) {
-        case .valid:
-            return true
-        case .invalid:
-            return false
-        }
+        true
     }
 
     var localizedRulesDescription: String {
-        PasswordRuleSet.localizedErrorMessage
+        "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."
     }
-
 }

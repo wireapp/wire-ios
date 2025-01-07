@@ -71,30 +71,5 @@ public struct BackupActionsView: View {
 }
 
 #Preview {
-    BackupActionsView(viewModel: BackupActionsViewModel(
-        backupSource: MockBackupSource(),
-        backupHandler: BackupHandler(
-            onSuccess: { _, _  in },
-            onFailure: { _ in }
-        ),
-        passwordValidator: MockBackupPasswordValidator()
-    ))
-}
-
-private class MockBackupSource: BackupSourceProtocol {
-    func backupActiveAccount(password: String) throws -> URL {
-        URL(fileURLWithPath: "path")
-    }
-
-    func clearPreviousBackups() {}
-}
-
-class MockBackupPasswordValidator: BackupPasswordValidatorProtocol {
-    func isValid(password: String) -> Bool {
-        true
-    }
-
-    var localizedRulesDescription: String {
-        "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."
-    }
+    BackupActionsPreview()
 }

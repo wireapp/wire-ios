@@ -23,6 +23,6 @@
 "exportBackup.title" = "Set password";
 "exportBackup.description" = "The backup will be compressed and encrypted with a password. Make sure to store it in a secure place.";
 "exportBackup.button" = "Back Up Now";
-"setBackupPassword.title" = "Password (OPTIONAL)";
-"setBackupPassword.placeholder" = "Enter password";
+"exportBackup.setBackupPassword.title" = "Password (OPTIONAL)";
+"exportBackup.setBackupPassword.placeholder" = "Enter password";
 

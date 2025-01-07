@@ -35,6 +35,7 @@ extension ZMUser {
 
 extension SettingsCellDescriptorFactory {
 
+    @MainActor
     func accountGroup(
         isPublicDomain: Bool,
         userSession: UserSession,
@@ -161,6 +162,7 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
+    @MainActor
     func conversationsSection() -> SettingsSectionDescriptorType {
         SettingsSectionDescriptor(
             cellDescriptors: [backUpElement()],
@@ -367,6 +369,7 @@ extension SettingsCellDescriptorFactory {
         SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.encryptMessagesAtRest))
     }
 
+    @MainActor
     func backUpElement() -> any SettingsCellDescriptorType {
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.HistoryBackup.title,
@@ -380,7 +383,7 @@ extension SettingsCellDescriptorFactory {
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     let viewModel = BackupActionsViewModel(
                         backupSource: BackupSource(),
-                        backupHandler: BackupHandler(
+                        backupResultHandler: BackupResultHandler(
                             onSuccess: presentShareSheet,
                             onFailure: presentAlert
                         ),

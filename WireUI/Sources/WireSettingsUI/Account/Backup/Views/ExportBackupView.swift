@@ -94,7 +94,7 @@ private struct SetBackupPasswordView: View {
 
             PasswordFieldView(
                 password: $password,
-                isPasswordValid: passwordValidator.isValid(password: password),
+                isPasswordValid: passwordValidator.isPasswordValid(password),
                 isPasswordVisible: $isPasswordVisible,
                 passwordRules: Text(passwordValidator.localizedRulesDescription))
 

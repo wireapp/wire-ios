@@ -27,13 +27,13 @@ struct PasswordFieldView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(L10n.SetBackupPassword.title)
+            Text(L10n.ExportBackup.SetBackupPassword.title)
                 .font(.subheadline)
                 .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color)
 
             ZStack {
                 if isPasswordVisible {
-                    TextField(L10n.SetBackupPassword.placeholder,
+                    TextField(L10n.ExportBackup.SetBackupPassword.placeholder,
                               text: $password)
                         .font(.textStyle(.body1))
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -42,7 +42,7 @@ struct PasswordFieldView: View {
                                 .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
                         )
                 } else {
-                    SecureField(L10n.SetBackupPassword.placeholder,
+                    SecureField(L10n.ExportBackup.SetBackupPassword.placeholder,
                                 text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .overlay(
