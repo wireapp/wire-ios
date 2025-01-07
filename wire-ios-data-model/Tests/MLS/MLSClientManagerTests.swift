@@ -19,7 +19,6 @@
 import XCTest
 
 @testable import WireDataModelSupport
-@testable import WireRequestStrategy
 
 class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
@@ -53,7 +52,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         super.tearDown()
     }
 
-    func test_InitializeMLSClient_Success() async {
+    func test_InitializeMLSClient_Success() async throws {
         // Mock
         mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .enabled,
@@ -67,24 +66,35 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         // Given
         BackendInfo.isMLSEnabled = true
         let mlsFeature = mockFeatureRepository.fetchMLS()
-        await syncMOC.perform {
+        let domain = "example.domain.com"
+
+        let selfUser = await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.domain = "example.domain.com"
+            selfUser.domain = domain
+            return selfUser
         }
+
         let selfClient = await syncMOC.perform {
             self.createSelfClient(onMOC: self.syncMOC)
         }
+
         let hasRegisteredMLSClient = await syncMOC.perform {
             selfClient.hasRegisteredMLSClient
         }
+
+        let remoteIdentifier = try XCTUnwrap(syncMOC.performAndWait { selfClient.remoteIdentifier })
         let qualifiedID = await syncMOC.perform {
-            selfClient.qualifiedClientID
+            QualifiedClientID(
+                userID: selfUser.remoteIdentifier,
+                domain: domain,
+                clientID: remoteIdentifier
+            )
         }
 
         // When
         XCTAssertFalse(hasRegisteredMLSClient)
         await sut.initializeMLSClientIfNeeded(
-            for: qualifiedID!,
+            for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature
         )
@@ -93,7 +103,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
     }
 
-    func test_InitializeMLSClient_Failed_MLSFeatureIsDisabled() async {
+    func test_InitializeMLSClient_Failed_MLSFeatureIsDisabled() async throws {
         // Mock
         mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .disabled,
@@ -107,24 +117,35 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         // Given
         BackendInfo.isMLSEnabled = true
         let mlsFeature = mockFeatureRepository.fetchMLS()
-        await syncMOC.perform {
+        let domain = "example.domain.com"
+
+        let selfUser = await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.domain = "example.domain.com"
+            selfUser.domain = domain
+            return selfUser
         }
+
         let selfClient = await syncMOC.perform {
             self.createSelfClient(onMOC: self.syncMOC)
         }
+
         let hasRegisteredMLSClient = await syncMOC.perform {
             selfClient.hasRegisteredMLSClient
         }
+
+        let remoteIdentifier = try XCTUnwrap(syncMOC.performAndWait { selfClient.remoteIdentifier })
         let qualifiedID = await syncMOC.perform {
-            selfClient.qualifiedClientID
+            QualifiedClientID(
+                userID: selfUser.remoteIdentifier,
+                domain: domain,
+                clientID: remoteIdentifier
+            )
         }
 
         // When
         XCTAssertFalse(hasRegisteredMLSClient)
         await sut.initializeMLSClientIfNeeded(
-            for: qualifiedID!,
+            for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature
         )
@@ -133,7 +154,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 0)
     }
 
-    func test_InitializeMLSClient_Failed_MLSClientAlreadyExists() async {
+    func test_InitializeMLSClient_Failed_MLSClientAlreadyExists() async throws {
         // Mock
         mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .enabled,
@@ -147,15 +168,25 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         // Given
         BackendInfo.isMLSEnabled = true
         let mlsFeature = mockFeatureRepository.fetchMLS()
-        await syncMOC.perform {
+        let domain = "example.domain.com"
+
+        let selfUser = await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.domain = "example.domain.com"
+            selfUser.domain = domain
+            return selfUser
         }
+
         let selfClient = await syncMOC.perform {
             self.createSelfClient(onMOC: self.syncMOC)
         }
+
+        let remoteIdentifier = try XCTUnwrap(syncMOC.performAndWait { selfClient.remoteIdentifier })
         let qualifiedID = await syncMOC.perform {
-            selfClient.qualifiedClientID
+            QualifiedClientID(
+                userID: selfUser.remoteIdentifier,
+                domain: domain,
+                clientID: remoteIdentifier
+            )
         }
 
         // When
@@ -167,7 +198,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(hasRegisteredMLSClient)
 
         await sut.initializeMLSClientIfNeeded(
-            for: qualifiedID!,
+            for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature
         )
@@ -176,7 +207,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 0)
     }
 
-    func test_InitializeMLSClient_Failed_MLSIsDisabledOnBackend() async {
+    func test_InitializeMLSClient_Failed_MLSIsDisabledOnBackend() async throws {
         // Mock
         mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .enabled,
@@ -190,24 +221,35 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         // Given
         BackendInfo.isMLSEnabled = false
         let mlsFeature = mockFeatureRepository.fetchMLS()
-        await syncMOC.perform {
+        let domain = "example.domain.com"
+
+        let selfUser = await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            selfUser.domain = "example.domain.com"
+            selfUser.domain = domain
+            return selfUser
         }
+
         let selfClient = await syncMOC.perform {
             self.createSelfClient(onMOC: self.syncMOC)
         }
+
         let hasRegisteredMLSClient = await syncMOC.perform {
             selfClient.hasRegisteredMLSClient
         }
+
+        let remoteIdentifier = try XCTUnwrap(syncMOC.performAndWait { selfClient.remoteIdentifier })
         let qualifiedID = await syncMOC.perform {
-            selfClient.qualifiedClientID
+            QualifiedClientID(
+                userID: selfUser.remoteIdentifier,
+                domain: domain,
+                clientID: remoteIdentifier
+            )
         }
 
         // When
         XCTAssertFalse(hasRegisteredMLSClient)
         await sut.initializeMLSClientIfNeeded(
-            for: qualifiedID!,
+            for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature
         )
