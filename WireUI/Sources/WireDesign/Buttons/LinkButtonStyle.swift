@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,23 +18,29 @@
 
 import SwiftUI
 
-struct TertiaryButtonStyle: SwiftUI.ButtonStyle {
+struct LinkButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
-    @Environment(\.isFocused) var isFocused
+    @Environment(\.isFocused) private var isFocused
 
-    typealias Theme = ColorTheme.Buttons.Tertiary
+    typealias Theme = ColorTheme.Buttons.Link
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .lineLimit(1)
+            .underline()
             .padding(8)
-            .background(isEnabled ? Theme.enabled.color : Theme.disabled.color)
-            .foregroundStyle(isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color)
-            .wireTextStyle(.buttonSmall)
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isEnabled ? Theme.enabledOutline.color : Theme.disabledOutline.color, lineWidth: 1)
-            }
-            .clipShape(.rect(cornerRadius: 12))
+            .foregroundStyle(foregroundColor(for: isEnabled, and: isFocused))
+            .wireTextStyle(.body1)
+    }
+}
+
+private func foregroundColor(for isEnabled: Bool, and isFocused: Bool) -> Color {
+    switch (isEnabled, isFocused) {
+    case (false, _):
+        ColorTheme.Buttons.Link.onDisabled.color
+    case (true, true):
+        ColorTheme.Buttons.Link.onFocus.color
+    case (true, false):
+        ColorTheme.Buttons.Link.onEnabled.color
     }
 }

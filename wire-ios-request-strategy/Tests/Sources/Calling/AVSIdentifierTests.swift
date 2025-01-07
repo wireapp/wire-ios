@@ -19,7 +19,7 @@
 import Foundation
 import WireTransport
 import XCTest
-@testable import WireSyncEngine
+@testable import WireRequestStrategy
 
 class AVSIdentifierTests: XCTestCase {
 

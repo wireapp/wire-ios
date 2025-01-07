@@ -13,6 +13,9 @@ on:
       notify_secret:
         type: string
         required: true
+      test_dependencies:
+        type: boolean
+        default: false
       
     secrets:
       ZENKINS_USERNAME:
@@ -105,9 +108,14 @@ jobs:
           bundle exec fastlane prepare_for_tests
 
       - name: "Test all selected frameworks" 
-        id: set_frameworks
+        if: ${{ inputs.test_dependencies || inputs.all }}
         run: |
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
+
+      - name: "Test frameworks without dependencies" 
+        if: ${{ inputs.test_dependencies == false }}
+        run: |
+          bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
 
       - name: Find all .xcresult files
         if: ${{ always() && github.event_name == 'pull_request' }}
@@ -119,6 +127,7 @@ jobs:
       - name: Debug Print xcresult files
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+
       - name: Upload .xcresult files as artifact
         if: always()
         uses: actions/upload-artifact@v4

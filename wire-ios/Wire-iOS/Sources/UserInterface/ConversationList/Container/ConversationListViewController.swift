@@ -134,6 +134,7 @@ final class ConversationListViewController: UIViewController {
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
+            selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
