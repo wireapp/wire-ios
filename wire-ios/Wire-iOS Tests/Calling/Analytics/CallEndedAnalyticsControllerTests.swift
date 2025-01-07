@@ -76,10 +76,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
 
     func testMissedGroupVideoCall() throws {
         // Given
-        let conversationID = setupGroupConversation(
-            team: nil,
-            participants: [selfUser, secondUser]
-        )
+        let conversationID = setupGroupConversation(team: nil, participants: [selfUser, secondUser])
 
         // When
         WireCallCenterCallStateNotification(
@@ -199,13 +196,6 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             participants: [selfUser, secondUser, thirdUser]
         )
 
-//        let c_ = syncContext.performAndWait { ZMConversation.fetchOrCreate(with: conversationID.identifier, domain: conversationID.domain, in: syncContext)
-//        }
-//        let c = viewContext.object(with: c_.objectID) as! ZMConversation
-//        print(selfUser.isGuest(in: c))
-//        print(secondUser.isGuest(in: c))
-//        print(thirdUser.isGuest(in: c))
-
         // When
         WireCallCenterCallStateNotification(
             context: viewContext,
@@ -267,6 +257,117 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         XCTAssertEqual(segmentation["team_is_team"], "True")
     }
 
+    func testSecondIncomingCall() throws {
+        // Given
+        let conversation0ID = setupGroupConversation(team: nil, participants: [selfUser, secondUser])
+        let conversation1ID = setupGroupConversation(team: nil, participants: [selfUser, thirdUser])
+
+        // When
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .incoming(isVideo: true, shouldRing: true, degraded: false),
+            conversationId: conversation0ID,
+            callerId: secondUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+
+        mockDateProvider.now.addTimeInterval(1)
+
+        // call established
+
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .established,
+            conversationId: conversation0ID,
+            callerId: secondUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+
+        mockDateProvider.now.addTimeInterval(3)
+
+        // another incoming call
+
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
+            conversationId: conversation1ID,
+            callerId: thirdUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+
+        mockDateProvider.now.addTimeInterval(3)
+
+        // incoming call is cancelled
+
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .terminating(reason: .canceled),
+            conversationId: conversation1ID,
+            callerId: thirdUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+
+        mockDateProvider.now.addTimeInterval(3)
+
+        // first call ended
+
+        WireCallCenterCallStateNotification(
+            context: viewContext,
+            callState: .terminating(reason: .unknown),
+            conversationId: conversation0ID,
+            callerId: secondUser.avsIdentifier,
+            messageTime: mockDateProvider.now,
+            previousCallState: nil
+        ).post(in: viewContext.notificationContext)
+
+        // Then
+        let event0 = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.first)
+        let segmentation0 = event0.segmentation
+        XCTAssertEqual(event0.name, "calling.ended_call")
+        XCTAssert(segmentation0.contains { $0.key == "device_model" })
+        XCTAssert(segmentation0.contains { $0.key == "os_version" })
+        XCTAssertEqual(segmentation0["call_screen_share"], "False")
+        XCTAssertEqual(segmentation0["call_screen_share_duration"], "0")
+        XCTAssertEqual(segmentation0["call_screen_share_unique"], "0")
+        XCTAssertEqual(segmentation0["call_direction"], "incoming")
+        XCTAssertEqual(segmentation0["call_duration"], "0")
+        XCTAssertEqual(segmentation0["conversation_type"], "group")
+        XCTAssertEqual(segmentation0["conversation_size"], "2")
+        XCTAssertEqual(segmentation0["conversation_guests"], "0")
+        XCTAssertEqual(segmentation0["conversation_guests_pro"], "0")
+        XCTAssertEqual(segmentation0["call_participants"], "0")
+        XCTAssertEqual(segmentation0["call_end_reason"], "4") // WCALL_REASON_CANCELED = 4
+        XCTAssertEqual(segmentation0["conversation_services"], "0")
+        XCTAssertEqual(segmentation0["call_av_switch_toggle"], "False")
+        XCTAssertEqual(segmentation0["call_video"], "False")
+        XCTAssertEqual(segmentation0["team_is_team"], "False")
+
+        let event1 = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.last)
+        let segmentation1 = event1.segmentation
+        XCTAssertEqual(event1.name, "calling.ended_call")
+        XCTAssert(segmentation1.contains { $0.key == "device_model" })
+        XCTAssert(segmentation1.contains { $0.key == "os_version" })
+        XCTAssertEqual(segmentation1["call_screen_share"], "False")
+        XCTAssertEqual(segmentation1["call_screen_share_duration"], "0")
+        XCTAssertEqual(segmentation1["call_screen_share_unique"], "0")
+        XCTAssertEqual(segmentation1["call_direction"], "incoming")
+        XCTAssertEqual(segmentation1["call_duration"], "9")
+        XCTAssertEqual(segmentation1["conversation_type"], "group")
+        XCTAssertEqual(segmentation1["conversation_size"], "2")
+        XCTAssertEqual(segmentation1["conversation_guests"], "0")
+        XCTAssertEqual(segmentation1["conversation_guests_pro"], "0")
+        XCTAssertEqual(segmentation1["call_participants"], "0")
+        XCTAssertEqual(segmentation1["call_end_reason"], "1") // WCALL_REASON_ERROR = 1
+        XCTAssertEqual(segmentation1["conversation_services"], "0")
+        XCTAssertEqual(segmentation1["call_av_switch_toggle"], "False")
+        XCTAssertEqual(segmentation1["call_video"], "True")
+        XCTAssertEqual(segmentation1["team_is_team"], "False")
+    }
+
     // MARK: - Helpers
 
     private func setupSelfUser() async -> ZMUser {
@@ -291,9 +392,9 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
 
     private func setupSelfTeam() {
         syncContext.performAndWait {
-            let secondUser = syncContext.object(with: secondUser.objectID) as! ZMUser
+            _ = syncContext.object(with: secondUser.objectID) as! ZMUser
             let modelHelper = ModelHelper()
-            let (team, _, _) = modelHelper.createSelfTeam(numberOfUsers: 0, in: syncContext)
+            modelHelper.createSelfTeam(numberOfUsers: 0, in: syncContext)
             try! syncContext.save()
         }
     }

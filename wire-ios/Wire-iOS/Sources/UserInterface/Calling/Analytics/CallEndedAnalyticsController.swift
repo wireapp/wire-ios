@@ -26,7 +26,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     private let notificationCenter: NotificationCenter
     private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
-    private var eventInfo: EventInfo?
+    private var eventInfos = [UUID: EventInfo]()
     private var callStateObservationToken: AnyObject?
     private var toggleVideoObservationToken: AnyObject?
     private var callParticipantObsererToken: AnyObject?
@@ -75,11 +75,11 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         _ conversation: ZMConversation,
         _ isVideoCall: Bool
     ) {
-        if let eventInfo {
+        if let eventInfo = eventInfos[conversation.remoteIdentifier] {
             logger.error("handleIncomingCall: expected eventInfo to be nil, but is: \(eventInfo)")
         }
 
-        eventInfo = .init(
+        eventInfos[conversation.remoteIdentifier] = .init(
             conversationID: conversation.avsIdentifier,
             conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
             isVideoCall: isVideoCall
@@ -90,11 +90,11 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         _ conversation: ZMConversation,
         _ isVideoCall: Bool
     ) {
-        if let eventInfo {
+        if let eventInfo = eventInfos[conversation.remoteIdentifier] {
             logger.error("handleOutgoingCall: expected eventInfo to be nil, but is: \(eventInfo)")
         }
 
-        eventInfo = .init(
+        eventInfos[conversation.remoteIdentifier] = .init(
             callDirection: .outgoing,
             conversationID: conversation.avsIdentifier,
             conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
@@ -103,12 +103,12 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     }
 
     private func handleCallEstablished(_ conversation: ZMConversation) {
-        if eventInfo == nil {
+        if eventInfos[conversation.remoteIdentifier] == nil {
             logger.error("handleCallEstablished: expected eventInfo to be non-nil")
-            eventInfo = .init(callStart: currentDateProvider.now)
+            eventInfos[conversation.remoteIdentifier] = .init(callStart: currentDateProvider.now)
         }
 
-        eventInfo?.callStart = currentDateProvider.now
+        eventInfos[conversation.remoteIdentifier]?.callStart = currentDateProvider.now
 
         callParticipantObsererToken = CallCenter.addCallParticipantObserver(
             observer: self,
@@ -120,10 +120,10 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     private func handleToggleVideoNotification(_ notification: Notification) {
         guard
             let conversationID = notification.userInfo?[CallCenter.conversationIDUserInfoKey] as? AVSIdentifier,
-            conversationID == eventInfo?.conversationID
+            conversationID == eventInfos[conversationID.identifier]?.conversationID
         else { return }
 
-        eventInfo?.hasAVSwitchToggled = true
+        eventInfos[conversationID.identifier]?.hasAVSwitchToggled = true
 
         // unsubscribe since we only want to know if the self user toggled the video at least once
         toggleVideoObservationToken.map { notificationCenter.removeObserver($0) }
@@ -134,14 +134,17 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         _ conversation: ZMConversation,
         _ reason: CallClosedReason
     ) {
-        if eventInfo == nil {
+        if eventInfos[conversation.remoteIdentifier] == nil {
             logger.error("handleCallTerminating: expected eventInfo to be non-nil")
-            eventInfo = .init()
+            eventInfos[conversation.remoteIdentifier] = .init()
         }
 
         callParticipantObsererToken = nil
 
-        guard let eventInfo, let context = conversation.managedObjectContext else { return }
+        guard
+            let eventInfo = eventInfos[conversation.remoteIdentifier],
+            let context = conversation.managedObjectContext
+        else { return }
 
         let (
             isTeamMember,
@@ -200,7 +203,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
             )
         )
 
-        self.eventInfo = nil
+        eventInfos[conversation.remoteIdentifier] = nil
     }
 
 }
@@ -269,21 +272,21 @@ extension CallEndedAnalyticsController: WireCallCenterCallParticipantObserver {
         conversation: ZMConversation,
         participants: [CallParticipant]
     ) {
-        let eventInfo = eventInfo
+        let eventInfo = eventInfos[conversation.remoteIdentifier]
 
         // if there is anybody sharing the screen take a note and also remember the time if needed
         let screenSharingParticipants = participants
             .filter { participant in participant.state.videoState == .screenSharing }
             .map(\.userId.identifier)
-        self.eventInfo?.uniqueScreenSharingUsers.formUnion(screenSharingParticipants)
+        eventInfos[conversation.remoteIdentifier]?.uniqueScreenSharingUsers.formUnion(screenSharingParticipants)
 
         if !screenSharingParticipants.isEmpty {
-            self.eventInfo?.screenSharingStart = eventInfo?.screenSharingStart ?? currentDateProvider.now
+            eventInfos[conversation.remoteIdentifier]?.screenSharingStart = eventInfo?.screenSharingStart ?? currentDateProvider.now
         } else if let screenSharingStart = eventInfo?.screenSharingStart {
             // screen sharing just stopped
             let duration = screenSharingStart.distance(to: currentDateProvider.now)
-            self.eventInfo?.totalScreenSharingDuration += Int(round(duration))
-            self.eventInfo?.screenSharingStart = nil
+            eventInfos[conversation.remoteIdentifier]?.totalScreenSharingDuration += Int(round(duration))
+            eventInfos[conversation.remoteIdentifier]?.screenSharingStart = nil
         }
     }
 
