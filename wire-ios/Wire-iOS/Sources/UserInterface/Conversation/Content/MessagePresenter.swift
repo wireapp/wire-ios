@@ -119,8 +119,6 @@ final class MessagePresenter: NSObject {
         ) { _ in
             self.mediaPlayerController?.tearDown()
 
-            UIViewController.attemptRotationToDeviceOrientation()
-
             if let videoPlayerObserver = self.videoPlayerObserver {
                 NotificationCenter.default.removeObserver(videoPlayerObserver)
                 self.videoPlayerObserver = nil
