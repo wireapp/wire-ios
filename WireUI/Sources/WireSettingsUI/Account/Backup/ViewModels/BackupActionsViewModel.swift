@@ -34,7 +34,7 @@ public final class BackupActionsViewModel: ObservableObject {
         self.backupHandler = backupHandler
         self.passwordValidator = passwordValidator
 
-        sections = [
+        self.sections = [
             BackupActionsSection(type: .backup)
         ]
     }

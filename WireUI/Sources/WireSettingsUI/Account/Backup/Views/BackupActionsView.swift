@@ -57,7 +57,8 @@ public struct BackupActionsView: View {
                                 passwordValidator: viewModel.passwordValidator,
                                 exportBackup: { password in
                                     viewModel.backupActiveAccount(password: password)
-                                })
+                                }
+                            )
                         }
                         .presentationDetents([.medium, .large])
                     }
@@ -74,7 +75,8 @@ public struct BackupActionsView: View {
         backupSource: MockBackupSource(),
         backupHandler: BackupHandler(
             onSuccess: { _, _  in },
-            onFailure: { _ in }),
+            onFailure: { _ in }
+        ),
         passwordValidator: MockBackupPasswordValidator()
     ))
 }
