@@ -398,7 +398,7 @@ final class OneOnOneMigratorTests: XCTestCase {
                 in: self.syncContext
             )
         }
-        
+
         let duplicateProteusConversation2 = try await syncContext.perform {
             let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
             let team = modelHelper.createTeam(in: self.syncContext)
@@ -466,7 +466,7 @@ final class OneOnOneMigratorTests: XCTestCase {
             // this save is needed, in order for the fetch request to get the correct duplicate OneOnOne conv.
             try self.syncContext.save()
         }
-        
+
         // duplicate Proteus OneOnOne conversation
         try await syncContext.perform {
             var message = try duplicateProteusConversation2.appendText(content: "Hello World 1!")
@@ -484,7 +484,7 @@ final class OneOnOneMigratorTests: XCTestCase {
             // this save is needed, in order for the fetch request to get the correct duplicate OneOnOne conv.
             try self.syncContext.save()
         }
-        
+
         // When
 
         try await sut.migrateToMLS(
