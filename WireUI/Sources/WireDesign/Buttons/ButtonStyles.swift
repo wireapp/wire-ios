@@ -22,6 +22,7 @@ public enum WireButtonStyle: String, CaseIterable {
     case primary
     case secondary
     case tertiary
+    case link
 }
 
 enum ButtonState: CaseIterable {
@@ -41,6 +42,8 @@ struct WireButtonStyleModifier: ViewModifier {
             content().buttonStyle(SecondaryButtonStyle())
         case .tertiary:
             content().buttonStyle(TertiaryButtonStyle())
+        case .link:
+            content().buttonStyle(LinkButtonStyle())
         }
     }
 

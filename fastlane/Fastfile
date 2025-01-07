@@ -40,9 +40,18 @@ platform :ios do
         ) if is_running_on_ci
     end
 
+    def delete_keychain_if_needed
+        return unless is_running_on_ci
+        begin
+            delete_keychain
+        rescue
+            UI.verbose("No keychain found, skipping deletion...")
+        end
+    end
+
     before_all do |lane|
         ensure_xcode_version
-        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -54,11 +63,7 @@ platform :ios do
     end
 
     after_all do |lane|
-        begin
-            delete_keychain if is_running_on_ci
-        rescue
-            UI.verbose("No keychain found, skipping deletion...") 
-        end
+        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks].include?(lane)
     end
 
     desc "Test frameworks given folders"
@@ -74,8 +79,27 @@ platform :ios do
         end
        
        UI.message "🤖 No schemes to test" if schemas.empty?
+       
+       begin
+           run_tests_frameworks(schemas, options)
+       rescue => e
+           UI.test_failure!("Failing running tests #{e.to_s}")
+       end
+    end
 
-       run_tests_frameworks(schemas, options)
+    desc "Test Frameworks without dependencies given folders"
+    lane :test_only_frameworks do |options|
+        frameworks = Framework.all
+
+        folders = options[:folders].split(',').filter { |f| !["fastlane", "scripts", "carthage"].include?(f) }
+        matching_frameworks = folders.map { |folder| frameworks[folder] }
+
+        framework_schemes = matching_frameworks.map { |f| f.scheme }
+        begin
+            run_tests_frameworks(framework_schemes, options)
+        rescue => e
+            UI.test_failure!("Failing running tests #{e.to_s}")
+        end
     end
 
     desc "Test one framework only"
@@ -113,7 +137,7 @@ platform :ios do
     lane :generate_framework_schemes do |options|
         frameworks = Framework.all      
 
-        folders = options[:folders].split(',')
+        folders = options[:folders].split(',').filter { |f| !["fastlane", "scripts", "carthage"].include?(f) }
         matching_frameworks = folders.map { |folder| frameworks[folder] }
         
         unique_schemes = matching_frameworks.compact.map do |framework|
@@ -271,13 +295,31 @@ platform :ios do
         options[:build_number] = 1
         build = Build.new(options: options)
         
-        UI.message "🤖 Testing schemas: #{schemas.join(', ')}"
+        write_tests_info_to_summary("🤖 Testing schemas: #{schemas.join(', ')}")
         
         testplan = options[:testplan] || "AllTests"
 
+        is_nightly_build = options[:all] == true
+        
+        schema_errors = {}
+        
         schemas.each do |scheme|
-            UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
-            test_plan(build, scheme, testplan)
+            write_tests_info_to_summary("🤖 Testing scheme #{scheme} with plan #{testplan}")
+            begin
+                test_plan(build, scheme, testplan)
+                schema_errors[scheme] = false
+            rescue => e
+                write_tests_info_to_summary("❌ Scheme: #{scheme} failed with errors: #{e.to_s}")
+                if !is_nightly_build
+                    raise e
+                end
+                schema_errors[scheme] = true
+            end
+        end
+       
+        # report errors so Github action fails
+        if schema_errors.values.include?(true)
+            raise "Tests fail"
         end
     end
 
@@ -395,6 +437,24 @@ platform :ios do
         UI.message("Successfully wrote to GITHUB_STEP_SUMMARY.")
     end
 
+    def write_tests_info_to_summary(text)
+        if is_running_on_ci
+            summary_file = ENV['GITHUB_STEP_SUMMARY']
+        else
+            summary_file = "github_summary.md"
+        end
+
+        if (summary_file.nil? || summary_file.empty?)
+          UI.error("GITHUB_STEP_SUMMARY is not set. Are you running in GitHub Actions?")
+          return
+        end
+
+        UI.message(text)
+        File.open(summary_file, "a") do |file|
+          file.puts "#{text}"
+        end
+    end
+
     # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
         xcode_version = options[:xcode_version]
@@ -492,59 +552,28 @@ platform :ios do
             UI.user_error! "missing id for tests"
         end
 
-        begin
-            UI.message "🔨 Building scheme: #{scheme}"
-            
-            run_tests(
-                testplan: testplan,
-                scheme: scheme,
-                skip_detect_devices: true,
-                configuration: "Debug",
-                sdk:"iphonesimulator",
-                destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
-                # code_coverage: true,
-                derived_data_path: "DerivedData",
-                buildlog_path: build.build_path,
-                result_bundle: true,
-                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
-                output_types: "junit",
-                cloned_source_packages_path: ENV['PACKAGES_DIR'],
-                number_of_retries: 2,
-                build_for_testing: true
-            )
-        rescue => e
-            UI.error "❌ Build failed for scheme: #{scheme}: #{e.to_s}"
-            raise e # Stops execution immediately if the build fails
-        end
-
         ci_args = is_running_on_ci ? "CI=1" : nil
         
-        begin
-            UI.message "🧪 Running tests for scheme: #{scheme}"
-            run_tests(
-                testplan: testplan,
-                scheme: scheme,
-                skip_detect_devices: true,
-                configuration: "Debug",
-                sdk:"iphonesimulator",
-                destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
-                # code_coverage: true,
-                derived_data_path: "DerivedData",
-                buildlog_path: build.build_path,
-                result_bundle: true,
-                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
-                output_types: "junit",
-                cloned_source_packages_path: ENV['PACKAGES_DIR'],
-                disable_package_automatic_updates: true,
-                skip_package_dependencies_resolution: true,
-                number_of_retries: 2,
-                test_without_building: true,
-                xcargs: ci_args
-            )
-        rescue => e
-            puts "⚠️ Tests failed for scheme: #{scheme}, but continuing..."
-            # Continue to the next scheme despite test failures
-        end
+        run_tests(
+            step_name: "🧪 Running tests for scheme: #{scheme}",
+            testplan: testplan,
+            scheme: scheme,
+            skip_detect_devices: true,
+            configuration: "Debug",
+            sdk:"iphonesimulator",
+            destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
+            # code_coverage: true,
+            derived_data_path: "DerivedData",
+            buildlog_path: build.build_path,
+            result_bundle: true,
+            output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
+            output_types: "junit",
+            cloned_source_packages_path: ENV['PACKAGES_DIR'],
+            disable_package_automatic_updates: true,
+            skip_package_dependencies_resolution: true,
+            number_of_retries: 2,
+            xcargs: ci_args
+        )
     end
 
     def create_simulator_if_needed

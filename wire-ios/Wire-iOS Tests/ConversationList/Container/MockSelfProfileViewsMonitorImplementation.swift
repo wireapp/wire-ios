@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Text styles defined in Wire's design system.
+@testable import Wire
 
-public enum WireTextStyle: CaseIterable, Sendable {
+class MockSelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor {
 
-    case largeTitle
-    case h1
-    case h2
-    case h3
-    case h4
-    case h5
-    case body1
-    case body2
-    case body3
-    case subline1
-    case buttonSmall
-    case buttonBig
+    private(set) var didViewSelfProfile: Bool
+    private let onDidViewSelfProfileCallback: @Sendable () -> Void
+
+    init(didViewSelfProfile: Bool, onDidViewSelfProfileCallback: @escaping @Sendable () -> Void = {}) {
+        self.didViewSelfProfile = didViewSelfProfile
+        self.onDidViewSelfProfileCallback = onDidViewSelfProfileCallback
+    }
+
+    func onDidViewSelfProfile() {
+        didViewSelfProfile = true
+        onDidViewSelfProfileCallback()
+    }
 }

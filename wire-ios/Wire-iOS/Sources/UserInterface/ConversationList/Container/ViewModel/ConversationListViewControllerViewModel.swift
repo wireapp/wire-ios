@@ -136,6 +136,7 @@ extension ConversationListViewController {
 
         init(
             account: Account,
+            selfProfileViewsMonitor: SelfProfileViewsMonitor,
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
@@ -144,6 +145,7 @@ extension ConversationListViewController {
             getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
         ) {
             self.account = account
+            self.selfProfileViewsMonitor = selfProfileViewsMonitor
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
             self.userSession = userSession
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
@@ -153,7 +155,6 @@ extension ConversationListViewController {
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
             self.getUserAccountImageSourceUseCase = getUserAccountImageSourceUseCase
-            self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
             super.init()
 
             updateE2EICertifiedStatus()

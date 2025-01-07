@@ -109,19 +109,31 @@ public enum ColorTheme {
 
         enum Tertiary {
 
-            public static let enabled = UIColor.clear
+            static let enabled = UIColor(light: .white, dark: .gray90)
             public static let onEnabled = UIColor(light: .black, dark: .white)
+            static let enabledOutline = UIColor(light: .gray40, dark: .gray90)
 
-            public static let disabled = UIColor.clear
-            public static let onDisabled = UIColor(light: .gray60, dark: .gray60)
+            static let disabled = UIColor(light: .gray20, dark: .gray95)
+            static let onDisabled = UIColor(light: .gray70, dark: .gray50)
+            static let disabledOutline = UIColor(light: .gray40, dark: .gray95)
 
-            public static let focus = UIColor(light: .gray30, dark: .gray90)
-            public static let onFocus = UIColor(light: .black, dark: .white)
-            public static let focusOutline = UIColor(light: .blue500Light, dark: .blue500Dark)
+            static let focus = UIColor(light: .gray30, dark: .blue800Dark)
+            static let onFocus = UIColor(light: .black, dark: .white)
+            static let focusOutline = UIColor(light: .blue500Light, dark: .blue500Dark)
 
-            public static let selected = UIColor(light: .blue50Light, dark: .gray95)
-            public static let onSelected = UIColor(light: .blue500Light, dark: .blue500Dark)
-            public static let selectedOutline = UIColor(light: .blue300Light, dark: .gray90)
+            static let selected = UIColor(light: .blue50Light, dark: .blue800Dark)
+            static let onSelected = UIColor(light: .blue500Light, dark: .white)
+            static let selectedOutline = UIColor(light: .blue300Light, dark: .blue800Dark)
+        }
+
+        enum Link {
+            public static let onEnabled = Backgrounds.onSurface
+
+            static let onDisabled = Base.secondaryText
+
+            static let onFocus = Base.primary
+
+            static let onSelected = Base.primary
         }
     }
 
