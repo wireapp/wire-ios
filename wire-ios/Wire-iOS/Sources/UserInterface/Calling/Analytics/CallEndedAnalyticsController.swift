@@ -125,7 +125,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
         eventInfo?.hasAVSwitchToggled = true
 
-        // unsubscribe
+        // unsubscribe since we only want to know if the self user toggled the video at least once
         toggleVideoObservationToken.map { notificationCenter.removeObserver($0) }
         toggleVideoObservationToken = nil
     }
