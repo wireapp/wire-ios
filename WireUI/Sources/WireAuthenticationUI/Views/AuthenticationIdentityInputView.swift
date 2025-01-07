@@ -42,7 +42,7 @@ package struct AuthenticationIdentityInputView: View {
             Text("Simply enter you email adress to start!")
                 .wireTextStyle(.body1)
             LabeledTextField(
-                mandatory: true,
+                isMandatory: true,
                 placeholder: "Email or SSO code",
                 title: "Email or SSO code",
                 string: $identity
@@ -60,8 +60,14 @@ package struct AuthenticationIdentityInputView: View {
     }
 }
 
+struct AuthenticationIdentityInputPreview: View {
+    var body: some View {
+        AuthenticationIdentityInputView(termsURL: URL(string: "https://example.com")!)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+            .padding(32)
+    }
+}
+
 #Preview {
-    AuthenticationIdentityInputView(termsURL: URL(string: "https://example.com")!)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-        .padding(32)
+    AuthenticationIdentityInputPreview()
 }
