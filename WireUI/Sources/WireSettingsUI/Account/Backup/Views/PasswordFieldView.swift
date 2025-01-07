@@ -53,9 +53,7 @@ struct PasswordFieldView: View {
 
                 HStack {
                     Spacer()
-                    Button(action: {
-                        isPasswordVisible.toggle()
-                    }) {
+                    Button(action: { isPasswordVisible.toggle() }) {
                         Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                             .foregroundColor(.gray)
                     }

@@ -44,8 +44,8 @@ public struct BackupActionsView: View {
                             isBackupSheetPresented = false
                             isRestoreSheetPresented.toggle()
                         }
-
-                    }) {
+                    }
+                    ) {
                         HStack {
                             section.type.title
                                 .font(.textStyle(.body2))
@@ -57,9 +57,10 @@ public struct BackupActionsView: View {
                     .sheet(isPresented: $isBackupSheetPresented) {
                         NavigationStack {
                             ExportBackupView(
-                                passwordValidator: viewModel.passwordValidator) { password in
-                                    viewModel.backupActiveAccount(password: password)
-                                }
+                                passwordValidator:
+                                    viewModel.passwordValidator) { password in
+                                        viewModel.backupActiveAccount(password: password)
+                                    }
                         }
                         .presentationDetents([.medium, .large])
                     }
@@ -75,8 +76,8 @@ public struct BackupActionsView: View {
     BackupActionsView(viewModel: BackupActionsViewModel(
         backupSource: MockBackupSource(),
         backupHandler: BackupHandler(
-            onSuccess: {_,_  in},
-            onFailure: {_ in}),
+            onSuccess: { _, _  in },
+            onFailure: { _ in }),
         passwordValidator: MockBackupPasswordValidator()
     ))
 }

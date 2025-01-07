@@ -139,7 +139,7 @@ private struct ExportBackupPreview: View {
             NavigationStack {
                 ExportBackupView(
                     passwordValidator: MockBackupPasswordValidator(),
-                    exportBackup:  {_ in }
+                    exportBackup: { _ in }
                 )
             }
             .presentationDragIndicator(.visible)

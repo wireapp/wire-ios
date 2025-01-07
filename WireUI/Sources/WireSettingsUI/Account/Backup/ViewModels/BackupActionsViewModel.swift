@@ -36,7 +36,6 @@ public final class BackupActionsViewModel: ObservableObject {
 
         sections = [
             BackupActionsSection(type: .backup)
-            //BackupActionsSection(type: .restore)
         ]
     }
 
