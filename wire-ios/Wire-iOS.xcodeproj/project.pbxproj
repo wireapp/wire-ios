@@ -314,18 +314,15 @@
 		5902F8D72BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */; };
 		5902F8E32BF7B18B00F1D392 /* ArchivedListViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
-		59076F972C934AA100AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F962C934AA100AE7529 /* WireAccountImageUI */; };
 		590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */; };
 		590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */; };
 		590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebarUI */; };
-		590DCA0A2C971AFF002D0A2C /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA092C971AFF002D0A2C /* WireFoundation */; };
 		5915B94B2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */; };
 		5915B94D2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94C2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift */; };
 		5915B9562BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9552BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift */; };
 		5915B9582BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9572BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift */; };
 		5915B95A2BF4BAFF00215817 /* DidPresentNotificationPermissionHintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9592BF4BAFE00215817 /* DidPresentNotificationPermissionHintUseCase.swift */; };
 		5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */; };
-		59191A652D0051C7001AB388 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59191A642D0051C7001AB388 /* WireLogging */; };
 		591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; };
 		591B6E182C8B095B009F8A7B /* WireNotificationEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		591B6E192C8B0960009F8A7B /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
@@ -396,17 +393,17 @@
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
 		59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59AF77A12CC7FB3B002438D1 /* AnyMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF77A02CC7FB39002438D1 /* AnyMainCoordinator.swift */; };
-		59AF77A32CC7FF89002438D1 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */; };
 		59B404512CAA937400CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */; };
 		59B404652CAAC3AC00CC33BF /* SettingsViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */; };
 		59B404672CAB05CA00CC33BF /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */; };
 		59B404692CAB13D400CC33BF /* MockSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */; };
 		59B4046A2CAB13D400CC33BF /* MockSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */; };
-		59B4046C2CAB140A00CC33BF /* WireSettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59B4046B2CAB140A00CC33BF /* WireSettingsUI */; };
-		59B4046E2CAB141000CC33BF /* WireSettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59B4046D2CAB141000CC33BF /* WireSettingsUI */; };
-		59B48C5E2C89CCAB00EA7999 /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5D2C89CCAB00EA7999 /* WireFoundationSupport */; };
-		59B48C602C89CCCC00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5F2C89CCCC00EA7999 /* WireFoundation */; };
-		59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C612C89CD3D00EA7999 /* WireTestingPackage */; };
+		59B768412D2D586E007B5F1E /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B768402D2D586E007B5F1E /* WireTestingPackage */; };
+		59B768432D2D58BE007B5F1E /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B768422D2D58BE007B5F1E /* WireFoundationSupport */; };
+		59B768452D2D58EF007B5F1E /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B768442D2D58EF007B5F1E /* WireTestingPackage */; };
+		59B768472D2D59E3007B5F1E /* WireLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B768462D2D59E3007B5F1E /* WireLoggingSupport */; };
+		59B768492D2D59E8007B5F1E /* WireLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B768482D2D59E8007B5F1E /* WireLoggingSupport */; };
+		59B7684B2D2D5A17007B5F1E /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B7684A2D2D5A17007B5F1E /* WireFoundationSupport */; };
 		59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FA92C89DE8600201827 /* WireFoundation */; };
 		59B99FAC2C89DF2100201827 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FAB2C89DF2100201827 /* WireAPI */; };
 		59B99FB02C89DFB700201827 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FAF2C89DFB700201827 /* WireDomainPackage */; };
@@ -415,7 +412,6 @@
 		59BFBFC92CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */; };
 		59BFBFCA2CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */; };
 		59BFBFCE2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFCD2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift */; };
-		59C2F09F2CA54E4900B25E5D /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59C2F09E2CA54E4900B25E5D /* WireMainNavigationUI */; };
 		59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; };
 		59CD83E52C22CE9800186022 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 59CD83E42C22CE9800186022 /* WireDesign */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
@@ -1363,7 +1359,6 @@
 		E97661812BDA4D1E0033AACC /* SecureLinkHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */; };
 		E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */; };
 		E9816C962CC9281000D77F22 /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9816C952CC9280400D77F22 /* LaunchScreenViewController.swift */; };
-		E9816C9A2CC929FC00D77F22 /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = E9816C992CC929FC00D77F22 /* WireFoundationSupport */; };
 		E985CB8F2CEB4FCB0075DAD6 /* WireDatadog in Frameworks */ = {isa = PBXBuildFile; productRef = 016A141C2CE6BFC4006A7EF5 /* WireDatadog */; };
 		E989695728EC430B0088F0CE /* SecondaryButtonDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */; };
 		E98B61102B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
@@ -3893,21 +3888,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */,
-				59076F972C934AA100AE7529 /* WireAccountImageUI in Frameworks */,
-				59B4046E2CAB141000CC33BF /* WireSettingsUI in Frameworks */,
+				59B768412D2D586E007B5F1E /* WireTestingPackage in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
 				CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */,
+				59B7684B2D2D5A17007B5F1E /* WireFoundationSupport in Frameworks */,
+				59B768492D2D59E8007B5F1E /* WireLoggingSupport in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
 				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
 				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
 				598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
-				59191A652D0051C7001AB388 /* WireLogging in Frameworks */,
-				E9816C9A2CC929FC00D77F22 /* WireFoundationSupport in Frameworks */,
-				590DCA0A2C971AFF002D0A2C /* WireFoundation in Frameworks */,
 				591B6E1C2C8B0964009F8A7B /* WireDataModelSupport.framework in Frameworks */,
-				59C2F09F2CA54E4900B25E5D /* WireMainNavigationUI in Frameworks */,
-				59B48C5E2C89CCAB00EA7999 /* WireFoundationSupport in Frameworks */,
 				5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3918,11 +3908,11 @@
 			files = (
 				59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */,
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
-				59B4046C2CAB140A00CC33BF /* WireSettingsUI in Frameworks */,
-				59B48C602C89CCCC00EA7999 /* WireFoundation in Frameworks */,
+				59B768452D2D58EF007B5F1E /* WireTestingPackage in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
-				59AF77A32CC7FF89002438D1 /* WireMainNavigationUI in Frameworks */,
+				59B768472D2D59E3007B5F1E /* WireLoggingSupport in Frameworks */,
+				59B768432D2D58BE007B5F1E /* WireFoundationSupport in Frameworks */,
 				591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8453,13 +8443,9 @@
 			name = "Wire-iOS-Tests";
 			packageProductDependencies = (
 				01C1A7C62A54C45A0058D578 /* SnapshotTesting */,
-				59B48C612C89CD3D00EA7999 /* WireTestingPackage */,
-				59076F962C934AA100AE7529 /* WireAccountImageUI */,
-				590DCA092C971AFF002D0A2C /* WireFoundation */,
-				E9816C992CC929FC00D77F22 /* WireFoundationSupport */,
-				59C2F09E2CA54E4900B25E5D /* WireMainNavigationUI */,
-				59B4046D2CAB141000CC33BF /* WireSettingsUI */,
-				59191A642D0051C7001AB388 /* WireLogging */,
+				59B768402D2D586E007B5F1E /* WireTestingPackage */,
+				59B768482D2D59E8007B5F1E /* WireLoggingSupport */,
+				59B7684A2D2D5A17007B5F1E /* WireFoundationSupport */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -8480,9 +8466,9 @@
 			);
 			name = "Wire-iOS UnitTests";
 			packageProductDependencies = (
-				59B48C5F2C89CCCC00EA7999 /* WireFoundation */,
-				59B4046B2CAB140A00CC33BF /* WireSettingsUI */,
-				59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */,
+				59B768422D2D58BE007B5F1E /* WireFoundationSupport */,
+				59B768442D2D58EF007B5F1E /* WireTestingPackage */,
+				59B768462D2D59E3007B5F1E /* WireLoggingSupport */,
 			);
 			productName = "Wire-iOS UnitTests";
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
@@ -11391,21 +11377,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAccountImageUI;
 		};
-		59076F962C934AA100AE7529 /* WireAccountImageUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireAccountImageUI;
-		};
 		590DCA072C971A56002D0A2C /* WireSidebarUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSidebarUI;
-		};
-		590DCA092C971AFF002D0A2C /* WireFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundation;
-		};
-		59191A642D0051C7001AB388 /* WireLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireLogging;
 		};
 		5929CB212CA6C9C800070488 /* WireConversationListUI */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -11447,29 +11421,29 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSettingsUI;
 		};
-		59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */ = {
+		59B768402D2D586E007B5F1E /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireMainNavigationUI;
+			productName = WireTestingPackage;
 		};
-		59B4046B2CAB140A00CC33BF /* WireSettingsUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireSettingsUI;
-		};
-		59B4046D2CAB141000CC33BF /* WireSettingsUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireSettingsUI;
-		};
-		59B48C5D2C89CCAB00EA7999 /* WireFoundationSupport */ = {
+		59B768422D2D58BE007B5F1E /* WireFoundationSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundationSupport;
 		};
-		59B48C5F2C89CCCC00EA7999 /* WireFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundation;
-		};
-		59B48C612C89CD3D00EA7999 /* WireTestingPackage */ = {
+		59B768442D2D58EF007B5F1E /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireTestingPackage;
+		};
+		59B768462D2D59E3007B5F1E /* WireLoggingSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLoggingSupport;
+		};
+		59B768482D2D59E8007B5F1E /* WireLoggingSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLoggingSupport;
+		};
+		59B7684A2D2D5A17007B5F1E /* WireFoundationSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundationSupport;
 		};
 		59B99FA92C89DE8600201827 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -11482,10 +11456,6 @@
 		59B99FAF2C89DFB700201827 /* WireDomainPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDomainPackage;
-		};
-		59C2F09E2CA54E4900B25E5D /* WireMainNavigationUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireMainNavigationUI;
 		};
 		59CD83E42C22CE9800186022 /* WireDesign */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -11511,10 +11481,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */;
 			productName = Down;
-		};
-		E9816C992CC929FC00D77F22 /* WireFoundationSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundationSupport;
 		};
 		E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */ = {
 			isa = XCSwiftPackageProductDependency;
