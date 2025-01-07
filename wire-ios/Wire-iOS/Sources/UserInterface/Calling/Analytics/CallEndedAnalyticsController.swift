@@ -154,9 +154,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
             conversationServices
         ) = context.performAndWait {
 
-            let isTeamMember = conversation.participants
-                .first { $0.isSelfUser }
-                .map(\.hasTeam) ?? false
+            let isTeamMember = ZMUser.selfUser(in: context).hasTeam
 
             let conversationSize = conversation.localParticipants.count
 

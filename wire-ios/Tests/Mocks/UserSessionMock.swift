@@ -336,10 +336,7 @@ final class UserSessionMock: UserSession {
     }
 
     func makeAppendFileMessageUseCase() -> any WireSyncEngine.AppendFileMessageUseCaseProtocol {
-        AppendFileMessageUseCase(
-            analyticsEventTracker: nil,
-            analyticsLogger: .init(tag: "mock")
-        )
+        AppendFileMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol {

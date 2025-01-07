@@ -362,10 +362,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeAppendFileMessageUseCase() -> AppendFileMessageUseCaseProtocol {
-        AppendFileMessageUseCase(
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsLogger: analyiticsLogger
-        )
+        AppendFileMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeToggleMessageReactionUseCase() -> ToggleMessageReactionUseCaseProtocol {
