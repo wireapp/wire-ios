@@ -24,6 +24,7 @@ public struct BackupActionsView: View {
     @ObservedObject private var viewModel: BackupActionsViewModel
     @State private var isBackupSheetPresented: Bool = false
     @State private var isRestoreSheetPresented: Bool = false
+    @State private var isBackupPickerPresented: Bool = false
 
     public init(viewModel: BackupActionsViewModel) {
         self.viewModel = viewModel
@@ -38,11 +39,9 @@ public struct BackupActionsView: View {
                     Button(action: {
                         switch section.type {
                         case .backup:
-                            isRestoreSheetPresented = false
                             isBackupSheetPresented.toggle()
                         case .restore:
-                            isBackupSheetPresented = false
-                            isRestoreSheetPresented.toggle()
+                            isBackupPickerPresented.toggle()
                         }
 
                     }) {
@@ -63,11 +62,61 @@ public struct BackupActionsView: View {
                         }
                         .presentationDetents([.medium, .large])
                     }
+                    //                    .sheet(isPresented: $isRestoreSheetPresented) {
+                    //                        NavigationStack {
+                    //                            RestoreBackupView(backupPath: <#T##URL#>) { password, url in
+                    //                                viewModel.restoreBackup(password: password, from: url)
+                    //                            }
+                    //                        }
+                    //                        .presentationDetents([.medium, .large])
+                    //                    }
+                    .fullScreenCover(isPresented: $isBackupPickerPresented) {
+                        DocumentPicker { url in
+                            if let fileURL = url {
+                                // Handle the file URL in your viewModel or further logic
+                                print("Selected file URL: \(fileURL)")
+                                // You can now call viewModel.restoreAccount(with: fileURL)
+                            }
+                        }
+                    }
                 }
             }
         }
         .listStyle(.grouped)
         .listRowBackground(Color(ColorTheme.Backgrounds.background))
+    }
+}
+
+struct DocumentPicker: UIViewControllerRepresentable {
+    var completion: (URL?) -> Void
+
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item])
+        picker.allowsMultipleSelection = false
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(completion: completion)
+    }
+
+    class Coordinator: NSObject, UIDocumentPickerDelegate {
+        var completion: (URL?) -> Void
+
+        init(completion: @escaping (URL?) -> Void) {
+            self.completion = completion
+        }
+
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            completion(urls.first)
+        }
+
+        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+            completion(nil)
+        }
     }
 }
 

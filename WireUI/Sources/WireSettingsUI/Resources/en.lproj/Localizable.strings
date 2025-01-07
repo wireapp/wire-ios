@@ -26,3 +26,7 @@
 "setBackupPassword.button" = "Back Up Now";
 "setBackupPassword.description" = "The backup will be compressed and encrypted with a password. Make sure to store it in a secure place.";
 "setBackupPassword.title" = "Set password";
+"enterBackupPassword.title" = "Enter password";
+"restoreFromBackup.title" = "This backup is password protected.";
+"restoreFromBackup.button" = "Continue";
+"enterBackupPassword.error" = "Wrong password. Please verify your input and try again";

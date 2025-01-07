@@ -111,7 +111,7 @@ final class BackupRestoreController: NSObject {
         }
 
         Task { @MainActor in activityIndicator.start() }
-
+//
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)

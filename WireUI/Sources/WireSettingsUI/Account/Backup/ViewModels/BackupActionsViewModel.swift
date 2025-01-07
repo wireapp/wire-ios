@@ -35,8 +35,8 @@ public final class BackupActionsViewModel: ObservableObject {
         self.passwordValidator = passwordValidator
 
         sections = [
-            BackupActionsSection(type: .backup)
-            //BackupActionsSection(type: .restore)
+            BackupActionsSection(type: .backup),
+            BackupActionsSection(type: .restore)
         ]
     }
 
@@ -49,5 +49,8 @@ public final class BackupActionsViewModel: ObservableObject {
         } catch {
             backupHandler.onFailure(error)
         }
+    }
+
+    func restoreBackup(password: String, from url: URL) {
     }
 }
