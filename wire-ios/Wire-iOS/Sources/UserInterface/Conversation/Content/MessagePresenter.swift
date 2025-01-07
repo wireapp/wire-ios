@@ -109,9 +109,9 @@ final class MessagePresenter: NSObject {
         }
     }
 
-    // MARK: - AVPlayerViewController dismissial
+    // MARK: - AVPlayerViewController dismissal
 
-    fileprivate func observePlayerDismissial() {
+    fileprivate func observePlayerDismissal() {
         videoPlayerObserver = NotificationCenter.default.addObserver(
             forName: .dismissingAVPlayer,
             object: nil,
@@ -173,7 +173,7 @@ final class MessagePresenter: NSObject {
             let playerViewController = AVPlayerViewController()
             playerViewController.player = player
 
-            observePlayerDismissial()
+            observePlayerDismissal()
 
             targetViewController?.present(playerViewController, animated: true) {
                 player.play()
