@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"historyBackup.action" = "Back Up Now";
-"historyBackup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.";
-"passwordField.placeholder" = "Enter password";
-"passwordField.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
-"passwordField.title" = "Password (OPTIONAL)";
-"restoreFromBackup.action" = "Restore from Backup";
-"restoreFromBackup.description" = "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.";
-"setBackupPassword.button" = "Back Up Now";
-"setBackupPassword.description" = "The backup will be compressed and encrypted with a password. Make sure to store it in a secure place.";
-"setBackupPassword.title" = "Set password";
+"settings.exportBackup.action" = "Back Up Now";
+"settings.exportBackup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.";
+"settings.restoreFromBackup.action" = "Restore from Backup";
+"settings.restoreFromBackup.description" = "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.";
+"exportBackup.title" = "Set password";
+"exportBackup.description" = "The backup will be compressed and encrypted with a password. Make sure to store it in a secure place.";
+"exportBackup.button" = "Back Up Now";
+"setBackupPassword.title" = "Password (OPTIONAL)";
+"setBackupPassword.placeholder" = "Enter password";
+

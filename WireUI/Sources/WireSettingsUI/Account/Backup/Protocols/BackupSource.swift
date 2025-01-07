@@ -18,8 +18,10 @@
 
 import Foundation
 
-public protocol BackupSource {
+public protocol BackupSourceProtocol {
+
     func backupActiveAccount(password: String) throws -> URL
 
     func clearPreviousBackups()
+
 }

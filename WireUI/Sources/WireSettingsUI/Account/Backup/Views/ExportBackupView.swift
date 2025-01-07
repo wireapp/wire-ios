@@ -23,7 +23,7 @@ import WireReusableUIComponents
 
 /// A view that allows to export the backup.
 
-public struct ExportBackup: View {
+public struct ExportBackupView: View {
 
     @Environment(\.dismiss) private var dismiss
     private let exportBackup: (String) -> Void
@@ -44,7 +44,7 @@ public struct ExportBackup: View {
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
-                Text(L10n.SetBackupPassword.title)
+                Text(L10n.ExportBackup.title)
             )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -85,7 +85,7 @@ private struct SetBackupPasswordView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text(L10n.SetBackupPassword.description)
+            Text(L10n.ExportBackup.description)
                 .font(.textStyle(.body1))
                 .foregroundStyle(Color.primaryText)
                 .multilineTextAlignment(.leading)
@@ -105,7 +105,7 @@ private struct SetBackupPasswordView: View {
                     dismiss()
                 },
                 label: {
-                    Text(L10n.SetBackupPassword.button)
+                    Text(L10n.ExportBackup.button)
                 }
             )
             .wireButtonStyle(.primary)
@@ -132,12 +132,12 @@ private struct ExportBackupPreview: View {
                 isPresented.toggle()
             },
             label: {
-                Text(L10n.SetBackupPassword.button)
+                Text(L10n.ExportBackup.button)
             }
         )
         .sheet(isPresented: $isPresented) {
             NavigationStack {
-                ExportBackup(
+                ExportBackupView(
                     passwordValidator: MockBackupPasswordValidator(),
                     exportBackup:  {_ in }
                 )

@@ -379,7 +379,7 @@ extension SettingsCellDescriptorFactory {
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     let viewModel = BackupActionsViewModel(
-                        backupSource: SessionManager.shared!,
+                        backupSource: BackupSource(),
                         backupHandler: BackupHandler(
                             onSuccess: presentShareSheet,
                             onFailure: presentAlert
