@@ -33,7 +33,6 @@ public enum WireAnalytics {
         defer { isSetUpLock.unlock() }
 
         guard !isSetUp else {
-            assertionFailure("WireAnalytics.setup() called more than once")
             return
         }
         isSetUp = true
