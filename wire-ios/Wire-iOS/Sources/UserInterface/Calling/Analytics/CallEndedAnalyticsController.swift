@@ -177,8 +177,6 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
         let analyticsEventTracker = analyticsEventTracker()
         analyticsEventTracker?.trackEvent(
             .Calling.endedCall(
-                deviceModel: eventInfo.deviceModel,
-                osVersion: eventInfo.osVersion,
                 callEndReason: .init(reason),
                 callDetails: .init(
                     wasScreenShared: !eventInfo.uniqueScreenSharingUsers.isEmpty,
@@ -212,8 +210,6 @@ private extension CallEndedAnalyticsController {
 
     struct EventInfo {
 
-        var deviceModel = UIDevice.current.model
-        var osVersion = UIDevice.current.systemVersion
         var callDirection: AnalyticsEvent.Calling.CallDirection = .incoming
         var callStart: Date?
         var screenSharingStart: Date?

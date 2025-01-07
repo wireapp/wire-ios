@@ -75,16 +75,12 @@ public extension AnalyticsEvent {
         /// An event tracking when a call ends.
 
         public static func endedCall(
-            deviceModel: String,
-            osVersion: String,
             callEndReason: CallEndedReason,
             callDetails: CallDetails,
             conversationDetails: ConversationDetails,
             isTeamMember: Bool
         ) -> AnalyticsEvent {
             AnalyticsEvent(name: "calling.ended_call", segmentation: [
-                .deviceModel(deviceModel),
-                .osVersion(osVersion),
                 .Call.wasScreenShared(callDetails.wasScreenShared),
                 .Call.totalScreenSharingDuration(callDetails.totalScreenSharingDuration),
                 .Call.uniqueScreenSharingUsers(callDetails.uniqueScreenSharingUsers),
