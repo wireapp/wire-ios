@@ -40,7 +40,8 @@ public struct ExportBackupView: View {
     public var body: some View {
         SetBackupPasswordView(
             passwordValidator: passwordValidator,
-            exportBackup: exportBackup)
+            exportBackup: exportBackup
+        )
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
