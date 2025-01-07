@@ -16,17 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@testable import Wire
 
-public struct BackupHandler {
-    let onSuccess: (URL, @escaping () -> Void) -> Void
-    let onFailure: (any Error) -> Void
+class MockSelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor {
 
-    public init(
-        onSuccess: @escaping (URL, @escaping () -> Void) -> Void,
-        onFailure: @escaping (any Error) -> Void
-    ) {
-        self.onSuccess = onSuccess
-        self.onFailure = onFailure
+    private(set) var didViewSelfProfile: Bool
+    private let onDidViewSelfProfileCallback: @Sendable () -> Void
+
+    init(didViewSelfProfile: Bool, onDidViewSelfProfileCallback: @escaping @Sendable () -> Void = {}) {
+        self.didViewSelfProfile = didViewSelfProfile
+        self.onDidViewSelfProfileCallback = onDidViewSelfProfileCallback
+    }
+
+    func onDidViewSelfProfile() {
+        didViewSelfProfile = true
+        onDidViewSelfProfileCallback()
     }
 }

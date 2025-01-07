@@ -16,40 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDesign
+import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import Wire
+@testable import WireDesign
 
-final class BackupViewControllerTests: XCTestCase {
+final class LinkButtonStyleSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
-        super.setUp()
-        snapshotHelper = SnapshotHelper()
-    }
-
-    override func tearDown() {
-        snapshotHelper = nil
-        super.tearDown()
-    }
-
-    func testInitialState() {
-        // GIVEN
-        let sut = makeViewController()
-
-        // WHEN && THEN
-        snapshotHelper.verify(matching: sut.view)
-    }
-
-    // MARK: Helpers
-
-    private func makeViewController() -> BackupViewController {
-        let backupSource = MockBackupSource()
-        let vc = BackupViewController(backupSource: backupSource)
-        vc.view.backgroundColor = SemanticColors.View.backgroundDefault
-        return vc
+    @MainActor
+    func test() {
+        // TODO: [WPB-14957] implement snapshot tests
     }
 }

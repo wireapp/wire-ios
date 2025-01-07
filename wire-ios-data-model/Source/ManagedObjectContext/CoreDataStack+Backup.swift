@@ -110,43 +110,47 @@ public extension CoreDataStack {
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
 
         return try workQueue.sync {
-            let model = CoreDataStack.loadMessagingModel()
-            let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+            do {
+                let model = CoreDataStack.loadMessagingModel()
+                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
-            // Create target directory
-            try fileManager.createDirectory(
-                at: databaseDirectory,
-                withIntermediateDirectories: true,
-                attributes: nil
-            )
-            let backupLocation = databaseDirectory.appendingStoreFile()
-            let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
+                // Create target directory
+                try fileManager.createDirectory(
+                    at: databaseDirectory,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
+                let backupLocation = databaseDirectory.appendingStoreFile()
+                let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
-            // Recreate the persistent store inside a new location
-            WireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
-            try coordinator.replacePersistentStore(
-                at: backupLocation,
-                destinationOptions: options,
-                withPersistentStoreFrom: storeFile,
-                sourceOptions: options,
-                ofType: NSSQLiteStoreType
-            )
+                // Recreate the persistent store inside a new location
+                WireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
+                try coordinator.replacePersistentStore(
+                    at: backupLocation,
+                    destinationOptions: options,
+                    withPersistentStoreFrom: storeFile,
+                    sourceOptions: options,
+                    ofType: NSSQLiteStoreType
+                )
 
-            WireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
-            try prepareStoreForBackupExport(
-                coordinator: coordinator,
-                location: backupLocation,
-                options: options,
-                databaseKey: databaseKey
-            )
+                WireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
+                try prepareStoreForBackupExport(
+                    coordinator: coordinator,
+                    location: backupLocation,
+                    options: options,
+                    databaseKey: databaseKey
+                )
 
-            // Create & write metadata
-            WireLogger.localStorage.debug("backup: Create & write metadata")
-            let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
-            try metadata.write(to: metadataURL)
-            log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
+                // Create & write metadata
+                WireLogger.localStorage.debug("backup: Create & write metadata")
+                let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
+                try metadata.write(to: metadataURL)
+                log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
 
-            return BackupInfo(url: backupDirectory, metadata: metadata)
+                return BackupInfo(url: backupDirectory, metadata: metadata)
+            } catch {
+                throw BackupError.failedToWrite(error)
+            }
         }
     }
 
@@ -307,7 +311,9 @@ public extension CoreDataStack {
 
         try context.performGroupedAndWait {
             if context.encryptMessagesAtRest {
-                guard let databaseKey else { throw BackupError.missingEAREncryptionKey }
+                guard let databaseKey else {
+                    throw BackupError.missingEAREncryptionKey
+                }
                 try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
                 context.encryptMessagesAtRest = false
                 _ = context.makeMetadataPersistent()

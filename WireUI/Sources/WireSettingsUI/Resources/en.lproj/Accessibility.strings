@@ -16,5 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"setBackupPassword.close.label" = "Close setup backup password"
-"restoreBackup.close.label" = "Close restore backup"
+"setBackupPassword.close.label" = "Close setup backup password";
+"restoreBackup.close.label" = "Close restore backup";

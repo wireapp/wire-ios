@@ -19,35 +19,28 @@
 import SwiftUI
 
 public final class BackupActionsViewModel: ObservableObject {
-    @Published var sections: [BackupActionsSection] = []
-
-    private let backupSource: any BackupSource
-    private let backupHandler: BackupHandler
+    private let backupSource: any BackupSourceProtocol
+    private let backupResultHandler: BackupResultHandler
     let passwordValidator: any BackupPasswordValidatorProtocol
 
     public init(
-        backupSource: any BackupSource,
-        backupHandler: BackupHandler,
+        backupSource: any BackupSourceProtocol,
+        backupResultHandler: BackupResultHandler,
         passwordValidator: any BackupPasswordValidatorProtocol
     ) {
         self.backupSource = backupSource
-        self.backupHandler = backupHandler
+        self.backupResultHandler = backupResultHandler
         self.passwordValidator = passwordValidator
-
-        sections = [
-            BackupActionsSection(type: .backup),
-            BackupActionsSection(type: .restore)
-        ]
     }
 
     func backupActiveAccount(password: String) {
         do {
             let backupPath = try backupSource.backupActiveAccount(password: password)
-            backupHandler.onSuccess(backupPath) { [weak self] in
+            backupResultHandler.onSuccess(backupPath) { [weak self] in
                 self?.backupSource.clearPreviousBackups()
             }
         } catch {
-            backupHandler.onFailure(error)
+            backupResultHandler.onFailure(error)
         }
     }
 

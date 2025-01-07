@@ -16,25 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSettingsUI
+import Foundation
 
-struct BackupPasswordValidator: BackupPasswordValidatorProtocol {
+public struct BackupResultHandler {
+    let onSuccess: (URL, @escaping () -> Void) -> Void
+    let onFailure: (any Error) -> Void
 
-    func isPasswordValid(_ password: String) -> Bool {
-        guard !password.isEmpty else {
-            return true
-        }
-
-        switch PasswordRuleSet.shared.validatePassword(password) {
-        case .valid:
-            return true
-        case .invalid:
-            return false
-        }
+    public init(
+        onSuccess: @escaping (URL, @escaping () -> Void) -> Void,
+        onFailure: @escaping (any Error) -> Void
+    ) {
+        self.onSuccess = onSuccess
+        self.onFailure = onFailure
     }
-
-    var localizedRulesDescription: String {
-        PasswordRuleSet.localizedErrorMessage
-    }
-
 }

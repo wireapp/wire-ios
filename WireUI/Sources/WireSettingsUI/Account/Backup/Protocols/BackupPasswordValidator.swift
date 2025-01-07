@@ -18,7 +18,7 @@
 
 public protocol BackupPasswordValidatorProtocol {
 
-    func isValid(password: String) -> Bool
+    func isPasswordValid(_ password: String) -> Bool
 
     var localizedRulesDescription: String { get }
 

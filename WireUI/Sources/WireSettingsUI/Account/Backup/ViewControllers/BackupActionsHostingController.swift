@@ -17,18 +17,8 @@
 //
 
 import SwiftUI
-import UIKit
 
-public final class BackupActionsHostingController: UIHostingController<BackupActionsView> {
-    private let viewModel: BackupActionsViewModel
-
-    public init(viewModel: BackupActionsViewModel) {
-        self.viewModel = viewModel
-        super.init(rootView: BackupActionsView(viewModel: viewModel))
-    }
-
-    @available(*, unavailable)
-    dynamic required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+@MainActor
+public func BackupActionsHostingController(viewModel: BackupActionsViewModel) -> UIViewController {
+    UIHostingController(rootView: BackupActionsView(viewModel: viewModel))
 }

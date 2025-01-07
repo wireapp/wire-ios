@@ -27,38 +27,43 @@ struct PasswordFieldView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(L10n.PasswordField.title)
+            Text(L10n.ExportBackup.SetBackupPassword.title)
                 .font(.subheadline)
                 .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color)
 
             ZStack {
                 if isPasswordVisible {
-                    TextField(L10n.PasswordField.placeholder,
-                              text: $password)
-                        .font(.textStyle(.body1))
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
-                        )
+                    TextField(
+                        L10n.ExportBackup.SetBackupPassword.placeholder, text: $password
+                    )
+                    .font(.textStyle(.body1))
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(
+                                isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
+                                lineWidth: 1
+                            )
+                    )
                 } else {
-                    SecureField(L10n.PasswordField.placeholder,
-                                text: $password)
+                    SecureField(L10n.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
-                                .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
+                                .stroke(
+                                    isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
+                                    lineWidth: 1
+                                )
                         )
                 }
-
                 HStack {
                     Spacer()
                     Button(action: {
                         isPasswordVisible.toggle()
-                    }) {
+                    }, label: {
                         Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                             .foregroundColor(.gray)
-                    }
+                    })
                     .padding(.trailing, 10)
                 }
             }
@@ -79,7 +84,7 @@ struct PasswordFieldView: View {
         password: .constant(""),
         isPasswordValid: false,
         isPasswordVisible: .constant(false),
-        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
 
@@ -89,7 +94,7 @@ struct PasswordFieldView: View {
         password: .constant("ValidPassword1!"),
         isPasswordValid: false,
         isPasswordVisible: .constant(true),
-        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
 
@@ -99,7 +104,7 @@ struct PasswordFieldView: View {
         password: .constant("ValidPassword1!"),
         isPasswordValid: true,
         isPasswordVisible: .constant(false),
-        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
 
@@ -109,6 +114,6 @@ struct PasswordFieldView: View {
         password: .constant("ValidPassword1!"),
         isPasswordValid: true,
         isPasswordVisible: .constant(true),
-        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }

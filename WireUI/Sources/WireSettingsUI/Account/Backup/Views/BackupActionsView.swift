@@ -22,8 +22,7 @@ import WireReusableUIComponents
 
 public struct BackupActionsView: View {
     @ObservedObject private var viewModel: BackupActionsViewModel
-    @State private var isBackupSheetPresented: Bool = false
-    @State private var isRestoreSheetPresented: Bool = false
+    @State private var isExportBackupSheetPresented: Bool = false
     @State private var isBackupPickerPresented: Bool = false
 
     public init(viewModel: BackupActionsViewModel) {
@@ -32,51 +31,51 @@ public struct BackupActionsView: View {
 
     public var body: some View {
         List {
-            ForEach(viewModel.sections) { section in
-                Section(
-                    footer: section.type.footer
-                ) {
-                    Button(action: {
-                        switch section.type {
-                        case .backup:
-                            isBackupSheetPresented.toggle()
-                        case .restore:
-                            isBackupPickerPresented.toggle()
-                        }
-
-                    }) {
-                        HStack {
-                            section.type.title
-                                .font(.textStyle(.body2))
-                                .foregroundStyle(Color.primaryText)
-                            Spacer()
-                            Image(systemName: "chevron.right").foregroundStyle(Color.primary)
-                        }
+            Section(
+                footer: Text(L10n.Settings.ExportBackup.description)
+            ) {
+                Button(action: {
+                    isExportBackupSheetPresented.toggle()
+                }, label: {
+                    HStack {
+                        Text(L10n.ExportBackup.title)
+                            .font(.textStyle(.body2))
+                            .foregroundStyle(Color.primaryText)
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(Color.primary)
                     }
-                    .sheet(isPresented: $isBackupSheetPresented) {
-                        NavigationStack {
-                            ExportBackup(
-                                passwordValidator: viewModel.passwordValidator) { password in
-                                    viewModel.backupActiveAccount(password: password)
-                                }
-                        }
-                        .presentationDetents([.medium, .large])
-                    }
-                    //                    .sheet(isPresented: $isRestoreSheetPresented) {
-                    //                        NavigationStack {
-                    //                            RestoreBackupView(backupPath: <#T##URL#>) { password, url in
-                    //                                viewModel.restoreBackup(password: password, from: url)
-                    //                            }
-                    //                        }
-                    //                        .presentationDetents([.medium, .large])
-                    //                    }
-                    .fullScreenCover(isPresented: $isBackupPickerPresented) {
-                        DocumentPicker { url in
-                            if let fileURL = url {
-                                // Handle the file URL in your viewModel or further logic
-                                print("Selected file URL: \(fileURL)")
-                                // You can now call viewModel.restoreAccount(with: fileURL)
+                })
+                .sheet(isPresented: $isExportBackupSheetPresented) {
+                    NavigationStack {
+                        ExportBackupView(
+                            passwordValidator: viewModel.passwordValidator,
+                            exportBackup: { password in
+                                viewModel.backupActiveAccount(password: password)
                             }
+                        )
+                    }
+                    .presentationDetents([.medium, .large])
+                }
+            }
+
+            Section(
+                footer: Text(L10n.Settings.RestoreFromBackup.description)
+            ) {
+                Button(action: {
+                    isBackupPickerPresented.toggle()
+                }, label: {
+                    HStack {
+                        Text(L10n.RestoreFromBackup.title)
+                            .font(.textStyle(.body2))
+                            .foregroundStyle(Color.primaryText)
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(Color.primary)
+                    }
+                })
+                .fullScreenCover(isPresented: $isBackupPickerPresented) {
+                    DocumentPicker { url in
+                        if let fileURL = url {
+                            print("Selected file URL: \(fileURL)")
                         }
                     }
                 }
@@ -121,29 +120,5 @@ struct DocumentPicker: UIViewControllerRepresentable {
 }
 
 #Preview {
-    BackupActionsView(viewModel: BackupActionsViewModel(
-        backupSource: MockBackupSource(),
-        backupHandler: BackupHandler(
-            onSuccess: {_,_  in},
-            onFailure: {_ in}),
-        passwordValidator: MockBackupPasswordValidator()
-    ))
-}
-
-private class MockBackupSource: BackupSource {
-    func backupActiveAccount(password: String) throws -> URL {
-        return URL(fileURLWithPath: "path")
-    }
-
-    func clearPreviousBackups() {}
-}
-
-class MockBackupPasswordValidator: BackupPasswordValidatorProtocol {
-    func isValid(password: String) -> Bool {
-        true
-    }
-
-    var localizedRulesDescription: String {
-        "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."
-    }
+    BackupActionsPreview()
 }
