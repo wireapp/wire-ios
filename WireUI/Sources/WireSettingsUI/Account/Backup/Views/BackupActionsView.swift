@@ -23,7 +23,6 @@ import WireReusableUIComponents
 public struct BackupActionsView: View {
     @ObservedObject private var viewModel: BackupActionsViewModel
     @State private var isBackupSheetPresented: Bool = false
-    @State private var isRestoreSheetPresented: Bool = false
 
     public init(viewModel: BackupActionsViewModel) {
         self.viewModel = viewModel
@@ -31,37 +30,30 @@ public struct BackupActionsView: View {
 
     public var body: some View {
         List {
-            ForEach(viewModel.sections) { section in
-                Section(
-                    footer: section.type.footer
-                ) {
-                    Button(action: {
-                        switch section.type {
-                        case .backup:
-                            isBackupSheetPresented.toggle()
-                        case .restore:
-                            isRestoreSheetPresented.toggle()
-                        }
-                    }, label: {
-                        HStack {
-                            section.type.title
-                                .font(.textStyle(.body2))
-                                .foregroundStyle(Color.primaryText)
-                            Spacer()
-                            Image(systemName: "chevron.right").foregroundStyle(Color.primary)
-                        }
-                    })
-                    .sheet(isPresented: $isBackupSheetPresented) {
-                        NavigationStack {
-                            ExportBackupView(
-                                passwordValidator: viewModel.passwordValidator,
-                                exportBackup: { password in
-                                    viewModel.backupActiveAccount(password: password)
-                                }
-                            )
-                        }
-                        .presentationDetents([.medium, .large])
+            Section(
+                footer: Text(L10n.ExportBackup.description)
+            ) {
+                Button(action: {
+                    isBackupSheetPresented.toggle()
+                }, label: {
+                    HStack {
+                        Text(L10n.ExportBackup.title)
+                            .font(.textStyle(.body2))
+                            .foregroundStyle(Color.primaryText)
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(Color.primary)
                     }
+                })
+                .sheet(isPresented: $isBackupSheetPresented) {
+                    NavigationStack {
+                        ExportBackupView(
+                            passwordValidator: viewModel.passwordValidator,
+                            exportBackup: { password in
+                                viewModel.backupActiveAccount(password: password)
+                            }
+                        )
+                    }
+                    .presentationDetents([.medium, .large])
                 }
             }
         }

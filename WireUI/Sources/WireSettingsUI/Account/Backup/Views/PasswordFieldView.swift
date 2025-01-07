@@ -34,14 +34,16 @@ struct PasswordFieldView: View {
             ZStack {
                 if isPasswordVisible {
                     TextField(
-                        L10n.ExportBackup.SetBackupPassword.placeholder, text: $password)
+                        L10n.ExportBackup.SetBackupPassword.placeholder, text: $password
+                    )
                     .font(.textStyle(.body1))
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(
                                 isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
-                                lineWidth: 1)
+                                lineWidth: 1
+                            )
                     )
                 } else {
                     SecureField(L10n.ExportBackup.SetBackupPassword.placeholder, text: $password)
@@ -50,7 +52,8 @@ struct PasswordFieldView: View {
                             RoundedRectangle(cornerRadius: 5)
                                 .stroke(
                                     isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
-                                    lineWidth: 1)
+                                    lineWidth: 1
+                                )
                         )
                 }
                 HStack {

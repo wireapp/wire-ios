@@ -19,8 +19,6 @@
 import SwiftUI
 
 public final class BackupActionsViewModel: ObservableObject {
-    @Published var sections: [BackupActionsSection] = []
-
     private let backupSource: any BackupSourceProtocol
     private let backupResultHandler: BackupResultHandler
     let passwordValidator: any BackupPasswordValidatorProtocol
@@ -33,10 +31,6 @@ public final class BackupActionsViewModel: ObservableObject {
         self.backupSource = backupSource
         self.backupResultHandler = backupResultHandler
         self.passwordValidator = passwordValidator
-
-        self.sections = [
-            BackupActionsSection(type: .backup)
-        ]
     }
 
     func backupActiveAccount(password: String) {
