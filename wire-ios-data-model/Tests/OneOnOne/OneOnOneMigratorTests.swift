@@ -367,6 +367,153 @@ final class OneOnOneMigratorTests: XCTestCase {
         withExtendedLifetime(handler) {}
     }
 
+    func test_migrateToMLS_moveMessagesFromMultipleDuplicateProteusConversations() async throws {
+        let modelHelper = ModelHelper()
+        let sut = OneOnOneMigrator(mlsService: mockMLSService)
+        let userID = QualifiedID(uuid: .create(), domain: "local@domain.com")
+        let selfUserID = QualifiedID(uuid: .create(), domain: "local@domain.com")
+        let mlsGroupID: MLSGroupID = .random()
+
+        let selfUser = await syncContext.perform {
+            modelHelper.createSelfUser(id: selfUserID.uuid, domain: selfUserID.domain, in: self.syncContext)
+        }
+
+        let (_, proteusConversation, mlsConversation) = await createConversations(
+            userID: userID,
+            mlsGroupID: mlsGroupID,
+            in: syncContext
+        )
+
+        let duplicateProteusConversation = try await syncContext.perform {
+            let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
+            let team = modelHelper.createTeam(in: self.syncContext)
+            modelHelper.addUsers([selfUser, otherUser], to: team, in: self.syncContext)
+
+            proteusConversation.addParticipantAndUpdateConversationState(user: selfUser)
+            proteusConversation.addParticipantAndUpdateConversationState(user: otherUser)
+            return self.createFakeProteusConversation(
+                with: UUID(),
+                selfUser: selfUser,
+                otherUser: otherUser,
+                in: self.syncContext
+            )
+        }
+        
+        let duplicateProteusConversation2 = try await syncContext.perform {
+            let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
+            let team = modelHelper.createTeam(in: self.syncContext)
+            modelHelper.addUsers([selfUser, otherUser], to: team, in: self.syncContext)
+
+            proteusConversation.addParticipantAndUpdateConversationState(user: selfUser)
+            proteusConversation.addParticipantAndUpdateConversationState(user: otherUser)
+            return self.createFakeProteusConversation(
+                with: UUID(),
+                selfUser: selfUser,
+                otherUser: otherUser,
+                in: self.syncContext
+            )
+        }
+
+        // Mock
+        let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
+            result: .success((mlsGroupID, nil)),
+            context: syncContext.notificationContext
+        )
+
+        mockMLSService.conversationExistsGroupID_MockValue = false
+        mockMLSService.establishGroupForWithRemovalKeys_MockMethod = { _, _, _ in
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        }
+
+        // required to add be able to add images
+        let cacheLocation = try XCTUnwrap(
+            FileManager.default.randomCacheURL
+        )
+
+        await syncContext.perform {
+            self.syncContext.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
+        }
+
+        // True Proteus OneOnOne conversation
+        try await syncContext.perform {
+            var message = try proteusConversation.appendText(content: "Hello World!")
+            message.updateServerTimestamp(with: 0)
+
+            message = try proteusConversation.appendKnock()
+            message.updateServerTimestamp(with: 1)
+
+            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message.updateServerTimestamp(with: 2)
+
+            XCTAssertEqual(proteusConversation.allMessages.count, 3)
+            XCTAssertNil(mlsConversation.lastMessage)
+        }
+
+        // duplicate Proteus OneOnOne conversation
+        try await syncContext.perform {
+            var message = try duplicateProteusConversation.appendText(content: "Hello World Dup!")
+            message.updateServerTimestamp(with: 10)
+
+            message = try duplicateProteusConversation.appendKnock()
+            message.updateServerTimestamp(with: 11)
+
+            message = try duplicateProteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message.updateServerTimestamp(with: 12)
+
+            XCTAssertEqual(proteusConversation.allMessages.count, 3)
+            XCTAssertNil(mlsConversation.lastMessage)
+
+            // this save is needed, in order for the fetch request to get the correct duplicate OneOnOne conv.
+            try self.syncContext.save()
+        }
+        
+        // duplicate Proteus OneOnOne conversation
+        try await syncContext.perform {
+            var message = try duplicateProteusConversation2.appendText(content: "Hello World 1!")
+            message.updateServerTimestamp(with: 100)
+
+            message = try duplicateProteusConversation2.appendText(content: "Hello World 2!")
+            message.updateServerTimestamp(with: 110)
+
+            message = try duplicateProteusConversation2.appendText(content: "Hello World 3!")
+            message.updateServerTimestamp(with: 120)
+
+            XCTAssertEqual(proteusConversation.allMessages.count, 3)
+            XCTAssertNil(mlsConversation.lastMessage)
+
+            // this save is needed, in order for the fetch request to get the correct duplicate OneOnOne conv.
+            try self.syncContext.save()
+        }
+        
+        // When
+
+        try await sut.migrateToMLS(
+            userID: userID,
+            in: syncContext
+        )
+
+        // Then
+        await syncContext.perform {
+            let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
+            let expectedMessagesCount = 9
+            if mlsMessages.count == expectedMessagesCount {
+                XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
+                XCTAssertTrue(mlsMessages[1].isKnock)
+                XCTAssertTrue(mlsMessages[2].isImage)
+                XCTAssertEqual(mlsMessages[3].textMessageData?.messageText, "Hello World Dup!")
+                XCTAssertTrue(mlsMessages[4].isKnock)
+                XCTAssertTrue(mlsMessages[5].isImage)
+                XCTAssertEqual(mlsMessages[6].textMessageData?.messageText, "Hello World 1!")
+                XCTAssertEqual(mlsMessages[7].textMessageData?.messageText, "Hello World 2!")
+                XCTAssertEqual(mlsMessages[8].textMessageData?.messageText, "Hello World 3!")
+            } else {
+                XCTFail("messages count is \(mlsMessages.count) instead of \(expectedMessagesCount)")
+            }
+            XCTAssertNil(proteusConversation.lastMessage)
+        }
+        withExtendedLifetime(handler) {}
+    }
+
     // MARK: - Core Data Objects
 
     private func createConversations(
