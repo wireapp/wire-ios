@@ -909,7 +909,7 @@ public extension WireCallCenterV3 {
     /// - Parameters:
     ///   - conversationId: The identifier of the conversation where the video call is hosted.
     ///   - clients: The list of clients for which AVS should load video streams.
-    func requestVideoStreams(conversationId: AVSIdentifier, clients: [AVSClient]) {
+    func requestVideoStreams(conversationId: AVSIdentifier, clients: [AVSClientVideoStream]) {
         let videoStreams = AVSVideoStreams(conversationId: conversationId.serialized, clients: clients)
         avsWrapper.requestVideoStreams(videoStreams, conversationId: conversationId)
     }
