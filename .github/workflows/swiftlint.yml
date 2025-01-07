@@ -17,7 +17,18 @@ jobs:
       image: ghcr.io/realm/swiftlint:0.57.0
 
     steps:
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            swift:
+              - '**/*.swift'
+
       - uses: actions/checkout@v4
+        if: steps.changes.outputs.swift == 'true'
+
       - name: GitHub Action for SwiftLint
+        if: steps.changes.outputs.swift == 'true'
         run: |
           swiftlint --reporter github-actions-logging --strict --quiet

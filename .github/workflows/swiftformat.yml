@@ -17,8 +17,19 @@ jobs:
       image: ghcr.io/nicklockwood/swiftformat:0.54.5
 
     steps:
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            swift:
+              - '**/*.swift'
+
       - uses: actions/checkout@v4
+        if: steps.changes.outputs.swift == 'true'
+
       - name: GitHub Action for SwiftFormat
+        if: steps.changes.outputs.swift == 'true'
         run: >
           swiftformat --lint .
           --reporter github-actions-log
