@@ -2,9 +2,7 @@ name: SwiftLint
 
 on:
   pull_request:
-    types: [opened, synchronize, edited, ready_for_review]
-  merge_group:
-    types: [checks_requested]
+    types: [opened, synchronize, ready_for_review]
 
 # This is what will cancel the workflow
 concurrency:
