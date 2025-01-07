@@ -33,21 +33,19 @@ struct PasswordFieldView: View {
 
             ZStack {
                 if isPasswordVisible {
-                    TextField(L10n.ExportBackup.SetBackupPassword.placeholder,
-                              text: $password)
-                        .font(.textStyle(.body1))
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
-                        )
+                    TextField(
+                        L10n.ExportBackup.SetBackupPassword.placeholder,
+                        text: $password)
+                    .font(.textStyle(.body1))
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .overlay(RoundedRectangle(cornerRadius: 5)
+                        .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
+                    )
                 } else {
-                    SecureField(L10n.ExportBackup.SetBackupPassword.placeholder,
-                                text: $password)
+                    SecureField(L10n.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
+                        .overlay(RoundedRectangle(cornerRadius: 5)
+                            .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
                         )
                 }
 
