@@ -148,4 +148,28 @@ class CallEventContentTests: XCTestCase {
         }
     }
 
+    func testCallerID() {
+        // Given
+        let uuidString = "550e8400-e29b-41d4-a716-446655440000"
+        let testCases: [(callerUserID: String, expectedCallerID: AVSIdentifier?)] = [
+            ("invalid", nil),
+            (uuidString, AVSIdentifier(identifier: UUID(uuidString: uuidString)!, domain: nil)),
+            ("\(uuidString)@wire.com", AVSIdentifier(identifier: UUID(uuidString: uuidString)!, domain: "wire.com"))
+        ]
+
+        for testCase in testCases {
+            // When
+            let sut = CallEventContent(
+                type: "something",
+                properties: nil,
+                callerUserID: testCase.callerUserID,
+                callerClientID: "something",
+                resp: true
+            )
+
+            // Then
+            XCTAssertEqual(sut.callerID, testCase.expectedCallerID, "Test case: \(testCase) failed")
+        }
+    }
+
 }
