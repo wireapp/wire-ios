@@ -54,10 +54,10 @@ public struct BackupActionsView: View {
                     .sheet(isPresented: $isBackupSheetPresented) {
                         NavigationStack {
                             ExportBackupView(
-                                passwordValidator:
-                                    viewModel.passwordValidator) { password in
-                                        viewModel.backupActiveAccount(password: password)
-                                    }
+                                passwordValidator: viewModel.passwordValidator,
+                                exportBackup: { password in
+                                    viewModel.backupActiveAccount(password: password)
+                                })
                         }
                         .presentationDetents([.medium, .large])
                     }
@@ -81,7 +81,7 @@ public struct BackupActionsView: View {
 
 private class MockBackupSource: BackupSourceProtocol {
     func backupActiveAccount(password: String) throws -> URL {
-        return URL(fileURLWithPath: "path")
+        URL(fileURLWithPath: "path")
     }
 
     func clearPreviousBackups() {}
