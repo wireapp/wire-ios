@@ -49,7 +49,7 @@ public extension Font {
         case .subline1:
             .caption
         case .buttonSmall:
-            fatalError("not implemented")
+            .system(size: 14, weight: .semibold)
         case .buttonBig:
             .title3.weight(.semibold)
         }

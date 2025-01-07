@@ -38,6 +38,7 @@ public struct SelfProfileViewCallToActionBanner: View {
         contentView(actionCallback: actionCallback)
             .padding(8)
             .bannerBackground()
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }
 
@@ -53,9 +54,8 @@ private func contentView(
         }, icon: {
             Image.infoCircle
         })
-        .fontWeight(.bold)
         Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
-            .wireTextStyle(.subline1)
+            .wireTextStyle(.body1)
             .lineLimit(nil)
 
         Button(
@@ -64,8 +64,7 @@ private func contentView(
                 Text(String.localized(key: "individualToTeam.banner.button", bundle: .module))
             }
         )
-        .wireButtonStyle(.secondary)
-        .fixedSize()
+        .wireButtonStyle(.tertiary)
     }
 }
 
