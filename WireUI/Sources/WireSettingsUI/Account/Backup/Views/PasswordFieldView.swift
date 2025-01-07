@@ -39,18 +39,20 @@ struct PasswordFieldView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
-                            .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1
-                                   )
+                            .stroke(
+                                isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
+                                lineWidth: 1)
                     )
                 } else {
                     SecureField(L10n.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
-                                .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
+                                .stroke(
+                                    isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
+                                    lineWidth: 1)
                         )
                 }
-
                 HStack {
                     Spacer()
                     Button(action: {
