@@ -276,10 +276,6 @@ platform :ios do
         testplan = options[:testplan] || "AllTests"
 
         schemas.each do |scheme|
-<<<<<<< HEAD
-            UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
-            test_plan(build, scheme, testplan)
-=======
             write_tests_info_to_summary("🤖 Testing scheme #{scheme} with plan #{testplan}")
             begin
                 test_plan(build, scheme, testplan)
@@ -296,7 +292,6 @@ platform :ios do
         # report errors so Github action fails
         if schema_errors.values.include?(true)
             raise "Tests fail"
->>>>>>> c48a4941f2 (fix: report error - WPB-15166 (#2357))
         end
     end
 
