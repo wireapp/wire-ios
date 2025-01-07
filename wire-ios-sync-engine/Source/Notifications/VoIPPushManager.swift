@@ -20,16 +20,11 @@ import avs
 import CallKit
 import Foundation
 import PushKit
+import WireLogging
 
 public protocol VoIPPushManagerDelegate: AnyObject {
 
     func processPendingCallEvents(accountID: UUID)
-
-}
-
-extension Logging {
-
-    static let push = ZMSLog(tag: "Push")
 
 }
 
