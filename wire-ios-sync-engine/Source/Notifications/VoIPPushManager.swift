@@ -32,12 +32,16 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     // MARK: - Properties
 
-    let registry = PKPushRegistry(queue: nil)
+    static let pushRegistryQueue = DispatchQueue(
+        label: "com.wire.pushRegistryQueue"
+    )
+    
     public let callKitManager: CallKitManager
 
     private let requiredPushTokenType: PushToken.TokenType
     private let pushTokenService: PushTokenServiceInterface
-
+    private let registry: PKPushRegistry
+    
     public weak var delegate: VoIPPushManagerDelegate?
 
     private static let logger = WireLogger.calling
@@ -53,6 +57,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         self.requiredPushTokenType = requiredPushTokenType
         self.pushTokenService = pushTokenService
 
+        self.registry = PKPushRegistry(queue: Self.pushRegistryQueue)
         self.callKitManager = CallKitManager(
             application: application,
             requiredPushTokenType: requiredPushTokenType,
