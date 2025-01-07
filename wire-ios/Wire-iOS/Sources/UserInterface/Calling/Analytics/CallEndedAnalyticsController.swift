@@ -279,7 +279,8 @@ extension CallEndedAnalyticsController: WireCallCenterCallParticipantObserver {
         eventInfos[conversation.remoteIdentifier]?.uniqueScreenSharingUsers.formUnion(screenSharingParticipants)
 
         if !screenSharingParticipants.isEmpty {
-            eventInfos[conversation.remoteIdentifier]?.screenSharingStart = eventInfo?.screenSharingStart ?? currentDateProvider.now
+            eventInfos[conversation.remoteIdentifier]?.screenSharingStart = eventInfo?
+                .screenSharingStart ?? currentDateProvider.now
         } else if let screenSharingStart = eventInfo?.screenSharingStart {
             // screen sharing just stopped
             let duration = screenSharingStart.distance(to: currentDateProvider.now)

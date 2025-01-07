@@ -182,9 +182,10 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         XCTAssertEqual(segmentation["call_video"], "False")
         XCTAssertEqual(segmentation["team_is_team"], "True")
     }
-    
+
     /// A group conversation with three users.
-    /// The conversation is from the team of the third user, the second user is a personal user, the self user is from a different team.
+    /// The conversation is from the team of the third user, the second user is a personal user, the self user is from a
+    /// different team.
     /// The self user toggles its video.
     func testIncomingOneOnOneCallWithToggledVideo() throws {
         // Given
