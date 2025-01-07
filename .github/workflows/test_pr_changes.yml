@@ -2,7 +2,7 @@ name: Test Pull Request Changes
 
 on: 
   pull_request:
-    types: [opened, synchronize, edited, ready_for_review]
+    types: [opened, synchronize, ready_for_review]
   merge_group:
     types: [checks_requested]
 
@@ -16,9 +16,7 @@ jobs:
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
     name: Detect PR Changes
-    if: > # neither run for draft pr nor for changed PR title/description
-      ${{ github.event.pull_request.draft != true &&
-          github.event.action != 'edited' }}
+    if: ${{ github.event.pull_request.draft != true }}
     runs-on: ubuntu-24.04
     # Set job outputs to values from filter step
     outputs:
