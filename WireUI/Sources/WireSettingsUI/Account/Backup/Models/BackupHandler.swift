@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct BackupHandler {
+public struct BackupResultHandler {
     let onSuccess: (URL, @escaping () -> Void) -> Void
     let onFailure: (any Error) -> Void
 
