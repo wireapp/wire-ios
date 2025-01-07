@@ -38,14 +38,11 @@ public struct BackupActionsView: View {
                     Button(action: {
                         switch section.type {
                         case .backup:
-                            isRestoreSheetPresented = false
                             isBackupSheetPresented.toggle()
                         case .restore:
-                            isBackupSheetPresented = false
                             isRestoreSheetPresented.toggle()
                         }
-                    }
-                    ) {
+                    }, label: {
                         HStack {
                             section.type.title
                                 .font(.textStyle(.body2))
@@ -53,7 +50,7 @@ public struct BackupActionsView: View {
                             Spacer()
                             Image(systemName: "chevron.right").foregroundStyle(Color.primary)
                         }
-                    }
+                    })
                     .sheet(isPresented: $isBackupSheetPresented) {
                         NavigationStack {
                             ExportBackupView(

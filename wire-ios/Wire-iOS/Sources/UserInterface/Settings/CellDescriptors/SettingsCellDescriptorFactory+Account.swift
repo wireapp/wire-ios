@@ -20,8 +20,8 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireSyncEngine
 import WireSettingsUI
+import WireSyncEngine
 
 extension ZMUser {
     var hasValidEmail: Bool {
