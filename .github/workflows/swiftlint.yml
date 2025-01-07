@@ -14,16 +14,9 @@ concurrency:
 jobs:
   SwiftLint:
     runs-on: ubuntu-24.04
-    if: >
-      github.event.pull_request.draft == false && (
-        github.event.action != 'edited' || (
-          github.event.changes.title == null &&
-          github.event.changes.body == null &&
-          github.event.changes.assignees == null &&
-          github.event.changes.reviewers == null &&
-          github.event.changes.labels == null
-        )
-      )
+    if: > # neither run for draft pr nor for changed PR title/description
+      ${{ github.event.pull_request.draft != true &&
+          github.event.action != 'edited' }}
     container:
       image: ghcr.io/realm/swiftlint:0.57.0
 

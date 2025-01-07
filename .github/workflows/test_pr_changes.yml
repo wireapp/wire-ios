@@ -16,17 +16,9 @@ jobs:
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
     name: Detect PR Changes
-    # If it's a draft PR, don't run.
-    if: >
-      github.event.pull_request.draft == false && (
-        github.event.action != 'edited' || (
-          github.event.changes.title == null &&
-          github.event.changes.body == null &&
-          github.event.changes.assignees == null &&
-          github.event.changes.reviewers == null &&
-          github.event.changes.labels == null
-        )
-      )
+    if: > # neither run for draft pr nor for changed PR title/description
+      ${{ github.event.pull_request.draft != true &&
+          github.event.action != 'edited' }}
     runs-on: ubuntu-24.04
     # Set job outputs to values from filter step
     outputs:
@@ -34,8 +26,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        # not sure if checkout is needed for the merge queue, for pull requests it doesn't seem to be needed
-        # https://github.com/dorny/paths-filter#supported-workflows
         if: ${{ github.event_name == 'merge_group' }}
         with:
           lfs: 'false' # as long as we use lfs only for snapshotTesting it should not be useful here
