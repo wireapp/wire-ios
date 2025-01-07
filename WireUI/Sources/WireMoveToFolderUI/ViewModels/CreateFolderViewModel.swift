@@ -40,7 +40,7 @@ public final class CreateFolderViewModel: ObservableObject {
 
     // MARK: - Public Interface
 
-     public func createFolder() async throws -> Folder {
+    public func createFolder() async throws -> Folder {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else {
             throw FolderCreationError.emptyName
