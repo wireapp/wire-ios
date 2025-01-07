@@ -42,9 +42,13 @@ let package = Package(
 
         .target(
             name: "WireAuthenticationUI",
-            dependencies: ["WireDesign", "WireFoundation", "WireReusableUIComponents"]
+            dependencies: ["WireDesign", "WireFoundation", "WireReusableUIComponents"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
-        .testTarget(name: "WireAuthenticationUITests", dependencies: ["WireAuthenticationUI"]),
+        .testTarget(
+            name: "WireAuthenticationUITests",
+            dependencies: ["WireAuthenticationUI"]
+        ),
 
         .target(name: "WireConversationListUI"),
         .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI", "WireSettingsUI"]),
