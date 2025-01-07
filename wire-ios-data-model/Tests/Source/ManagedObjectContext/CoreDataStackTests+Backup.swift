@@ -216,7 +216,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // when
-        let _ = try createBackup(accountIdentifier: uuid)
+        _ = try createBackup(accountIdentifier: uuid)
 
         // then
         let fetchConversations = ZMConversation.sortedFetchRequest()
@@ -231,7 +231,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // when
-        let _ = try createBackup(accountIdentifier: uuid)
+        _ = try createBackup(accountIdentifier: uuid)
 
         // then
         let anotherDirectory = createStorageStackAndWaitForCompletion(userID: uuid)

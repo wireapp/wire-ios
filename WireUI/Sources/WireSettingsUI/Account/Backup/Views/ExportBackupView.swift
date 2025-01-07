@@ -42,24 +42,24 @@ public struct ExportBackupView: View {
             passwordValidator: passwordValidator,
             exportBackup: exportBackup
         )
-            .background(Color.viewBackground)
-            .scrollContentBackground(.hidden)
-            .navigationTitle(
-                Text(L10n.ExportBackup.title)
-            )
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    CloseButton(
-                        action: didTapClose,
-                        accessibilityLabel: String(
-                            localized: "setBackupPassword.close.label",
-                            table: "Accessibility",
-                            bundle: .module
-                        )
+        .background(Color.viewBackground)
+        .scrollContentBackground(.hidden)
+        .navigationTitle(
+            Text(L10n.ExportBackup.title)
+        )
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                CloseButton(
+                    action: didTapClose,
+                    accessibilityLabel: String(
+                        localized: "setBackupPassword.close.label",
+                        table: "Accessibility",
+                        bundle: .module
                     )
-                }
+                )
             }
+        }
     }
 
     private func didTapClose() {
