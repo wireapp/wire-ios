@@ -263,7 +263,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         XCTAssertEqual(segmentation["call_end_reason"], "1") // WCALL_REASON_ERROR = 1
         XCTAssertEqual(segmentation["conversation_services"], "0")
         XCTAssertEqual(segmentation["call_av_switch_toggle"], "True")
-        XCTAssertEqual(segmentation["call_video"], "True")
+        XCTAssertEqual(segmentation["call_video"], "False")
         XCTAssertEqual(segmentation["team_is_team"], "True")
     }
 

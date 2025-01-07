@@ -96,6 +96,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
         eventInfo = .init(
             callDirection: .outgoing,
+            conversationID: conversation.avsIdentifier,
             conversationType: conversation.conversationType == .group ? .group : .oneOnOne,
             isVideoCall: isVideoCall
         )
