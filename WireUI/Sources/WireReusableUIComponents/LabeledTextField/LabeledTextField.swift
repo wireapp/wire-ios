@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ public struct LabeledTextField: View {
 
     @Binding private var string: String
 
-    public init(mandatory: Bool = false, placeholder: String?, title: String?, string: Binding<String>) {
-        self.isMandatory = mandatory
+    public init(isMandatory: Bool = false, placeholder: String?, title: String?, string: Binding<String>) {
+        self.isMandatory = isMandatory
         self.placeholder = placeholder
         self.title = title
         self._string = string
@@ -41,7 +41,7 @@ public struct LabeledTextField: View {
                 (
                     isMandatory ? (
                         Text(title) +
-                        Text(verbatim: " *")
+                            Text(verbatim: " *")
                             .foregroundColor(ColorTheme.Base.requiredField.color)
                     ) : Text(title)
                 )
@@ -56,25 +56,25 @@ public struct LabeledTextField: View {
 
 #Preview {
     LabeledTextField(
-        mandatory: false,
+        isMandatory: false,
         placeholder: nil,
         title: nil,
         string: .constant("")
     )
     LabeledTextField(
-        mandatory: false,
+        isMandatory: false,
         placeholder: "Placeholder",
         title: "Some Title",
         string: .constant("")
     )
     LabeledTextField(
-        mandatory: true,
+        isMandatory: true,
         placeholder: "Placeholder",
         title: "Some Title",
         string: .constant("")
     )
     LabeledTextField(
-        mandatory: true,
+        isMandatory: true,
         placeholder: "Placeholder",
         title: "Some Title",
         string: .constant("Lorem ipsum sic amet [...]")
