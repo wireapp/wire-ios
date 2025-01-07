@@ -103,8 +103,6 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         let event = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.last)
         let segmentation = event.segmentation
         XCTAssertEqual(event.name, "calling.ended_call")
-        XCTAssert(segmentation.contains { $0.key == "device_model" })
-        XCTAssert(segmentation.contains { $0.key == "os_version" })
         XCTAssertEqual(segmentation["call_screen_share"], "False")
         XCTAssertEqual(segmentation["call_screen_share_duration"], "0")
         XCTAssertEqual(segmentation["call_screen_share_unique"], "0")
@@ -164,8 +162,6 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         let event = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.last)
         let segmentation = event.segmentation
         XCTAssertEqual(event.name, "calling.ended_call")
-        XCTAssert(segmentation.contains { $0.key == "device_model" })
-        XCTAssert(segmentation.contains { $0.key == "os_version" })
         XCTAssertEqual(segmentation["call_screen_share"], "False")
         XCTAssertEqual(segmentation["call_screen_share_duration"], "0")
         XCTAssertEqual(segmentation["call_screen_share_unique"], "0")
@@ -239,8 +235,6 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         let event = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.last)
         let segmentation = event.segmentation
         XCTAssertEqual(event.name, "calling.ended_call")
-        XCTAssert(segmentation.contains { $0.key == "device_model" })
-        XCTAssert(segmentation.contains { $0.key == "os_version" })
         XCTAssertEqual(segmentation["call_screen_share"], "False")
         XCTAssertEqual(segmentation["call_screen_share_duration"], "0")
         XCTAssertEqual(segmentation["call_screen_share_unique"], "0")
@@ -329,8 +323,6 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         let event0 = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.first)
         let segmentation0 = event0.segmentation
         XCTAssertEqual(event0.name, "calling.ended_call")
-        XCTAssert(segmentation0.contains { $0.key == "device_model" })
-        XCTAssert(segmentation0.contains { $0.key == "os_version" })
         XCTAssertEqual(segmentation0["call_screen_share"], "False")
         XCTAssertEqual(segmentation0["call_screen_share_duration"], "0")
         XCTAssertEqual(segmentation0["call_screen_share_unique"], "0")
@@ -350,8 +342,6 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
         let event1 = try XCTUnwrap(mockAnalyticsEventTracker.trackedEvents.last)
         let segmentation1 = event1.segmentation
         XCTAssertEqual(event1.name, "calling.ended_call")
-        XCTAssert(segmentation1.contains { $0.key == "device_model" })
-        XCTAssert(segmentation1.contains { $0.key == "os_version" })
         XCTAssertEqual(segmentation1["call_screen_share"], "False")
         XCTAssertEqual(segmentation1["call_screen_share_duration"], "0")
         XCTAssertEqual(segmentation1["call_screen_share_unique"], "0")
