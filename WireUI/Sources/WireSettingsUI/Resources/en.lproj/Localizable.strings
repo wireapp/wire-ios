@@ -25,4 +25,5 @@
 "exportBackup.button" = "Back Up Now";
 "exportBackup.setBackupPassword.title" = "Password (OPTIONAL)";
 "exportBackup.setBackupPassword.placeholder" = "Enter password";
+"exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
 

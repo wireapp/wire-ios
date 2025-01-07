@@ -34,18 +34,20 @@ struct PasswordFieldView: View {
             ZStack {
                 if isPasswordVisible {
                     TextField(
-                        L10n.ExportBackup.SetBackupPassword.placeholder,
-                        text: $password)
+                        L10n.ExportBackup.SetBackupPassword.placeholder, text: $password)
                     .font(.textStyle(.body1))
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .overlay(RoundedRectangle(cornerRadius: 5)
-                        .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1
+                                   )
                     )
                 } else {
                     SecureField(L10n.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .overlay(RoundedRectangle(cornerRadius: 5)
-                            .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color, lineWidth: 1)
                         )
                 }
 
@@ -77,7 +79,7 @@ struct PasswordFieldView: View {
         password: .constant(""),
         isPasswordValid: false,
         isPasswordVisible: .constant(false),
-        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
 
@@ -87,7 +89,7 @@ struct PasswordFieldView: View {
         password: .constant("ValidPassword1!"),
         isPasswordValid: false,
         isPasswordVisible: .constant(true),
-        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
 
@@ -97,7 +99,7 @@ struct PasswordFieldView: View {
         password: .constant("ValidPassword1!"),
         isPasswordValid: true,
         isPasswordVisible: .constant(false),
-        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
 
@@ -107,6 +109,6 @@ struct PasswordFieldView: View {
         password: .constant("ValidPassword1!"),
         isPasswordValid: true,
         isPasswordVisible: .constant(true),
-        passwordRules: Text("Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
