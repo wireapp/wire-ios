@@ -26,9 +26,9 @@ jobs:
               - '**/*.swift'
 
       - uses: actions/checkout@v4
-        if: steps.changes.outputs.swift == 'true'
+        if: ${{ steps.changes.outputs.swift == 'true' }}
 
       - name: GitHub Action for SwiftLint
-        if: steps.changes.outputs.swift == 'true'
+        if: ${{ steps.changes.outputs.swift == 'true' }}
         run: |
           swiftlint --reporter github-actions-logging --strict --quiet

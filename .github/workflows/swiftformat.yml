@@ -26,10 +26,10 @@ jobs:
               - '**/*.swift'
 
       - uses: actions/checkout@v4
-        if: steps.changes.outputs.swift == 'true'
+        if: ${{ steps.changes.outputs.swift == 'true' }}
 
       - name: GitHub Action for SwiftFormat
-        if: steps.changes.outputs.swift == 'true'
+        if: ${{ steps.changes.outputs.swift == 'true' }}
         run: >
           swiftformat --lint .
           --reporter github-actions-log
