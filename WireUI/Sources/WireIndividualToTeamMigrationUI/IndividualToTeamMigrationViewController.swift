@@ -252,7 +252,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.setViewControllers([vc], animated: true)
-            isModalInPresentation = false
+            isModalInPresentation = true
         case .toCompletionDismiss:
             analyticsFlowCompletionAction = nil
             actionCallback(.completionDismiss)
@@ -351,17 +351,21 @@ private func hostedView(
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     )
     vc.title = step.title
-    vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
-        action: UIAction { _ in
-            switch step {
-            case .teamPlanSelection, .teamName, .confirmation:
-                transitionCallback(.toCancellationAlert)
-            case .completion:
-                transitionCallback(.toCompletionDismiss)
-            }
-        },
-        accessibilityLabel: step.closeButtonAccessibilityLabel
-    )
+    if case .completion = step {
+        vc.navigationItem.rightBarButtonItem = nil
+    } else {
+        vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { _ in
+                switch step {
+                case .teamPlanSelection, .teamName, .confirmation:
+                    transitionCallback(.toCancellationAlert)
+                case .completion:
+                    transitionCallback(.toCompletionDismiss)
+                }
+            },
+            accessibilityLabel: step.closeButtonAccessibilityLabel
+        )
+    }
     // Hide navigation bar title
     vc.navigationItem.titleView = UIView()
     vc.navigationItem.rightBarButtonItem?.tintColor = ColorTheme.Backgrounds.onBackground
