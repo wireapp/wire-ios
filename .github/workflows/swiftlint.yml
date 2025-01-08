@@ -2,7 +2,7 @@ name: SwiftLint
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, edited, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review]
   merge_group:
     types: [checks_requested]
 
@@ -14,9 +14,7 @@ concurrency:
 jobs:
   SwiftLint:
     runs-on: ubuntu-24.04
-    if: >
-      ${{ github.event.pull_request.draft != true &&
-          ( github.event.action != 'edited' || github.event.changes.base != null ) }}
+    if: ${{ github.event.pull_request.draft != true }}
     container:
       image: ghcr.io/realm/swiftlint:0.57.0
 

@@ -2,7 +2,7 @@ name: Build for PR
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, edited, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review]
     branches: [develop]
 
 concurrency:
@@ -14,9 +14,7 @@ permissions:
 
 jobs:
   build_develop:
-    if: >
-      ${{ github.event.pull_request.draft != true &&
-          ( github.event.action != 'edited' || github.event.changes.base != null ) }}
+    if: ${{ github.event.pull_request.draft != true }}
     uses: ./.github/workflows/_reusable_app_release_without_changelog.yml
     with:
       countly_enabled: false
