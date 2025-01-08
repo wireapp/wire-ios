@@ -48,15 +48,15 @@ jobs:
 
       - name: Sanitize branch name
         run: |
-            if [ -z "${{ inputs.branch }}" ]; then
-              BRANCH = ${{ inputs.branch }}
-            elif [ "${{ github.event_name }}" == "pull_request" ]; then
-              BRANCH = ${{ github.head_ref }}"
-            else
-              BRANCH = ${GITHUB_REF#refs/heads/}"
-            fi
-            SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
-            echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" | tee -a $GITHUB_ENV
+          if [ -z "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" | tee -a "$GITHUB_ENV"
     
       - name: Retrieve Xcode version
         run: |
@@ -227,7 +227,14 @@ jobs:
     steps:
       - name: Sanitize branch name
         run: |
-          SANITIZED_BRANCH=$(echo "${{ inputs.branch }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          if [ -z "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
           echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
       - name: Download .xcresult files
@@ -254,8 +261,15 @@ jobs:
     steps:
       - name: Sanitize branch name
         run: |
-            SANITIZED_BRANCH=$(echo "${{ inputs.branch }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
-            echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+          if [ -z "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
       - name: Download tests results
         uses: actions/download-artifact@v4
