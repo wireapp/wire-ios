@@ -165,12 +165,13 @@ node("Job_distributor") {
                           branches: [[name: '*/${Branch}']],
                           doGenerateSubmoduleConfigurations: true,
                           extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'wire-ios'],
-                                       [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'wire-ios-automation/ios'], [path: 'wire-ios-automation/tools']]],
+                                       [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'wire-ios-automation/ios'], [path: 'wire-ios-automation/tools'], [path: 'wire-ios-automation/ios-automation-assets']]],
                                        [$class: 'CheckoutOption', timeout: 30],
+                                       [$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, trackingSubmodules: false, depth: 1, shallow: true],
                                        [$class: 'CloneOption', depth: 0, noTags: true, reference: '', shallow: true, timeout: 30],
                                        [$class: 'BuildChooserSetting', buildChooser: [$class: 'DefaultBuildChooser']]],
                           submoduleCfg: [],
-                          userRemoteConfigs: [[credentialsId: 'zautomation', url: 'git@github.com:wireapp/wire-ios.git']]])
+                          userRemoteConfigs: [[credentialsId: 'wire-ios', url: 'git@github.com:wireapp/wire-ios.git']]])
 
                 echo("Installing kubectl if not already installed")
                 kubeCtlSetup = readFile("${WORKSPACE}/common/tests/common/kubectlSetup.sh")
