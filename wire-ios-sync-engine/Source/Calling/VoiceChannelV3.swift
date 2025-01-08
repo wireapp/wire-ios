@@ -210,9 +210,8 @@ extension VoiceChannelV3: CallActions {
         }
     }
 
-    public func request(videoStreams: [AVSClient]) {
+    public func request(videoStreams: [AVSClientVideoStream]) {
         guard let conversationId = conversation?.avsIdentifier else { return }
-
         callCenter?.requestVideoStreams(conversationId: conversationId, clients: videoStreams)
     }
 }
