@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAPI
 
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.

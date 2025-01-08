@@ -54,14 +54,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func updateLastReadMessageTimestamp(
         _ lastReadMessage: LastRead,
-        in conversation: ZMConversation
+        in conversation: ConversationEntity
     ) async {
         await context.perform { [context] in
             guard conversation.isSelfConversation else {
                 return
             }
 
-            ZMConversation.updateConversation(
+            ConversationEntity.updateConversation(
                 withLastReadFromSelfConversation: lastReadMessage,
                 in: context
             )
@@ -70,14 +70,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func updateClearedMessageTimestamp(
         _ clearedMessage: Cleared,
-        in conversation: ZMConversation
+        in conversation: ConversationEntity
     ) async {
         await context.perform { [context] in
             guard conversation.isSelfConversation else {
                 return
             }
 
-            ZMConversation.updateConversation(
+            ConversationEntity.updateConversation(
                 withClearedFromSelfConversation: clearedMessage,
                 in: context
             )
@@ -85,7 +85,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func mlsConversationInfo(
-        conversation: ZMConversation
+        conversation: ConversationEntity
     ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)? {
 
         await context.perform {
@@ -100,7 +100,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
-        conversation: ZMConversation
+        conversation: ConversationEntity
     ) async {
         await context.perform {
             conversation.mlsStatus = .ready
@@ -123,7 +123,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func fetchOtherUserIDInOneOnOneConversation(
-        conversation: ZMConversation
+        conversation: ConversationEntity
     ) async -> WireDataModel.QualifiedID? {
         await context.perform {
             guard conversation.conversationType == .oneOnOne else {
@@ -156,7 +156,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func updateMemberStatus(
         mutedStatusInfo: (status: Int?, referenceDate: Date?),
         archivedStatusInfo: (status: Bool?, referenceDate: Date?),
-        for localConversation: ZMConversation
+        for localConversation: ConversationEntity
     ) async {
         await context.perform {
             let mutedStatus = mutedStatusInfo.status
@@ -184,9 +184,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func fetchConversation(
         id: UUID,
         domain: String?
-    ) async -> ZMConversation? {
+    ) async -> ConversationEntity? {
         await context.perform { [context] in
-            ZMConversation.fetch(
+            ConversationEntity.fetch(
                 with: id,
                 domain: domain,
                 in: context
@@ -197,9 +197,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func fetchOrCreateConversation(
         id: UUID,
         domain: String?
-    ) async -> ZMConversation {
+    ) async -> ConversationEntity {
         await context.perform { [context] in
-            ZMConversation.fetchOrCreate(
+            ConversationEntity.fetchOrCreate(
                 with: id,
                 domain: domain,
                 in: context
@@ -208,9 +208,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func addOrUpdateParticipant(
-        _ user: ZMUser,
+        _ user: UserEntity,
         withRole role: String,
-        in conversation: ZMConversation
+        in conversation: ConversationEntity
     ) async {
         let role = await fetchOrCreateRole(role, in: conversation)
 
@@ -230,7 +230,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         atDate date: Date,
         conversation: (id: UUID, domain: String)
     ) async throws {
-        typealias UserAndRole = (user: ZMUser, role: Role?)
+        typealias UserAndRole = (user: UserEntity, role: Role?)
 
         let localConversation = await fetchConversation(
             id: conversation.id,
@@ -309,10 +309,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         usersID: Set<NSManagedObjectID>
     ) async {
         await context.perform { [context] in
-            if let conversation = context.object(with: conversationID) as? ZMConversation {
+            if let conversation = context.object(with: conversationID) as? ConversationEntity {
 
                 let users = usersID.compactMap {
-                    context.object(with: $0) as? ZMUser
+                    context.object(with: $0) as? UserEntity
                 }
 
                 context.typingUsers?.update(
@@ -329,8 +329,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func obtainPermanentIDs(
-        user: ZMUser,
-        conversation: ZMConversation
+        user: UserEntity,
+        conversation: ConversationEntity
     ) {
         if user.objectID.isTemporaryID || conversation.objectID.isTemporaryID {
             do {
@@ -345,7 +345,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func addSystemMessage(
         _ message: SystemMessage,
-        to conversation: ZMConversation
+        to conversation: ConversationEntity
     ) async {
         await context.perform { [context] in
             let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
@@ -383,7 +383,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
 
         Flow.createGroup.checkpoint(
-            description: "create ZMConversation of type \(conversationType))"
+            description: "create ConversationEntity of type \(conversationType))"
         )
 
         guard let id = conversation.id ?? conversation.qualifiedID?.uuid else {
@@ -446,7 +446,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         conversationDomain: String
     ) async {
         await context.perform { [context] in
-            let conversation = ZMConversation.fetch(
+            let conversation = ConversationEntity.fetch(
                 with: conversationID,
                 domain: conversationDomain,
                 in: context
@@ -473,9 +473,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func fetchMLSConversation(
         groupID: WireDataModel.MLSGroupID
-    ) async -> ZMConversation? {
+    ) async -> ConversationEntity? {
         await context.perform { [context] in
-            ZMConversation.fetch(
+            ConversationEntity.fetch(
                 with: groupID,
                 in: context
             )
@@ -483,7 +483,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func isConversationArchived(
-        _ conversation: ZMConversation
+        _ conversation: ConversationEntity
     ) async -> Bool {
         await context.perform {
             conversation.isArchived
@@ -491,7 +491,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func isConversationForcedReadOnly(
-        _ conversation: ZMConversation
+        _ conversation: ConversationEntity
     ) async -> Bool {
         await context.perform {
             conversation.isForcedReadOnly
@@ -499,7 +499,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func commitPendingProposals(
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         date: Date,
         commitDelay: UInt64
     ) async {
@@ -513,7 +513,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func updateSecurityLevelAfterReceivingMessage(
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         genericMessage: GenericMessage,
         date: Date
     ) async {
@@ -529,7 +529,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func addParticipantIfNeeded(
         participantID: UUID,
         participantDomain: String?,
-        in conversation: ZMConversation,
+        in conversation: ConversationEntity,
         date: Date
     ) async {
         guard let participant = try? await userLocalStore.fetchUser(
@@ -548,7 +548,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func conversationMutedMessageTypes(
-        _ conversation: ZMConversation
+        _ conversation: ConversationEntity
     ) async -> MutedMessageTypes {
         await context.perform {
             conversation.mutedMessageTypes
@@ -556,7 +556,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func conversationMessageDestructionTimeout(
-        _ conversation: ZMConversation
+        _ conversation: ConversationEntity
     ) async -> MessageDestructionTimeoutValue {
         await context.perform {
             conversation.activeMessageDestructionTimeoutValue ?? .init(rawValue: 0)
@@ -565,7 +565,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func storeConversation(
         timeoutValue: Double,
-        for conversation: ZMConversation
+        for conversation: ConversationEntity
     ) async {
         await context.perform {
             conversation.setMessageDestructionTimeoutValue(
@@ -577,7 +577,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func storeConversation(
         hasReadReceiptsEnabled: Bool,
-        for conversation: ZMConversation
+        for conversation: ConversationEntity
     ) async {
         await context.perform {
             conversation.hasReadReceiptsEnabled = hasReadReceiptsEnabled
@@ -585,7 +585,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func messageProtocol(
-        for conversation: ZMConversation
+        for conversation: ConversationEntity
     ) async -> WireDataModel.MessageProtocol {
         await context.perform {
             conversation.messageProtocol
@@ -593,7 +593,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func isGroupConversation(
-        _ conversation: ZMConversation
+        _ conversation: ConversationEntity
     ) async -> Bool {
         await context.perform {
             conversation.conversationType == .group
@@ -613,7 +613,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         let allGroupConversations = await context.perform {
             // swiftformat:disable:next redundantProperty
-            let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
+            let allGroupConversations: [ConversationEntity] = user.participantRoles.compactMap {
                 guard $0.conversation?.conversationType == .group else {
                     return nil
                 }
@@ -674,7 +674,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func fetchOrCreateRole(
         _ role: String,
-        in conversation: ZMConversation
+        in conversation: ConversationEntity
     ) async -> Role {
         await context.perform { [context] in
             Role.fetchOrCreateRole(
@@ -686,7 +686,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func updateAccesses(
-        for conversation: ZMConversation,
+        for conversation: ConversationEntity,
         accessModes: [String],
         accessRoles: [String]
     ) async {
@@ -698,7 +698,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func deleteConversation(_ conversation: ZMConversation) async {
+    public func deleteConversation(_ conversation: ConversationEntity) async {
         await storeConversation(
             isDeletedRemotely: true,
             conversation: conversation
@@ -711,7 +711,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func storeConversation(
         isDeletedRemotely: Bool,
-        conversation: ZMConversation
+        conversation: ConversationEntity
     ) async {
         await context.perform {
             conversation.isDeletedRemotely = isDeletedRemotely
@@ -719,9 +719,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func removeParticipantsAndUpdateConversationState(
-        conversation: ZMConversation,
-        users: Set<ZMUser>,
-        initiatingUser: ZMUser
+        conversation: ConversationEntity,
+        users: Set<UserEntity>,
+        initiatingUser: UserEntity
     ) async {
         await context.perform {
             conversation.removeParticipantsAndUpdateConversationState(
@@ -732,15 +732,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func localParticipants(
-        in conversation: ZMConversation
-    ) async -> Set<ZMUser> {
+        in conversation: ConversationEntity
+    ) async -> Set<UserEntity> {
         await context.perform {
             conversation.localParticipants
         }
     }
 
     public func conversationName(
-        conversation: ZMConversation
+        conversation: ConversationEntity
     ) async -> String? {
         await context.perform {
             conversation.userDefinedName
@@ -749,7 +749,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func storeConversation(
         newName: String,
-        conversation: ZMConversation
+        conversation: ConversationEntity
     ) async {
         await context.perform {
             conversation.userDefinedName = newName
@@ -759,8 +759,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Private
 
     private func notifyTypingUsers(
-        _ typingUsers: Set<ZMUser>,
-        in conversation: ZMConversation
+        _ typingUsers: Set<UserEntity>,
+        in conversation: ConversationEntity
     ) {
         let typingNotificationUsersKey = "typingUsers"
 
@@ -1065,7 +1065,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     private func commonUpdate(
         from conversation: Conversation,
-        for localConversation: ZMConversation,
+        for localConversation: ConversationEntity,
         serverTimestamp: Date,
         isFederationEnabled: Bool
     ) {
@@ -1096,8 +1096,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ///
     /// - Parameter conversationID: The conversation ID to fetch or create the local conversation from.
     /// - Parameter conversationDomain: The domain to fetch or create the conversation from.
-    /// - Parameter handler: A completion block that takes a `ZMConversation` as argument and returns
-    ///   a `ZMConversation` and an optional `MLSGroupID`.
+    /// - Parameter handler: A completion block that takes a `ConversationEntity` as argument and returns
+    ///   a `ConversationEntity` and an optional `MLSGroupID`.
     ///
     ///  Since storage logic can be different according to the conversation type, the method provides a completion block
     ///  with the conversation fetched or created locally.
@@ -1106,8 +1106,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func fetchOrCreateConversation(
         conversationID: UUID,
         conversationDomain: String?,
-        handler: @escaping (ZMConversation) -> (ZMConversation, MLSGroupID?)
-    ) async -> (ZMConversation, MLSGroupID?) {
+        handler: @escaping (ConversationEntity) -> (ConversationEntity, MLSGroupID?)
+    ) async -> (ConversationEntity, MLSGroupID?) {
 
         let conversation = await fetchOrCreateConversation(
             id: conversationID,

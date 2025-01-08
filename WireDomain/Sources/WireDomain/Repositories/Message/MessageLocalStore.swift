@@ -24,6 +24,7 @@ import WireLogging
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
 public protocol MessageLocalStoreProtocol {
+    associatedtype ConversationEntity: ConversationEntityProtocol
 
     /// Adds a system message to a given conversation.
     /// - Parameters:
@@ -46,7 +47,7 @@ public protocol MessageLocalStoreProtocol {
 
     func fetchOrCreateClientMessage(
         id: String,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMClientMessage, isNew: Bool)
@@ -60,7 +61,7 @@ public protocol MessageLocalStoreProtocol {
 
     func fetchOrCreateAssetClientMessage(
         id: String,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMAssetClientMessage, isNew: Bool)
@@ -78,7 +79,7 @@ public protocol MessageLocalStoreProtocol {
         _ clientMessage: ZMClientMessage,
         isNewMessage: Bool,
         genericMessage: GenericMessage,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         senderID: UUID,
         senderDomain: String
     ) async
@@ -96,7 +97,7 @@ public protocol MessageLocalStoreProtocol {
         _ assetClientMessage: ZMAssetClientMessage,
         isNewMessage: Bool,
         genericMessage: GenericMessage,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         senderID: UUID,
         senderDomain: String
     ) async
@@ -107,7 +108,7 @@ public protocol MessageLocalStoreProtocol {
     ///     - senderID: The message sender id.
 
     func canAddMessage(
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         senderID: UUID
     ) async -> Bool
 
@@ -123,7 +124,7 @@ public protocol MessageLocalStoreProtocol {
 
     func deleteMessageForSelf(
         _ hiddenMessage: MessageHide,
-        in conversation: ZMConversation
+        in conversation: ConversationEntity
     ) async
 
     /// Recalls a previously sent message.
@@ -138,7 +139,7 @@ public protocol MessageLocalStoreProtocol {
 
     func deleteMessageForEveryone(
         _ deletedMessage: MessageDelete,
-        in conversation: ZMConversation,
+        in conversation: ConversationEntity,
         senderID: UUID
     ) async
 
@@ -153,7 +154,7 @@ public protocol MessageLocalStoreProtocol {
 
     func addMessageReaction(
         _ messageReaction: WireProtos.Reaction,
-        in conversation: ZMConversation,
+        in conversation: ConversationEntity,
         senderID: UUID,
         date: Date
     ) async
@@ -167,7 +168,7 @@ public protocol MessageLocalStoreProtocol {
 
     func updateButtonStates(
         _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ZMConversation
+        in conversation: ConversationEntity
     ) async
 
     /// Edits a previously sent message.
@@ -183,7 +184,7 @@ public protocol MessageLocalStoreProtocol {
 
     func editMessage(
         _ messageEdit: MessageEdit,
-        in conversation: ZMConversation,
+        in conversation: ConversationEntity,
         senderID: UUID,
         genericMessage: GenericMessage,
         date: Date
@@ -246,7 +247,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func canAddMessage(
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         senderID: UUID
     ) async -> Bool {
         let selfUser = await userLocalStore.fetchSelfUser()
@@ -259,7 +260,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func fetchOrCreateClientMessage(
         id: String,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMClientMessage, isNew: Bool) {
@@ -276,7 +277,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func fetchOrCreateAssetClientMessage(
         id: String,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMAssetClientMessage, isNew: Bool) {
@@ -295,7 +296,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         _ clientMessage: ZMClientMessage,
         isNewMessage: Bool,
         genericMessage: GenericMessage,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         senderID: UUID,
         senderDomain: String
     ) async {
@@ -328,7 +329,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         _ assetClientMessage: ZMAssetClientMessage,
         isNewMessage: Bool,
         genericMessage: GenericMessage,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         senderID: UUID,
         senderDomain: String
     ) async {
@@ -379,7 +380,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func deleteMessageForSelf(
         _ hiddenMessage: MessageHide,
-        in conversation: ZMConversation
+        in conversation: ConversationEntity
     ) async {
         await context.perform { [context] in
             guard conversation.isSelfConversation else {
@@ -395,7 +396,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func deleteMessageForEveryone(
         _ deletedMessage: MessageDelete,
-        in conversation: ZMConversation,
+        in conversation: ConversationEntity,
         senderID: UUID
     ) async {
         await context.perform { [context] in
@@ -410,7 +411,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func addMessageReaction(
         _ messageReaction: WireProtos.Reaction,
-        in conversation: ZMConversation,
+        in conversation: ConversationEntity,
         senderID: UUID,
         date: Date
     ) async {
@@ -427,7 +428,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func updateButtonStates(
         _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ZMConversation
+        in conversation: ConversationEntity
     ) async {
         await context.perform { [context] in
             ZMClientMessage.updateButtonStates(
@@ -440,7 +441,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func editMessage(
         _ messageEdit: MessageEdit,
-        in conversation: ZMConversation,
+        in conversation: ConversationEntity,
         senderID: UUID,
         genericMessage: GenericMessage,
         date: Date
@@ -480,7 +481,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     private func fetchOrCreateClientMessage(
         id: String,
         messageType: ClientMessageType,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMOTRMessage, isNew: Bool) {
@@ -532,7 +533,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     private func setupNewClientMessage(
         _ message: ZMOTRMessage,
-        conversation: ZMConversation,
+        conversation: ConversationEntity,
         senderID: UUID,
         clientID: String?,
         date: Date
@@ -551,7 +552,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         clientMessage: ZMOTRMessage,
         senderID: UUID,
         senderDomain: String,
-        conversation: ZMConversation
+        conversation: ConversationEntity
     ) {
         let sender = ZMUser.fetchOrCreate(
             with: senderID,
@@ -570,7 +571,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     private func createSystemMessages(
         from messageType: SystemMessageType,
-        conversation: ZMConversation
+        conversation: ConversationEntity
     ) async -> Set<ZMSystemMessage> {
         switch messageType {
         case let .federationTermination(domains, date):
@@ -1015,7 +1016,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     private func addSystemMessages(
         _ messages: Set<ZMSystemMessage>,
-        to conversation: ZMConversation
+        to conversation: ConversationEntity
     ) async {
         await context.perform {
             for message in messages {
