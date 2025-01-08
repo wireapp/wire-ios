@@ -5130,6 +5130,18 @@ internal enum L10n {
         }
       }
     }
+    internal enum RestoreBackup {
+      internal enum Confirmation {
+        /// Cancel
+        internal static let cancelButton = L10n.tr("Localizable", "restore_backup.confirmation.cancel_button", fallback: "Cancel")
+        /// The backup contents will replace the current conversation history on this device.
+        internal static let description = L10n.tr("Localizable", "restore_backup.confirmation.description", fallback: "The backup contents will replace the current conversation history on this device.")
+        /// Override
+        internal static let overrideButton = L10n.tr("Localizable", "restore_backup.confirmation.override_button", fallback: "Override")
+        /// Backup file will overwrite your history
+        internal static let title = L10n.tr("Localizable", "restore_backup.confirmation.title", fallback: "Backup file will overwrite your history")
+      }
+    }
     internal enum RevokedCertificate {
       internal enum Alert {
         /// Continue Using This Device

@@ -322,6 +322,7 @@ public extension CoreDataStack {
             accountIdentifier: accountIdentifier,
             applicationContainer: applicationContainer
         )
+
         let accountStoreFile = accountDirectory.appendingPersistentStoreLocation()
         let backupStoreFile = backupDirectory
             .appendingPathComponent(databaseDirectoryName)

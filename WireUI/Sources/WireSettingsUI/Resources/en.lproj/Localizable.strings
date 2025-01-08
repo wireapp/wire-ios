@@ -31,3 +31,10 @@
 "restoreFromBackup.button" = "Continue";
 "restoreFromBackup.enterPassword.title" = "Password";
 "restoreFromBackup.enterPassword.error" = "Wrong password. Please verify your input and try again";
+//"restoreFromBackup.confirmation.title" = "Backup file will overwrite your history";
+//"restoreFromBackup.confirmation.description" = "The backup contents will replace the current conversation history on this device.";
+//"restoreFromBackup.confirmation.cancelButton" = "Cancel";
+//"restoreFromBackup.confirmation.overrideButton" = "Override";
+"restoreFromBackup.successAlert.title" = "Success";
+"restoreFromBackup.successAlert.description" = "Your history is restored.";
+"restoreFromBackup.successAlert.button" = "OK";

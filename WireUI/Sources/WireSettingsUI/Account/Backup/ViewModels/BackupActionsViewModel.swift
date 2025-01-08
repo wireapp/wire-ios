@@ -63,4 +63,16 @@ public final class BackupActionsViewModel: ObservableObject {
             }
         }
     }
+
+    func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, any Error>) -> Void) {
+        restoreSource.restoreFromBackup(at: location, password: password) { result in
+            print("AAAA: \(result)")
+        }
+    }
+
+    func confirmBackupRestore(completion: @escaping () -> Void) {
+        restoreBackupResultHandler.onConfirmation {
+            completion()
+        }
+    }
 }

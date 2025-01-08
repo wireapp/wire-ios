@@ -29,6 +29,7 @@ func BackupActionsPreview() -> some View {
         ),
         restoreBackupResultHandler: RestoreBackupResultHandler(
             onSuccess: { _  in },
+            onConfirmation: { _ in },
             onFailure: { _ in }),
         passwordValidator: MockBackupPasswordValidator()
     ))
@@ -43,6 +44,10 @@ private class MockBackupSource: BackupSourceProtocol {
 }
 
 private class MockRestoreSource: RestoreSourceProtocol {
+    func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, any Error>) -> Void) {
+        
+    }
+    
     func restoreFromBackup(at location: URL, password: String) throws {}
 }
 

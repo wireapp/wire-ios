@@ -64,7 +64,9 @@ public struct BackupActionsView: View {
                 footer: Text(L10n.Settings.RestoreFromBackup.description)
             ) {
                 Button(action: {
-                    isBackupPickerPresented.toggle()
+                    viewModel.confirmBackupRestore {
+                        isBackupPickerPresented.toggle()
+                    }
                 }, label: {
                     HStack {
                         Text(L10n.Settings.RestoreFromBackup.action)
@@ -86,10 +88,11 @@ public struct BackupActionsView: View {
                     NavigationStack {
                         RestoreBackupView { password in
                             if let fileURL = selectedFileURL {
-                                try? viewModel.restoreBackup(
-                                    at: fileURL,
-                                    password: password
-                                )
+                                viewModel.restoreFromBackup(at: fileURL, password: password, completion: {_ in })
+//                                try? viewModel.restoreBackup(
+//                                    at: fileURL,
+//                                    password: password
+//                                )
                             }
                         }
                     }

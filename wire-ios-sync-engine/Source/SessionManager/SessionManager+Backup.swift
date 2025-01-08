@@ -115,12 +115,18 @@ extension SessionManager {
             }
         }
 
-        guard
-            let status = unauthenticatedSession?.authenticationStatus,
-            let userId = status.authenticatedUserIdentifier
-        else {
+//        guard
+//            let status = unauthenticatedSession?.authenticationStatus,
+//            let userId = status.authenticatedUserIdentifier
+//        else {
+//            return completion(.failure(BackupError.notAuthenticated))
+//        }
+
+        guard let account = activeUserSession?.account,
+              let userId = activeUserSession?.userId else {
             return completion(.failure(BackupError.notAuthenticated))
         }
+
 
         // Verify the imported file has the correct file extension.
         guard BackupFileExtensions.allCases.contains(where: {
@@ -165,13 +171,37 @@ extension SessionManager {
                 return complete(.failure(BackupError.compressionError))
             }
 
-            CoreDataStack.importLocalStorage(
-                accountIdentifier: userId,
-                from: url,
-                applicationContainer: sharedContainerURL,
-                dispatchGroup: dispatchGroup
-            ) { result in
-                completion(result.map { _ in })
+            //            CoreDataStack.importLocalStorage(
+            //                accountIdentifier: userId,
+            //                from: url,
+            //                applicationContainer: sharedContainerURL,
+            //                dispatchGroup: dispatchGroup
+            //            ) { result in
+            //                completion(result.map { _ in })
+            //            }
+            self.delegate?.sessionManagerWillMigrateAccount { [weak self] in
+                guard let self else {
+                    return complete(.failure(NSError(
+                        userSessionErrorCode: .unknownError,
+                        userInfo: ["reason": "SessionManager.self is `nil` during session migration"]
+                    )))
+                }
+
+                CoreDataStack.importLocalStorage(
+                    accountIdentifier: userId,
+                    from: url,
+                    applicationContainer: self.sharedContainerURL,
+                    dispatchGroup: self.dispatchGroup
+                ) { result in
+                    switch result {
+                    case .success:
+                        self.activateSession(for: account) { sessionResult in
+                            complete(.success(()))
+                        }
+                    case .failure(let error):
+                        complete(.failure(error))
+                    }
+                }
             }
         }
     }
@@ -180,7 +210,8 @@ extension SessionManager {
         at location: URL,
         password: String
     ) throws {
-        guard let userId = activeUserSession?.userId else {
+        guard let account = activeUserSession?.account,
+              let userId = activeUserSession?.userId else {
             throw BackupError.notAuthenticated
         }
 
@@ -214,13 +245,32 @@ extension SessionManager {
         guard decryptedURL.unzip(to: url) else {
             throw BackupError.compressionError
         }
+        print("Account111: \(account)")
+        self.delegate?.sessionManagerWillMigrateAccount { [weak self] in
+            try? CoreDataStack.importLocalStorage(
+                accountIdentifier: userId,
+                from: url,
+                applicationContainer: self!.sharedContainerURL,
+                dispatchGroup: self!.dispatchGroup
+            )
+            print("Account222: \(account)")
+            self?.activateSession(for: account) { session in
+            }
+        }
 
-        try CoreDataStack.importLocalStorage(
-            accountIdentifier: userId,
-            from: url,
-            applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
-        )
+//        self.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {
+//            do {
+//                try CoreDataStack.importLocalStorage(
+//                    accountIdentifier: userId,
+//                    from: url,
+//                    applicationContainer: self.sharedContainerURL,
+//                    dispatchGroup: self.dispatchGroup
+//                )
+//                self.activateSession(for: account) { _ in }
+//            } catch {
+//
+//            }
+//        })
     }
 
     // MARK: - Encryption & Decryption

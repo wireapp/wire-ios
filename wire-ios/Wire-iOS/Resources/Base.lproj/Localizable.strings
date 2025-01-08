@@ -1518,6 +1518,12 @@
 "registration.no_history.restore_backup_failed.wrong_version.title" = "Incompatible backup";
 "registration.no_history.restore_backup_failed.wrong_version.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
 
+// Restore backup
+"restore_backup.confirmation.title" = "Backup file will overwrite your history";
+"restore_backup.confirmation.description" = "The backup contents will replace the current conversation history on this device.";
+"restore_backup.confirmation.cancel_button" = "Cancel";
+"restore_backup.confirmation.override_button" = "Override";
+
 // SSO – Company Login
 "login.sso.alert.title" = "Enterprise Login";
 "login.sso.alert.message.sso_and_email" = "Please enter your email or SSO code. If your email matches an enterprise installation of Wire, this app will connect to that server.";

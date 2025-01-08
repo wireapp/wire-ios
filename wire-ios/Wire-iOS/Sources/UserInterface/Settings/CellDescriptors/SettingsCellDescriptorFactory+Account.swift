@@ -390,7 +390,9 @@ extension SettingsCellDescriptorFactory {
                         ),
                         restoreBackupResultHandler: RestoreBackupResultHandler(
                             onSuccess: { _ in },
-                            onFailure: presentAlert),
+                            onConfirmation: presentConfirmationAlert,
+                            onFailure: presentAlert
+                        ),
                         passwordValidator: BackupPasswordValidator()
                     )
                     let backupActionsController = BackupActionsHostingController(viewModel: viewModel)
@@ -497,5 +499,30 @@ extension SettingsCellDescriptorFactory {
         }
         controller.present(activityController, animated: true)
     }
+
+    private func presentConfirmationAlert(completion: @escaping Completion) {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: L10n.Localizable.RestoreBackup.Confirmation.title,
+            message: L10n.Localizable.RestoreBackup.Confirmation.description,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.RestoreBackup.Confirmation.cancelButton,
+            style: .cancel
+        ))
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.RestoreBackup.Confirmation.overrideButton,
+            style: .default, handler: { _ in
+                completion()
+            }))
+
+        controller.present(alert, animated: true)
+    }
+
 
 }

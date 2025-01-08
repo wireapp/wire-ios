@@ -38,5 +38,14 @@ struct RestoreSource: RestoreSourceProtocol {
             throw RestoreBackupError.generic(error)
         }
     }
-    
+
+    func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, any Error>) -> Void) {
+        SessionManager.shared?.restoreFromBackup(
+            at: location,
+            password: password,
+            completion: { result in
+            print(result)
+        })
+    }
+
 }

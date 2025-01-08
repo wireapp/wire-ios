@@ -60,7 +60,7 @@ extension SessionManager: APIVersionResolverDelegate {
         }
     }
 
-    private func migrateSessions(_ sessions: [ZMUserSession], to apiVersion: APIVersion) {
+    private func migrateSessions(_ sessions: [ZMUserSession], to apiVersion: APIVersion) {//
         delegate?.sessionManagerWillMigrateAccount { [weak self] in
             guard let self else { return }
             Task {

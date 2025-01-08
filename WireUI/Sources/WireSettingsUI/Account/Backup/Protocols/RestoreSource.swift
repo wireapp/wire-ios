@@ -28,5 +28,6 @@ public enum RestoreBackupError: Error {
 public protocol RestoreSourceProtocol {
 
     func restoreFromBackup(at location: URL, password: String) throws
+    func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, any Error>) -> Void)
 
 }
