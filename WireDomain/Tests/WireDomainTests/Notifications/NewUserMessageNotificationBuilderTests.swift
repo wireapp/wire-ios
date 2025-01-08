@@ -86,13 +86,13 @@ final class NewUserMessageNotificationBuilderTests: XCTestCase {
 
         for messageCapable in messagesCapable {
             let genericMessage = GenericMessage(content: messageCapable)
-            
+
             sut = await NewUserMessageNotificationBuilder(
                 message: genericMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
@@ -125,7 +125,7 @@ final class NewUserMessageNotificationBuilderTests: XCTestCase {
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
@@ -158,7 +158,7 @@ final class NewUserMessageNotificationBuilderTests: XCTestCase {
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 

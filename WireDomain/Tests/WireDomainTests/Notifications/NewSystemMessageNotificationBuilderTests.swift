@@ -82,7 +82,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         let isTeam = true
 
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
-        
+
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
         ]
@@ -93,7 +93,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
@@ -117,7 +117,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         let isTeam = false
 
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
-        
+
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
         ]
@@ -128,7 +128,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
@@ -152,7 +152,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         let isTeam = true
 
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
-        
+
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
         ]
@@ -163,7 +163,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
@@ -178,7 +178,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         }
     }
-    
+
     func testGenerateNewSystemMessageNotifications_Notification_Is_Empty_When_User_Is_Not_Self() async throws {
 
         // Mock
@@ -187,7 +187,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         let isTeam = true
 
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID3)
-        
+
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [UUID()]) // doesn't concern self user
         ]
@@ -198,7 +198,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
 
             XCTAssertEqual(shouldBuildNotification, false) // user is not self user
@@ -227,7 +227,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         }
 
         // Body
-        
+
         switch systemMessage {
         case .memberLeave:
             XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) removed you")

@@ -108,43 +108,43 @@ struct ConversationNotificationBuilder: NotificationBuilder {
                 conversationID: proteusMessageEvent.conversationID,
                 senderID: proteusMessageEvent.senderID
             )
-            
+
         case let .memberLeave(memberLeaveEvent):
             let removedUserIDs = Set(memberLeaveEvent.removedUserIDs.compactMap(\.uuid))
-            
+
             builder = await NewSystemMessageNotificationBuilder(
                 systemMessage: .memberLeave(removedUserIDs: removedUserIDs),
                 conversationID: memberLeaveEvent.conversationID,
                 senderID: memberLeaveEvent.senderID
             )
-            
-        case .memberJoin(let memberJoinEvent):
+
+        case let .memberJoin(memberJoinEvent):
             let addedUserIDs = Set(memberJoinEvent.members.compactMap(\.id))
-            
+
             builder = await NewSystemMessageNotificationBuilder(
                 systemMessage: .memberJoin(addedUserIDs: addedUserIDs),
                 conversationID: memberJoinEvent.conversationID,
                 senderID: memberJoinEvent.senderID
             )
-            
-        case .create(let conversationCreateEvent):
-            
+
+        case let .create(conversationCreateEvent):
+
             builder = await NewSystemMessageNotificationBuilder(
                 systemMessage: .conversationCreated,
                 conversationID: conversationCreateEvent.conversationID,
                 senderID: conversationCreateEvent.senderID
             )
-            
-        case .delete(let conversationDeleteEvent):
-            
+
+        case let .delete(conversationDeleteEvent):
+
             builder = await NewSystemMessageNotificationBuilder(
                 systemMessage: .conversationDeleted,
                 conversationID: conversationDeleteEvent.conversationID,
                 senderID: conversationDeleteEvent.senderID
             )
-            
-        case .messageTimerUpdate(let messageTimerUpdateEvent):
-            
+
+        case let .messageTimerUpdate(messageTimerUpdateEvent):
+
             builder = await NewSystemMessageNotificationBuilder(
                 systemMessage: .messageTimerUpdate(newTimer: messageTimerUpdateEvent.newTimer),
                 conversationID: messageTimerUpdateEvent.conversationID,

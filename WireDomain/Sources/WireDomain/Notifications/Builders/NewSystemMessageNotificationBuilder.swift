@@ -20,7 +20,7 @@ import WireAPI
 import WireDataModel
 
 struct NewSystemMessageNotificationBuilder: NotificationBuilder {
-    
+
     enum SystemMessage {
         case memberLeave(removedUserIDs: Set<UUID>)
         case conversationCreated
@@ -28,9 +28,9 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
         case conversationDeleted
         case messageTimerUpdate(newTimer: Int64?)
     }
-    
+
     private let context: Context
-    
+
     struct Context {
         let senderName: String?
         let conversationName: String?
@@ -42,26 +42,26 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
         let hidesNotificationContent: Bool
         let systemMessage: SystemMessage
     }
-    
+
     init(
         systemMessage: SystemMessage,
         conversationID: WireAPI.QualifiedID,
         senderID: UserID
     ) async {
-        
+
         let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
         let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
-        
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
         )
-        
+
         let sender = await userLocalStore.fetchOrCreateUser(
             id: senderID.uuid,
             domain: senderID.domain
         )
-        
+
         let senderName = await userLocalStore.name(for: sender)
         let conversationName = await conversationLocalStore.name(for: conversation)
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
@@ -70,7 +70,7 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
 
         let selfUserID = await userLocalStore.id(for: selfUser)
         let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
-        
+
         self.context = Context(
             senderName: senderName,
             conversationName: conversationName,
@@ -82,21 +82,21 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
             hidesNotificationContent: shouldHideNotification,
             systemMessage: systemMessage
         )
-        
+
     }
-    
+
     func shouldBuildNotification() async -> Bool {
         switch context.systemMessage {
-        case .memberLeave(let removedUserIDs):
+        case let .memberLeave(removedUserIDs):
             removedUserIDs.contains(context.selfUserID)
-        case .memberJoin(let addedUserIDs):
+        case let .memberJoin(addedUserIDs):
             // TODO: [WPB-11661]
             true
         case .conversationCreated, .conversationDeleted, .messageTimerUpdate:
             true
         }
     }
-    
+
     func buildContent() async -> UNMutableNotificationContent {
         switch context.systemMessage {
         case .memberLeave:
@@ -114,23 +114,23 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
             // TODO: [WPB-11663]
             break
         }
-        
+
         return UNMutableNotificationContent()
     }
-    
+
     // MARK: - Build notifications
-    
+
     private func buildMemberLeaveNotification() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        
+
         if let title = makeTitle() {
             content.title = title
         }
-        
+
         let body = NotificationBody.newSystemMessage(
             .removedYou(senderName: context.senderName)
         )
-        
+
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
@@ -139,7 +139,7 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
 
         return content
     }
-    
+
     // MARK: - Helpers
 
     private func makeTitle() -> String? {
@@ -190,5 +190,5 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
 
         return userInfo
     }
-    
+
 }

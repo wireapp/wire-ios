@@ -32,13 +32,14 @@ enum NotificationBody {
             )
 
             return newUserMessageBodyComposer.make()
-            
+
         case let .newSystemMessage(systemMessageBodyFormat):
             let newSystemMessageBodyComposer = NewSystemMessageNotificationBodyComposer(
                 format: systemMessageBodyFormat
             )
 
             return newSystemMessageBodyComposer.make()
+
         case let .bundled(count):
             return "\(count) new messages."
         }
@@ -77,7 +78,7 @@ extension NotificationBody {
         /// `New message`
         case hidden
     }
-    
+
     /// The expected formats for the body of a new system message notification.
     enum SystemMessageBodyFormat {
         /// `[sender name] created a conversation` or `Someone created a conversation` if sender is nil
@@ -86,7 +87,8 @@ extension NotificationBody {
         case addedYou(senderName: String?)
         /// `[sender name] removed you` or `Someone removed you` if sender is nil
         case removedYou(senderName: String?)
-        /// `[sender name] set the message timer to [value]` or `Someone set the message timer to [value]` if sender is nil
+        /// `[sender name] set the message timer to [value]` or `Someone set the message timer to [value]` if sender is
+        /// nil
         case setMessageTimer(senderName: String?)
         /// `[sender name] turned off the message timer` or `Someone turned off the message timer` if sender is nil
         case turnedOffMessageTimer(senderName: String?)
