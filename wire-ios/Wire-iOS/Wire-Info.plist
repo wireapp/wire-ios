@@ -213,11 +213,32 @@
 			<string>logo</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
-				<key>com.apple.ostype</key>
-				<string>com.wire.backup-ios-hyphen</string>
 				<key>public.filename-extension</key>
 				<array>
 					<string>ios-wbu</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Wire Universal Backup File</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.wire.backup-universal</string>
+			<key>UTTypeSize320IconFile</key>
+			<string>logo</string>
+			<key>UTTypeSize64IconFile</key>
+			<string>logo</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>wirebackup</string>
 				</array>
 			</dict>
 		</dict>
