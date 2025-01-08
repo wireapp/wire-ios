@@ -85,7 +85,7 @@ struct ConversationNotificationBuilder: NotificationBuilder {
                 return UNMutableNotificationContent()
             }
 
-            builder = await NewMessageNotificationBuilder(
+            builder = await NewUserMessageNotificationBuilder(
                 message: genericMessage,
                 conversationID: mlsMessageEvent.conversationID,
                 senderID: mlsMessageEvent.senderID
@@ -103,10 +103,52 @@ struct ConversationNotificationBuilder: NotificationBuilder {
                 return UNMutableNotificationContent()
             }
 
-            builder = await NewMessageNotificationBuilder(
+            builder = await NewUserMessageNotificationBuilder(
                 message: genericMessage,
                 conversationID: proteusMessageEvent.conversationID,
                 senderID: proteusMessageEvent.senderID
+            )
+            
+        case let .memberLeave(memberLeaveEvent):
+            let removedUserIDs = Set(memberLeaveEvent.removedUserIDs.compactMap(\.uuid))
+            
+            builder = await NewSystemMessageNotificationBuilder(
+                systemMessage: .memberLeave(removedUserIDs: removedUserIDs),
+                conversationID: memberLeaveEvent.conversationID,
+                senderID: memberLeaveEvent.senderID
+            )
+            
+        case .memberJoin(let memberJoinEvent):
+            let addedUserIDs = Set(memberJoinEvent.members.compactMap(\.id))
+            
+            builder = await NewSystemMessageNotificationBuilder(
+                systemMessage: .memberJoin(addedUserIDs: addedUserIDs),
+                conversationID: memberJoinEvent.conversationID,
+                senderID: memberJoinEvent.senderID
+            )
+            
+        case .create(let conversationCreateEvent):
+            
+            builder = await NewSystemMessageNotificationBuilder(
+                systemMessage: .conversationCreated,
+                conversationID: conversationCreateEvent.conversationID,
+                senderID: conversationCreateEvent.senderID
+            )
+            
+        case .delete(let conversationDeleteEvent):
+            
+            builder = await NewSystemMessageNotificationBuilder(
+                systemMessage: .conversationDeleted,
+                conversationID: conversationDeleteEvent.conversationID,
+                senderID: conversationDeleteEvent.senderID
+            )
+            
+        case .messageTimerUpdate(let messageTimerUpdateEvent):
+            
+            builder = await NewSystemMessageNotificationBuilder(
+                systemMessage: .messageTimerUpdate(newTimer: messageTimerUpdateEvent.newTimer),
+                conversationID: messageTimerUpdateEvent.conversationID,
+                senderID: messageTimerUpdateEvent.senderID
             )
 
         default: // TODO: [WPB-11175] - Generate notifications for other events

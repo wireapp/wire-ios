@@ -25,8 +25,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class NewMessageNotificationBuilderTests: XCTestCase {
-    private var sut: NewMessageNotificationBuilder!
+final class NewSystemMessageNotificationBuilderTests: XCTestCase {
+    private var sut: NewSystemMessageNotificationBuilder!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
@@ -74,29 +74,34 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
         }
     }
 
-    func testGenerateNewMessageNotifications_Is_Group_Conversation_And_Is_Team_User() async throws {
+    func testGenerateNewSystemMessageNotifications_Is_Group_Conversation_And_Is_Team_User() async throws {
 
         // Mock
 
         let isGroup = true
         let isTeam = true
 
-        await setupMock(isGroup: isGroup, isTeam: isTeam)
-        let messagesCapable = getAllMessagesCapable()
+        await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
+        
+        let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
+            .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
+        ]
 
-        for messageCapable in messagesCapable {
-            let genericMessage = GenericMessage(content: messageCapable)
-            sut = await NewMessageNotificationBuilder(
-                message: genericMessage,
+        for systemMessage in systemMessages {
+            sut = await NewSystemMessageNotificationBuilder(
+                systemMessage: systemMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
+            
+            let shouldBuildNotification = await sut.shouldBuildNotification()
+            XCTAssertEqual(shouldBuildNotification, true)
 
-            let notification = await sut.buildContent()
+            let notificationContent = await sut.buildContent()
 
             try await internalTest_assertNotificationContent(
-                notification,
-                messageContent: try XCTUnwrap(genericMessage.content),
+                notificationContent,
+                systemMessage: systemMessage,
                 isGroup: isGroup,
                 isTeam: isTeam
             )
@@ -104,29 +109,34 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
         }
     }
 
-    func testGenerateNewMessageNotifications_Is_Group_Conversation_And_Is_Personal_User() async throws {
+    func testGenerateNewSystemMessageNotifications_Is_Group_Conversation_And_Is_Personal_User() async throws {
 
         // Mock
 
         let isGroup = true
         let isTeam = false
 
-        await setupMock(isGroup: isGroup, isTeam: isTeam)
-        let messagesCapable = getAllMessagesCapable()
+        await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
+        
+        let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
+            .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
+        ]
 
-        for messageCapable in messagesCapable {
-            let genericMessage = GenericMessage(content: messageCapable)
-            sut = await NewMessageNotificationBuilder(
-                message: genericMessage,
+        for systemMessage in systemMessages {
+            sut = await NewSystemMessageNotificationBuilder(
+                systemMessage: systemMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
+            
+            let shouldBuildNotification = await sut.shouldBuildNotification()
+            XCTAssertEqual(shouldBuildNotification, true)
 
-            let notification = await sut.buildContent()
+            let notificationContent = await sut.buildContent()
 
             try await internalTest_assertNotificationContent(
-                notification,
-                messageContent: try XCTUnwrap(genericMessage.content),
+                notificationContent,
+                systemMessage: systemMessage,
                 isGroup: isGroup,
                 isTeam: isTeam
             )
@@ -134,110 +144,102 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
         }
     }
 
-    func testGenerateNewMessageNotifications_Is_OneOnOne_Conversation_And_Team() async throws {
+    func testGenerateNewSystemMessageNotifications_Is_OneOnOne_Conversation_And_Team() async throws {
 
         // Mock
 
         let isGroup = false
         let isTeam = true
 
-        await setupMock(isGroup: isGroup, isTeam: isTeam)
-        let messagesCapable = getAllMessagesCapable()
+        await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
+        
+        let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
+            .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
+        ]
 
-        for messageCapable in messagesCapable {
-            let genericMessage = GenericMessage(content: messageCapable)
-            sut = await NewMessageNotificationBuilder(
-                message: genericMessage,
+        for systemMessage in systemMessages {
+            sut = await NewSystemMessageNotificationBuilder(
+                systemMessage: systemMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
+            
+            let shouldBuildNotification = await sut.shouldBuildNotification()
+            XCTAssertEqual(shouldBuildNotification, true)
 
             let notificationContent = await sut.buildContent()
 
             try await internalTest_assertNotificationContent(
                 notificationContent,
-                messageContent: try XCTUnwrap(genericMessage.content),
+                systemMessage: systemMessage,
                 isGroup: isGroup,
                 isTeam: isTeam
             )
 
         }
     }
+    
+    func testGenerateNewSystemMessageNotifications_Notification_Is_Empty_When_User_Is_Not_Self() async throws {
+
+        // Mock
+
+        let isGroup = false
+        let isTeam = true
+
+        await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID3)
+        
+        let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
+            .memberLeave(removedUserIDs: [UUID()]) // doesn't concern self user
+        ]
+
+        for systemMessage in systemMessages {
+            sut = await NewSystemMessageNotificationBuilder(
+                systemMessage: systemMessage,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+            
+            let shouldBuildNotification = await sut.shouldBuildNotification()
+
+            XCTAssertEqual(shouldBuildNotification, false) // user is not self user
+        }
+    }
 
     private func internalTest_assertNotificationContent(
         _ notificationContent: UNMutableNotificationContent,
-        messageContent: GenericMessage.OneOf_Content,
+        systemMessage: NewSystemMessageNotificationBuilder.SystemMessage,
         isGroup: Bool,
         isTeam: Bool
     ) async throws {
 
         // Title
-        switch messageContent {
-        case .ephemeral, .hidden:
-            XCTAssert(notificationContent.title.isEmpty)
-        default:
-            if isGroup {
-                XCTAssertEqual(
-                    notificationContent.title,
-                    isTeam ? "\(Scaffolding.conversationName) in \(Scaffolding.teamName)" :
-                        "\(Scaffolding.conversationName)"
-                )
-            } else {
-                XCTAssertEqual(
-                    notificationContent.title,
-                    isTeam ? "\(Scaffolding.senderName) in \(Scaffolding.teamName)" : "\(Scaffolding.senderName)"
-                )
-            }
+        if isGroup {
+            XCTAssertEqual(
+                notificationContent.title,
+                isTeam ? "\(Scaffolding.conversationName) in \(Scaffolding.teamName)" :
+                    "\(Scaffolding.conversationName)"
+            )
+        } else {
+            XCTAssertEqual(
+                notificationContent.title,
+                isTeam ? "\(Scaffolding.senderName) in \(Scaffolding.teamName)" : "\(Scaffolding.senderName)"
+            )
         }
 
         // Body
-        switch messageContent {
-        case .image:
-            XCTAssertEqual(
-                notificationContent.body,
-                isGroup ? "\(Scaffolding.senderName) shared a picture" : "Shared a picture"
-            )
-        case let .asset(asset):
-            switch asset.original.metaData {
-            case .image:
-                XCTAssertEqual(
-                    notificationContent.body,
-                    isGroup ? "\(Scaffolding.senderName) shared a picture" : "Shared a picture"
-                )
-            case .video:
-                XCTAssertEqual(
-                    notificationContent.body,
-                    isGroup ? "\(Scaffolding.senderName) shared a video" : "Shared a video"
-                )
-            case .audio:
-                XCTAssertEqual(
-                    notificationContent.body,
-                    isGroup ? "\(Scaffolding.senderName) shared an audio message" : "Shared an audio message"
-                )
-            default:
-                XCTAssertEqual(
-                    notificationContent.body,
-                    isGroup ? "\(Scaffolding.senderName) shared a file" : "Shared a file"
-                )
-            }
-        case .knock:
-            XCTAssertEqual(notificationContent.body, isGroup ? "\(Scaffolding.senderName) pinged you" : "Pinged you")
-        case .text, .composite:
-            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName): Hello")
-        case .hidden:
-            XCTAssertEqual(notificationContent.body, "New message")
-        case .location:
-            XCTAssertEqual(
-                notificationContent.body,
-                isGroup ? "\(Scaffolding.senderName) shared a location" : "Shared a location"
-            )
-        case .ephemeral:
-            XCTAssertEqual(notificationContent.body, "Someone sent a message")
-        default:
-            XCTFail("Not handled")
+        
+        switch systemMessage {
+        case .memberLeave:
+            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) removed you")
+        case .conversationCreated:
+            break
+        case .memberJoin:
+            break
+        case .conversationDeleted:
+            break
+        case .messageTimerUpdate:
+            break
         }
-
-        XCTAssert(!notificationContent.body.isEmpty)
 
         // Category
         XCTAssertEqual(
@@ -246,62 +248,26 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
         )
 
         // Sound
-        switch messageContent {
-        case .knock:
-            XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("ping_from_them.caf")))
-        default:
-            XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
-        }
+        XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
 
         // Thread ID
-        switch messageContent {
-        case .ephemeral:
-            XCTAssertEqual(notificationContent.threadIdentifier, "")
-        default:
-            XCTAssertEqual(
-                notificationContent.threadIdentifier,
-                Scaffolding.conversationID.uuid.uuidString.lowercased()
-            )
-        }
+        XCTAssertEqual(
+            notificationContent.threadIdentifier,
+            Scaffolding.conversationID.uuid.uuidString.lowercased()
+        )
 
         // User info
-        XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! UUID, .mockID1)
+        XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! UUID, .mockID4)
         XCTAssertEqual(notificationContent.userInfo["senderIDString"] as! UUID, .mockID3)
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! UUID, .mockID2)
 
     }
 
-    private func getAllMessagesCapable() -> [MessageCapable] {
-        var composite = Composite()
-        var textItem = Composite.Item()
-        textItem.text = Text(content: "Hello")
-        composite.items = [textItem]
-
-        var audioAsset = Asset()
-        audioAsset.original.metaData = .audio(Asset.AudioMetaData())
-
-        var videoAsset = Asset()
-        videoAsset.original.metaData = .video(Asset.VideoMetaData())
-
-        var imageAsset = Asset()
-        imageAsset.original.metaData = .image(Asset.ImageMetaData())
-
-        return [
-            Location(),
-            Knock(),
-            ImageAsset(),
-            Ephemeral(),
-            Text(content: "Hello"),
-            composite,
-            Asset(),
-            audioAsset,
-            videoAsset,
-            imageAsset,
-            MessageHide()
-        ]
-    }
-
-    private func setupMock(isGroup: Bool, isTeam: Bool) async {
+    private func setupMock(
+        isGroup: Bool,
+        isTeam: Bool,
+        selfUserID: UUID
+    ) async {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
@@ -315,10 +281,10 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
         conversationLocalStore.nameFor_MockValue = Scaffolding.conversationName
         conversationLocalStore.isGroupConversation_MockValue = isGroup
         userLocalStore.fetchSelfUser_MockValue = await context.perform { [self] in
-            modelHelper.createSelfUser(in: context)
+            modelHelper.createSelfUser(id: selfUserID, in: context)
         }
         conversationLocalStore.isMessageSilencedSenderIDConversation_MockValue = false
-        userLocalStore.idFor_MockValue = .mockID1
+        userLocalStore.idFor_MockValue = selfUserID
         userLocalStore.teamNameFor_MockValue = .some(isTeam ? Scaffolding.teamName : nil)
         conversationLocalStore.shouldHideNotification_MockValue = false
         messageLocalStore.fetchMessageIdConversationIDConversationDomain_MockValue = await context.perform { [self] in

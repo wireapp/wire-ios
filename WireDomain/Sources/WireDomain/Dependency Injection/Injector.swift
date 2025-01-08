@@ -100,7 +100,7 @@ enum Injector {
     // MARK: - Resolve
 
     static func resolve<Service>() -> Service {
-        typealias FactoryType = () -> Any
+        typealias FactoryType = (()) -> Any
         return _genericResolve(serviceType: Service.self) { (factory: FactoryType) in
             factory(())
         }
