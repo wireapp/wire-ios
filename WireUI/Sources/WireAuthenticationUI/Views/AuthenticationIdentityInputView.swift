@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,10 +22,17 @@ import WireFoundation
 import WireReusableUIComponents
 
 package struct AuthenticationIdentityInputView: View {
+
+    package enum Action {
+        case submit(identity: String)
+    }
+
     @State private var identity: String = ""
+    private let actionCallback: @Sendable (Action) -> Void
     private let termsURL: URL
 
-    package init(termsURL: URL) {
+    package init(actionCallback: @escaping @Sendable (Action) -> Void, termsURL: URL) {
+        self.actionCallback = actionCallback
         self.termsURL = termsURL
     }
 
@@ -39,21 +46,21 @@ package struct AuthenticationIdentityInputView: View {
                 Spacer()
                     .frame(maxWidth: .infinity)
             }
-            Text("Simply enter you email adress to start!")
+            Text(L10n.Authentication.Identity.Input.body)
                 .wireTextStyle(.body1)
             LabeledTextField(
                 isMandatory: true,
-                placeholder: "Email or SSO code",
-                title: "Email or SSO code",
+                placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
+                title: L10n.Authentication.Identity.Input.Field.title,
                 string: $identity
             )
             Button(action: {
-
+                actionCallback(.submit(identity: identity))
             }, label: {
-                Text("Next")
+                Text(L10n.Authentication.Identity.Input.submit)
             })
             .wireButtonStyle(.primary)
-            Text(AttributedString.markdown(from: String(format: "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)", termsURL.absoluteString)))
+            Text(AttributedString.markdown(from: L10n.Authentication.Identity.Input.terms(termsURL.absoluteString)))
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.subline1)
         }
@@ -62,9 +69,12 @@ package struct AuthenticationIdentityInputView: View {
 
 struct AuthenticationIdentityInputPreview: View {
     var body: some View {
-        AuthenticationIdentityInputView(termsURL: URL(string: "https://example.com")!)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-            .padding(32)
+        AuthenticationIdentityInputView(
+            actionCallback: { _ in },
+            termsURL: URL(string: "https://example.com")!
+        )
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        .padding(32)
     }
 }
 

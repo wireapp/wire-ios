@@ -49,7 +49,6 @@ class AuthenticationIdentityInputView: XCTestCase {
             .verify(matching: view, named: "dark")
     }
 
-
     @MainActor
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
