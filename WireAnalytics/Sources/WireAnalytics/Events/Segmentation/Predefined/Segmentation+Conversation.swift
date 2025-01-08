@@ -36,7 +36,7 @@ public extension AnalyticsEvent.Segmentation {
         }
 
         /// Creates a ``Segmentation`` for the number of guests in a conversation which are not members of any team
-        /// (free users).
+        /// (personal accounts).
 
         static func conversationGuestsNonTeam(_ value: Int) -> AnalyticsEvent.Segmentation {
             .init(key: "conversation_guests", value: value)
