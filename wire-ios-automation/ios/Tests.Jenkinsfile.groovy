@@ -163,7 +163,7 @@ node("Job_distributor") {
 
                 checkout([$class: 'GitSCM',
                           branches: [[name: '*/${Branch}']],
-                          doGenerateSubmoduleConfigurations: false,
+                          doGenerateSubmoduleConfigurations: true,
                           extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'wire-ios'],
                                        [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'wire-ios-automation/ios'], [path: 'wire-ios-automation/tools']]],
                                        [$class: 'CheckoutOption', timeout: 30],
