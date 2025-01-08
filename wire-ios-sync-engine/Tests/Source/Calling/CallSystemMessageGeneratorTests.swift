@@ -50,7 +50,8 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
             clientId: clientID,
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init()
         )
     }
 

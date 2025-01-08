@@ -20,29 +20,43 @@ public extension AnalyticsEvent.Segmentation {
 
     enum Conversation {
 
+        /// Creates a ``Segmentation`` for the type of conversation.
+
+        static func conversationType(_ value: Conversation.ConversationType) -> AnalyticsEvent.Segmentation {
+            .init(key: "conversation_type", value: value.rawValue)
+        }
+
+        /// Creates a ``Segmentation`` for the size of a conversation.
+        ///
+        /// - Parameter value: The number of participants in the conversation.
+        /// - Returns: A ``Segmentation`` instance with the appropriate key and value.
+
+        static func conversationSize(_ value: Int) -> AnalyticsEvent.Segmentation {
+            .init(key: "conversation_size", value: value)
+        }
+
+        /// Creates a ``Segmentation`` for the number of guests in a conversation which are not members of any team
+        /// (personal accounts).
+
+        static func conversationGuestsNonTeam(_ value: Int) -> AnalyticsEvent.Segmentation {
+            .init(key: "conversation_guests", value: value)
+        }
+
+        /// Creates a ``Segmentation`` for the number of guests in a conversation which are members of a team.
+
+        static func conversationGuestsTeam(_ value: Int) -> AnalyticsEvent.Segmentation {
+            .init(key: "conversation_guests_pro", value: value)
+        }
+
+        /// Creates a ``Segmentation`` for the number of services (members) of the conversation.
+
+        static func conversationServices(_ value: Int) -> AnalyticsEvent.Segmentation {
+            .init(key: "conversation_services", value: value)
+        }
+
         public enum ConversationType: String {
             case group
             case oneOnOne = "one_to_one"
-        }
-
-        // https://wearezeta.atlassian.net/browse/WPB-12199?focusedCommentId=132080
-        @available(*, deprecated, message: "Use `ConversationType`.")
-        enum LegacyConversationType: String {
-            case group
-            case oneOnOne = "one_on_one"
-            case unknown
-        }
-    }
-}
-
-extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
-
-    func mapToConversationType() -> AnalyticsEvent.Segmentation.Conversation.LegacyConversationType {
-        switch self {
-        case .group:
-            .group
-        case .oneOnOne:
-            .oneOnOne
         }
     }
 }
