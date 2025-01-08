@@ -86,7 +86,10 @@ final class CallTopOverlayController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         if let userSession = ZMUserSession.shared() {
-            observerTokens.append(WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession))
+            observerTokens.append(WireCallCenterV3.addCallStateObserver(
+                observer: self,
+                contextProvider: userSession.contextProvider
+            ))
             observerTokens.append(WireCallCenterV3.addMuteStateObserver(observer: self, userSession: userSession))
         }
 

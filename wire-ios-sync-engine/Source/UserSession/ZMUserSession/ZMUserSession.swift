@@ -107,6 +107,8 @@ public final class ZMUserSession: NSObject {
 
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
+    let analyiticsLogger: WireLogger
+
     // MARK: Computed Properties
 
     var isPerformingSync = true {
@@ -429,6 +431,7 @@ public final class ZMUserSession: NSObject {
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
+        self.analyiticsLogger = .analytics
 
         super.init()
     }
@@ -671,7 +674,10 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setupCallStateObserverForAnalytics() {
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: self)
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: contextProvider
+        )
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {

@@ -55,13 +55,14 @@
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC
                                           isDeveloperModeEnabled:NO];
-    self.pushChannelObserverToken = [NotificationInContext addObserverWithName:ZMOperationLoop.pushChannelStateChangeNotificationName
-                                       context:self.uiMOC.notificationContext
-                                        object:nil
-                                         queue:nil
-                                         using:^(NotificationInContext * note) {
-                                             [self pushChannelDidChange:note];
-                                         }];
+    self.pushChannelObserverToken = [NotificationInContext addObserverWithNotificationCenter:[NSNotificationCenter defaultCenter]
+                                                                                        name:ZMOperationLoop.pushChannelStateChangeNotificationName
+                                                                                     context:self.uiMOC.notificationContext
+                                                                                      object:nil
+                                                                                       queue:nil
+                                                                                       using:^(NotificationInContext * note) {
+        [self pushChannelDidChange:note];
+    }];
 }
 
 - (void)tearDown;

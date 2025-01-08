@@ -111,7 +111,10 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             zmLog.error("UserSession not available when initializing \(type(of: self))")
             return
         }
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: userSession.contextProvider
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {
