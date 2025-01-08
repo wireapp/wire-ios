@@ -36,7 +36,7 @@ public extension AnalyticsEvent {
                 name: "calling.initiated_call",
                 segmentation: [
                     .Call.isVideoCall(isVideo),
-                    .conversationType(conversationType),
+                    .Conversation.conversationType(conversationType),
                     .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
@@ -58,7 +58,7 @@ public extension AnalyticsEvent {
                 name: "calling.joined_call",
                 segmentation: [
                     .Call.isVideoCall(isVideo),
-                    .conversationType(conversationType),
+                    .Conversation.conversationType(conversationType),
                     .Removed.groupType(conversationType.mapToConversationType())
                 ]
             )
@@ -70,6 +70,104 @@ public extension AnalyticsEvent {
 
         public static func callQualitySurvey(_ review: CallQualitySurveyReview) -> AnalyticsEvent {
             .init(name: "calling.call_quality_review", segmentation: review.segmentation)
+        }
+
+        /// An event tracking when a call ends.
+
+        public static func endedCall(
+            callEndReason: CallEndedReason,
+            callDetails: CallDetails,
+            conversationDetails: ConversationDetails,
+            isTeamMember: Bool
+        ) -> AnalyticsEvent {
+            AnalyticsEvent(name: "calling.ended_call", segmentation: [
+                .Call.wasScreenShared(callDetails.wasScreenShared),
+                .Call.totalScreenSharingDuration(callDetails.totalScreenSharingDuration),
+                .Call.uniqueScreenSharingUsers(callDetails.uniqueScreenSharingUsers),
+                .Call.callDirection(callDetails.callDirection.rawValue),
+                .Call.callDuration(callDetails.callDuration),
+                .Conversation.conversationType(conversationDetails.conversationType),
+                .Conversation.conversationSize(conversationDetails.conversationSize),
+                .Conversation.conversationGuestsNonTeam(conversationDetails.conversationGuestsNonTeam),
+                .Conversation.conversationGuestsTeam(conversationDetails.conversationGuestsTeam),
+                .Call.callParticipants(callDetails.callParticipantCount),
+                .Call.callEndReason(callEndReason.value),
+                .Conversation.conversationServices(callDetails.conversationServiceCount),
+                .Call.callAVSwitchToggled(callDetails.hasAVSwitchToggled),
+                .Call.isVideoCall(callDetails.isVideoCall),
+                .Team.teamIsTeam(isTeamMember)
+            ])
+        }
+
+        public enum CallDirection: String {
+            case outgoing
+            case incoming
+        }
+
+        public struct CallEndedReason {
+
+            /// The value AVS uses.
+            var value: Int
+
+            /// - Parameter value: The value AVS uses.
+            public init(value: Int) {
+                self.value = value
+            }
+        }
+
+        public struct CallDetails {
+
+            var wasScreenShared: Bool
+            var totalScreenSharingDuration: Int
+            var uniqueScreenSharingUsers: Int
+            var callDirection: CallDirection
+            var callDuration: Int
+            var callParticipantCount: Int
+            var conversationServiceCount: Int
+            var hasAVSwitchToggled: Bool
+            var isVideoCall: Bool
+
+            public init(
+                wasScreenShared: Bool,
+                totalScreenSharingDuration: Int,
+                uniqueScreenSharingUsers: Int,
+                callDirection: CallDirection,
+                callDuration: Int,
+                callParticipantCount: Int,
+                conversationServiceCount: Int,
+                hasAVSwitchToggled: Bool,
+                isVideoCall: Bool
+            ) {
+                self.wasScreenShared = wasScreenShared
+                self.totalScreenSharingDuration = totalScreenSharingDuration
+                self.uniqueScreenSharingUsers = uniqueScreenSharingUsers
+                self.callDirection = callDirection
+                self.callDuration = callDuration
+                self.callParticipantCount = callParticipantCount
+                self.conversationServiceCount = conversationServiceCount
+                self.hasAVSwitchToggled = hasAVSwitchToggled
+                self.isVideoCall = isVideoCall
+            }
+        }
+
+        public struct ConversationDetails {
+
+            var conversationType: Segmentation.Conversation.ConversationType
+            var conversationSize: Int
+            var conversationGuestsNonTeam: Int
+            var conversationGuestsTeam: Int
+
+            public init(
+                conversationType: Segmentation.Conversation.ConversationType,
+                conversationSize: Int,
+                conversationGuestsNonTeam: Int,
+                conversationGuestsTeam: Int
+            ) {
+                self.conversationType = conversationType
+                self.conversationSize = conversationSize
+                self.conversationGuestsNonTeam = conversationGuestsNonTeam
+                self.conversationGuestsTeam = conversationGuestsTeam
+            }
         }
 
     }

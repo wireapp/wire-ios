@@ -39,6 +39,11 @@ public extension AnalyticsEvent {
             self.value = "\(value)"
         }
 
+        init(key: String, value: Int32) {
+            self.key = key
+            self.value = "\(value)"
+        }
+
         init(key: String, value: Bool) {
             self.key = key
             self.value = value ? "True" : "False"

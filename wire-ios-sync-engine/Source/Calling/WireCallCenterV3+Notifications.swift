@@ -200,9 +200,12 @@ extension WireCallCenterV3 {
 
     public class func addCallErrorObserver(
         observer: WireCallCenterCallErrorObserver,
-        userSession: ZMUserSession
+        contextProvider: ContextProvider
     ) -> AnyObject {
-        addCallErrorObserver(observer: observer, context: userSession.managedObjectContext)
+        addCallErrorObserver(
+            observer: observer,
+            context: contextProvider.viewContext
+        )
     }
 
     class func addCallErrorObserver(
@@ -225,9 +228,12 @@ extension WireCallCenterV3 {
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addCallStateObserver(
         observer: WireCallCenterCallStateObserver,
-        userSession: ZMUserSession
+        contextProvider: ContextProvider
     ) -> AnyObject {
-        addCallStateObserver(observer: observer, context: userSession.managedObjectContext)
+        addCallStateObserver(
+            observer: observer,
+            context: contextProvider.viewContext
+        )
     }
 
     /// Register observer of the call center call state in all user sessions.
