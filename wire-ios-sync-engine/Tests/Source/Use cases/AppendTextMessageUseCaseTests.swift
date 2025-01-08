@@ -38,10 +38,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
     override func setUp() {
         analyticsEventTracker = .init()
         mockConversation = .init()
-        sut = AppendTextMessageUseCase(
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsLogger: .init(tag: "mock")
-        )
+        sut = AppendTextMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     // MARK: - tearDown

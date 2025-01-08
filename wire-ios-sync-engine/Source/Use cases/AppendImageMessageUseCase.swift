@@ -18,7 +18,6 @@
 
 import WireAnalytics
 import WireDataModel
-import WireLogging
 
 public protocol AppendImageMessageUseCaseProtocol {
 
@@ -31,14 +30,9 @@ public protocol AppendImageMessageUseCaseProtocol {
 public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
-    var analyticsLogger: WireLogger
 
-    public init(
-        analyticsEventTracker: (any AnalyticsEventTracker)?,
-        analyticsLogger: WireLogger
-    ) {
+    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
         self.analyticsEventTracker = analyticsEventTracker
-        self.analyticsLogger = analyticsLogger
     }
 
     public func invoke(
@@ -46,7 +40,6 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
         in conversation: some MessageAppendableConversation
     ) throws {
         try conversation.appendImage(from: imageData, nonce: UUID())
-
         analyticsEventTracker?.trackEvent(
             .Contributed.conversationContribution(
                 .imageMessage,

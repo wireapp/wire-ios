@@ -38,10 +38,7 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
     override func setUp() {
         analyticsEventTracker = .init()
         mockConversation = .init()
-        sut = AppendImageMessageUseCase(
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsLogger: .init(tag: "mock")
-        )
+        sut = AppendImageMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     // MARK: - tearDown

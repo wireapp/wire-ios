@@ -18,7 +18,6 @@
 
 import WireAnalytics
 import WireDataModel
-import WireLogging
 
 public protocol AppendLocationMessagekUseCaseProtocol {
 
@@ -32,14 +31,9 @@ public protocol AppendLocationMessagekUseCaseProtocol {
 public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
-    var analyticsLogger: WireLogger
 
-    public init(
-        analyticsEventTracker: (any AnalyticsEventTracker)?,
-        analyticsLogger: WireLogger
-    ) {
+    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
         self.analyticsEventTracker = analyticsEventTracker
-        self.analyticsLogger = analyticsLogger
     }
 
     public func invoke(

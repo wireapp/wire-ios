@@ -334,31 +334,19 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol {
-        AppendTextMessageUseCase(
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsLogger: analyiticsLogger
-        )
+        AppendTextMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {
-        AppendImageMessageUseCase(
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsLogger: analyiticsLogger
-        )
+        AppendImageMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeAppendKnockMessageUseCase() -> AppendKnockMessageUseCaseProtocol {
-        AppendKnockMessageUseCase(
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsLogger: analyiticsLogger
-        )
+        AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
-        AppendLocationMessageUseCase(
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsLogger: analyiticsLogger
-        )
+        AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeAppendFileMessageUseCase() -> AppendFileMessageUseCaseProtocol {
@@ -366,10 +354,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeToggleMessageReactionUseCase() -> ToggleMessageReactionUseCaseProtocol {
-        ToggleMessageReactionUseCase(
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsLogger: analyiticsLogger
-        )
+        ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeCallQualitySurveyUseCase() -> SubmitCallQualitySurveyUseCaseProtocol {

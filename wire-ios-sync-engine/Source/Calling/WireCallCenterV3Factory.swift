@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireAnalytics
 import WireDataModel
 
 /// Creates call centers.

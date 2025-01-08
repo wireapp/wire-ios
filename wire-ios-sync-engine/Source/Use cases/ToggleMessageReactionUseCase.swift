@@ -18,7 +18,6 @@
 
 import WireAnalytics
 import WireDataModel
-import WireLogging
 
 public protocol ToggleMessageReactionUseCaseProtocol {
 
@@ -32,14 +31,9 @@ public protocol ToggleMessageReactionUseCaseProtocol {
 public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
-    var analyticsLogger: WireLogger
 
-    public init(
-        analyticsEventTracker: (any AnalyticsEventTracker)?,
-        analyticsLogger: WireLogger
-    ) {
+    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
         self.analyticsEventTracker = analyticsEventTracker
-        self.analyticsLogger = analyticsLogger
     }
 
     public func invoke(
@@ -53,7 +47,6 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
         } else {
             ZMMessage.addReaction(reaction, to: message)
             if reaction == "❤️" {
-
                 analyticsEventTracker?.trackEvent(
                     .Contributed.conversationContribution(
                         .likeMessage,

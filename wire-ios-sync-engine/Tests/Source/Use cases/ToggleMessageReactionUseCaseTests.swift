@@ -47,10 +47,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         analyticsEventTracker = MockAnalyticsEventTracker()
         analyticsEventTracker.trackEvent_MockMethod = { _ in }
 
-        sut = ToggleMessageReactionUseCase(
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsLogger: .init(tag: "mock")
-        )
+        sut = ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
 
         (conversation, firstMessage) = try await setupConversationWithMessage()
     }
