@@ -35,15 +35,15 @@ final class FeatureDescriptionComponentSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-
-    @MainActor @ViewBuilder
-    static var view: some View {
+    @MainActor @ViewBuilder static var view: some View {
         let screenBounds = UIScreen.main.bounds
 
         FeatureDescriptionComponent(
             feature: .init(
                 id: "feature",
-                description: try! AttributedString(markdown: "**Lorem ipsum:** dolor sit amet, consectetur adipiscing elit. Quisque eu tincidunt lectus. Sed porta lectus ac viverra porttitor. Sed et aliquet sapien. Nulla consectetur purus sapien, quis hendrerit purus sagittis eget. Donec vel lorem diam. ")
+                description: try! AttributedString(
+                    markdown: "**Lorem ipsum:** dolor sit amet, consectetur adipiscing elit. Quisque eu tincidunt lectus. Sed porta lectus ac viverra porttitor. Sed et aliquet sapien. Nulla consectetur purus sapien, quis hendrerit purus sagittis eget. Donec vel lorem diam. "
+                )
             )
         )
         .frame(width: screenBounds.width, height: screenBounds.height)

@@ -36,13 +36,11 @@ final class LinkButtonStyleUITests: XCTestCase {
         snapshotHelper = nil
     }
 
-
-    @MainActor @ViewBuilder
-    static var view: some View {
+    @MainActor @ViewBuilder static var view: some View {
         let screenBounds = UIScreen.main.bounds
 
         Button(
-            action: { },
+            action: {},
             label: { Text("Label") }
         )
         .wireButtonStyle(.link)

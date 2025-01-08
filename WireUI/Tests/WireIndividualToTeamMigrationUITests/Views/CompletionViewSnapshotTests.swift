@@ -35,9 +35,7 @@ final class CompletionViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-
-    @MainActor @ViewBuilder
-    static var view: some View {
+    @MainActor @ViewBuilder static var view: some View {
         let screenBounds = UIScreen.main.bounds
 
         completionPreview()

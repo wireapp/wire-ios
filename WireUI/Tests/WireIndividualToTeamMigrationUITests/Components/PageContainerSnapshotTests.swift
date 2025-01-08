@@ -35,9 +35,7 @@ final class PageContainerSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-
-    @MainActor @ViewBuilder
-    static var view: some View {
+    @MainActor @ViewBuilder static var view: some View {
         let screenBounds = UIScreen.main.bounds
 
         PageContainer(

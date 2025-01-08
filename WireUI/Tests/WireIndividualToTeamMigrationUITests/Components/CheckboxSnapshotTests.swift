@@ -35,16 +35,14 @@ final class CheckboxSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @MainActor @ViewBuilder
-    static var checked: some View {
+    @MainActor @ViewBuilder static var checked: some View {
         let screenBounds = UIScreen.main.bounds
 
         Checkbox(isChecked: .constant(true), title: "Checkbox")
             .frame(width: screenBounds.width, height: screenBounds.height)
     }
 
-    @MainActor @ViewBuilder
-    static var unchecked: some View {
+    @MainActor @ViewBuilder static var unchecked: some View {
         let screenBounds = UIScreen.main.bounds
 
         Checkbox(isChecked: .constant(false), title: "Checkbox")
