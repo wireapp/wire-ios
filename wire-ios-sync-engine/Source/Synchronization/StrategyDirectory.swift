@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireAnalytics
 import WireDomain
 import WireRequestStrategy
 

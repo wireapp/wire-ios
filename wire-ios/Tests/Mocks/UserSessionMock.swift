@@ -308,31 +308,19 @@ final class UserSessionMock: UserSession {
     }
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol {
-        AppendTextMessageUseCase(
-            analyticsEventTracker: nil,
-            analyticsLogger: .init(tag: "mock")
-        )
+        AppendTextMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {
-        AppendImageMessageUseCase(
-            analyticsEventTracker: nil,
-            analyticsLogger: .init(tag: "mock")
-        )
+        AppendImageMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol {
-        AppendKnockMessageUseCase(
-            analyticsEventTracker: nil,
-            analyticsLogger: .init(tag: "mock")
-        )
+        AppendKnockMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
-        AppendLocationMessageUseCase(
-            analyticsEventTracker: nil,
-            analyticsLogger: .init(tag: "mock")
-        )
+        AppendLocationMessageUseCase(analyticsEventTracker: nil)
     }
 
     func makeAppendFileMessageUseCase() -> any WireSyncEngine.AppendFileMessageUseCaseProtocol {
@@ -340,10 +328,7 @@ final class UserSessionMock: UserSession {
     }
 
     func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol {
-        ToggleMessageReactionUseCase(
-            analyticsEventTracker: nil,
-            analyticsLogger: .init(tag: "mock")
-        )
+        ToggleMessageReactionUseCase(analyticsEventTracker: nil)
     }
 
     func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol {
