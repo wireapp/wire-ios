@@ -32,5 +32,4 @@ public enum WireTextStyle: CaseIterable, Sendable {
     case subline1
     case buttonSmall
     case buttonBig
-
 }

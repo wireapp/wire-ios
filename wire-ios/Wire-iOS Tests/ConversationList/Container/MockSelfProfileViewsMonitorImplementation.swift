@@ -16,16 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 @testable import Wire
 
-final class MockCallGridViewControllerDelegate: CallGridViewControllerDelegate {
+class MockSelfProfileViewsMonitorImplementation: SelfProfileViewsMonitor {
 
-    var requestedClients: [AVSClientVideoStream]?
+    private(set) var didViewSelfProfile: Bool
+    private let onDidViewSelfProfileCallback: @Sendable () -> Void
 
-    func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction) {
-        guard case let .requestVideoStreamsForClients(clients) = action else { return }
-        requestedClients = clients
+    init(didViewSelfProfile: Bool, onDidViewSelfProfileCallback: @escaping @Sendable () -> Void = {}) {
+        self.didViewSelfProfile = didViewSelfProfile
+        self.onDidViewSelfProfileCallback = onDidViewSelfProfileCallback
     }
 
+    func onDidViewSelfProfile() {
+        didViewSelfProfile = true
+        onDidViewSelfProfileCallback()
+    }
 }

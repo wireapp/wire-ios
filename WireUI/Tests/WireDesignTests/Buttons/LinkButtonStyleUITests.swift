@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
+import SwiftUI
+import WireTestingPackage
+import XCTest
 
-final class MockCallGridViewControllerDelegate: CallGridViewControllerDelegate {
+@testable import WireDesign
 
-    var requestedClients: [AVSClientVideoStream]?
+final class LinkButtonStyleSnapshotTests: XCTestCase {
 
-    func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction) {
-        guard case let .requestVideoStreamsForClients(clients) = action else { return }
-        requestedClients = clients
+    private var snapshotHelper: SnapshotHelper!
+
+    @MainActor
+    func test() {
+        // TODO: [WPB-14957] implement snapshot tests
     }
-
 }
