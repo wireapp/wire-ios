@@ -176,6 +176,53 @@ extension SessionManager {
         }
     }
 
+    public func restoreFromBackup(
+        at location: URL,
+        password: String
+    ) throws {
+        guard let userId = activeUserSession?.userId else {
+            throw BackupError.notAuthenticated
+        }
+
+        // Verify the imported file has the correct file extension.
+        guard BackupFileExtensions.allCases.contains(where: {
+            $0.rawValue == location.pathExtension
+        }) else {
+            throw BackupError.invalidFileExtension
+        }
+
+        let decryptedURL = SessionManager.temporaryURL(for: location)
+        WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
+
+        do {
+            try SessionManager.decrypt(
+                from: location,
+                to: decryptedURL,
+                password: password,
+                accountId: userId
+            )
+        } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
+            throw BackupError.decryptionError
+        } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
+            throw BackupError.keyCreationFailed
+        } catch {
+            throw error
+        }
+
+        let url = SessionManager.unzippedBackupURL(for: location)
+
+        guard decryptedURL.unzip(to: url) else {
+            throw BackupError.compressionError
+        }
+
+        try CoreDataStack.importLocalStorage(
+            accountIdentifier: userId,
+            from: url,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup
+        )
+    }
+
     // MARK: - Encryption & Decryption
 
     static func encrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {

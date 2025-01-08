@@ -94,8 +94,9 @@ private struct SetBackupPasswordView: View {
 
             PasswordFieldView(
                 password: $password,
-                isPasswordValid: passwordValidator.isPasswordValid(password),
                 isPasswordVisible: $isPasswordVisible,
+                title: Text(L10n.ExportBackup.SetBackupPassword.title),
+                isPasswordValid: passwordValidator.isPasswordValid(password),
                 passwordRules: Text(passwordValidator.localizedRulesDescription)
             )
 
@@ -123,29 +124,4 @@ private struct SetBackupPasswordView: View {
 @available(iOS 17.0, *)
 #Preview("Export Backup sheet") {
     ExportBackupPreview()
-}
-
-private struct ExportBackupPreview: View {
-    @State private var isPresented = true
-
-    var body: some View {
-        Button(
-            action: {
-                isPresented.toggle()
-            },
-            label: {
-                Text(L10n.ExportBackup.button)
-            }
-        )
-        .sheet(isPresented: $isPresented) {
-            NavigationStack {
-                ExportBackupView(
-                    passwordValidator: MockBackupPasswordValidator(),
-                    exportBackup: { _ in }
-                )
-            }
-            .presentationDragIndicator(.visible)
-            .presentationDetents([.medium, .large])
-        }
-    }
 }

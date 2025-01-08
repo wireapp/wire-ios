@@ -20,16 +20,22 @@ import SwiftUI
 
 public final class BackupActionsViewModel: ObservableObject {
     private let backupSource: any BackupSourceProtocol
+    private let restoreSource: any RestoreSourceProtocol
     private let backupResultHandler: BackupResultHandler
+    private let restoreBackupResultHandler: RestoreBackupResultHandler
     let passwordValidator: any BackupPasswordValidatorProtocol
 
     public init(
         backupSource: any BackupSourceProtocol,
+        restoreSource: any RestoreSourceProtocol,
         backupResultHandler: BackupResultHandler,
+        restoreBackupResultHandler: RestoreBackupResultHandler,
         passwordValidator: any BackupPasswordValidatorProtocol
     ) {
         self.backupSource = backupSource
+        self.restoreSource = restoreSource
         self.backupResultHandler = backupResultHandler
+        self.restoreBackupResultHandler = restoreBackupResultHandler
         self.passwordValidator = passwordValidator
     }
 
@@ -44,6 +50,17 @@ public final class BackupActionsViewModel: ObservableObject {
         }
     }
 
-    func restoreBackup(password: String, from url: URL) {
+    func restoreBackup(at url: URL, password: String) throws {
+        do {
+            try restoreSource.restoreFromBackup(at: url, password: password)
+            print("all good")
+        } catch let error as RestoreBackupError {
+            switch error {
+            case .decryptionError:
+                print("decryptionError")
+            case let .generic(error):
+                print("generic")
+            }
+        }
     }
 }

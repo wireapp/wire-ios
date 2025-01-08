@@ -189,6 +189,38 @@ public extension CoreDataStack {
         )
     }
 
+    static func importLocalStorage(
+        accountIdentifier: UUID,
+        from backupDirectory: URL,
+        applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup
+    ) throws {
+        // Start background activity
+        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "import backup") else {
+            WireLogger.localStorage
+                .error("backup: error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
+            log.debug("error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
+            throw CoreDataStackError.noDatabaseActivity
+        }
+
+        do {
+            try importLocalStorage(
+                accountIdentifier: accountIdentifier,
+                from: backupDirectory,
+                applicationContainer: applicationContainer,
+                dispatchGroup: dispatchGroup,
+                messagingMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>(isInMemoryStore: false)
+            )
+        } catch {
+            // Ensure background activity is ended even if an error occurs
+            BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+            throw error
+        }
+
+        // End background activity after successful completion
+        BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+    }
+
     internal static func importLocalStorage(
         accountIdentifier: UUID,
         from backupDirectory: URL,
@@ -275,6 +307,93 @@ public extension CoreDataStack {
                 }
             } catch {
                 fail(.failedToCopy(error))
+            }
+        }
+    }
+
+    internal static func importLocalStorage(
+        accountIdentifier: UUID,
+        from backupDirectory: URL,
+        applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup,
+        messagingMigrator: CoreDataMessagingMigratorProtocol
+    ) throws {
+        let accountDirectory = accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: applicationContainer
+        )
+        let accountStoreFile = accountDirectory.appendingPersistentStoreLocation()
+        let backupStoreFile = backupDirectory
+            .appendingPathComponent(databaseDirectoryName)
+            .appendingStoreFile()
+        let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
+
+        try workQueue.sync {
+            do {
+                // Load metadata
+                let metadata = try BackupMetadata(url: metadataURL)
+                let currentModel = CoreDataStack.loadMessagingModel()
+
+                // Ensure the model version is available
+                guard let backupModel = managedObjectModel(for: metadata.modelVersion) else {
+                    throw BackupImportError.missingModelVersion(metadata.modelVersion)
+                }
+
+                // Verify metadata compatibility
+                if let verificationError = metadata.verify(
+                    using: accountIdentifier,
+                    modelVersionProvider: currentModel
+                ) {
+                    throw BackupImportError.incompatibleBackup(verificationError)
+                }
+
+                // Set up the coordinator with the backup model
+                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: backupModel)
+
+                // Create the target directory for the account store
+                try fileManager.createDirectory(
+                    at: accountStoreFile.deletingLastPathComponent(),
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
+                let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
+
+                // Prepare the backup store for import
+                WireLogger.localStorage.debug("backup: import prepare", attributes: .safePublic)
+                try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
+
+                // Perform the migration
+                let tp = TimePoint(interval: 60.0, label: "db migration")
+                WireLogger.localStorage.debug("backup: migrate database \(metadata.modelVersion) to \(currentModel.version)")
+                try messagingMigrator.migrateStore(at: backupStoreFile, toVersion: .current)
+
+                if !tp.warnIfLongerThanInterval() {
+                    WireLogger.localStorage.info(
+                        "time spent in migration only: \(tp.elapsedTime)",
+                        attributes: .safePublic
+                    )
+                }
+
+                // Import the persistent store to the account data directory
+                WireLogger.localStorage.debug(
+                    "backup: import the persistent store to the account data directory",
+                    attributes: .safePublic
+                )
+                try coordinator.replacePersistentStore(
+                    at: accountStoreFile,
+                    destinationOptions: options,
+                    withPersistentStoreFrom: backupStoreFile,
+                    sourceOptions: options,
+                    ofType: NSSQLiteStoreType
+                )
+
+                WireLogger.localStorage.info(
+                    "successfully imported backup with metadata: \(metadata)",
+                    attributes: .safePublic
+                )
+            } catch {
+                WireLogger.localStorage.error("backup: error importing local store: \(error)", attributes: .safePublic)
+                throw BackupImportError.failedToCopy(error)
             }
         }
     }

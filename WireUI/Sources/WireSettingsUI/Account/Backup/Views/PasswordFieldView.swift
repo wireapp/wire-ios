@@ -21,15 +21,17 @@ import WireDesign
 
 struct PasswordFieldView: View {
     @Binding var password: String
-    let isPasswordValid: Bool
     @Binding var isPasswordVisible: Bool
-    let passwordRules: Text
+    let title: Text
+    var isPasswordValid: Bool = true
+    let passwordRules: Text?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(L10n.ExportBackup.SetBackupPassword.title)
+            title
                 .font(.subheadline)
-                .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color)
+                .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color
+                )
 
             ZStack {
                 if isPasswordVisible {
@@ -82,8 +84,9 @@ struct PasswordFieldView: View {
 #Preview("Invalid Password - Hidden") {
     PasswordFieldView(
         password: .constant(""),
-        isPasswordValid: false,
         isPasswordVisible: .constant(false),
+        title: Text(L10n.ExportBackup.SetBackupPassword.title),
+        isPasswordValid: false,
         passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
@@ -92,8 +95,9 @@ struct PasswordFieldView: View {
 #Preview("Invalid Password - Visible") {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
-        isPasswordValid: false,
         isPasswordVisible: .constant(true),
+        title: Text(L10n.ExportBackup.SetBackupPassword.title),
+        isPasswordValid: false,
         passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
@@ -102,8 +106,9 @@ struct PasswordFieldView: View {
 #Preview("Valid Password - Hidden") {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
-        isPasswordValid: true,
         isPasswordVisible: .constant(false),
+        title: Text(L10n.ExportBackup.SetBackupPassword.title),
+        isPasswordValid: true,
         passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }
@@ -112,8 +117,9 @@ struct PasswordFieldView: View {
 #Preview("Valid Password - Visible") {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
-        isPasswordValid: true,
         isPasswordVisible: .constant(true),
+        title: Text(L10n.ExportBackup.SetBackupPassword.title),
+        isPasswordValid: true,
         passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
     )
 }

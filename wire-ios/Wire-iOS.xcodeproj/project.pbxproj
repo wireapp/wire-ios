@@ -102,6 +102,7 @@
 		06C412AC238FCAA80018866F /* Int+Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AB238FCAA80018866F /* Int+Const.swift */; };
 		06C412B0239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */; };
 		06CDC6F62A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CDC6F52A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift */; };
+		06CDDA952D2E5F960092BECC /* RestoreSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CDDA942D2E5F920092BECC /* RestoreSource.swift */; };
 		06D93B472B56F64F00A0A512 /* E2EIFeatureChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D93B462B56F64F00A0A512 /* E2EIFeatureChange.swift */; };
 		06DF42D12757DA56009C8A99 /* GuestLinkInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */; };
 		06E097982A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E097972A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift */; };
@@ -2044,6 +2045,7 @@
 		06C412AB238FCAA80018866F /* Int+Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Const.swift"; sourceTree = "<group>"; };
 		06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+DragAndDrop.swift"; sourceTree = "<group>"; };
 		06CDC6F52A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailedUsersSystemMessageCell.swift; sourceTree = "<group>"; };
+		06CDDA942D2E5F920092BECC /* RestoreSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreSource.swift; sourceTree = "<group>"; };
 		06D93B462B56F64F00A0A512 /* E2EIFeatureChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIFeatureChange.swift; sourceTree = "<group>"; };
 		06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestLinkInfoCell.swift; sourceTree = "<group>"; };
 		06E097972A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+IncompleteMetadata.swift"; sourceTree = "<group>"; };
@@ -7484,6 +7486,7 @@
 			children = (
 				060F032A2D2C12910016431F /* BackupPasswordValidator.swift */,
 				E666EDD52B73E62800C03E2B /* BackupSource.swift */,
+				06CDDA942D2E5F920092BECC /* RestoreSource.swift */,
 			);
 			path = Backup;
 			sourceTree = "<group>";
@@ -9665,6 +9668,7 @@
 				A9BBD8D026A5D51D00C768B1 /* LayoutDirection.swift in Sources */,
 				061EF88F2797F74900584C53 /* SettingsCopyButtonCellDescriptor.swift in Sources */,
 				874A02561D1D329B00D0D74A /* AudioEffectCell.swift in Sources */,
+				06CDDA952D2E5F960092BECC /* RestoreSource.swift in Sources */,
 				E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseProtocol .swift in Sources */,
 				55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */,
 				87E56EDA1E4E10CA0097D489 /* TextSearchViewController.swift in Sources */,

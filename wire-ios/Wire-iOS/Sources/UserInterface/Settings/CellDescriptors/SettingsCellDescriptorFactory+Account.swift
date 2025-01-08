@@ -383,10 +383,14 @@ extension SettingsCellDescriptorFactory {
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     let viewModel = BackupActionsViewModel(
                         backupSource: BackupSource(),
+                        restoreSource: RestoreSource(),
                         backupResultHandler: BackupResultHandler(
                             onSuccess: presentShareSheet,
                             onFailure: presentAlert
                         ),
+                        restoreBackupResultHandler: RestoreBackupResultHandler(
+                            onSuccess: { _ in },
+                            onFailure: presentAlert),
                         passwordValidator: BackupPasswordValidator()
                     )
                     let backupActionsController = BackupActionsHostingController(viewModel: viewModel)

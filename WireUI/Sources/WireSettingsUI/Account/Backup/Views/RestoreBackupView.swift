@@ -23,24 +23,20 @@ import WireReusableUIComponents
 
 struct RestoreBackupView: View {
     @Environment(\.dismiss) private var dismiss
-    private let backupPath: URL
-    private let importBackup: (String, URL) -> Void
+    private let importBackup: (String) -> Void
 
     public init(
-        backupPath: URL,
-        importBackup: @escaping (String, URL) -> Void
+        importBackup: @escaping (String) -> Void
     ) {
-        self.backupPath = backupPath
         self.importBackup = importBackup
     }
 
     public var body: some View {
-        PpasswordBackupView(
-            backupPath: backupPath, importBackup: importBackup)
+        PpasswordBackupView(importBackup: importBackup)
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
-                Text("Enter password")
+                Text(L10n.RestoreFromBackup.title)
             )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -67,36 +63,32 @@ private struct PpasswordBackupView: View {
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
 
-    private let backupPath: URL
-    private let importBackup: (String, URL) -> Void
+    private let importBackup: (String) -> Void
 
-    init(
-        backupPath: URL,
-        importBackup: @escaping (String, URL) -> Void
-    ) {
-        self.backupPath = backupPath
+    init(importBackup: @escaping (String) -> Void) {
         self.importBackup = importBackup
     }
 
     var body: some View {
         VStack(spacing: 20) {
-            Text(L10n.RestoreFromBackup.title)
+            Text(L10n.RestoreFromBackup.description)
                 .font(.textStyle(.body1))
                 .foregroundStyle(Color.primaryText)
                 .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
-//            PasswordFieldView(
-//                password: $password,
-//                isPasswordValid: passwordValidator.isValid(password: password),
-//                isPasswordVisible: $isPasswordVisible,
-//                passwordRules: Text(passwordValidator.localizedRulesDescription))
-
+            PasswordFieldView(
+                password: $password,
+                isPasswordVisible: $isPasswordVisible,
+                title: Text(L10n.RestoreFromBackup.EnterPassword.title),
+                passwordRules: nil
+            )
             Spacer()
 
             Button(
                 action: {
-                    importBackup(password, backupPath)
+                    importBackup(password)
                     dismiss()
                 },
                 label: {
@@ -116,29 +108,4 @@ private struct PpasswordBackupView: View {
 @available(iOS 17.0, *)
 #Preview("Export Backup sheet") {
     RestoreBackupPreview()
-}
-
-private struct RestoreBackupPreview: View {
-    @State private var isPresented = true
-
-    var body: some View {
-        Button(
-            action: {
-                isPresented.toggle()
-            },
-            label: {
-                Text(L10n.RestoreFromBackup.button)
-            }
-        )
-        .sheet(isPresented: $isPresented) {
-            NavigationStack {
-                RestoreBackupView(
-                    backupPath: URL(fileURLWithPath: ""),
-                    importBackup:  { _, _ in }
-                )
-            }
-            .presentationDragIndicator(.visible)
-            .presentationDetents([.medium, .large])
-        }
-    }
 }

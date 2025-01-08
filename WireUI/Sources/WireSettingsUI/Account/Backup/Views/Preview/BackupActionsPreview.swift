@@ -22,10 +22,14 @@ import SwiftUI
 func BackupActionsPreview() -> some View {
     BackupActionsView(viewModel: BackupActionsViewModel(
         backupSource: MockBackupSource(),
+        restoreSource: MockRestoreSource(),
         backupResultHandler: BackupResultHandler(
             onSuccess: { _, _  in },
             onFailure: { _ in }
         ),
+        restoreBackupResultHandler: RestoreBackupResultHandler(
+            onSuccess: { _  in },
+            onFailure: { _ in }),
         passwordValidator: MockBackupPasswordValidator()
     ))
 }
@@ -36,6 +40,10 @@ private class MockBackupSource: BackupSourceProtocol {
     }
 
     func clearPreviousBackups() {}
+}
+
+private class MockRestoreSource: RestoreSourceProtocol {
+    func restoreFromBackup(at location: URL, password: String) throws {}
 }
 
 class MockBackupPasswordValidator: BackupPasswordValidatorProtocol {
