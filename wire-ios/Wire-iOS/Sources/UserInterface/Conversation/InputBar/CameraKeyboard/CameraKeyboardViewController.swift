@@ -118,7 +118,7 @@ class CameraKeyboardViewController: UIViewController {
         if let userSession = ZMUserSession.shared() {
             self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
                 observer: self,
-                userSession: userSession
+                contextProvider: userSession.contextProvider
             )
         }
     }

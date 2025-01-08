@@ -366,12 +366,12 @@ private enum Scaffolding {
 
     static let baseSegmentation: Set<AnalyticsEvent.Segmentation> = [
         .deviceModel("simulator"),
-        .deviceOS("iOS")
+        .osVersion("iOS")
     ]
 
     static func expectedSegmentation(for user: AnalyticsUser) -> [String: String] {
         let segmentation = baseSegmentation.union([
-            .isSelfTeamMember(user.teamInfo != nil),
+            .Team.isSelfTeamMember(user.teamInfo != nil),
             segmentation
         ])
 

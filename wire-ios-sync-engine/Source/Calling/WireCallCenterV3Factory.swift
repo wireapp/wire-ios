@@ -29,6 +29,9 @@ public enum WireCallCenterV3Factory {
     /// The class to use when creating a voice channel.
     public static var voiceChannelClass: VoiceChannelV3.Type = VoiceChannelV3.self
 
+    /// The notification center used for posting notifications.
+    public static var notificationCenter: NotificationCenter = .default
+
     /// Creates a call center with the specified information.
     /// - parameter userId: The identifier of the current signed-in user.
     /// - parameter clientId: The identifier of the current client on the user's account.
@@ -53,7 +56,8 @@ public enum WireCallCenterV3Factory {
                 clientId: clientId,
                 uiMOC: uiMOC,
                 flowManager: flowManager,
-                transport: transport
+                transport: transport,
+                notificationCenter: notificationCenter
             )
 
             newInstance.useConstantBitRateAudio = uiMOC.zm_useConstantBitRateAudio
