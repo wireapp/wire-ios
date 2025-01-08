@@ -50,7 +50,7 @@ jobs:
         run: |
           if [ -n "${{ inputs.branch }}" ]; then
             BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
             BRANCH="${{ github.head_ref }}"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
@@ -229,7 +229,7 @@ jobs:
         run: |
           if [ -n "${{ inputs.branch }}" ]; then
             BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
             BRANCH="${{ github.head_ref }}"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
@@ -263,7 +263,7 @@ jobs:
         run: |
           if [ -n "${{ inputs.branch }}" ]; then
             BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
             BRANCH="${{ github.head_ref }}"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
