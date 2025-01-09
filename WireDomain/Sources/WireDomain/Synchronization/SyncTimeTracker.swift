@@ -22,11 +22,11 @@ import WireLogging
 /// Keep tracks of each sync phase duration and the start time of a given phase.
 ///
 /// Used to log time for each sync phase along with the time a slow / quick sync took to complete.
-final class SyncTimeTracker {
-    var phaseStartTime: Date
+public final class SyncTimeTracker {
+    public var phaseStartTime: Date
     private var phasesDurations: [TimeInterval]
 
-    init(
+    public init(
         phasesDurations: [TimeInterval] = [TimeInterval](),
         phaseStartTime: Date = .now
     ) {
@@ -34,21 +34,21 @@ final class SyncTimeTracker {
         self.phaseStartTime = phaseStartTime
     }
 
-    func addPhaseDuration(
+    public func addPhaseDuration(
         _ duration: TimeInterval
     ) {
         phasesDurations.append(duration)
     }
 
-    func totalSyncDuration() -> TimeInterval {
+    public func totalSyncDuration() -> TimeInterval {
         phasesDurations.reduce(0, +)
     }
 
-    func resetStartTime() {
+    public func resetStartTime() {
         phaseStartTime = .now
     }
 
-    func reset() {
+    public func reset() {
         phaseStartTime = .now
         phasesDurations = []
     }

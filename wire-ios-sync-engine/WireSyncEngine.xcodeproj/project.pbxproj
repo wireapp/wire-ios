@@ -416,7 +416,6 @@
 		BF8367311C52651900364B37 /* store125.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BF8367301C52651900364B37 /* store125.wiredatabase */; };
 		BFCE9A5B1C4E4C4D00951B3D /* store124.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BFCE9A581C4E4C4D00951B3D /* store124.wiredatabase */; };
 		BFE7FCBF2101E50700D1165F /* CompanyLoginVerificationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7FCBE2101E50700D1165F /* CompanyLoginVerificationToken.swift */; };
-		C9A6B3BE2D3014CE0058D4A4 /* SyncTimeTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A6B3BD2D3014CE0058D4A4 /* SyncTimeTracker.swift */; };
 		CB4895532C4FB77C00CA2C25 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4895522C4FB77C00CA2C25 /* WireTesting.framework */; };
 		CBD35F2A2D09EBA50080DA37 /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = CBD35F292D09EBA50080DA37 /* WireCrypto */; };
 		CBD3AED02C4A742B007643A0 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD3AECF2C4A742B007643A0 /* TestSetup.swift */; };
@@ -1111,7 +1110,6 @@
 		BFCE9A581C4E4C4D00951B3D /* store124.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = store124.wiredatabase; sourceTree = "<group>"; };
 		BFE7FCBE2101E50700D1165F /* CompanyLoginVerificationToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLoginVerificationToken.swift; sourceTree = "<group>"; };
 		C3BF3961360B7EB12679AF27 /* ZMOperationLoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMOperationLoopTests.swift; sourceTree = "<group>"; };
-		C9A6B3BD2D3014CE0058D4A4 /* SyncTimeTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncTimeTracker.swift; sourceTree = "<group>"; };
 		CB4895522C4FB77C00CA2C25 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79AC7B2C6DFAA2003CF5F4 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBD3AECF2C4A742B007643A0 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
@@ -2042,7 +2040,6 @@
 				E6C983EF2B986B2900D55177 /* ZMUserSession */,
 				EE38DDED280437E500D4983D /* BlacklistReason.swift */,
 				63C5321E27FDB283009DFFF4 /* SyncStatus.swift */,
-				C9A6B3BD2D3014CE0058D4A4 /* SyncTimeTracker.swift */,
 				063AFA3E264B30C400DCBCED /* BuildType.swift */,
 				F9AB00211F0CDAF00037B437 /* CacheFileRelocator.swift */,
 				EE51FBED2AE1305B002B503B /* UserSession.swift */,
@@ -3386,7 +3383,6 @@
 				166D18A4230EBFFA001288CD /* MediaManager.swift in Sources */,
 				874F142D1C16FD9700C15118 /* Device.swift in Sources */,
 				F19E55A422B3A740005C792D /* PKPushPayload+SafeLogging.swift in Sources */,
-				C9A6B3BE2D3014CE0058D4A4 /* SyncTimeTracker.swift in Sources */,
 				EE1108F923D1F945005DC663 /* TypingUsersTimeout.swift in Sources */,
 				16C4BDA020A309CD00BCDB17 /* CallParticipantSnapshot.swift in Sources */,
 				1639A8272260CE5000868AB9 /* ZMLocalNotification+AvailabilityAlert.swift in Sources */,
