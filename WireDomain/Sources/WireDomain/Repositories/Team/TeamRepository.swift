@@ -171,7 +171,6 @@ public class TeamRepository: TeamRepositoryProtocol {
         )
     }
 
-
     public func pullSelfLegalholdInfo() async throws {
         let selfUser = await userRepository.fetchSelfUser()
 
