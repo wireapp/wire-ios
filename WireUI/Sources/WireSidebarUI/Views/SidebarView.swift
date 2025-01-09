@@ -168,7 +168,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
         case .support:
             text = Text(L10n.Localizable.Sidebar.Support.title)
-            accessibilityLabel = Text("sidebar.support.description", tableName: "Accessibility", bundle: .module)
+            accessibilityLabel = Text(L10n.Accessibility.Sidebar.Support.description)
             icon = "questionmark.circle"
             isLink = true
             action = supportAction
@@ -221,11 +221,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         case .oneOnOne:
             text = Text(L10n.Localizable.Sidebar.ConversationFilter.OneOnOneConversations.title)
             icon = "person"
-            accessibilityLabel = Text(
-                "sidebar.conversation_filter.oneOnOneConversations.description",
-                tableName: "Accessibility",
-                bundle: .module
-            )
+            accessibilityLabel = Text(L10n.Accessibility.Sidebar.ConversationFilter.OneOnOneConversations.description)
 
         case .folders:
             text = Text(L10n.Localizable.Sidebar.ConversationFilter.Folders.title)
@@ -240,7 +236,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         case .settings:
             text = Text(L10n.Localizable.Sidebar.Settings.title)
             icon = "gearshape"
-            accessibilityLabel = Text("sidebar.settings.description", tableName: "Accessibility", bundle: .module)
+            accessibilityLabel = Text(L10n.Accessibility.Sidebar.Settings.description)
         }
 
         return SidebarMenuItemView(
