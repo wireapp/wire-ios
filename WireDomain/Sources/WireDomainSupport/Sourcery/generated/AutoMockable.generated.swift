@@ -288,10 +288,10 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool)] = []
-    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod: ((WireDomain.Conversation, Date, Bool, Bool) async -> Void)?
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations: [(conversation: Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool)] = []
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod: ((Conversation, Date, Bool, Bool) async -> Void)?
 
-    public func storeConversation(_ conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool) async {
+    public func storeConversation(_ conversation: Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool) async {
         storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled, isMLSEnabled: isMLSEnabled))
 
         guard let mock = storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod else {
