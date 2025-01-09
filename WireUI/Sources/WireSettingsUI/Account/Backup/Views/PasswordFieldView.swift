@@ -44,7 +44,7 @@ struct PasswordFieldView: View {
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(
                                 isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
-                                lineWidth: 1
+                                lineWidth: password.isEmpty ? 0 : 1
                             )
                     )
                 } else {
@@ -54,7 +54,7 @@ struct PasswordFieldView: View {
                             RoundedRectangle(cornerRadius: 5)
                                 .stroke(
                                     isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
-                                    lineWidth: 1
+                                    lineWidth: password.isEmpty ? 0 : 11
                                 )
                         )
                 }

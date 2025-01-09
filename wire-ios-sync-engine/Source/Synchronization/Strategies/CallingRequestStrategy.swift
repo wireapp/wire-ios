@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireAnalytics
 import WireDataModel
 import WireLogging
 import WireRequestStrategy

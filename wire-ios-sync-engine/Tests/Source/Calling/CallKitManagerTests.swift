@@ -259,7 +259,8 @@ class CallKitManagerTest: DatabaseTest {
             clientId: "123",
             uiMOC: uiMOC,
             flowManager: flowManager,
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init()
         )
         mockCallKitManagerDelegate = MockCallKitManagerDelegate()
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)

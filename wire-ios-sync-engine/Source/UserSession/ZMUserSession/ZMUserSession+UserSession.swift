@@ -178,7 +178,7 @@ extension ZMUserSession: UserSession {
     ) -> Any {
         WireCallCenterV3.addCallStateObserver(
             observer: observer,
-            userSession: self
+            contextProvider: contextProvider
         )
     }
 
@@ -187,7 +187,7 @@ extension ZMUserSession: UserSession {
     ) -> Any {
         WireCallCenterV3.addCallErrorObserver(
             observer: observer,
-            userSession: self
+            contextProvider: contextProvider
         )
     }
 
