@@ -40,13 +40,13 @@ protocol SyncManagerProtocol {
 }
 
 final class SyncManager: SyncManagerProtocol {
-    
+
     enum Failure: Error {
         case failedToPerformSlowSync(Error)
     }
-    
+
     // MARK: - Logs
-    
+
     private enum SyncPhaseName: String {
         case pullingLastUpdateEventID
         case pullingSelfTeam
@@ -182,16 +182,16 @@ final class SyncManager: SyncManagerProtocol {
 
         do {
             syncState = .quickSync(quickSyncTask)
-            
+
             syncTimeTracker.reset()
-            
+
             try await quickSyncTask.value
-            
+
             logSyncTime(
                 for: .pullPendingEvents,
                 completedAllPhases: true
             )
-            
+
         } catch {
             try await suspend()
             throw error
@@ -294,7 +294,7 @@ final class SyncManager: SyncManagerProtocol {
             try await updateEventsRepository.deleteNextPendingEvents(limit: batchSize)
         }
     }
-    
+
     private func logSyncTime(
         for phase: SyncPhaseName,
         completedAllPhases: Bool = false
@@ -304,10 +304,10 @@ final class SyncManager: SyncManagerProtocol {
         let duration = currentTime.timeIntervalSince(syncTimeTracker.phaseStartTime)
         let message = "Completed \(syncType) phase \(phase) in \(duration)"
         WireLogger.sync.info(message, attributes: .safePublic)
-        
+
         syncTimeTracker.addPhaseDuration(duration)
         syncTimeTracker.resetStartTime() // reset for next sync phase
-        
+
         if completedAllPhases {
             let message = "Completed \(syncType) in \(syncTimeTracker.totalSyncDuration())"
             WireLogger.sync.info(message, attributes: .safePublic)

@@ -59,7 +59,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public internal(set) var pushChannelEstablishedDate: Date?
 
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
-    
+
     private let syncTimeTracker = SyncTimeTracker()
 
     public var isSlowSyncing: Bool {
@@ -188,9 +188,9 @@ public extension SyncStatus {
             persistLastUpdateEventID()
             syncStateDelegate?.didFinishSlowSync()
         }
-        
+
         let didCompleteSync = isSlowSyncing ? phase.isLastSlowSyncPhase : phase.isLastQuickSyncPhase
-        
+
         logSyncTime(
             for: phase,
             completedAllPhases: didCompleteSync
@@ -312,7 +312,7 @@ public extension SyncStatus {
             currentSyncPhase = .fetchingMissedEvents
         }
     }
-    
+
     private func logSyncTime(
         for phase: SyncPhase,
         completedAllPhases: Bool
@@ -322,10 +322,10 @@ public extension SyncStatus {
         let duration = currentTime.timeIntervalSince(syncTimeTracker.phaseStartTime)
         let message = "Completed \(syncType) phase \(phase) in \(duration)"
         WireLogger.sync.info(message, attributes: .safePublic)
-        
+
         syncTimeTracker.addPhaseDuration(duration)
         syncTimeTracker.resetStartTime() // reset for next sync phase
-        
+
         if completedAllPhases {
             let message = "Completed \(syncType) in \(syncTimeTracker.totalSyncDuration())"
             WireLogger.sync.info(message, attributes: .safePublic)

@@ -24,7 +24,7 @@ import WireLogging
 final class SyncTimeTracker {
     var phaseStartTime: Date
     private var phasesDurations: [TimeInterval]
-    
+
     init(
         phasesDurations: [TimeInterval] = [TimeInterval](),
         phaseStartTime: Date = .now
@@ -32,21 +32,21 @@ final class SyncTimeTracker {
         self.phasesDurations = phasesDurations
         self.phaseStartTime = phaseStartTime
     }
-    
+
     func addPhaseDuration(
         _ duration: TimeInterval
     ) {
         phasesDurations.append(duration)
     }
-    
+
     func totalSyncDuration() -> TimeInterval {
         phasesDurations.reduce(0, +)
     }
-    
+
     func resetStartTime() {
         phaseStartTime = .now
     }
-    
+
     func reset() {
         phaseStartTime = .now
         phasesDurations = []

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
 import Foundation
+import WireLogging
 
 /// Keep tracks of each sync phase duration and the start time of a given phase.
 ///
@@ -25,7 +25,7 @@ import Foundation
 final class SyncTimeTracker {
     var phaseStartTime: Date
     private var phasesDurations: [TimeInterval]
-    
+
     init(
         phasesDurations: [TimeInterval] = [TimeInterval](),
         phaseStartTime: Date = .now
@@ -33,21 +33,21 @@ final class SyncTimeTracker {
         self.phasesDurations = phasesDurations
         self.phaseStartTime = phaseStartTime
     }
-    
+
     func addPhaseDuration(
         _ duration: TimeInterval
     ) {
         phasesDurations.append(duration)
     }
-    
+
     func totalSyncDuration() -> TimeInterval {
         phasesDurations.reduce(0, +)
     }
-    
+
     func resetStartTime() {
         phaseStartTime = .now
     }
-    
+
     func reset() {
         phaseStartTime = .now
         phasesDurations = []
