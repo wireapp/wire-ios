@@ -64,7 +64,6 @@ final class SyncManager: SyncManagerProtocol {
         case pullPendingEvents // quick sync
     }
 
-
     // MARK: - Properties
 
     private(set) var syncState: SyncState = .suspended
