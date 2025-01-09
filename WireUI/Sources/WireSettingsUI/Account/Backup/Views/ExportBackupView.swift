@@ -45,7 +45,7 @@ public struct ExportBackupView: View {
         .background(Color.viewBackground)
         .scrollContentBackground(.hidden)
         .navigationTitle(
-            Text(L10n.ExportBackup.title)
+            Text(L10n.Localizable.ExportBackup.title)
         )
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -86,7 +86,7 @@ private struct SetBackupPasswordView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text(L10n.ExportBackup.description)
+            Text(L10n.Localizable.ExportBackup.description)
                 .font(.textStyle(.body1))
                 .foregroundStyle(Color.primaryText)
                 .multilineTextAlignment(.leading)
@@ -107,7 +107,7 @@ private struct SetBackupPasswordView: View {
                     dismiss()
                 },
                 label: {
-                    Text(L10n.ExportBackup.button)
+                    Text(L10n.Localizable.ExportBackup.button)
                 }
             )
             .wireButtonStyle(.primary)
@@ -134,7 +134,7 @@ private struct ExportBackupPreview: View {
                 isPresented.toggle()
             },
             label: {
-                Text(L10n.ExportBackup.button)
+                Text(L10n.Localizable.ExportBackup.button)
             }
         )
         .sheet(isPresented: $isPresented) {
