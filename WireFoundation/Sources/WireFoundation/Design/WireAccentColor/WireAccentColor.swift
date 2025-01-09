@@ -27,7 +27,7 @@ public enum WireAccentColor: Int16, CaseIterable, Hashable, Sendable {
     case turquoise
     case purple
 }
-
+xxxx
 // MARK: - Default and random value
 
 public extension WireAccentColor {
