@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 // sourcery: AutoMockable
 /// Decrypt the E2EE content within update events.
 protocol UpdateEventDecryptorProtocol {

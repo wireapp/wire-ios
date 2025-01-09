@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process conversation message timer update events.
 
 protocol ConversationMessageTimerUpdateEventProcessorProtocol {

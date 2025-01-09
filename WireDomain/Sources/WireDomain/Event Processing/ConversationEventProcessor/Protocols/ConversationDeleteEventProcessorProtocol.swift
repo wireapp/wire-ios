@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process conversation delete events.
 
 protocol ConversationDeleteEventProcessorProtocol {

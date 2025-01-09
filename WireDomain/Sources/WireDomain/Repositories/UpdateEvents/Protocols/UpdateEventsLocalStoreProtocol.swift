@@ -18,9 +18,6 @@
 
 import Foundation
 
-
-
-
 // sourcery: AutoMockable
 protocol UpdateEventsLocalStoreProtocol {
 

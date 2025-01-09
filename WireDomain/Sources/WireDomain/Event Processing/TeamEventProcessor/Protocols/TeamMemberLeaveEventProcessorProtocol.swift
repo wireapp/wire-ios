@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process team member leave events.
 ///
 protocol TeamMemberLeaveEventProcessorProtocol {

@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process user connection events.
 
 protocol UserConnectionEventProcessorProtocol {

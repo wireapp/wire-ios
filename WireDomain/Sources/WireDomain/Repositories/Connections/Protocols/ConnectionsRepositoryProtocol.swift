@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 // sourcery: AutoMockable
 /// Facilitate access to connections related domain objects.
 ///

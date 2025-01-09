@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 // sourcery: AutoMockable
 /// Facilitates access to conversation labels related domain objects.
 public protocol ConversationLabelsRepositoryProtocol {

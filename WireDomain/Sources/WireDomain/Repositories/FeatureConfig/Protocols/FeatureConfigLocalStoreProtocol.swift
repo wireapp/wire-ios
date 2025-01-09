@@ -18,9 +18,6 @@
 
 import WireDataModel
 
-
-
-
 protocol FeatureConfigLocalStoreProtocol {
 
     /// Fetches a feature locally.

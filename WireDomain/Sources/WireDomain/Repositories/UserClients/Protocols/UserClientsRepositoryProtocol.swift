@@ -19,7 +19,6 @@
 import WireAPI
 import WireDataModel
 
-
 // sourcery: AutoMockable
 /// Facilitate access to user clients related domain objects.
 ///

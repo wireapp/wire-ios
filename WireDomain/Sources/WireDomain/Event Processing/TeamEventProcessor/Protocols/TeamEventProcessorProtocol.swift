@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process team update events.
 
 protocol TeamEventProcessorProtocol {

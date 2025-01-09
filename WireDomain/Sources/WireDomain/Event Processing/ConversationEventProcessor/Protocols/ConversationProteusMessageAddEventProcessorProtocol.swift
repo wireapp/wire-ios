@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process conversation proteus message add events.
 
 protocol ConversationProteusMessageAddEventProcessorProtocol {

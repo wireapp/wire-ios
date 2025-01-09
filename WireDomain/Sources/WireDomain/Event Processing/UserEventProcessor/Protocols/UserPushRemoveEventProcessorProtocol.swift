@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-
-
 /// Process user push remove events.
 
 protocol UserPushRemoveEventProcessorProtocol {

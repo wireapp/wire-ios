@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process user properties delete events.
 
 protocol UserPropertiesDeleteEventProcessorProtocol {

@@ -18,9 +18,6 @@
 
 import Foundation
 
-
-
-
 protocol PullSelfTeamRolesSyncProtocol {
 
     func pull(selfTeamID: UUID) async throws

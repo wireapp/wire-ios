@@ -19,9 +19,6 @@
 import Foundation
 import WireAPI
 
-
-
-
 // sourcery: AutoMockable
 /// Access update events.
 protocol UpdateEventsRepositoryProtocol {

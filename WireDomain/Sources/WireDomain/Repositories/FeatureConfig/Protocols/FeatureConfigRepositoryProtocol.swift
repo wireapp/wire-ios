@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireAPI
 import Combine
-
-
+import WireAPI
+import WireDataModel
 
 /// Facilitates access to feature configs related domain objects.
 protocol FeatureConfigRepositoryProtocol {

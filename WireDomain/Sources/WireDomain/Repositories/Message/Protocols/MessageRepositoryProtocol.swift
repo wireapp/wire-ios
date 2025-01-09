@@ -18,9 +18,6 @@
 
 import Foundation
 
-
-
-
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
 public protocol MessageRepositoryProtocol {

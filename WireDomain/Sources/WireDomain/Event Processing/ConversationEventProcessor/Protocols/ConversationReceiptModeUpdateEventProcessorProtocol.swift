@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process conversation receipt mode update events.
 
 protocol ConversationReceiptModeUpdateEventProcessorProtocol {

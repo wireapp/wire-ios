@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process user properties set events.
 
 protocol UserPropertiesSetEventProcessorProtocol {

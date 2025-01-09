@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process federation connection removed events.
 
 protocol FederationConnectionRemovedEventProcessorProtocol {

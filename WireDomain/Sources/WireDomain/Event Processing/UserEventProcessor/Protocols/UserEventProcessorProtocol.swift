@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process user update events.
 
 protocol UserEventProcessorProtocol {

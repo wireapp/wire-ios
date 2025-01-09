@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process conversation rename events.
 
 protocol ConversationRenameEventProcessorProtocol {

@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process conversation protocol update events.
 
 protocol ConversationProtocolUpdateEventProcessorProtocol {

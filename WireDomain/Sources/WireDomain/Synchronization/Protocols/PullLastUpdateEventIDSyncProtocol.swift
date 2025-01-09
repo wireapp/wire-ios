@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-
-
 protocol PullLastUpdateEventIDSyncProtocol {
 
     func pull() async throws

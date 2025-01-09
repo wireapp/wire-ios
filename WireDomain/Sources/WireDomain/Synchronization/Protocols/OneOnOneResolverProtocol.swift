@@ -18,7 +18,6 @@
 
 import WireDataModel
 
-
 // sourcery: AutoMockable
 /// Resolves 1:1 conversations
 public protocol OneOnOneResolverProtocol {

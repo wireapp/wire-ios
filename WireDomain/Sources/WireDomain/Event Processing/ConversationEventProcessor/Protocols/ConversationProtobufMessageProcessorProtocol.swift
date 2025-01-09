@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireProtos
-import WireDataModel
 import WireAPI
-
-
-
+import WireDataModel
+import WireProtos
 
 // sourcery: AutoMockable
 /// A common processor for processing MLS / Proteus protobuf message.

@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process federation update events.
 
 protocol FederationEventProcessorProtocol {

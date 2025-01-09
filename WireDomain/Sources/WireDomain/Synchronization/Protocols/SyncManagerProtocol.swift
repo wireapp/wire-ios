@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-
-
 protocol SyncManagerProtocol {
 
     /// Pulls and stores all required objects for the database to be initially up-to-date.

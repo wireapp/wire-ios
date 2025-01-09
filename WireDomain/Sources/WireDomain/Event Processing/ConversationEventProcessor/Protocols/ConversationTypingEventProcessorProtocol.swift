@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process conversation typing events.
 
 protocol ConversationTypingEventProcessorProtocol {

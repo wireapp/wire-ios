@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process feature config update events.
 
 protocol FeatureConfigEventProcessorProtocol {

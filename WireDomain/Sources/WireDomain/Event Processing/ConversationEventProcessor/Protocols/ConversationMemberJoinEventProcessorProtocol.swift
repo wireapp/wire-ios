@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process conversation member join events.
 
 protocol ConversationMemberJoinEventProcessorProtocol {

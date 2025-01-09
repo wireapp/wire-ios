@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process federation delete events.
 
 protocol FederationDeleteEventProcessorProtocol {

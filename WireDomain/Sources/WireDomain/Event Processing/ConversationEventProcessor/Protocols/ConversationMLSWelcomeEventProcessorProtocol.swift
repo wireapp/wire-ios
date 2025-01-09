@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process conversation mls welcome events.
 
 protocol ConversationMLSWelcomeEventProcessorProtocol {

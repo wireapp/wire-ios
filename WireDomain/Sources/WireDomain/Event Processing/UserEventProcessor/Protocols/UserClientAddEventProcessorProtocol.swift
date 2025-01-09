@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process user client add events.
 
 protocol UserClientAddEventProcessorProtocol {

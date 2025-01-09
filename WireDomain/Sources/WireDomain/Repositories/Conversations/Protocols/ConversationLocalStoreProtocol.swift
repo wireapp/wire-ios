@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-//import WireLogging
 
 // sourcery: AutoMockable
 /// A local store dedicated to conversations.

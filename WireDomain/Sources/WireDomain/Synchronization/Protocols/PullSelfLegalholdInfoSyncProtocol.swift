@@ -18,9 +18,6 @@
 
 import Foundation
 
-
-
-
 protocol PullSelfLegalholdInfoSyncProtocol {
 
     func pull(selfTeamID: UUID) async throws

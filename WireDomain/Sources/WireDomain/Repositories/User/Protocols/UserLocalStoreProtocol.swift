@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import Foundation
-
-
+import WireDataModel
 
 // sourcery: AutoMockable
 /// A local store dedicated to user.

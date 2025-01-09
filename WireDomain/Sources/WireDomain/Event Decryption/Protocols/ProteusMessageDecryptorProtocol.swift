@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 // sourcery: AutoMockable
 /// Decrypt proteus messages.
 protocol ProteusMessageDecryptorProtocol {

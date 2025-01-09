@@ -18,9 +18,6 @@
 
 import WireDataModel
 
-
-
-
 // sourcery: AutoMockable
 public protocol SelfUserProviderProtocol {
 

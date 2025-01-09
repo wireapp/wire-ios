@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import Foundation
 import WireAPI
-
-
+import WireDataModel
 
 // sourcery: AutoMockable
 /// Facilitate access to users related domain objects.

@@ -18,9 +18,6 @@
 
 import WireAPI
 
-
-
-
 /// Process user legalhold enable events.
 
 protocol UserLegalholdEnableEventProcessorProtocol {
