@@ -19,7 +19,6 @@
 		018A3DBF2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */; };
 		018F17B92B83B70A00E0594D /* AVSConversationType+Conference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */; };
 		01A532512CCA218A005FD421 /* WireAnalyticsSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 01A532502CCA218A005FD421 /* WireAnalyticsSupport */; };
-		01D33D8129B8ED97009E94F3 /* SyncStatusLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */; };
 		01F0F8922CCA2B2C00FE4170 /* avs.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6C7296F0622001D7C88 /* avs.xcframework */; };
 		0601900B2678750D0043F8F8 /* DeepLinkURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161ACB3E23F6E4C200ABFF33 /* DeepLinkURLActionProcessorTests.swift */; };
 		060C06632B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06622B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift */; };
@@ -417,6 +416,7 @@
 		BF8367311C52651900364B37 /* store125.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BF8367301C52651900364B37 /* store125.wiredatabase */; };
 		BFCE9A5B1C4E4C4D00951B3D /* store124.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = BFCE9A581C4E4C4D00951B3D /* store124.wiredatabase */; };
 		BFE7FCBF2101E50700D1165F /* CompanyLoginVerificationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE7FCBE2101E50700D1165F /* CompanyLoginVerificationToken.swift */; };
+		C9A6B3BE2D3014CE0058D4A4 /* SyncTimeTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A6B3BD2D3014CE0058D4A4 /* SyncTimeTracker.swift */; };
 		CB4895532C4FB77C00CA2C25 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4895522C4FB77C00CA2C25 /* WireTesting.framework */; };
 		CBD35F2A2D09EBA50080DA37 /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = CBD35F292D09EBA50080DA37 /* WireCrypto */; };
 		CBD3AED02C4A742B007643A0 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD3AECF2C4A742B007643A0 /* TestSetup.swift */; };
@@ -660,7 +660,6 @@
 		018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCase.swift; sourceTree = "<group>"; };
 		018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCaseTests.swift; sourceTree = "<group>"; };
 		018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSConversationType+Conference.swift"; sourceTree = "<group>"; };
-		01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatusLog.swift; sourceTree = "<group>"; };
 		060C06622B73DB8800B484C6 /* SnoozeCertificateEnrollmentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeCertificateEnrollmentUseCase.swift; sourceTree = "<group>"; };
 		060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProvider.swift; sourceTree = "<group>"; };
 		06185A9F2CEBA632005D3CFE /* GetMLSFeatureUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMLSFeatureUseCase.swift; sourceTree = "<group>"; };
@@ -1112,6 +1111,7 @@
 		BFCE9A581C4E4C4D00951B3D /* store124.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = store124.wiredatabase; sourceTree = "<group>"; };
 		BFE7FCBE2101E50700D1165F /* CompanyLoginVerificationToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLoginVerificationToken.swift; sourceTree = "<group>"; };
 		C3BF3961360B7EB12679AF27 /* ZMOperationLoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMOperationLoopTests.swift; sourceTree = "<group>"; };
+		C9A6B3BD2D3014CE0058D4A4 /* SyncTimeTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncTimeTracker.swift; sourceTree = "<group>"; };
 		CB4895522C4FB77C00CA2C25 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79AC7B2C6DFAA2003CF5F4 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBD3AECF2C4A742B007643A0 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
@@ -2042,6 +2042,7 @@
 				E6C983EF2B986B2900D55177 /* ZMUserSession */,
 				EE38DDED280437E500D4983D /* BlacklistReason.swift */,
 				63C5321E27FDB283009DFFF4 /* SyncStatus.swift */,
+				C9A6B3BD2D3014CE0058D4A4 /* SyncTimeTracker.swift */,
 				063AFA3E264B30C400DCBCED /* BuildType.swift */,
 				F9AB00211F0CDAF00037B437 /* CacheFileRelocator.swift */,
 				EE51FBED2AE1305B002B503B /* UserSession.swift */,
@@ -2390,7 +2391,6 @@
 				EE2DE5EB29263C5100F42F4C /* Logger.swift */,
 				5E8EE1F920FDC7D700DB1F9B /* Pasteboard.swift */,
 				1634958A1F0254CB004E80DB /* ServerConnection.swift */,
-				01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */,
 				EE0CAEAE2AAF2E8E00BD2DB7 /* URLSession+MinTLSVersion.swift */,
 				E6E557992BBD4D9C0033E62B /* ZMReachability+ServerConnection.swift */,
 				E91180E02CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift */,
@@ -3276,7 +3276,6 @@
 				549815CE1A432BC700A7CE2E /* ZMBlacklistVerificator.m in Sources */,
 				16D9E8BA22BCD39200FA463F /* LegalHoldRequestStrategy.swift in Sources */,
 				164C29A71ED2D7B00026562A /* SearchResult.swift in Sources */,
-				01D33D8129B8ED97009E94F3 /* SyncStatusLog.swift in Sources */,
 				1660AA091ECCAC900056D403 /* SearchDirectory.swift in Sources */,
 				166E47D0255EBFA900C161C8 /* StrategyDirectory.swift in Sources */,
 				63EB9B2D258131F700B44635 /* AVSActiveSpeakerChange.swift in Sources */,
@@ -3387,6 +3386,7 @@
 				166D18A4230EBFFA001288CD /* MediaManager.swift in Sources */,
 				874F142D1C16FD9700C15118 /* Device.swift in Sources */,
 				F19E55A422B3A740005C792D /* PKPushPayload+SafeLogging.swift in Sources */,
+				C9A6B3BE2D3014CE0058D4A4 /* SyncTimeTracker.swift in Sources */,
 				EE1108F923D1F945005DC663 /* TypingUsersTimeout.swift in Sources */,
 				16C4BDA020A309CD00BCDB17 /* CallParticipantSnapshot.swift in Sources */,
 				1639A8272260CE5000868AB9 /* ZMLocalNotification+AvailabilityAlert.swift in Sources */,

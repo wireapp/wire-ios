@@ -37,8 +37,10 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public internal(set) var currentSyncPhase: SyncPhase = .done {
         didSet {
             if currentSyncPhase != oldValue {
-                log()
-                zmLog.debug("did change sync phase: \(currentSyncPhase)")
+                if currentSyncPhase != .done {
+                    let syncType = isSlowSyncing ? "slow sync" : "quick sync"
+                    WireLogger.sync.info("Started \(syncType) phase \(currentSyncPhase)", attributes: .safePublic)
+                }
                 notifySyncPhaseDidStart()
             }
         }
@@ -57,6 +59,8 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public internal(set) var pushChannelEstablishedDate: Date?
 
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
+    
+    private let syncTimeTracker = SyncTimeTracker()
 
     public var isSlowSyncing: Bool {
         !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
@@ -114,16 +118,18 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     public func determineInitialSyncPhase() {
         currentSyncPhase = hasPersistedLastEventID ? .fetchingMissedEvents : .fetchingLastUpdateEventID
+        syncTimeTracker.reset()
         notifySyncPhaseDidStart()
     }
 
     public func forceSlowSync() {
         // Refetch user settings.
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
+        syncTimeTracker.reset()
         // Reset the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        log("slow sync")
+        WireLogger.sync.info("slow sync", attributes: .safePublic)
         syncStateDelegate?.didStartSlowSync()
     }
 
@@ -135,8 +141,9 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         // in the notification queue.
         currentSyncPhase = hasPersistedLastEventID ? SyncPhase.fetchingLastUpdateEventID
             .nextPhase : .fetchingLastUpdateEventID
+        syncTimeTracker.reset()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        log("resyncResources")
+        WireLogger.sync.info("resyncResources", attributes: .safePublic)
         syncStateDelegate?.didStartSlowSync()
     }
 
@@ -163,9 +170,9 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public func forceQuickSync() {
         isForceQuickSync = true
         currentSyncPhase = .fetchingMissedEvents
-        log("quick sync")
+        syncTimeTracker.reset()
+        WireLogger.sync.info("quick sync", attributes: .safePublic)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
-
     }
 
 }
@@ -177,12 +184,17 @@ public extension SyncStatus {
     func finishCurrentSyncPhase(phase: SyncPhase) {
         precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase '\(currentSyncPhase)'!")
 
-        log("finished sync phase")
-
         if phase.isLastSlowSyncPhase {
             persistLastUpdateEventID()
             syncStateDelegate?.didFinishSlowSync()
         }
+        
+        let didCompleteSync = isSlowSyncing ? phase.isLastSlowSyncPhase : phase.isLastQuickSyncPhase
+        
+        logSyncTime(
+            for: phase,
+            completedAllPhases: didCompleteSync
+        )
 
         currentSyncPhase = phase.nextPhase
 
@@ -197,7 +209,6 @@ public extension SyncStatus {
                         "restarting quick sync since push channel was closed or open after request to fetch notifiations"
                     )
             } else {
-                WireLogger.sync.debug("sync complete")
                 notifyQuickSyncDidFinish()
                 isForceQuickSync = false
             }
@@ -211,6 +222,7 @@ public extension SyncStatus {
         WireLogger.sync.warn("failed sync phase: \(phase)")
 
         if currentSyncPhase == .fetchingMissedEvents {
+            syncTimeTracker.reset()
             lastEventIDRepository.storeLastEventID(nil)
             currentSyncPhase = .fetchingLastUpdateEventID
             needsToRestartQuickSync = false
@@ -257,8 +269,6 @@ public extension SyncStatus {
 
     @objc(completedFetchingNotificationStreamFetchBeganAt:)
     func completedFetchingNotificationStream(fetchBeganAt: Date?) {
-        WireLogger.sync
-            .debug("completedFetchingNotificationStream began at: \(fetchBeganAt?.description ?? "<unknown>")")
         if currentSyncPhase == .fetchingMissedEvents {
 
             // Only complete the .fetchingMissedEvents phase if the push channel was
@@ -302,22 +312,24 @@ public extension SyncStatus {
             currentSyncPhase = .fetchingMissedEvents
         }
     }
-
-    private func log(_ message: String? = nil) {
-        let info = SyncStatusLog(
-            phase: currentSyncPhase.description,
-            isSyncing: isSyncing,
-            pushChannelEstablishedDate: pushChannelEstablishedDate?.description,
-            message: message
-        )
-        do {
-            let data = try JSONEncoder().encode(info)
-            let jsonString = String(decoding: data, as: UTF8.self)
-            let message = "SYNC_STATUS: \(jsonString)"
+    
+    private func logSyncTime(
+        for phase: SyncPhase,
+        completedAllPhases: Bool
+    ) {
+        let syncType = isSlowSyncing ? "slow sync" : "quick sync"
+        let currentTime = Date.now
+        let duration = currentTime.timeIntervalSince(syncTimeTracker.phaseStartTime)
+        let message = "Completed \(syncType) phase \(phase) in \(duration)"
+        WireLogger.sync.info(message, attributes: .safePublic)
+        
+        syncTimeTracker.addPhaseDuration(duration)
+        syncTimeTracker.resetStartTime() // reset for next sync phase
+        
+        if completedAllPhases {
+            let message = "Completed \(syncType) in \(syncTimeTracker.totalSyncDuration())"
             WireLogger.sync.info(message, attributes: .safePublic)
-        } catch {
-            let message = "SYNC_STATUS: \(description)"
-            WireLogger.sync.error(message, attributes: .safePublic)
+            syncTimeTracker.reset() // Sync is completed and logged, resetting tracked time values
         }
     }
 }

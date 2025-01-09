@@ -41,9 +41,14 @@ public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
     case done
 
     static let lastSlowSyncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
+    static let lastQuickSyncPhase: SyncPhase = .fetchingMissedEvents
 
     public var isLastSlowSyncPhase: Bool {
         self == Self.lastSlowSyncPhase
+    }
+    
+    public var isLastQuickSyncPhase: Bool {
+        self == Self.lastQuickSyncPhase
     }
 
     public var isSyncing: Bool {

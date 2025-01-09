@@ -40,10 +40,30 @@ protocol SyncManagerProtocol {
 }
 
 final class SyncManager: SyncManagerProtocol {
-
+    
     enum Failure: Error {
         case failedToPerformSlowSync(Error)
     }
+    
+    // MARK: - Logs
+    
+    private enum SyncPhaseName: String {
+        case pullingLastUpdateEventID
+        case pullingSelfTeam
+        case pullingSelfTeamRoles
+        case pullingSelfTeamMembers
+        case pullingConnections
+        case pullingKnownUsers
+        case pullingSelfUser
+        case pullingSelfLegalholdInfo
+        case pullingConversationLabels
+        case pullingFeatureConfigs
+        case pullingMLSBackendStatus
+        case pushingSupportedProtocols
+        case resolvingOneOnOneConversations
+        case pullPendingEvents // quick sync
+    }
+
 
     // MARK: - Properties
 
@@ -63,6 +83,7 @@ final class SyncManager: SyncManagerProtocol {
     private let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
     private let mlsProvider: MLSProvider
     private let context: NSManagedObjectContext
+    private let syncTimeTracker = SyncTimeTracker()
 
     // MARK: - Update event processor
 
@@ -100,21 +121,36 @@ final class SyncManager: SyncManagerProtocol {
 
     func performSlowSync() async throws {
         do {
+            syncTimeTracker.reset()
             try await updateEventsRepository.pullLastEventID()
+            logSyncTime(for: .pullingLastUpdateEventID)
             try await teamRepository.pullSelfTeam()
+            logSyncTime(for: .pullingSelfTeam)
             try await teamRepository.pullSelfTeamRoles()
+            logSyncTime(for: .pullingSelfTeamRoles)
             try await teamRepository.pullSelfTeamMembers()
+            logSyncTime(for: .pullingSelfTeamMembers)
             try await connectionsRepository.pullConnections()
+            logSyncTime(for: .pullingConnections)
             try await conversationsRepository.pullConversations()
+            logSyncTime(for: .pullingConnections)
             try await userRepository.pullKnownUsers()
+            logSyncTime(for: .pullingKnownUsers)
             try await userRepository.pullSelfUser()
+            logSyncTime(for: .pullingSelfUser)
             try await teamRepository.pullSelfLegalholdInfo()
+            logSyncTime(for: .pullingSelfLegalholdInfo)
             try await conversationLabelsRepository.pullConversationLabels()
+            logSyncTime(for: .pullingConversationLabels)
             try await featureConfigsRepository.pullFeatureConfigs()
+            logSyncTime(for: .pullingFeatureConfigs)
             await backendConfigRepository.pullMLSBackendStatus()
+            logSyncTime(for: .pullingMLSBackendStatus)
             try await pushSupportedProtocolsUseCase.invoke()
+            logSyncTime(for: .pushingSupportedProtocols)
             let oneOnOneResolver = makeOneOnOneResolver()
             try await oneOnOneResolver.resolveAllOneOnOneConversations()
+            logSyncTime(for: .resolvingOneOnOneConversations, completedAllPhases: true)
         } catch {
             throw Failure.failedToPerformSlowSync(error)
         }
@@ -146,7 +182,16 @@ final class SyncManager: SyncManagerProtocol {
 
         do {
             syncState = .quickSync(quickSyncTask)
+            
+            syncTimeTracker.reset()
+            
             try await quickSyncTask.value
+            
+            logSyncTime(
+                for: .pullPendingEvents,
+                completedAllPhases: true
+            )
+            
         } catch {
             try await suspend()
             throw error
@@ -247,6 +292,26 @@ final class SyncManager: SyncManagerProtocol {
             }
 
             try await updateEventsRepository.deleteNextPendingEvents(limit: batchSize)
+        }
+    }
+    
+    private func logSyncTime(
+        for phase: SyncPhaseName,
+        completedAllPhases: Bool = false
+    ) {
+        let syncType = phase != .pullPendingEvents ? "slow sync" : "quick sync"
+        let currentTime = Date.now
+        let duration = currentTime.timeIntervalSince(syncTimeTracker.phaseStartTime)
+        let message = "Completed \(syncType) phase \(phase) in \(duration)"
+        WireLogger.sync.info(message, attributes: .safePublic)
+        
+        syncTimeTracker.addPhaseDuration(duration)
+        syncTimeTracker.resetStartTime() // reset for next sync phase
+        
+        if completedAllPhases {
+            let message = "Completed \(syncType) in \(syncTimeTracker.totalSyncDuration())"
+            WireLogger.sync.info(message, attributes: .safePublic)
+            syncTimeTracker.reset() // Sync is completed and logged, resetting tracked time values
         }
     }
 

@@ -940,7 +940,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didFinishQuickSync() {
-        WireLogger.sync.debug("did finish quick sync")
         processEvents()
 
         NotificationInContext(
