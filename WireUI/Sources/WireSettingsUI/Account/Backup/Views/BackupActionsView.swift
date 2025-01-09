@@ -37,7 +37,7 @@ public struct BackupActionsView: View {
                     isBackupSheetPresented.toggle()
                 }, label: {
                     HStack {
-                        Text(L10n.ExportBackup.title)
+                        Text(L10n.Settings.ExportBackup.action)
                             .font(.textStyle(.body2))
                             .foregroundStyle(Color.primaryText)
                         Spacer()
