@@ -36,13 +36,19 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
 
     // MARK: - Get last update event
 
-    func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope {
-        var path = "\(pathPrefix)\(basePath)/last"
+    func getLastUpdateEvent(selfClientID: String?) async throws -> UpdateEventEnvelope {
+        let path = "\(pathPrefix)\(basePath)/last"
 
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .withQueryItem(name: "client", value: selfClientID)
-            .build()
+        var requestBuilder = try URLRequestBuilder(path: path).withMethod(.get)
+
+        if let selfClientID {
+            requestBuilder = requestBuilder.withQueryItem(
+                name: "client",
+                value: selfClientID
+            )
+        }
+
+        let request = requestBuilder.build()
 
         let (data, response) = try await apiService.executeRequest(
             request,
@@ -59,19 +65,25 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
     // MARK: - Get events since
 
     func getUpdateEvents(
-        selfClientID: String,
+        selfClientID: String?,
         sinceEventID: UUID
     ) -> PayloadPager<UpdateEventEnvelope> {
         let resourcePath = "\(pathPrefix)\(basePath)"
 
         return PayloadPager(start: sinceEventID.transportString()) { nextSince in
-
-            let request = try URLRequestBuilder(path: resourcePath)
+            var requestBuilder = try URLRequestBuilder(path: resourcePath)
                 .withMethod(.get)
-                .withQueryItem(name: "client", value: selfClientID)
                 .withQueryItem(name: "since", value: nextSince)
                 .withQueryItem(name: "size", value: "500")
-                .build()
+
+            if let selfClientID {
+                requestBuilder = requestBuilder.withQueryItem(
+                    name: "client",
+                    value: selfClientID
+                )
+            }
+
+            let request = requestBuilder.build()
 
             let (data, response) = try await self.apiService.executeRequest(
                 request,
