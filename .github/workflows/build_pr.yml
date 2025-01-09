@@ -2,8 +2,8 @@ name: Build for PR
 
 on:
   pull_request:
-    types: [ opened, synchronize, edited, ready_for_review ]
-    branches: [ 'develop' ]
+    types: [opened, reopened, synchronize, ready_for_review]
+    branches: [develop]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,14 +14,7 @@ permissions:
 
 jobs:
   build_develop:
-    if: >
-      github.event.action != 'edited' || (
-        github.event.changes.title == null &&
-        github.event.changes.body == null &&
-        github.event.changes.assignees == null &&
-        github.event.changes.reviewers == null &&
-        github.event.changes.labels == null
-      ) && github.event.pull_request.draft == false
+    if: ${{ github.event.pull_request.draft != true }}
     uses: ./.github/workflows/_reusable_app_release_without_changelog.yml
     with:
       countly_enabled: false
@@ -30,4 +23,3 @@ jobs:
       is_cloud_build: true
       pr_s3_path: "PR-${{ github.event.pull_request.number }}"
     secrets: inherit
-
