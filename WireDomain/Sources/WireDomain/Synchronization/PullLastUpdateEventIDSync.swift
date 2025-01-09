@@ -31,12 +31,12 @@ protocol PullLastUpdateEventIDSyncProtocol {
 
 struct PullLastUpdateEventIDSync: PullLastUpdateEventIDSyncProtocol {
 
-    private let selfClientID: String
+    private let selfClientID: String?
     private let api: any UpdateEventsAPI
     private let store: any UpdateEventsLocalStoreProtocol
 
     init(
-        selfClientID: String,
+        selfClientID: String?,
         api: any UpdateEventsAPI,
         store: any UpdateEventsLocalStoreProtocol
     ) {
