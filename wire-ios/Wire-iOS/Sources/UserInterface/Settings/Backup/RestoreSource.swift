@@ -43,9 +43,8 @@ struct RestoreSource: RestoreSourceProtocol {
         SessionManager.shared?.restoreFromBackup(
             at: location,
             password: password,
-            completion: { result in
-            print(result)
-        })
+            completion: completion
+        )
     }
 
 }

@@ -5130,6 +5130,14 @@ internal enum L10n {
         }
       }
     }
+    internal enum RestoreFromBackup {
+      internal enum SuccessAlert {
+        /// Your history is restored.
+        internal static let description = L10n.tr("Localizable", "restoreFromBackup.successAlert.description", fallback: "Your history is restored.")
+        /// Success
+        internal static let title = L10n.tr("Localizable", "restoreFromBackup.successAlert.title", fallback: "Success")
+      }
+    }
     internal enum RestoreBackup {
       internal enum Confirmation {
         /// Cancel

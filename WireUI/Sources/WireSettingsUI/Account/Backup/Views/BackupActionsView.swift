@@ -88,7 +88,10 @@ public struct BackupActionsView: View {
                     NavigationStack {
                         RestoreBackupView { password in
                             if let fileURL = selectedFileURL {
-                                viewModel.restoreFromBackup(at: fileURL, password: password, completion: {_ in })
+                                viewModel.restoreFromBackup(
+                                    at: fileURL,
+                                    password: password,
+                                    completion: { _ in })
 //                                try? viewModel.restoreBackup(
 //                                    at: fileURL,
 //                                    password: password

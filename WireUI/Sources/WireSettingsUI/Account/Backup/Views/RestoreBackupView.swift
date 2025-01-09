@@ -24,7 +24,6 @@ import WireReusableUIComponents
 struct RestoreBackupView: View {
     @Environment(\.dismiss) private var dismiss
     private let importBackup: (String) -> Void
-    //private let importBackup1: (String) -> Void
 
     public init(
         importBackup: @escaping (String) -> Void

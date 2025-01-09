@@ -389,7 +389,7 @@ extension SettingsCellDescriptorFactory {
                             onFailure: presentAlert
                         ),
                         restoreBackupResultHandler: RestoreBackupResultHandler(
-                            onSuccess: { _ in },
+                            onSuccess: presentOnSuccessAlert,
                             onConfirmation: presentConfirmationAlert,
                             onFailure: presentAlert
                         ),
@@ -524,5 +524,22 @@ extension SettingsCellDescriptorFactory {
         controller.present(alert, animated: true)
     }
 
+    private func presentOnSuccessAlert() {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: L10n.Localizable.RestoreFromBackup.SuccessAlert.title,
+            message: L10n.Localizable.RestoreFromBackup.SuccessAlert.description,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
+        controller.present(alert, animated: true)
+    }
 
 }

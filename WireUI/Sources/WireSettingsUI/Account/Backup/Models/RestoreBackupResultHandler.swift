@@ -17,12 +17,12 @@
 //
 
 public struct RestoreBackupResultHandler {
-    let onSuccess: (@escaping () -> Void) -> Void
+    let onSuccess: () -> Void
     let onConfirmation: (@escaping () -> Void) -> Void
     let onFailure: (any Error) -> Void
 
     public init(
-        onSuccess: @escaping (@escaping () -> Void) -> Void,
+        onSuccess: @escaping () -> Void,
         onConfirmation: @escaping (@escaping () -> Void) -> Void,
         onFailure: @escaping (any Error) -> Void
     ) {

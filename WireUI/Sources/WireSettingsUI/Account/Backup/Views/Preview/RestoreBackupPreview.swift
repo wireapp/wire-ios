@@ -33,7 +33,7 @@ struct RestoreBackupPreview: View {
         .sheet(isPresented: $isPresented) {
             NavigationStack {
                 RestoreBackupView(
-                    importBackup:  { _ in }
+                    importBackup: { _ in }
                 )
             }
             .presentationDragIndicator(.visible)

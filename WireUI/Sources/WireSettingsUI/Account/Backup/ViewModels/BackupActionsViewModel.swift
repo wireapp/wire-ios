@@ -53,22 +53,31 @@ public final class BackupActionsViewModel: ObservableObject {
     func restoreBackup(at url: URL, password: String) throws {
         do {
             try restoreSource.restoreFromBackup(at: url, password: password)
-            print("all good")
+            restoreBackupResultHandler.onSuccess()
         } catch let error as RestoreBackupError {
             switch error {
             case .decryptionError:
-                print("decryptionError")
+                return
             case let .generic(error):
-                print("generic")
+                restoreBackupResultHandler.onFailure(error)
             }
         }
     }
 
-    func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, any Error>) -> Void) {
-        restoreSource.restoreFromBackup(at: location, password: password) { result in
-            print("AAAA: \(result)")
+    func restoreFromBackup(
+        at location: URL,
+        password: String,
+        completion: @escaping (Result<Void, any Error>) -> Void) {
+            restoreSource.restoreFromBackup(at: location, password: password) { result in
+                switch result {
+                case .success:
+                    self.restoreBackupResultHandler.onSuccess()
+                case let .failure(error):
+                    self.restoreBackupResultHandler.onFailure(error)
+                }
+                completion(result)
+            }
         }
-    }
 
     func confirmBackupRestore(completion: @escaping () -> Void) {
         restoreBackupResultHandler.onConfirmation {
