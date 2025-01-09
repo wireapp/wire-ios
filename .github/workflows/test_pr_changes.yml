@@ -27,7 +27,7 @@ jobs:
         if: ${{ github.event_name == 'merge_group' }}
         with:
           lfs: 'false' # as long as we use lfs only for snapshotTesting it should not be useful here
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
