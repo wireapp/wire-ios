@@ -46,20 +46,20 @@ public final class BackupActionsViewModel: ObservableObject {
                 self?.backupSource.clearPreviousBackups()
             }
         } catch {
-            backupResultHandler.onFailure(error)
+            backupResultHandler.onFailure()
         }
     }
 
     func restoreBackup(at url: URL, password: String) throws {
         do {
             try restoreSource.restoreFromBackup(at: url, password: password)
-            restoreBackupResultHandler.onSuccess()
+            //restoreBackupResultHandler.onSuccess()
         } catch let error as RestoreBackupError {
             switch error {
             case .decryptionError:
                 return
-            case let .generic(error):
-                restoreBackupResultHandler.onFailure(error)
+            case .generic:
+                restoreBackupResultHandler.onFailure()
             }
         }
     }
@@ -72,8 +72,8 @@ public final class BackupActionsViewModel: ObservableObject {
                 switch result {
                 case .success:
                     self.restoreBackupResultHandler.onSuccess()
-                case let .failure(error):
-                    self.restoreBackupResultHandler.onFailure(error)
+                case .failure:
+                    self.restoreBackupResultHandler.onFailure()
                 }
                 completion(result)
             }

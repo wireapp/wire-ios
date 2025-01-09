@@ -20,11 +20,11 @@ import Foundation
 
 public struct BackupResultHandler {
     let onSuccess: (URL, @escaping () -> Void) -> Void
-    let onFailure: (any Error) -> Void
+    let onFailure: () -> Void
 
     public init(
         onSuccess: @escaping (URL, @escaping () -> Void) -> Void,
-        onFailure: @escaping (any Error) -> Void
+        onFailure: @escaping () -> Void
     ) {
         self.onSuccess = onSuccess
         self.onFailure = onFailure

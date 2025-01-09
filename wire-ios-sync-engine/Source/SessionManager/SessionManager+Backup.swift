@@ -123,10 +123,11 @@ extension SessionManager {
 //        }
 
         guard let account = activeUserSession?.account,
-              let userId = activeUserSession?.userId else {
+              let userId = activeUserSession?.userId,
+              let clientId = activeUserSession?.selfUserClient?.remoteIdentifier
+        else {
             return completion(.failure(BackupError.notAuthenticated))
         }
-
 
         // Verify the imported file has the correct file extension.
         guard BackupFileExtensions.allCases.contains(where: {
@@ -179,27 +180,28 @@ extension SessionManager {
             //            ) { result in
             //                completion(result.map { _ in })
             //            }
-            self.delegate?.sessionManagerWillMigrateAccount { [weak self] in
-                guard let self else {
-                    return complete(.failure(NSError(
-                        userSessionErrorCode: .unknownError,
-                        userInfo: ["reason": "SessionManager.self is `nil` during session migration"]
-                    )))
-                }
+            let sharedContainerURL = sharedContainerURL
+            let dispatchGroup = dispatchGroup
+            delegate?.sessionManagerWillMigrateAccount { [weak self] in
+                self?.tearDownBackgroundSession(for: account.userIdentifier) {
+                    self?.activeUserSession = nil
+                    CoreDataStack.importLocalStorage(
+                        accountIdentifier: userId,
+                        from: url,
+                        applicationContainer: sharedContainerURL,
+                        dispatchGroup: dispatchGroup
+                    ) { result in
 
-                CoreDataStack.importLocalStorage(
-                    accountIdentifier: userId,
-                    from: url,
-                    applicationContainer: self.sharedContainerURL,
-                    dispatchGroup: self.dispatchGroup
-                ) { result in
-                    switch result {
-                    case .success:
-                        self.activateSession(for: account) { sessionResult in
-                            complete(.success(()))
+                        switch result {
+                        case .success:
+                            self?.activateSession(for: account) { session in
+                                session.managedObjectContext.setPersistentStoreMetadata(clientId, key: ZMPersistedClientIdKey)
+                                session.managedObjectContext.saveOrRollback()
+                            }
+                        case .failure(let error):
+                            WireLogger.apiMigration.error("failed to migrate account: \(error)")
+                            //complete(.failure(error))
                         }
-                    case .failure(let error):
-                        complete(.failure(error))
                     }
                 }
             }
@@ -245,7 +247,6 @@ extension SessionManager {
         guard decryptedURL.unzip(to: url) else {
             throw BackupError.compressionError
         }
-        print("Account111: \(account)")
         self.delegate?.sessionManagerWillMigrateAccount { [weak self] in
             try? CoreDataStack.importLocalStorage(
                 accountIdentifier: userId,
@@ -253,7 +254,6 @@ extension SessionManager {
                 applicationContainer: self!.sharedContainerURL,
                 dispatchGroup: self!.dispatchGroup
             )
-            print("Account222: \(account)")
             self?.activateSession(for: account) { session in
             }
         }

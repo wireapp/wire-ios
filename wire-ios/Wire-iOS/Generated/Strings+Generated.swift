@@ -3285,6 +3285,12 @@ internal enum L10n {
         internal static let verificationCodeTooMany = L10n.tr("Localizable", "error.user.verification_code_too_many", fallback: "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.")
       }
     }
+    internal enum ExportBackup {
+      internal enum Failed {
+        /// The backup could not be created. Please try again or contact Wire support.
+        internal static let message = L10n.tr("Localizable", "export_backup.failed.message", fallback: "The backup could not be created. Please try again or contact Wire support.")
+      }
+    }
     internal enum FailedToGetCertificate {
       internal enum Alert {
         /// Please try again, or reach out to your team admin.
@@ -5130,14 +5136,6 @@ internal enum L10n {
         }
       }
     }
-    internal enum RestoreFromBackup {
-      internal enum SuccessAlert {
-        /// Your history is restored.
-        internal static let description = L10n.tr("Localizable", "restoreFromBackup.successAlert.description", fallback: "Your history is restored.")
-        /// Success
-        internal static let title = L10n.tr("Localizable", "restoreFromBackup.successAlert.title", fallback: "Success")
-      }
-    }
     internal enum RestoreBackup {
       internal enum Confirmation {
         /// Cancel
@@ -5148,6 +5146,16 @@ internal enum L10n {
         internal static let overrideButton = L10n.tr("Localizable", "restore_backup.confirmation.override_button", fallback: "Override")
         /// Backup file will overwrite your history
         internal static let title = L10n.tr("Localizable", "restore_backup.confirmation.title", fallback: "Backup file will overwrite your history")
+      }
+      internal enum Failed {
+        /// The backup could not be restored. Please try again or contact Wire support.
+        internal static let message = L10n.tr("Localizable", "restore_backup.failed.message", fallback: "The backup could not be restored. Please try again or contact Wire support.")
+      }
+      internal enum SuccessAlert {
+        /// Your history is restored.
+        internal static let description = L10n.tr("Localizable", "restore_backup.successAlert.description", fallback: "Your history is restored.")
+        /// Success
+        internal static let title = L10n.tr("Localizable", "restore_backup.successAlert.title", fallback: "Success")
       }
     }
     internal enum RevokedCertificate {

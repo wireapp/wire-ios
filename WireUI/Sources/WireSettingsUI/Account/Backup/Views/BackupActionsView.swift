@@ -92,10 +92,6 @@ public struct BackupActionsView: View {
                                     at: fileURL,
                                     password: password,
                                     completion: { _ in })
-//                                try? viewModel.restoreBackup(
-//                                    at: fileURL,
-//                                    password: password
-//                                )
                             }
                         }
                     }

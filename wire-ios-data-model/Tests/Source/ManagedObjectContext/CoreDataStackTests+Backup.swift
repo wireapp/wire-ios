@@ -260,7 +260,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         XCTAssertEqual(try directory.viewContext.count(for: fetchConversations), 1)
     }
 
-    func testThatMetadataIsDeletedWhenImportingBackup() throws {
+    func testThatMetadataIsDeletedWhenImportingBackup() throws {//
         // given
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)

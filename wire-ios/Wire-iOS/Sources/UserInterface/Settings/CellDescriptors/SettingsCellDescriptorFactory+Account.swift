@@ -386,12 +386,12 @@ extension SettingsCellDescriptorFactory {
                         restoreSource: RestoreSource(),
                         backupResultHandler: BackupResultHandler(
                             onSuccess: presentShareSheet,
-                            onFailure: presentAlert
+                            onFailure: presentExportBackupErrorAlert
                         ),
                         restoreBackupResultHandler: RestoreBackupResultHandler(
                             onSuccess: presentOnSuccessAlert,
                             onConfirmation: presentConfirmationAlert,
-                            onFailure: presentAlert
+                            onFailure: presentRestoreBackupErrorAlert
                         ),
                         passwordValidator: BackupPasswordValidator()
                     )
@@ -470,14 +470,14 @@ extension SettingsCellDescriptorFactory {
 
 extension SettingsCellDescriptorFactory {
 
-    private func presentAlert(for error: Error) {
+    private func presentErrorAlert(errorMessage: String) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
 
         let alert = UIAlertController(
-            title: L10n.Localizable.Self.Settings.HistoryBackup.Error.title,
-            message: error.localizedDescription,
+            title: L10n.Localizable.General.failure,
+            message: errorMessage,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(
@@ -486,6 +486,14 @@ extension SettingsCellDescriptorFactory {
         ))
 
         controller.present(alert, animated: true)
+    }
+
+    private func presentExportBackupErrorAlert() {
+        presentErrorAlert(errorMessage: L10n.Localizable.ExportBackup.Failed.message)
+    }
+
+    private func presentRestoreBackupErrorAlert() {
+        presentErrorAlert(errorMessage: L10n.Localizable.RestoreBackup.Failed.message)
     }
 
     private func presentShareSheet(with url: URL, completion: @escaping Completion) {
@@ -530,8 +538,8 @@ extension SettingsCellDescriptorFactory {
         }
 
         let alert = UIAlertController(
-            title: L10n.Localizable.RestoreFromBackup.SuccessAlert.title,
-            message: L10n.Localizable.RestoreFromBackup.SuccessAlert.description,
+            title: L10n.Localizable.RestoreBackup.SuccessAlert.title,
+            message: L10n.Localizable.RestoreBackup.SuccessAlert.description,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(
