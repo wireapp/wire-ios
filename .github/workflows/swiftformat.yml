@@ -3,8 +3,6 @@ name: SwiftFormat
 on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
-  merge_group:
-    types: [checks_requested]
 
 # This is what will cancel the workflow
 concurrency:
