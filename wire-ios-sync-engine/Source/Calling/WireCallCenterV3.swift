@@ -1005,8 +1005,6 @@ extension WireCallCenterV3 {
     /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it
     /// to the `bufferedEvents`.
     /// - parameter callEvent: calling event to process.
-    /// - parameter completionHandler: called after the call event has been processed (this will for example wait for
-    /// AVS to signal that it's ready).
     func processCallEvent(_ callEvent: CallEvent) {
         Self.logger.info("process call event")
         if isReady {
