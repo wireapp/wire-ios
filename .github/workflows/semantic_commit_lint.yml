@@ -62,7 +62,7 @@ jobs:
             contains a ticket with "- WPB-XXX" or "- no ticket" for urgent cases.
 
       - name: Checkout
-        if: ${{ success() || failure() }}
+        if: always()
         uses: actions/checkout@v4
 
       - name: Add Failure Label
