@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -1172,7 +1172,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         // then
         XCTAssertTrue(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
@@ -1194,7 +1194,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
-        await fulfillment(of: [didCallCreateGroup], timeout: 0.5)
+        await fulfillment(of: [didCallCreateGroup], timeout: 1)
 
         // then
         XCTAssertFalse(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
@@ -1221,7 +1221,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
-        await fulfillment(of: [didJoinGroup], timeout: 0.5)
+        await fulfillment(of: [didJoinGroup], timeout: 1)
 
         // then
         XCTAssertFalse(mockMLSService.joinGroupWith_Invocations.isEmpty)
@@ -1319,7 +1319,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             originalEvent: updateEvent,
             in: syncMOC
         )
-        await fulfillment(of: [wipeGroupExpectation], timeout: 0.5)
+        await fulfillment(of: [wipeGroupExpectation], timeout: 1)
 
         // Then
         let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations

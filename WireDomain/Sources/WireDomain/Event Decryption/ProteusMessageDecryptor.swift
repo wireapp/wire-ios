@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ protocol ProteusMessageDecryptorProtocol {
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
     let proteusService: any ProteusServiceInterface
-    let managedObjectContext: NSManagedObjectContext
+    let userClientsLocalStore: any UserClientsLocalStoreProtocol
+    let userRepository: any UserRepositoryProtocol
 
     typealias Context = (
         selfClient: WireDataModel.UserClient,
@@ -47,14 +48,24 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         proteusSessionID: ProteusSessionID
     )
 
+    private let maxCiphertextSize = Int(12_000 * 1.5)
+
+    init(
+        proteusService: any ProteusServiceInterface,
+        userClientsLocalStore: any UserClientsLocalStoreProtocol,
+        userRepository: any UserRepositoryProtocol
+    ) {
+        self.proteusService = proteusService
+        self.userClientsLocalStore = userClientsLocalStore
+        self.userRepository = userRepository
+    }
+
     func decryptedEventData(
         from eventData: ConversationProteusMessageAddEvent
     ) async throws -> ConversationProteusMessageAddEvent {
         // Only decrypt ciphertext, return plaintext unchanged.
-        guard case let .ciphertext(ciphertext) = eventData.message else {
-            return eventData
-        }
 
+        let ciphertext = eventData.message.encryptedMessage
         let ciphertextData = try validateCiphertext(ciphertext)
         let context = try await extractContext(from: eventData)
 
@@ -64,14 +75,15 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         )
 
         if didCreateSession {
-            await managedObjectContext.perform {
-                context.selfClient.decrementNumberOfRemainingProteusKeys()
-                context.selfClient.updateSecurityLevelAfterDiscovering([context.senderClient])
-            }
+            await userClientsLocalStore.clientSessionCreated(
+                selfClient: context.selfClient,
+                newClient: context.senderClient
+            )
         }
 
         var decryptedEvent = eventData
-        decryptedEvent.message = .plaintext(plaintextData.base64String())
+        decryptedEvent.message.decryptedMessage = plaintextData.base64String()
+
         return decryptedEvent
     }
 
@@ -90,36 +102,40 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     private func extractContext(
         from eventData: ConversationProteusMessageAddEvent
     ) async throws -> Context {
-        try await managedObjectContext.perform { [managedObjectContext] in
-            guard let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient() else {
-                throw ProteusMessageDecryptorError.selfClientNotFound
-            }
-
-            let senderUser = ZMUser.fetchOrCreate(
-                with: eventData.senderID.uuid,
-                domain: eventData.senderID.domain,
-                in: managedObjectContext
-            )
-
-            guard let senderClient = UserClient.fetchUserClient(
-                withRemoteId: eventData.messageSenderClientID,
-                forUser: senderUser,
-                createIfNeeded: true
-            ) else {
-                throw ProteusMessageDecryptorError.selfClientNotFound
-            }
-
-            if senderClient.isInserted {
-                senderClient.discoveryDate = eventData.timestamp
-                selfClient.addNewClientToIgnored(senderClient)
-            }
-
-            guard let proteusSessionID = senderClient.proteusSessionID else {
-                throw ProteusMessageDecryptorError.proteusSessionIDNotFound
-            }
-
-            return (selfClient, senderUser, senderClient, proteusSessionID)
+        guard let selfClient = await userClientsLocalStore.fetchSelfClient() else {
+            throw ProteusMessageDecryptorError.selfClientNotFound
         }
+
+        let senderUser = await userRepository.fetchOrCreateUser(
+            id: eventData.senderID.uuid,
+            domain: eventData.senderID.domain
+        )
+
+        guard let senderClient = await userClientsLocalStore.fetchClient(
+            id: eventData.messageSenderClientID,
+            forUser: senderUser,
+            createIfNeeded: true
+        ) else {
+            throw ProteusMessageDecryptorError.selfClientNotFound
+        }
+
+        await userClientsLocalStore.storeClient(
+            discoveryDate: eventData.timestamp,
+            client: senderClient
+        )
+
+        await userClientsLocalStore.addNewClientToIgnored(
+            selfClient: selfClient,
+            newClient: senderClient
+        )
+
+        guard let proteusSessionID = await userClientsLocalStore.proteusSessionID(
+            for: senderClient
+        ) else {
+            throw ProteusMessageDecryptorError.proteusSessionIDNotFound
+        }
+
+        return (selfClient, senderUser, senderClient, proteusSessionID)
     }
 
 }

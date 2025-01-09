@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireAnalytics
 import WireDataModel
 
 /// An abstraction of the user session for use in the presentation
@@ -79,6 +80,10 @@ public protocol UserSession: AnyObject {
     /// Whether the user needs to be informed about configuration changes.
 
     var needsToNotifyUserOfAppLockConfiguration: Bool { get set }
+
+    /// This property will be set or cleared depending on the user giving or removing consent for analytics tracking.
+
+    var analyticsEventTracker: AnalyticsEventTracker? { get }
 
     /// Unlocks the database.
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ public struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     private let connectionsAPI: any ConnectionsAPI
     private let connectionsLocalStore: any ConnectionsLocalStoreProtocol
 
+    private let pullUserConnectionsSync: PullUserConnectionsSync
+
     // MARK: - Object lifecycle
 
     init(
@@ -57,6 +59,10 @@ public struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     ) {
         self.connectionsAPI = connectionsAPI
         self.connectionsLocalStore = connectionsLocalStore
+        self.pullUserConnectionsSync = PullUserConnectionsSync(
+            api: connectionsAPI,
+            store: connectionsLocalStore
+        )
     }
 
     // MARK: - Public
@@ -64,17 +70,7 @@ public struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     /// Retrieve from backend and store connections locally
 
     public func pullConnections() async throws {
-        let connectionsPager = try await connectionsAPI.getConnections()
-
-        for try await connections in connectionsPager {
-            await withThrowingTaskGroup(of: Void.self) { taskGroup in
-                for connection in connections {
-                    taskGroup.addTask {
-                        try await connectionsLocalStore.storeConnection(connection.toDomainModel())
-                    }
-                }
-            }
-        }
+        try await pullUserConnectionsSync.pull()
     }
 
     public func updateConnection(

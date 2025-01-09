@@ -24,7 +24,7 @@ jobs:
         github.event.changes.reviewers == null &&
         github.event.changes.labels == null
       ) && github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Set job outputs to values from filter step
     outputs:
       folders: ${{ steps.filter.outputs.changes }}
@@ -99,4 +99,5 @@ jobs:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
       branch: ${{ github.head_ref }}
       notify_secret: WIRE_IOS_CI_WEBHOOK
+      test_dependencies: ${{ github.event_name != 'pull_request' }}
     secrets: inherit

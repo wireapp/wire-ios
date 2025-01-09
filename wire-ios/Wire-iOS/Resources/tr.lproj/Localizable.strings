@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Daha fazla bilgi";
 "peoplepicker.no_matching_results.action.manage_services" = "Hizmetleri yönet";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Sonuç yok.";
 "peoplepicker.no_matching_results.message.users" = "Wire'daki insanları isim veya @kullanıcıadı'na göre bulun";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Herkes burada.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "2 hafta için kullanılabilir. Süresi dolduğunda yenisini gönderebilirsiniz.";
 "peoplepicker.send_invitation.dialog.ok" = "TAMAM";
 
-"peoplepicker.invite_more_people" = "Daha fazla kişi davet et";
 "peoplepicker.invite_team_members" = "İnsanları takıma katılmaya davet edin";
 "peoplepicker.quick-action.open-conversation" = "Aç";
 "peoplepicker.quick-action.admin-services" = "Hizmetleri yönet";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Ayrıntıları Düzenle";
 
 "registration.country_select.title" = "Ülke";
-
-"registration.share_contacts.hero.title" = "Wire'da yeni insanlar keşfedin";
-"registration.share_contacts.hero.paragraph" = "Kişilerinizi paylaşın ki sizi başkalarına bağlayabilelim. Tüm bilgilerinizi gizler ve kimseyle paylaşmayız.";
-"registration.share_contacts.find_friends_button.title" = "Kişileri paylaş";
-"registration.share_contacts.skip_button.title" = "Şimdi değil";
-
-"registration.address_book_access_denied.hero.title" = "Wire'ın kişilerinize erişimi yoktur.";
-"registration.address_book_access_denied.hero.paragraph1" = "Eğer kişilerinizi paylaşırsanız Wire arkadaşlarınızı bulmanıza yardım eder.";
-"registration.address_book_access_denied.hero.paragraph2" = "Erişim sağlamak için Ayarlara girip Kişileri açın.";
-"registration.address_book_access_denied.settings_button.title" = "Ayarlar";
-"registration.address_book_access_denied.maybe_later_button.title" = "Belki sonra";
 
 "registration.push_access_denied.hero.title" = "Asla bir arama veya mesaj kaçırmayın.";
 "registration.push_access_denied.hero.paragraph1" = "Ayarlardan Bildirimleri Etkinleştir.";

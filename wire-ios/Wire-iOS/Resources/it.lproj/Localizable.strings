@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Ulteriori informazioni";
 "peoplepicker.no_matching_results.action.manage_services" = "Gestisci servizi";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Nessun risultato.";
 "peoplepicker.no_matching_results.message.users" = "Trova persone in Wire per nome o @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Sono tutti qui.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Può essere usato per 2 settimane. Inviane un altro quando scade.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Invita più persone";
 "peoplepicker.invite_team_members" = "Invita altre persone ad unirsi al team";
 "peoplepicker.quick-action.open-conversation" = "Apri";
 "peoplepicker.quick-action.admin-services" = "Gestisci servizi";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Modifica dettagli";
 
 "registration.country_select.title" = "Paese";
-
-"registration.share_contacts.hero.title" = "Trova persone su Wire";
-"registration.share_contacts.hero.paragraph" = "Condividi i tuoi contatti, così possiamo connetterti con altre persone. Rendiamo anonimi tutti i tuoi dati e non li condividiamo con nessuno.";
-"registration.share_contacts.find_friends_button.title" = "Condividi contatti";
-"registration.share_contacts.skip_button.title" = "Non ora";
-
-"registration.address_book_access_denied.hero.title" = "Wire non ha accesso ai tuoi contatti.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire ti aiuta a trovare i tuoi amici se Condividi i tuoi contatti.";
-"registration.address_book_access_denied.hero.paragraph2" = "Per abilitare vai su Impostazioni e attiva i contatti.";
-"registration.address_book_access_denied.settings_button.title" = "Impostazioni";
-"registration.address_book_access_denied.maybe_later_button.title" = "Forse dopo";
 
 "registration.push_access_denied.hero.title" = "Non perdere mai una chiamata o un messaggio.";
 "registration.push_access_denied.hero.paragraph1" = "Attiva le notifiche nelle impostazioni.";

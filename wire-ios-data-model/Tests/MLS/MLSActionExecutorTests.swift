@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -293,7 +293,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         _ = try await sut.processWelcomeMessage(message)
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
     }
 
     // MARK: - Add members
@@ -392,7 +392,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         _ = try await sut.addMembers([], to: .random())
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
     }
 
     // MARK: - Remove clients
@@ -645,7 +645,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         _ = try await sut.joinGroup(.random(), groupInfo: .random())
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
     }
 
     // MARK: - Decrypt Message

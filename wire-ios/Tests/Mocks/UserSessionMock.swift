@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireAnalytics
 import WireDataModel
 import WireDataModelSupport
 import WireRequestStrategySupport
@@ -130,6 +131,7 @@ final class UserSessionMock: UserSession {
     var requireCustomAppLockPasscode: Bool = false
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
+    var analyticsEventTracker: (any AnalyticsEventTracker)?
 
     func openAppLock() throws {
         openApp.append(())

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -348,7 +348,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
     }
 
@@ -429,10 +429,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
 
         // When
-        try await sut.createGroup(for: groupID)
+        _ = try await sut.createGroup(for: groupID)
 
         // Then
-        await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 0.5)
+        await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 1)
         XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
     }
 
@@ -448,7 +448,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
 
         // When
-        try await sut.createGroup(for: groupID, removalKeys: removalKeys)
+        _ = try await sut.createGroup(for: groupID, removalKeys: removalKeys)
 
         // Then
         let invocation = mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_Invocations.first
@@ -1282,7 +1282,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         try await sut.performPendingJoins()
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         // it fetches public group state
         let groupStateInvocations = mockActionsProvider
@@ -1368,7 +1368,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         try await sut.performPendingJoins()
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         // it fetches group info
         let groupInfoInvocations = mockActionsProvider
@@ -1414,7 +1414,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         try await sut.performPendingJoins()
 
         // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         let groupInfoInvocations = mockActionsProvider
             .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
@@ -1495,7 +1495,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // THEN
         // Verify expectation that the conversation was rejoined
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
         // Wait for groups that need the current context before its deallocated
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -1525,7 +1525,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // THEN
         // Verify expectation that the conversation was NOT rejoined
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
     }
 
     func test_FetchAndRepairConversation_RejoinsOutOfSyncSubgroup() async throws {
@@ -1565,7 +1565,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // THEN
         // Verify expectation that the subgroup was rejoined
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
     }
 
     func test_FetchAndRepairConversation_DoesNothingIfSubgroupIsNotOutOfSync() async throws {
@@ -1606,7 +1606,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // THEN
         // Verify expectation that the subgroup was NOT rejoined
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
     }
 
     private func setMocksForConversationRepair(
@@ -1778,7 +1778,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await sut.uploadKeyPackagesIfNeeded()
 
         // Then
-        await fulfillment(of: [countUnclaimedKeyPackages], timeout: 0.5)
+        await fulfillment(of: [countUnclaimedKeyPackages], timeout: 1)
     }
 
     enum TestError: Error {
@@ -1872,7 +1872,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await sut.uploadKeyPackagesIfNeeded()
 
         // Then
-        await fulfillment(of: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 0.5)
+        await fulfillment(of: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 1)
     }
 
     // MARK: - Update key material

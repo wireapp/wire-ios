@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,14 +31,9 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
     }
 
     func getSelfClients() async throws -> [SelfUserClient] {
-        let components = URLComponents(string: "\(pathPrefix)/clients")
+        let path = "\(pathPrefix)/clients"
 
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw UserClientsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .build()
 
@@ -53,20 +48,14 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
     }
 
     func getClients(for userIDs: Set<UserID>) async throws -> [OtherUserClients] {
-        let components =
-            URLComponents(string: "/users/list-clients/v2") // v2 suffix required for api version v0 and v1, suffix
-        // removed from next versions
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw UserClientsAPIError.invalidURL
-        }
+        // v2 suffix required for api version v0 and v1, suffix. Removed from next versions.
+        let path = "/users/list-clients/v2"
 
         let body = try JSONEncoder.defaultEncoder.encode(
             UserClientsRequestV0(qualifiedIDs: Array(userIDs))
         )
 
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()

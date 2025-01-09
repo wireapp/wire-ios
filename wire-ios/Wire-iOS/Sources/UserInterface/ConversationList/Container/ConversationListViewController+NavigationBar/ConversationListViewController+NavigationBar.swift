@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,6 +64,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
     }
 
+    func refreshAccountImageViewNotificationBadge() {
+        accountImageView?.hideProfileNotificationsBadge = viewModel.hideProfileNotificationsBadge
+    }
+
     // MARK: - Navigation Bar Items
 
     private func makeAccountImageView() -> AccountImageView {
@@ -71,6 +75,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let accountImageView = AccountImageView()
         accountImageView.source = viewModel.accountImageSource
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
+        accountImageView.hideProfileNotificationsBadge = viewModel.hideProfileNotificationsBadge
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -340,11 +345,19 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     @objc
     private func presentProfile() {
+        // analytics
+        let isNotificationsBadgeVisible = viewModel.hideProfileNotificationsBadge
+        let analyticsEventTracker = viewModel.userSession.analyticsEventTracker
+        #if false // [WPB-15245] This event has temporarily been disabled.
+            analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+        #endif
+
+        // open profile
         Task {
-            let selfProfileUI = UINavigationController(
-                rootViewController: selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
-            )
+            let rootViewController = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
             selfProfileUI.modalPresentationStyle = .formSheet
+            selfProfileUI.presentationController?.delegate = rootViewController
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }

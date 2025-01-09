@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,8 +76,8 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
         case let .account(string):
             (kSecAttrAccount, string)
 
-        case let .itemClass(itemClass):
-            (kSecClass, itemClass)
+        case .itemClass(.genericPassword):
+            (kSecClass, kSecClassGenericPassword)
 
         case .accessible(.afterFirstUnlock):
             (kSecAttrAccessible, kSecAttrAccessibleAfterFirstUnlock)

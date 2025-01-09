@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,10 +34,11 @@ struct SidebarViewControllerBuilder {
         let legalHoldIndicatorViewDesign = LegalHoldIndicatorViewDesign()
 
         let sidebarViewController = SidebarViewController(
-            accountImageView: { accountImage, availability in
+            accountImageView: { accountImage, availability, showNotificationsBadge in
                 AccountImageViewRepresentable(
                     source: accountImage.mapToAccountImageSource(),
-                    availability: availability?.mapToAccountImageAvailability()
+                    availability: availability?.mapToAccountImageAvailability(),
+                    showNotificationsBadge: showNotificationsBadge
                 )
                 .accountImageBorderWidth(accountImageViewDesign.borderWidth)
                 .accountImageViewBorderColor(accountImageViewDesign.borderColor)

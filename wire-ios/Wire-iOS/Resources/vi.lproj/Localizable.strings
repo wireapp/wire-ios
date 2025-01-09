@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Tìm hiểu thêm";
 "peoplepicker.no_matching_results.action.manage_services" = "Quản lý Dịch vụ";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Không có kết quả.";
 "peoplepicker.no_matching_results.message.users" = "Tìm kiếm mọi người trong Wire bằng tên hoặc @tên người dùng";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Tìm kiếm mọi người trong Wire bằng tên hoặc @tên người dùng\n\nTìm kiếm mọi người bằng tên miền khác như @tên_người_dùng@tên_miền";
 "peoplepicker.no_matching_results.message.users_all_added" = "Mọi người đã ở đây.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Nó có thể được dùng trong 2 tuần. Gửi một cái mới nếu đã quá hạn.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Mời nhiều người hơn";
 "peoplepicker.invite_team_members" = "Mời mọi người vào nhóm";
 "peoplepicker.quick-action.open-conversation" = "Mở";
 "peoplepicker.quick-action.admin-services" = "Quản lý Dịch vụ";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Sử Thông tin";
 
 "registration.country_select.title" = "Quốc gia";
-
-"registration.share_contacts.hero.title" = "Tìm mọi người trên Wire";
-"registration.share_contacts.hero.paragraph" = "Chia sẽ danh bạ của bạn nên chúng tôi có thể kết nối bạn với người khác. Chúng tôi giữ bí mật tất cả thông tin và không chia sẽ nó với ai khác.";
-"registration.share_contacts.find_friends_button.title" = "Chia sẽ danh bạ";
-"registration.share_contacts.skip_button.title" = "Không phải lúc này";
-
-"registration.address_book_access_denied.hero.title" = "Wire không truy cập danh bạ của bạn.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wirw giúp tìm bạn bè của bạn nếu bạn chia sẽ danh bạ của bạn.";
-"registration.address_book_access_denied.hero.paragraph2" = "Để kích hoạt truy cập Thiết lập và mở Danh bạ.";
-"registration.address_book_access_denied.settings_button.title" = "Cài đặt";
-"registration.address_book_access_denied.maybe_later_button.title" = "Có lẽ để sau";
 
 "registration.push_access_denied.hero.title" = "Không bao giờ lỡ cuộc gọi hoặc tin nhắn.";
 "registration.push_access_denied.hero.paragraph1" = "Bật Thông báo trong Thiết lập.";

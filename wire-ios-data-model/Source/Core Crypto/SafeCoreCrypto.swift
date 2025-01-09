@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import WireLogging
 
 public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
-    func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
+    func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
     func tearDown() throws
 }
 
@@ -71,8 +71,8 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         return try await block(coreCrypto)
     }
 
-    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        try block(coreCrypto)
+    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
+        try await block(coreCrypto)
     }
 
     private func restoreFromDisk() async {

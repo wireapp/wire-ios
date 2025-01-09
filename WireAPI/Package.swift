@@ -18,7 +18,10 @@ let package = Package(
     targets: [
         .target(
             name: "WireAPI",
-            dependencies: ["WireFoundation"]
+            dependencies: [
+                "WireFoundation",
+                .product(name: "WireCrypto", package: "WireFoundation")
+            ]
         ),
         .target(
             name: "WireAPISupport",
@@ -32,11 +35,13 @@ let package = Package(
             dependencies: [
                 "WireAPI",
                 "WireAPISupport",
+                .product(name: "WireCrypto", package: "WireFoundation"),
                 .product(name: "WireTestingPackage", package: "WireFoundation"),
                 .product(name: "WireFoundationSupport", package: "WireFoundation"),
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [
+                .process("APIs/AccountsAPI/Resources"),
                 .process("APIs/BackendInfoAPI/Resources"),
                 .process("APIs/ConnectionsAPI/Resources"),
                 .process("APIs/ConversationsAPI/Resources"),

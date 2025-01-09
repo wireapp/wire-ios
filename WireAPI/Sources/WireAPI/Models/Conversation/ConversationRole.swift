@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import Foundation
 /// Each member of a conversation is assigned a role which allows them
 /// to perform a specific set of actions in that conversation.
 
-public struct ConversationRole: Equatable {
+public struct ConversationRole: Equatable, Sendable {
 
     /// The name of the role.
 

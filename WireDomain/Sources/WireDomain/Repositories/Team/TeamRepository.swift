@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,6 +78,10 @@ public class TeamRepository: TeamRepositoryProtocol {
     private let teamsAPI: any TeamsAPI
     private let teamLocalStore: any TeamLocalStoreProtocol
 
+    private let pullSelfTeamSync: PullSelfTeamSync
+    private let pullSelfTeamRolesSync: PullSelfTeamRolesSync
+    private let pullSelfTeamMembersSync: PullSelfTeamMembersSync
+
     // MARK: - Object lifecycle
 
     public init(
@@ -90,46 +94,32 @@ public class TeamRepository: TeamRepositoryProtocol {
         self.userRepository = userRepository
         self.teamLocalStore = teamLocalStore
         self.teamsAPI = teamsAPI
+        self.pullSelfTeamSync = PullSelfTeamSync(
+            api: teamsAPI,
+            store: teamLocalStore
+        )
+        self.pullSelfTeamRolesSync = PullSelfTeamRolesSync(
+            api: teamsAPI,
+            store: teamLocalStore
+        )
+        self.pullSelfTeamMembersSync = PullSelfTeamMembersSync(
+            api: teamsAPI,
+            store: teamLocalStore
+        )
     }
 
     // MARK: - Public
 
     public func pullSelfTeam() async throws {
-        let team = try await fetchSelfTeamRemotely()
-
-        await teamLocalStore.storeTeam(
-            id: team.id,
-            name: team.name,
-            creatorID: team.creatorID,
-            logoID: team.logoID,
-            logoKey: team.logoKey
-        )
+        try await pullSelfTeamSync.pull(selfTeamID: selfTeamID)
     }
 
     public func pullSelfTeamRoles() async throws {
-        let teamRoles = try await fetchSelfTeamRolesRemotely()
-
-        let teamRolesInfo = teamRoles.map {
-            $0.toDomainModel()
-        }
-
-        try await teamLocalStore.storeTeamRoles(
-            selfTeamID: selfTeamID,
-            teamRolesInfo: teamRolesInfo
-        )
+        try await pullSelfTeamRolesSync.pull(selfTeamID: selfTeamID)
     }
 
     public func pullSelfTeamMembers() async throws {
-        let teamMembers = try await fetchSelfTeamMembersRemotely()
-
-        let teamMembersInfo = teamMembers.map {
-            $0.toDomainModel()
-        }
-
-        try await teamLocalStore.storeTeamMembers(
-            selfTeamID: selfTeamID,
-            teamMembersInfo: teamMembersInfo
-        )
+        try await pullSelfTeamMembersSync.pull(selfTeamID: selfTeamID)
     }
 
     public func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
@@ -215,35 +205,6 @@ public class TeamRepository: TeamRepositoryProtocol {
             for: selfTeamID,
             userID: selfUserID
         )
-    }
-
-    // MARK: - Private
-
-    private func fetchSelfTeamRemotely() async throws -> WireAPI.Team {
-        do {
-            return try await teamsAPI.getTeam(for: selfTeamID)
-        } catch {
-            throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
-    }
-
-    private func fetchSelfTeamRolesRemotely() async throws -> [WireAPI.ConversationRole] {
-        do {
-            return try await teamsAPI.getTeamRoles(for: selfTeamID)
-        } catch {
-            throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
-    }
-
-    private func fetchSelfTeamMembersRemotely() async throws -> [WireAPI.TeamMember] {
-        do {
-            return try await teamsAPI.getTeamMembers(
-                for: selfTeamID,
-                maxResults: 2000
-            )
-        } catch {
-            throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "En savoir plus";
 "peoplepicker.no_matching_results.action.manage_services" = "Gérer les Services";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Aucun résultat.";
 "peoplepicker.no_matching_results.message.users" = "Trouver des contacts sur Wire par nom ou par @identifiant";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Trouvez des contacts sur Wire par nom ou par @identifiant\n\nTrouvez des contacts sur un autre domaine par @identifiant@nomdedomaine";
 "peoplepicker.no_matching_results.message.users_all_added" = "Tout le monde est là.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Elle peut être utilisée pendant 2 semaines. Envoyez-en une nouvelle si elle expire.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Invitez d'autres contacts";
 "peoplepicker.invite_team_members" = "Invitez des contacts à rejoindre votre équipe";
 "peoplepicker.quick-action.open-conversation" = "Ouvrir";
 "peoplepicker.quick-action.admin-services" = "Gérer les Services";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Modifier les informations";
 
 "registration.country_select.title" = "Pays";
-
-"registration.share_contacts.hero.title" = "Trouver des contacts sur Wire";
-"registration.share_contacts.hero.paragraph" = "Partager vos contacts nous permet de vous connecter à d'autres personnes. Nous anonymisons toutes les informations et ne les partageons avec personne d'autre.";
-"registration.share_contacts.find_friends_button.title" = "Partagez vos contacts";
-"registration.share_contacts.skip_button.title" = "Pas maintenant";
-
-"registration.address_book_access_denied.hero.title" = "Wire n'a pas accès a vos contacts.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire vous aide à trouver vos amis si vous partagez vos contacts.";
-"registration.address_book_access_denied.hero.paragraph2" = "Pour autoriser l'accès, cliquez sur Paramètres et activez les contacts.";
-"registration.address_book_access_denied.settings_button.title" = "Paramètres";
-"registration.address_book_access_denied.maybe_later_button.title" = "Peut-être plus tard";
 
 "registration.push_access_denied.hero.title" = "Ne manquez jamais un appel ou un message.";
 "registration.push_access_denied.hero.paragraph1" = "Activez les notifications dans les paramètres.";

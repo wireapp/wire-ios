@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ extension ZMOTRMessage {
 
     private static let deliveryConfirmationDayThreshold = 7
 
-    @NSManaged dynamic var expectsReadConfirmation: Bool
+    @NSManaged public dynamic var expectsReadConfirmation: Bool
 
     @objc var needsDeliveryConfirmation: Bool {
         needsDeliveryConfirmationAtCurrentDate()

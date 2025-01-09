@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -118,6 +118,11 @@ public protocol UserLocalStoreProtocol {
     ///     - user: The user to mark the account deleted for.
 
     func markAccountAsDeleted(for user: ZMUser) async
+
+    func updateSelfUserAnalyticsID(
+        analyticsID: String,
+        conversation: ZMConversation
+    ) async
 
     // TODO: [WPB-10727] Merge these two methods into a single method
     func persistUser(userInfo: NewUserInfo) async
@@ -299,6 +304,19 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     public func markAccountAsDeleted(for user: ZMUser) async {
         await context.perform {
             user.isAccountDeleted = true
+        }
+    }
+
+    public func updateSelfUserAnalyticsID(
+        analyticsID: String,
+        conversation: ZMConversation
+    ) async {
+        await context.perform { [context] in
+            guard conversation.isSelfConversation else {
+                return
+            }
+
+            ZMUser.selfUser(in: context).analyticsIdentifier = analyticsID
         }
     }
 

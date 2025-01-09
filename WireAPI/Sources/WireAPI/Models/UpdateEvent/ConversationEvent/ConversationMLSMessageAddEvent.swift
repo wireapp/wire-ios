@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,21 @@ import Foundation
 
 public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
 
+    public struct DecryptedMessage: Equatable, Codable, Sendable {
+
+        public let message: String
+
+        public let senderClientID: String?
+
+        public init(
+            message: String,
+            senderClientID: String?
+        ) {
+            self.message = message
+            self.senderClientID = senderClientID
+        }
+    }
+
     /// The id of the conversation.
 
     public let conversationID: ConversationID
@@ -41,5 +56,14 @@ public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
     /// The base 64 encoded message.
 
     public let message: String
+
+    /// The date the message was received.
+
+    public let timestamp: Date?
+
+    /// The decrypted current message + decrypted buffered messages
+    /// along with the related sender client ID for each message.
+
+    public var decryptedMessages: [DecryptedMessage] = []
 
 }

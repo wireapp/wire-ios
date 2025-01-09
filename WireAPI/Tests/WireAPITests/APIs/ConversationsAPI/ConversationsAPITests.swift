@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -96,18 +96,14 @@ final class ConversationsAPITests: XCTestCase {
             (.ok, "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ])
 
-        // when
-        let api = ConversationsAPIV0(apiService: apiService)
-        let pager = try await api.getLegacyConversationIdentifiers()
-
-        for try await _ in pager {
-            // trigger fetching date
-        }
-
         // then
 
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { api in
-            _ = try await api.getLegacyConversationIdentifiers()
+            let pager = try await api.getLegacyConversationIdentifiers()
+
+            for try await _ in pager {
+                // trigger fetching date
+            }
         }
     }
 
@@ -164,15 +160,12 @@ final class ConversationsAPITests: XCTestCase {
         ])
 
         // when
-        let api = ConversationsAPIV1(apiService: apiService)
-        let pager = try await api.getConversationIdentifiers()
-
-        for try await _ in pager {
-            // trigger fetching date
-        }
-
         try await apiSnapshotHelper.verifyRequest(for: [.v1], apiService: apiService) { api in
-            _ = try await api.getConversationIdentifiers()
+            let pager = try await api.getConversationIdentifiers()
+
+            for try await _ in pager {
+                // trigger fetching date
+            }
         }
     }
 

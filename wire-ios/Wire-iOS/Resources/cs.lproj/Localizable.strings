@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Dozvědět se více";
 "peoplepicker.no_matching_results.action.manage_services" = "Spravovat služby";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Žádné výsledky.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Všichni jsou zde.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Může být použito na 2 týdny. Zašlete novou, pokud její platnost vyprší.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Pozvat další osoby";
 "peoplepicker.invite_team_members" = "Pozvat do týmu další členy";
 "peoplepicker.quick-action.open-conversation" = "Otevřít";
 "peoplepicker.quick-action.admin-services" = "Spravovat služby";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Upravit Detaily";
 
 "registration.country_select.title" = "Země";
-
-"registration.share_contacts.hero.title" = "Najít lidi na Wire";
-"registration.share_contacts.hero.paragraph" = "Vaše údaje o kontaktech používáme k propojení s ostatními uživateli. Všechny informace anonymizujeme a nesdílíme je s nikým dalším.";
-"registration.share_contacts.find_friends_button.title" = "Sdílet kontakty";
-"registration.share_contacts.skip_button.title" = "Nyní ne";
-
-"registration.address_book_access_denied.hero.title" = "Wire nemá přístup k vašim kontaktům.";
-"registration.address_book_access_denied.hero.paragraph1" = "Pokud s aplikací sdílíte své kontakty, Wire vám pomůže najít vaše přátele.";
-"registration.address_book_access_denied.hero.paragraph2" = "Klepnutím v Nastavení a zapnutím Kontaktů povolíte přístup.";
-"registration.address_book_access_denied.settings_button.title" = "Nastavení";
-"registration.address_book_access_denied.maybe_later_button.title" = "Možná později";
 
 "registration.push_access_denied.hero.title" = "Nikdy nezmeškáte hovor nebo zprávu.";
 "registration.push_access_denied.hero.paragraph1" = "Povolte oznámení v nastavení.";

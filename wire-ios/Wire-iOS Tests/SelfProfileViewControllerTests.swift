@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -159,8 +159,8 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
             userRightInterfaceType: MockUserRight.self,
             userSession: userSession,
             accountSelector: MockAccountSelector(),
-            trackingManager: nil,
-            mainCoordinator: .init(mainCoordinator: MockMainCoordinator())
+            mainCoordinator: .init(mainCoordinator: MockMainCoordinator()),
+            analyticsEventTracker: nil
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }

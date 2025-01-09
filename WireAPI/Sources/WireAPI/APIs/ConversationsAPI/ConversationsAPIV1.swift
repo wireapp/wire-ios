@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,20 +27,15 @@ class ConversationsAPIV1: ConversationsAPIV0 {
     }
 
     override func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
-        let components = URLComponents(string: "\(pathPrefix)\(basePath)/list-ids/")
+        let path = "\(pathPrefix)\(basePath)/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw ConversationsAPIError.invalidURL
-        }
 
         return PayloadPager<QualifiedID> { start in
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try jsonEncoder.encode(params)
 
-            let request = URLRequestBuilder(url: url)
+            let request = try URLRequestBuilder(path: path)
                 .withMethod(.post)
                 .withBody(body, contentType: .json)
                 .build()

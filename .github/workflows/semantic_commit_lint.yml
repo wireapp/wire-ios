@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   semantic-commit-pr-title-lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: contains(fromJSON('["opened", "synchronize"]'), github.event.action) || github.event.changes.title != null
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,14 +54,14 @@ jobs:
           # to also validate the commit message for one commit PRs.
           validateSingleCommit: false
           
-          subjectPattern: ^(.*) - ((WPB-\d+)|(no ticket))$
+          subjectPattern: ^(.*) - (WPB-\d+)$
           # If `subjectPattern` is configured, you can use this property to override
           # the default error message that is shown when the pattern doesn't match.
           # The variables `subject` and `title` can be used within the message.
           subjectPatternError: |
             The subject "{subject}" found in the pull request title "{title}"
             didn't match the configured pattern. Please ensure that the subject
-            contains a ticket with "- WPB-XXX" or "- no ticket" for urgent cases.
+            contains a ticket with "- WPB-XXX".
       - name: Add Failure Label
         if: failure()
         run: |
