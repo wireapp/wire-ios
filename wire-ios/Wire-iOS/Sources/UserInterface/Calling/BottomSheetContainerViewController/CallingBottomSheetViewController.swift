@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -111,7 +111,10 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             zmLog.error("UserSession not available when initializing \(type(of: self))")
             return
         }
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: userSession.contextProvider
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {

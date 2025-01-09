@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ public struct MLSPublicKeys: Equatable, Codable, Sendable {
         case ed448
         case p256 = "ecdsa_secp256r1_sha256"
         case p384 = "ecdsa_secp384r1_sha384"
-        case p512 = "ecdsa_secp512r1_sha512"
+        case p512 = "ecdsa_secp521r1_sha512"
 
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ private extension VoiceChannel {
 
     private var isIncomingVideoCall: Bool {
         switch state {
-        case .incoming(video: true, shouldRing: true, degraded: _): true
+        case .incoming(isVideo: true, shouldRing: true, degraded: _): true
         default: false
         }
     }
@@ -271,9 +271,9 @@ extension VoiceChannel {
         guard let degradationReason else { return .none }
 
         switch state {
-        case .incoming(video: _, shouldRing: _, degraded: true), .answered(degraded: true):
+        case .incoming(isVideo: _, shouldRing: _, degraded: true), .answered(degraded: true):
             return .incoming(reason: degradationReason)
-        case .outgoing(degraded: true):
+        case .outgoing(_, degraded: true):
             return .outgoing(reason: degradationReason)
         case .terminating(reason: .securityDegraded):
             return .terminating(reason: degradationReason)

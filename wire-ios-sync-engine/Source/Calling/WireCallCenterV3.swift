@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import avs
 import Combine
 import Foundation
+import WireAnalytics
 import WireLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
@@ -35,6 +36,8 @@ public class WireCallCenterV3: NSObject {
     let legacyVideoParticipantsLimit = 4
 
     // MARK: - Properties
+
+    private let notificationCenter: NotificationCenter
 
     /// The selfUser remoteIdentifier
     let selfUserId: AVSIdentifier
@@ -124,13 +127,14 @@ public class WireCallCenterV3: NSObject {
         avsWrapper: AVSWrapperType? = nil,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        notificationCenter: NotificationCenter
     ) {
-
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
+        self.notificationCenter = notificationCenter
 
         super.init()
 
@@ -655,7 +659,7 @@ public extension WireCallCenterV3 {
             throw Failure.unknown
         }
 
-        let callState: CallState = .outgoing(degraded: isDegraded(conversationId: conversationId))
+        let callState: CallState = .outgoing(isVideo: isVideo, degraded: isDegraded(conversationId: conversationId))
         let previousCallState = callSnapshots[conversationId]?.callState
 
         createSnapshot(
@@ -812,7 +816,7 @@ public extension WireCallCenterV3 {
         if let previousSnapshot = callSnapshots[conversationId] {
             if previousSnapshot.isGroup {
                 let callState: CallState = .incoming(
-                    video: previousSnapshot.isVideo,
+                    isVideo: previousSnapshot.isVideo,
                     shouldRing: false,
                     degraded: isDegraded(conversationId: conversationId)
                 )
@@ -846,7 +850,7 @@ public extension WireCallCenterV3 {
 
         if let previousSnapshot = callSnapshots[conversationId] {
             let callState: CallState = .incoming(
-                video: previousSnapshot.isVideo,
+                isVideo: previousSnapshot.isVideo,
                 shouldRing: false,
                 degraded: isDegraded(conversationId: conversationId)
             )
@@ -877,6 +881,8 @@ public extension WireCallCenterV3 {
     /// - parameter videoState: The new video state for the self user.
 
     func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
+        defer { postDidToggleVideoNotification(notificationCenter, conversationId, videoState) }
+
         Self.logger.info("setting video state")
         guard videoState != .badConnection else { return }
 
@@ -908,7 +914,7 @@ public extension WireCallCenterV3 {
     /// - Parameters:
     ///   - conversationId: The identifier of the conversation where the video call is hosted.
     ///   - clients: The list of clients for which AVS should load video streams.
-    func requestVideoStreams(conversationId: AVSIdentifier, clients: [AVSClient]) {
+    func requestVideoStreams(conversationId: AVSIdentifier, clients: [AVSClientVideoStream]) {
         let videoStreams = AVSVideoStreams(conversationId: conversationId.serialized, clients: clients)
         avsWrapper.requestVideoStreams(videoStreams, conversationId: conversationId)
     }
@@ -1091,7 +1097,7 @@ extension WireCallCenterV3 {
             if isDegraded(conversationId: conversationId) {
                 callState = .terminating(reason: .securityDegraded)
             } else if canJoinCall(conversationId: conversationId) {
-                callState = .incoming(video: false, shouldRing: false, degraded: false)
+                callState = .incoming(isVideo: false, shouldRing: false, degraded: false)
             }
         }
 

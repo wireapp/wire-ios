@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,6 +29,10 @@ struct TeamNameView: View {
     let actionCallback: (Action) -> Void
     @State private var teamName: String = ""
 
+    var validTeamName: String {
+        teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(String.localized(key: "individualToTeam.teamName.body", bundle: .module))
@@ -51,11 +55,11 @@ struct TeamNameView: View {
             Spacer()
 
             Button(
-                action: { actionCallback(.continue(teamName: teamName)) },
+                action: { actionCallback(.continue(teamName: validTeamName)) },
                 label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
             )
             .wireButtonStyle(.primary)
-            .disabled(teamName.isEmpty)
+            .disabled(validTeamName.isEmpty)
         }
     }
 }

@@ -1,0 +1,90 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import WireAPISupport
+import XCTest
+@testable import WireAPI
+@testable import WireDomain
+@testable import WireDomainSupport
+
+final class PullSelfUserSyncTests: XCTestCase {
+
+    private var sut: PullSelfUserSync!
+    private var api: MockSelfUserAPI!
+    private var store: MockUserLocalStoreProtocol!
+
+    override func setUp() async throws {
+        api = MockSelfUserAPI()
+        store = MockUserLocalStoreProtocol()
+        sut = PullSelfUserSync(api: api, store: store)
+    }
+
+    override func tearDown() async throws {
+        api = nil
+        store = nil
+        sut = nil
+    }
+
+    func testPull() async throws {
+        // Mock
+        api.getSelfUser_MockValue = Scaffolding.remoteSelfUser
+        store.persistUserUserInfo_MockMethod = { _ in }
+
+        // When
+        try await sut.pull()
+
+        // Then
+        XCTAssertEqual(api.getSelfUser_Invocations.count, 1)
+
+        let storeInvocations = store.persistUserUserInfo_Invocations
+        try XCTAssertCount(storeInvocations, count: 1)
+        XCTAssertEqual(storeInvocations[0], Scaffolding.localSelfUser)
+    }
+
+}
+
+private enum Scaffolding {
+
+    static let qualifiedID = UserID(
+        uuid: UUID(),
+        domain: "example.com"
+    )
+
+    static let remoteSelfUser = SelfUser(
+        id: qualifiedID.uuid,
+        qualifiedID: qualifiedID,
+        ssoID: nil,
+        name: "username",
+        handle: "username",
+        teamID: UUID(),
+        phone: "",
+        accentID: 1,
+        managedBy: .wire,
+        assets: [],
+        deleted: false,
+        email: "username@wire.com",
+        expiresAt: .now,
+        service: nil,
+        supportedProtocols: [.mls]
+    )
+
+    static var localSelfUser: NewUserInfo {
+        remoteSelfUser.toDomainModel()
+    }
+
+}

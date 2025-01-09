@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -108,7 +108,8 @@ final class WireCallCenterV3Tests: MessagingTest {
             avsWrapper: mockAVSWrapper,
             uiMOC: uiMOC,
             flowManager: flowManager,
-            transport: mockTransport
+            transport: mockTransport,
+            notificationCenter: .init()
         )
         // set conferenceCalling feature flag
         conferenceCalling = Feature.fetch(name: .conferenceCalling, context: uiMOC)
@@ -196,7 +197,7 @@ final class WireCallCenterV3Tests: MessagingTest {
 
     func testThatTheIncomingCallHandlerPostsTheRightNotification_IsVideo() {
         checkThatItPostsNotification(
-            expectedCallState: .incoming(video: true, shouldRing: false, degraded: false),
+            expectedCallState: .incoming(isVideo: true, shouldRing: false, degraded: false),
             expectedCallerId: otherUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
@@ -213,7 +214,7 @@ final class WireCallCenterV3Tests: MessagingTest {
 
     func testThatTheIncomingCallHandlerPostsTheRightNotification() {
         checkThatItPostsNotification(
-            expectedCallState: .incoming(video: false, shouldRing: false, degraded: false),
+            expectedCallState: .incoming(isVideo: false, shouldRing: false, degraded: false),
             expectedCallerId: otherUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
@@ -230,7 +231,7 @@ final class WireCallCenterV3Tests: MessagingTest {
 
     func testThatTheIncomingCallHandlerPostsTheRightNotification_IsVideo_ShouldRing() {
         checkThatItPostsNotification(
-            expectedCallState: .incoming(video: true, shouldRing: true, degraded: false),
+            expectedCallState: .incoming(isVideo: true, shouldRing: true, degraded: false),
             expectedCallerId: otherUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
@@ -247,7 +248,7 @@ final class WireCallCenterV3Tests: MessagingTest {
 
     func testThatTheIncomingCallHandlerPostsTheRightNotification_ShouldRing() {
         checkThatItPostsNotification(
-            expectedCallState: .incoming(video: false, shouldRing: true, degraded: false),
+            expectedCallState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             expectedCallerId: otherUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
@@ -535,7 +536,7 @@ final class WireCallCenterV3Tests: MessagingTest {
             else { return false }
             XCTAssertEqual(note.conversationId, self.groupConversationID)
             XCTAssertEqual(note.callerId, self.otherUserID)
-            XCTAssertEqual(note.callState, .incoming(video: false, shouldRing: false, degraded: false))
+            XCTAssertEqual(note.callState, .incoming(isVideo: false, shouldRing: false, degraded: false))
             return true
         }
 
@@ -576,7 +577,7 @@ final class WireCallCenterV3Tests: MessagingTest {
             else { return false }
             XCTAssertEqual(note.conversationId, self.oneOnOneConversationID)
             XCTAssertEqual(note.callerId, self.otherUserID)
-            XCTAssertEqual(note.callState, .incoming(video: false, shouldRing: false, degraded: false))
+            XCTAssertEqual(note.callState, .incoming(isVideo: false, shouldRing: false, degraded: false))
             return true
         }
 
@@ -1019,7 +1020,7 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItStartsACall_oneToOne_normal() throws {
         // given
         try checkThatItPostsNotification(
-            expectedCallState: .outgoing(degraded: false),
+            expectedCallState: .outgoing(isVideo: false, degraded: false),
             expectedCallerId: selfUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
@@ -1040,7 +1041,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         oneOnOneConversation.mlsGroupID = .random()
         syncMOC.performAndWait { syncMOC.mlsService = nil }
         try checkThatItPostsNotification(
-            expectedCallState: .outgoing(degraded: false),
+            expectedCallState: .outgoing(isVideo: false, degraded: false),
             expectedCallerId: selfUserID,
             expectedConversationId: oneOnOneConversationID
         ) {
@@ -1056,7 +1057,7 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItStartsACall_conference_normal() throws {
         // given
         try checkThatItPostsNotification(
-            expectedCallState: .outgoing(degraded: false),
+            expectedCallState: .outgoing(isVideo: false, degraded: false),
             expectedCallerId: selfUserID,
             expectedConversationId: groupConversationID
         ) {
@@ -1074,7 +1075,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         throw XCTSkip()
 
         try assertMLSConference(
-            expectedCallState: .outgoing(degraded: false),
+            expectedCallState: .outgoing(isVideo: false, degraded: false),
             expectedCallerID: selfUserID,
             expectedConversationID: groupConversationID
         ) {
@@ -1252,7 +1253,7 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItStartsACall_conference_video() throws {
         // given
         try checkThatItPostsNotification(
-            expectedCallState: .outgoing(degraded: false),
+            expectedCallState: .outgoing(isVideo: true, degraded: false),
             expectedCallerId: selfUserID,
             expectedConversationId: groupConversationID
         ) {
@@ -1429,8 +1430,8 @@ final class WireCallCenterV3Tests: MessagingTest {
         ]
 
         let nonActiveCallStates: [CallState] = [
-            CallState.incoming(video: false, shouldRing: false, degraded: false),
-            CallState.outgoing(degraded: false),
+            CallState.incoming(isVideo: false, shouldRing: false, degraded: false),
+            CallState.outgoing(isVideo: false, degraded: false),
             CallState.answered(degraded: false),
             CallState.terminating(reason: CallClosedReason.normal),
             CallState.none,
@@ -1466,7 +1467,7 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItMutesMicrophone_WhenHandlingIncomingGroupCall() {
         // given
         let conversationID = AVSIdentifier.stub
-        let incomingState = CallState.incoming(video: false, shouldRing: true, degraded: false)
+        let incomingState = CallState.incoming(isVideo: false, shouldRing: true, degraded: false)
         let incomingCall = CallSnapshotTestFixture.callSnapshot(
             conversationId: conversationID,
             callCenter: sut,
@@ -1494,7 +1495,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         )
 
         let incomingCallConversationId = AVSIdentifier.stub
-        let incomingState = CallState.incoming(video: false, shouldRing: true, degraded: false)
+        let incomingState = CallState.incoming(isVideo: false, shouldRing: true, degraded: false)
         let incomingCall = CallSnapshotTestFixture.callSnapshot(
             conversationId: incomingCallConversationId,
             callCenter: sut,
@@ -1789,7 +1790,7 @@ extension WireCallCenterV3Tests {
         // then
         XCTAssertEqual(
             sut.callState(conversationId: oneOnOneConversationID),
-            .incoming(video: false, shouldRing: false, degraded: false)
+            .incoming(isVideo: false, shouldRing: false, degraded: false)
         )
     }
 
@@ -1812,7 +1813,7 @@ extension WireCallCenterV3Tests {
         // then
         XCTAssertEqual(
             sut.callState(conversationId: oneOnOneConversationID),
-            .incoming(video: false, shouldRing: false, degraded: false)
+            .incoming(isVideo: false, shouldRing: false, degraded: false)
         )
     }
 
@@ -1835,7 +1836,7 @@ extension WireCallCenterV3Tests {
         // then
         XCTAssertEqual(
             sut.callState(conversationId: groupConversationID),
-            .incoming(video: false, shouldRing: false, degraded: false)
+            .incoming(isVideo: false, shouldRing: false, degraded: false)
         )
     }
 
@@ -1858,7 +1859,7 @@ extension WireCallCenterV3Tests {
         // then
         XCTAssertNotEqual(
             sut.callState(conversationId: oneOnOneConversationID),
-            .incoming(video: false, shouldRing: false, degraded: false)
+            .incoming(isVideo: false, shouldRing: false, degraded: false)
         )
     }
 
@@ -2365,7 +2366,9 @@ extension WireCallCenterV3Tests {
         let clients = [
             AVSClient(userId: selfUserID, clientId: clientId1),
             AVSClient(userId: otherUserID, clientId: clientId2)
-        ]
+        ].map { client in
+            AVSClientVideoStream(client: client, quality: .low)
+        }
 
         let expectedResult = AVSVideoStreams(conversationId: conversationId.serialized, clients: clients)
 

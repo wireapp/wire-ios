@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -141,6 +141,10 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         let oneOnOneResolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
+        )
+        let mlsClientManager = MLSClientManager(
+            coreCryptoProvider: coreCryptoProvider,
+            mlsService: mlsService
         )
 
         return [
@@ -356,7 +360,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus
+                syncProgress: applicationStatusDirectory.syncStatus,
+                mlsClientManager: mlsClientManager
             ),
             FetchBackendMLSPublicKeysRequestStrategy(
                 withManagedObjectContext: syncMOC,

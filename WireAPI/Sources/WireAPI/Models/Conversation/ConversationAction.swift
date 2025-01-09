@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 /// Represents the actions that ca be performed in a conversation.
 
-public enum ConversationAction: Hashable {
+public enum ConversationAction: Hashable, Sendable {
 
     /// The action of adding a new member to a conversation.
 

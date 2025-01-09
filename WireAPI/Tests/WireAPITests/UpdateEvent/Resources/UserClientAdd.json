@@ -14,7 +14,7 @@
             "ed448": "ed448_key",
             "ecdsa_secp256r1_sha256": "p256_key",
             "ecdsa_secp384r1_sha384": "p384_key",
-            "ecdsa_secp512r1_sha512": "p512_key"
+            "ecdsa_secp521r1_sha512": "p512_key"
         },
         "capabilities": {
             "capabilities": [

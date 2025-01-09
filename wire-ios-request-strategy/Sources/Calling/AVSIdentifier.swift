@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ public extension AVSIdentifier {
     /// The string should be composed of a UUID string and an optional domain. Components should be separated by "@".
     /// Example: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F@wire.link"
 
-    internal init?(string: String) {
+    init?(string: String) {
         let components = string.components(separatedBy: "@")
 
         guard
