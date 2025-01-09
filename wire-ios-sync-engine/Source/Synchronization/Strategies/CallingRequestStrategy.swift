@@ -34,8 +34,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     private let flowManager: FlowManagerType
     private let decoder = JSONDecoder()
 
-    private let callEventStatus: CallEventStatus
-
     private var callConfigRequestSync: ZMSingleRequestSync! = nil
     private var callConfigCompletion: CallConfigRequestCompletion?
 
@@ -58,13 +56,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         applicationStatus: ApplicationStatus,
         clientRegistrationDelegate: ClientRegistrationDelegate,
         flowManager: FlowManagerType,
-        callEventStatus: CallEventStatus,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
         messageSender: MessageSenderInterface
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
-        self.callEventStatus = callEventStatus
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)

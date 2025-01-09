@@ -1350,7 +1350,7 @@ final class WireCallCenterV3Tests: MessagingTest {
             calledCompletionHandler.fulfill()
         }
         // then
-            
+
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 

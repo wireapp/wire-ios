@@ -615,7 +615,6 @@ public final class ZMUserSession: NSObject {
             operationStatus: applicationStatusDirectory.operationStatus,
             syncStatus: applicationStatusDirectory.syncStatus,
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-            callEventStatus: applicationStatusDirectory.callEventStatus,
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled
