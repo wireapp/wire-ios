@@ -20,12 +20,6 @@ import Foundation
 import WireAPI
 import WireLogging
 
-protocol PullSelfLegalholdInfoSyncProtocol {
-
-    func pull(selfTeamID: UUID) async throws
-
-}
-
 /// An object to keep the local self legal hold info
 /// up to date with the remote self legal hold info.
 
