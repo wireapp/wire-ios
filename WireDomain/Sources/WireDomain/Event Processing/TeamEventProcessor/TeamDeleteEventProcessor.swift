@@ -20,16 +20,6 @@ import CoreData
 import WireAPI
 import WireDataModel
 
-/// Process team delete events.
-
-protocol TeamDeleteEventProcessorProtocol {
-
-    /// Process a team delete event.
-
-    func processEvent() async throws
-
-}
-
 struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
 
     let context: NSManagedObjectContext

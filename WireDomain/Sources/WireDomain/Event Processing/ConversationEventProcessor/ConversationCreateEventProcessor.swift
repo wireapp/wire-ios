@@ -20,18 +20,6 @@ import WireAPI
 import WireLogging
 import WireSystem
 
-/// Process conversation create events.
-
-protocol ConversationCreateEventProcessorProtocol {
-
-    /// Process a conversation create event.
-    ///
-    /// - Parameter event: A conversation create event.
-
-    func processEvent(_ event: ConversationCreateEvent) async
-
-}
-
 struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtocol {
 
     let repository: any ConversationRepositoryProtocol
