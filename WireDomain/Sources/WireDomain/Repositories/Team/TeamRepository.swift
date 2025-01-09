@@ -171,6 +171,7 @@ public class TeamRepository: TeamRepositoryProtocol {
         )
     }
 
+
     public func pullSelfLegalholdInfo() async throws {
         let selfUser = await userRepository.fetchSelfUser()
 
@@ -180,14 +181,17 @@ public class TeamRepository: TeamRepositoryProtocol {
 
         switch selfUserLegalHold.status {
         case .pending:
-            guard let selfClientID else {
+            guard
+                let clientID = selfUserLegalHold.clientID,
+                let lastPrekey = selfUserLegalHold.prekey
+            else {
                 return
             }
 
             await userRepository.addLegalHoldRequest(
                 userID: selfUserID,
-                clientID: selfClientID,
-                lastPrekey: selfUserLegalHold.prekey
+                clientID: clientID,
+                lastPrekey: lastPrekey
             )
 
         case .disabled:
