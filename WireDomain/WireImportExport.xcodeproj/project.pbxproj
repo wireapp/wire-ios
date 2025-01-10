@@ -30,14 +30,12 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		59049E312D3146CE00E866D1 /* WireImportExport */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			name = WireImportExport;
-			path = Sources/WireImportExport;
+			path = WireImportExport;
 			sourceTree = "<group>";
 		};
 		59049E3D2D3146CE00E866D1 /* WireImportExportTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			name = WireImportExportTests;
-			path = Tests/WireImportExportTests;
+			path = WireImportExportTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -65,8 +63,8 @@
 		59049E252D3146CE00E866D1 = {
 			isa = PBXGroup;
 			children = (
-				59049E312D3146CE00E866D1 /* WireImportExport */,
-				59049E3D2D3146CE00E866D1 /* WireImportExportTests */,
+				5904B1C22D3158EA00E866D1 /* Sources */,
+				5904B1C32D31590000E866D1 /* Tests */,
 				5904A52E2D31497A00E866D1 /* Frameworks */,
 				59049E302D3146CE00E866D1 /* Products */,
 			);
@@ -87,6 +85,22 @@
 				5904A52F2D31497A00E866D1 /* WireDomain.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5904B1C22D3158EA00E866D1 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				59049E312D3146CE00E866D1 /* WireImportExport */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		5904B1C32D31590000E866D1 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				59049E3D2D3146CE00E866D1 /* WireImportExportTests */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
