@@ -20,18 +20,6 @@ import WireAPI
 import WireLogging
 import WireSystem
 
-/// Process user properties delete events.
-
-protocol UserPropertiesDeleteEventProcessorProtocol {
-
-    /// Process a user properties delete event.
-    ///
-    /// - Parameter event: A user properties delete event.
-
-    func processEvent(_ event: UserPropertiesDeleteEvent) async
-
-}
-
 struct UserPropertiesDeleteEventProcessor: UserPropertiesDeleteEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol

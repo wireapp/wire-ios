@@ -300,6 +300,7 @@ final class TeamRepositoryTests: XCTestCase {
 
         static let teamMemberLegalhold = TeamMemberLegalholdInfo(
             status: .pending,
+            clientID: "abc123",
             prekey: prekey
         )
 

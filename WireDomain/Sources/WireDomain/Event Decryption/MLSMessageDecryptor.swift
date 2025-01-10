@@ -21,21 +21,6 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-/// Decrypt MLS messages.
-protocol MLSMessageDecryptorProtocol {
-
-    /// Decrypt a MLS message.
-    ///
-    /// - Parameter eventData: A payload containing the encrypted message.
-    /// - Returns: The payload containing the decrypted message.
-
-    func decryptedEventData(
-        from eventData: ConversationMLSMessageAddEvent
-    ) async throws -> ConversationMLSMessageAddEvent
-
-}
-
 struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
     let mlsDecryptionService: any MLSDecryptionServiceInterface

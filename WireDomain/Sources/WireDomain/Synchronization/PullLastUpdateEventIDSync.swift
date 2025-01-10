@@ -20,12 +20,6 @@ import Foundation
 import WireAPI
 import WireLogging
 
-protocol PullLastUpdateEventIDSyncProtocol {
-
-    func pull() async throws
-
-}
-
 /// An object to keep the local last update event id up to date
 /// with the remote last update evnt id.
 

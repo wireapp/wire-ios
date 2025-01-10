@@ -20,18 +20,6 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-/// Process conversation mls welcome events.
-
-protocol ConversationMLSWelcomeEventProcessorProtocol {
-
-    /// Process a conversation mls welcome event.
-    ///
-    /// - Parameter event: A conversation mls welcome event.
-
-    func processEvent(_ event: ConversationMLSWelcomeEvent) async throws
-
-}
-
 struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcessorProtocol {
 
     enum Failure: Error {

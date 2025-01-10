@@ -18,18 +18,6 @@
 
 import WireAPI
 
-/// Process feature config update events.
-
-protocol FeatureConfigUpdateEventProcessorProtocol {
-
-    /// Process a feature config update event.
-    ///
-    /// - Parameter event: A feature config update event.
-
-    func processEvent(_ event: FeatureConfigUpdateEvent) async throws
-
-}
-
 struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
 
     let repository: any FeatureConfigRepositoryProtocol

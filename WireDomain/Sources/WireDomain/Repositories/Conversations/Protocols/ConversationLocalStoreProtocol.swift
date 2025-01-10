@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-//import WireLogging
 
 // sourcery: AutoMockable
 /// A local store dedicated to conversations.
@@ -51,7 +50,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - Parameter isFederationEnabled: A flag indicating whether a `Federation` is enabled.
 
     func storeConversation(
-        _ conversation: Conversation,
+        _ conversation: WireDomain.Conversation,
         timestamp: Date,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool
