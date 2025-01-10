@@ -21,9 +21,7 @@ import WireCryptobox
 import WireDataModel
 import WireLogging
 
-public final class MessageLocalStore<ConversationLocalStore: ConversationLocalStoreProtocol>: MessageLocalStoreProtocol
-where ConversationLocalStore.ConversationEntity == ZMConversation {
-
+public final class MessageLocalStore: MessageLocalStoreProtocol {
     public typealias ConversationEntity = ZMConversation
 
     enum Failure: Error {
@@ -40,14 +38,14 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let conversationLocalStore: ConversationLocalStore
+    let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
-        conversationLocalStore: ConversationLocalStore,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol
     ) {
         self.context = context
@@ -79,7 +77,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
     }
 
     public func canAddMessage(
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         senderID: UUID
     ) async -> Bool {
         let selfUser = await userLocalStore.fetchSelfUser()
@@ -92,7 +90,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     public func fetchOrCreateClientMessage(
         id: String,
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMClientMessage, isNew: Bool) {
@@ -109,7 +107,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     public func fetchOrCreateAssetClientMessage(
         id: String,
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMAssetClientMessage, isNew: Bool) {
@@ -128,7 +126,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
         _ clientMessage: ZMClientMessage,
         isNewMessage: Bool,
         genericMessage: GenericMessage,
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         senderID: UUID,
         senderDomain: String
     ) async {
@@ -161,7 +159,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
         _ assetClientMessage: ZMAssetClientMessage,
         isNewMessage: Bool,
         genericMessage: GenericMessage,
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         senderID: UUID,
         senderDomain: String
     ) async {
@@ -212,7 +210,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     public func deleteMessageForSelf(
         _ hiddenMessage: MessageHide,
-        in conversation: ConversationEntity
+        in conversation: ZMConversation
     ) async {
         await context.perform { [context] in
             guard conversation.isSelfConversation else {
@@ -228,7 +226,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     public func deleteMessageForEveryone(
         _ deletedMessage: MessageDelete,
-        in conversation: ConversationEntity,
+        in conversation: ZMConversation,
         senderID: UUID
     ) async {
         await context.perform { [context] in
@@ -243,7 +241,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     public func addMessageReaction(
         _ messageReaction: WireProtos.Reaction,
-        in conversation: ConversationEntity,
+        in conversation: ZMConversation,
         senderID: UUID,
         date: Date
     ) async {
@@ -260,7 +258,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     public func updateButtonStates(
         _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ConversationEntity
+        in conversation: ZMConversation
     ) async {
         await context.perform { [context] in
             ZMClientMessage.updateButtonStates(
@@ -273,7 +271,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     public func editMessage(
         _ messageEdit: MessageEdit,
-        in conversation: ConversationEntity,
+        in conversation: ZMConversation,
         senderID: UUID,
         genericMessage: GenericMessage,
         date: Date
@@ -313,7 +311,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
     private func fetchOrCreateClientMessage(
         id: String,
         messageType: ClientMessageType,
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMOTRMessage, isNew: Bool) {
@@ -365,7 +363,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     private func setupNewClientMessage(
         _ message: ZMOTRMessage,
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         senderID: UUID,
         clientID: String?,
         date: Date
@@ -384,7 +382,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
         clientMessage: ZMOTRMessage,
         senderID: UUID,
         senderDomain: String,
-        conversation: ConversationEntity
+        conversation: ZMConversation
     ) {
         let sender = ZMUser.fetchOrCreate(
             with: senderID,
@@ -403,7 +401,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     private func createSystemMessages(
         from messageType: SystemMessageType,
-        conversation: ConversationEntity
+        conversation: ZMConversation
     ) async -> Set<ZMSystemMessage> {
         switch messageType {
         case let .federationTermination(domains, date):
@@ -848,7 +846,7 @@ where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     private func addSystemMessages(
         _ messages: Set<ZMSystemMessage>,
-        to conversation: ConversationEntity
+        to conversation: ZMConversation
     ) async {
         await context.perform {
             for message in messages {

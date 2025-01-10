@@ -17,11 +17,13 @@
 //
 
 import WireAPI
+import WireDataModel
 
-struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProcessorProtocol {
+struct ConversationAccessUpdateEventProcessor<Dependencies>: ConversationAccessUpdateEventProcessorProtocol
+where Dependencies: ConversationAccessUpdateEventProcessorDependencies {
 
-    let repository: any ConversationRepositoryProtocol
-    let localStore: any ConversationLocalStoreProtocol
+    let repository: ConversationRepository
+    let localStore: ConversationLocalStore
 
     func processEvent(_ event: ConversationAccessUpdateEvent) async {
         let conversationID = event.conversationID
@@ -46,7 +48,7 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
 
     private func getAccessRoles(
         from legacyRole: ConversationAccessRoleLegacy
-    ) -> Set<ConversationAccessRole> {
+    ) -> Set<WireAPI.ConversationAccessRole> {
         switch legacyRole {
         case .team:
             [.teamMember]
@@ -59,4 +61,15 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
         }
     }
 
+}
+
+protocol ConversationAccessUpdateEventProcessorDependencies {
+    associatedtype ConversationRepository: ConversationRepositoryProtocol
+    where ConversationRepository.ConversationEntity == ZMConversation
+    associatedtype ConversationLocalStore: ConversationLocalStoreProtocol
+}
+
+extension ConversationAccessUpdateEventProcessor {
+    typealias ConversationRepository = Dependencies.ConversationRepository
+    typealias ConversationLocalStore = Dependencies.ConversationLocalStore
 }

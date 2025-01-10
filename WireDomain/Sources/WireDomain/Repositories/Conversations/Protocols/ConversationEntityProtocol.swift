@@ -16,4 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ConversationEntityProtocol {}
+import CoreData
+import WireDataModel
+
+public protocol ConversationEntityProtocol: NSManagedObject {
+    var mlsGroupID: MLSGroupID? { get }
+    var mutableMessages: NSMutableSet { get }
+    var isForcedReadOnly: Bool { get set }
+    var needsToBeUpdatedFromBackend: Bool { get set }
+}

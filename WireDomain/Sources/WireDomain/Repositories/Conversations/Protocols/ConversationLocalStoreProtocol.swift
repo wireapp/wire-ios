@@ -30,19 +30,17 @@ import WireDataModel
 /// Check out the Confluence page for full details
 /// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
-    associatedtype ConversationEntity: ConversationEntityProtocol
-    associatedtype UserEntity: UserEntityProtocol
 
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
     ///
-    /// - returns: The `ConversationEntity` found or created locally.
+    /// - returns: The `ZMConversation` found or created locally.
 
     func fetchOrCreateConversation(
         id: UUID,
         domain: String?
-    ) async -> ConversationEntity
+    ) async -> ZMConversation
 
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
@@ -86,18 +84,18 @@ public protocol ConversationLocalStoreProtocol {
 
     func fetchMLSConversation(
         groupID: WireDataModel.MLSGroupID
-    ) async -> ConversationEntity?
+    ) async -> ZMConversation?
 
     /// Fetches a conversation locally.
     /// - Parameters:
     ///     - id: The ID of the conversation.
     ///     - domain: The domain of the conversation if any.
-    /// - returns: The `ConversationEntity` found locally.
+    /// - returns: The `ZMConversation` found locally.
 
     func fetchConversation(
         id: UUID,
         domain: String?
-    ) async -> ConversationEntity?
+    ) async -> ZMConversation?
 
     /// Wipes MLS group conversation.
     /// - parameter id: The MLS group ID.
@@ -130,9 +128,9 @@ public protocol ConversationLocalStoreProtocol {
     /// If not, user will be added to the conversation.
 
     func addOrUpdateParticipant(
-        _ user: UserEntity,
+        _ user: ZMUser,
         withRole role: String,
-        in conversation: ConversationEntity
+        in conversation: ZMConversation
     ) async
 
     /// Adds new participants to a conversation.
@@ -158,7 +156,7 @@ public protocol ConversationLocalStoreProtocol {
     func updateMemberStatus(
         mutedStatusInfo: (status: Int?, referenceDate: Date?),
         archivedStatusInfo: (status: Bool?, referenceDate: Date?),
-        for localConversation: ConversationEntity
+        for localConversation: ZMConversation
     ) async
 
     /// Updates access modes and roles to conversation.
@@ -169,7 +167,7 @@ public protocol ConversationLocalStoreProtocol {
     /// See `ConversationAccessMode` and `ConversationAccessRole`
 
     func updateAccesses(
-        for conversation: ConversationEntity,
+        for conversation: ZMConversation,
         accessModes: [String],
         accessRoles: [String]
     ) async
@@ -179,7 +177,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - returns: The message protocol used for that conversation.
 
     func messageProtocol(
-        for conversation: ConversationEntity
+        for conversation: ZMConversation
     ) async -> WireDataModel.MessageProtocol
 
     /// Stores a flag indicating whether a conversation has read receipts enabled.
@@ -189,7 +187,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func storeConversation(
         hasReadReceiptsEnabled: Bool,
-        for conversation: ConversationEntity
+        for conversation: ZMConversation
     ) async
 
     /// Indicates whether a given conversation is read-only.
@@ -197,7 +195,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - returns: Whether the conversation is read-only.
 
     func isConversationForcedReadOnly(
-        _ conversation: ConversationEntity
+        _ conversation: ZMConversation
     ) async -> Bool
 
     /// Removes participants from conversation and updates conversation state.
@@ -207,7 +205,7 @@ public protocol ConversationLocalStoreProtocol {
     ///     - initiatingUser: The user that initiated the removal.
 
     func removeParticipantsAndUpdateConversationState(
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         users: Set<ZMUser>,
         initiatingUser: ZMUser
     ) async
@@ -218,7 +216,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - returns: A `MessageDestructionTimeoutValue` object.
 
     func conversationMessageDestructionTimeout(
-        _ conversation: ConversationEntity
+        _ conversation: ZMConversation
     ) async -> MessageDestructionTimeoutValue
 
     /// Stores a message destruction timeout value.
@@ -228,7 +226,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func storeConversation(
         timeoutValue: Double,
-        for conversation: ConversationEntity
+        for conversation: ZMConversation
     ) async
     /// Fetches or creates a role locally.
     /// - Parameters:
@@ -238,7 +236,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func fetchOrCreateRole(
         _ role: String,
-        in conversation: ConversationEntity
+        in conversation: ZMConversation
     ) async -> Role
 
     /// Fetches local participants from a conversation.
@@ -246,7 +244,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - returns: A list of participants.
 
     func localParticipants(
-        in conversation: ConversationEntity
+        in conversation: ZMConversation
     ) async -> Set<ZMUser>
 
     /// Whether the conversation is a group conversation.
@@ -254,7 +252,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - returns: A flag indicating whether the conversation is a group one.
 
     func isGroupConversation(
-        _ conversation: ConversationEntity
+        _ conversation: ZMConversation
     ) async -> Bool
 
     /// Deletes a conversation locally.
@@ -262,7 +260,7 @@ public protocol ConversationLocalStoreProtocol {
     ///     - conversation: The conversation to delete.
 
     func deleteConversation(
-        _ conversation: ConversationEntity
+        _ conversation: ZMConversation
     ) async
 
     /// Stores a flag indicating whether a conversation is deleted remotely.
@@ -271,7 +269,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func storeConversation(
         isDeletedRemotely: Bool,
-        conversation: ConversationEntity
+        conversation: ZMConversation
     ) async
 
     /// Fetches the MLS conversation info (given conversation is MLS one)
@@ -282,7 +280,7 @@ public protocol ConversationLocalStoreProtocol {
     /// group ID.
 
     func mlsConversationInfo(
-        conversation: ConversationEntity
+        conversation: ZMConversation
     ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)?
 
     /// Commits pending proposals for a given conversation.
@@ -291,13 +289,13 @@ public protocol ConversationLocalStoreProtocol {
     /// - Parameter commitDelay: The commit delay.
 
     func commitPendingProposals(
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         date: Date,
         commitDelay: UInt64
     ) async
 
     func updateSecurityLevelAfterReceivingMessage(
-        conversation: ConversationEntity,
+        conversation: ZMConversation,
         genericMessage: GenericMessage,
         date: Date
     ) async
@@ -305,7 +303,7 @@ public protocol ConversationLocalStoreProtocol {
     func addParticipantIfNeeded(
         participantID: UUID,
         participantDomain: String?,
-        in conversation: ConversationEntity,
+        in conversation: ZMConversation,
         date: Date
     ) async
 
@@ -317,7 +315,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func updateLastReadMessageTimestamp(
         _ lastReadMessage: LastRead,
-        in conversation: ConversationEntity
+        in conversation: ZMConversation
     ) async
 
     /// Updates cleared message timestamp.
@@ -328,7 +326,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func updateClearedMessageTimestamp(
         _ clearedMessage: Cleared,
-        in conversation: ConversationEntity
+        in conversation: ZMConversation
     ) async
 
     /// Sends a notification using the main context informing typing users
@@ -349,7 +347,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func obtainPermanentIDs(
         user: ZMUser,
-        conversation: ConversationEntity
+        conversation: ZMConversation
     )
 
     /// Fetches the current conversation name
@@ -357,7 +355,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - returns: The conversation name
 
     func conversationName(
-        conversation: ConversationEntity
+        conversation: ZMConversation
     ) async -> String?
 
     /// Updates the conversation name.
@@ -367,7 +365,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func storeConversation(
         newName: String,
-        conversation: ConversationEntity
+        conversation: ZMConversation
     ) async
 
     /// Updates or creates a MLS group locally.
@@ -385,7 +383,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
-        conversation: ConversationEntity
+        conversation: ZMConversation
     ) async
 
     /// Fetches the other user qualified id (not self user) in a 1:1 conversation.
@@ -394,7 +392,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - returns: The other user `QualifiedID`.
 
     func fetchOtherUserIDInOneOnOneConversation(
-        conversation: ConversationEntity
+        conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
 
 }
