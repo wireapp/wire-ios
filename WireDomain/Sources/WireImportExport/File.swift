@@ -17,5 +17,8 @@
 //
 
 import Foundation
+import WireDomain
 
 public let SOMEINT = 0
+
+public struct ImportConversationUseCase {}

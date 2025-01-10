@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		59049E3A2D3146CE00E866D1 /* WireImportExport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59049E2F2D3146CE00E866D1 /* WireImportExport.framework */; };
+		5904A5302D31497A00E866D1 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5904A52F2D31497A00E866D1 /* WireDomain.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,6 +24,7 @@
 /* Begin PBXFileReference section */
 		59049E2F2D3146CE00E866D1 /* WireImportExport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireImportExport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59049E392D3146CE00E866D1 /* WireImportExportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireImportExportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5904A52F2D31497A00E866D1 /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -45,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5904A5302D31497A00E866D1 /* WireDomain.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +67,7 @@
 			children = (
 				59049E312D3146CE00E866D1 /* WireImportExport */,
 				59049E3D2D3146CE00E866D1 /* WireImportExportTests */,
+				5904A52E2D31497A00E866D1 /* Frameworks */,
 				59049E302D3146CE00E866D1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -75,6 +79,14 @@
 				59049E392D3146CE00E866D1 /* WireImportExportTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5904A52E2D31497A00E866D1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5904A52F2D31497A00E866D1 /* WireDomain.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -220,7 +232,6 @@
 		59049E432D3146CE00E866D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -252,7 +263,6 @@
 		59049E442D3146CE00E866D1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -342,6 +352,9 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -400,6 +413,9 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
