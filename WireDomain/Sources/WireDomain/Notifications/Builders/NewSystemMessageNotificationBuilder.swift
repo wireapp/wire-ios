@@ -137,7 +137,7 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
 
         return content
     }
-    
+
     private func buildMemberJoinNotification() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
 
