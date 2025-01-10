@@ -19,18 +19,6 @@
 import CoreData
 import WireAPI
 
-/// Process user legalhold enable events.
-
-protocol UserLegalholdEnableEventProcessorProtocol {
-
-    /// Process a user legalhold enable event.
-    ///
-    /// - Parameter event: A user legalhold enable event.
-
-    func processEvent(_ event: UserLegalholdEnableEvent) async throws
-
-}
-
 struct UserLegalholdEnableEventProcessor: UserLegalholdEnableEventProcessorProtocol {
 
     let context: NSManagedObjectContext

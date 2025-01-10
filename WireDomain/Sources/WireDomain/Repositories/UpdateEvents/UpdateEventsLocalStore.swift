@@ -20,50 +20,6 @@ import WireDataModel
 import WireFoundation
 import WireLogging
 
-// sourcery: AutoMockable
-protocol UpdateEventsLocalStoreProtocol {
-
-    /// Get last event ID.
-    /// - returns: The last event ID.
-
-    func lastEventID() -> UUID?
-
-    /// Stores last event ID.
-    /// - parameter id: The last event ID to store.
-
-    func storeLastEventID(id: UUID)
-
-    /// Retrieves the index of the last event envelope.
-    /// - returns: The last index event envelope.
-
-    func indexOfLastEventEnvelope() async throws -> Int64
-
-    /// Persists an event envelope locally.
-    /// - Parameters:
-    ///     - data: The event envelope payload data.
-    ///     - index: The event envelope index.
-
-    func persistEventEnvelope(
-        _ data: Data,
-        index: Int64
-    ) async throws
-
-    /// Fetches stored event envelope payloads.
-    /// - parameter limit: A fetch limit.
-    /// - returns: A list of event payloads.
-
-    func fetchStoredEventEnvelopePayloads(
-        limit: UInt
-    ) async throws -> [Data]
-
-    /// Deletes next pending events locally.
-    /// - parameter limit: A fetch limit.
-
-    func deleteNextPendingEvents(
-        limit: UInt
-    ) async throws
-}
-
 final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
     enum Key: String, DefaultsKey {

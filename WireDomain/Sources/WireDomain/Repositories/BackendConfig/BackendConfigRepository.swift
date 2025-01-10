@@ -20,17 +20,6 @@ import Foundation
 import WireAPI
 import WireLogging
 
-// sourcery: AutoMockable
-/// Facilitate access to backend configurations.
-///
-/// A repository provides an abstraction for the access and storage backend configurations.
-protocol BackendConfigRepositoryProtocol {
-
-    /// Fetches backend MLS public keys, calculates and stores the `isMLSEnabled` for backend info
-
-    func pullMLSBackendStatus() async
-}
-
 final class BackendConfigRepository: BackendConfigRepositoryProtocol {
 
     // MARK: - Properties

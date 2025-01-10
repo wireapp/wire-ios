@@ -19,21 +19,6 @@
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-public protocol ConversationLabelsLocalStoreProtocol {
-
-    /// Stores the label and updates conversation relationships in
-    /// the local storage.
-    ///
-    /// After this method is invoked, only the given labels exist
-    /// in the local storage, i.e all old labels will be deleted.
-    ///
-    /// - Parameter labels: The labels to store.
-
-    func setLabels(_ labels: [ConversationLabelInfo]) async throws
-
-}
-
 public final class ConversationLabelsLocalStore: ConversationLabelsLocalStoreProtocol {
 
     // MARK: - Error

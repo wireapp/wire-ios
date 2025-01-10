@@ -20,23 +20,6 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-/// Facilitates access to conversation labels related domain objects.
-public protocol ConversationLabelsRepositoryProtocol {
-
-    /// Pulls conversation labels from the server and stores locally
-
-    func pullConversationLabels() async throws
-
-    /// Updates conversation labels locally
-    /// - parameters:
-    ///     - conversationLabels: The conversation labels to update locally.
-
-    func updateConversationLabels(
-        _ conversationLabels: [ConversationLabel]
-    ) async throws
-}
-
 public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
 
     // MARK: - Properties

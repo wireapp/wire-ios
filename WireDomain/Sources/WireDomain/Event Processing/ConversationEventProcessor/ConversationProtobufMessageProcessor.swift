@@ -21,26 +21,6 @@ import WireDataModel
 import WireLogging
 import WireProtos
 
-// sourcery: AutoMockable
-/// A common processor for processing MLS / Proteus protobuf message.
-/// Used by `ConversationMLSMessageAddEventProcessor` and `ConversationProteusMessageAddEventProcessor`
-/// The message content is encoded using protocol buffers. There is a common protocol buffer definition adopted by all
-/// Wire client.
-public protocol ConversationProtobufMessageProcessorProtocol {
-
-    func processProtobufMessage(
-        _ message: GenericMessage,
-        content: GenericMessage.OneOf_Content,
-        conversation: ZMConversation,
-        conversationID: ConversationID,
-        senderID: UserID,
-        senderClientID: String?,
-        date: Date,
-        eventMessage: String
-    ) async throws
-
-}
-
 struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 
     let messageLocalStore: any MessageLocalStoreProtocol

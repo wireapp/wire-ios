@@ -34,7 +34,6 @@ final class PullSelfLegalholdInfoSyncTests: XCTestCase {
         store = MockUserLocalStoreProtocol()
         sut = PullSelfLegalholdInfoSync(
             selfUserID: Scaffolding.selfUserID,
-            selfClientID: Scaffolding.selfClientID,
             api: api,
             store: store
         )
@@ -63,7 +62,7 @@ final class PullSelfLegalholdInfoSyncTests: XCTestCase {
         let storeInvocations = store.addSelfLegalHoldRequestUserIDClientIDLastPrekey_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0].userID, Scaffolding.selfUserID)
-        XCTAssertEqual(storeInvocations[0].clientID, Scaffolding.selfClientID)
+        XCTAssertEqual(storeInvocations[0].clientID, Scaffolding.clientID)
         XCTAssertEqual(storeInvocations[0].lastPrekey, Scaffolding.localPrekey)
     }
 
@@ -117,9 +116,8 @@ final class PullSelfLegalholdInfoSyncTests: XCTestCase {
 private enum Scaffolding {
 
     static let selfUserID = UUID()
-    static let selfClientID = "abc123"
     static let selfTeamID = UUID()
-
+    static let clientID = "abc123"
     static let prekeyData = Data.random()
     static let prekey = LegalholdPrekey(
         id: 0,
@@ -129,6 +127,7 @@ private enum Scaffolding {
     static func remoteLegalholdInfo(status: LegalholdStatus) -> TeamMemberLegalholdInfo {
         .init(
             status: status,
+            clientID: clientID,
             prekey: prekey
         )
     }
