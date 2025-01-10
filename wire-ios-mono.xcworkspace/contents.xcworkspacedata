@@ -165,7 +165,7 @@
       location = "group:WireDomain/WireImportExport.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireDomain/Project/WireDomain Project.xcodeproj">
+      location = "group:WireDomain/WireDomain Project.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:WireDomain">
