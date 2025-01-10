@@ -19,20 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullSelfLegalholdInfoSyncProtocol {
-
-    func pull(selfTeamID: UUID) async throws
-
-}
-
-enum PullSelfLegalholdInfoSyncError: Error {
-
-    case missingClientID
-    case missingPrekey
-    case invalidPrekey
-
-}
-
 /// An object to keep the local self legal hold info
 /// up to date with the remote self legal hold info.
 

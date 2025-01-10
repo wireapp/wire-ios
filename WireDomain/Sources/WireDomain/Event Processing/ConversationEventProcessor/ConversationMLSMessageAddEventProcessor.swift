@@ -21,18 +21,6 @@ import WireDataModel
 import WireLogging
 import WireSystem
 
-/// Process conversation mls message add events.
-
-protocol ConversationMLSMessageAddEventProcessorProtocol {
-
-    /// Process a conversation mls message add event.
-    ///
-    /// - Parameter event: A conversation mls message add event.
-
-    func processEvent(_ event: ConversationMLSMessageAddEvent) async throws
-
-}
-
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
 
     enum Failure: Error {

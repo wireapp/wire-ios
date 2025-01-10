@@ -19,17 +19,6 @@
 import WireDataModel
 import WireFoundation
 
-// sourcery: AutoMockable
-protocol BackendConfigLocalStoreProtocol {
-
-    /// Stores isMLSEnabled value
-    /// - parameter newValue: New value to store
-    func storeIsMLSEnabledStatus(newValue: Bool)
-
-    var isMLSEnabled: Bool { get }
-
-}
-
 final class BackendConfigLocalStore: BackendConfigLocalStoreProtocol {
 
     enum Key: String {
