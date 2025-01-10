@@ -19,12 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullAllConversationsSyncProtocol {
-
-    func pull() async throws
-
-}
-
 /// An object to keep the local conversations up to date
 /// with the remote conversations.
 

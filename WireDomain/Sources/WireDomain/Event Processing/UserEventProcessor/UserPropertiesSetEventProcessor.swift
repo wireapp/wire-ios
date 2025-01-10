@@ -18,18 +18,6 @@
 
 import WireAPI
 
-/// Process user properties set events.
-
-protocol UserPropertiesSetEventProcessorProtocol {
-
-    /// Process a user properties set event.
-    ///
-    /// - Parameter event: A user properties set event.
-
-    func processEvent(_ event: UserPropertiesSetEvent) async throws
-
-}
-
 struct UserPropertiesSetEventProcessor: UserPropertiesSetEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol

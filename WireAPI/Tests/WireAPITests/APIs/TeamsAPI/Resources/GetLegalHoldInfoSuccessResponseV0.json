@@ -1,5 +1,8 @@
 {
   "status": "pending",
+  "client": {
+      "id": "abc123"
+  },
   "last_prekey": {
       "id": 12345,
       "key": "foo"

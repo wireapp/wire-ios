@@ -125,7 +125,10 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
                 .withCookies(cookies)
 
             if let clientID {
-                requestBuilder = requestBuilder.withQueryItem(name: "client_id", value: clientID)
+                requestBuilder = requestBuilder.withQueryItem(
+                    name: "client_id",
+                    value: clientID
+                )
             }
 
             var request = requestBuilder.build()

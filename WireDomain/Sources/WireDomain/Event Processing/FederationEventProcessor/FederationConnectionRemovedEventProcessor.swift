@@ -20,18 +20,6 @@ import CoreData
 import WireAPI
 import WireDataModel
 
-/// Process federation connection removed events.
-
-protocol FederationConnectionRemovedEventProcessorProtocol {
-
-    /// Process a federation connection removed event.
-    ///
-    /// - Parameter event: A federation connection removed event.
-
-    func processEvent(_ event: FederationConnectionRemovedEvent) async throws
-
-}
-
 struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEventProcessorProtocol {
 
     enum Error: Swift.Error {
