@@ -23,7 +23,7 @@ import WireDomainAPI
 import WireLogging
 import WireSystem
 
-public struct IndividualToTeamMigrationUseCase_: IndividualToTeamMigrationUseCaseProtocol {
+public struct IndividualToTeamMigrationUseCase: IndividualToTeamMigrationUseCaseProtocol {
 
     private let accountsAPI: AccountsAPI
     private let context: NSManagedObjectContext
