@@ -144,7 +144,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
             .nextPhase : .fetchingLastUpdateEventID
         syncTimeTracker.reset()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        WireLogger.sync.info("resyncResources", attributes: .safePublic)
+        WireLogger.sync.debug("resyncResources", attributes: .safePublic)
         syncStateDelegate?.didStartSlowSync()
     }
 
