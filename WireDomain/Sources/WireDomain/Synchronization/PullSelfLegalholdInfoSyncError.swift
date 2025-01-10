@@ -16,30 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public typealias LegalholdPrekey = Prekey
+enum PullSelfLegalholdInfoSyncError: Error {
 
-/// The team member legalhold.
-public struct TeamMemberLegalholdInfo: Equatable, Sendable {
+    case missingClientID
+    case missingPrekey
+    case invalidPrekey
 
-    /// The legalhold status.
-
-    public let status: LegalholdStatus
-
-    /// The legalhold client id.
-
-    public let clientID: String?
-
-    /// The legalhold prekey.
-
-    public let prekey: LegalholdPrekey?
-
-    public init(
-        status: LegalholdStatus,
-        clientID: String?,
-        prekey: LegalholdPrekey?
-    ) {
-        self.status = status
-        self.clientID = clientID
-        self.prekey = prekey
-    }
 }

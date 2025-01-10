@@ -18,7 +18,6 @@
 
 import Foundation
 import WireAPI
-import WireLogging
 
 /// An object to keep the local self legal hold info
 /// up to date with the remote self legal hold info.
@@ -26,18 +25,15 @@ import WireLogging
 struct PullSelfLegalholdInfoSync: PullSelfLegalholdInfoSyncProtocol {
 
     private let selfUserID: UUID
-    private let selfClientID: String
     private let api: any TeamsAPI
     private let store: any UserLocalStoreProtocol
 
     init(
         selfUserID: UUID,
-        selfClientID: String,
         api: any TeamsAPI,
         store: any UserLocalStoreProtocol
     ) {
         self.selfUserID = selfUserID
-        self.selfClientID = selfClientID
         self.api = api
         self.store = store
     }
@@ -56,16 +52,21 @@ struct PullSelfLegalholdInfoSync: PullSelfLegalholdInfoSyncProtocol {
 
         switch remoteLegalholdInfo.status {
         case .pending:
-            let lastPrekey = remoteLegalholdInfo.prekey
+            guard let clientID = remoteLegalholdInfo.clientID else {
+                throw PullSelfLegalholdInfoSyncError.missingClientID
+            }
+
+            guard let lastPrekey = remoteLegalholdInfo.prekey else {
+                throw PullSelfLegalholdInfoSyncError.missingPrekey
+            }
+
             guard let mappedPrekey = lastPrekey.toDomainModel() else {
-                return WireLogger.eventProcessing.error(
-                    "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
-                )
+                throw PullSelfLegalholdInfoSyncError.invalidPrekey
             }
 
             await store.addSelfLegalHoldRequest(
                 userID: selfUserID,
-                clientID: selfClientID,
+                clientID: clientID,
                 lastPrekey: mappedPrekey
             )
 
