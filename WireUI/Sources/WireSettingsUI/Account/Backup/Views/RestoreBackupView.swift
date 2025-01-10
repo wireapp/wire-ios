@@ -32,22 +32,18 @@ struct RestoreBackupView: View {
     }
 
     public var body: some View {
-        PpasswordBackupView(importBackup: importBackup)
+        PasswordBackupView(importBackup: importBackup)
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
-                Text(L10n.RestoreFromBackup.title)
+                Text(L10n.Localizable.RestoreFromBackup.title)
             )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     CloseButton(
                         action: didTapClose,
-                        accessibilityLabel: String(
-                            localized: "restoreBackup.close.label",
-                            table: "Accessibility",
-                            bundle: .module
-                        )
+                        accessibilityLabel: L10n.Accessibility.RestoreBackup.Close.label
                     )
                 }
             }
@@ -58,7 +54,7 @@ struct RestoreBackupView: View {
     }
 }
 
-private struct PpasswordBackupView: View {
+private struct PasswordBackupView: View {
     @Environment(\.dismiss) var dismiss
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
@@ -71,7 +67,7 @@ private struct PpasswordBackupView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text(L10n.RestoreFromBackup.description)
+            Text(L10n.Localizable.RestoreFromBackup.description)
                 .font(.textStyle(.body1))
                 .foregroundStyle(Color.primaryText)
                 .multilineTextAlignment(.leading)
@@ -81,7 +77,6 @@ private struct PpasswordBackupView: View {
             PasswordFieldView(
                 password: $password,
                 isPasswordVisible: $isPasswordVisible,
-                title: Text(L10n.RestoreFromBackup.EnterPassword.title),
                 passwordRules: nil
             )
             Spacer()
@@ -92,7 +87,7 @@ private struct PpasswordBackupView: View {
                     dismiss()
                 },
                 label: {
-                    Text(L10n.RestoreFromBackup.button)
+                    Text(L10n.Localizable.RestoreFromBackup.button)
                 }
             )
             .wireButtonStyle(.primary)

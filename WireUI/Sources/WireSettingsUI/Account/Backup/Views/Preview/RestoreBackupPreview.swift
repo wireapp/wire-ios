@@ -27,7 +27,7 @@ struct RestoreBackupPreview: View {
                 isPresented.toggle()
             },
             label: {
-                Text(L10n.RestoreFromBackup.button)
+                Text(L10n.Localizable.RestoreFromBackup.button)
             }
         )
         .sheet(isPresented: $isPresented) {
