@@ -20,18 +20,6 @@ import WireAPI
 import WireLogging
 import WireSystem
 
-/// Process conversation receipt mode update events.
-
-protocol ConversationReceiptModeUpdateEventProcessorProtocol {
-
-    /// Process a conversation receipt mode update event.
-    ///
-    /// - Parameter event: A conversation receipt mode update event.
-
-    func processEvent(_ event: ConversationReceiptModeUpdateEvent) async throws
-
-}
-
 struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdateEventProcessorProtocol {
 
     let userRepository: any UserRepositoryProtocol

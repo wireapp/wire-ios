@@ -20,55 +20,6 @@ import Foundation
 import WireAPI
 import WireDataModel
 
-// sourcery: AutoMockable
-/// Facilitate access to team related domain objects.
-///
-/// A repository provides an abstraction for the access and storage
-/// of domain models, concealing how and where the models are stored
-/// as well as the possible source(s) of the models.
-public protocol TeamRepositoryProtocol {
-
-    /// Pull self team metadata from the server and store locally.
-
-    func pullSelfTeam() async throws
-
-    /// Pull team roles for the self team from the server and store locally.
-
-    func pullSelfTeamRoles() async throws
-
-    /// Pull team members for the self team from the server and store locally.
-
-    func pullSelfTeamMembers() async throws
-
-    /// Fetches the legalhold info for the self user from the server.
-    /// - returns: The legalhold info.
-
-    func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo
-
-    /// Deletes the member of a team.
-    /// - Parameter userID: The ID of the team member.
-    /// - Parameter domain: The domain of the team member.
-    /// - Parameter date: The time the member left the team.
-
-    func deleteMembership(
-        userID: UUID,
-        domain: String?,
-        date: Date
-    ) async throws
-
-    /// Sets the team member `needsToBeUpdatedFromBackend` flag to true.
-    /// - Parameter membershipID: The id of the team member.
-
-    func storeTeamMemberNeedsBackendUpdate(
-        membershipID: UUID
-    ) async throws
-
-    /// Pulls and stores legalhold info locally.
-
-    func pullSelfLegalholdInfo() async throws
-
-}
-
 public class TeamRepository: TeamRepositoryProtocol {
 
     // MARK: - Properties

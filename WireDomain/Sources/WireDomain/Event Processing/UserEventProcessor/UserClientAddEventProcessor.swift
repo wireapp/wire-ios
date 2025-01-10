@@ -18,18 +18,6 @@
 
 import WireAPI
 
-/// Process user client add events.
-
-protocol UserClientAddEventProcessorProtocol {
-
-    /// Process a user client add event.
-    ///
-    /// - Parameter event: A user client add event.
-
-    func processEvent(_ event: UserClientAddEvent) async throws
-
-}
-
 struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
 
     enum Error: Swift.Error {

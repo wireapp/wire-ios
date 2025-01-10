@@ -20,21 +20,6 @@ import Foundation
 import WireAPI
 import WireDataModel
 
-// sourcery: AutoMockable
-/// Decrypt proteus messages.
-protocol ProteusMessageDecryptorProtocol {
-
-    /// Decrypt a proteus message.
-    ///
-    /// - Parameter eventData: A payload containing the encrypted message.
-    /// - Returns: The payload containing the decrypted message.
-
-    func decryptedEventData(
-        from eventData: ConversationProteusMessageAddEvent
-    ) async throws -> ConversationProteusMessageAddEvent
-
-}
-
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
     let proteusService: any ProteusServiceInterface

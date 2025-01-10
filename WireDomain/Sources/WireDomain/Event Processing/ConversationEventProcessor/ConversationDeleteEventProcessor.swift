@@ -20,18 +20,6 @@ import WireAPI
 import WireDataModel
 import WireSystem
 
-/// Process conversation delete events.
-
-protocol ConversationDeleteEventProcessorProtocol {
-
-    /// Process a conversation delete event.
-    ///
-    /// - Parameter event: A conversation delete event.
-
-    func processEvent(_ event: ConversationDeleteEvent) async throws
-
-}
-
 struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtocol {
 
     enum Error: Swift.Error {

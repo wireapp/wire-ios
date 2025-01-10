@@ -19,12 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullConversationLabelsSyncProtocol {
-
-    func pull() async throws
-
-}
-
 /// An object to keep the local conversation labels up to date
 /// with the remote conversation labels.
 
