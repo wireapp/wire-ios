@@ -16,9 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDomain
-
-public let SOMEINT = 0
-
-public struct ImportConversationUseCase {}
+public protocol ImportBackupUseCaseProtocol: Sendable {}
