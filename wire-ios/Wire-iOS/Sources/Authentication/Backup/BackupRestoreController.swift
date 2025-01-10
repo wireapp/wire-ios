@@ -19,6 +19,7 @@
 import Foundation
 import UniformTypeIdentifiers
 import WireDataModel
+import WireImportExport
 import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
@@ -114,7 +115,17 @@ final class BackupRestoreController: NSObject {
             return
         }
 
-        Task { @MainActor in activityIndicator.start() }
+        Task { @MainActor in
+            activityIndicator.start()
+            defer { activityIndicator.stop() }
+
+            let useCase: ImportBackupUseCaseProtocol? = nil
+            do {
+                try await useCase?.invoke(url: url, password: password)
+            } catch {
+                fatalError("TODO: Hanlde error")
+            }
+        }
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {

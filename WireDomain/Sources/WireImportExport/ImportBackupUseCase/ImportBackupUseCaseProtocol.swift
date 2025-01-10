@@ -16,4 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ImportBackupUseCaseProtocol: Sendable {}
+public import Foundation
+
+public protocol ImportBackupUseCaseProtocol: Sendable {
+    func invoke(url: URL, password: String) async throws
+}

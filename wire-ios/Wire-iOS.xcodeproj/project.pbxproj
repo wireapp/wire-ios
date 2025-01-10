@@ -413,7 +413,6 @@
 		59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C612C89CD3D00EA7999 /* WireTestingPackage */; };
 		59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FA92C89DE8600201827 /* WireFoundation */; };
 		59B99FAC2C89DF2100201827 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FAB2C89DF2100201827 /* WireAPI */; };
-		59B99FB02C89DFB700201827 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FAF2C89DFB700201827 /* WireDomainPackage */; };
 		59BFBFC42CB68E8C005C3375 /* CreateGroupConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC32CB68E8B005C3375 /* CreateGroupConversationViewControllerBuilder.swift */; };
 		59BFBFC62CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC52CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift */; };
 		59BFBFC92CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */; };
@@ -3899,7 +3898,6 @@
 				76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */,
 				016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */,
 				5996E8A62C19D090007A52F0 /* WireSyncEngine.framework in Frameworks */,
-				59B99FB02C89DFB700201827 /* WireDomainPackage in Frameworks */,
 				EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */,
 				5929CB222CA6C9C800070488 /* WireConversationListUI in Frameworks */,
 			);
@@ -8441,7 +8439,6 @@
 				59D038262C85D31E009FE583 /* WireMainNavigationUI */,
 				59B99FA92C89DE8600201827 /* WireFoundation */,
 				59B99FAB2C89DF2100201827 /* WireAPI */,
-				59B99FAF2C89DFB700201827 /* WireDomainPackage */,
 				59076F942C934A9800AE7529 /* WireAccountImageUI */,
 				590DCA072C971A56002D0A2C /* WireSidebarUI */,
 				5929CB212CA6C9C800070488 /* WireConversationListUI */,
@@ -11524,10 +11521,6 @@
 		59B99FAB2C89DF2100201827 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
-		};
-		59B99FAF2C89DFB700201827 /* WireDomainPackage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireDomainPackage;
 		};
 		59C2F09E2CA54E4900B25E5D /* WireMainNavigationUI */ = {
 			isa = XCSwiftPackageProductDependency;

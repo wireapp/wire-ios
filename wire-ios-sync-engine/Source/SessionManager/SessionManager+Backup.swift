@@ -23,7 +23,6 @@ import WireDataModel
 import WireLogging
 import WireUtilities
 import ZipArchive
-import WireImportExport
 
 extension SessionManager {
 
@@ -116,11 +115,6 @@ extension SessionManager {
         password: String,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
-
-        let useCase: ImportBackupUseCaseProtocol? = nil
-
-
-
         func complete(_ result: Result<Void, Error>) {
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(result)
