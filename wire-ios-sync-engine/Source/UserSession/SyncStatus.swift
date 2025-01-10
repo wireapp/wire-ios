@@ -46,7 +46,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
                         .syncPhase: currentSyncPhase.description,
                         .public: true
                     ]
-                    
+
                     WireLogger.sync.info("Started sync phase", attributes: attributes)
                 }
                 notifySyncPhaseDidStart()
@@ -336,7 +336,7 @@ public extension SyncStatus {
             .syncPhase: phase.description,
             .public: true
         ]
-        
+
         WireLogger.sync.info(message, attributes: logAttributes)
 
         syncTimeTracker.addPhaseDuration(duration)
@@ -351,7 +351,7 @@ public extension SyncStatus {
                 .duration: String(syncTotalDuration),
                 .public: true
             ]
-            
+
             WireLogger.sync.info(message, attributes: logAttributes)
             syncTimeTracker.reset() // Sync is completed and logged, resetting tracked time values
         }

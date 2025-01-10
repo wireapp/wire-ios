@@ -37,7 +37,7 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case processId = "process_id"
     case processName = "process_name"
     case coreCryptoContext = "core_crypto_context"
-    case duration = "duration"
+    case duration
     case syncType = "sync_type"
     case syncSystem = "sync_system"
 
