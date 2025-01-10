@@ -19,10 +19,9 @@
 import WireAPI
 import WireDataModel
 
-struct ConversationTypingEventProcessor<Dependencies>: ConversationTypingEventProcessorProtocol
-where Dependencies: ConversationTypingEventProcessorDependencies {
+struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
 
-    let conversationRepository: ConversationRepository
+    let conversationRepository: any ConversationRepositoryProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userRepository: any UserRepositoryProtocol
 
@@ -117,13 +116,4 @@ where Dependencies: ConversationTypingEventProcessorDependencies {
         typingUsersTimeout.updateExpirationIfNeeded()
     }
 
-}
-
-protocol ConversationTypingEventProcessorDependencies {
-    associatedtype ConversationRepository: ConversationRepositoryProtocol
-    where ConversationRepository.ConversationEntity == ZMConversation
-}
-
-extension ConversationTypingEventProcessor {
-    typealias ConversationRepository = Dependencies.ConversationRepository
 }

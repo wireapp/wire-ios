@@ -41,7 +41,7 @@ public final class UserRepository: UserRepositoryProtocol {
         usersAPI: any UsersAPI,
         selfUserAPI: any SelfUserAPI,
         conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
-        conversationRepository: any ConversationRepositoryProtocol,
+        conversationRepository: ConversationRepositoryProtocol,
         userLocalStore: any UserLocalStoreProtocol
     ) {
         self.usersAPI = usersAPI

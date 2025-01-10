@@ -145,7 +145,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     }
 
     private func migrateToMLS(
-        mlsConversation: some ConversationEntityProtocol,
+        mlsConversation: ZMConversation,
         mlsGroupID: MLSGroupID,
         user: ZMUser,
         userID: WireDataModel.QualifiedID
@@ -180,7 +180,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     ///     - userID: The user ID that will be part of the MLS group.
 
     private func setupMLSGroup(
-        mlsConversation: some ConversationEntityProtocol,
+        mlsConversation: ZMConversation,
         groupID: MLSGroupID,
         userID: WireDataModel.QualifiedID
     ) async throws {
@@ -218,7 +218,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     /// - Parameter user: The user to set the MLS conversation for.
 
     private func switchLocalConversationToMLS(
-        mlsConversation: some ConversationEntityProtocol,
+        mlsConversation: ZMConversation,
         for user: ZMUser
     ) async {
         await context.perform {

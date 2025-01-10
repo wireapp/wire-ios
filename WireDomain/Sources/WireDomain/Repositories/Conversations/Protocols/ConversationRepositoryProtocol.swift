@@ -18,11 +18,11 @@
 
 import Foundation
 import WireAPI
+import WireDataModel
 
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.
 public protocol ConversationRepositoryProtocol {
-    associatedtype ConversationEntity: ConversationEntityProtocol
 
     /// Fetches and persists a conversation with a given ID.
     /// - Parameters:
@@ -38,12 +38,12 @@ public protocol ConversationRepositoryProtocol {
     /// - Parameters:
     ///     - id: The ID of the conversation.
     ///     - domain: The domain of the conversation if any.
-    /// - returns: The `ConversationEntity` found locally.
+    /// - returns: The `ZMConversation` found locally.
 
     func fetchConversation(
         id: UUID,
         domain: String?
-    ) async -> ConversationEntity?
+    ) async -> ZMConversation?
 
     /// Stores a conversation locally.
     /// - Parameters:
@@ -59,12 +59,12 @@ public protocol ConversationRepositoryProtocol {
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
     ///
-    /// - returns: The `ConversationEntity` found or created locally.
+    /// - returns: The `ZMConversation` found or created locally.
 
     func fetchOrCreateConversation(
         id: UUID,
         domain: String?
-    ) async -> ConversationEntity
+    ) async -> ZMConversation
 
     /// Fetches and persists all conversations
 
@@ -92,7 +92,7 @@ public protocol ConversationRepositoryProtocol {
 
     func fetchMLSConversation(
         groupID: String
-    ) async -> ConversationEntity?
+    ) async -> ZMConversation?
 
     /// Deletes a conversation locally.
     /// - Parameters:

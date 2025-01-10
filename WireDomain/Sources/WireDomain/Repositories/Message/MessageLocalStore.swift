@@ -22,7 +22,6 @@ import WireDataModel
 import WireLogging
 
 public final class MessageLocalStore: MessageLocalStoreProtocol {
-    public typealias ConversationEntity = ZMConversation
 
     enum Failure: Error {
         case failedToAddConversation

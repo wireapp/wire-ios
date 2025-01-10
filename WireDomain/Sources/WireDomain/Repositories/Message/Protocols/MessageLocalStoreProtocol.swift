@@ -22,7 +22,6 @@ import WireDataModel
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
 public protocol MessageLocalStoreProtocol {
-    associatedtype ConversationEntity: ConversationEntityProtocol
 
     /// Adds a system message to a given conversation.
     /// - Parameters:
