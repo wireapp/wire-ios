@@ -41,8 +41,7 @@ final class ExportBackupViewSnapshotTests: XCTestCase {
         let sut = ExportBackupView(
             passwordValidator: MockBackupPasswordValidator(),
             exportBackup: { _ in }
-        )
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        ).frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)

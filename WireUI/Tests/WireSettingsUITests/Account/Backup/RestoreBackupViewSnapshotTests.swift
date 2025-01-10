@@ -40,8 +40,7 @@ final class RestoreBackupViewSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
         let sut = RestoreBackupView(
             importBackup: { _ in }
-        )
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        ).frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)

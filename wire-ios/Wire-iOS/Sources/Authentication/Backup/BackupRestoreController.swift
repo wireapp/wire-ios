@@ -116,7 +116,7 @@ final class BackupRestoreController: NSObject {
 
         Task { @MainActor in activityIndicator.start() }
 
-        sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in //
+        sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")

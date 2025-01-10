@@ -30,6 +30,7 @@ public protocol RestoreSourceProtocol {
     func restoreFromBackup(
         at location: URL,
         password: String,
-        completion: @escaping (Result<Void, any Error>) -> Void)
+        completion: @escaping (Result<Void, any Error>) -> Void
+    )
 
 }

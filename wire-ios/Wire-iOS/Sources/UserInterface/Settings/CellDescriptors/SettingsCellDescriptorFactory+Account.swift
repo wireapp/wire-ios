@@ -527,7 +527,8 @@ extension SettingsCellDescriptorFactory {
             title: L10n.Localizable.RestoreBackup.Confirmation.overrideButton,
             style: .default, handler: { _ in
                 completion()
-            }))
+            })
+        )
 
         controller.present(alert, animated: true)
     }

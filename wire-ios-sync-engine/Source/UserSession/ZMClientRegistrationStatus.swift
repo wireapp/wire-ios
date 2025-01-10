@@ -267,7 +267,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         Self.needsToRegisterMLSClient(in: managedObjectContext)
     }
 
-    @objc(needsToRegisterClientInContext:)//
+    @objc(needsToRegisterClientInContext:)
     public static func needsToRegisterClient(in context: NSManagedObjectContext) -> Bool {
         // replace with selfUser.client.remoteIdentifier == nil
         if let clientID = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String {
@@ -481,7 +481,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     @objc(didRegisterProteusClient:)
-    public func didRegisterProteusClient(_ client: UserClient) {//
+    public func didRegisterProteusClient(_ client: UserClient) {
         WireLogger.authentication.info("Did register proteus client")
 
         managedObjectContext.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)

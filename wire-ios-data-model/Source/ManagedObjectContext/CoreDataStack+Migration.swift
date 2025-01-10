@@ -107,7 +107,6 @@ extension CoreDataStack {
                 let migrationStoreLocation = databaseDirectory.appendingStoreFile()
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
-                //
                 // Recreate the persistent store inside a new location
                 try coordinator.replacePersistentStore(
                     at: migrationStoreLocation,

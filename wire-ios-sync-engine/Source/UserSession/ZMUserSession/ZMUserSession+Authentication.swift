@@ -47,7 +47,7 @@ extension ZMUserSession {
         let needsToRegisterMLSClient = ZMClientRegistrationStatus.needsToRegisterMLSClient(in: managedObjectContext)
         let waitingToRegisterMLSClient = needsToRegisterMLSClient && !hasCompletedInitialSync
 
-        return isAuthenticated && !needsToRegisterClient && !waitingToRegisterMLSClient//
+        return isAuthenticated && !needsToRegisterClient && !waitingToRegisterMLSClient
     }
 
     /// `True` if the session has a valid authentication cookie
