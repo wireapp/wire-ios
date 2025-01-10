@@ -19,18 +19,6 @@
 import WireAPI
 import WireDataModel
 
-/// Process team member leave events.
-///
-protocol TeamMemberLeaveEventProcessorProtocol {
-
-    /// Process a team member leave event.
-    ///
-    /// - Parameter event: A team member leave event.
-
-    func processEvent(_ event: TeamMemberLeaveEvent) async throws
-
-}
-
 struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
 
     let repository: any TeamRepositoryProtocol

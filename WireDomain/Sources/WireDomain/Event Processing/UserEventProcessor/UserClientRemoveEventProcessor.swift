@@ -18,18 +18,6 @@
 
 import WireAPI
 
-/// Process user client remove events.
-
-protocol UserClientRemoveEventProcessorProtocol {
-
-    /// Process a user client remove event.
-    ///
-    /// - Parameter event: A user client remove event.
-
-    func processEvent(_ event: UserClientRemoveEvent) async throws
-
-}
-
 struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
 
     func processEvent(_: UserClientRemoveEvent) async throws {

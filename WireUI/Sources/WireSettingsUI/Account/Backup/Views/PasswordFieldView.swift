@@ -22,41 +22,26 @@ import WireDesign
 struct PasswordFieldView: View {
     @Binding var password: String
     @Binding var isPasswordVisible: Bool
-    let title: Text
     var isPasswordValid: Bool = true
     let passwordRules: Text?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            title
+            Text(L10n.Localizable.ExportBackup.SetBackupPassword.title)
                 .font(.subheadline)
-                .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color
-                )
+                .foregroundColor(calculatedColor)
 
             ZStack {
                 if isPasswordVisible {
                     TextField(
-                        L10n.ExportBackup.SetBackupPassword.placeholder, text: $password
+                        L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
+                        text: $password
                     )
-                    .font(.textStyle(.body1))
+                    .wireTextStyle(.body1)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(
-                                isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
-                                lineWidth: password.isEmpty ? 0 : 1
-                            )
-                    )
                 } else {
-                    SecureField(L10n.ExportBackup.SetBackupPassword.placeholder, text: $password)
+                    SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(
-                                    isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color,
-                                    lineWidth: password.isEmpty ? 0 : 1
-                                )
-                        )
                 }
                 HStack {
                     Spacer()
@@ -69,12 +54,32 @@ struct PasswordFieldView: View {
                     .padding(.trailing, 10)
                 }
             }
+            .overlay(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(
+                        calculatedColor,
+                        lineWidth: password.isEmpty ? 0 : 1
+                    )
+            )
 
             passwordRules
                 .font(.caption)
-                .foregroundColor(isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error.color)
+                .foregroundColor(calculatedColor)
         }
         .padding(.horizontal)
+    }
+
+    // MARK: - Helper
+
+    private var calculatedColor: Color {
+        switch (password.isEmpty, isPasswordValid) {
+        case (_, false):
+            ColorTheme.Base.error.color
+        case (true, _):
+            ColorTheme.Base.secondaryText.color
+        case (false, true):
+            ColorTheme.Base.primary.color
+        }
     }
 }
 
@@ -85,9 +90,7 @@ struct PasswordFieldView: View {
     PasswordFieldView(
         password: .constant(""),
         isPasswordVisible: .constant(false),
-        title: Text(L10n.ExportBackup.SetBackupPassword.title),
-        isPasswordValid: false,
-        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
+        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
     )
 }
 
@@ -96,9 +99,7 @@ struct PasswordFieldView: View {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
         isPasswordVisible: .constant(true),
-        title: Text(L10n.ExportBackup.SetBackupPassword.title),
-        isPasswordValid: false,
-        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
+        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
     )
 }
 
@@ -107,9 +108,7 @@ struct PasswordFieldView: View {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
         isPasswordVisible: .constant(false),
-        title: Text(L10n.ExportBackup.SetBackupPassword.title),
-        isPasswordValid: true,
-        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
+        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
     )
 }
 
@@ -118,8 +117,6 @@ struct PasswordFieldView: View {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
         isPasswordVisible: .constant(true),
-        title: Text(L10n.ExportBackup.SetBackupPassword.title),
-        isPasswordValid: true,
-        passwordRules: Text(L10n.ExportBackup.SetBackupPassword.rules)
+        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
     )
 }

@@ -19,21 +19,6 @@
 import Foundation
 import WireAPI
 
-/// Process user update events.
-
-protocol UserEventProcessorProtocol {
-
-    /// Process a user update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A user update event.
-
-    func processEvent(_ event: UserEvent) async throws
-
-}
-
 struct UserEventProcessor {
 
     let clientAddEventProcessor: any UserClientAddEventProcessorProtocol

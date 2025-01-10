@@ -20,18 +20,6 @@ import CoreData
 import WireAPI
 import WireDataModel
 
-/// Process federation delete events.
-
-protocol FederationDeleteEventProcessorProtocol {
-
-    /// Process a federation delete event.
-    ///
-    /// - Parameter event: A federation delete event.
-
-    func processEvent(_ event: FederationDeleteEvent) async throws
-
-}
-
 struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
 
     let context: NSManagedObjectContext

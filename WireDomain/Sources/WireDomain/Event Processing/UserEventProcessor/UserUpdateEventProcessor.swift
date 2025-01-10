@@ -18,18 +18,6 @@
 
 import WireAPI
 
-/// Process user update events.
-
-protocol UserUpdateEventProcessorProtocol {
-
-    /// Process a user update event.
-    ///
-    /// - Parameter event: A user update event.
-
-    func processEvent(_ event: UserUpdateEvent) async throws
-
-}
-
 struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol

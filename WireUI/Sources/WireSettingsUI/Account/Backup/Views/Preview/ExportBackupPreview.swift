@@ -18,7 +18,12 @@
 
 import SwiftUI
 
-struct ExportBackupPreview: View {
+@ViewBuilder @MainActor
+func ExportBackupPreview() -> some View {
+    ExportBackup_Preview()
+}
+
+private struct ExportBackup_Preview: View {
     @State private var isPresented = true
 
     var body: some View {
@@ -27,7 +32,7 @@ struct ExportBackupPreview: View {
                 isPresented.toggle()
             },
             label: {
-                Text(L10n.ExportBackup.button)
+                Text(L10n.Localizable.ExportBackup.button)
             }
         )
         .sheet(isPresented: $isPresented) {
@@ -38,7 +43,7 @@ struct ExportBackupPreview: View {
                 )
             }
             .presentationDragIndicator(.visible)
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.medium])
         }
     }
 }

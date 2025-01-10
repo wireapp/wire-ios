@@ -9,7 +9,7 @@ on:
         required: false
       branch:
         type: string
-        required: true
+        required: false
       notify_secret:
         type: string
         required: true
@@ -48,8 +48,15 @@ jobs:
 
       - name: Sanitize branch name
         run: |
-            SANITIZED_BRANCH=$(echo "${{ inputs.branch }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
-            echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" | tee -a "$GITHUB_ENV"
     
       - name: Retrieve Xcode version
         run: |
@@ -190,7 +197,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **Tests for ${{ inputs.branch }}**
+            **Tests for ${{ inputs.branch || github.head_ref }}**
 
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
@@ -202,7 +209,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **🚨 Tests for ${{ inputs.branch }} failed 🆘**
+            **🚨 Tests for ${{ inputs.branch || github.head_ref }} failed 🆘**
 
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
@@ -220,7 +227,14 @@ jobs:
     steps:
       - name: Sanitize branch name
         run: |
-          SANITIZED_BRANCH=$(echo "${{ inputs.branch }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
           echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
       - name: Download .xcresult files
@@ -247,8 +261,15 @@ jobs:
     steps:
       - name: Sanitize branch name
         run: |
-            SANITIZED_BRANCH=$(echo "${{ inputs.branch }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
-            echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
       - name: Download tests results
         uses: actions/download-artifact@v4

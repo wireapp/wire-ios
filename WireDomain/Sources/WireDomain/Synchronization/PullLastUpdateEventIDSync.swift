@@ -20,23 +20,17 @@ import Foundation
 import WireAPI
 import WireLogging
 
-protocol PullLastUpdateEventIDSyncProtocol {
-
-    func pull() async throws
-
-}
-
 /// An object to keep the local last update event id up to date
 /// with the remote last update evnt id.
 
 struct PullLastUpdateEventIDSync: PullLastUpdateEventIDSyncProtocol {
 
-    private let selfClientID: String
+    private let selfClientID: String?
     private let api: any UpdateEventsAPI
     private let store: any UpdateEventsLocalStoreProtocol
 
     init(
-        selfClientID: String,
+        selfClientID: String?,
         api: any UpdateEventsAPI,
         store: any UpdateEventsLocalStoreProtocol
     ) {

@@ -34,14 +34,14 @@ public struct BackupActionsView: View {
     public var body: some View {
         List {
             Section(
-                footer: Text(L10n.Settings.ExportBackup.description)
+                footer: Text(L10n.Localizable.Settings.ExportBackup.description)
             ) {
                 Button(action: {
                     isExportBackupSheetPresented.toggle()
                 }, label: {
                     HStack {
-                        Text(L10n.Settings.ExportBackup.action)
-                            .font(.textStyle(.body2))
+                        Text(L10n.Localizable.Settings.ExportBackup.action)
+                            .wireTextStyle(.body2)
                             .foregroundStyle(Color.primaryText)
                         Spacer()
                         Image(systemName: "chevron.right").foregroundStyle(Color.primary)
@@ -56,12 +56,12 @@ public struct BackupActionsView: View {
                             }
                         )
                     }
-                    .presentationDetents([.medium, .large])
+                    .presentationDetents([.medium])
                 }
             }
 
             Section(
-                footer: Text(L10n.Settings.RestoreFromBackup.description)
+                footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)
             ) {
                 Button(action: {
                     viewModel.confirmBackupRestore {
@@ -69,7 +69,7 @@ public struct BackupActionsView: View {
                     }
                 }, label: {
                     HStack {
-                        Text(L10n.Settings.RestoreFromBackup.action)
+                        Text(L10n.Localizable.Settings.RestoreFromBackup.action)
                             .font(.textStyle(.body2))
                             .foregroundStyle(Color.primaryText)
                         Spacer()
@@ -98,9 +98,11 @@ public struct BackupActionsView: View {
                     .presentationDetents([.medium, .large])
                 }
             }
+            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
         }
         .listStyle(.grouped)
-        .listRowBackground(Color(ColorTheme.Backgrounds.background))
+        .background(Color(ColorTheme.Backgrounds.background))
+        .scrollContentBackground(.hidden)
     }
 }
 

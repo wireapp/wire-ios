@@ -45,18 +45,14 @@ public struct ExportBackupView: View {
         .background(Color.viewBackground)
         .scrollContentBackground(.hidden)
         .navigationTitle(
-            Text(L10n.ExportBackup.title)
+            Text(L10n.Localizable.ExportBackup.title)
         )
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 CloseButton(
                     action: didTapClose,
-                    accessibilityLabel: String(
-                        localized: "setBackupPassword.close.label",
-                        table: "Accessibility",
-                        bundle: .module
-                    )
+                    accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
                 )
             }
         }
@@ -72,6 +68,7 @@ private struct SetBackupPasswordView: View {
     @Environment(\.dismiss) var dismiss
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
+    @State private var contentFits: Bool = true
 
     private let passwordValidator: any BackupPasswordValidatorProtocol
     private let exportBackup: (String) -> Void
@@ -85,38 +82,51 @@ private struct SetBackupPasswordView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text(L10n.ExportBackup.description)
-                .font(.textStyle(.body1))
-                .foregroundStyle(Color.primaryText)
-                .multilineTextAlignment(.leading)
-                .padding(.horizontal)
+        GeometryReader { geometry in
+            VStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        Text(L10n.Localizable.ExportBackup.description)
+                            .wireTextStyle(.body1)
+                            .foregroundStyle(Color.primaryText)
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
 
-            PasswordFieldView(
-                password: $password,
-                isPasswordVisible: $isPasswordVisible,
-                title: Text(L10n.ExportBackup.SetBackupPassword.title),
-                isPasswordValid: passwordValidator.isPasswordValid(password),
-                passwordRules: Text(passwordValidator.localizedRulesDescription)
-            )
-
-            Spacer()
-
-            Button(
-                action: {
-                    exportBackup(password)
-                    dismiss()
-                },
-                label: {
-                    Text(L10n.ExportBackup.button)
+                        PasswordFieldView(
+                            password: $password,
+                            isPasswordVisible: $isPasswordVisible,
+                            isPasswordValid: passwordValidator.isPasswordValid(password),
+                            passwordRules: Text(passwordValidator.localizedRulesDescription)
+                        )
+                    }
+                    .background(
+                        GeometryReader { contentGeometry in
+                            Color.clear.onAppear {
+                                contentFits = contentGeometry.size.height <= geometry.size.height
+                            }
+                        }
+                    )
+                    .frame(maxWidth: .infinity)
                 }
-            )
-            .wireButtonStyle(.primary)
-            .padding()
-        }
-        .frame(maxHeight: .infinity)
-    }
+                .scrollDisabled(contentFits)
 
+                Spacer()
+
+                Button(
+                    action: {
+                        exportBackup(password)
+                        dismiss()
+                    },
+                    label: {
+                        Text(L10n.Localizable.ExportBackup.button)
+                    }
+                )
+                .disabled(!passwordValidator.isPasswordValid(password))
+                .wireButtonStyle(.primary)
+                .padding()
+            }
+        }
+    }
 }
 
 // MARK: - Previews
