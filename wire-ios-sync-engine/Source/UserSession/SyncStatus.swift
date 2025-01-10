@@ -356,7 +356,7 @@ public extension SyncStatus {
             resetSyncTimeTracker() // Sync is completed and logged, resetting tracked time values
         }
     }
-    
+
     func resetSyncTimeTracker() {
         syncTimeTracker.reset()
     }
