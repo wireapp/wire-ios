@@ -172,7 +172,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         isForceQuickSync = true
         currentSyncPhase = .fetchingMissedEvents
         syncTimeTracker.reset()
-        WireLogger.sync.info("quick sync", attributes: .safePublic)
+        WireLogger.sync.debug("quick sync", attributes: .safePublic)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
