@@ -31,7 +31,7 @@ public struct BackupActionsView: View {
     public var body: some View {
         List {
             Section(
-                footer: Text(L10n.Localizable.ExportBackup.description)
+                footer: Text(L10n.Localizable.Settings.ExportBackup.description)
             ) {
                 Button(action: {
                     isBackupSheetPresented.toggle()
