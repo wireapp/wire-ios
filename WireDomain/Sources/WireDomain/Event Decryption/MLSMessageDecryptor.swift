@@ -21,11 +21,12 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
+struct MLSMessageDecryptor<ConversationLocalStore: ConversationLocalStoreProtocol>: MLSMessageDecryptorProtocol
+where ConversationLocalStore.ConversationEntity == ZMConversation {
 
     let mlsDecryptionService: any MLSDecryptionServiceInterface
     let mlsService: any MLSServiceInterface
-    let conversationLocalStore: any ConversationLocalStoreProtocol
+    let conversationLocalStore: ConversationLocalStore
 
     func decryptedEventData(
         from eventData: ConversationMLSMessageAddEvent

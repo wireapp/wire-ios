@@ -22,6 +22,10 @@ import WireLogging
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
+    public typealias ConversationEntity = ZMConversation
+    public typealias UserEntity = ZMUser
+
+
     enum Error: Swift.Error {
         case noBackendConversationID
     }

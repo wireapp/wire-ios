@@ -21,7 +21,10 @@ import WireCryptobox
 import WireDataModel
 import WireLogging
 
-public final class MessageLocalStore: MessageLocalStoreProtocol {
+public final class MessageLocalStore<ConversationLocalStore: ConversationLocalStoreProtocol>: MessageLocalStoreProtocol
+where ConversationLocalStore.ConversationEntity == ZMConversation {
+
+    public typealias ConversationEntity = ZMConversation
 
     enum Failure: Error {
         case failedToAddConversation
@@ -37,14 +40,14 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let conversationLocalStore: any ConversationLocalStoreProtocol
+    let conversationLocalStore: ConversationLocalStore
     let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
+        conversationLocalStore: ConversationLocalStore,
         userLocalStore: any UserLocalStoreProtocol
     ) {
         self.context = context
