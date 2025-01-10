@@ -130,7 +130,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         // Reset the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        WireLogger.sync.info("slow sync", attributes: .safePublic)
+        WireLogger.sync.debug("slow sync", attributes: .safePublic)
         syncStateDelegate?.didStartSlowSync()
     }
 
