@@ -64,7 +64,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		59EA76E82D00CD88002CA0B8 /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
 		59EA78992D00CF1C002CA0B8 /* WireDomainTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireDomainTests; sourceTree = "<group>"; };
 		59EA78D42D00CF22002CA0B8 /* WireDomainSupport */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59EA78D62D00CF22002CA0B8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireDomainSupport; sourceTree = "<group>"; };
 		59EA7A282D00CFB2002CA0B8 /* WireDomain */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireDomain; sourceTree = "<group>"; };
@@ -155,7 +154,6 @@
 		01D0DCED2C1C8EA10076CB1C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				59EA76E82D00CD88002CA0B8 /* TestPlans */,
 				59EA78992D00CF1C002CA0B8 /* WireDomainTests */,
 			);
 			name = Tests;
@@ -228,7 +226,6 @@
 				01D0DCB32C1C8C880076CB1C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				59EA76E82D00CD88002CA0B8 /* TestPlans */,
 				59EA78992D00CF1C002CA0B8 /* WireDomainTests */,
 			);
 			name = WireDomainTests;
