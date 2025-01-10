@@ -126,14 +126,14 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     public func determineInitialSyncPhase() {
         currentSyncPhase = hasPersistedLastEventID ? .fetchingMissedEvents : .fetchingLastUpdateEventID
-        syncTimeTracker.reset()
+        resetSyncTimeTracker()
         notifySyncPhaseDidStart()
     }
 
     public func forceSlowSync() {
         // Refetch user settings.
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-        syncTimeTracker.reset()
+        resetSyncTimeTracker()
         // Reset the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
@@ -149,7 +149,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         // in the notification queue.
         currentSyncPhase = hasPersistedLastEventID ? SyncPhase.fetchingLastUpdateEventID
             .nextPhase : .fetchingLastUpdateEventID
-        syncTimeTracker.reset()
+        resetSyncTimeTracker()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         WireLogger.sync.debug("resyncResources", attributes: .safePublic)
         syncStateDelegate?.didStartSlowSync()
@@ -178,7 +178,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public func forceQuickSync() {
         isForceQuickSync = true
         currentSyncPhase = .fetchingMissedEvents
-        syncTimeTracker.reset()
+        resetSyncTimeTracker()
         WireLogger.sync.debug("quick sync", attributes: .safePublic)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
@@ -230,7 +230,7 @@ public extension SyncStatus {
         WireLogger.sync.warn("failed sync phase: \(phase)")
 
         if currentSyncPhase == .fetchingMissedEvents {
-            syncTimeTracker.reset()
+            resetSyncTimeTracker()
             lastEventIDRepository.storeLastEventID(nil)
             currentSyncPhase = .fetchingLastUpdateEventID
             needsToRestartQuickSync = false
@@ -353,7 +353,11 @@ public extension SyncStatus {
             ]
 
             WireLogger.sync.info(message, attributes: logAttributes)
-            syncTimeTracker.reset() // Sync is completed and logged, resetting tracked time values
+            resetSyncTimeTracker() // Sync is completed and logged, resetting tracked time values
         }
+    }
+    
+    func resetSyncTimeTracker() {
+        syncTimeTracker.reset()
     }
 }

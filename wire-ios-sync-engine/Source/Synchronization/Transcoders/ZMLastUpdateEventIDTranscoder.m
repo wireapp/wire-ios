@@ -84,6 +84,7 @@
 - (ZMTransportRequest *)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion
 {
     if (self.isSyncing && !self.isDownloadingLastUpdateEventID) {
+        [self.syncStatus resetSyncTimeTracker]; // Slow sync started, resetting tracked time values
         [self startRequestingLastUpdateEventIDWithoutPersistingIt];
         return [self.requestGenerators nextRequestForAPIVersion:apiVersion];
     }
