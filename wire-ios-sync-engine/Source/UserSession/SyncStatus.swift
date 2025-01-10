@@ -40,7 +40,14 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
             if currentSyncPhase != oldValue {
                 if currentSyncPhase != .done {
                     let syncType = isSlowSyncing ? "slow sync" : "quick sync"
-                    WireLogger.sync.info("Started \(syncType) phase \(currentSyncPhase)", attributes: .safePublic)
+                    let attributes: LogAttributes = [
+                        .syncType: syncType,
+                        .syncSystem: "legacy",
+                        .syncPhase: currentSyncPhase.description,
+                        .public: true
+                    ]
+                    
+                    WireLogger.sync.info("Started sync phase", attributes: attributes)
                 }
                 notifySyncPhaseDidStart()
             }
@@ -321,15 +328,31 @@ public extension SyncStatus {
         let syncType = isSlowSyncing ? "slow sync" : "quick sync"
         let currentTime = Date.now
         let duration = currentTime.timeIntervalSince(syncTimeTracker.phaseStartTime)
-        let message = "Completed \(syncType) phase \(phase) in \(duration)"
-        WireLogger.sync.info(message, attributes: .safePublic)
+        let message = "Completed sync phase"
+        let logAttributes: LogAttributes = [
+            .syncType: syncType,
+            .duration: String(duration),
+            .syncSystem: "legacy",
+            .syncPhase: phase.description,
+            .public: true
+        ]
+        
+        WireLogger.sync.info(message, attributes: logAttributes)
 
         syncTimeTracker.addPhaseDuration(duration)
         syncTimeTracker.resetStartTime() // reset for next sync phase
 
         if completedAllPhases {
-            let message = "Completed \(syncType) in \(syncTimeTracker.totalSyncDuration())"
-            WireLogger.sync.info(message, attributes: .safePublic)
+            let message = "Completed \(syncType)"
+            let syncTotalDuration = syncTimeTracker.totalSyncDuration()
+            let logAttributes: LogAttributes = [
+                .syncType: syncType,
+                .syncSystem: "legacy",
+                .duration: String(syncTotalDuration),
+                .public: true
+            ]
+            
+            WireLogger.sync.info(message, attributes: logAttributes)
             syncTimeTracker.reset() // Sync is completed and logged, resetting tracked time values
         }
     }
