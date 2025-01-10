@@ -38,7 +38,7 @@ public struct BackupActionsView: View {
                 }, label: {
                     HStack {
                         Text(L10n.Localizable.Settings.ExportBackup.action)
-                            .font(.textStyle(.body2))
+                            .wireTextStyle(.body2)
                             .foregroundStyle(Color.primaryText)
                         Spacer()
                         Image(systemName: "chevron.right").foregroundStyle(Color.primary)
@@ -53,12 +53,14 @@ public struct BackupActionsView: View {
                             }
                         )
                     }
-                    .presentationDetents([.medium, .large])
+                    .presentationDetents([.medium])
                 }
             }
+            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
         }
         .listStyle(.grouped)
-        .listRowBackground(Color(ColorTheme.Backgrounds.background))
+        .background(Color(ColorTheme.Backgrounds.background))
+        .scrollContentBackground(.hidden)
     }
 }
 

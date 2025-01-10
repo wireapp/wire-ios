@@ -52,11 +52,7 @@ public struct ExportBackupView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 CloseButton(
                     action: didTapClose,
-                    accessibilityLabel: String(
-                        localized: "setBackupPassword.close.label",
-                        table: "Accessibility",
-                        bundle: .module
-                    )
+                    accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
                 )
             }
         }
@@ -72,6 +68,7 @@ private struct SetBackupPasswordView: View {
     @Environment(\.dismiss) var dismiss
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
+    @State private var contentFits: Bool = true
 
     private let passwordValidator: any BackupPasswordValidatorProtocol
     private let exportBackup: (String) -> Void
@@ -85,37 +82,50 @@ private struct SetBackupPasswordView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text(L10n.Localizable.ExportBackup.description)
-                .font(.textStyle(.body1))
-                .foregroundStyle(Color.primaryText)
-                .multilineTextAlignment(.leading)
-                .padding(.horizontal)
+        GeometryReader { geometry in
+            VStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        Text(L10n.Localizable.ExportBackup.description)
+                            .wireTextStyle(.body1)
+                            .foregroundStyle(Color.primaryText)
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
 
-            PasswordFieldView(
-                password: $password,
-                isPasswordValid: passwordValidator.isPasswordValid(password),
-                isPasswordVisible: $isPasswordVisible,
-                passwordRules: Text(passwordValidator.localizedRulesDescription)
-            )
-
-            Spacer()
-
-            Button(
-                action: {
-                    exportBackup(password)
-                    dismiss()
-                },
-                label: {
-                    Text(L10n.Localizable.ExportBackup.button)
+                        PasswordFieldView(
+                            password: $password,
+                            isPasswordValid: passwordValidator.isPasswordValid(password),
+                            isPasswordVisible: $isPasswordVisible,
+                            passwordRules: Text(passwordValidator.localizedRulesDescription)
+                        )
+                    }
+                    .background(
+                        GeometryReader { contentGeometry in
+                            Color.clear.onAppear {
+                                contentFits = contentGeometry.size.height <= geometry.size.height
+                            }
+                        })
+                    .frame(maxWidth: .infinity)
                 }
-            )
-            .wireButtonStyle(.primary)
-            .padding()
-        }
-        .frame(maxHeight: .infinity)
-    }
+                .scrollDisabled(contentFits)
 
+                Spacer()
+
+                Button(
+                    action: {
+                        exportBackup(password)
+                        dismiss()
+                    },
+                    label: {
+                        Text(L10n.Localizable.ExportBackup.button)
+                    }
+                )
+                .disabled(!passwordValidator.isPasswordValid(password))
+                .wireButtonStyle(.primary)
+                .padding()
+            }
+        }
+    }
 }
 
 // MARK: - Previews
@@ -123,29 +133,4 @@ private struct SetBackupPasswordView: View {
 @available(iOS 17.0, *)
 #Preview("Export Backup sheet") {
     ExportBackupPreview()
-}
-
-private struct ExportBackupPreview: View {
-    @State private var isPresented = true
-
-    var body: some View {
-        Button(
-            action: {
-                isPresented.toggle()
-            },
-            label: {
-                Text(L10n.Localizable.ExportBackup.button)
-            }
-        )
-        .sheet(isPresented: $isPresented) {
-            NavigationStack {
-                ExportBackupView(
-                    passwordValidator: MockBackupPasswordValidator(),
-                    exportBackup: { _ in }
-                )
-            }
-            .presentationDragIndicator(.visible)
-            .presentationDetents([.medium, .large])
-        }
-    }
 }
