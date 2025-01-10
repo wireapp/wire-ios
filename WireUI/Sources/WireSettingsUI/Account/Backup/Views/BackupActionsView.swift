@@ -31,13 +31,13 @@ public struct BackupActionsView: View {
     public var body: some View {
         List {
             Section(
-                footer: Text(L10n.ExportBackup.description)
+                footer: Text(L10n.Localizable.ExportBackup.description)
             ) {
                 Button(action: {
                     isBackupSheetPresented.toggle()
                 }, label: {
                     HStack {
-                        Text(L10n.Settings.ExportBackup.action)
+                        Text(L10n.Localizable.Settings.ExportBackup.action)
                             .font(.textStyle(.body2))
                             .foregroundStyle(Color.primaryText)
                         Spacer()
