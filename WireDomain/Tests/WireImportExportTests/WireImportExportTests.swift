@@ -16,3 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Testing
+
+@testable import WireImportExport
+
+struct WireImportExportTests {
+
+    @Test func example() async throws {
+        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    }
+
+}

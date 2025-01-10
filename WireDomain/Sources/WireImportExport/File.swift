@@ -16,14 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-//! Project version number for WireImportExport.
-FOUNDATION_EXPORT double WireImportExportVersionNumber;
-
-//! Project version string for WireImportExport.
-FOUNDATION_EXPORT const unsigned char WireImportExportVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <WireImportExport/PublicHeader.h>
-
-
+public let SOMEINT = 0

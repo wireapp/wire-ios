@@ -25,28 +25,17 @@
 		59049E392D3146CE00E866D1 /* WireImportExportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireImportExportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		59049E412D3146CE00E866D1 /* Exceptions for "WireImportExport" folder in "WireImportExport" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				WireImportExport.h,
-			);
-			target = 59049E2E2D3146CE00E866D1 /* WireImportExport */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		59049E312D3146CE00E866D1 /* WireImportExport */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				59049E412D3146CE00E866D1 /* Exceptions for "WireImportExport" folder in "WireImportExport" target */,
-			);
-			path = WireImportExport;
+			name = WireImportExport;
+			path = Sources/WireImportExport;
 			sourceTree = "<group>";
 		};
 		59049E3D2D3146CE00E866D1 /* WireImportExportTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireImportExportTests;
+			name = WireImportExportTests;
+			path = Tests/WireImportExportTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
