@@ -59,6 +59,7 @@ public struct BackupActionsView: View {
                     .presentationDetents([.medium])
                 }
             }
+            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
 
             Section(
                 footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)
@@ -95,7 +96,7 @@ public struct BackupActionsView: View {
                             }
                         }
                     }
-                    .presentationDetents([.medium, .large])
+                    .presentationDetents([.medium])
                 }
             }
             .listRowBackground(Color(ColorTheme.Backgrounds.surface))

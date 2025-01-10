@@ -37,7 +37,7 @@ struct RestoreBackupPreview: View {
                 )
             }
             .presentationDragIndicator(.visible)
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.medium])
         }
     }
 }

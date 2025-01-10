@@ -22,24 +22,11 @@ import class WireSyncEngine.SessionManager
 
 struct RestoreSource: RestoreSourceProtocol {
 
-    func restoreFromBackup(at location: URL, password: String) throws {
-        do {
-            try SessionManager.shared?.restoreFromBackup(
-                at: location,
-                password: password)
-        } catch let error as SessionManager.BackupError {
-            switch error {
-            case .decryptionError:
-                throw RestoreBackupError.decryptionError
-            default:
-                throw RestoreBackupError.generic(error)
-            }
-        } catch {
-            throw RestoreBackupError.generic(error)
-        }
-    }
-
-    func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, any Error>) -> Void) {
+    func restoreFromBackup(
+        at location: URL,
+        password: String,
+        completion: @escaping (Result<Void, any Error>) -> Void
+    ) {
         SessionManager.shared?.restoreFromBackup(
             at: location,
             password: password,
