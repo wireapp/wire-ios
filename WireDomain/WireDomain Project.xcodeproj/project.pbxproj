@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */ = {isa = PBXBuildFile; fileRef = 01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */; };
 		017F67942C207AA000B6E02D /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */; };
 		01D0DCB12C1C8C880076CB1C /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
 		01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */; };
@@ -57,7 +56,6 @@
 		01D0DCB02C1C8C880076CB1C /* WireDomainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireDomainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireDomain.docc; sourceTree = "<group>"; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -72,6 +70,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		5904B7822D315AAC00E866D1 /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
 		59EA78992D00CF1C002CA0B8 /* WireDomainTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireDomainTests; sourceTree = "<group>"; };
 		59EA78D42D00CF22002CA0B8 /* WireDomainSupport */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5904B1B92D31586500E866D1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireDomainSupport; sourceTree = "<group>"; };
 		59EA7A282D00CFB2002CA0B8 /* WireDomain */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireDomain; sourceTree = "<group>"; };
@@ -123,7 +122,6 @@
 			children = (
 				01D0DCE82C1C8EA10076CB1C /* Sources */,
 				01D0DCED2C1C8EA10076CB1C /* Tests */,
-				01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */,
 				01D0DCA72C1C8C870076CB1C /* Products */,
 				01D0DCC02C1C8CBA0076CB1C /* Frameworks */,
 			);
@@ -162,6 +160,7 @@
 		01D0DCED2C1C8EA10076CB1C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5904B7822D315AAC00E866D1 /* TestPlans */,
 				59EA78992D00CF1C002CA0B8 /* WireDomainTests */,
 			);
 			path = Tests;
@@ -234,6 +233,7 @@
 				5904B1B62D31582700E866D1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				5904B7822D315AAC00E866D1 /* TestPlans */,
 				59EA78992D00CF1C002CA0B8 /* WireDomainTests */,
 			);
 			name = WireDomainTests;
@@ -346,7 +346,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -38,6 +38,11 @@
 			path = WireImportExportTests;
 			sourceTree = "<group>";
 		};
+		5904B7852D315B9300E866D1 /* TestPlans */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TestPlans;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +103,7 @@
 		5904B1C32D31590000E866D1 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5904B7852D315B9300E866D1 /* TestPlans */,
 				59049E3D2D3146CE00E866D1 /* WireImportExportTests */,
 			);
 			path = Tests;
@@ -154,6 +160,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				59049E3D2D3146CE00E866D1 /* WireImportExportTests */,
+				5904B7852D315B9300E866D1 /* TestPlans */,
 			);
 			name = WireImportExportTests;
 			packageProductDependencies = (
