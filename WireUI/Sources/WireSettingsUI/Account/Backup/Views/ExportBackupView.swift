@@ -104,7 +104,8 @@ private struct SetBackupPasswordView: View {
                             Color.clear.onAppear {
                                 contentFits = contentGeometry.size.height <= geometry.size.height
                             }
-                        })
+                        }
+                    )
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDisabled(contentFits)

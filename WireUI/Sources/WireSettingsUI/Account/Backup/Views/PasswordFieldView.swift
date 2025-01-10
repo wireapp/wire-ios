@@ -69,7 +69,7 @@ struct PasswordFieldView: View {
         .padding(.horizontal)
     }
 
-    // MARK - Helper
+    // MARK: - Helper
 
     private var calculatedColor: Color {
         switch (password.isEmpty, isPasswordValid) {

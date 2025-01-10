@@ -25,7 +25,7 @@ func ExportBackupPreview() -> some View {
 
 private struct ExportBackup_Preview: View {
     @State private var isPresented = true
-    
+
     var body: some View {
         Button(
             action: {
