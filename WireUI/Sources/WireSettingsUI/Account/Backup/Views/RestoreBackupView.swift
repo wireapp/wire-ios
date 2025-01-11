@@ -58,6 +58,7 @@ private struct PasswordBackupView: View {
     @Environment(\.dismiss) var dismiss
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
+    @State private var contentFits: Bool = true
 
     private let importBackup: (String) -> Void
 
@@ -66,36 +67,97 @@ private struct PasswordBackupView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text(L10n.Localizable.RestoreFromBackup.description)
-                .font(.textStyle(.body1))
-                .foregroundStyle(Color.primaryText)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
+        GeometryReader { geometry in
+            VStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        Text(L10n.Localizable.RestoreFromBackup.description)
+                            .wireTextStyle(.body1)
+                            .foregroundStyle(Color.primaryText)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
 
-            PasswordFieldView(
-                password: $password,
-                isPasswordVisible: $isPasswordVisible,
-                passwordRules: nil
-            )
-            Spacer()
-
-            Button(
-                action: {
-                    importBackup(password)
-                    dismiss()
-                },
-                label: {
-                    Text(L10n.Localizable.RestoreFromBackup.button)
+                        EnterPasswordFieldView(
+                            password: $password,
+                            isPasswordVisible: $isPasswordVisible
+                        )
+                    }
+                    .background(
+                        GeometryReader { contentGeometry in
+                            Color.clear.onAppear {
+                                contentFits = contentGeometry.size.height <= geometry.size.height
+                            }
+                        }
+                    )
+                    .frame(maxWidth: .infinity)
                 }
-            )
-            .wireButtonStyle(.primary)
-            .padding()
-        }
-        .frame(maxHeight: .infinity)
-    }
+                .scrollDisabled(contentFits)
 
+                Spacer()
+
+                Button(
+                    action: {
+                        importBackup(password)
+                        dismiss()
+                    },
+                    label: {
+                        Text(L10n.Localizable.RestoreFromBackup.button)
+                    }
+                )
+                .wireButtonStyle(.primary)
+                .padding()
+            }
+        }
+    }
+}
+
+private struct EnterPasswordFieldView: View {
+    @Binding var password: String
+    @Binding var isPasswordVisible: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(L10n.Localizable.RestoreFromBackup.EnterPassword.title)
+                .font(.subheadline)
+                .foregroundColor(password.isEmpty ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.primary.color)
+
+            ZStack {
+                if isPasswordVisible {
+                    TextField(
+                        L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
+                        text: $password
+                    )
+                    .wireTextStyle(.body1)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                } else {
+                    SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
+                                text: $password
+                    )
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        isPasswordVisible.toggle()
+                    }, label: {
+                        Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
+                            .foregroundColor(.gray)
+                    })
+                    .padding(.trailing, 10)
+                }
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(
+                        password.isEmpty ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.primary.color,
+                        lineWidth: password.isEmpty ? 0 : 1
+                    )
+            )
+
+        }
+        .padding(.horizontal)
+    }
 }
 
 // MARK: - Previews

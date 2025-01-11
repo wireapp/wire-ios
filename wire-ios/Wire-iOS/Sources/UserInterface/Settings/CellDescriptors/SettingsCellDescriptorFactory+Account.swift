@@ -521,8 +521,8 @@ extension SettingsCellDescriptorFactory {
 
         alert.addAction(UIAlertAction(
             title: L10n.Localizable.RestoreBackup.Confirmation.cancelButton,
-            style: .cancel
-        ))
+            style: .cancel)
+        )
         alert.addAction(UIAlertAction(
             title: L10n.Localizable.RestoreBackup.Confirmation.overrideButton,
             style: .default, handler: { _ in

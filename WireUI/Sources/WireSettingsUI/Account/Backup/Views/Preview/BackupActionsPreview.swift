@@ -30,7 +30,8 @@ func BackupActionsPreview() -> some View {
         restoreBackupResultHandler: RestoreBackupResultHandler(
             onSuccess: {},
             onConfirmation: { _ in },
-            onFailure: {}),
+            onFailure: {}
+        ),
         passwordValidator: MockBackupPasswordValidator()
     ))
 }
