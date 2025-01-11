@@ -131,8 +131,9 @@ private struct EnterPasswordFieldView: View {
                     .wireTextStyle(.body1)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 } else {
-                    SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
-                                text: $password
+                    SecureField(
+                        L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
+                        text: $password
                     )
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
