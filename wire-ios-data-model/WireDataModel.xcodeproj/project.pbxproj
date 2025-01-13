@@ -314,6 +314,7 @@
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
 		59B48C5C2C89CBBD00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5B2C89CBBD00EA7999 /* WireFoundation */; };
 		59BAE1102C3429EB00F8EEDC /* FilterConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BAE10F2C3429EB00F8EEDC /* FilterConversationsUseCaseTests.swift */; };
+		59D058402D15939800B687F2 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 59D0583F2D15939800B687F2 /* WireAnalytics */; };
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D1C30E2B1DEC300016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
@@ -1880,6 +1881,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59D058402D15939800B687F2 /* WireAnalytics in Frameworks */,
 				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
 				CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */,
 				591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */,
@@ -3844,6 +3846,7 @@
 				59B48C5B2C89CBBD00EA7999 /* WireFoundation */,
 				59537CDA2CFF8F2B00920B59 /* WireLogging */,
 				CBD35F2B2D09EBB20080DA37 /* WireCrypto */,
+				59D0583F2D15939800B687F2 /* WireAnalytics */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -5212,6 +5215,10 @@
 		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
+		};
+		59D0583F2D15939800B687F2 /* WireAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalytics;
 		};
 		CBD35F2B2D09EBB20080DA37 /* WireCrypto */ = {
 			isa = XCSwiftPackageProductDependency;

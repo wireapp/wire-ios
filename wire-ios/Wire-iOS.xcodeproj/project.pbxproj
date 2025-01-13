@@ -351,6 +351,7 @@
 		594211D32C90778E00576053 /* SettingsDebugReportViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211D12C90775700576053 /* SettingsDebugReportViewModelProtocol.swift */; };
 		594341D72D08611700A6C0B5 /* WireCountly in Frameworks */ = {isa = PBXBuildFile; productRef = 594341D62D08611700A6C0B5 /* WireCountly */; };
 		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
+		594906A52D0713C000238104 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 594906A42D0713C000238104 /* WireAnalytics */; };
 		594C4E2B2CCA98F000F13D03 /* AccountImageSourceMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594C4E2A2CCA98E800F13D03 /* AccountImageSourceMapping.swift */; };
 		5950467D2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950467C2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift */; };
 		5950A9472C2F1C31005AB9CE /* AvailabilityMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950A9462C2F1C31005AB9CE /* AvailabilityMappings.swift */; };
@@ -3874,6 +3875,7 @@
 				59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */,
 				590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */,
 				594341D72D08611700A6C0B5 /* WireCountly in Frameworks */,
+				594906A52D0713C000238104 /* WireAnalytics in Frameworks */,
 				EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */,
 				59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */,
 				59B99FAC2C89DF2100201827 /* WireAPI in Frameworks */,
@@ -8444,6 +8446,7 @@
 				E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */,
 				59537D942CFFA11A00920B59 /* WireLogging */,
 				76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */,
+				594906A42D0713C000238104 /* WireAnalytics */,
 				594341D62D08611700A6C0B5 /* WireCountly */,
 			);
 			productName = "ZClient iOS";
@@ -11455,6 +11458,10 @@
 		5945D0292C219F7200D039E3 /* WireDesign */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDesign;
+		};
+		594906A42D0713C000238104 /* WireAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalytics;
 		};
 		59537D8E2CFFA05600920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
