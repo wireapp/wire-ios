@@ -39,8 +39,7 @@ struct NewSystemMessageNotificationBodyComposer {
             // TODO: [WPB-11663]
             ""
         case let .deletedGroup(senderName):
-            // TODO: [WPB-11658]
-            ""
+            senderName != nil ? "\(senderName!) deleted the group" : "Someone deleted the group"
         }
     }
 }

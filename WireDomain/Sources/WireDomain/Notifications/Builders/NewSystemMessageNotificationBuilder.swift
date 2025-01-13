@@ -108,8 +108,7 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
             // TODO: [WPB-11661]
             break
         case .conversationDeleted:
-            // TODO: [WPB-11658]
-            break
+            return buildDeletedConversationNotification()
         case .messageTimerUpdate:
             // TODO: [WPB-11663]
             break
@@ -129,6 +128,26 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
 
         let body = NotificationBody.newSystemMessage(
             .removedYou(senderName: context.senderName)
+        )
+
+        content.body = body.make()
+        content.categoryIdentifier = makeCategory()
+        content.sound = makeSound()
+        content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
+
+        return content
+    }
+
+    private func buildDeletedConversationNotification() -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+
+        if let title = makeTitle() {
+            content.title = title
+        }
+
+        let body = NotificationBody.newSystemMessage(
+            .deletedGroup(senderName: context.senderName)
         )
 
         content.body = body.make()
