@@ -52,11 +52,9 @@ struct UserConnectionNotificationBuilder: NotificationBuilder {
         case .joined:
             buildUserJoinNotification()
         case .pending:
-            // TODO: [WPB-11659] To implement
-            UNMutableNotificationContent()
+            buildConnectionRequestNotification(isPending: true)
         case .accepted:
-            // TODO: [WPB-11659] To implement
-            UNMutableNotificationContent()
+            buildConnectionRequestNotification(isPending: false)
         }
     }
 
@@ -76,6 +74,22 @@ struct UserConnectionNotificationBuilder: NotificationBuilder {
         return content
     }
 
+    private func buildConnectionRequestNotification(
+        isPending: Bool
+    ) -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+
+        let body = NotificationBody.userConnection(
+            isPending ? .userWantsToConnect(username: context.username) : .usersConnected(username: context.username)
+        )
+
+        content.body = body.make()
+        content.categoryIdentifier = makeCategory()
+        content.sound = makeSound()
+
+        return content
+    }
+
     // MARK: - Helpers
 
     private func makeSound(type: NotificationSound = .default) -> UNNotificationSound {
@@ -85,11 +99,10 @@ struct UserConnectionNotificationBuilder: NotificationBuilder {
 
     private func makeCategory() -> String {
         switch context.connectionStatus {
-        case .joined:
+        case .joined, .accepted:
             NotificationCategory.nonActionable.rawValue
-        case .pending, .accepted:
-            // TODO: [WPB-11659] To implement
-            ""
+        case .pending:
+            NotificationCategory.incomingConnectionRequest.rawValue
         }
     }
 
