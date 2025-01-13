@@ -1021,7 +1021,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
     
     
-    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClients {
+    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsProtocol {
         guard let apiService =  managedObjectContext.performAndWait({ self.apiService }) else {
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
         }

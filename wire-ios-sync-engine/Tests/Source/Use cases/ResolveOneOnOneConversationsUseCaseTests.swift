@@ -20,6 +20,7 @@ import WireDataModelSupport
 import WireSyncEngineSupport
 import XCTest
 @testable import WireSyncEngine
+import WireDomainSupport
 
 final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
 
@@ -28,6 +29,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
     private var sut: ResolveOneOnOneConversationsUseCase!
     private var mockSupportedProtocolService: MockSupportedProtocolsServiceInterface!
     private var mockOneOnOneResolver: MockOneOnOneResolverInterface!
+    private var mockPullSelfUserClients: MockPullSelfUserClientsProtocol!
     private var stack: CoreDataStack!
     private let coreDataStackHelper = CoreDataStackHelper()
 
@@ -42,11 +44,16 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         mockSupportedProtocolService = MockSupportedProtocolsServiceInterface()
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
-
+        mockPullSelfUserClients = MockPullSelfUserClientsProtocol()
+        mockPullSelfUserClients.pullSelfClients_MockMethod = {}
+        
         sut = ResolveOneOnOneConversationsUseCase(
             context: syncContext,
             supportedProtocolService: mockSupportedProtocolService,
-            resolver: mockOneOnOneResolver
+            resolver: mockOneOnOneResolver,
+            pullSelfUserClientsFactory: { _ in
+                return self.mockPullSelfUserClients
+            }
         )
     }
 
@@ -56,6 +63,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         stack = nil
         mockSupportedProtocolService = nil
         mockOneOnOneResolver = nil
+        mockPullSelfUserClients = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
@@ -63,6 +71,22 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
 
     // MARK: - Unit Tests
 
+    func test_invoke_Calls_PullSelfClients() async throws {
+        // GIVEN
+        await syncContext.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            selfUser.supportedProtocols = [.proteus]
+            mockSupportedProtocolService.calculateSupportedProtocols_MockValue = [.mls, .proteus]
+        }
+
+        // WHEN
+        try await sut.invoke()
+        
+        // THEN
+        XCTAssertEqual(mockPullSelfUserClients.pullSelfClients_Invocations.count, 1)
+    }
+    
+    
     func test_SupportedProtocolsRemainProteusOnly() async throws {
         // GIVEN
         await syncContext.perform { [self] in

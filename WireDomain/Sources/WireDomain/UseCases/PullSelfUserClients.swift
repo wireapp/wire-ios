@@ -19,10 +19,22 @@
 import WireAPI
 import CoreData
 
-public struct PullSelfUserClients {
+// sourcery: AutoMockable
+public protocol PullSelfUserClientsProtocol {
+    
+    func pullSelfClients() async throws
+}
+
+/// Pull self clients from backend and update local state
+public struct PullSelfUserClients: PullSelfUserClientsProtocol {
     private let userClientsAPI: any UserClientsAPI
     private let userClientsLocalStore: any UserClientsLocalStoreProtocol
 
+    init(userClientsAPI: any UserClientsAPI, userClientsLocalStore: any UserClientsLocalStoreProtocol) {
+        self.userClientsAPI = userClientsAPI
+        self.userClientsLocalStore = userClientsLocalStore
+    }
+    
     public func pullSelfClients() async throws {
         let remoteSelfClients = try await userClientsAPI.getSelfClients()
 
@@ -66,8 +78,8 @@ public struct PullSelfUserClients {
 public extension PullSelfUserClients {
     
     static func make(apiService: any APIServiceProtocol,
-                            apiVersion: WireAPI.APIVersion,
-                            context: NSManagedObjectContext) -> PullSelfUserClients {
+                     apiVersion: WireAPI.APIVersion,
+                     context: NSManagedObjectContext) -> PullSelfUserClientsProtocol {
         let userClientsAPI = UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
         
         let userLocalStore = UserLocalStore(context: context)

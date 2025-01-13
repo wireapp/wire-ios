@@ -27,7 +27,7 @@ public protocol ResolveOneOnOneConversationsUseCaseProtocol {
 
 }
 
-typealias PullSelfUserClientsFactory = (NSManagedObjectContext) -> PullSelfUserClients
+typealias PullSelfUserClientsFactory = (NSManagedObjectContext) -> PullSelfUserClientsProtocol
 
 struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseProtocol {
 
