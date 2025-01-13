@@ -35,24 +35,20 @@ struct BackupActionsView: View {
                         Text(L10n.Localizable.Settings.ExportBackup.action)
                             .wireTextStyle(.body2)
                             .foregroundStyle(Color.primaryText)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .foregroundStyle(Color.primary)
                     }
-                }
-                .sheet(isPresented: $isBackupSheetPresented) {
-                    NavigationStack {
-                        ExportBackupView(
-                            passwordValidator: viewModel.passwordValidator,
-                            exportBackup: { password in
-                                viewModel.backupActiveAccount(password: password)
-                            }
-                        )
-                    }
-                    .presentationDetents([.medium])
                 }
             }
-            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
+            .sheet(isPresented: $isBackupSheetPresented) {
+                NavigationStack {
+                    ExportBackupView(
+                        passwordValidator: viewModel.passwordValidator,
+                        exportBackup: { password in
+                            viewModel.backupActiveAccount(password: password)
+                        }
+                    )
+                }
+                .presentationDetents([.medium])
+            }
         }
         .listStyle(.grouped)
         .background(Color(ColorTheme.Backgrounds.background))

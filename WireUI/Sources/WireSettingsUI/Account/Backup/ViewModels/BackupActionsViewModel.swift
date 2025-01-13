@@ -55,16 +55,6 @@ public final class BackupActionsViewModel: ObservableObject {
             backupResultHandler.onFailure(error)
         }
     }
-
-    enum BackupStatus {
-        case inProgress(Double)
-        case failed(any Error)
-
-        var error: (any Error)? {
-            if case .failed(let error) = self { return error }
-            return nil
-        }
-    }
 }
 
 enum DummyError: Error {

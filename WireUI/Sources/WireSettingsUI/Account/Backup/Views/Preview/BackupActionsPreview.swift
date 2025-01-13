@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import SwiftUI
 
 @ViewBuilder @MainActor
@@ -28,6 +29,7 @@ func BackupActionsPreview() -> some View {
         ),
         passwordValidator: MockBackupPasswordValidator()
     ))
+    .environment(\.wireTextStyleMapping, PreviewTextStyleMapping())
 }
 
 private class MockBackupSource: BackupSourceProtocol {
@@ -45,5 +47,18 @@ class MockBackupPasswordValidator: BackupPasswordValidatorProtocol {
 
     var localizedRulesDescription: String {
         "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."
+    }
+}
+
+private func PreviewTextStyleMapping() -> WireTextStyleMapping {
+    .init { _ in
+        fatalError("not implemented for preview yet")
+    } fontMapping: { textStyle in
+        switch textStyle {
+        case .body2:
+            .callout.weight(.semibold)
+        default:
+            fatalError("not implemented for preview yet")
+        }
     }
 }
