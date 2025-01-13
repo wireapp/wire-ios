@@ -46,7 +46,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
         mockPullSelfUserClients = MockPullSelfUserClientsProtocol()
         mockPullSelfUserClients.pullSelfClients_MockMethod = {}
-        
+    
         sut = ResolveOneOnOneConversationsUseCase(
             context: syncContext,
             supportedProtocolService: mockSupportedProtocolService,
@@ -75,15 +75,17 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         // GIVEN
         await syncContext.perform { [self] in
             let selfUser = ZMUser.selfUser(in: syncContext)
-            selfUser.supportedProtocols = [.proteus]
-            mockSupportedProtocolService.calculateSupportedProtocols_MockValue = [.mls, .proteus]
+            selfUser.supportedProtocols = [.mls]
+            mockSupportedProtocolService.calculateSupportedProtocols_MockValue = [.mls]
         }
+        mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_MockMethod = { _ in }
 
         // WHEN
         try await sut.invoke()
         
         // THEN
         XCTAssertEqual(mockPullSelfUserClients.pullSelfClients_Invocations.count, 1)
+        XCTAssertEqual(mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 1)
     }
     
     

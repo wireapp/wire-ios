@@ -1100,7 +1100,7 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         guard let mock = addParticipantsSenderDateConversationIDConversationDomain_MockMethod else {
             fatalError("no mock for `addParticipantsSenderDateConversationIDConversationDomain`")
         }
-
+        
         try await mock(participants, sender, date, conversationID, conversationDomain)
     }
 
