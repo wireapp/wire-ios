@@ -262,7 +262,7 @@ final class SelfProfileViewController: UIViewController {
         }
     }
 
-    private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
+    private func userDidTapCreateTeam(useCase: any IndividualToTeamMigrationUseCaseProtocol, userName: String) {
 
         analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
 
