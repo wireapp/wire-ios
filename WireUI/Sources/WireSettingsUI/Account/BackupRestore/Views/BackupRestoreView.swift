@@ -20,9 +20,9 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-struct BackupActionsView: View {
+struct BackupRestoreView: View {
 
-    @ObservedObject private(set) var viewModel: BackupActionsViewModel
+    @ObservedObject private(set) var viewModel: BackupRestoreViewModel
     @State private var isBackupSheetPresented = false
 
     var body: some View {

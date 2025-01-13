@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-public final class BackupActionsViewModel: ObservableObject {
+public final class BackupRestoreViewModel: ObservableObject {
 
     private let backupSource: any BackupSourceProtocol
     private let backupResultHandler: BackupResultHandler

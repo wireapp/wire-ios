@@ -381,7 +381,7 @@ extension SettingsCellDescriptorFactory {
                     return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-                    let viewModel = BackupActionsViewModel(
+                    let viewModel = BackupRestoreViewModel(
                         backupSource: BackupSource(),
                         backupResultHandler: BackupResultHandler(
                             onSuccess: presentShareSheet,
@@ -389,7 +389,7 @@ extension SettingsCellDescriptorFactory {
                         ),
                         passwordValidator: BackupPasswordValidator()
                     )
-                    let backupActionsController = BackupActionsHostingController(viewModel: viewModel)
+                    let backupActionsController = BackupRestoreViewController(viewModel: viewModel)
                     backupActionsController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
                     return backupActionsController
                 } else {

@@ -19,6 +19,13 @@
 import SwiftUI
 
 @MainActor
-public func BackupActionsHostingController(viewModel: BackupActionsViewModel) -> UIViewController {
-    UIHostingController(rootView: BackupActionsView(viewModel: viewModel))
+public func BackupRestoreViewController(viewModel: BackupRestoreViewModel) -> UIViewController {
+    UIHostingController(rootView: BackupRestoreView(viewModel: viewModel))
+}
+
+@MainActor
+public func BackupRestoreViewController(
+//    viewModel: BackupRestoreViewModel
+) -> UIViewController {
+    fatalError()
 }
