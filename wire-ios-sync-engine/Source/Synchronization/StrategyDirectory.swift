@@ -424,7 +424,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         resolver: any OneOnOneResolverInterface,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory
     ) -> any ResolveOneOnOneConversationsUseCaseProtocol {
-        
+
         ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: SupportedProtocolsService(context: context),

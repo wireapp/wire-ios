@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import CoreData
+import WireAPI
 
 // sourcery: AutoMockable
 public protocol PullSelfUserClientsProtocol {
-    
+
     func pullSelfClients() async throws
 }
 
@@ -34,7 +34,7 @@ public struct PullSelfUserClients: PullSelfUserClientsProtocol {
         self.userClientsAPI = userClientsAPI
         self.userClientsLocalStore = userClientsLocalStore
     }
-    
+
     public func pullSelfClients() async throws {
         let remoteSelfClients = try await userClientsAPI.getSelfClients()
 
@@ -58,8 +58,7 @@ public struct PullSelfUserClients: PullSelfUserClientsProtocol {
             await userClientsLocalStore.deleteClient(id: deletedSelfClientID)
         }
     }
-    
-    
+
     func updateClient(
         id: String,
         from remoteClient: WireAPI.SelfUserClient,
@@ -72,19 +71,20 @@ public struct PullSelfUserClients: PullSelfUserClientsProtocol {
         )
     }
 
-    
 }
 
 public extension PullSelfUserClients {
-    
-    static func make(apiService: any APIServiceProtocol,
-                     apiVersion: WireAPI.APIVersion,
-                     context: NSManagedObjectContext) -> PullSelfUserClientsProtocol {
+
+    static func make(
+        apiService: any APIServiceProtocol,
+        apiVersion: WireAPI.APIVersion,
+        context: NSManagedObjectContext
+    ) -> PullSelfUserClientsProtocol {
         let userClientsAPI = UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        
+
         let userLocalStore = UserLocalStore(context: context)
         let userClientsLocalStore = UserClientsLocalStore(context: context, userLocalStore: userLocalStore)
-        
+
         return PullSelfUserClients(userClientsAPI: userClientsAPI, userClientsLocalStore: userClientsLocalStore)
     }
 }

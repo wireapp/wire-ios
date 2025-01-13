@@ -17,10 +17,10 @@
 //
 
 import WireDataModelSupport
+import WireDomainSupport
 import WireSyncEngineSupport
 import XCTest
 @testable import WireSyncEngine
-import WireDomainSupport
 
 final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
 
@@ -46,13 +46,13 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
         mockPullSelfUserClients = MockPullSelfUserClientsProtocol()
         mockPullSelfUserClients.pullSelfClients_MockMethod = {}
-    
+
         sut = ResolveOneOnOneConversationsUseCase(
             context: syncContext,
             supportedProtocolService: mockSupportedProtocolService,
             resolver: mockOneOnOneResolver,
             pullSelfUserClientsFactory: { _ in
-                return self.mockPullSelfUserClients
+                self.mockPullSelfUserClients
             }
         )
     }
@@ -82,13 +82,12 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
 
         // WHEN
         try await sut.invoke()
-        
+
         // THEN
         XCTAssertEqual(mockPullSelfUserClients.pullSelfClients_Invocations.count, 1)
         XCTAssertEqual(mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 1)
     }
-    
-    
+
     func test_SupportedProtocolsRemainProteusOnly() async throws {
         // GIVEN
         await syncContext.perform { [self] in

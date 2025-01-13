@@ -35,29 +35,29 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
     let supportedProtocolService: any SupportedProtocolsServiceInterface
     let resolver: any OneOnOneResolverInterface
     let pullSelfUserClientsFactory: PullSelfUserClientsFactory
-    
+
     func invoke() async throws {
         let oldProtocols = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
             return selfUser.supportedProtocols
         }
-        
+
         let newProtocols = await calculateSupportedProtocols()
         if oldProtocols != newProtocols {
             var action = PushSupportedProtocolsAction(supportedProtocols: newProtocols)
             try await action.perform(in: context.notificationContext)
-            
+
             await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 selfUser.supportedProtocols = newProtocols
             }
         }
-        
+
         if newProtocols.contains(.mls) {
             try await resolver.resolveAllOneOnOneConversations(in: context)
         }
     }
-    
+
     private func calculateSupportedProtocols() async -> Set<WireDataModel.MessageProtocol> {
         // we need the self clients to be up to date before calculating supported protocols
         let pullSelfUserClients = pullSelfUserClientsFactory(context)

@@ -582,8 +582,6 @@ public final class ZMUserSession: NSObject {
         )
     }
 
-    
-    
     private func createUpdateEventProcessor() -> EventProcessor {
         EventProcessor(
             storeProvider: coreDataStack,
@@ -1002,39 +1000,39 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
-    -> any ResolveOneOnOneConversationsUseCaseProtocol {
+        -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
-        
-      
+
         let resolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
         )
-        
-        
-        return ResolveOneOnOneConversationsUseCase(context: context,
-                                                   supportedProtocolService: supportedProtocolService,
-                                                   resolver: resolver,
-                                                   pullSelfUserClientsFactory: pullSelfUserClientsFactory
+
+        return ResolveOneOnOneConversationsUseCase(
+            context: context,
+            supportedProtocolService: supportedProtocolService,
+            resolver: resolver,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory
         )
     }
-    
-    
+
     private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsProtocol {
-        guard let apiService =  managedObjectContext.performAndWait({ self.apiService }) else {
+        guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
         }
         guard let apiVersion = BackendInfo.apiVersion,
               let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
             WireLogger.backend.warn("apiVersion not resolved")
-            
+
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
-            
+
         }
-        
-        return PullSelfUserClients.make(apiService: apiService,
-                                        apiVersion: wireAPIVersion,
-                                        context: context)
+
+        return PullSelfUserClients.make(
+            apiService: apiService,
+            apiVersion: wireAPIVersion,
+            context: context
+        )
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
