@@ -171,7 +171,7 @@ node("Job_distributor") {
                                        [$class: 'CloneOption', depth: 0, noTags: true, reference: '', shallow: true, timeout: 30],
                                        [$class: 'BuildChooserSetting', buildChooser: [$class: 'DefaultBuildChooser']]],
                           submoduleCfg: [],
-                          userRemoteConfigs: [[credentialsId: 'wire-ios', url: 'git@github.com:wireapp/wire-ios.git']]])
+                          userRemoteConfigs: [[credentialsId: 'zautomation', url: 'git@github.com:wireapp/wire-ios.git']]])
 
                 echo("Installing kubectl if not already installed")
                 kubeCtlSetup = readFile("${WORKSPACE}/common/tests/common/kubectlSetup.sh")
