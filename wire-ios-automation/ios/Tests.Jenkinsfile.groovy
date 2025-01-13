@@ -128,6 +128,7 @@ node("Job_distributor") {
             [envVar: 'MS_PASSWORD', secretRef: 'op://QA automation/MS_CREDENTIALS/password'],
             [envVar: 'BLACKLIST_S3_SECRET', secretRef: 'op://QA automation/BLACKLIST_S3_SECRET/password'],
             [envVar: 'TESTINY_API_KEY', secretRef: 'op://QA automation/TESTINY_API_KEY_IOS/password'],
+            [envVar: 'CALLINGSERVICE_BASIC_AUTH', secretRef: 'op://QA automation/CALLINGSERVICE_BASIC_AUTH/password'],
     ]
 
     // Use 1Password secrets
