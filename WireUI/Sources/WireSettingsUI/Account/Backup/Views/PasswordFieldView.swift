@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
 
 struct PasswordFieldView: View {
     @Binding var password: String
@@ -32,17 +33,22 @@ struct PasswordFieldView: View {
                 .foregroundColor(calculatedColor)
 
             ZStack {
-                if isPasswordVisible {
-                    TextField(
-                        L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
-                        text: $password
-                    )
-                    .wireTextStyle(.body1)
+                SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                } else {
-                    SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                }
+                    .foregroundStyle(isPasswordVisible ? .clear : ColorTheme.Base.primary.color)
+                    .overlay {
+                        if isPasswordVisible {
+                            HStack {
+                                Text(password)
+                                    .disabled(true)
+                                    .background(Color.red)
+                                    .wireTextStyle(.body1)
+                                //                                .multilineTextAlignment(.leading)
+                                Spacer()
+                            }
+                            .padding(8)
+                        }
+                    }
                 HStack {
                     Spacer()
                     Button(action: {
@@ -92,7 +98,7 @@ struct PasswordFieldView: View {
         isPasswordValid: false,
         isPasswordVisible: .constant(false),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
-    )
+    ).environment(\.wireTextStyleMapping, PreviewTextStyleMapping())
 }
 
 @available(iOS 17, *)
@@ -123,4 +129,23 @@ struct PasswordFieldView: View {
         isPasswordVisible: .constant(true),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
     )
+}
+
+private func PreviewTextStyleMapping() -> WireTextStyleMapping {
+    .init { _ in
+        fatalError("not implemented for preview yet")
+    } fontMapping: { textStyle in
+        switch textStyle {
+//        case .h2:
+//            .title3.bold()
+//        case .h3:
+//            .headline
+        case .body1:
+            .body
+//        case .subline1:
+//            .caption
+        default:
+            fatalError("not implemented for preview yet")
+        }
+    }
 }
