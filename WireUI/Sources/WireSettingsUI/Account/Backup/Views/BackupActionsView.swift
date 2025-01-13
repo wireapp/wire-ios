@@ -20,30 +20,26 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-public struct BackupActionsView: View {
-    @ObservedObject private var viewModel: BackupActionsViewModel
-    @State private var isBackupSheetPresented: Bool = false
+struct BackupActionsView: View {
 
-    public init(viewModel: BackupActionsViewModel) {
-        self.viewModel = viewModel
-    }
+    @ObservedObject private(set) var viewModel: BackupActionsViewModel
+    @State private var isBackupSheetPresented = false
 
-    public var body: some View {
+    var body: some View {
         List {
-            Section(
-                footer: Text(L10n.Localizable.Settings.ExportBackup.description)
-            ) {
-                Button(action: {
+            Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
+                Button {
                     isBackupSheetPresented.toggle()
-                }, label: {
+                } label: {
                     HStack {
                         Text(L10n.Localizable.Settings.ExportBackup.action)
                             .wireTextStyle(.body2)
                             .foregroundStyle(Color.primaryText)
                         Spacer()
-                        Image(systemName: "chevron.right").foregroundStyle(Color.primary)
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(Color.primary)
                     }
-                })
+                }
                 .sheet(isPresented: $isBackupSheetPresented) {
                     NavigationStack {
                         ExportBackupView(
@@ -61,6 +57,11 @@ public struct BackupActionsView: View {
         .listStyle(.grouped)
         .background(Color(ColorTheme.Backgrounds.background))
         .scrollContentBackground(.hidden)
+        .alert("abcd", isPresented: $viewModel.presentBackupFailedAlert) {
+            Button("OK") {
+                viewModel.presentBackupFailedAlert = false
+            }
+        }
     }
 }
 

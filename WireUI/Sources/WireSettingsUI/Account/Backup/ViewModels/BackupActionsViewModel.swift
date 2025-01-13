@@ -19,9 +19,13 @@
 import SwiftUI
 
 public final class BackupActionsViewModel: ObservableObject {
+
     private let backupSource: any BackupSourceProtocol
     private let backupResultHandler: BackupResultHandler
     let passwordValidator: any BackupPasswordValidatorProtocol
+
+    @Published private(set) var progress: Double?
+    @Published var presentBackupFailedAlert = false
 
     public init(
         backupSource: any BackupSourceProtocol,
@@ -35,12 +39,34 @@ public final class BackupActionsViewModel: ObservableObject {
 
     func backupActiveAccount(password: String) {
         do {
+            progress = 0.5
+            throw DummyError.some
+
             let backupPath = try backupSource.backupActiveAccount(password: password)
             backupResultHandler.onSuccess(backupPath) { [weak self] in
                 self?.backupSource.clearPreviousBackups()
+                self?.progress = 1
             }
         } catch {
+            progress = nil
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
+                self.presentBackupFailedAlert = true
+            }
             backupResultHandler.onFailure(error)
         }
     }
+
+    enum BackupStatus {
+        case inProgress(Double)
+        case failed(any Error)
+
+        var error: (any Error)? {
+            if case .failed(let error) = self { return error }
+            return nil
+        }
+    }
+}
+
+enum DummyError: Error {
+    case some
 }

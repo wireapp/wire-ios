@@ -65,7 +65,7 @@ public struct ExportBackupView: View {
 }
 
 private struct SetBackupPasswordView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
     @State private var contentFits: Bool = true
@@ -112,15 +112,12 @@ private struct SetBackupPasswordView: View {
 
                 Spacer()
 
-                Button(
-                    action: {
-                        exportBackup(password)
-                        dismiss()
-                    },
-                    label: {
-                        Text(L10n.Localizable.ExportBackup.button)
-                    }
-                )
+                Button {
+                    dismiss()
+                    exportBackup(password)
+                } label: {
+                    Text(L10n.Localizable.ExportBackup.button)
+                }
                 .disabled(!passwordValidator.isPasswordValid(password))
                 .wireButtonStyle(.primary)
                 .padding()

@@ -131,14 +131,8 @@ private func PreviewTextStyleMapping() -> WireTextStyleMapping {
         fatalError("not implemented for preview yet")
     } fontMapping: { textStyle in
         switch textStyle {
-//        case .h2:
-//            .title3.bold()
-//        case .h3:
-//            .headline
         case .body1:
             .body
-//        case .subline1:
-//            .caption
         default:
             fatalError("not implemented for preview yet")
         }
