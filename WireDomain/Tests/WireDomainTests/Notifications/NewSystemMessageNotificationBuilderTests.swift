@@ -84,7 +84,8 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
-            .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
+            .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
+            .conversationCreated
         ]
 
         for systemMessage in systemMessages {
@@ -119,7 +120,8 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
-            .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
+            .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
+            .conversationCreated
         ]
 
         for systemMessage in systemMessages {
@@ -154,7 +156,8 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
-            .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
+            .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
+            .conversationCreated
         ]
 
         for systemMessage in systemMessages {
@@ -232,7 +235,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         case .memberLeave:
             XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) removed you")
         case .conversationCreated:
-            break
+            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) created a conversation")
         case .memberJoin:
             break
         case .conversationDeleted:

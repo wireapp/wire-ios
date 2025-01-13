@@ -25,8 +25,7 @@ struct NewSystemMessageNotificationBodyComposer {
     func make() -> String {
         switch format {
         case let .createdConversation(senderName):
-            // TODO: [WPB-11657]
-            ""
+            senderName != nil ? "\(senderName!) created a conversation" : "Someone created a conversation"
         case let .removedYou(senderName):
             senderName != nil ? "\(senderName!) removed you" : "Someone removed you"
         case let .setMessageTimer(senderName):

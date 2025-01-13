@@ -102,8 +102,7 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
         case .memberLeave:
             return buildMemberLeaveNotification()
         case .conversationCreated:
-            // TODO: [WPB-11657]
-            break
+            return buildConversationCreatedNotification()
         case .memberJoin:
             // TODO: [WPB-11661]
             break
@@ -129,6 +128,26 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
 
         let body = NotificationBody.newSystemMessage(
             .removedYou(senderName: context.senderName)
+        )
+
+        content.body = body.make()
+        content.categoryIdentifier = makeCategory()
+        content.sound = makeSound()
+        content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
+
+        return content
+    }
+    
+    private func buildConversationCreatedNotification() -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+
+        if let title = makeTitle() {
+            content.title = title
+        }
+
+        let body = NotificationBody.newSystemMessage(
+            .createdConversation(senderName: context.senderName)
         )
 
         content.body = body.make()
