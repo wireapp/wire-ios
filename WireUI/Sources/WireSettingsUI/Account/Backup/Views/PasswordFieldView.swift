@@ -33,22 +33,17 @@ struct PasswordFieldView: View {
                 .foregroundColor(calculatedColor)
 
             ZStack {
-                SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
+                if isPasswordVisible {
+                    TextField(
+                        L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
+                        text: $password
+                    )
+                    .wireTextStyle(.body1)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .foregroundStyle(isPasswordVisible ? .clear : ColorTheme.Base.primary.color)
-                    .overlay {
-                        if isPasswordVisible {
-                            HStack {
-                                Text(password)
-                                    .disabled(true)
-                                    .background(Color.red)
-                                    .wireTextStyle(.body1)
-                                //                                .multilineTextAlignment(.leading)
-                                Spacer()
-                            }
-                            .padding(8)
-                        }
-                    }
+                } else {
+                    SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
                 HStack {
                     Spacer()
                     Button(action: {
