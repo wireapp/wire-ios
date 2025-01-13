@@ -25,8 +25,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class NewSystemMessageNotificationBuilderTests: XCTestCase {
-    private var sut: NewSystemMessageNotificationBuilder!
+final class ConversationSystemMessageNotificationBuilderTests: XCTestCase {
+    private var sut: ConversationSystemMessageNotificationBuilder!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
@@ -83,12 +83,12 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
 
-        let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
+        let systemMessages: [ConversationSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
         ]
 
         for systemMessage in systemMessages {
-            sut = await NewSystemMessageNotificationBuilder(
+            sut = await ConversationSystemMessageNotificationBuilder(
                 systemMessage: systemMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
@@ -118,12 +118,12 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
 
-        let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
+        let systemMessages: [ConversationSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
         ]
 
         for systemMessage in systemMessages {
-            sut = await NewSystemMessageNotificationBuilder(
+            sut = await ConversationSystemMessageNotificationBuilder(
                 systemMessage: systemMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
@@ -153,12 +153,12 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
 
-        let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
+        let systemMessages: [ConversationSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
         ]
 
         for systemMessage in systemMessages {
-            sut = await NewSystemMessageNotificationBuilder(
+            sut = await ConversationSystemMessageNotificationBuilder(
                 systemMessage: systemMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
@@ -188,12 +188,12 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID3)
 
-        let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
+        let systemMessages: [ConversationSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [UUID()]) // doesn't concern self user
         ]
 
         for systemMessage in systemMessages {
-            sut = await NewSystemMessageNotificationBuilder(
+            sut = await ConversationSystemMessageNotificationBuilder(
                 systemMessage: systemMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
@@ -207,7 +207,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
     private func internalTest_assertNotificationContent(
         _ notificationContent: UNMutableNotificationContent,
-        systemMessage: NewSystemMessageNotificationBuilder.SystemMessage,
+        systemMessage: ConversationSystemMessageNotificationBuilder.SystemMessage,
         isGroup: Bool,
         isTeam: Bool
     ) async throws {

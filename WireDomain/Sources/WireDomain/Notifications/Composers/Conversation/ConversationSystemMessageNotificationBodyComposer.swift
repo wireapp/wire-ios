@@ -18,21 +18,29 @@
 
 import Foundation
 
-struct NewMessageNotificationTitleComposer {
-    let format: NotificationTitle.MessageTitleFormat
+struct ConversationSystemMessageNotificationBodyComposer {
+    let format: NotificationBody.SystemMessageBodyFormat
 
     // TODO: [WPB-15153] - Localize strings
     func make() -> String {
         switch format {
-        case let .sender(sender):
-            "\(sender)"
-        case let .senderInTeam(sender, team):
-            "\(sender) in \(team)"
-        case let .conversation(conversation):
-            "\(conversation)"
-        case let .conversationInTeam(conversation, team):
-            "\(conversation) in \(team)"
+        case let .createdConversation(senderName):
+            // TODO: [WPB-11657]
+            ""
+        case let .removedYou(senderName):
+            senderName != nil ? "\(senderName!) removed you" : "Someone removed you"
+        case let .setMessageTimer(senderName):
+            // TODO: [WPB-11663]
+            ""
+        case let .addedYou(senderName):
+            // TODO: [WPB-11661]
+            ""
+        case let .turnedOffMessageTimer(senderName):
+            // TODO: [WPB-11663]
+            ""
+        case let .deletedGroup(senderName):
+            // TODO: [WPB-11658]
+            ""
         }
     }
-
 }

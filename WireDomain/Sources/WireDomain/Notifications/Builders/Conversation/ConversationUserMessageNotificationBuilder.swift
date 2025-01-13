@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-struct NewUserMessageNotificationBuilder: NotificationBuilder {
+struct ConversationUserMessageNotificationBuilder: NotificationBuilder {
 
     private enum AssetType {
         case image
@@ -143,19 +143,19 @@ struct NewUserMessageNotificationBuilder: NotificationBuilder {
 
         let body: NotificationBody = switch assetType {
         case .image:
-            .newUserMessage(
+            .conversationUserMessage(
                 .sharedPicture(senderName: isGroupConversation ? senderName : nil)
             )
         case .video:
-            .newUserMessage(
+            .conversationUserMessage(
                 .sharedVideo(senderName: isGroupConversation ? senderName : nil)
             )
         case .audio:
-            .newUserMessage(
+            .conversationUserMessage(
                 .sharedAudio(senderName: isGroupConversation ? senderName : nil)
             )
         case .fileUpload:
-            .newUserMessage(
+            .conversationUserMessage(
                 .sharedFile(senderName: isGroupConversation ? senderName : nil)
             )
         }
@@ -177,7 +177,7 @@ struct NewUserMessageNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.newUserMessage(
+        let body = NotificationBody.conversationUserMessage(
             .ping(senderName: context.isGroupConversation ? senderName : nil)
         )
 
@@ -194,7 +194,7 @@ struct NewUserMessageNotificationBuilder: NotificationBuilder {
         let content = UNMutableNotificationContent()
 
         // No title for hidden message, only a body.
-        let body: NotificationBody = .newUserMessage(.hidden)
+        let body: NotificationBody = .conversationUserMessage(.hidden)
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
@@ -241,7 +241,7 @@ struct NewUserMessageNotificationBuilder: NotificationBuilder {
             .text(content: text, senderName: senderName)
         }
 
-        let body = NotificationBody.newUserMessage(
+        let body = NotificationBody.conversationUserMessage(
             format
         )
 
@@ -263,7 +263,7 @@ struct NewUserMessageNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.newUserMessage(
+        let body = NotificationBody.conversationUserMessage(
             .sharedLocation(senderName: isGroupConversation ? senderName : nil)
         )
 
@@ -310,7 +310,7 @@ struct NewUserMessageNotificationBuilder: NotificationBuilder {
             .sentWithUnknownSender
         }
 
-        let body = NotificationBody.newUserMessage(
+        let body = NotificationBody.conversationUserMessage(
             format
         )
 
@@ -351,7 +351,7 @@ struct NewUserMessageNotificationBuilder: NotificationBuilder {
         }
 
         return NotificationTitle
-            .newMessage(format)
+            .conversationMessage(format)
             .make()
     }
 
