@@ -462,6 +462,7 @@ extension SettingsCellDescriptorFactory {
 
 // MARK: - Backup action handler
 
+// TODO: remove, present alert and file picker with BackupRestoreViewController
 extension SettingsCellDescriptorFactory {
 
     private func presentAlert(for error: Error) {
