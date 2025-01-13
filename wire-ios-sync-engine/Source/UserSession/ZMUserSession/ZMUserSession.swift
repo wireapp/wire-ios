@@ -21,11 +21,10 @@ import Foundation
 import WireAnalytics
 import WireAPI
 import WireDataModel
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireSystem
-import WireDomain
-import WireDomainPkg
 
 typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate
