@@ -243,9 +243,12 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
             break
         case .conversationDeleted:
             break
-        case .messageTimerUpdate(let timeoutValue):
+        case let .messageTimerUpdate(timeoutValue):
             if let timeoutValue {
-                XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) set the message timer to \(timeoutValue / 1000) seconds")
+                XCTAssertEqual(
+                    notificationContent.body,
+                    "\(Scaffolding.senderName) set the message timer to \(timeoutValue / 1000) seconds"
+                )
             } else {
                 XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) turned off the message timer")
             }

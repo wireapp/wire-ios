@@ -112,15 +112,15 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
             break
         case let .messageTimerUpdate(timeoutValue):
             var timeoutStrValue: String?
-            
+
             if let timeoutValue {
                 let timerInMilliseconds = Double(timeoutValue)
                 let timeoutValue = timerInMilliseconds / 1000
                 let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
-                
+
                 timeoutStrValue = timeout.displayString
             }
-            
+
             return buildTimerUpdateNotification(timeout: timeoutStrValue)
         }
 
@@ -148,14 +148,14 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
 
         return content
     }
-    
+
     private func buildTimerUpdateNotification(timeout: String?) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
 
         if let title = makeTitle() {
             content.title = title
         }
-        
+
         let bodyFormat: NotificationBody.SystemMessageBodyFormat = if let timeout {
             .setMessageTimer(senderName: context.senderName, timeoutValue: timeout)
         } else {
