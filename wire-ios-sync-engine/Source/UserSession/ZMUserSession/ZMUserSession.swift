@@ -24,6 +24,8 @@ import WireDataModel
 import WireLogging
 import WireRequestStrategy
 import WireSystem
+import WireDomain
+import WireDomainPkg
 
 typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate
@@ -576,10 +578,13 @@ public final class ZMUserSession: NSObject {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
 
+    
+    
     private func createUpdateEventProcessor() -> EventProcessor {
         EventProcessor(
             storeProvider: coreDataStack,
@@ -998,18 +1003,39 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
-        -> any ResolveOneOnOneConversationsUseCaseProtocol {
+    -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
+        
+      
         let resolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
         )
-
-        return ResolveOneOnOneConversationsUseCase(
-            context: context,
-            supportedProtocolService: supportedProtocolService,
-            resolver: resolver
+        
+        
+        return ResolveOneOnOneConversationsUseCase(context: context,
+                                                   supportedProtocolService: supportedProtocolService,
+                                                   resolver: resolver,
+                                                   pullSelfUserClientsFactory: pullSelfUserClientsFactory
         )
+    }
+    
+    
+    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClients {
+        guard let apiService =  managedObjectContext.performAndWait({ self.apiService }) else {
+            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
+        }
+        guard let apiVersion = BackendInfo.apiVersion,
+              let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+            WireLogger.backend.warn("apiVersion not resolved")
+            
+            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
+            
+        }
+        
+        return PullSelfUserClients.make(apiService: apiService,
+                                        apiVersion: wireAPIVersion,
+                                        context: context)
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {

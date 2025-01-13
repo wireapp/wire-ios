@@ -113,3 +113,62 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
     }
 
 }
+
+
+
+
+
+
+
+//public extension UserClientsRepository {
+//    
+//    static func make(apiService: any APIServiceProtocol,
+//                     apiVersion: WireAPI.APIVersion,
+//                     context: NSManagedObjectContext) -> UserClientsRepositoryProtocol {
+//        
+//        let userClientsAPI = UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+//        let usersAPI = UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+//        let selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+//        let userPropertiesAPI = UserPropertiesBuilder(apiService: apiService).makeAPI(for: apiVersion)
+//        
+//        
+//        let conversationLabelsLocalStore = ConversationLabelsLocalStore(context: context)
+//
+//        let conversationRepository = ConversationRepository(conversationsAPI: <#T##any ConversationsAPI#>,
+//                                                            conversationsLocalStore: any ConversationLocalStoreProtocol,
+//                                                            userRepository: <#T##any UserRepositoryProtocol#>,
+//                                                            teamRepository: <#T##any TeamRepositoryProtocol#>,
+//                                                            messageRepository: <#T##any MessageRepositoryProtocol#>,
+//                                                            backendInfo: <#T##ConversationRepository.BackendInfo#>,
+//                                                            mlsProvider: <#T##MLSProvider#>)
+//        
+//        let conversationLabelsRepository = ConversationLabelsRepository(userPropertiesAPI: userPropertiesAPI, conversationLabelsLocalStore: conversationLabelsLocalStore)
+//        
+//        
+//        let userRepository = UserRepository(usersAPI: usersAPI,
+//                                            selfUserAPI: selfUserAPI,
+//                                            conversationLabelsRepository: conversationLabelsRepository, conversationRepository: <#T##any ConversationRepositoryProtocol#>, userLocalStore: <#T##any UserLocalStoreProtocol#>)
+//        let userClientsLocalStore = UserClientsLocalStore(context: context, userLocalStore: )
+//      
+//        return UserClientsRepository(userClientsAPI: userClientsAPI,
+//                                     userRepository: userRepository,
+//                                     userClientsLocalStore: userClientsLocalStore)
+//    }
+//}
+
+//public extension SupportedProtocolsHelper {
+//    
+//    public static func make(apiService: any APIServiceProtocol, apiVersion: WireAPI.APIVersion, context: NSManagedObjectContext) -> SupportedProtocolsHelper {
+//        
+//        let userClientsRepository = UserClientsRepository.make(apiService: apiService, apiVersion: apiVersion, context: context)
+//        
+//        let featureConfigRepository = FeatureConfigRepository(
+//            featureConfigsAPI: FeatureConfigsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+//            featureConfigLocalStore: FeatureConfigLocalStore(context: context)
+//        )
+//        
+//        
+//        return SupportedProtocolsHelper(featureConfigRepository: featureConfigRepository,
+//                                 userClientsRepository: <#T##any UserClientsRepositoryProtocol#>)
+//    }
+//}
