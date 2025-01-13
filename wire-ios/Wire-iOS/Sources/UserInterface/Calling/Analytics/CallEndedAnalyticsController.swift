@@ -136,7 +136,8 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     ) {
         if eventInfos[conversation.remoteIdentifier] == nil {
             logger.error("handleCallTerminating: expected eventInfo to be non-nil")
-            eventInfos[conversation.remoteIdentifier] = .init()
+//            eventInfos[conversation.remoteIdentifier] = .init()
+            return // TODO: check again how to handle app start with ongoing group conversations
         }
 
         callParticipantObsererToken = nil
@@ -184,7 +185,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
                     uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers.count,
                     callDirection: eventInfo.callDirection,
                     callDuration: eventInfo.callDuration(at: currentDateProvider.now),
-                    callParticipantCount: eventInfo.participantCount,
+                    callParticipantCount: eventInfo.participants.count,
                     conversationServiceCount: conversationServices,
                     hasAVSwitchToggled: eventInfo.hasAVSwitchToggled,
                     isVideoCall: eventInfo.isVideoCall
@@ -217,7 +218,7 @@ private extension CallEndedAnalyticsController {
         var conversationType: AnalyticsEvent.Segmentation.Conversation.ConversationType = .oneOnOne
         var totalScreenSharingDuration = 0
         var uniqueScreenSharingUsers = Set<UUID>()
-        var participantCount = Int()
+        var participants = Set<UUID>()
         var isVideoCall = false
         var hasAVSwitchToggled = false
 
@@ -272,12 +273,16 @@ extension CallEndedAnalyticsController: WireCallCenterCallParticipantObserver {
     ) {
         let eventInfo = eventInfos[conversation.remoteIdentifier]
 
-        // if there is anybody sharing the screen take a note and also remember the time if needed
+        let callParticipants = participants
+            .map(\.userId.identifier)
+        eventInfos[conversation.remoteIdentifier]?.participants.formUnion(callParticipants)
+
         let screenSharingParticipants = participants
             .filter { participant in participant.state.videoState == .screenSharing }
             .map(\.userId.identifier)
         eventInfos[conversation.remoteIdentifier]?.uniqueScreenSharingUsers.formUnion(screenSharingParticipants)
 
+        // if there is anybody sharing the screen take a note and also remember the time if needed
         if !screenSharingParticipants.isEmpty {
             eventInfos[conversation.remoteIdentifier]?.screenSharingStart = eventInfo?
                 .screenSharingStart ?? currentDateProvider.now
