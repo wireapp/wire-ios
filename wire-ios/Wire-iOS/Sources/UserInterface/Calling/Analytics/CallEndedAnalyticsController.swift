@@ -243,14 +243,18 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         logger.info("callCenterDidChange: \(callState)")
 
         switch callState {
-        case let .incoming(isVideoCall, _, _):
+        case let .incoming(isVideoCall, true, _):
             handleIncomingCall(conversation, isVideoCall)
+        case .answered:
+            handleIncomingCall(conversation, false)
         case let .outgoing(isVideoCall, _):
             handleOutgoingCall(conversation, isVideoCall)
         case .established:
             handleCallEstablished(conversation)
         case let .terminating(reason):
             handleCallTerminating(conversation, reason)
+        case .mediaStopped, .incoming(_, shouldRing: false, _):
+            handleCallTerminating(conversation, .stillOngoing)
         default:
             break
         }
