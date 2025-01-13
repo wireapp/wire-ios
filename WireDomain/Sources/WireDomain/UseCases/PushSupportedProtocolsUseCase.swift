@@ -27,7 +27,8 @@ public protocol PushSupportedProtocolsUseCaseProtocol {
     func invoke() async throws
 }
 
-public struct SupportedProtocolsHelper {
+public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtocol {
+
     private enum ProteusToMLSMigrationState: String {
         case disabled
         case notStarted
@@ -36,11 +37,17 @@ public struct SupportedProtocolsHelper {
     }
 
     let featureConfigRepository: any FeatureConfigRepositoryProtocol
+    let userRepository: any UserRepositoryProtocol
     let userClientsRepository: any UserClientsRepositoryProtocol
 
     private let logger = WireLogger(tag: "supported-protocols")
 
-    public func calculateSupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
+    public func invoke() async throws {
+        let supportedProtocols = await calculateSupportedProtocols()
+        try await userRepository.pushSelfSupportedProtocols(supportedProtocols)
+    }
+
+    private func calculateSupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
         logger.debug("calculating supported protocols...")
 
         let remoteProtocols = await remotelySupportedProtocols()
@@ -153,36 +160,6 @@ public struct SupportedProtocolsHelper {
 
     private func allSelfUserClientsAreActiveMLSClients() async -> Bool {
         await userClientsRepository.allSelfUserClientsAreActiveMLSClients()
-    }
-}
-
-public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtocol {
-    
-    private enum ProteusToMLSMigrationState: String {
-        case disabled
-        case notStarted
-        case ongoing
-        case finalised
-    }
-
-    let helper: SupportedProtocolsHelper
-    let userRepository: any UserRepositoryProtocol
-    
-    private let logger = WireLogger(tag: "supported-protocols")
-
-    init(featureConfigRepository: any FeatureConfigRepositoryProtocol,
-         userRepository: any UserRepositoryProtocol,
-         userClientsRepository: any UserClientsRepositoryProtocol
-    ) {
-        
-        self.helper = SupportedProtocolsHelper(featureConfigRepository: featureConfigRepository,
-                                               userClientsRepository: userClientsRepository)
-        self.userRepository = userRepository
-    }
-    
-    public func invoke() async throws {
-        let supportedProtocols = await helper.calculateSupportedProtocols()
-        try await userRepository.pushSelfSupportedProtocols(supportedProtocols)
     }
 
 }
