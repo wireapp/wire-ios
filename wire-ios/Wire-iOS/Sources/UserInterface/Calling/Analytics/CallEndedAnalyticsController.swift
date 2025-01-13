@@ -136,8 +136,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     ) {
         if eventInfos[conversation.remoteIdentifier] == nil {
             logger.error("handleCallTerminating: expected eventInfo to be non-nil")
-//            eventInfos[conversation.remoteIdentifier] = .init()
-            return // TODO: check again how to handle app start with ongoing group conversations
+            return
         }
 
         callParticipantObsererToken = nil
@@ -181,7 +180,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
                 callEndReason: .init(reason),
                 callDetails: .init(
                     wasScreenShared: !eventInfo.uniqueScreenSharingUsers.isEmpty,
-                    totalScreenSharingDuration: eventInfo.totalScreenSharingDuration,
+                    totalScreenSharingDuration: Int(ceil(eventInfo.totalScreenSharingDuration)),
                     uniqueScreenSharingUsers: eventInfo.uniqueScreenSharingUsers.count,
                     callDirection: eventInfo.callDirection,
                     callDuration: eventInfo.callDuration(at: currentDateProvider.now),
@@ -216,7 +215,7 @@ private extension CallEndedAnalyticsController {
         var screenSharingStart: Date?
         var conversationID: AVSIdentifier?
         var conversationType: AnalyticsEvent.Segmentation.Conversation.ConversationType = .oneOnOne
-        var totalScreenSharingDuration = 0
+        var totalScreenSharingDuration = TimeInterval()
         var uniqueScreenSharingUsers = Set<UUID>()
         var participants = Set<UUID>()
         var isVideoCall = false
@@ -289,7 +288,7 @@ extension CallEndedAnalyticsController: WireCallCenterCallParticipantObserver {
         } else if let screenSharingStart = eventInfo?.screenSharingStart {
             // screen sharing just stopped
             let duration = screenSharingStart.distance(to: currentDateProvider.now)
-            eventInfos[conversation.remoteIdentifier]?.totalScreenSharingDuration += Int(round(duration))
+            eventInfos[conversation.remoteIdentifier]?.totalScreenSharingDuration += duration
             eventInfos[conversation.remoteIdentifier]?.screenSharingStart = nil
         }
     }
