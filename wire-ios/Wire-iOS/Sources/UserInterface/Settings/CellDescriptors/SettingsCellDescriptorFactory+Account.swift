@@ -519,14 +519,18 @@ extension SettingsCellDescriptorFactory {
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.RestoreBackup.Confirmation.cancelButton,
-            style: .cancel)
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.RestoreBackup.Confirmation.cancelButton,
+                style: .cancel
+            )
         )
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.RestoreBackup.Confirmation.overrideButton,
-            style: .default,
-            handler: { _ in completion() })
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.RestoreBackup.Confirmation.overrideButton,
+                style: .default,
+                handler: { _ in completion() }
+            )
         )
 
         controller.present(alert, animated: true)
