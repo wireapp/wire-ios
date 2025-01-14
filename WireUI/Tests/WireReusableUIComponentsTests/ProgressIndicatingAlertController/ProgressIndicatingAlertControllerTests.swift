@@ -22,45 +22,56 @@ import XCTest
 
 @testable import WireReusableUIComponents
 
+@MainActor
 final class ProgressIndicatingAlertControllerTests: XCTestCase {
 
+    private var sut: UIViewController!
+    private var window: UIWindow!
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
+    override func setUp() async throws {
+        window = .init(frame: UIScreen.main.bounds)
+        window.backgroundColor = .systemBackground
+        window.makeKeyAndVisible()
+
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
+        window.isHidden = true
+        window = nil
         snapshotHelper = nil
     }
 
-    @MainActor
-    func testColorSchemeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let sut = ProgressIndicatingAlertControllerPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: sut, named: "light")
+    @available(iOS 17, *) @MainActor
+    func testUIFontDarkUserInterfaceStyle() async {
+        sut = ProgressIndicatingAlertControllerPreview()
+        try? await Task.sleep(for: .milliseconds(200))
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
+            .verify(matching: sut)
     }
 
-    @MainActor
-    func testDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let sut = ProgressIndicatingAlertControllerPreview()
-            .frame(width: screenBounds.width * 2 / 3, height: screenBounds.height * 2 / 3)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
+    @available(iOS 17, *) @MainActor
+    func testUIFontContentSizeCategories() async {
+        sut = ProgressIndicatingAlertControllerPreview()
+        window.rootViewController = sut
+        try? await Task.sleep(for: .milliseconds(200))
+        for contentSizeCategory in UIContentSizeCategory.allCases {
+            sut.traitOverrides.preferredContentSizeCategory = contentSizeCategory
             snapshotHelper
                 .verify(
-                    matching: sut.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
+                    matching: renderedImage(),
+                    named: "\(contentSizeCategory)"
                 )
+        }
+    }
+
+    private func renderedImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: sut.view.bounds.size)
+        return renderer.image { _ in
+            sut.view.drawHierarchy(in: sut.view.bounds, afterScreenUpdates: true)
         }
     }
 }
