@@ -16,11 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
+import WireSettingsUI
+import class WireSyncEngine.SessionManager
 
-@testable import WireSettingsUI
+struct RestoreSource: RestoreSourceProtocol {
 
-final class PlaceholderTests: XCTestCase {
+    func restoreFromBackup(
+        at location: URL,
+        password: String,
+        completion: @escaping (Result<Void, any Error>) -> Void
+    ) {
+        SessionManager.shared?.restoreFromBackup(
+            at: location,
+            password: password,
+            completion: completion
+        )
+    }
 
-    func testNothing() {}
 }

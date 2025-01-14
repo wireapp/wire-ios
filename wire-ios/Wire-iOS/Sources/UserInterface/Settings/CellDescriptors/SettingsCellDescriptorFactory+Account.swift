@@ -383,9 +383,15 @@ extension SettingsCellDescriptorFactory {
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     let viewModel = BackupRestoreViewModel(
                         backupSource: BackupSource(),
+                        restoreSource: RestoreSource(),
                         backupResultHandler: BackupResultHandler(
                             onSuccess: presentShareSheet,
-                            onFailure: presentAlert
+                            onFailure: presentExportBackupErrorAlert
+                        ),
+                        restoreBackupResultHandler: RestoreBackupResultHandler(
+                            onSuccess: presentOnSuccessAlert,
+                            onConfirmation: presentConfirmationAlert,
+                            onFailure: presentRestoreBackupErrorAlert
                         ),
                         passwordValidator: BackupPasswordValidator()
                     )
@@ -465,14 +471,14 @@ extension SettingsCellDescriptorFactory {
 // TODO: remove, present alert and file picker with BackupRestoreViewController
 extension SettingsCellDescriptorFactory {
 
-    private func presentAlert(for error: Error) {
+    private func presentErrorAlert(errorMessage: String) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
 
         let alert = UIAlertController(
-            title: L10n.Localizable.Self.Settings.HistoryBackup.Error.title,
-            message: error.localizedDescription,
+            title: L10n.Localizable.General.failure,
+            message: errorMessage,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(
@@ -481,6 +487,14 @@ extension SettingsCellDescriptorFactory {
         ))
 
         controller.present(alert, animated: true)
+    }
+
+    private func presentExportBackupErrorAlert() {
+        presentErrorAlert(errorMessage: L10n.Localizable.ExportBackup.Failed.message)
+    }
+
+    private func presentRestoreBackupErrorAlert() {
+        presentErrorAlert(errorMessage: L10n.Localizable.RestoreBackup.Failed.message)
     }
 
     private func presentShareSheet(with url: URL, completion: @escaping Completion) {
@@ -493,6 +507,52 @@ extension SettingsCellDescriptorFactory {
             completion()
         }
         controller.present(activityController, animated: true)
+    }
+
+    private func presentConfirmationAlert(completion: @escaping Completion) {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: L10n.Localizable.RestoreBackup.Confirmation.title,
+            message: L10n.Localizable.RestoreBackup.Confirmation.description,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.RestoreBackup.Confirmation.cancelButton,
+                style: .cancel
+            )
+        )
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.RestoreBackup.Confirmation.overrideButton,
+                style: .default,
+                handler: { _ in completion() }
+            )
+        )
+
+        controller.present(alert, animated: true)
+    }
+
+    private func presentOnSuccessAlert() {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: L10n.Localizable.RestoreBackup.SuccessAlert.title,
+            message: L10n.Localizable.RestoreBackup.SuccessAlert.description,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
+        controller.present(alert, animated: true)
     }
 
 }

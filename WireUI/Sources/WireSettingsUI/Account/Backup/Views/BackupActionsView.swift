@@ -20,35 +20,87 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-struct BackupRestoreView: View {
+public struct BackupActionsView: View {
+    @ObservedObject private var viewModel: BackupActionsViewModel
+    @State private var isExportBackupSheetPresented: Bool = false
+    @State private var isBackupPickerPresented: Bool = false
+    @State private var isRestoreBackupSheetPresented: Bool = false
+    @State private var selectedFileURL: URL?
 
-    @ObservedObject private(set) var viewModel: BackupRestoreViewModel
-    @State private var isBackupSheetPresented = false
+    public init(viewModel: BackupActionsViewModel) {
+        self.viewModel = viewModel
+    }
 
-    var body: some View {
+    public var body: some View {
         List {
-            Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
-                Button {
-                    isBackupSheetPresented.toggle()
-                } label: {
+            Section(
+                footer: Text(L10n.Localizable.Settings.ExportBackup.description)
+            ) {
+                Button(action: {
+                    isExportBackupSheetPresented.toggle()
+                }, label: {
                     HStack {
                         Text(L10n.Localizable.Settings.ExportBackup.action)
                             .wireTextStyle(.body2)
                             .foregroundStyle(Color.primaryText)
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(Color.primary)
+                    }
+                })
+                .sheet(isPresented: $isExportBackupSheetPresented) {
+                    NavigationStack {
+                        ExportBackupView(
+                            passwordValidator: viewModel.passwordValidator,
+                            exportBackup: { password in
+                                viewModel.backupActiveAccount(password: password)
+                            }
+                        )
+                    }
+                    .presentationDetents([.medium])
+                }
+            }
+            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
+
+            Section(
+                footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)
+            ) {
+                Button(action: {
+                    viewModel.confirmBackupRestore {
+                        isBackupPickerPresented.toggle()
+                    }
+                }, label: {
+                    HStack {
+                        Text(L10n.Localizable.Settings.RestoreFromBackup.action)
+                            .font(.textStyle(.body2))
+                            .foregroundStyle(Color.primaryText)
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(Color.primary)
+                    }
+                })
+                .fullScreenCover(isPresented: $isBackupPickerPresented) {
+                    BackupPicker { url in
+                        if let fileURL = url {
+                            selectedFileURL = fileURL
+                            isRestoreBackupSheetPresented = true
+                        }
                     }
                 }
-            }
-            .sheet(isPresented: $isBackupSheetPresented) {
-                NavigationStack {
-                    ExportBackupView(
-                        passwordValidator: viewModel.passwordValidator,
-                        exportBackup: { password in
-                            viewModel.backupActiveAccount(password: password)
+                .sheet(isPresented: $isRestoreBackupSheetPresented) {
+                    NavigationStack {
+                        RestoreBackupView { password in
+                            if let fileURL = selectedFileURL {
+                                viewModel.restoreFromBackup(
+                                    at: fileURL,
+                                    password: password,
+                                    completion: { _ in }
+                                )
+                            }
                         }
-                    )
+                    }
+                    .presentationDetents([.medium])
                 }
-                .presentationDetents([.medium])
             }
+            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
         }
         .listStyle(.grouped)
         .background(Color(ColorTheme.Backgrounds.background))
