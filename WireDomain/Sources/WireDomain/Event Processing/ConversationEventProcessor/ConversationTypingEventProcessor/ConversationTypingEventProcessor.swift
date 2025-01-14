@@ -19,18 +19,6 @@
 import WireAPI
 import WireDataModel
 
-/// Process conversation typing events.
-
-protocol ConversationTypingEventProcessorProtocol {
-
-    /// Process a conversation typing event.
-    ///
-    /// - Parameter event: A conversation typing event.
-
-    func processEvent(_ event: ConversationTypingEvent) async
-
-}
-
 struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
 
     let conversationRepository: any ConversationRepositoryProtocol

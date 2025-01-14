@@ -19,18 +19,6 @@
 import WireAPI
 import WireSystem
 
-/// Process conversation member update events.
-
-protocol ConversationMemberUpdateEventProcessorProtocol {
-
-    /// Process a conversation member update event.
-    ///
-    /// - Parameter event: A conversation member update event.
-
-    func processEvent(_ event: ConversationMemberUpdateEvent) async throws
-
-}
-
 struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProcessorProtocol {
 
     let conversationRepository: any ConversationRepositoryProtocol

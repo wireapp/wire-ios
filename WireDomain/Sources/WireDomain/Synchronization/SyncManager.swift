@@ -23,22 +23,6 @@ import WireDataModel
 import WireLogging
 import WireSystem
 
-protocol SyncManagerProtocol {
-
-    /// Pulls and stores all required objects for the database to be initially up-to-date.
-
-    func performSlowSync() async throws
-
-    /// Fetch events from the server and process all pending events.
-
-    func performQuickSync() async throws
-
-    /// Stop all syncing activities and prepare to idle.
-
-    func suspend() async throws
-
-}
-
 final class SyncManager: SyncManagerProtocol {
 
     enum Failure: Error {

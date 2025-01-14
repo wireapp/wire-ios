@@ -19,21 +19,6 @@
 import Foundation
 import WireAPI
 
-/// Process feature config update events.
-
-protocol FeatureConfigEventProcessorProtocol {
-
-    /// Process a feature config update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A feature config update event.
-
-    func processEvent(_ event: FeatureConfigEvent) async throws
-
-}
-
 struct FeatureConfigEventProcessor {
 
     let updateEventProcessor: any FeatureConfigUpdateEventProcessorProtocol

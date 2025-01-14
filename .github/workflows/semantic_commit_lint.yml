@@ -2,7 +2,7 @@ name: "Semantic Commit Linting of PR titles"
 
 on:
   pull_request:
-    types: [ opened, edited, synchronize ]
+    types: [ opened, edited ]
 
 # This is what will cancel the workflow
 concurrency:
@@ -12,18 +12,16 @@ concurrency:
 jobs:
   semantic-commit-pr-title-lint:
     runs-on: ubuntu-24.04
-    if: contains(fromJSON('["opened", "synchronize"]'), github.event.action) || github.event.changes.title != null
+    if: ${{ github.event.action == 'opened' || github.event.changes.title != null }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CUSTOM_PR_LABEL: "Fix PR Title 🤦‍♂️"
-      HEAD: ${{github.head_ref}}
+      HEAD: ${{ github.head_ref }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       # Please look up the latest version from
       # https://github.com/amannn/action-semantic-pull-request/releases
       - name: Run Semantic Commint Linter
-        uses: amannn/action-semantic-pull-request@v5.5.2
+        uses: amannn/action-semantic-pull-request@v5.5.3
         with:
           # Configure which types are allowed.
           # Default: https://github.com/commitizen/conventional-commit-types
@@ -62,11 +60,19 @@ jobs:
             The subject "{subject}" found in the pull request title "{title}"
             didn't match the configured pattern. Please ensure that the subject
             contains a ticket with "- WPB-XXX".
+
+      - name: Checkout
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github
+
       - name: Add Failure Label
         if: failure()
         run: |
           gh api repos/{owner}/{repo}/labels -f name="${CUSTOM_PR_LABEL}" -f color="FF0000" || true
           gh pr edit "${HEAD}" --add-label "${CUSTOM_PR_LABEL}"
+
       - name: Remove Failure Label
         if: success()
         run: |
