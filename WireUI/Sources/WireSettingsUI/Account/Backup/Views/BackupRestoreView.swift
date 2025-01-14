@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
 import WireReusableUIComponents
 
 struct BackupRestoreView: View {
@@ -89,6 +90,7 @@ struct BackupRestoreView: View {
         .listStyle(.grouped)
         .background(Color(ColorTheme.Backgrounds.background))
         .scrollContentBackground(.hidden)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }
 

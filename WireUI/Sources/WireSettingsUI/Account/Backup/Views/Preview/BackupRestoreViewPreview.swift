@@ -35,7 +35,6 @@ func BackupRestoreViewPreview() -> some View {
         ),
         passwordValidator: MockBackupPasswordValidator()
     ))
-    .environment(\.wireTextStyleMapping, PreviewTextStyleMapping())
 }
 
 private class MockBackupSource: BackupSourceProtocol {
