@@ -381,7 +381,8 @@ extension SettingsCellDescriptorFactory {
                     return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-                    let viewModel = BackupRestoreViewModel(
+//                    let backupRestoreController = BackupRestoreBuilder().build()
+                    let viewModel = BackupRestoreViewModel( // TODO: delete, use builder
                         backupSource: BackupSource(),
                         restoreSource: RestoreSource(),
                         backupResultHandler: BackupResultHandler(
@@ -395,9 +396,9 @@ extension SettingsCellDescriptorFactory {
                         ),
                         passwordValidator: BackupPasswordValidator()
                     )
-                    let backupActionsController = BackupRestoreViewController(viewModel: viewModel)
-                    backupActionsController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
-                    return backupActionsController
+                    let backupRestoreController = BackupRestoreViewController(viewModel: viewModel)
+                    backupRestoreController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
+                    return backupRestoreController
                 } else {
                     let alert = UIAlertController(
                         title: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.title,

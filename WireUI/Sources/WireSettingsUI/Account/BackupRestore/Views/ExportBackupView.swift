@@ -38,24 +38,27 @@ public struct ExportBackupView: View {
     }
 
     public var body: some View {
-        SetBackupPasswordView(
-            passwordValidator: passwordValidator,
-            exportBackup: exportBackup
-        )
-        .background(Color.viewBackground)
-        .scrollContentBackground(.hidden)
-        .navigationTitle(
-            Text(L10n.Localizable.ExportBackup.title)
-        )
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                CloseButton(
-                    action: didTapClose,
-                    accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
-                )
+        NavigationStack {
+            SetBackupPasswordView(
+                passwordValidator: passwordValidator,
+                exportBackup: exportBackup
+            )
+            .background(Color.viewBackground)
+            .scrollContentBackground(.hidden)
+            .navigationTitle(
+                Text(L10n.Localizable.ExportBackup.title)
+            )
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    CloseButton(
+                        action: didTapClose,
+                        accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
+                    )
+                }
             }
         }
+        .presentationDetents([.medium])
     }
 
     private func didTapClose() {

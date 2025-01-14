@@ -21,9 +21,10 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
-struct BackupRestoreView: View {
+struct BackupRestoreView<ExportBackupSheet: View>: View {
 
     @ObservedObject private(set) var viewModel: BackupRestoreViewModel
+    @ViewBuilder private(set) var exportBackupSheetContent: () -> ExportBackupSheet
 
     @State private var isExportBackupSheetPresented: Bool = false
     @State private var isBackupPickerPresented: Bool = false
@@ -40,17 +41,7 @@ struct BackupRestoreView: View {
                         .wireTextStyle(.body2)
                         .foregroundStyle(Color.primaryText)
                 }
-                .sheet(isPresented: $isExportBackupSheetPresented) {
-                    NavigationStack {
-                        ExportBackupView(
-                            passwordValidator: viewModel.passwordValidator,
-                            exportBackup: { password in
-                                viewModel.backupActiveAccount(password: password)
-                            }
-                        )
-                    }
-                    .presentationDetents([.medium])
-                }
+                .sheet(isPresented: $isExportBackupSheetPresented, content: exportBackupSheetContent)
             }
 
             Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {

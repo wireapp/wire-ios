@@ -21,20 +21,23 @@ import SwiftUI
 
 @ViewBuilder @MainActor
 func BackupRestoreViewPreview() -> some View {
-    BackupRestoreView(viewModel: BackupRestoreViewModel(
-        backupSource: MockBackupSource(),
-        restoreSource: MockRestoreSource(),
-        backupResultHandler: BackupResultHandler(
-            onSuccess: { _, _  in },
-            onFailure: {}
+    BackupRestoreView(
+        viewModel: BackupRestoreViewModel(
+            backupSource: MockBackupSource(),
+            restoreSource: MockRestoreSource(),
+            backupResultHandler: BackupResultHandler(
+                onSuccess: { _, _  in },
+                onFailure: {}
+            ),
+            restoreBackupResultHandler: RestoreBackupResultHandler(
+                onSuccess: {},
+                onConfirmation: { _ in },
+                onFailure: {}
+            ),
+            passwordValidator: MockBackupPasswordValidator()
         ),
-        restoreBackupResultHandler: RestoreBackupResultHandler(
-            onSuccess: {},
-            onConfirmation: { _ in },
-            onFailure: {}
-        ),
-        passwordValidator: MockBackupPasswordValidator()
-    ))
+        exportBackupSheetContent: { EmptyView() }
+    )
 }
 
 private class MockBackupSource: BackupSourceProtocol {

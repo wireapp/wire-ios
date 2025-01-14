@@ -38,7 +38,18 @@ public final class BackupRestoreViewController: UIViewController {
     }
 
     private func setupView() {
-        let hostingController = UIHostingController(rootView: BackupRestoreView(viewModel: viewModel))
+        let backupRestoreView = BackupRestoreView(
+            viewModel: viewModel,
+            exportBackupSheetContent: {
+                ExportBackupView(
+                    passwordValidator: self.viewModel.passwordValidator,
+                    exportBackup: { password in
+                        self.viewModel.backupActiveAccount(password: password)
+                    }
+                )
+            }
+        )
+        let hostingController = UIHostingController(rootView: backupRestoreView)
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingController.view)

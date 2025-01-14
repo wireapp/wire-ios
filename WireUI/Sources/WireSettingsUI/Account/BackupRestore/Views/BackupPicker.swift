@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct BackupPicker: UIViewControllerRepresentable {
+struct BackupPicker: UIViewControllerRepresentable { // TODO: present from view controller instead
     var completion: (URL?) -> Void
 
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {

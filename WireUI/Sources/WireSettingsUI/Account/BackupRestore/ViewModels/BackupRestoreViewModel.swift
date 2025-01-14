@@ -24,7 +24,13 @@ public final class BackupRestoreViewModel: ObservableObject {
     private let restoreSource: any RestoreSourceProtocol
     private let backupResultHandler: BackupResultHandler
     private let restoreBackupResultHandler: RestoreBackupResultHandler
-    let passwordValidator: any BackupPasswordValidatorProtocol
+    let passwordValidator: any BackupPasswordValidatorProtocol // TODO: private
+
+    public init(
+        //
+    ) {
+        fatalError()
+    }
 
     public init(
         backupSource: any BackupSourceProtocol,
