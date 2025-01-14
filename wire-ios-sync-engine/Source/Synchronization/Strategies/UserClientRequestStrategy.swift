@@ -114,7 +114,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             format: "\(ZMUserClientNumberOfKeysRemainingKey) < \(minNumberOfRemainingKeys)"
         )
 
-
         let needsToUpdateCapabilitiesPredicate = NSPredicate(
             format: "\(ZMUserClientNeedsToUpdateCapabilitiesKey) == YES"
         )
