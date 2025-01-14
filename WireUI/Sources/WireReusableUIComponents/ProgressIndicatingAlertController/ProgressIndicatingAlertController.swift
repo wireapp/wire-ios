@@ -20,6 +20,12 @@ import UIKit
 
 public final class ProgressIndicatingAlertController: UIViewController {
 
+    struct Action {
+        let title: String
+        let style: UIAlertAction.Style
+        let handler: (() -> Void)?
+    }
+
     private let containerView = UIView()
     private let titleLabel = UILabel()
     private let messageLabel = UILabel()
@@ -27,13 +33,15 @@ public final class ProgressIndicatingAlertController: UIViewController {
 
     var alertTitle: String?
     var alertMessage: String?
-    var actions: [UIAlertAction] = []
+    var actions: [Action] = []
 
     // Initializer
     init(title: String?, message: String?) {
         self.alertTitle = title
         self.alertMessage = message
         super.init(nibName: nil, bundle: nil)
+
+        // Presentation style to mimic an alert
         self.modalPresentationStyle = .overFullScreen
         self.modalTransitionStyle = .crossDissolve
     }
@@ -45,15 +53,21 @@ public final class ProgressIndicatingAlertController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupView()
+        setupBackground()
+        setupContainerView()
+        setupStackView()
         setupContent()
     }
 
-    private func setupView() {
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+    // MARK: - Setup Methods
 
-        // Container View
-        containerView.backgroundColor = .white
+    private func setupBackground() {
+        // Dim the background to mimic an alert
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+    }
+
+    private func setupContainerView() {
+        containerView.backgroundColor = .systemBackground
         containerView.layer.cornerRadius = 12
         containerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(containerView)
@@ -63,10 +77,11 @@ public final class ProgressIndicatingAlertController: UIViewController {
             containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             containerView.widthAnchor.constraint(equalToConstant: 270)
         ])
+    }
 
-        // Stack View
+    private func setupStackView() {
         stackView.axis = .vertical
-        stackView.spacing = 8
+        stackView.spacing = 16
         stackView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(stackView)
 
@@ -80,20 +95,24 @@ public final class ProgressIndicatingAlertController: UIViewController {
 
     private func setupContent() {
         // Title
-        if let title = alertTitle {
-            titleLabel.text = title
-            titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        if let titleText = alertTitle {
+            titleLabel.text = titleText
+            titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            titleLabel.adjustsFontForContentSizeCategory = true
             titleLabel.textAlignment = .center
             titleLabel.numberOfLines = 0
+
             stackView.addArrangedSubview(titleLabel)
         }
 
         // Message
-        if let message = alertMessage {
-            messageLabel.text = message
-            messageLabel.font = UIFont.systemFont(ofSize: 13)
+        if let messageText = alertMessage {
+            messageLabel.text = messageText
+            messageLabel.font = UIFont.preferredFont(forTextStyle: .body)
+            messageLabel.adjustsFontForContentSizeCategory = true
             messageLabel.textAlignment = .center
             messageLabel.numberOfLines = 0
+
             stackView.addArrangedSubview(messageLabel)
         }
 
@@ -101,21 +120,56 @@ public final class ProgressIndicatingAlertController: UIViewController {
         for action in actions {
             let button = UIButton(type: .system)
             button.setTitle(action.title, for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-            button.setTitleColor(action.style == .destructive ? .red : .systemBlue, for: .normal)
-            button.addTarget(self, action: #selector(handleAction(_:)), for: .touchUpInside)
+
+            // Use a preferred font style for buttons, e.g. .body or .callout
+            button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+            button.titleLabel?.adjustsFontForContentSizeCategory = true
+
+            switch action.style {
+            case .destructive:
+                button.setTitleColor(.systemRed, for: .normal)
+            default:
+                button.setTitleColor(.systemBlue, for: .normal)
+            }
+
+            // Tag each button so we know which action to trigger
             button.tag = actions.firstIndex(of: action) ?? 0
+            button.addTarget(self, action: #selector(handleAction(_:)), for: .touchUpInside)
+
+            // Add a separator for clarity if you like
+            // (Or you can just add the button if you don't need separators)
+            let separator = UIView()
+            separator.backgroundColor = .separator
+            separator.translatesAutoresizingMaskIntoConstraints = false
+
+            // If you want a thin line above each button (optional):
+            if stackView.arrangedSubviews.last != nil {
+                let separatorContainer = UIView()
+                separatorContainer.addSubview(separator)
+                NSLayoutConstraint.activate([
+                    separator.leadingAnchor.constraint(equalTo: separatorContainer.leadingAnchor),
+                    separator.trailingAnchor.constraint(equalTo: separatorContainer.trailingAnchor),
+                    separator.topAnchor.constraint(equalTo: separatorContainer.topAnchor),
+                    separator.heightAnchor.constraint(equalToConstant: 0.5),
+                    separatorContainer.heightAnchor.constraint(equalToConstant: 0.5)
+                ])
+                stackView.addArrangedSubview(separatorContainer)
+            }
+
             stackView.addArrangedSubview(button)
         }
     }
 
+    // MARK: - Action Handling
+
     @objc private func handleAction(_ sender: UIButton) {
         let action = actions[sender.tag]
-//        action.handler?(action)
+        action?(action)
         dismiss(animated: true, completion: nil)
     }
 
-    // Add Action Method
+    // MARK: - Public Methods
+
     func addAction(_ action: UIAlertAction) {
         actions.append(action)
     }
