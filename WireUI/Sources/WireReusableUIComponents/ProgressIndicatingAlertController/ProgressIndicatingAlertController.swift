@@ -25,7 +25,10 @@ public final class ProgressIndicatingAlertController: UIViewController {
     // MARK: - Properties
 
     public var progress = Float() {
-        didSet { progressView.progress = progress }
+        didSet {
+            progressLabel.text = "\(Int(progress * 100))%"
+            progressView.progress = progress
+        }
     }
 
     private let message: String
@@ -38,6 +41,7 @@ public final class ProgressIndicatingAlertController: UIViewController {
     private let messageLabel = UILabel()
     private let progressLabel = UILabel()
     private let progressView = UIProgressView()
+    private let cancelButton = UIButton(type: .system)
 
     // MARK: - Initializer
 
@@ -91,71 +95,36 @@ public final class ProgressIndicatingAlertController: UIViewController {
         titleLabel.textColor = .label
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
-        titleLabel.font = .preferredFont(forTextStyle: .headline) // TODO: wiretextstyle
+        titleLabel.font = .preferredFont(forTextStyle: .headline)
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(titleLabel)
 
         messageLabel.text = message
-        messageLabel.font = .preferredFont(forTextStyle: .footnote) // TODO: wiretextstyle
+        messageLabel.font = .preferredFont(forTextStyle: .caption1)
         messageLabel.textColor = BaseColorPalette.Grays.gray70
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 0
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(messageLabel)
 
-        progressLabel.text = "25%"
-        progressLabel.font = .preferredFont(forTextStyle: .caption2) // TODO: wiretextstyle
+        progressLabel.text = "\(Int(progress * 100))%"
+        progressLabel.font = .preferredFont(forTextStyle: .caption1)
         progressLabel.textColor = BaseColorPalette.Grays.gray70
         progressLabel.textAlignment = .center
         progressLabel.numberOfLines = 1
         progressLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(progressLabel)
 
+        progressView.progress = progress
         progressView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(progressView)
 
-        // TODO: button
-
-        // 3. Buttons (one for each CustomAlertAction)
-        /*
-        for (index, action) in actions.enumerated() {
-            // Add a thin separator above each button (optional, for clarity).
-            if stackView.arrangedSubviews.count > 0 {
-                let separator = UIView()
-                separator.backgroundColor = .separator
-                separator.translatesAutoresizingMaskIntoConstraints = false
-                separator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
-                stackView.addArrangedSubview(separator)
-            }
-
-            // Create a button for the action.
-            let button = UIButton(type: .system)
-            button.setTitle(action.title, for: .normal)
-//            button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-            // Use a preferred font style for buttons, e.g. .body or .callout
-                 button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-                 button.titleLabel?.adjustsFontForContentSizeCategory = true
-
-            // Match the color style of system alerts.
-            switch action.style {
-            case .destructive:
-                button.setTitleColor(.systemRed, for: .normal)
-            case .cancel:
-                button.setTitleColor(.systemBlue, for: .normal)
-                button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17) // TODO: dynamic type
-            default:
-                button.setTitleColor(.systemBlue, for: .normal)
-            }
-
-            // Tag to identify which action was tapped.
-            button.tag = index
-            button.addTarget(self, action: #selector(handleButtonTap(_:)), for: .touchUpInside)
-
-            // Add the button to the stack.
-            stackView.addArrangedSubview(button)
-        }
-         */
+        cancelButton.setTitle("cancel", for: .normal) // TODO: localization
+        cancelButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        cancelButton.addTarget(self, action: #selector(handleCancel(_:)), for: .primaryActionTriggered)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(cancelButton)
 
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 2),
@@ -172,20 +141,19 @@ public final class ProgressIndicatingAlertController: UIViewController {
             progressView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             progressView.topAnchor.constraint(equalToSystemSpacingBelow: progressLabel.bottomAnchor, multiplier: 1),
             containerView.trailingAnchor.constraint(equalTo: progressView.trailingAnchor),
-            containerView.bottomAnchor.constraint(equalToSystemSpacingBelow: progressView.bottomAnchor, multiplier: 3),
+
+            cancelButton.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            cancelButton.topAnchor.constraint(equalToSystemSpacingBelow: progressView.bottomAnchor, multiplier: 1),
+            titleLabel.trailingAnchor.constraint(equalTo: cancelButton.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalToSystemSpacingBelow: cancelButton.bottomAnchor, multiplier: 1),
         ])
     }
 
     // MARK: - Action Handling
 
-    @objc private func handleButtonTap(_ sender: UIButton) {
-//        let tappedAction = actions[sender.tag]
-//
-//        // Call the custom handler closure.
-//        tappedAction.handler?(tappedAction)
-//
-//        // Dismiss the custom alert.
-//        dismiss(animated: true, completion: nil)
+    @objc private func handleCancel(_ sender: UIButton) {
+        cancelHandler()
+        presentingViewController?.dismiss(animated: true)
     }
 }
 
