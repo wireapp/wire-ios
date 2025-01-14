@@ -45,7 +45,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     fileprivate(set) var deleteSync: ZMUpstreamModifiedObjectSync! = nil
     fileprivate(set) var insertSync: ZMUpstreamInsertedObjectSync! = nil
     fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
-    fileprivate var didRetryRegisteringSignalingKeys: Bool = false
     fileprivate var didRetryUpdatingCapabilities: Bool = false
     let prekeyGenerator: PrekeyGenerator
 
@@ -74,7 +73,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
         let modifiedKeysToSync = [
             ZMUserClientNumberOfKeysRemainingKey,
-            ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
             UserClient.needsToUploadMLSPublicKeysKey
         ]
@@ -116,9 +114,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             format: "\(ZMUserClientNumberOfKeysRemainingKey) < \(minNumberOfRemainingKeys)"
         )
 
-        let needsToUploadSignalingKeysPredicate = NSPredicate(
-            format: "\(ZMUserClientNeedsToUpdateSignalingKeysKey) == YES"
-        )
 
         let needsToUpdateCapabilitiesPredicate = NSPredicate(
             format: "\(ZMUserClientNeedsToUpdateCapabilitiesKey) == YES"
@@ -132,7 +127,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             baseModifiedPredicate,
             NSCompoundPredicate(orPredicateWithSubpredicates: [
                 needToUploadKeysPredicate,
-                needsToUploadSignalingKeysPredicate,
                 needsToUpdateCapabilitiesPredicate,
                 needsToUploadMLSPublicKeysPredicate
             ])
@@ -257,18 +251,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             )
         }
 
-        if keys.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
-            do {
-                // what are these: signaling keys? what is it for?
-                return try requestsFactory.updateClientSignalingKeysRequest(
-                    userClient,
-                    apiVersion: apiVersion
-                )
-            } catch {
-                fatal("Couldn't create request for new signaling keys: \(error)")
-            }
-        }
-
         if keys.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
             do {
                 return try requestsFactory.updateClientCapabilitiesRequest(
@@ -364,23 +346,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
             return false
         }
-        if keysToParse.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
-            if response.httpStatus == 400, let label = response.payloadLabel(), label == "bad-request" {
-                // Malformed prekeys uploaded - recreate and retry once per launch
 
-                if didRetryRegisteringSignalingKeys {
-                    (managedObject as? UserClient)?.needsToUploadSignalingKeys = false
-                    managedObjectContext?.saveOrRollback()
-                    fatal(
-                        "UserClientTranscoder sigKey request failed with bad-request - \(upstreamRequest.transportRequest.safeForLoggingDescription)"
-                    )
-                }
-                didRetryRegisteringSignalingKeys = true
-                return true
-            }
-            (managedObject as? UserClient)?.needsToUploadSignalingKeys = false
-            return false
-        }
         if keysToParse.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
             if response.httpStatus == 400, let label = response.payloadLabel(), label == "bad-request" {
 
@@ -555,8 +521,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         } else if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
             (managedObject as! UserClient).numberOfKeysRemaining += Int32(prekeyGenerator.keyCount)
             clientUpdateStatus?.didUploadPrekeys()
-        } else if keysToParse.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
-            didRetryRegisteringSignalingKeys = false
         } else if keysToParse.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
             didRetryUpdatingCapabilities = false
         } else if keysToParse.contains(UserClient.needsToUploadMLSPublicKeysKey), response.result == .success {

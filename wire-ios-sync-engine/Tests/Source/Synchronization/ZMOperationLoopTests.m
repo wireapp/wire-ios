@@ -404,27 +404,6 @@
 
 @implementation ZMOperationLoopTests (Background)
 
-- (APSSignalingKeysStore *)prepareSelfClientForAPSSignalingStore
-{    
-    NSString *macKey = @"OnuLUsjZT5ix8mebzewnNH7kVuLNYvDTxVFe8xiZ1u0=";
-    NSString *encryptionKey = @"eiISyl78bYnFZaXsjvZh4v7d/mnNLDQNB+vRcsapovA=";
-    
-    NSData *macKeyData = [[NSData alloc] initWithBase64EncodedString:macKey options:0];
-    NSData *encryptionKeyData = [[NSData alloc] initWithBase64EncodedString:encryptionKey options:0];
-    
-    UserClient *selfClient = [self createSelfClient];
-    selfClient.apsDecryptionKey = encryptionKeyData;
-    selfClient.apsVerificationKey = macKeyData;
-
-    return [[APSSignalingKeysStore alloc] initWithUserClient:selfClient];
-}
-
--(void)clearKeyChainData
-{
-    [ZMKeychain deleteAllKeychainItemsWithAccountName: @"APSVerificationKey"];
-    [ZMKeychain deleteAllKeychainItemsWithAccountName: @"APSDecryptionKey"];
-}
-
 - (NSDictionary *)pushPayloadForEventPayload:(NSArray *)eventPayloads identifier:(NSUUID *)identifier
 {
     return @{
@@ -538,9 +517,6 @@
 - (void)testThatItForwardsEventsFromEncryptedPushesToThePushNotificationStatus
 {
     // given
-    [self.syncMOC performBlockAndWait:^{
-        self.sut.apsSignalKeyStore = [self prepareSelfClientForAPSSignalingStore];
-    }];
     NSDictionary *pushPayload = [self encryptedPushPayload];
     
     // when
@@ -549,7 +525,6 @@
     
     // then
     XCTAssertTrue(self.pushNotificationStatus.hasEventsToFetch);
-    [self clearKeyChainData];
 }
 
 - (void)testThatItForwardsNoticeNotificationsToThePushNotificationStatus
