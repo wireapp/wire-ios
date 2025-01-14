@@ -120,6 +120,7 @@ public final class ProgressIndicatingAlertController: UIViewController {
         progressLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(progressLabel)
 
+        progressView.progressViewStyle = .bar
         progressView.progress = progress
         progressView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(progressView)

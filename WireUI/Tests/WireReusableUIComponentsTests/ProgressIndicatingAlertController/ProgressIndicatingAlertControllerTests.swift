@@ -66,6 +66,8 @@ final class ProgressIndicatingAlertControllerTests: XCTestCase {
                     named: "\(contentSizeCategory)"
                 )
         }
+
+        XCTFail("doesn't work")
     }
 
     private func renderedImage() -> UIImage {
