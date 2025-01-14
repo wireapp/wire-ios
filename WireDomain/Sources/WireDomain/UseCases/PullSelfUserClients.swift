@@ -19,12 +19,6 @@
 import CoreData
 import WireAPI
 
-// sourcery: AutoMockable
-public protocol PullSelfUserClientsProtocol {
-
-    func pullSelfClients() async throws
-}
-
 /// Pull self clients from backend and update local state
 public struct PullSelfUserClients: PullSelfUserClientsProtocol {
     private let userClientsAPI: any UserClientsAPI
