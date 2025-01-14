@@ -21,7 +21,7 @@ import SwiftUI
 
 @ViewBuilder @MainActor
 func BackupActionsPreview() -> some View {
-    BackupRestoreView(viewModel: BackupRestoreViewModel(
+    BackupActionsView(viewModel: BackupRestoreViewModel(
         backupSource: MockBackupSource(),
         restoreSource: MockRestoreSource(),
         backupResultHandler: BackupResultHandler(

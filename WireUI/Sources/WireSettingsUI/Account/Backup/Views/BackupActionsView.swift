@@ -21,13 +21,13 @@ import WireDesign
 import WireReusableUIComponents
 
 public struct BackupActionsView: View {
-    @ObservedObject private var viewModel: BackupActionsViewModel
+    @ObservedObject private var viewModel: BackupRestoreViewModel
     @State private var isExportBackupSheetPresented: Bool = false
     @State private var isBackupPickerPresented: Bool = false
     @State private var isRestoreBackupSheetPresented: Bool = false
     @State private var selectedFileURL: URL?
 
-    public init(viewModel: BackupActionsViewModel) {
+    public init(viewModel: BackupRestoreViewModel) {
         self.viewModel = viewModel
     }
 
