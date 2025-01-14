@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireDomain
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol ResolveOneOnOneConversationsUseCaseProtocol {
@@ -25,20 +27,22 @@ public protocol ResolveOneOnOneConversationsUseCaseProtocol {
 
 }
 
+typealias PullSelfUserClientsFactory = (NSManagedObjectContext) -> PullSelfUserClientsProtocol
+
 struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseProtocol {
 
     let context: NSManagedObjectContext
     let supportedProtocolService: any SupportedProtocolsServiceInterface
     let resolver: any OneOnOneResolverInterface
+    let pullSelfUserClientsFactory: PullSelfUserClientsFactory
 
     func invoke() async throws {
-        let (oldProtocols, newProtocols) = await context.perform {
+        let oldProtocols = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
-            let oldProtocols = selfUser.supportedProtocols
-            let newProtocols = supportedProtocolService.calculateSupportedProtocols()
-            return (oldProtocols, newProtocols)
+            return selfUser.supportedProtocols
         }
 
+        let newProtocols = await calculateSupportedProtocols()
         if oldProtocols != newProtocols {
             var action = PushSupportedProtocolsAction(supportedProtocols: newProtocols)
             try await action.perform(in: context.notificationContext)
@@ -52,5 +56,16 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
         if newProtocols.contains(.mls) {
             try await resolver.resolveAllOneOnOneConversations(in: context)
         }
+    }
+
+    private func calculateSupportedProtocols() async -> Set<WireDataModel.MessageProtocol> {
+        // we need the self clients to be up to date before calculating supported protocols
+        let pullSelfUserClients = pullSelfUserClientsFactory(context)
+        do {
+            try await pullSelfUserClients.pullSelfClients()
+        } catch {
+            WireLogger.userClient.error("error syncing selfclients: \(error.localizedDescription)")
+        }
+        return await context.perform { supportedProtocolService.calculateSupportedProtocols() }
     }
 }
