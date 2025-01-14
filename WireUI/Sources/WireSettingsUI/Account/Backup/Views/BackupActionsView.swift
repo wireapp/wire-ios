@@ -20,25 +20,20 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-public struct BackupActionsView: View {
+struct BackupActionsView: View {
+
     @ObservedObject private var viewModel: BackupRestoreViewModel
     @State private var isExportBackupSheetPresented: Bool = false
     @State private var isBackupPickerPresented: Bool = false
     @State private var isRestoreBackupSheetPresented: Bool = false
     @State private var selectedFileURL: URL?
 
-    public init(viewModel: BackupRestoreViewModel) {
-        self.viewModel = viewModel
-    }
-
-    public var body: some View {
+    var body: some View {
         List {
-            Section(
-                footer: Text(L10n.Localizable.Settings.ExportBackup.description)
-            ) {
-                Button(action: {
+            Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
+                Button {
                     isExportBackupSheetPresented.toggle()
-                }, label: {
+                } label: {
                     HStack {
                         Text(L10n.Localizable.Settings.ExportBackup.action)
                             .wireTextStyle(.body2)
@@ -46,7 +41,7 @@ public struct BackupActionsView: View {
                         Spacer()
                         Image(systemName: "chevron.right").foregroundStyle(Color.primary)
                     }
-                })
+                }
                 .sheet(isPresented: $isExportBackupSheetPresented) {
                     NavigationStack {
                         ExportBackupView(
@@ -61,14 +56,12 @@ public struct BackupActionsView: View {
             }
             .listRowBackground(Color(ColorTheme.Backgrounds.surface))
 
-            Section(
-                footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)
-            ) {
-                Button(action: {
+            Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
+                Button {
                     viewModel.confirmBackupRestore {
                         isBackupPickerPresented.toggle()
                     }
-                }, label: {
+                } label: {
                     HStack {
                         Text(L10n.Localizable.Settings.RestoreFromBackup.action)
                             .font(.textStyle(.body2))
@@ -76,7 +69,7 @@ public struct BackupActionsView: View {
                         Spacer()
                         Image(systemName: "chevron.right").foregroundStyle(Color.primary)
                     }
-                })
+                }
                 .fullScreenCover(isPresented: $isBackupPickerPresented) {
                     BackupPicker { url in
                         if let fileURL = url {
@@ -103,7 +96,6 @@ public struct BackupActionsView: View {
             .listRowBackground(Color(ColorTheme.Backgrounds.surface))
         }
         .listStyle(.grouped)
-        .background(Color(ColorTheme.Backgrounds.background))
         .scrollContentBackground(.hidden)
     }
 }

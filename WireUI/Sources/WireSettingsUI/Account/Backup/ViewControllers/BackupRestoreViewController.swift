@@ -35,29 +35,6 @@ public final class BackupRestoreViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
-            let alertController = UIAlertController(title: "title", message: "message\n\n", preferredStyle: .alert)
-
-            let activityIndicator = UIActivityIndicatorView(style: .medium)
-            activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-            activityIndicator.startAnimating()
-
-            alertController.view.addSubview(activityIndicator)
-
-            NSLayoutConstraint.activate([
-                activityIndicator.centerXAnchor.constraint(equalTo: alertController.view.centerXAnchor),
-                activityIndicator.bottomAnchor.constraint(equalTo: alertController.view.bottomAnchor, constant: -40)
-            ])
-
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                print("Cancel button tapped!")
-                // Add any additional cleanup or logic here
-            }
-            alertController.addAction(cancelAction)
-
-            self.present(alertController, animated: true)
-        }
     }
 
     private func setupView() {
@@ -71,5 +48,6 @@ public final class BackupRestoreViewController: UIViewController {
             view.trailingAnchor.constraint(equalTo: hostingController.view.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor),
         ])
+        hostingController.didMove(toParent: self)
     }
 }

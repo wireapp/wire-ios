@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// Determines if a given password is valid for encrypting a backup.
 public protocol BackupPasswordValidatorProtocol {
 
     func isPasswordValid(_ password: String) -> Bool
