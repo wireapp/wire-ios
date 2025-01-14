@@ -18,14 +18,58 @@
 
 import SwiftUI
 
-@MainActor
-public func BackupRestoreViewController(viewModel: BackupRestoreViewModel) -> UIViewController {
-    UIHostingController(rootView: BackupRestoreView(viewModel: viewModel))
-}
+public final class BackupRestoreViewController: UIViewController {
 
-@MainActor
-public func BackupRestoreViewController(
-//    viewModel: BackupRestoreViewModel
-) -> UIViewController {
-    fatalError()
+    private let viewModel: BackupRestoreViewModel
+
+    public init(viewModel: BackupRestoreViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setupView()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
+            let alertController = UIAlertController(title: "title", message: "message\n\n", preferredStyle: .alert)
+
+            let activityIndicator = UIActivityIndicatorView(style: .medium)
+            activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+            activityIndicator.startAnimating()
+
+            alertController.view.addSubview(activityIndicator)
+
+            NSLayoutConstraint.activate([
+                activityIndicator.centerXAnchor.constraint(equalTo: alertController.view.centerXAnchor),
+                activityIndicator.bottomAnchor.constraint(equalTo: alertController.view.bottomAnchor, constant: -40)
+            ])
+
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                print("Cancel button tapped!")
+                // Add any additional cleanup or logic here
+            }
+            alertController.addAction(cancelAction)
+
+            self.present(alertController, animated: true)
+        }
+    }
+
+    private func setupView() {
+        let hostingController = UIHostingController(rootView: BackupRestoreView(viewModel: viewModel))
+        addChild(hostingController)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(hostingController.view)
+        NSLayoutConstraint.activate([
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            view.trailingAnchor.constraint(equalTo: hostingController.view.trailingAnchor),
+            view.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor),
+        ])
+    }
 }

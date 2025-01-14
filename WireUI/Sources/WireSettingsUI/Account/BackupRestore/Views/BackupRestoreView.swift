@@ -53,11 +53,6 @@ struct BackupRestoreView: View {
         .listStyle(.grouped)
         .background(Color(ColorTheme.Backgrounds.background))
         .scrollContentBackground(.hidden)
-        .alert("abcd", isPresented: $viewModel.presentBackupFailedAlert) {
-            Button("OK") {
-                viewModel.presentBackupFailedAlert = false
-            }
-        }
     }
 }
 
