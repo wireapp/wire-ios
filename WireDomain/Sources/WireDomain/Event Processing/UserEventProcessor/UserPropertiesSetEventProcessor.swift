@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,6 @@
 //
 
 import WireAPI
-
-/// Process user properties set events.
-
-protocol UserPropertiesSetEventProcessorProtocol {
-
-    /// Process a user properties set event.
-    ///
-    /// - Parameter event: A user properties set event.
-
-    func processEvent(_ event: UserPropertiesSetEvent) async throws
-
-}
 
 struct UserPropertiesSetEventProcessor: UserPropertiesSetEventProcessorProtocol {
 

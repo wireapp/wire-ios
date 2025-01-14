@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Saznaj više";
 "peoplepicker.no_matching_results.action.manage_services" = "Upravljanje uslugama";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "0 rezultata.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Svi su ovdje.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Ovo se može upotrebljavati dva tjedna. Pošalji nov zahtjev ako ovaj istekne.";
 "peoplepicker.send_invitation.dialog.ok" = "U redu";
 
-"peoplepicker.invite_more_people" = "Pozovi više ljudi";
 "peoplepicker.invite_team_members" = "Pozovite ljude da se pridruže timu";
 "peoplepicker.quick-action.open-conversation" = "Otvori";
 "peoplepicker.quick-action.admin-services" = "Upravljanje uslugama";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Uredite detalje";
 
 "registration.country_select.title" = "Država";
-
-"registration.share_contacts.hero.title" = "Pronađite poznanike na Wireu";
-"registration.share_contacts.hero.paragraph" = "Dozvoli da Wire pristupi tvojim kontaktima kako bi te povezao s drugima. Sve informacije koje primimo se anonimiziraju i ne dijele s drugima.";
-"registration.share_contacts.find_friends_button.title" = "Podijeli kontakte";
-"registration.share_contacts.skip_button.title" = "Ne sada";
-
-"registration.address_book_access_denied.hero.title" = "Wire nema pristup tvojim kontaktima.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire će ti pomoći u pronalaženju prijatelja ako podijeliš svoje kontakte.";
-"registration.address_book_access_denied.hero.paragraph2" = "Za omogućavanje pristupa, dodirnite Postavke i uključite Kontakti.";
-"registration.address_book_access_denied.settings_button.title" = "Postavke";
-"registration.address_book_access_denied.maybe_later_button.title" = "Možda kasnije";
 
 "registration.push_access_denied.hero.title" = "Nikad ne propustite poziv ili poruku.";
 "registration.push_access_denied.hero.paragraph1" = "Omogućite obavijesti u postavkama.";

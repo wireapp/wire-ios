@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Learn more";
 "peoplepicker.no_matching_results.action.manage_services" = "서비스 관리하기";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "결과가 없습니다.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "모든 사용자가 참가했습니다.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "초대장은 2주동안 유효합니다. 기간이 지난 후에는 새로운 초대장을 보내세요.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "더 많은 사람들을 초대합니다";
 "peoplepicker.invite_team_members" = "사람들을 팀에 초대하세요.";
 "peoplepicker.quick-action.open-conversation" = "대화 열기";
 "peoplepicker.quick-action.admin-services" = "서비스 관리하기";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Edit Details";
 
 "registration.country_select.title" = "Country";
-
-"registration.share_contacts.hero.title" = "Find people on Wire";
-"registration.share_contacts.hero.paragraph" = "Share your contacts so we can connect you with others. We anonymize all information and do not share it with anyone else.";
-"registration.share_contacts.find_friends_button.title" = "연락처 공유하기";
-"registration.share_contacts.skip_button.title" = "나중에";
-
-"registration.address_book_access_denied.hero.title" = "Wire does not have access to your contacts.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire helps find your friends if you share your contacts.";
-"registration.address_book_access_denied.hero.paragraph2" = "To enable access tap Settings and turn on Contacts.";
-"registration.address_book_access_denied.settings_button.title" = "설정";
-"registration.address_book_access_denied.maybe_later_button.title" = "Maybe later";
 
 "registration.push_access_denied.hero.title" = "Never miss a call or a message.";
 "registration.push_access_denied.hero.paragraph1" = "Enable Notifications in Settings.";

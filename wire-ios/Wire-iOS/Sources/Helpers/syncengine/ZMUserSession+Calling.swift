@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ extension ZMUserSession {
                 guard let callState = conversation.voiceChannel?.state else { return false }
 
                 switch callState {
-                case .incoming(video: _, shouldRing: true, degraded: _):
+                case .incoming(isVideo: _, shouldRing: true, degraded: _):
                     return conversation
                         .mutedMessageTypesIncludingAvailability == .none && callNotificationStyle != .callKit
                 default:

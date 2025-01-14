@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,6 @@
 import CoreData
 import WireAPI
 import WireDataModel
-
-/// Process federation connection removed events.
-
-protocol FederationConnectionRemovedEventProcessorProtocol {
-
-    /// Process a federation connection removed event.
-    ///
-    /// - Parameter event: A federation connection removed event.
-
-    func processEvent(_ event: FederationConnectionRemovedEvent) async throws
-
-}
 
 struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEventProcessorProtocol {
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,6 +56,27 @@ public enum NetworkError: Error, Equatable {
             response
         case let .invalidRequestError(_, response):
             response
+        }
+    }
+}
+
+// MARK: - LocalizedError
+
+extension NetworkError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .errorEncodingRequest:
+            "Failed to encode the request."
+        case let .errorDecodingResponse(response):
+            "Failed to decode the response: \(response)."
+        case let .errorDecodingURLResponse(urlResponse):
+            "Failed to decode the URL response: \(urlResponse)."
+        case .endpointNotAvailable:
+            "The requested endpoint is not available."
+        case let .missingClients(status, response):
+            "Missing clients with status: \(status). Response: \(response)."
+        case let .invalidRequestError(failure, response):
+            "Invalid request error: \(failure). Response: \(response)."
         }
     }
 }

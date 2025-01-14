@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,14 +21,14 @@ import Foundation
 /// The contents of a message, typically as a base-64 encoded
 /// Protobuf string.
 
-public enum MessageContent: Equatable, Codable, Sendable {
+public struct MessageContent: Equatable, Codable, Sendable {
 
     /// Encrypted message content.
 
-    case ciphertext(String)
+    public let encryptedMessage: String
 
     /// Unencrypted message content.
 
-    case plaintext(String)
+    public var decryptedMessage: String?
 
 }

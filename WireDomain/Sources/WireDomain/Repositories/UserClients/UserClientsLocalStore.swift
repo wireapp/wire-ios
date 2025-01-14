@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,53 +19,6 @@
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-public protocol UserClientsLocalStoreProtocol {
-
-    /// Fetches or creates a client locally.
-    ///
-    /// - parameters:
-    ///     - id: The user client id to find or create locally.
-    /// - returns: The user client found or created locally and a flag indicating whether or not the user client is new.
-
-    func fetchOrCreateClient(
-        id: String
-    ) async -> (client: WireDataModel.UserClient, isNew: Bool)
-
-    /// Retrieves deleted self clients locally based on new self clients.
-    /// - parameter newClients: The new self user clients.
-    /// - returns: A list of deleted self clients.
-
-    func deletedSelfClients(
-        newClients: [String]
-    ) async -> [String]
-
-    /// Deletes client locally.
-    /// - parameter id: The client id.
-
-    func deleteClient(
-        id: String
-    ) async
-
-    /// Updates the user client informations locally.
-    ///
-    /// - parameters:
-    ///     - id: The user client id.
-    ///     - isNewClient: A flag indicating whether the user client is new.
-    ///     - remoteClient: The up-to-date user client info object.
-
-    func updateClient(
-        id: String,
-        isNewClient: Bool,
-        userClientInfo: UserClientInfo
-    ) async
-
-    /// Indicates whether self user clients are active MLS clients.
-    /// - returns: A flag indicating whether all self user clients are active MLS clients.
-
-    func allSelfUserClientsAreActiveMLSClients() async -> Bool
-}
-
 public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
 
     // MARK: - Properties
@@ -81,6 +34,28 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     ) {
         self.context = context
         self.userLocalStore = userLocalStore
+    }
+
+    public func fetchSelfClient() async -> UserClient? {
+        let selfUser = await userLocalStore.fetchSelfUser()
+
+        return await context.perform {
+            selfUser.selfClient()
+        }
+    }
+
+    public func fetchClient(
+        id: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) async -> UserClient? {
+        await context.perform {
+            UserClient.fetchUserClient(
+                withRemoteId: id,
+                forUser: user,
+                createIfNeeded: createIfNeeded
+            )
+        }
     }
 
     public func fetchOrCreateClient(
@@ -223,6 +198,42 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
 
                 return hasMLSIdentity && isRecentlyActive
             }
+        }
+    }
+
+    public func storeClient(
+        discoveryDate: Date,
+        client: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            client.discoveryDate = discoveryDate
+        }
+    }
+
+    public func addNewClientToIgnored(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            selfClient.addNewClientToIgnored(newClient)
+        }
+    }
+
+    public func proteusSessionID(
+        for client: WireDataModel.UserClient
+    ) async -> ProteusSessionID? {
+        await context.perform {
+            client.proteusSessionID
+        }
+    }
+
+    public func clientSessionCreated(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            selfClient.decrementNumberOfRemainingProteusKeys()
+            selfClient.updateSecurityLevelAfterDiscovering([newClient])
         }
     }
 

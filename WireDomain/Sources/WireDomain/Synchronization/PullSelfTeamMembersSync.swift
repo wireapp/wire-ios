@@ -1,0 +1,59 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import WireAPI
+
+/// An object to keep the local self team members up to date
+/// with the remote self team members.
+
+struct PullSelfTeamMembersSync: PullSelfTeamMembersSyncProtocol {
+
+    private let api: any TeamsAPI
+    private let store: any TeamLocalStoreProtocol
+
+    init(
+        api: any TeamsAPI,
+        store: any TeamLocalStoreProtocol
+    ) {
+        self.api = api
+        self.store = store
+    }
+
+    /// Fetch the team members0from remote, then create or update
+    /// them locally.
+    ///
+    /// - Parameter selfTeamID: The id of the self user's team.
+
+    func pull(selfTeamID: UUID) async throws {
+        let remoteMembers = try await api.getTeamMembers(
+            for: selfTeamID,
+            maxResults: 2000
+        )
+
+        let teamMembersInfo = remoteMembers.map {
+            $0.toDomainModel()
+        }
+
+        try await store.storeTeamMembers(
+            selfTeamID: selfTeamID,
+            teamMembersInfo: teamMembersInfo
+        )
+    }
+
+}

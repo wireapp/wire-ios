@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,6 @@
 import WireAPI
 import WireDataModel
 import WireSystem
-
-/// Process conversation member join events.
-
-protocol ConversationMemberJoinEventProcessorProtocol {
-
-    /// Process a conversation member join event.
-    ///
-    /// - Parameter event: A conversation member join event.
-
-    func processEvent(_ event: ConversationMemberJoinEvent) async throws
-
-}
 
 struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcessorProtocol {
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ public struct SelfProfileViewCallToActionBanner: View {
         contentView(actionCallback: actionCallback)
             .padding(8)
             .bannerBackground()
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }
 
@@ -51,11 +52,10 @@ private func contentView(
             Text(String.localized(key: "individualToTeam.banner.title", bundle: .module))
                 .wireTextStyle(.h5)
         }, icon: {
-            Image.info
+            Image.infoCircle
         })
-        .fontWeight(.bold)
         Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
-            .wireTextStyle(.subline1)
+            .wireTextStyle(.body1)
             .lineLimit(nil)
 
         Button(
@@ -64,8 +64,7 @@ private func contentView(
                 Text(String.localized(key: "individualToTeam.banner.button", bundle: .module))
             }
         )
-        .wireButtonStyle(.secondary)
-        .fixedSize()
+        .wireButtonStyle(.tertiary)
     }
 }
 

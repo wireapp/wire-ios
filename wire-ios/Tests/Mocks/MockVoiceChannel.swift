@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 final class MockVoiceChannel: NSObject, VoiceChannel {
     var conversation: ZMConversation?
-    var mockCallState: CallState = .incoming(video: false, shouldRing: true, degraded: false)
+    var mockCallState: CallState = .incoming(isVideo: false, shouldRing: true, degraded: false)
     var mockCallDuration: TimeInterval?
     var mockParticipants: [CallParticipant] = []
     var mockIsConstantBitRateAudioActive: Bool = false
@@ -157,8 +157,8 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
 
     func leave() {}
 
-    var requestedVideoStreams: [AVSClient]?
-    func request(videoStreams: [AVSClient]) {
+    var requestedVideoStreams: [AVSClientVideoStream]?
+    func request(videoStreams: [AVSClientVideoStream]) {
         requestedVideoStreams = videoStreams
     }
 }

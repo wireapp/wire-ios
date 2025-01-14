@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,6 @@
 import WireAPI
 import WireLogging
 import WireSystem
-
-/// Process conversation receipt mode update events.
-
-protocol ConversationReceiptModeUpdateEventProcessorProtocol {
-
-    /// Process a conversation receipt mode update event.
-    ///
-    /// - Parameter event: A conversation receipt mode update event.
-
-    func processEvent(_ event: ConversationReceiptModeUpdateEvent) async throws
-
-}
 
 struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdateEventProcessorProtocol {
 
@@ -71,13 +59,13 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
             timestamp: .now
         )
 
-        let systemMessageType: MessageType = .readReceiptsStatus(
+        let systemMessageType: SystemMessageType = .readReceiptsStatus(
             isEnabled: isEnabled,
             sender: (senderID.uuid, senderID.domain),
             date: .now
         )
 
-        await messageRepository.addMessageToConversation(
+        await messageRepository.addSystemMessage(
             messageType: systemMessageType,
             conversationID: conversationID.uuid,
             conversationDomain: conversationID.domain

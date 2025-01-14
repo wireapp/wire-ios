@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-11951] when opening self profile ensure these alerts are shown and also don't block each other
-// - alert that new devices have been added
-// - alert about read receipts enabled
-
 import SwiftUI
-import UIKit
+import WireAnalytics
 import WireAPI
 import WireCommonComponents
 import WireDesign
@@ -51,6 +47,8 @@ final class SelfProfileViewController: UIViewController {
 
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
+    private let selfProfileViewsMonitor: SelfProfileViewsMonitor
+    private let analyticsEventTracker: (any AnalyticsEventTracker)?
 
     // MARK: - Configuration
 
@@ -65,17 +63,18 @@ final class SelfProfileViewController: UIViewController {
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
-        trackingManager: TrackingManager?,
-        mainCoordinator: AnyMainCoordinator
+        mainCoordinator: AnyMainCoordinator,
+        analyticsEventTracker: (any AnalyticsEventTracker)?
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
+        self.analyticsEventTracker = analyticsEventTracker
 
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(
             userSession: userSession,
             selfUser: selfUser,
-            trackingManager: trackingManager
+            trackingManager: nil
         )
 
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
@@ -106,7 +105,7 @@ final class SelfProfileViewController: UIViewController {
 
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
-
+        self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
         if selfUser.isTeamMember {
@@ -162,9 +161,10 @@ final class SelfProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        selfProfileViewsMonitor.onDidViewSelfProfile()
         configureAccountTitle()
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true)
+            self?.dismiss()
         }, accessibilityLabel: L10n.Localizable.General.close)
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.backButtonDisplayMode = .minimal
@@ -263,9 +263,15 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
-        let vc = IndividualToTeamMigrationViewController(
+
+        analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
+
+        let viewController = IndividualToTeamMigrationViewController(
+            privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
+            termsOfUseURL: WireURLs.shared.legal.absoluteString,
             useCase: useCase,
             userProfileName: userName,
+            analyticsEventTracker: analyticsEventTracker,
             actionCallback: { [weak self] action in
                 Task { [weak self] in
                     await MainActor.run { [weak self] in
@@ -273,20 +279,35 @@ final class SelfProfileViewController: UIViewController {
                         switch action {
                         case .cancel:
                             presentedViewController?.dismiss(animated: true)
-                        case .completionGoToApp:
+                        case .toLearnMoreAboutPlans:
+                            _ = WireURLs.shared.wireEnterpriseInfo.open()
+                        case .completionDismiss:
                             dismissIndividualToTeamMigrationBanner()
                             presentedViewController?.dismiss(animated: true)
+                        case .completionGoToConversations:
+                            dismissIndividualToTeamMigrationBanner()
+                            if let presentingViewController {
+                                presentingViewController.dismiss(animated: true)
+                            } else {
+                                presentedViewController?.dismiss(animated: true)
+                            }
                         case .completionGoToTeamManagement:
                             dismissIndividualToTeamMigrationBanner()
-                            presentedViewController?.dismiss(animated: true, completion: { [weak self] in
-                                self?.navigateToTeam()
-                            })
+                            if let presentingViewController {
+                                presentingViewController.dismiss(animated: true) {
+                                    URL.manageTeam(source: .settings).open()
+                                }
+                            } else {
+                                presentedViewController?.dismiss(animated: true)
+                            }
                         }
                     }
                 }
             }
         )
-        present(vc, animated: true)
+        viewController.modalPresentationStyle = .formSheet
+        viewController.presentationController?.delegate = viewController
+        present(viewController, animated: true)
     }
 
     private func dismissIndividualToTeamMigrationBanner() {
@@ -299,7 +320,7 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func navigateToTeam() {
-        // TODO: [WPB-11968] navigate to team
+        URL.manageTeam(source: .settings).open()
     }
 
     @objc
@@ -316,9 +337,31 @@ final class SelfProfileViewController: UIViewController {
         present(alertController, animated: true)
     }
 
+    private func dismiss() {
+        sendDismissAnalyticsEventIfNeeded()
+        presentingViewController?.dismiss(animated: true)
+    }
+
+    private func sendDismissAnalyticsEventIfNeeded() {
+        // only when the banner was shown to the user
+        guard teamMigrationBanner != nil else { return }
+
+        analyticsEventTracker?.trackEvent(.UI.dismissedSelfProfileWithToTeamMigrationBanner)
+    }
+
     override func accessibilityPerformEscape() -> Bool {
+        sendDismissAnalyticsEventIfNeeded()
         dismiss(animated: true)
         return true
+    }
+}
+
+// MARK: - UIAdaptivePresentationControllerDelegate
+
+extension SelfProfileViewController: UIAdaptivePresentationControllerDelegate {
+
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        sendDismissAnalyticsEventIfNeeded()
     }
 }
 
@@ -329,6 +372,7 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
     func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 
+        sendDismissAnalyticsEventIfNeeded()
         presentingViewController?.dismiss(animated: true) {
             if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
                 appDelegate.mediaPlaybackManager?.stop()
@@ -336,4 +380,11 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
             self.accountSelector?.switchTo(account: account)
         }
     }
+}
+
+// MARK: - Notifications
+
+public extension Notification.Name {
+    // Used to notify the app that the user has viewed their own profile
+    static let userDidViewSelfProfile = Notification.Name("userDidViewSelfProfile")
 }

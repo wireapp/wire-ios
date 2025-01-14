@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,25 +18,6 @@
 
 import WireDataModel
 import WireLogging
-
-// sourcery: AutoMockable
-public protocol ConversationLabelsLocalStoreProtocol {
-
-    /// Save label and related conversations objects to local storage.
-    /// - Parameter conversationLabel: conversation label info
-
-    func storeLabel(
-        _ conversationLabel: ConversationLabelInfo
-    ) async throws
-
-    /// Delete old `folder` labels and related conversations objects from local storage.
-    /// - Parameter excludedLabels: remote labels that should be excluded from deletion.
-    /// - Only old labels of type `folder` are deleted, `favorite` labels always remain in the local storage.
-
-    func deleteOldLabelsLocally(
-        excludedLabels: [ConversationLabelInfo]
-    ) async throws
-}
 
 public final class ConversationLabelsLocalStore: ConversationLabelsLocalStoreProtocol {
 
@@ -61,10 +42,17 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
 
     // MARK: - Public
 
-    /// Save label and related conversations objects to local storage.
-    /// - Parameter conversationLabel: conversation label
+    public func setLabels(
+        _ labels: [ConversationLabelInfo]
+    ) async throws {
+        for label in labels {
+            try await storeLabel(label)
+        }
 
-    public func storeLabel(
+        try await deleteOldLabelsLocally(excludedLabels: labels)
+    }
+
+    private func storeLabel(
         _ conversationLabel: ConversationLabelInfo
     ) async throws {
         try await context.perform { [context] in
@@ -103,7 +91,7 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
         }
     }
 
-    public func deleteOldLabelsLocally(
+    private func deleteOldLabelsLocally(
         excludedLabels: [ConversationLabelInfo]
     ) async throws {
         try await context.perform { [self] in

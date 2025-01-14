@@ -13,14 +13,13 @@ on:
         description: "The name of the changelog file"
         value: ${{ jobs.changelog.outputs.changelog-name }}
 
-
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
 
 jobs:
   changelog:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       changelog-url: ${{ steps.expose-url.outputs.changelog }}
       changelog-name: ${{ steps.expose-url.outputs.changelog-name }}
@@ -86,4 +85,3 @@ jobs:
         run: |
           echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
           echo "changelog-name=CHANGELOG-${{ github.run_number }}-${{ steps.date.outputs.date }}.md" >> $GITHUB_OUTPUT
-

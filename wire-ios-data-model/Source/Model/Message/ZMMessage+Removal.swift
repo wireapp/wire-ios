@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "ZMMessage")
 
-extension ZMMessage {
+public extension ZMMessage {
 
-    func removePendingDeliveryReceipts() {
+    internal func removePendingDeliveryReceipts() {
         // Pending receipt can exist only in new inserted messages since it is deleted locally after it is sent to the
         // backend
         guard let predicate = ZMClientMessage.predicateForObjectsThatNeedToBeInsertedUpstream() else {

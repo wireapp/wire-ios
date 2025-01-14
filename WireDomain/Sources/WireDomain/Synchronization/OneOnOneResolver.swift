@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,17 +20,6 @@ import CoreData
 import WireAPI
 import WireDataModel
 import WireLogging
-
-// sourcery: AutoMockable
-/// Resolves 1:1 conversations
-public protocol OneOnOneResolverProtocol {
-
-    func resolveOneOnOneConversation(
-        with userID: WireDataModel.QualifiedID
-    ) async throws
-
-    func resolveAllOneOnOneConversations() async throws
-}
 
 struct OneOnOneResolver: OneOnOneResolverProtocol {
 

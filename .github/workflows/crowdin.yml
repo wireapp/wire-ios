@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   synchronize-with-crowdin:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container: swift:5.10.1
 
     steps:
@@ -46,7 +46,7 @@ jobs:
         run: |
           BASE_BRANCH=${GITHUB_REF#refs/heads/}
           HEAD_BRANCH="chore/update-localization"
-          TITLE="chore: Update localization - no ticket"
+          TITLE="chore: Update localization - WPB-15278"
           BODY="This PR pulls in the latest localization translations from Crowdin."
 
           git config --global --add safe.directory "$GITHUB_WORKSPACE"

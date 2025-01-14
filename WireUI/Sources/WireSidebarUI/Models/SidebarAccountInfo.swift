@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ public struct SidebarAccountInfo {
     public var isE2EICertified = false
     public var isVerified = false
     public var isLegalHoldEnabled = false
+    public var showNotificationsBadge = false
 
     public init() {}
 
@@ -37,7 +38,8 @@ public struct SidebarAccountInfo {
         availability: Availability?,
         isE2EICertified: Bool,
         isVerified: Bool,
-        isLegalHoldEnabled: Bool
+        isLegalHoldEnabled: Bool,
+        showNotificationsBadge: Bool
     ) {
         self.displayName = displayName
         self.username = username
@@ -46,6 +48,7 @@ public struct SidebarAccountInfo {
         self.isE2EICertified = isE2EICertified
         self.isVerified = isVerified
         self.isLegalHoldEnabled = isLegalHoldEnabled
+        self.showNotificationsBadge = showNotificationsBadge
     }
 
     public enum Availability: CaseIterable {

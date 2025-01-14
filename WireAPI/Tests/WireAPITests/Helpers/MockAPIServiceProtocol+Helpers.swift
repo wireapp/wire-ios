@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import Foundation
 
 extension MockAPIServiceProtocol {
 
-    typealias Response = (statusCode: HTTPStatusCode, resourceName: String)
+    typealias Response = (statusCode: HTTPStatusCode, resourceName: String?)
 
     /// Create a mock api service that returns zero or more responses.
     ///

@@ -1,4 +1,2 @@
-- HTTPRequest
-  - path: "/v1/properties/WIRE_RECEIPT_MODE"
-  - method: get
-  - body: none
+curl \
+	"/v1/properties/WIRE_RECEIPT_MODE"

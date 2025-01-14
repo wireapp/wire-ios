@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -93,12 +93,16 @@ public final class AccountImageView: UIView {
         set { availabilityIndicatorView.backgroundViewColor = newValue }
     }
 
+    public var hideProfileNotificationsBadge: Bool = false {
+        didSet { updateNotificationBadge() }
+    }
+
     // MARK: - Private Properties
 
     private let accountImageView = UIImageView()
     private let initialsLabel = UILabel()
     let availabilityIndicatorView = AvailabilityIndicatorView()
-
+    let notificationBadgeView = createNotificationBadgeView()
     public override var intrinsicContentSize: CGSize {
         .init(
             width: imageBorderWidth * 2 + accountImageHeight,
@@ -232,9 +236,26 @@ public final class AccountImageView: UIView {
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor)
         ])
 
+        // view which renders the notification badge
+        notificationBadgeView.isHidden = true
+        notificationBadgeView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(notificationBadgeView)
+        NSLayoutConstraint.activate([
+            notificationBadgeView.widthAnchor.constraint(
+                equalToConstant: 14
+            ),
+            notificationBadgeView.heightAnchor.constraint(equalToConstant: 14),
+            notificationBadgeView.centerYAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: 3.5),
+            notificationBadgeView.centerXAnchor.constraint(
+                equalTo: accountImageViewWrapper.trailingAnchor,
+                constant: -3.5
+            )
+        ])
+
         updateAccountImage()
         updateShape()
         updateAvailabilityIndicator()
+        updateNotificationBadge()
 
         if #available(iOS 17.0, *) {
             registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _: UITraitCollection) in
@@ -283,6 +304,12 @@ public final class AccountImageView: UIView {
             return
         }
     }
+
+    private func updateNotificationBadge() {
+        if notificationBadgeView.isHidden != hideProfileNotificationsBadge {
+            notificationBadgeView.isHidden = hideProfileNotificationsBadge
+        }
+    }
 }
 
 // MARK: - Previews
@@ -311,37 +338,46 @@ struct AccountImageView_Previews: PreviewProvider {
     @ViewBuilder
     static func previewWithNavigationBar(
         _ source: AccountImageSource,
-        _ availability: Availability?
+        _ availability: Availability?,
+        _ showNotificationsBadge: Bool = false
     ) -> some View {
         NavigationStack {
-            AccountImageViewRepresentable(source, availability)
-                // slightly differnet colors so that we can verify that the view modifiers work
-                .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
-                .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
-                .availabilityIndicatorAwayColor(.init(red: 0.7, green: 0.15, blue: 0.07, alpha: 1))
-                .availabilityIndicatorBusyColor(.init(red: 0.42, green: 0.19, blue: 0.1, alpha: 1))
-                .availabilityIndicatorBackgroundViewColor(.init(red: 0.83, green: 0.81, blue: 0.8, alpha: 1))
-                // set a frame in order check that it scales,
-                // ensure it scales with "aspectFit" content mode
-                .frame(width: 32, height: 50)
-                // make the frame visible in order to be able
-                // to check the alignment and size
-                .background(Color(UIColor.systemGray2))
-                .center()
-                // scale in order to better see it, keeping the
-                // ratio between the border width and total size
-                .scaleEffect(6)
-                .navigationTitle(Text(verbatim: "Conversations"))
-                .navigationBarTitleDisplayMode(.inline)
-                .background(Color(UIColor.systemGray3))
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {} label: {
-                            AccountImageViewRepresentable(source, availability)
-                                .padding(.horizontal)
-                        }
+            AccountImageViewRepresentable(
+                source: source,
+                availability: availability,
+                showNotificationsBadge: showNotificationsBadge
+            )
+            // slightly differnet colors so that we can verify that the view modifiers work
+            .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
+            .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
+            .availabilityIndicatorAwayColor(.init(red: 0.7, green: 0.15, blue: 0.07, alpha: 1))
+            .availabilityIndicatorBusyColor(.init(red: 0.42, green: 0.19, blue: 0.1, alpha: 1))
+            .availabilityIndicatorBackgroundViewColor(.init(red: 0.83, green: 0.81, blue: 0.8, alpha: 1))
+            // set a frame in order check that it scales,
+            // ensure it scales with "aspectFit" content mode
+            .frame(width: 32, height: 50)
+            // make the frame visible in order to be able
+            // to check the alignment and size
+            .background(Color(UIColor.systemGray2))
+            .center()
+            // scale in order to better see it, keeping the
+            // ratio between the border width and total size
+            .scaleEffect(6)
+            .navigationTitle(Text(verbatim: "Conversations"))
+            .navigationBarTitleDisplayMode(.inline)
+            .background(Color(UIColor.systemGray3))
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {} label: {
+                        AccountImageViewRepresentable(
+                            source: source,
+                            availability: availability,
+                            showNotificationsBadge: showNotificationsBadge
+                        )
+                        .padding(.horizontal)
                     }
                 }
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,15 +27,11 @@ class PushChannelAPIImpl: PushChannelAPI {
     }
 
     func createPushChannel(clientID: String) async throws -> any PushChannelProtocol {
-        var components = URLComponents(string: "/await")
-        components?.queryItems = [URLQueryItem(name: "client", value: clientID)]
+        let path = "/await"
 
-        guard let url = components?.url else {
-            throw PushChannelAPIError.invalidRequest
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
+            .withQueryItem(name: "client", value: clientID)
             .build()
 
         return try await pushChannelService.createPushChannel(request)

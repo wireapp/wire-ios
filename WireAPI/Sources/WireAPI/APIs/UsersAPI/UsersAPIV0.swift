@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@ import Foundation
 
 class UsersAPIV0: UsersAPI, VersionedAPI {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     var apiVersion: APIVersion {
@@ -33,32 +33,40 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
     // MARK: - Get team
 
     func getUser(for userID: UserID) async throws -> User {
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())",
-            method: .get
-        )
+        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())"
 
-        let response = try await httpClient.executeRequest(request)
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: UserResponseV0.self)
             .failure(code: .notFound, label: "not-found", error: UsersAPIError.userNotFound)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     func getUsers(userIDs: [UserID]) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/list-users",
-            method: .post,
-            body: body
-        )
+        let path = "\(pathPrefix)/list-users"
 
-        let response = try await httpClient.executeRequest(request)
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: ListUsersResponseV0.self)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 }
 

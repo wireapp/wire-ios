@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
 
@@ -51,7 +50,6 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         sut = ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
 
         (conversation, firstMessage) = try await setupConversationWithMessage()
-
     }
 
     // MARK: - tearDown
@@ -63,8 +61,6 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         coreDataStackHelper = nil
         conversation = nil
         firstMessage = nil
-
-        super.tearDown()
     }
 
     // MARK: - Helper Methods
@@ -101,7 +97,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         XCTAssertEqual(
             analyticsEventTracker.trackEvent_Invocations,
             [
-                AnalyticsEvent.conversationContribution(
+                AnalyticsEvent.Contributed.conversationContribution(
                     .likeMessage,
                     conversationType: .group,
                     conversationSize: 0
@@ -143,7 +139,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         XCTAssertEqual(
             analyticsEventTracker.trackEvent_Invocations,
             [
-                AnalyticsEvent.conversationContribution(
+                AnalyticsEvent.Contributed.conversationContribution(
                     .likeMessage,
                     conversationType: .group,
                     conversationSize: 0

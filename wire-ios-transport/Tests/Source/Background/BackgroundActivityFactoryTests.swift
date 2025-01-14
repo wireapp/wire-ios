@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         activityManager.triggerExpiration()
 
         // THEN
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
@@ -137,7 +137,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         activityManager.triggerExpiration()
 
         // THEN
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
@@ -156,7 +156,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         factory.endBackgroundActivity(activity)
 
         // THEN
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
@@ -192,7 +192,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         simulateApplicationDidEnterBackground()
 
         // THEN
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 3)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)

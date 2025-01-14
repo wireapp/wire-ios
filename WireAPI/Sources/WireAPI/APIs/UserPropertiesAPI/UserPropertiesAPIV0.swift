@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,14 +20,18 @@ import Foundation
 
 class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     var apiVersion: APIVersion {
         .v0
+    }
+
+    var resourcePath: String {
+        "\(pathPrefix)/properties/"
     }
 
     var areTypingIndicatorsEnabled: Bool {
@@ -64,32 +68,47 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
 
     // MARK: - Fetch user property
 
-    func getProperty(forKey key: UserProperty.Key) async throws -> UserProperty {
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/properties/\(key.rawValue)",
-            method: .get
-        )
+    func getProperty(
+        forKey key: UserProperty.Key
+    ) async throws -> UserProperty {
+        let path = resourcePath + key.rawValue
 
-        let response = try await httpClient.executeRequest(request)
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         switch key {
         case .wireReceiptMode:
-            return try parseResponse(response, forPayloadType: ReceiptModeResponseV0.self)
+            return try parseResponse(
+                (response.statusCode, data),
+                forPayloadType: ReceiptModeResponseV0.self
+            )
         case .wireTypingIndicatorMode:
-            return try parseResponse(response, forPayloadType: TypeIndicatorModeResponseV0.self)
+            return try parseResponse(
+                (response.statusCode, data),
+                forPayloadType: TypeIndicatorModeResponseV0.self
+            )
         case .labels:
-            return try parseResponse(response, forPayloadType: LabelsResponseV0.self)
+            return try parseResponse(
+                (response.statusCode, data),
+                forPayloadType: LabelsResponseV0.self
+            )
         }
     }
 
     func parseResponse<Payload: UserPropertiesResponseAPIV0>(
-        _ response: HTTPResponse,
+        _ response: (code: Int, data: Data),
         forPayloadType type: Payload.Type
     ) throws -> UserProperty where Payload.APIModel == UserProperty {
         try ResponseParser()
             .success(code: .ok, type: type)
             .failure(code: .notFound, error: UserPropertiesAPIError.propertyNotFound)
-            .parse(response)
+            .parse(code: response.code, data: response.data)
     }
 
 }

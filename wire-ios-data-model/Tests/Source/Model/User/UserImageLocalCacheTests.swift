@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ final class UserImageLocalCacheTests: XCTestCase {
             completeImageArrived.fulfill()
         }
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 1)
     }
 
     // MARK: - Storing

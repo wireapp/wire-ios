@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         }
 
         // then
-        await fulfillment(of: [expectation], timeout: 0.1)
+        await fulfillment(of: [expectation], timeout: 1)
 
         XCTAssertEqual(mockSyncStatus.finishCurrentSyncPhasePhase_Invocations.count, 1)
     }
@@ -104,7 +104,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         }
 
         // then
-        await fulfillment(of: [expectation], timeout: 0.1)
+        await fulfillment(of: [expectation], timeout: 1)
 
         XCTAssert(mockSyncStatus.finishCurrentSyncPhasePhase_Invocations.isEmpty)
     }

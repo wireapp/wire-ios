@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireRequestStrategy
 import WireSyncEngineSupport
 import WireTransport
+
 @testable import WireSyncEngine
 
 class CallingRequestStrategyTests: MessagingTest {
@@ -33,6 +34,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     override class func setUp() {
         super.setUp()
+
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
@@ -61,7 +63,8 @@ class CallingRequestStrategyTests: MessagingTest {
                 clientId: UUID().transportString(),
                 uiMOC: uiMOC,
                 flowManager: FlowManagerMock(),
-                transport: WireCallCenterTransportMock()
+                transport: WireCallCenterTransportMock(),
+                notificationCenter: .init()
             )
         }
         setupMockMessageSyncForMLSSuccessfully()
@@ -72,6 +75,7 @@ class CallingRequestStrategyTests: MessagingTest {
         mockRegistrationDelegate = nil
         mockApplicationStatus = nil
         mockFetchUserClientsUseCase = nil
+
         super.tearDown()
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Pelajari lebih lanjut";
 "peoplepicker.no_matching_results.action.manage_services" = "Manage Services";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Tidak ada hasil.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Everyone’s here.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Ini bisa digunakan selama 2 minggu. Kirim yang baru jika kadaluarsa.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Undang lebih banyak orang";
 "peoplepicker.invite_team_members" = "Invite people to join the team";
 "peoplepicker.quick-action.open-conversation" = "Buka";
 "peoplepicker.quick-action.admin-services" = "Manage Services";
@@ -1589,17 +1587,6 @@
 "registration.email_flow.email_step.title" = "Edit Rincian";
 
 "registration.country_select.title" = "Negara";
-
-"registration.share_contacts.hero.title" = "Temukan orang di Wire";
-"registration.share_contacts.hero.paragraph" = "Bagikan kontak Anda sehingga kami dapat menghubungkan Anda dengan orang lain. Kami menganonimkan semua informasi dan tidak membagikannya dengan orang lain.";
-"registration.share_contacts.find_friends_button.title" = "Bagikan kontak";
-"registration.share_contacts.skip_button.title" = "Tidak sekarang";
-
-"registration.address_book_access_denied.hero.title" = "Kawat tidak memiliki akses ke kontak Anda.";
-"registration.address_book_access_denied.hero.paragraph1" = "Kawat membantu menemukan teman Anda jika Anda berbagi kontak Anda.";
-"registration.address_book_access_denied.hero.paragraph2" = "Untuk mengaktifkan akses ketuk Settings dan aktifkan Contacts.";
-"registration.address_book_access_denied.settings_button.title" = "Pengaturan";
-"registration.address_book_access_denied.maybe_later_button.title" = "Mungkin nanti";
 
 "registration.push_access_denied.hero.title" = "Jangan pernah melewatkan panggilan atau pesan.";
 "registration.push_access_denied.hero.paragraph1" = "Aktifkan Notifikasi di Setelan.";
