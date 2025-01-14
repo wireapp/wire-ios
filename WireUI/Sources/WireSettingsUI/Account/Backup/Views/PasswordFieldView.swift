@@ -21,9 +21,9 @@ import WireDesign
 
 struct PasswordFieldView: View {
     @Binding var password: String
-    let isPasswordValid: Bool
     @Binding var isPasswordVisible: Bool
-    let passwordRules: Text
+    var isPasswordValid: Bool = true
+    let passwordRules: Text?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -89,7 +89,6 @@ struct PasswordFieldView: View {
 #Preview("Invalid Password - Hidden") {
     PasswordFieldView(
         password: .constant(""),
-        isPasswordValid: false,
         isPasswordVisible: .constant(false),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
     )
@@ -99,7 +98,6 @@ struct PasswordFieldView: View {
 #Preview("Invalid Password - Visible") {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
-        isPasswordValid: false,
         isPasswordVisible: .constant(true),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
     )
@@ -109,7 +107,6 @@ struct PasswordFieldView: View {
 #Preview("Valid Password - Hidden") {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
-        isPasswordValid: true,
         isPasswordVisible: .constant(false),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
     )
@@ -119,7 +116,6 @@ struct PasswordFieldView: View {
 #Preview("Valid Password - Visible") {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
-        isPasswordValid: true,
         isPasswordVisible: .constant(true),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
     )

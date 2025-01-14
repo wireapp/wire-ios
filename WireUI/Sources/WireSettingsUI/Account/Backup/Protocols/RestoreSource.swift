@@ -16,5 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"setBackupPassword.close.label" = "Close setup backup password";
-"restoreBackup.close.label" = "Close restore backup";
+import Foundation
+
+public enum RestoreBackupError: Error {
+
+    case decryptionError
+    case generic(any Error)
+
+}
+
+public protocol RestoreSourceProtocol {
+
+    func restoreFromBackup(
+        at location: URL,
+        password: String,
+        completion: @escaping (Result<Void, any Error>) -> Void
+    )
+
+}

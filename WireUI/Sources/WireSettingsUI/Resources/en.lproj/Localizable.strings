@@ -26,4 +26,8 @@
 "exportBackup.setBackupPassword.title" = "Password (OPTIONAL)";
 "exportBackup.setBackupPassword.placeholder" = "Enter password";
 "exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
-
+"restoreFromBackup.title" = "Enter password";
+"restoreFromBackup.description" = "This backup is password protected.";
+"restoreFromBackup.button" = "Continue";
+"restoreFromBackup.enterPassword.title" = "Password";
+"restoreFromBackup.enterPassword.error" = "Wrong password. Please verify your input and try again";

@@ -22,7 +22,10 @@ import WireReusableUIComponents
 
 public struct BackupActionsView: View {
     @ObservedObject private var viewModel: BackupActionsViewModel
-    @State private var isBackupSheetPresented: Bool = false
+    @State private var isExportBackupSheetPresented: Bool = false
+    @State private var isBackupPickerPresented: Bool = false
+    @State private var isRestoreBackupSheetPresented: Bool = false
+    @State private var selectedFileURL: URL?
 
     public init(viewModel: BackupActionsViewModel) {
         self.viewModel = viewModel
@@ -34,7 +37,7 @@ public struct BackupActionsView: View {
                 footer: Text(L10n.Localizable.Settings.ExportBackup.description)
             ) {
                 Button(action: {
-                    isBackupSheetPresented.toggle()
+                    isExportBackupSheetPresented.toggle()
                 }, label: {
                     HStack {
                         Text(L10n.Localizable.Settings.ExportBackup.action)
@@ -44,7 +47,7 @@ public struct BackupActionsView: View {
                         Image(systemName: "chevron.right").foregroundStyle(Color.primary)
                     }
                 })
-                .sheet(isPresented: $isBackupSheetPresented) {
+                .sheet(isPresented: $isExportBackupSheetPresented) {
                     NavigationStack {
                         ExportBackupView(
                             passwordValidator: viewModel.passwordValidator,
@@ -52,6 +55,47 @@ public struct BackupActionsView: View {
                                 viewModel.backupActiveAccount(password: password)
                             }
                         )
+                    }
+                    .presentationDetents([.medium])
+                }
+            }
+            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
+
+            Section(
+                footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)
+            ) {
+                Button(action: {
+                    viewModel.confirmBackupRestore {
+                        isBackupPickerPresented.toggle()
+                    }
+                }, label: {
+                    HStack {
+                        Text(L10n.Localizable.Settings.RestoreFromBackup.action)
+                            .font(.textStyle(.body2))
+                            .foregroundStyle(Color.primaryText)
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(Color.primary)
+                    }
+                })
+                .fullScreenCover(isPresented: $isBackupPickerPresented) {
+                    BackupPicker { url in
+                        if let fileURL = url {
+                            selectedFileURL = fileURL
+                            isRestoreBackupSheetPresented = true
+                        }
+                    }
+                }
+                .sheet(isPresented: $isRestoreBackupSheetPresented) {
+                    NavigationStack {
+                        RestoreBackupView { password in
+                            if let fileURL = selectedFileURL {
+                                viewModel.restoreFromBackup(
+                                    at: fileURL,
+                                    password: password,
+                                    completion: { _ in }
+                                )
+                            }
+                        }
                     }
                     .presentationDetents([.medium])
                 }

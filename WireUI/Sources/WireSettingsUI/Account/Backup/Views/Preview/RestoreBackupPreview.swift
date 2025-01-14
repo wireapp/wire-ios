@@ -16,5 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"setBackupPassword.close.label" = "Close setup backup password";
-"restoreBackup.close.label" = "Close restore backup";
+import SwiftUI
+
+struct RestoreBackupPreview: View {
+    @State private var isPresented = true
+
+    var body: some View {
+        Button(
+            action: {
+                isPresented.toggle()
+            },
+            label: {
+                Text(L10n.Localizable.RestoreFromBackup.button)
+            }
+        )
+        .sheet(isPresented: $isPresented) {
+            NavigationStack {
+                RestoreBackupView(
+                    importBackup: { _ in }
+                )
+            }
+            .presentationDragIndicator(.visible)
+            .presentationDetents([.medium])
+        }
+    }
+}

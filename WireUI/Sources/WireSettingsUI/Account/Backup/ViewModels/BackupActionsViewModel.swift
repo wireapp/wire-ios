@@ -20,16 +20,22 @@ import SwiftUI
 
 public final class BackupActionsViewModel: ObservableObject {
     private let backupSource: any BackupSourceProtocol
+    private let restoreSource: any RestoreSourceProtocol
     private let backupResultHandler: BackupResultHandler
+    private let restoreBackupResultHandler: RestoreBackupResultHandler
     let passwordValidator: any BackupPasswordValidatorProtocol
 
     public init(
         backupSource: any BackupSourceProtocol,
+        restoreSource: any RestoreSourceProtocol,
         backupResultHandler: BackupResultHandler,
+        restoreBackupResultHandler: RestoreBackupResultHandler,
         passwordValidator: any BackupPasswordValidatorProtocol
     ) {
         self.backupSource = backupSource
+        self.restoreSource = restoreSource
         self.backupResultHandler = backupResultHandler
+        self.restoreBackupResultHandler = restoreBackupResultHandler
         self.passwordValidator = passwordValidator
     }
 
@@ -40,7 +46,29 @@ public final class BackupActionsViewModel: ObservableObject {
                 self?.backupSource.clearPreviousBackups()
             }
         } catch {
-            backupResultHandler.onFailure(error)
+            backupResultHandler.onFailure()
+        }
+    }
+
+    func restoreFromBackup(
+        at location: URL,
+        password: String,
+        completion: @escaping (Result<Void, any Error>) -> Void
+    ) {
+        restoreSource.restoreFromBackup(at: location, password: password) { result in
+            completion(result)
+            switch result {
+            case .success:
+                self.restoreBackupResultHandler.onSuccess()
+            case .failure:
+                self.restoreBackupResultHandler.onFailure()
+            }
+        }
+    }
+
+    func confirmBackupRestore(completion: @escaping () -> Void) {
+        restoreBackupResultHandler.onConfirmation {
+            completion()
         }
     }
 }
