@@ -18,51 +18,77 @@
 
 import UIKit
 
+/// A custom view controller that displays an alert-like interface.
 public final class ProgressIndicatingAlertController: UIViewController {
 
-    struct Action {
+    /// A custom action model that mimics UIAlertAction.
+    struct CustomAlertAction {
+        /// The button title shown in the alert.
         let title: String
+
+        /// The style for the button (default, cancel, or destructive).
         let style: UIAlertAction.Style
-        let handler: (() -> Void)?
+
+        /// The closure to execute when the button is tapped.
+        let handler: ((CustomAlertAction) -> Void)?
     }
+
+    // MARK: - UI Elements
 
     private let containerView = UIView()
     private let titleLabel = UILabel()
     private let messageLabel = UILabel()
+
+    /// A stack view to layout the title, message, and buttons vertically.
     private let stackView = UIStackView()
 
-    var alertTitle: String?
-    var alertMessage: String?
-    var actions: [Action] = []
+    // MARK: - Properties
 
-    // Initializer
+    /// The alert's title and message text.
+    private let alertTitle: String?
+    private let alertMessage: String?
+
+    /// An array of custom actions that will be turned into buttons.
+    private var actions: [CustomAlertAction] = []
+
+    // MARK: - Initializer
+
     init(title: String?, message: String?) {
         self.alertTitle = title
         self.alertMessage = message
         super.init(nibName: nil, bundle: nil)
 
-        // Presentation style to mimic an alert
-        self.modalPresentationStyle = .overFullScreen
-        self.modalTransitionStyle = .crossDissolve
+        // Presentation style to mimic a system alert (centered, dim background).
+        modalPresentationStyle = .overFullScreen
+        modalTransitionStyle = .crossDissolve
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle
+
     public override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupBackground()
+        setupBackgroundDimming()
         setupContainerView()
         setupStackView()
-        setupContent()
+        setupContent()  // Populate with title, message, and buttons.
     }
 
-    // MARK: - Setup Methods
+    // MARK: - Public Methods
 
-    private func setupBackground() {
-        // Dim the background to mimic an alert
+    /// Add a custom action to the alert.
+    func addAction(_ action: CustomAlertAction) {
+        actions.append(action)
+    }
+
+    // MARK: - Private Setup Methods
+
+    private func setupBackgroundDimming() {
+        // Dim the background to mimic a system alert’s overlay.
         view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
     }
 
@@ -70,8 +96,10 @@ public final class ProgressIndicatingAlertController: UIViewController {
         containerView.backgroundColor = .systemBackground
         containerView.layer.cornerRadius = 12
         containerView.translatesAutoresizingMaskIntoConstraints = false
+
         view.addSubview(containerView)
 
+        // Center the container and set its width (similar to UIAlertController).
         NSLayoutConstraint.activate([
             containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -82,9 +110,13 @@ public final class ProgressIndicatingAlertController: UIViewController {
     private func setupStackView() {
         stackView.axis = .vertical
         stackView.spacing = 16
+        stackView.alignment = .fill
+        stackView.distribution = .equalSpacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
+
         containerView.addSubview(stackView)
 
+        // Pin stackView edges to containerView with some padding.
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
             stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
@@ -94,84 +126,77 @@ public final class ProgressIndicatingAlertController: UIViewController {
     }
 
     private func setupContent() {
-        // Title
-        if let titleText = alertTitle {
-            titleLabel.text = titleText
-            titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
-            titleLabel.adjustsFontForContentSizeCategory = true
+        // 1. Title
+        if let alertTitle = alertTitle {
+            titleLabel.text = alertTitle
+//            titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
+            titleLabel.textColor = .label
             titleLabel.textAlignment = .center
             titleLabel.numberOfLines = 0
-
+            titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            titleLabel.adjustsFontForContentSizeCategory = true
             stackView.addArrangedSubview(titleLabel)
         }
 
-        // Message
-        if let messageText = alertMessage {
-            messageLabel.text = messageText
-            messageLabel.font = UIFont.preferredFont(forTextStyle: .body)
-            messageLabel.adjustsFontForContentSizeCategory = true
+        // 2. Message
+        if let alertMessage = alertMessage {
+            messageLabel.text = alertMessage
+            messageLabel.font = UIFont.systemFont(ofSize: 13)
+            messageLabel.textColor = .secondaryLabel
             messageLabel.textAlignment = .center
             messageLabel.numberOfLines = 0
-
             stackView.addArrangedSubview(messageLabel)
         }
 
-        // Actions (Buttons)
-        for action in actions {
+        // 3. Buttons (one for each CustomAlertAction)
+        for (index, action) in actions.enumerated() {
+            // Add a thin separator above each button (optional, for clarity).
+            if stackView.arrangedSubviews.count > 0 {
+                let separator = UIView()
+                separator.backgroundColor = .separator
+                separator.translatesAutoresizingMaskIntoConstraints = false
+                separator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+                stackView.addArrangedSubview(separator)
+            }
+
+            // Create a button for the action.
             let button = UIButton(type: .system)
             button.setTitle(action.title, for: .normal)
-
+//            button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
             // Use a preferred font style for buttons, e.g. .body or .callout
-            button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-            button.titleLabel?.adjustsFontForContentSizeCategory = true
+                 button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+                 button.titleLabel?.adjustsFontForContentSizeCategory = true
 
+            // Match the color style of system alerts.
             switch action.style {
             case .destructive:
                 button.setTitleColor(.systemRed, for: .normal)
+            case .cancel:
+                button.setTitleColor(.systemBlue, for: .normal)
+                button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17) // TODO: dynamic type
             default:
                 button.setTitleColor(.systemBlue, for: .normal)
             }
 
-            // Tag each button so we know which action to trigger
-            button.tag = actions.firstIndex(of: action) ?? 0
-            button.addTarget(self, action: #selector(handleAction(_:)), for: .touchUpInside)
+            // Tag to identify which action was tapped.
+            button.tag = index
+            button.addTarget(self, action: #selector(handleButtonTap(_:)), for: .touchUpInside)
 
-            // Add a separator for clarity if you like
-            // (Or you can just add the button if you don't need separators)
-            let separator = UIView()
-            separator.backgroundColor = .separator
-            separator.translatesAutoresizingMaskIntoConstraints = false
-
-            // If you want a thin line above each button (optional):
-            if stackView.arrangedSubviews.last != nil {
-                let separatorContainer = UIView()
-                separatorContainer.addSubview(separator)
-                NSLayoutConstraint.activate([
-                    separator.leadingAnchor.constraint(equalTo: separatorContainer.leadingAnchor),
-                    separator.trailingAnchor.constraint(equalTo: separatorContainer.trailingAnchor),
-                    separator.topAnchor.constraint(equalTo: separatorContainer.topAnchor),
-                    separator.heightAnchor.constraint(equalToConstant: 0.5),
-                    separatorContainer.heightAnchor.constraint(equalToConstant: 0.5)
-                ])
-                stackView.addArrangedSubview(separatorContainer)
-            }
-
+            // Add the button to the stack.
             stackView.addArrangedSubview(button)
         }
     }
 
     // MARK: - Action Handling
 
-    @objc private func handleAction(_ sender: UIButton) {
-        let action = actions[sender.tag]
-        action?(action)
+    @objc private func handleButtonTap(_ sender: UIButton) {
+        let tappedAction = actions[sender.tag]
+
+        // Call the custom handler closure.
+        tappedAction.handler?(tappedAction)
+
+        // Dismiss the custom alert.
         dismiss(animated: true, completion: nil)
-    }
-
-    // MARK: - Public Methods
-
-    func addAction(_ action: UIAlertAction) {
-        actions.append(action)
     }
 }
 
@@ -192,7 +217,7 @@ public final class ProgressIndicatingAlertController: UIViewController {
 
         let alertController = ProgressIndicatingAlertController(title: "title", message: "message")
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+        let cancelAction = ProgressIndicatingAlertController.CustomAlertAction(title: "Cancel", style: .cancel) { _ in
             print("Cancel button tapped!")
             // Add any additional cleanup or logic here
         }
