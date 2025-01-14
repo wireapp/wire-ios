@@ -20,9 +20,10 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-struct BackupActionsView: View {
+struct BackupRestoreView: View {
 
-    @ObservedObject private var viewModel: BackupRestoreViewModel
+    @ObservedObject private(set) var viewModel: BackupRestoreViewModel
+
     @State private var isExportBackupSheetPresented: Bool = false
     @State private var isBackupPickerPresented: Bool = false
     @State private var isRestoreBackupSheetPresented: Bool = false
@@ -34,13 +35,9 @@ struct BackupActionsView: View {
                 Button {
                     isExportBackupSheetPresented.toggle()
                 } label: {
-                    HStack {
-                        Text(L10n.Localizable.Settings.ExportBackup.action)
-                            .wireTextStyle(.body2)
-                            .foregroundStyle(Color.primaryText)
-                        Spacer()
-                        Image(systemName: "chevron.right").foregroundStyle(Color.primary)
-                    }
+                    Text(L10n.Localizable.Settings.ExportBackup.action)
+                        .wireTextStyle(.body2)
+                        .foregroundStyle(Color.primaryText)
                 }
                 .sheet(isPresented: $isExportBackupSheetPresented) {
                     NavigationStack {
@@ -54,7 +51,6 @@ struct BackupActionsView: View {
                     .presentationDetents([.medium])
                 }
             }
-            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
 
             Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
                 Button {
@@ -62,13 +58,9 @@ struct BackupActionsView: View {
                         isBackupPickerPresented.toggle()
                     }
                 } label: {
-                    HStack {
-                        Text(L10n.Localizable.Settings.RestoreFromBackup.action)
-                            .font(.textStyle(.body2))
-                            .foregroundStyle(Color.primaryText)
-                        Spacer()
-                        Image(systemName: "chevron.right").foregroundStyle(Color.primary)
-                    }
+                    Text(L10n.Localizable.Settings.RestoreFromBackup.action)
+                        .font(.textStyle(.body2))
+                        .foregroundStyle(Color.primaryText)
                 }
                 .fullScreenCover(isPresented: $isBackupPickerPresented) {
                     BackupPicker { url in
@@ -93,13 +85,13 @@ struct BackupActionsView: View {
                     .presentationDetents([.medium])
                 }
             }
-            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
         }
         .listStyle(.grouped)
+        .background(Color(ColorTheme.Backgrounds.background))
         .scrollContentBackground(.hidden)
     }
 }
 
 #Preview {
-    BackupActionsPreview()
+    BackupRestoreViewPreview()
 }

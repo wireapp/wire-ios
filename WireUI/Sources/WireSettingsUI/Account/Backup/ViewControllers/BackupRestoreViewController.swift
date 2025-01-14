@@ -38,7 +38,7 @@ public final class BackupRestoreViewController: UIViewController {
     }
 
     private func setupView() {
-        let hostingController = UIHostingController(rootView: BackupActionsView(viewModel: viewModel))
+        let hostingController = UIHostingController(rootView: BackupRestoreView(viewModel: viewModel))
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingController.view)

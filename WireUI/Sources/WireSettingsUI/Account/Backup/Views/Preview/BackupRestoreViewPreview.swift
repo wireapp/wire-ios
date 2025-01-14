@@ -20,8 +20,8 @@ import WireFoundation
 import SwiftUI
 
 @ViewBuilder @MainActor
-func BackupActionsPreview() -> some View {
-    BackupActionsView(viewModel: BackupRestoreViewModel(
+func BackupRestoreViewPreview() -> some View {
+    BackupRestoreView(viewModel: BackupRestoreViewModel(
         backupSource: MockBackupSource(),
         restoreSource: MockRestoreSource(),
         backupResultHandler: BackupResultHandler(

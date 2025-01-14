@@ -38,7 +38,7 @@ final class BackupActionsViewSnapshotTests: XCTestCase {
     @MainActor
     func testBackupActions() {
         let screenBounds = UIScreen.main.bounds
-        let sut = BackupActionsPreview()
+        let sut = BackupRestoreViewPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
