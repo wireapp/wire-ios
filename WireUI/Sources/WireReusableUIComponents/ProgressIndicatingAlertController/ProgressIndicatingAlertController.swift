@@ -32,7 +32,7 @@ public final class ProgressIndicatingAlertController: UIViewController {
     }
 
     private let message: String
-    private let cancelHandler: () -> Void
+    private let cancelAction: Action
 
     // MARK: - Subviews
 
@@ -45,9 +45,13 @@ public final class ProgressIndicatingAlertController: UIViewController {
 
     // MARK: - Initializer
 
-    init(title: String, message: String, cancelHandler: @escaping () -> Void) {
+    init(
+        title: String,
+        message: String,
+        cancelAction: Action
+    ) {
         self.message = message
-        self.cancelHandler = cancelHandler
+        self.cancelAction = cancelAction
         super.init(nibName: nil, bundle: nil)
         self.title = title
 
@@ -120,7 +124,7 @@ public final class ProgressIndicatingAlertController: UIViewController {
         progressView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(progressView)
 
-        cancelButton.setTitle("cancel", for: .normal) // TODO: localization
+        cancelButton.setTitle("Cancel", for: .normal) // TODO: localization
         cancelButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
         cancelButton.addTarget(self, action: #selector(handleCancel(_:)), for: .primaryActionTriggered)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
@@ -152,37 +156,21 @@ public final class ProgressIndicatingAlertController: UIViewController {
     // MARK: - Action Handling
 
     @objc private func handleCancel(_ sender: UIButton) {
-        cancelHandler()
+        cancelAction.handler()
         presentingViewController?.dismiss(animated: true)
+    }
+
+    // MARK: - Nested Types
+
+    struct Action {
+        var title: String
+        var handler: () -> Void
     }
 }
 
 @available(iOS 17, *)
 #Preview("ProgressIndicatingAlertController") {
-    {
-        let vc = UIViewController()
-        vc.navigationItem.title = "test"
-
-        let label = UILabel()
-        label.text = "Hello, World!"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.preferredFont(forTextStyle: .body)
-        label.adjustsFontForContentSizeCategory = true
-        vc.view.addSubview(label)
-        label.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor).isActive = true
-        label.topAnchor.constraint(equalToSystemSpacingBelow: vc.view.safeAreaLayoutGuide.topAnchor, multiplier: 3).isActive = true
-
-        let alertController = ProgressIndicatingAlertController(title: "title", message: "message") {
-            print("Cancel button tapped!")
-        }
-        alertController.progress = 0.25
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) {
-            vc.present(alertController, animated: false)
-        }
-
-        return UINavigationController(rootViewController: vc)
-    }()
+    ProgressIndicatingAlertControllerPreview()
 }
 
 @available(iOS 17, *)
@@ -202,10 +190,7 @@ public final class ProgressIndicatingAlertController: UIViewController {
 
         let alertController = UIAlertController(title: "title", message: "message", preferredStyle: .alert)
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            print("Cancel button tapped!")
-            // Add any additional cleanup or logic here
-        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in }
         alertController.addAction(cancelAction)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) {
