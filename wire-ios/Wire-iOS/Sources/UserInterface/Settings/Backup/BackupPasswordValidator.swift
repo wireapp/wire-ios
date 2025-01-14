@@ -16,25 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireSettingsUI
-import class WireSyncEngine.SessionManager
 
-struct BackupSource: BackupSourceProtocol {
+struct BackupPasswordValidator: BackupPasswordValidatorProtocol {
 
-    enum BackupSourceError: Error {
-        case missingSessionManager
-    }
-
-    func backupActiveAccount(password: String) throws -> URL {
-        guard let sessionManager = SessionManager.shared else {
-            throw BackupSourceError.missingSessionManager
+    func isPasswordValid(_ password: String) -> Bool {
+        guard !password.isEmpty else {
+            return true
         }
-        return try sessionManager.backupActiveAccount(password: password)
+
+        switch PasswordRuleSet.shared.validatePassword(password) {
+        case .valid:
+            return true
+        case .invalid:
+            return false
+        }
     }
 
-    func clearPreviousBackups() {
-        SessionManager.shared?.clearPreviousBackups()
+    var localizedRulesDescription: String {
+        PasswordRuleSet.localizedErrorMessage
     }
 
 }

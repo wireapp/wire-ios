@@ -5558,29 +5558,11 @@ internal enum L10n {
           internal static let header = L10n.tr("Localizable", "self.settings.external_apps.header", fallback: "Open With")
         }
         internal enum HistoryBackup {
-          /// Back Up Now
-          internal static let action = L10n.tr("Localizable", "self.settings.history_backup.action", fallback: "Back Up Now")
-          /// Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.
-          /// 
-          /// Choose a strong password to protect the backup file.
-          internal static let description = L10n.tr("Localizable", "self.settings.history_backup.description", fallback: "Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.\n\nChoose a strong password to protect the backup file.")
-          /// Back Up Conversations
-          internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back Up Conversations")
+          /// Back up or Restore
+          internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back up or Restore")
           internal enum Error {
             /// Error
             internal static let title = L10n.tr("Localizable", "self.settings.history_backup.error.title", fallback: "Error")
-          }
-          internal enum Password {
-            /// Cancel
-            internal static let cancel = L10n.tr("Localizable", "self.settings.history_backup.password.cancel", fallback: "Cancel")
-            /// The backup will be compressed and encrypted with the password you set here.
-            internal static let description = L10n.tr("Localizable", "self.settings.history_backup.password.description", fallback: "The backup will be compressed and encrypted with the password you set here.")
-            /// Next
-            internal static let next = L10n.tr("Localizable", "self.settings.history_backup.password.next", fallback: "Next")
-            /// Password
-            internal static let placeholder = L10n.tr("Localizable", "self.settings.history_backup.password.placeholder", fallback: "Password")
-            /// Set Password
-            internal static let title = L10n.tr("Localizable", "self.settings.history_backup.password.title", fallback: "Set Password")
           }
           internal enum SetEmail {
             /// You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.

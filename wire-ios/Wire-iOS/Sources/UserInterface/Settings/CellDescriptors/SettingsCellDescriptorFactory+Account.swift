@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireSettingsUI
 import WireSyncEngine
 
 extension ZMUser {
@@ -34,6 +35,7 @@ extension ZMUser {
 
 extension SettingsCellDescriptorFactory {
 
+    @MainActor
     func accountGroup(
         isPublicDomain: Bool,
         userSession: UserSession,
@@ -160,6 +162,7 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
+    @MainActor
     func conversationsSection() -> SettingsSectionDescriptorType {
         SettingsSectionDescriptor(
             cellDescriptors: [backUpElement()],
@@ -366,6 +369,7 @@ extension SettingsCellDescriptorFactory {
         SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.encryptMessagesAtRest))
     }
 
+    @MainActor
     func backUpElement() -> any SettingsCellDescriptorType {
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.HistoryBackup.title,
@@ -377,7 +381,17 @@ extension SettingsCellDescriptorFactory {
                     return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-                    return BackupViewController(backupSource: SessionManager.shared!)
+                    let viewModel = BackupActionsViewModel(
+                        backupSource: BackupSource(),
+                        backupResultHandler: BackupResultHandler(
+                            onSuccess: presentShareSheet,
+                            onFailure: presentAlert
+                        ),
+                        passwordValidator: BackupPasswordValidator()
+                    )
+                    let backupActionsController = BackupActionsHostingController(viewModel: viewModel)
+                    backupActionsController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
+                    return backupActionsController
                 } else {
                     let alert = UIAlertController(
                         title: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.title,
@@ -442,6 +456,42 @@ extension SettingsCellDescriptorFactory {
 
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
+    }
+
+}
+
+// MARK: - Backup action handler
+
+extension SettingsCellDescriptorFactory {
+
+    private func presentAlert(for error: Error) {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: L10n.Localizable.Self.Settings.HistoryBackup.Error.title,
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
+        controller.present(alert, animated: true)
+    }
+
+    private func presentShareSheet(with url: URL, completion: @escaping Completion) {
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+
+        let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        activityController.completionWithItemsHandler = { _, _, _, _ in
+            completion()
+        }
+        controller.present(activityController, animated: true)
     }
 
 }
