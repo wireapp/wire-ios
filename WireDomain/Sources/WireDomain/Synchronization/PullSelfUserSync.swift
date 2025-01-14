@@ -19,12 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullSelfUserSyncProtocol {
-
-    func pull() async throws
-
-}
-
 /// An object to keep the local self user up to date
 /// with the remote self user.
 

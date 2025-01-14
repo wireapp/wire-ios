@@ -19,21 +19,6 @@
 import Foundation
 import WireAPI
 
-// sourcery: AutoMockable
-/// Process update events.
-protocol UpdateEventProcessorProtocol {
-
-    /// Process an update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: An update event.
-
-    func processEvent(_ event: UpdateEvent) async throws
-
-}
-
 struct UpdateEventProcessor {
 
     let conversationEventProcessor: any ConversationEventProcessorProtocol

@@ -19,18 +19,6 @@
 import WireAPI
 import WireDataModel
 
-/// Process team member update events.
-
-protocol TeamMemberUpdateEventProcessorProtocol {
-
-    /// Process a team member update event.
-    ///
-    /// - Parameter event: A team member update event.
-
-    func processEvent(_ event: TeamMemberUpdateEvent) async throws
-
-}
-
 struct TeamMemberUpdateEventProcessor: TeamMemberUpdateEventProcessorProtocol {
 
     let repository: any TeamRepositoryProtocol

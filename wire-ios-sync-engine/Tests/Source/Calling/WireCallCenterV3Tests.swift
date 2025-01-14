@@ -108,7 +108,8 @@ final class WireCallCenterV3Tests: MessagingTest {
             avsWrapper: mockAVSWrapper,
             uiMOC: uiMOC,
             flowManager: flowManager,
-            transport: mockTransport
+            transport: mockTransport,
+            notificationCenter: .init()
         )
         // set conferenceCalling feature flag
         conferenceCalling = Feature.fetch(name: .conferenceCalling, context: uiMOC)
@@ -2428,7 +2429,9 @@ extension WireCallCenterV3Tests {
         let clients = [
             AVSClient(userId: selfUserID, clientId: clientId1),
             AVSClient(userId: otherUserID, clientId: clientId2)
-        ]
+        ].map { client in
+            AVSClientVideoStream(client: client, quality: .low)
+        }
 
         let expectedResult = AVSVideoStreams(conversationId: conversationId.serialized, clients: clients)
 

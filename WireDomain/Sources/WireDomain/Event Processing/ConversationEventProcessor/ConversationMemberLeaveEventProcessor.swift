@@ -19,18 +19,6 @@
 import WireAPI
 import WireDataModel
 
-/// Process conversation member leave events.
-
-protocol ConversationMemberLeaveEventProcessorProtocol {
-
-    /// Process a conversation member leave event.
-    ///
-    /// - Parameter event: A conversation member leave event.
-
-    func processEvent(_ event: ConversationMemberLeaveEvent) async throws
-
-}
-
 struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProcessorProtocol {
 
     enum Error: Swift.Error {

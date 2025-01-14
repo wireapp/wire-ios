@@ -28,7 +28,6 @@
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "ZMAuthenticationStatus_Internal.h"
 
-
 static NSString *const TimerInfoOriginalCredentialsKey = @"credentials";
 static NSString *const AuthenticationCenterDataChangeNotificationName = @"ZMAuthenticationStatusDataChangeNotificationName";
 NSTimeInterval DebugLoginFailureTimerOverride = 0;
@@ -96,21 +95,25 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     if(credentials != self.internalLoginCredentials) {
         self.internalLoginCredentials = credentials;
         [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
-        [[[NotificationInContext alloc] initWithName:AuthenticationCenterDataChangeNotificationName
-                                             context:self object:nil userInfo:nil] post];
+        [[[NotificationInContext alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]
+                                                      name:AuthenticationCenterDataChangeNotificationName
+                                                           context:self
+                                                            object:nil
+                                                          userInfo:nil] post];
     }
 }
 
 - (id)addAuthenticationCenterObserver:(id<ZMAuthenticationStatusObserver>)observer;
 {
     ZM_WEAK(observer);
-    return [NotificationInContext addObserverWithName:AuthenticationCenterDataChangeNotificationName
-                                       context:self
-                                        object:nil
-                                         queue:nil
-                                         using:^(NotificationInContext * notification __unused) {
-                                             ZM_STRONG(observer);
-                                             [observer didChangeAuthenticationData];
+    return [NotificationInContext addObserverWithNotificationCenter:[NSNotificationCenter defaultCenter]
+                                                               name:AuthenticationCenterDataChangeNotificationName
+                                                            context:self
+                                                             object:nil
+                                                              queue:nil
+                                                              using:^(NotificationInContext * notification __unused) {
+        ZM_STRONG(observer);
+        [observer didChangeAuthenticationData];
      }];
 }
 

@@ -65,6 +65,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
         let zClientViewController = ZClientViewController(
             account: mockAccount,
+            selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: nil
         )

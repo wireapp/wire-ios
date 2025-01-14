@@ -19,6 +19,7 @@
 import avs
 import Combine
 import Foundation
+import WireAnalytics
 import WireLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
@@ -35,6 +36,8 @@ public class WireCallCenterV3: NSObject {
     let legacyVideoParticipantsLimit = 4
 
     // MARK: - Properties
+
+    private let notificationCenter: NotificationCenter
 
     /// The selfUser remoteIdentifier
     let selfUserId: AVSIdentifier
@@ -125,13 +128,14 @@ public class WireCallCenterV3: NSObject {
         avsWrapper: AVSWrapperType? = nil,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        notificationCenter: NotificationCenter
     ) {
-
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
+        self.notificationCenter = notificationCenter
 
         super.init()
 
@@ -878,6 +882,8 @@ public extension WireCallCenterV3 {
     /// - parameter videoState: The new video state for the self user.
 
     func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
+        defer { postDidToggleVideoNotification(notificationCenter, conversationId, videoState) }
+
         Self.logger.info("setting video state")
         guard videoState != .badConnection else { return }
 
@@ -909,7 +915,7 @@ public extension WireCallCenterV3 {
     /// - Parameters:
     ///   - conversationId: The identifier of the conversation where the video call is hosted.
     ///   - clients: The list of clients for which AVS should load video streams.
-    func requestVideoStreams(conversationId: AVSIdentifier, clients: [AVSClient]) {
+    func requestVideoStreams(conversationId: AVSIdentifier, clients: [AVSClientVideoStream]) {
         let videoStreams = AVSVideoStreams(conversationId: conversationId.serialized, clients: clients)
         avsWrapper.requestVideoStreams(videoStreams, conversationId: conversationId)
     }

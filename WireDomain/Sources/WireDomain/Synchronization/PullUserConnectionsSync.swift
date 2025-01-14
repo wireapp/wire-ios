@@ -19,12 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullUserConnectionsSyncProtocol {
-
-    func pull() async throws
-
-}
-
 /// An object to keep the local user connections up to date
 /// with the remote user connections.
 

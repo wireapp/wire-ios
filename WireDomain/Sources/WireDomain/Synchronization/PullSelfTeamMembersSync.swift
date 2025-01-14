@@ -19,12 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullSelfTeamMembersSyncProtocol {
-
-    func pull(selfTeamID: UUID) async throws
-
-}
-
 /// An object to keep the local self team members up to date
 /// with the remote self team members.
 
