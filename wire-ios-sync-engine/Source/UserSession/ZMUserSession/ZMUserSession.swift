@@ -1086,7 +1086,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         WireLogger.updateEvent.info("process pending call events")
         Task {
             do {
-                // why not processing only the call events (should be stored here?)
+                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
                 try await updateEventProcessor!.processBufferedEvents()
                 await managedObjectContext.perform {
                     completionHandler()
