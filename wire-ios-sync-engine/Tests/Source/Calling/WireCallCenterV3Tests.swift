@@ -1371,8 +1371,6 @@ final class WireCallCenterV3Tests: MessagingTest {
         sut.setCallReady(version: 3)
 
         // expect
-        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
-
         customExpectation(
             forNotification: WireCallCenterCallErrorNotification.notificationName,
             object: nil
@@ -1382,14 +1380,17 @@ final class WireCallCenterV3Tests: MessagingTest {
             else { return false }
             XCTAssertEqual(note.error, self.mockAVSWrapper.callError)
             XCTAssertEqual(note.conversationId, self.oneOnOneConversationID)
+
             return true
         }
 
         // when
 
         mockAVSWrapper.callError = .unknownProtocol
-
-        sut.processCallEvent(callEvent)
+        // wait for setCallReady to be done
+        uiMOC.performAndWait {
+            sut.processCallEvent(callEvent)
+        }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -1411,14 +1412,14 @@ final class WireCallCenterV3Tests: MessagingTest {
         sut.setCallReady(version: 3)
 
         // expect
-        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
+        let calledCompletionHandler = expectation(description: "processCallEvent completion handler called")
         calledCompletionHandler.isInverted = true
 
         // when
         sut.processCallEvent(callEvent)
 
         // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        wait(for: [calledCompletionHandler], timeout: 0.5)
     }
 
     func testThatActiveCallsOnlyIncludeExpectedCallStates() {
