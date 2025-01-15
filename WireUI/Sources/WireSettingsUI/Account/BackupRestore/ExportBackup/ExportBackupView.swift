@@ -28,58 +28,32 @@ struct ExportBackupView: View {
     @Environment(\.dismiss) private var dismiss
 
     @ObservedObject private(set) var viewModel: ExportBackupViewModel
+    @State private var isScrollDisabled: Bool = true
 
     let exportBackup: (String) -> Void
     let passwordValidator: any BackupPasswordValidatorProtocol
 
     var body: some View {
         NavigationStack {
-            SetBackupPasswordView(
-                passwordValidator: passwordValidator,
-                exportBackup: exportBackup
-            )
-            .background(Color.viewBackground)
-            .scrollContentBackground(.hidden)
-            .navigationTitle(
-                Text(L10n.Localizable.ExportBackup.title)
-            )
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    CloseButton(
-                        action: didTapClose,
-                        accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
-                    )
+            setBackupPasswordView
+                .background(Color.viewBackground)
+                .scrollContentBackground(.hidden)
+                .navigationTitle(Text(L10n.Localizable.ExportBackup.title))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        CloseButton(
+                            action: didTapClose,
+                            accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
+                        )
+                    }
                 }
-            }
         }
         .presentationDetents([.medium])
     }
 
-    private func didTapClose() {
-        dismiss()
-    }
-
-}
-
-private struct SetBackupPasswordView: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var password: String = ""
-    @State private var isPasswordVisible: Bool = false
-    @State private var contentFits: Bool = true
-
-    private let passwordValidator: any BackupPasswordValidatorProtocol
-    private let exportBackup: (String) -> Void
-
-    init(
-        passwordValidator: any BackupPasswordValidatorProtocol,
-        exportBackup: @escaping (String) -> Void
-    ) {
-        self.passwordValidator = passwordValidator
-        self.exportBackup = exportBackup
-    }
-
-    var body: some View {
+    @ViewBuilder
+    private var setBackupPasswordView: some View {
         GeometryReader { geometry in
             VStack {
                 ScrollView {
@@ -91,37 +65,42 @@ private struct SetBackupPasswordView: View {
                             .padding(.horizontal)
 
                         PasswordFieldView(
-                            password: $password,
-                            isPasswordVisible: $isPasswordVisible,
-                            isPasswordValid: passwordValidator.isPasswordValid(password),
+                            password: $viewModel.password,
+                            isPasswordVisible: $viewModel.isPasswordVisible,
+                            isPasswordValid: passwordValidator.isPasswordValid(viewModel.password),
                             passwordRules: Text(passwordValidator.localizedRulesDescription)
                         )
                     }
                     .background(
                         GeometryReader { contentGeometry in
                             Color.clear.onAppear {
-                                contentFits = contentGeometry.size.height <= geometry.size.height
+                                isScrollDisabled = contentGeometry.size.height <= geometry.size.height
                             }
                         }
                     )
                     .frame(maxWidth: .infinity)
                 }
-                .scrollDisabled(contentFits)
+                .scrollDisabled(isScrollDisabled)
 
                 Spacer()
 
                 Button {
                     dismiss()
-                    exportBackup(password)
+                    exportBackup(viewModel.password)
                 } label: {
                     Text(L10n.Localizable.ExportBackup.button)
                 }
-                .disabled(!passwordValidator.isPasswordValid(password))
+                .disabled(!passwordValidator.isPasswordValid(viewModel.password))
                 .wireButtonStyle(.primary)
                 .padding()
             }
         }
     }
+
+    private func didTapClose() {
+        dismiss()
+    }
+
 }
 
 // MARK: - Previews

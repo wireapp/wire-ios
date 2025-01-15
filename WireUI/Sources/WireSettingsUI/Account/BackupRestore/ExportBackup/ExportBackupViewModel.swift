@@ -20,4 +20,7 @@ import Foundation
 
 final class ExportBackupViewModel: ObservableObject {
 
+    @Published var password = ""
+    @Published var isPasswordVisible = false
+
 }

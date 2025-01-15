@@ -22,7 +22,7 @@ import WireDesign
 public struct CloseButton: View {
 
     private let action: () -> Void
-    private let accessibilityLabel: String
+    private let accessibilityLabel: String // TODO: remove
 
     public var body: some View {
         Button(action: action) {
