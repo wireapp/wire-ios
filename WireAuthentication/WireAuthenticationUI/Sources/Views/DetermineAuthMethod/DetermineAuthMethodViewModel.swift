@@ -25,14 +25,14 @@ import WireAuthenticationAPI
 public final class DetermineAuthMethodViewModel: ObservableObject {
 
     let router: Router
-    let determineAuthenticationMethod: any DetermineAuthenticationMethodUseCaseProtocol
+    let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
 
     public init(
         router: Router,
-        determineAuthenticationMethod: any DetermineAuthenticationMethodUseCaseProtocol
+        determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
     ) {
         self.router = router
-        self.determineAuthenticationMethod = determineAuthenticationMethod
+        self.determineAuthMethod = determineAuthMethod
     }
 
     func isValidEmailOrSSOCode(_ emailOrSSOCode: String) -> Bool {
@@ -41,7 +41,7 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
 
     func submitEmailOrSSOCode(_ emailOrSSOCode: String) {
         Task { [router] in
-            let method = await self.determineAuthenticationMethod.invoke(
+            let method = await self.determineAuthMethod.invoke(
                 emailOrSSOCode: emailOrSSOCode
             )
 
@@ -55,18 +55,6 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
             default:
                 break
             }
-        }
-    }
-
-}
-
-struct DetermineAuthenticationMethodUseCaseMock: DetermineAuthenticationMethodUseCaseProtocol {
-
-    func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        if emailOrSSOCode.hasSuffix("@wire.com") {
-            return .loginOrRegister(email: emailOrSSOCode)
-        } else {
-            return .login(email: emailOrSSOCode)
         }
     }
 

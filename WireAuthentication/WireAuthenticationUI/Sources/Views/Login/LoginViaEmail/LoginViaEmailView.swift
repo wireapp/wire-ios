@@ -25,7 +25,6 @@ public protocol LoginViaEmailBuilder {
 
 }
 
-
 public struct LoginViaEmailView: View {
 
     @ObservedObject
@@ -58,17 +57,7 @@ public struct LoginViaEmailView: View {
             Text("Forgot password?")
                 .underline()
 
-            if viewModel.isRegistrationAllowed {
-                VStack {
-                    Text("Don't have a Wire account?")
-                    Text("Create Account").underline()
-                }
-                .padding()
-                .border(.secondary)
-            }
-
             Spacer()
-
         }
         .navigationTitle("Enter your password to log in")
         .navigationBarTitleDisplayMode(.inline)

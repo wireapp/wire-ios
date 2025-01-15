@@ -28,18 +28,15 @@ public final class LoginViaEmailViewModel: ObservableObject {
     let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
 
     let email: String
-    let isRegistrationAllowed: Bool
 
     public init(
         router: Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
-        email: String,
-        isRegistrationAllowed: Bool
+        email: String
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.email = email
-        self.isRegistrationAllowed = isRegistrationAllowed
     }
 
     func isValidPassword(_ password: String) -> Bool {
@@ -57,17 +54,6 @@ public final class LoginViaEmailViewModel: ObservableObject {
                 print("error: \(error)")
             }
         }
-    }
-
-}
-
-struct LoginViaEmailUseCaseMock: LoginViaEmailUseCaseProtocol {
-
-    func invoke(
-        email: String,
-        password: String
-    ) async throws(LoginViaEmailUseCaseFailure) {
-
     }
 
 }

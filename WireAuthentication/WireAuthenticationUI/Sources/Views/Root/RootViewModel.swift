@@ -27,6 +27,8 @@ public final class RootViewModel: ObservableObject, Router {
     @Published
     var path = NavigationPath()
 
+    public init() {}
+
     public func popToRoot() {
         path.removeLast(path.count)
     }

@@ -21,7 +21,7 @@ import WireAuthenticationAPI
 
 // If we were using a Swift package, we should use the `package` access modifier here.
 
-public struct DetermineAuthenticationMethodUseCase: DetermineAuthenticationMethodUseCaseProtocol {
+public struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
     public init() {}
 

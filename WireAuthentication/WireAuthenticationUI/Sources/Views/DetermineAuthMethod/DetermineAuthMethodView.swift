@@ -18,6 +18,13 @@
 
 import SwiftUI
 
+public protocol DetermineAuthMethodBuilder {
+
+    @MainActor
+    var determineAuthMethodView: DetermineAuthMethodView { get }
+
+}
+
 public struct DetermineAuthMethodView: View {
 
     @ObservedObject
@@ -74,5 +81,5 @@ public struct DetermineAuthMethodView: View {
 }
 
 #Preview {
-    MockDependencies().landingView
+    MockDependencies().determineAuthMethodView
 }

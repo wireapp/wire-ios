@@ -19,24 +19,16 @@
 import SwiftUI
 import WireAuthenticationAPI
 
-
-public protocol LandingBuilder {
-
-    @MainActor
-    var landingView: DetermineAuthMethodView { get }
-
-}
-
 public struct RootView: View {
 
     @ObservedObject
     var viewModel: RootViewModel
 
-    let builder: LandingBuilder
+    let builder: DetermineAuthMethodBuilder
 
     public init(
         viewModel: RootViewModel,
-        builder: LandingBuilder
+        builder: DetermineAuthMethodBuilder
     ) {
         self.viewModel = viewModel
         self.builder = builder
@@ -44,7 +36,7 @@ public struct RootView: View {
 
     public var body: some View {
         NavigationStack(path: $viewModel.path) {
-            builder.landingView
+            builder.determineAuthMethodView
         }
     }
 

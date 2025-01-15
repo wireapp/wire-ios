@@ -35,7 +35,7 @@ final class MockDependencies {
 
 }
 
-extension MockDependencies: DetermineAuthenticationMethodUseCaseProtocol {
+extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
 
     func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
         .login(email: emailOrSSOCode)
@@ -62,18 +62,18 @@ extension MockDependencies: SubmitTwoFactorAuthenticationCodeUseCaseProtocol {
 
 }
 
-extension MockDependencies: LandingBuilder {
+extension MockDependencies: DetermineAuthMethodBuilder {
 
-    private var landingViewModel: DetermineAuthMethodViewModel {
+    private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
-            determineAuthenticationMethod: self
+            determineAuthMethod: self
         )
     }
 
-    var landingView: DetermineAuthMethodView {
+    var determineAuthMethodView: DetermineAuthMethodView {
         DetermineAuthMethodView(
-            viewModel: landingViewModel,
+            viewModel: determineAuthMethodViewModel,
             builder: self
         )
     }
@@ -86,8 +86,7 @@ extension MockDependencies: LoginViaEmailBuilder {
         LoginViaEmailViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
-            email: email,
-            isRegistrationAllowed: false
+            email: email
         )
     }
 
