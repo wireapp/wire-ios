@@ -60,7 +60,3 @@ final class ExportBackupViewModel: ObservableObject {
         }
     }
 }
-
-public protocol ExportBackupUseCaseProtocol: Sendable { // TODO: move away from here
-    func invoke(url: URL, password: String) async
-}

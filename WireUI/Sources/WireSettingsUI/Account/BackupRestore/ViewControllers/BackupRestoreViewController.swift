@@ -22,13 +22,16 @@ public final class BackupRestoreViewController: UIViewController {
 
     private let viewModel: BackupRestoreViewModel
     private let backupPasswordValidator: any BackupPasswordValidatorProtocol
+    private let exportBackupUseCase: any ExportBackupUseCaseProtocol
 
     public init(
         viewModel: BackupRestoreViewModel,
-        backupPasswordValidator: any BackupPasswordValidatorProtocol
+        backupPasswordValidator: any BackupPasswordValidatorProtocol,
+        exportBackupUseCase: any ExportBackupUseCaseProtocol
     ) {
         self.viewModel = viewModel
         self.backupPasswordValidator = backupPasswordValidator
+        self.exportBackupUseCase = exportBackupUseCase
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -44,6 +47,7 @@ public final class BackupRestoreViewController: UIViewController {
 
     private func setupView() {
         let backupPasswordValidator = backupPasswordValidator
+        let exportBackupUseCase = exportBackupUseCase
         let backupRestoreView = BackupRestoreView(
             viewModel: viewModel,
             exportBackupSheetContent: {
@@ -51,9 +55,10 @@ public final class BackupRestoreViewController: UIViewController {
                     viewModel: .init(
                         passwordValidator: backupPasswordValidator,
                         alertPresenter: DummyAlertPresenter(), // TODO: fix
-                        exportBackupUseCase: DummyUseCase { password in // TODO: fix
-                            self.viewModel.backupActiveAccount(password: password)
-                        }
+                        exportBackupUseCase: exportBackupUseCase
+//                        DummyUseCase { password in // TODO: fix
+//                            self.viewModel.backupActiveAccount(password: password)
+//                        }
                     )
                 )
             },

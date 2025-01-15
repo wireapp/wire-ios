@@ -371,7 +371,8 @@ extension SettingsCellDescriptorFactory {
 
     private var backupRestoreBuilder: BackupRestoreBuilder {
         .init(
-            backupPasswordValidator: BackupPasswordValidator()
+            backupPasswordValidator: BackupPasswordValidator(),
+            exportBackupUseCase: BackupSource()
         )
     }
 
@@ -387,24 +388,24 @@ extension SettingsCellDescriptorFactory {
                     return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-//                    let backupRestoreController = backupRestoreBuilder.build()
-                    let viewModel = BackupRestoreViewModel( // TODO: delete, use `backupRestoreBuilder`
-                        backupSource: BackupSource(),
-                        restoreSource: RestoreSource(),
-                        backupResultHandler: BackupResultHandler(
-                            onSuccess: presentShareSheet,
-                            onFailure: presentExportBackupErrorAlert
-                        ),
-                        restoreBackupResultHandler: RestoreBackupResultHandler(
-                            onSuccess: presentOnSuccessAlert,
-                            onConfirmation: presentConfirmationAlert,
-                            onFailure: presentRestoreBackupErrorAlert
-                        )
-                    )
-                    let backupRestoreController = BackupRestoreViewController(
-                        viewModel: viewModel,
-                        backupPasswordValidator: BackupPasswordValidator()
-                    )
+                    let backupRestoreController = backupRestoreBuilder.build()
+//                    let viewModel = BackupRestoreViewModel( // TODO: delete, use `backupRestoreBuilder`
+//                        backupSource: BackupSource(),
+//                        restoreSource: RestoreSource(),
+//                        backupResultHandler: BackupResultHandler(
+//                            onSuccess: presentShareSheet,
+//                            onFailure: presentExportBackupErrorAlert
+//                        ),
+//                        restoreBackupResultHandler: RestoreBackupResultHandler(
+//                            onSuccess: presentOnSuccessAlert,
+//                            onConfirmation: presentConfirmationAlert,
+//                            onFailure: presentRestoreBackupErrorAlert
+//                        )
+//                    )
+//                    let backupRestoreController = BackupRestoreViewController(
+//                        viewModel: viewModel,
+//                        backupPasswordValidator: BackupPasswordValidator()
+//                    )
                     backupRestoreController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
                     return backupRestoreController
                 } else {

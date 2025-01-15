@@ -28,7 +28,19 @@ public final class BackupRestoreViewModel: ObservableObject {
     public init(
         //
     ) {
-        fatalError()
+        // TODO: fix
+        backupSource = DummyBackupSource()
+        restoreSource = DummyRestoreSource()
+        backupResultHandler = .init(onSuccess: { _, _ in fatalError() }, onFailure: {})
+        restoreBackupResultHandler = .init(onSuccess: {}, onConfirmation: { _ in }, onFailure: {})
+
+        struct DummyBackupSource: BackupSourceProtocol {
+            func backupActiveAccount(password: String) throws -> URL { fatalError() }
+            func clearPreviousBackups() { fatalError() }
+        }
+        struct DummyRestoreSource: RestoreSourceProtocol {
+            func restoreFromBackup(at: URL, password: String, completion: @escaping (Result<Void, any Error>) -> Void) { fatalError() }
+        }
     }
 
     public init(
