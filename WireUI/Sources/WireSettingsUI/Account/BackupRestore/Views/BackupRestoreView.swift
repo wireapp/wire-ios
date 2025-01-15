@@ -64,7 +64,7 @@ struct BackupRestoreView<ExportBackupSheet: View>: View {
                 }
                 .sheet(isPresented: $isRestoreBackupSheetPresented) {
                     NavigationStack {
-                        ImportBackupView { password in // TODO: importBackupSheetContent
+                        ImportBackupView(viewModel: .init()) { password in // TODO: importBackupSheetContent
                             if let fileURL = selectedFileURL {
                                 viewModel.restoreFromBackup(
                                     at: fileURL,

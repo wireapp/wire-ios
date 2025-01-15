@@ -25,12 +25,12 @@ struct ImportBackupView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    // TODO: move to view model?
-    @State private var password: String = ""
-    @State private var isPasswordVisible: Bool = false
-    @State private var contentFits = true
+    @ObservedObject private(set) var viewModel: ImportBackupViewModel
 
+    // TODO: move to view model?
     let importBackup: (String) -> Void
+
+    @State private var contentFits = true
 
     var body: some View {
         passwordBackupView
@@ -82,7 +82,7 @@ struct ImportBackupView: View {
 
                 Button(
                     action: {
-                        importBackup(password)
+                        importBackup(viewModel.password)
                         dismiss()
                     },
                     label: {
@@ -100,29 +100,29 @@ struct ImportBackupView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(L10n.Localizable.RestoreFromBackup.EnterPassword.title)
                 .font(.subheadline)
-                .foregroundColor(password.isEmpty ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.primary.color)
+                .foregroundColor(viewModel.password.isEmpty ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.primary.color)
 
             ZStack {
-                if isPasswordVisible {
+                if viewModel.isPasswordVisible {
                     TextField(
                         L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
-                        text: $password
+                        text: $viewModel.password
                     )
                     .wireTextStyle(.body1)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 } else {
                     SecureField(
                         L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
-                        text: $password
+                        text: $viewModel.password
                     )
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 HStack {
                     Spacer()
                     Button(action: {
-                        isPasswordVisible.toggle()
+                        viewModel.isPasswordVisible.toggle()
                     }, label: {
-                        Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
+                        Image(systemName: viewModel.isPasswordVisible ? "eye" : "eye.slash")
                             .foregroundColor(.gray)
                     })
                     .padding(.trailing, 10)
@@ -131,8 +131,8 @@ struct ImportBackupView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 5)
                     .stroke(
-                        password.isEmpty ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.primary.color,
-                        lineWidth: password.isEmpty ? 0 : 1
+                        viewModel.password.isEmpty ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.primary.color,
+                        lineWidth: viewModel.password.isEmpty ? 0 : 1
                     )
             )
 
