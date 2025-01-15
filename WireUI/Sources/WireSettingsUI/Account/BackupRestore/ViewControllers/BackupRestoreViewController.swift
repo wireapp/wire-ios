@@ -48,10 +48,13 @@ public final class BackupRestoreViewController: UIViewController {
             viewModel: viewModel,
             exportBackupSheetContent: {
                 ExportBackupView(
-                    viewModel: .init(passwordValidator: backupPasswordValidator),
-                    exportBackup: { password in
-                        self.viewModel.backupActiveAccount(password: password)
-                    }
+                    viewModel: .init(
+                        passwordValidator: backupPasswordValidator,
+                        alertPresenter: DummyAlertPresenter(), // TODO: fix
+                        exportBackupUseCase: DummyUseCase { password in // TODO: fix
+                            self.viewModel.backupActiveAccount(password: password)
+                        }
+                    )
                 )
             },
             importBackupSheetContent: {
@@ -80,5 +83,22 @@ public final class BackupRestoreViewController: UIViewController {
             view.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor)
         ])
         hostingController.didMove(toParent: self)
+    }
+}
+
+// TODO: remove
+
+private struct DummyAlertPresenter: BackupRestoreAlertPresenterProtocol {
+    func todo() async -> Bool {
+        fatalError("not implemented")
+    }
+}
+
+private struct DummyUseCase: ExportBackupUseCaseProtocol {
+
+    let action: (String) -> Void
+
+    func invoke(url: URL, password: String) async {
+        action(password)
     }
 }

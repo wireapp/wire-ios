@@ -30,8 +30,6 @@ struct ExportBackupView: View {
     @ObservedObject private(set) var viewModel: ExportBackupViewModel
     @State private var isScrollDisabled: Bool = true
 
-    let exportBackup: (String) -> Void
-
     var body: some View {
         NavigationStack {
             setBackupPasswordView
@@ -49,7 +47,8 @@ struct ExportBackupView: View {
         .presentationDetents([.medium])
     }
 
-    @ViewBuilder private var setBackupPasswordView: some View {
+    @ViewBuilder
+    private var setBackupPasswordView: some View {
         GeometryReader { geometry in
             VStack {
                 ScrollView {
@@ -82,7 +81,7 @@ struct ExportBackupView: View {
 
                 Button {
                     dismiss()
-                    exportBackup(viewModel.password)
+                    viewModel.triggerExport()
                 } label: {
                     Text(L10n.Localizable.ExportBackup.button)
                 }

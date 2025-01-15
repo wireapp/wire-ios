@@ -30,12 +30,37 @@ final class ExportBackupViewModel: ObservableObject {
     var localizedPasswordRules: String { passwordValidator.localizedRulesDescription }
 
     private let passwordValidator: any BackupPasswordValidatorProtocol
+    private let alertPresenter: any BackupRestoreAlertPresenterProtocol
+    private let exportBackupUseCase: any ExportBackupUseCaseProtocol
 
-    init(passwordValidator: any BackupPasswordValidatorProtocol) {
+    init(
+        passwordValidator: any BackupPasswordValidatorProtocol,
+        alertPresenter: any BackupRestoreAlertPresenterProtocol,
+        exportBackupUseCase: any ExportBackupUseCaseProtocol
+    ) {
         self.passwordValidator = passwordValidator
+        self.alertPresenter = alertPresenter
+        self.exportBackupUseCase = exportBackupUseCase
     }
 
     private func validatePassword() {
         isPasswordValid = passwordValidator.isPasswordValid(password)
     }
+
+    func triggerExport() {
+        let password = password
+        let exportBackupUseCase = exportBackupUseCase
+        Task {
+            do {
+                let url: URL! = .init(string: "https://example.org")
+                try await exportBackupUseCase.invoke(url: url, password: password)
+            } catch {
+                fatalError("TODO: use alertPresenter")
+            }
+        }
+    }
+}
+
+public protocol ExportBackupUseCaseProtocol: Sendable { // TODO: move away from here
+    func invoke(url: URL, password: String) async
 }

@@ -38,12 +38,27 @@ private struct ExportBackup_Preview: View {
         .sheet(isPresented: $isPresented) {
             NavigationStack {
                 ExportBackupView(
-                    viewModel: .init(passwordValidator: MockBackupPasswordValidator()),
-                    exportBackup: { _ in }
+                    viewModel: .init(
+                        passwordValidator: MockBackupPasswordValidator(),
+                        alertPresenter: PreviewAlertPresenter(),
+                        exportBackupUseCase: PreviewUseCase()
+                    )
                 )
             }
             .presentationDragIndicator(.visible)
             .presentationDetents([.medium])
         }
+    }
+}
+
+private struct PreviewAlertPresenter: BackupRestoreAlertPresenterProtocol {
+    func todo() async -> Bool {
+        fatalError("not implemented")
+    }
+}
+
+private struct PreviewUseCase: ExportBackupUseCaseProtocol {
+    func invoke(url: URL, password: String) async {
+        fatalError("not implemented")
     }
 }
