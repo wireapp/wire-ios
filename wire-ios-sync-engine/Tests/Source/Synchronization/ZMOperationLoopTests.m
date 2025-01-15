@@ -67,7 +67,6 @@
 {
     WaitForAllGroupsToBeEmpty(0.5);
     self.pushChannelObserverToken = nil;
-    self.callEventStatus = nil;
     self.pushNotificationStatus = nil;
     self.applicationStatusDirectory = nil;
     self.mockPushChannel = nil;
