@@ -39,8 +39,7 @@ private struct ExportBackup_Preview: View {
             NavigationStack {
                 ExportBackupView(
                     viewModel: .init(passwordValidator: MockBackupPasswordValidator()),
-                    exportBackup: { _ in },
-                    passwordValidator: MockBackupPasswordValidator()
+                    exportBackup: { _ in }
                 )
             }
             .presentationDragIndicator(.visible)

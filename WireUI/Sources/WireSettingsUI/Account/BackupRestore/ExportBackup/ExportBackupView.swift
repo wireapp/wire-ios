@@ -23,15 +23,14 @@ import WireReusableUIComponents
 
 /// A view that allows to export the backup.
 
-struct ExportBackupView<BackupPasswordValidator: BackupPasswordValidatorProtocol>: View {
+struct ExportBackupView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    @ObservedObject private(set) var viewModel: ExportBackupViewModel<BackupPasswordValidator>
+    @ObservedObject private(set) var viewModel: ExportBackupViewModel
     @State private var isScrollDisabled: Bool = true
 
     let exportBackup: (String) -> Void
-    let passwordValidator: any BackupPasswordValidatorProtocol
 
     var body: some View {
         NavigationStack {
@@ -67,8 +66,8 @@ struct ExportBackupView<BackupPasswordValidator: BackupPasswordValidatorProtocol
                         PasswordFieldView(
                             password: $viewModel.password,
                             isPasswordVisible: $viewModel.isPasswordVisible,
-                            isPasswordValid: passwordValidator.isPasswordValid(viewModel.password),
-                            passwordRules: Text(passwordValidator.localizedRulesDescription)
+                            isPasswordValid: viewModel.isPasswordValid,
+                            passwordRules: Text(viewModel.localizedPasswordRules)
                         )
                     }
                     .background(
@@ -90,7 +89,7 @@ struct ExportBackupView<BackupPasswordValidator: BackupPasswordValidatorProtocol
                 } label: {
                     Text(L10n.Localizable.ExportBackup.button)
                 }
-                .disabled(!passwordValidator.isPasswordValid(viewModel.password))
+                .disabled(!viewModel.isPasswordValid)
                 .wireButtonStyle(.primary)
                 .padding()
             }
