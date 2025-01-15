@@ -42,7 +42,7 @@ public final class BackupRestoreViewController: UIViewController {
             viewModel: viewModel,
             exportBackupSheetContent: {
                 ExportBackupView(
-                    viewModel: .init(), // TODO: fix
+                    viewModel: .init(passwordValidator: viewModel.passwordValidator),
                     exportBackup: { password in
                         self.viewModel.backupActiveAccount(password: password)
                     },

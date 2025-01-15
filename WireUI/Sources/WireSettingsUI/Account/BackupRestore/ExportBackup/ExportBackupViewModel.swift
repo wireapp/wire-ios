@@ -18,9 +18,22 @@
 
 import Foundation
 
-final class ExportBackupViewModel: ObservableObject {
+final class ExportBackupViewModel<BackupPasswordValidator: BackupPasswordValidatorProtocol>: ObservableObject {
 
-    @Published var password = ""
+    @Published var password = "" {
+        didSet { validatePassword() }
+    }
+
     @Published var isPasswordVisible = false
+    @Published private(set) var isPasswordValid = false
 
+    private let passwordValidator: BackupPasswordValidator
+
+    init(passwordValidator: BackupPasswordValidator) {
+        self.passwordValidator = passwordValidator
+    }
+
+    private func validatePassword() {
+        fatalError("TODO")
+    }
 }
