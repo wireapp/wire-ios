@@ -33,7 +33,7 @@ struct ImportBackupViewPreview: View {
         .sheet(isPresented: $isPresented) {
             NavigationStack {
                 ImportBackupView(
-                    viewModel: .init(),
+                    viewModel: .init(importBackupAction: {}),
                     importBackup: { _ in }
                 )
             }

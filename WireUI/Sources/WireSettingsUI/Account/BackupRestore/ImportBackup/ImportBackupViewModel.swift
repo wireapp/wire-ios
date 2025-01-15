@@ -23,4 +23,10 @@ final class ImportBackupViewModel: ObservableObject {
     @Published var password = ""
     @Published var isPasswordVisible = false
 
+    private let importBackupAction: () -> Void // TODO: use case protocol
+    // TODO: file picker
+
+    init(importBackupAction: @escaping () -> Void) {
+        self.importBackupAction = importBackupAction
+    }
 }

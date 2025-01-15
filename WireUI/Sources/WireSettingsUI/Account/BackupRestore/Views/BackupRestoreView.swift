@@ -21,14 +21,16 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
-struct BackupRestoreView<ExportBackupSheet: View>: View {
+struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View {
 
     @ObservedObject private(set) var viewModel: BackupRestoreViewModel
+
     @ViewBuilder private(set) var exportBackupSheetContent: () -> ExportBackupSheet
+    @ViewBuilder private(set) var importBackupSheetContent: () -> ImportBackupSheet
 
     @State private var isExportBackupSheetPresented: Bool = false
+    @State private var isImportBackupSheetPresented: Bool = false
     @State private var isBackupPickerPresented: Bool = false
-    @State private var isRestoreBackupSheetPresented: Bool = false
     @State private var selectedFileURL: URL?
 
     var body: some View {
@@ -58,24 +60,11 @@ struct BackupRestoreView<ExportBackupSheet: View>: View {
                     BackupPicker { url in
                         if let fileURL = url {
                             selectedFileURL = fileURL
-                            isRestoreBackupSheetPresented = true
+                            isImportBackupSheetPresented = true
                         }
                     }
                 }
-                .sheet(isPresented: $isRestoreBackupSheetPresented) {
-                    NavigationStack {
-                        ImportBackupView(viewModel: .init()) { password in // TODO: importBackupSheetContent
-                            if let fileURL = selectedFileURL {
-                                viewModel.restoreFromBackup(
-                                    at: fileURL,
-                                    password: password,
-                                    completion: { _ in }
-                                )
-                            }
-                        }
-                    }
-                    .presentationDetents([.medium])
-                }
+                .sheet(isPresented: $isImportBackupSheetPresented, content: importBackupSheetContent)
             }
         }
         .listStyle(.grouped)
