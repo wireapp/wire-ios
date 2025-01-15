@@ -21,16 +21,16 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
-struct RestoreBackupView: View {
+struct RestoreBackupView: View { // TODO: RestoreBackupView is too similar to BackupRestoreView, name it ImportBackupView
 
     @Environment(\.dismiss) private var dismiss
 
     // TODO: move to view model?
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
-    @State private var contentFits: Bool = true
+    @State private var contentFits = true
 
-    private let importBackup: (String) -> Void
+    let importBackup: (String) -> Void
 
     var body: some View {
         passwordBackupView
@@ -52,7 +52,8 @@ struct RestoreBackupView: View {
         dismiss()
     }
 
-    @ViewBuilder private var passwordBackupView: some View {
+    @ViewBuilder
+    private var passwordBackupView: some View {
         GeometryReader { geometry in
             VStack {
                 ScrollView {
