@@ -79,7 +79,7 @@ extension SessionManager {
         dispatchGroup: ZMSDispatchGroup,
         handle: String
     ) throws -> URL {
-        try workerQueue.sync {
+        try workerQueue.sync { // TODO: async
             switch result {
             case let .success(info):
                 do {

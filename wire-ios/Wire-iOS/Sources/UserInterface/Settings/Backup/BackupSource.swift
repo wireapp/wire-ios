@@ -40,6 +40,7 @@ struct BackupSource: BackupSourceProtocol, ExportBackupUseCaseProtocol {
         SessionManager.shared?.clearPreviousBackups()
     }
 
+    @MainActor
     func invoke(url: URL, password: String) async throws {
         let url = try SessionManager.shared?.backupActiveAccount(password: password)
     }
