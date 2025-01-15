@@ -41,10 +41,8 @@ struct ExportBackupView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        CloseButton(
-                            action: didTapClose,
-                            accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
-                        )
+                        CloseButton(action: didTapClose)
+                            .accessibilityLabel(Text(L10n.Accessibility.SetBackupPassword.Close.label))
                     }
                 }
         }

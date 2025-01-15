@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+// sourcery: AutoMockable
+public protocol PullSelfUserClientsProtocol {
 
-public extension UIImage {
-    static let close = UIImage(resource: .close)
+    func pullSelfClients() async throws
 }

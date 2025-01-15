@@ -41,10 +41,8 @@ struct RestoreBackupView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    CloseButton(
-                        action: didTapClose,
-                        accessibilityLabel: L10n.Accessibility.RestoreBackup.Close.label
-                    )
+                    CloseButton(action: didTapClose)
+                        .accessibilityLabel(Text(L10n.Accessibility.RestoreBackup.Close.label))
                 }
             }
     }

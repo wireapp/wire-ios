@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 
 struct E2EIdentityCertificateDetailsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -44,18 +45,12 @@ struct E2EIdentityCertificateDetailsView: View {
         .overlay {
             HStack {
                 Spacer()
-                Button(
-                    action: {
-                        dismiss()
-                        didDismiss?()
-                    },
-                    label: {
-                        Image
-                            .close
-                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-                    }
-                )
+                CloseButton {
+                    dismiss()
+                    didDismiss?()
+                }
                 .accessibilityIdentifier("CloseButton")
+                .accessibilityLabel(Text(L10n.Localizable.General.close))
                 .padding(.all, ViewConstants.Padding.standard)
             }
         }

@@ -54,6 +54,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
+        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?
     ) {
 
@@ -71,6 +72,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache
         )
 
@@ -110,6 +112,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
+        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
@@ -382,7 +385,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 resolveOneOnOneConversations: makeResolveOneOnOneConversationsUseCase(
                     context: syncMOC,
-                    resolver: oneOnOneResolver
+                    resolver: oneOnOneResolver,
+                    pullSelfUserClientsFactory: pullSelfUserClientsFactory
                 )
             ),
             ResetSessionRequestStrategy(
@@ -417,12 +421,15 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
     private static func makeResolveOneOnOneConversationsUseCase(
         context: NSManagedObjectContext,
-        resolver: any OneOnOneResolverInterface
+        resolver: any OneOnOneResolverInterface,
+        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory
     ) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+
         ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: SupportedProtocolsService(context: context),
-            resolver: resolver
+            resolver: resolver,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory
         )
     }
 }
