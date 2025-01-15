@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,33 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-final class InitialSyncViewModel: ObservableObject {
-
-    let router: Router
-    let performInitialSync: any PerformInitialSyncUseCaseProtocol
-
-    init(router: Router) {
-        self.router = router
-        self.performInitialSync = PerformInitialSyncUseCaseMock()
-    }
-
-    func startInitialSync() {
-        Task {
-            try await self.performInitialSync.invoke()
-        }
-    }
-
-}
-
-struct PerformInitialSyncUseCaseMock: PerformInitialSyncUseCaseProtocol {
-
-    func invoke() async throws {
-
-    }
+public final class SetAccountUsernameViewModel: ObservableObject {
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,22 +19,10 @@
 import Combine
 import Foundation
 import SwiftUI
+import WireAuthenticationAPI
 
-public final class Router: ObservableObject {
+@MainActor
+public final class LoginOrRegisterViaEmailViewModel: ObservableObject {
 
-    public init() {
-        
-    }
-
-    @Published
-    var path = NavigationPath()
-
-    func navigate<Destination: Hashable>(to destination: Destination) {
-        path.append(destination)
-    }
-
-    func popToRoot() {
-        path.removeLast(path.count)
-    }
 
 }

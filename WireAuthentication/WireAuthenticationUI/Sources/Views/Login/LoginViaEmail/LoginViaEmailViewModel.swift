@@ -22,7 +22,7 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class LoginViewModel: ObservableObject {
+public final class LoginViaEmailViewModel: ObservableObject {
 
     let router: Router
     let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
@@ -53,8 +53,6 @@ public final class LoginViewModel: ObservableObject {
                     email: email,
                     password: password
                 )
-
-                router.navigate(to: LoginView.Destination.twoFactorAuthentication)
             } catch {
                 print("error: \(error)")
             }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,40 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
+import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 
+@MainActor
+public final class RootViewModel: ObservableObject, Router {
 
-public protocol LandingBuilder {
+    @Published
+    var path = NavigationPath()
 
-    @MainActor
-    var landingView: DetermineAuthMethodView { get }
-
-}
-
-public struct RootView: View {
-
-    @ObservedObject
-    var viewModel: RootViewModel
-
-    let builder: LandingBuilder
-
-    public init(
-        viewModel: RootViewModel,
-        builder: LandingBuilder
-    ) {
-        self.viewModel = viewModel
-        self.builder = builder
+    public func popToRoot() {
+        path.removeLast(path.count)
     }
 
-    public var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            builder.landingView
-        }
+    public func navigate<Destination: Hashable>(to destination: Destination) {
+        path.append(destination)
     }
 
-}
-
-#Preview {
-    MockDependencies().rootView
 }

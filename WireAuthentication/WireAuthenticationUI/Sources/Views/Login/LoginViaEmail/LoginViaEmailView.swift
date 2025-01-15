@@ -21,27 +21,23 @@ import SwiftUI
 public protocol LoginViaEmailBuilder {
 
     @MainActor
-    func loginViaEmailView(email: String) -> LoginView
+    func loginViaEmailView(email: String) -> LoginViaEmailView
 
 }
 
 
-public struct LoginView: View {
+public struct LoginViaEmailView: View {
 
     @ObservedObject
-    var viewModel: LoginViewModel
-
-    let builder: VerifyEmailBuilder
+    var viewModel: LoginViaEmailViewModel
 
     @State
     private var password = ""
 
     public init(
-        viewModel: LoginViewModel,
-        builder: VerifyEmailBuilder
+        viewModel: LoginViaEmailViewModel
     ) {
         self.viewModel = viewModel
-        self.builder = builder
     }
 
     public var body: some View {
@@ -50,7 +46,6 @@ public struct LoginView: View {
                 .textFieldStyle(.roundedBorder)
                 .foregroundStyle(.secondary)
                 .disabled(true)
-
 
             SecureField("Password", text: $password)
                 .textFieldStyle(.roundedBorder)
@@ -75,19 +70,9 @@ public struct LoginView: View {
             Spacer()
 
         }
-        .navigationDestination(for: Destination.self) {
-            switch $0 {
-            case .twoFactorAuthentication:
-                builder.verifyEmailView
-            }
-        }
         .navigationTitle("Enter your password to log in")
         .navigationBarTitleDisplayMode(.inline)
         .padding()
-    }
-
-    enum Destination: Hashable {
-        case twoFactorAuthentication
     }
 
 }

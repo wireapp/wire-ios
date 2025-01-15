@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,39 +17,18 @@
 //
 
 import SwiftUI
-import WireAuthenticationAPI
 
-
-public protocol LandingBuilder {
-
-    @MainActor
-    var landingView: DetermineAuthMethodView { get }
-
-}
-
-public struct RootView: View {
+struct LoginViaSSOView: View {
 
     @ObservedObject
-    var viewModel: RootViewModel
+    var viewModel: LoginViaSSOViewModel
 
-    let builder: LandingBuilder
-
-    public init(
-        viewModel: RootViewModel,
-        builder: LandingBuilder
-    ) {
-        self.viewModel = viewModel
-        self.builder = builder
-    }
-
-    public var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            builder.landingView
-        }
+    var body: some View {
+        Color.red
     }
 
 }
 
 #Preview {
-    MockDependencies().rootView
+    LoginViaSSOView(viewModel: LoginViaSSOViewModel())
 }

@@ -22,7 +22,16 @@ import WireAuthenticationAPI
 @MainActor
 final class MockDependencies {
 
-    let router = Router()
+    private var rootViewModel: RootViewModel {
+        RootViewModel()
+    }
+
+    var rootView: RootView {
+        RootView(
+            viewModel: rootViewModel,
+            builder: self
+        )
+    }
 
 }
 
@@ -55,15 +64,15 @@ extension MockDependencies: SubmitTwoFactorAuthenticationCodeUseCaseProtocol {
 
 extension MockDependencies: LandingBuilder {
 
-    private var landingViewModel: LandingViewModel {
-        LandingViewModel(
-            router: router,
+    private var landingViewModel: DetermineAuthMethodViewModel {
+        DetermineAuthMethodViewModel(
+            router: rootViewModel,
             determineAuthenticationMethod: self
         )
     }
 
-    var landingView: LandingView {
-        LandingView(
+    var landingView: DetermineAuthMethodView {
+        DetermineAuthMethodView(
             viewModel: landingViewModel,
             builder: self
         )
@@ -73,35 +82,19 @@ extension MockDependencies: LandingBuilder {
 
 extension MockDependencies: LoginViaEmailBuilder {
 
-    private func loginViewModel(email: String) -> LoginViewModel {
-        LoginViewModel(
-            router: router,
+    private func loginViewModel(email: String) -> LoginViaEmailViewModel {
+        LoginViaEmailViewModel(
+            router: rootViewModel,
             loginViaEmailUseCase: self,
             email: email,
             isRegistrationAllowed: false
         )
     }
 
-    func loginViaEmailView(email: String) -> LoginView {
-        LoginView(
-            viewModel: loginViewModel(email: email),
-            builder: self
+    func loginViaEmailView(email: String) -> LoginViaEmailView {
+        LoginViaEmailView(
+            viewModel: loginViewModel(email: email)
         )
-    }
-
-}
-
-extension MockDependencies: VerifyEmailBuilder {
-
-    private var verifyEmailViewModel: TwoFactorAuthenticationViewModel {
-        TwoFactorAuthenticationViewModel(
-            router: router,
-            submitCode: self
-        )
-    }
-
-    var verifyEmailView: TwoFactorAuthenticationView {
-        TwoFactorAuthenticationView(viewModel: verifyEmailViewModel)
     }
 
 }

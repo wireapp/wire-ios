@@ -125,7 +125,7 @@ class LandingComponent: Component<LandingComponentDependency>, LandingBuilder {
     }
 
     @MainActor
-    var viewModel: LandingViewModel {
+    var viewModel: DetermineAuthMethodViewModel {
         .init(
             router: dependency.router,
             determineAuthenticationMethod: determineAuthenticationMethodUseCase
@@ -133,8 +133,8 @@ class LandingComponent: Component<LandingComponentDependency>, LandingBuilder {
     }
 
     @MainActor
-    var landingView: LandingView {
-        LandingView(
+    var landingView: DetermineAuthMethodView {
+        DetermineAuthMethodView(
             viewModel: viewModel,
             builder: loginViaEmailComponent
         )
@@ -173,8 +173,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, Login
     }
 
     @MainActor
-    func loginViewModel(email: String) -> LoginViewModel {
-        LoginViewModel(
+    func loginViewModel(email: String) -> LoginViaEmailViewModel {
+        LoginViaEmailViewModel(
             router: dependency.router,
             loginViaEmailUseCase: loginViaEmailUseCase,
             email: email,
@@ -183,8 +183,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, Login
     }
 
     @MainActor
-    func loginViaEmailView(email: String) -> LoginView {
-        LoginView(
+    func loginViaEmailView(email: String) -> LoginViaEmailView {
+        LoginViaEmailView(
             viewModel: loginViewModel(email: email),
             builder: verifyEmailComponent
         )

@@ -19,38 +19,12 @@
 import Combine
 import Foundation
 import SwiftUI
-import WireAuthenticationAPI
 
 @MainActor
-public final class TwoFactorAuthenticationViewModel: ObservableObject {
+public protocol Router {
 
-    let router: Router
-    let submitCode: any SubmitTwoFactorAuthenticationCodeUseCaseProtocol
+    func popToRoot()
 
-    public init(
-        router: Router,
-        submitCode: any SubmitTwoFactorAuthenticationCodeUseCaseProtocol
-    ) {
-        self.router = router
-        self.submitCode = submitCode
-    }
-
-    func isCodeValid(_ code: String) -> Bool {
-        !code.isEmpty
-    }
-
-    func submitCode(_ code: String) {
-        Task {
-            try await self.submitCode.invoke(code: code)
-        }
-    }
-
-}
-
-struct SubmitTwoFactorAuthenticationCodeUseCaseMock: SubmitTwoFactorAuthenticationCodeUseCaseProtocol {
-
-    func invoke(code: String) async throws {
-
-    }
+    func navigate<Destination: Hashable>(to destination: Destination)
 
 }

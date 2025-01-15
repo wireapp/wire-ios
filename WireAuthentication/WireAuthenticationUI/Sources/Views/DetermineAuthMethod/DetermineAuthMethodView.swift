@@ -18,10 +18,10 @@
 
 import SwiftUI
 
-public struct LandingView: View {
+public struct DetermineAuthMethodView: View {
 
     @ObservedObject
-    var viewModel: LandingViewModel
+    var viewModel: DetermineAuthMethodViewModel
 
     let builder: LoginViaEmailBuilder
 
@@ -29,7 +29,7 @@ public struct LandingView: View {
     private var emailOrSSOCode = ""
 
     public init(
-        viewModel: LandingViewModel,
+        viewModel: DetermineAuthMethodViewModel,
         builder: LoginViaEmailBuilder
     ) {
         self.viewModel = viewModel
