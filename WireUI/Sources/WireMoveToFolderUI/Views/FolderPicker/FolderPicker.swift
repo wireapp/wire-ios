@@ -50,14 +50,10 @@ public struct FolderPicker: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    CloseButton(
-                        action: didTapClose,
-                        accessibilityLabel: String(
-                            localized: "folderPicker.close.label",
-                            table: "Accessibility",
-                            bundle: .module
+                    CloseButton(action: didTapClose)
+                        .accessibilityLabel(
+                            Text("folderPicker.close.label", tableName: "Accessibility", bundle: .module)
                         )
-                    )
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
