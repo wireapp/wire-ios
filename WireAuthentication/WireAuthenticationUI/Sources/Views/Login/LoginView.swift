@@ -18,15 +18,33 @@
 
 import SwiftUI
 
-struct LoginView: View {
+public protocol LoginViaEmailBuilder {
+
+    @MainActor
+    func loginViaEmailView(email: String) -> LoginView
+
+}
+
+
+public struct LoginView: View {
 
     @ObservedObject
     var viewModel: LoginViewModel
 
+    let builder: VerifyEmailBuilder
+
     @State
     private var password = ""
 
-    var body: some View {
+    public init(
+        viewModel: LoginViewModel,
+        builder: VerifyEmailBuilder
+    ) {
+        self.viewModel = viewModel
+        self.builder = builder
+    }
+
+    public var body: some View {
         VStack(spacing: 20) {
             TextField("", text: .constant(viewModel.email))
                 .textFieldStyle(.roundedBorder)
@@ -57,21 +75,23 @@ struct LoginView: View {
             Spacer()
 
         }
+        .navigationDestination(for: Destination.self) {
+            switch $0 {
+            case .twoFactorAuthentication:
+                builder.verifyEmailView
+            }
+        }
         .navigationTitle("Enter your password to log in")
         .navigationBarTitleDisplayMode(.inline)
         .padding()
     }
+
+    enum Destination: Hashable {
+        case twoFactorAuthentication
+    }
+
 }
 
 #Preview {
-    NavigationView {
-        LoginView(
-            viewModel: LoginViewModel(
-                router: Router(),
-                loginViewEmailProvider: { LoginViaEmailUseCaseMock() },
-                email: "foo@bar.com",
-                isRegistrationAllowed: true
-            )
-        )
-    }
+    MockDependencies().loginViaEmailView(email: "foo@bar.com")
 }

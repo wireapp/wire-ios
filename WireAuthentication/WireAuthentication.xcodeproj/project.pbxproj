@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE7442732D3132570025271D /* NeedleFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EE7442722D3132570025271D /* NeedleFoundation */; };
 		EEC738EA2D022EDB003C0FC9 /* WireAuthenticationUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738E02D022EDB003C0FC9 /* WireAuthenticationUI.framework */; };
 		EEC739072D022EF6003C0FC9 /* WireAuthenticationCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationCore.framework */; };
 		EEC739292D022FE0003C0FC9 /* WireAuthenticationCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationCore.framework */; };
@@ -193,6 +194,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE7442732D3132570025271D /* NeedleFoundation in Frameworks */,
 				EEC73BB12D03B290003C0FC9 /* WireAPI in Frameworks */,
 				EEC739292D022FE0003C0FC9 /* WireAuthenticationCore.framework in Frameworks */,
 				EEC7392D2D022FE0003C0FC9 /* WireAuthenticationUI.framework in Frameworks */,
@@ -332,6 +334,7 @@
 			name = WireAuthentication;
 			packageProductDependencies = (
 				EEC73BB02D03B290003C0FC9 /* WireAPI */,
+				EE7442722D3132570025271D /* NeedleFoundation */,
 			);
 			productName = WireAuthentication;
 			productReference = EEC738C02D022D30003C0FC9 /* WireAuthentication.framework */;
@@ -496,6 +499,9 @@
 			);
 			mainGroup = EEC738B62D022D30003C0FC9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EE7442712D3132570025271D /* XCRemoteSwiftPackageReference "needle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EEC738C12D022D30003C0FC9 /* Products */;
 			projectDirPath = "";
@@ -1222,7 +1228,23 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		EE7442712D3132570025271D /* XCRemoteSwiftPackageReference "needle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/uber/needle.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		EE7442722D3132570025271D /* NeedleFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE7442712D3132570025271D /* XCRemoteSwiftPackageReference "needle" */;
+			productName = NeedleFoundation;
+		};
 		EEC73BAB2D035B02003C0FC9 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;

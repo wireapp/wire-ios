@@ -19,14 +19,14 @@
 import Foundation
 
 /// Builder for the Login API.
-struct LoginAPIBuilder {
+public struct LoginAPIBuilder {
 
     let networkService: NetworkService
 
     /// Create a new builder.
     ///
     /// - Parameter NetworkService: The service for making network requests.
-    init(networkService: NetworkService) {
+    public init(networkService: NetworkService) {
         self.networkService = networkService
     }
 
@@ -34,7 +34,7 @@ struct LoginAPIBuilder {
     ///
     /// - Parameter version: An api version.
     /// - Returns: A versioned `LoginAPI`.
-    func makeAPI(for version: APIVersion) -> any LoginAPI {
+    public func makeAPI(for version: APIVersion) -> some LoginAPI {
         switch version {
         case .v0:
             LoginAPIV0(networkService: networkService)

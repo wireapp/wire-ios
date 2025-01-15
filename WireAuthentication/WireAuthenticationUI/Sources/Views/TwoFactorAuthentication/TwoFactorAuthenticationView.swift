@@ -18,7 +18,14 @@
 
 import SwiftUI
 
-struct TwoFactorAuthenticationView: View {
+public protocol VerifyEmailBuilder {
+
+    @MainActor
+    var verifyEmailView: TwoFactorAuthenticationView { get }
+
+}
+
+public struct TwoFactorAuthenticationView: View {
 
     @ObservedObject
     var viewModel: TwoFactorAuthenticationViewModel
@@ -26,7 +33,11 @@ struct TwoFactorAuthenticationView: View {
     @State
     private var code = ""
 
-    var body: some View {
+    public init(viewModel: TwoFactorAuthenticationViewModel) {
+        self.viewModel = viewModel
+    }
+
+    public var body: some View {
         VStack(spacing: 20) {
             Text("Enter 2FA code")
 
@@ -46,10 +57,5 @@ struct TwoFactorAuthenticationView: View {
 }
 
 #Preview {
-    TwoFactorAuthenticationView(
-        viewModel: TwoFactorAuthenticationViewModel(
-            router: Router(),
-            submitCode: SubmitTwoFactorAuthenticationCodeUseCaseMock()
-        )
-    )
+    MockDependencies().verifyEmailView
 }

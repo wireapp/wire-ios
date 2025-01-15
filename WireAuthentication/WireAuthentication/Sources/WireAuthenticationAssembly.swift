@@ -17,61 +17,210 @@
 //
 
 import Foundation
+import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationCore
 
-/// The entry point for the feature module.
-///
-/// To load the contents of the module, create an instance of
-/// the assembly, which you can then use to make required views.
-
 public struct WireAuthenticationAssembly {
 
-    let loginAPI: any LoginAPI
+    public init() {
+        registerProviderFactories()
+    }
+
+    @MainActor
+    public func assemble(
+        backendURL: URL,
+        minTLSVersion: TLSVersion,
+        apiVersion: APIVersion
+    ) -> some View {
+        let root = RootComponent(
+            backendURL: backendURL,
+            minTLSVersion: minTLSVersion,
+            apiVersion: apiVersion
+        )
+        return root.rootView
+    }
+
+}
+
+class RootComponent: BootstrapComponent {
+
+    let backendURL: URL
+    let minTLSVersion: TLSVersion
+    public let apiVersion: APIVersion
 
     public init(
         backendURL: URL,
         minTLSVersion: TLSVersion,
         apiVersion: APIVersion
     ) {
-        loginAPI = WireAPIAssembly.makeLoginStack(
-            backendURL: backendURL,
-            minTLSVersion: minTLSVersion,
-            apiVersion: apiVersion
-        )
+        self.backendURL = backendURL
+        self.minTLSVersion = minTLSVersion
+        self.apiVersion = apiVersion
+    }
+
+    var serverTrustValidator: ServerTrustValidator {
+        shared {
+            ServerTrustValidator(pinnedKeys: [])
+        }
+    }
+
+    var urlSessionConfigurationFactory: URLSessionConfigurationFactory {
+        shared {
+            URLSessionConfigurationFactory(
+                minTLSVersion: minTLSVersion,
+                proxySettings: nil
+            )
+        }
+    }
+
+    public var networkService: NetworkService {
+        shared {
+            let service = NetworkService(
+                baseURL: backendURL,
+                serverTrustValidator: serverTrustValidator
+            )
+            let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
+            let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
+            service.configure(with: session)
+            return service
+        }
+    }
+
+    public var router: Router {
+        shared {
+            Router()
+        }
     }
 
     @MainActor
-    public func makeRootView() -> some View {
-        RootView(factory: self)
+    var rootView: some View {
+        RootView(
+            router: router,
+            builder: landingComponent
+        )
+    }
+
+    // Children
+
+    var landingComponent: LandingComponent {
+        LandingComponent(parent: self)
     }
 
 }
 
-// Views are able to load other views, but the logic
-// (in the form of use cases) needs to be injected from
-// the assembly. The assembly injects itself as a `Factory`
-// to the public views it exposes.
+protocol LandingComponentDependency: Dependency {
 
-extension WireAuthenticationAssembly: Factory {
+    var router: Router { get }
 
-    public func makeDetermineAuthenticationMethodUseCase() -> any DetermineAuthenticationMethodUseCaseProtocol {
+}
+
+class LandingComponent: Component<LandingComponentDependency>, LandingBuilder {
+
+    var determineAuthenticationMethodUseCase: some DetermineAuthenticationMethodUseCaseProtocol {
         DetermineAuthenticationMethodUseCase()
     }
-    
-    public func makeEmailLoginUseCase() -> any LoginViaEmailUseCaseProtocol {
+
+    @MainActor
+    var viewModel: LandingViewModel {
+        .init(
+            router: dependency.router,
+            determineAuthenticationMethod: determineAuthenticationMethodUseCase
+        )
+    }
+
+    @MainActor
+    var landingView: LandingView {
+        LandingView(
+            viewModel: viewModel,
+            builder: loginViaEmailComponent
+        )
+    }
+
+    // Children
+
+    var loginViaEmailComponent: LoginViaEmailComponent {
+        LoginViaEmailComponent(parent: self)
+    }
+
+}
+
+protocol LoginViaEmailComponentDependency: Dependency {
+
+    var router: Router { get }
+    var networkService: NetworkService { get }
+    var apiVersion: APIVersion { get }
+
+}
+
+class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, LoginViaEmailBuilder {
+
+    var loginAPIBuilder: LoginAPIBuilder {
+        shared {
+            .init(networkService: dependency.networkService)
+        }
+    }
+
+    var loginAPI: some LoginAPI {
+        loginAPIBuilder.makeAPI(for: dependency.apiVersion)
+    }
+
+    var loginViaEmailUseCase: some LoginViaEmailUseCaseProtocol {
         LoginViaEmailUseCase(loginAPI: loginAPI)
     }
-    
-    public func makePerformInitialSyncUseCase() -> any PerformInitialSyncUseCaseProtocol {
-        PerformInitialSyncUseCase()
+
+    @MainActor
+    func loginViewModel(email: String) -> LoginViewModel {
+        LoginViewModel(
+            router: dependency.router,
+            loginViaEmailUseCase: loginViaEmailUseCase,
+            email: email,
+            isRegistrationAllowed: false
+        )
     }
-    
-    public func makeSubmitTwoFactorAuthenticationCodeUseCase() -> any SubmitTwoFactorAuthenticationCodeUseCaseProtocol {
+
+    @MainActor
+    func loginViaEmailView(email: String) -> LoginView {
+        LoginView(
+            viewModel: loginViewModel(email: email),
+            builder: verifyEmailComponent
+        )
+    }
+
+    // Children
+
+    var verifyEmailComponent: VerifyEmailComponent {
+        VerifyEmailComponent(parent: self)
+    }
+
+}
+
+protocol VerifyEmailComponentDependency: Dependency {
+
+    var router: Router { get }
+
+}
+
+class VerifyEmailComponent: Component<VerifyEmailComponentDependency>, VerifyEmailBuilder {
+
+    var submitCodeUseCase: SubmitTwoFactorAuthenticationCodeUseCaseProtocol {
         SubmitTwoFactorAuthenticationCodeUseCase()
+    }
+
+    @MainActor
+    var verifyEmailViewModel: TwoFactorAuthenticationViewModel {
+        TwoFactorAuthenticationViewModel(
+            router: dependency.router,
+            submitCode: submitCodeUseCase
+        )
+    }
+
+    @MainActor
+    var verifyEmailView: TwoFactorAuthenticationView {
+        TwoFactorAuthenticationView(viewModel: verifyEmailViewModel)
     }
 
 }

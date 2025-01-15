@@ -46,6 +46,7 @@ public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
             password: password
         )
 
+        print("Got cookies: \(cookies.count)")
         // Create account new account in account manager
         // Store cookie for account
         // Create an authentecated session

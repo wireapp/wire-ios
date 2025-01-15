@@ -16,27 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-final class LoginViewModel: ObservableObject {
+public final class LoginViewModel: ObservableObject {
 
     let router: Router
-    let loginViewEmailProvider: @Sendable () -> any LoginViaEmailUseCaseProtocol
+    let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
 
     let email: String
     let isRegistrationAllowed: Bool
 
-    init(
+    public init(
         router: Router,
-        loginViewEmailProvider: @escaping @Sendable () -> any LoginViaEmailUseCaseProtocol,
+        loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         email: String,
         isRegistrationAllowed: Bool
     ) {
         self.router = router
-        self.loginViewEmailProvider = loginViewEmailProvider
+        self.loginViaEmailUseCase = loginViaEmailUseCase
         self.email = email
         self.isRegistrationAllowed = isRegistrationAllowed
     }
@@ -46,14 +47,16 @@ final class LoginViewModel: ObservableObject {
     }
 
     func submitPassword(_ password: String) {
-        Task.detached {
-            try await self.loginViewEmailProvider().invoke(
-                email: self.email,
-                password: password
-            )
+        Task {
+            do {
+                try await loginViaEmailUseCase.invoke(
+                    email: email,
+                    password: password
+                )
 
-            await MainActor.run {
-                self.router.navigate(to: .twoFactorAuthentication)
+                router.navigate(to: LoginView.Destination.twoFactorAuthentication)
+            } catch {
+                print("error: \(error)")
             }
         }
     }

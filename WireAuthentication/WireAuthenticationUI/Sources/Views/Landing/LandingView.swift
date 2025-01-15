@@ -18,15 +18,25 @@
 
 import SwiftUI
 
-struct LandingView: View {
+public struct LandingView: View {
 
     @ObservedObject
     var viewModel: LandingViewModel
 
+    let builder: LoginViaEmailBuilder
+
     @State
     private var emailOrSSOCode = ""
 
-    var body: some View {
+    public init(
+        viewModel: LandingViewModel,
+        builder: LoginViaEmailBuilder
+    ) {
+        self.viewModel = viewModel
+        self.builder = builder
+    }
+
+    public var body: some View {
         VStack(spacing: 20) {
             Text("Wire").font(.largeTitle)
             Text("Enter your email to start")
@@ -44,16 +54,25 @@ struct LandingView: View {
                 .foregroundStyle(.secondary)
         }
         .padding()
+        .navigationDestination(for: Destination.self) {
+            switch $0 {
+            case .login(let email):
+                builder.loginViaEmailView(email: email)
+            case .loginOrRegister:
+                Color.red
+            }
+        }
+    }
+
+    enum Destination: Hashable {
+
+        case login(email: String)
+        case loginOrRegister(email: String)
+
     }
 
 }
 
 #Preview {
-    LandingView(
-        viewModel: LandingViewModel(
-            router: Router(),
-            determineAuthenticationMethod: DetermineAuthenticationMethodUseCaseMock()
-        )
-    )
+    MockDependencies().landingView
 }
-

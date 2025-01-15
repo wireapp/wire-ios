@@ -47,10 +47,10 @@ public final class LandingViewModel: ObservableObject {
 
             switch method {
             case .login(let email):
-                router.navigate(to: .login(email: email))
+                router.navigate(to: LandingView.Destination.login(email: email))
 
             case .loginOrRegister(let email):
-                router.navigate(to: .loginOrRegister(email: email))
+                router.navigate(to: LandingView.Destination.loginOrRegister(email: email))
 
             default:
                 break

@@ -22,27 +22,19 @@ import SwiftUI
 
 public final class Router: ObservableObject {
 
-    public init() {}
+    public init() {
+        
+    }
 
     @Published
     var path = NavigationPath()
 
-    func navigate(to destination: Destination) {
+    func navigate<Destination: Hashable>(to destination: Destination) {
         path.append(destination)
     }
 
     func popToRoot() {
         path.removeLast(path.count)
     }
-
-}
-
-enum Destination: Hashable {
-
-    case landing
-    case login(email: String)
-    case loginOrRegister(email: String)
-    case twoFactorAuthentication
-
 
 }

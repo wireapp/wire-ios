@@ -16,17 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-final class TwoFactorAuthenticationViewModel: ObservableObject {
+public final class TwoFactorAuthenticationViewModel: ObservableObject {
 
     let router: Router
     let submitCode: any SubmitTwoFactorAuthenticationCodeUseCaseProtocol
 
-    init(
+    public init(
         router: Router,
         submitCode: any SubmitTwoFactorAuthenticationCodeUseCaseProtocol
     ) {
