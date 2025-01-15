@@ -24,7 +24,6 @@ public final class BackupRestoreViewModel: ObservableObject {
     private let restoreSource: any RestoreSourceProtocol
     private let backupResultHandler: BackupResultHandler
     private let restoreBackupResultHandler: RestoreBackupResultHandler
-    let passwordValidator: any BackupPasswordValidatorProtocol // TODO: private
 
     public init(
         //
@@ -36,14 +35,12 @@ public final class BackupRestoreViewModel: ObservableObject {
         backupSource: any BackupSourceProtocol,
         restoreSource: any RestoreSourceProtocol,
         backupResultHandler: BackupResultHandler,
-        restoreBackupResultHandler: RestoreBackupResultHandler,
-        passwordValidator: any BackupPasswordValidatorProtocol
+        restoreBackupResultHandler: RestoreBackupResultHandler
     ) {
         self.backupSource = backupSource
         self.restoreSource = restoreSource
         self.backupResultHandler = backupResultHandler
         self.restoreBackupResultHandler = restoreBackupResultHandler
-        self.passwordValidator = passwordValidator
     }
 
     func backupActiveAccount(password: String) {

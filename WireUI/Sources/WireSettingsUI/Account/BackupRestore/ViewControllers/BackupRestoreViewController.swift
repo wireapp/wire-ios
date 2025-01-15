@@ -21,9 +21,14 @@ import SwiftUI
 public final class BackupRestoreViewController: UIViewController {
 
     private let viewModel: BackupRestoreViewModel
+    private let backupPasswordValidator: any BackupPasswordValidatorProtocol
 
-    public init(viewModel: BackupRestoreViewModel) {
+    public init(
+        viewModel: BackupRestoreViewModel,
+        backupPasswordValidator: any BackupPasswordValidatorProtocol
+    ) {
         self.viewModel = viewModel
+        self.backupPasswordValidator = backupPasswordValidator
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -38,11 +43,12 @@ public final class BackupRestoreViewController: UIViewController {
     }
 
     private func setupView() {
+        let backupPasswordValidator = backupPasswordValidator
         let backupRestoreView = BackupRestoreView(
             viewModel: viewModel,
             exportBackupSheetContent: {
                 ExportBackupView(
-                    viewModel: .init(passwordValidator: self.viewModel.passwordValidator),
+                    viewModel: .init(passwordValidator: backupPasswordValidator),
                     exportBackup: { password in
                         self.viewModel.backupActiveAccount(password: password)
                     }

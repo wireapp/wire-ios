@@ -369,6 +369,12 @@ extension SettingsCellDescriptorFactory {
         SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.encryptMessagesAtRest))
     }
 
+    private var backupRestoreBuilder: BackupRestoreBuilder {
+        .init(
+            backupPasswordValidator: BackupPasswordValidator()
+        )
+    }
+
     @MainActor
     func backUpElement() -> any SettingsCellDescriptorType {
         SettingsExternalScreenCellDescriptor(
@@ -381,8 +387,8 @@ extension SettingsCellDescriptorFactory {
                     return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-//                    let backupRestoreController = BackupRestoreBuilder().build()
-                    let viewModel = BackupRestoreViewModel( // TODO: delete, use builder
+//                    let backupRestoreController = backupRestoreBuilder.build()
+                    let viewModel = BackupRestoreViewModel( // TODO: delete, use `backupRestoreBuilder`
                         backupSource: BackupSource(),
                         restoreSource: RestoreSource(),
                         backupResultHandler: BackupResultHandler(
@@ -393,10 +399,12 @@ extension SettingsCellDescriptorFactory {
                             onSuccess: presentOnSuccessAlert,
                             onConfirmation: presentConfirmationAlert,
                             onFailure: presentRestoreBackupErrorAlert
-                        ),
-                        passwordValidator: BackupPasswordValidator()
+                        )
                     )
-                    let backupRestoreController = BackupRestoreViewController(viewModel: viewModel)
+                    let backupRestoreController = BackupRestoreViewController(
+                        viewModel: viewModel,
+                        backupPasswordValidator: BackupPasswordValidator()
+                    )
                     backupRestoreController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
                     return backupRestoreController
                 } else {

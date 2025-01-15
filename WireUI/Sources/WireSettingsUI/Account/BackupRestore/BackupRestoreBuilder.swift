@@ -20,13 +20,17 @@ import UIKit
 
 public struct BackupRestoreBuilder {
 
-//    public var
+    public var backupPasswordValidator: any BackupPasswordValidatorProtocol
 
-    public init() {}
+    public init(backupPasswordValidator: any BackupPasswordValidatorProtocol) {
+        self.backupPasswordValidator = backupPasswordValidator
+    }
 
     @MainActor
     public func build() -> UIViewController {
-        let viewModel = BackupRestoreViewModel()
-        return BackupRestoreViewController(viewModel: viewModel)
+        BackupRestoreViewController(
+            viewModel: BackupRestoreViewModel(),
+            backupPasswordValidator: backupPasswordValidator
+        )
     }
 }

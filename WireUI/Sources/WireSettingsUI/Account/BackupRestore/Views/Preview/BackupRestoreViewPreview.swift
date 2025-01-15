@@ -33,8 +33,8 @@ func BackupRestoreViewPreview() -> some View {
                 onSuccess: {},
                 onConfirmation: { _ in },
                 onFailure: {}
-            ),
-            passwordValidator: MockBackupPasswordValidator()
+            )
+//            passwordValidator: MockBackupPasswordValidator()
         ),
         exportBackupSheetContent: { EmptyView() }
     )

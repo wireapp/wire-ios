@@ -25,7 +25,7 @@ final class ExportBackupViewModel: ObservableObject {
     }
 
     @Published var isPasswordVisible = false
-    @Published private(set) var isPasswordValid = false
+    @Published private(set) var isPasswordValid = true
 
     var localizedPasswordRules: String { passwordValidator.localizedRulesDescription }
 
