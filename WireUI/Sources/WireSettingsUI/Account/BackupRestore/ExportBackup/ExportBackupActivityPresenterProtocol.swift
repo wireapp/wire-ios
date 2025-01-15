@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A use case to export the current app state using a provided `password`.
-public protocol ExportBackupUseCaseProtocol {
-    func invoke(
-        password: String,
-        activityPresenter: some ExportBackupActivityPresenterProtocol
-    ) async throws
+import Foundation
+
+/// A conforming type must allow the user to export/share the file at the provided `backup` URL.
+/// The async method must only complete when the backup file can safely be deleted.
+public protocol ExportBackupActivityPresenterProtocol {
+    func present(backup: URL) async
 }

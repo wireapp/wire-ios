@@ -40,6 +40,7 @@ private struct ExportBackup_Preview: View {
                 ExportBackupView(
                     viewModel: .init(
                         passwordValidator: MockBackupPasswordValidator(),
+                        activityPresenter: PreviewActivityPresenter(),
                         alertPresenter: PreviewAlertPresenter(),
                         exportBackupUseCase: PreviewUseCase()
                     )
@@ -58,7 +59,11 @@ private struct PreviewAlertPresenter: BackupRestoreAlertPresenterProtocol {
 }
 
 private struct PreviewUseCase: ExportBackupUseCaseProtocol {
-    func invoke(url: URL, password: String) async {
+    func invoke(password: String, activityPresenter: some ExportBackupActivityPresenterProtocol) async throws {
         fatalError("not implemented")
     }
+}
+
+private struct PreviewActivityPresenter: ExportBackupActivityPresenterProtocol {
+    func present(backup: URL) async {}
 }

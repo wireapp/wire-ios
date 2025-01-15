@@ -372,7 +372,7 @@ extension SettingsCellDescriptorFactory {
     private var backupRestoreBuilder: BackupRestoreBuilder {
         .init(
             backupPasswordValidator: BackupPasswordValidator(),
-            exportBackupUseCase: BackupSource()
+            exportBackupUseCase: BackupSource(sessionManager: .shared!)
         )
     }
 

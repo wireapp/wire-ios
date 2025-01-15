@@ -18,7 +18,7 @@
 
 import Foundation
 import WireSettingsUI
-import class WireSyncEngine.SessionManager
+import WireSyncEngine
 
 struct BackupSource: BackupSourceProtocol, ExportBackupUseCaseProtocol {
 
@@ -41,11 +41,26 @@ struct BackupSource: BackupSourceProtocol, ExportBackupUseCaseProtocol {
         SessionManager.shared?.clearPreviousBackups()
     }
 
+    var sessionManager: () -> SessionManager
+
+    init(sessionManager: @autoclosure @escaping () -> SessionManager) {
+        self.sessionManager = sessionManager
+    }
+
     @MainActor
-    func invoke(url: URL, password: String) async throws {
-        SessionManager.shared?.backupActiveAccount(password: password) { result in
-            print(result) // TODO: result contains a temporary url, use the provided url argument to move the file
+    func invoke(
+        password: String,
+        activityPresenter: some ExportBackupActivityPresenterProtocol
+    ) async throws {
+        let sessionManager = sessionManager()
+
+        let url = try await withCheckedThrowingContinuation { continuation in
+            sessionManager.backupActiveAccount(password: password) { result in
+                continuation.resume(with: result)
+            }
         }
+        await activityPresenter.present(backup: url)
+        sessionManager.clearPreviousBackups()
     }
 
 }

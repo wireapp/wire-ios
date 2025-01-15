@@ -18,6 +18,7 @@
 
 import Foundation
 
+@MainActor
 final class ExportBackupViewModel: ObservableObject {
 
     @Published var password = "" {
@@ -30,15 +31,18 @@ final class ExportBackupViewModel: ObservableObject {
     var localizedPasswordRules: String { passwordValidator.localizedRulesDescription }
 
     private let passwordValidator: any BackupPasswordValidatorProtocol
+    private let activityPresenter: any ExportBackupActivityPresenterProtocol
     private let alertPresenter: any BackupRestoreAlertPresenterProtocol
     private let exportBackupUseCase: any ExportBackupUseCaseProtocol
 
     init(
         passwordValidator: any BackupPasswordValidatorProtocol,
+        activityPresenter: any ExportBackupActivityPresenterProtocol,
         alertPresenter: any BackupRestoreAlertPresenterProtocol,
         exportBackupUseCase: any ExportBackupUseCaseProtocol
     ) {
         self.passwordValidator = passwordValidator
+        self.activityPresenter = activityPresenter
         self.alertPresenter = alertPresenter
         self.exportBackupUseCase = exportBackupUseCase
     }
@@ -50,10 +54,10 @@ final class ExportBackupViewModel: ObservableObject {
     func triggerExport() {
         let password = password
         let exportBackupUseCase = exportBackupUseCase
+        let activityPresenter = activityPresenter
         Task {
             do {
-                let url: URL! = .init(string: "https://example.org")
-                try await exportBackupUseCase.invoke(url: url, password: password)
+                try await exportBackupUseCase.invoke(password: password, activityPresenter: activityPresenter)
             } catch {
                 fatalError("TODO: use alertPresenter")
             }

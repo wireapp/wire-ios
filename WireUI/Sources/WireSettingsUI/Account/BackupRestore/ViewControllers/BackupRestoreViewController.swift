@@ -54,6 +54,7 @@ public final class BackupRestoreViewController: UIViewController {
                 ExportBackupView(
                     viewModel: .init(
                         passwordValidator: backupPasswordValidator,
+                        activityPresenter: self,
                         alertPresenter: DummyAlertPresenter(), // TODO: fix
                         exportBackupUseCase: exportBackupUseCase
 //                        DummyUseCase { password in // TODO: fix
@@ -77,17 +78,40 @@ public final class BackupRestoreViewController: UIViewController {
                 .presentationDetents([.medium])
             }
         )
+
         let hostingController = UIHostingController(rootView: backupRestoreView)
         addChild(hostingController)
+
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingController.view)
+
         NSLayoutConstraint.activate([
             hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.trailingAnchor.constraint(equalTo: hostingController.view.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor)
         ])
+
         hostingController.didMove(toParent: self)
+    }
+}
+
+// MARK: - BackupRestoreViewController + ExportBackupActivityPresenterProtocol
+
+extension BackupRestoreViewController: ExportBackupActivityPresenterProtocol {
+
+    public func present(backup: URL) async {
+        await withCheckedContinuation { continuation in
+            let activityViewController = UIActivityViewController(activityItems: [backup], applicationActivities: .none)
+            activityViewController.completionWithItemsHandler = { _, _, _, _ in
+                //
+                continuation.resume()
+            }
+            if let popoverPresentationController = activityViewController.popoverPresentationController {
+                fatalError("TODO")
+            }
+            present(activityViewController, animated: true)
+        }
     }
 }
 
@@ -99,11 +123,11 @@ private struct DummyAlertPresenter: BackupRestoreAlertPresenterProtocol {
     }
 }
 
-private struct DummyUseCase: ExportBackupUseCaseProtocol {
-
-    let action: (String) -> Void
-
-    func invoke(url: URL, password: String) async {
-        action(password)
-    }
-}
+//private struct DummyUseCase: ExportBackupUseCaseProtocol {
+//
+//    let action: (String) -> Void
+//
+//    func invoke(password: String) async {
+//        action(password)
+//    }
+//}
