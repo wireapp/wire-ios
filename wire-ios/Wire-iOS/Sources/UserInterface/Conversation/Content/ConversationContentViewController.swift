@@ -323,10 +323,6 @@ final class ConversationContentViewController: UIViewController {
         }
     }
 
-    override var shouldAutorotate: Bool {
-        true
-    }
-
     override func didReceiveMemoryWarning() {
         zmLog.warn("Received system memory warning.")
         super.didReceiveMemoryWarning()
