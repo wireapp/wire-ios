@@ -23,21 +23,16 @@ import WireReusableUIComponents
 
 /// A view that allows to export the backup.
 
-public struct ExportBackupView: View {
+struct ExportBackupView: View {
 
     @Environment(\.dismiss) private var dismiss
-    private let exportBackup: (String) -> Void
-    private let passwordValidator: any BackupPasswordValidatorProtocol
 
-    public init(
-        passwordValidator: any BackupPasswordValidatorProtocol,
-        exportBackup: @escaping (String) -> Void
-    ) {
-        self.exportBackup = exportBackup
-        self.passwordValidator = passwordValidator
-    }
+    @ObservedObject private(set) var viewModel: ExportBackupViewModel
 
-    public var body: some View {
+    let exportBackup: (String) -> Void
+    let passwordValidator: any BackupPasswordValidatorProtocol
+
+    var body: some View {
         NavigationStack {
             SetBackupPasswordView(
                 passwordValidator: passwordValidator,

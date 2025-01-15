@@ -38,8 +38,9 @@ private struct ExportBackup_Preview: View {
         .sheet(isPresented: $isPresented) {
             NavigationStack {
                 ExportBackupView(
-                    passwordValidator: MockBackupPasswordValidator(),
-                    exportBackup: { _ in }
+                    viewModel: .init(),
+                    exportBackup: { _ in },
+                    passwordValidator: MockBackupPasswordValidator()
                 )
             }
             .presentationDragIndicator(.visible)
