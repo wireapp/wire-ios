@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct RestoreBackupPreview: View {
+struct ImportBackupViewPreview: View {
     @State private var isPresented = true
 
     var body: some View {
@@ -32,7 +32,7 @@ struct RestoreBackupPreview: View {
         )
         .sheet(isPresented: $isPresented) {
             NavigationStack {
-                RestoreBackupView(
+                ImportBackupView(
                     importBackup: { _ in }
                 )
             }

@@ -21,7 +21,7 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
-struct RestoreBackupView: View { // TODO: RestoreBackupView is too similar to BackupRestoreView, name it ImportBackupView
+struct ImportBackupView: View {
 
     @Environment(\.dismiss) private var dismiss
 
@@ -144,6 +144,6 @@ struct RestoreBackupView: View { // TODO: RestoreBackupView is too similar to Ba
 // MARK: - Previews
 
 @available(iOS 17.0, *)
-#Preview("Export Backup sheet") {
-    RestoreBackupPreview()
+#Preview("Import Backup sheet") {
+    ImportBackupViewPreview()
 }
