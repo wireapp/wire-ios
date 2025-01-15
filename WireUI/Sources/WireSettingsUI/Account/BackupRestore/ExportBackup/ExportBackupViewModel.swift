@@ -31,20 +31,14 @@ final class ExportBackupViewModel: ObservableObject {
     var localizedPasswordRules: String { passwordValidator.localizedRulesDescription }
 
     private let passwordValidator: any BackupPasswordValidatorProtocol
-    private let activityPresenter: any ExportBackupActivityPresenterProtocol
-    private let alertPresenter: any BackupRestoreAlertPresenterProtocol
-    private let exportBackupUseCase: any ExportBackupUseCaseProtocol
+    private let exportBackupAction: (_ password: String) -> Void
 
     init(
         passwordValidator: any BackupPasswordValidatorProtocol,
-        activityPresenter: any ExportBackupActivityPresenterProtocol,
-        alertPresenter: any BackupRestoreAlertPresenterProtocol,
-        exportBackupUseCase: any ExportBackupUseCaseProtocol
+        exportBackupAction: @escaping (_ password: String) -> Void
     ) {
         self.passwordValidator = passwordValidator
-        self.activityPresenter = activityPresenter
-        self.alertPresenter = alertPresenter
-        self.exportBackupUseCase = exportBackupUseCase
+        self.exportBackupAction = exportBackupAction
     }
 
     private func validatePassword() {
@@ -52,15 +46,8 @@ final class ExportBackupViewModel: ObservableObject {
     }
 
     func triggerExport() {
-        let password = password
-        let exportBackupUseCase = exportBackupUseCase
-        let activityPresenter = activityPresenter
-        Task {
-            do {
-                try await exportBackupUseCase.invoke(password: password, activityPresenter: activityPresenter)
-            } catch {
-                fatalError("TODO: use alertPresenter")
-            }
+        if isPasswordValid {
+            exportBackupAction(password)
         }
     }
 }

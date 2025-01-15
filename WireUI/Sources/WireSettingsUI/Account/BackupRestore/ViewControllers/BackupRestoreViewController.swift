@@ -21,11 +21,13 @@ import SwiftUI
 public final class BackupRestoreViewController: UIViewController {
 
     private let viewModel: BackupRestoreViewModel
+    // TODO: move into ViewModel
     private let backupPasswordValidator: any BackupPasswordValidatorProtocol
     private let exportBackupUseCase: any ExportBackupUseCaseProtocol
 
     public init(
         viewModel: BackupRestoreViewModel,
+        // TODO: move into ViewModel
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
         exportBackupUseCase: any ExportBackupUseCaseProtocol
     ) {
@@ -46,22 +48,14 @@ public final class BackupRestoreViewController: UIViewController {
     }
 
     private func setupView() {
-        let backupPasswordValidator = backupPasswordValidator
-        let exportBackupUseCase = exportBackupUseCase
+
         let backupRestoreView = BackupRestoreView(
             viewModel: viewModel,
-            exportBackupSheetContent: {
-                ExportBackupView(
-                    viewModel: .init(
-                        passwordValidator: backupPasswordValidator,
-                        activityPresenter: self,
-                        alertPresenter: DummyAlertPresenter(), // TODO: fix
-                        exportBackupUseCase: exportBackupUseCase
-//                        DummyUseCase { password in // TODO: fix
-//                            self.viewModel.backupActiveAccount(password: password)
-//                        }
-                    )
-                )
+            exportBackupSheetContent: { [backupPasswordValidator] exportBackupAction in
+                ExportBackupView(viewModel: ExportBackupViewModel(
+                    passwordValidator: /*viewModel.*/ backupPasswordValidator,
+                    exportBackupAction: /*viewModel.*/ exportBackupAction
+                ))
             },
             importBackupSheetContent: {
                 NavigationStack {

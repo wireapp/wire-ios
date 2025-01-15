@@ -18,8 +18,5 @@
 
 /// A use case to export the current app state using a provided `password`.
 public protocol ExportBackupUseCaseProtocol {
-    func invoke(
-        password: String,
-        activityPresenter: some ExportBackupActivityPresenterProtocol
-    ) async throws
+    func invoke(password: String) async throws
 }

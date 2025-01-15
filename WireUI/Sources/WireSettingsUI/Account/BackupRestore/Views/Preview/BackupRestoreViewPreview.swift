@@ -36,7 +36,9 @@ func BackupRestoreViewPreview() -> some View {
             )
 //            passwordValidator: MockBackupPasswordValidator()
         ),
-        exportBackupSheetContent: { EmptyView() },
+        exportBackupSheetContent: { exportBackupAction in
+            EmptyView()
+        },
         importBackupSheetContent: { EmptyView() }
     )
 }

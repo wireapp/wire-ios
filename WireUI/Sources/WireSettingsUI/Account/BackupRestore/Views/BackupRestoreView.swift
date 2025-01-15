@@ -23,9 +23,11 @@ import WireReusableUIComponents
 
 struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View {
 
+    typealias ExportBackupAction = (_ password: String) -> Void
+
     @ObservedObject private(set) var viewModel: BackupRestoreViewModel
 
-    @ViewBuilder private(set) var exportBackupSheetContent: () -> ExportBackupSheet
+    @ViewBuilder private(set) var exportBackupSheetContent: (@escaping ExportBackupAction) -> ExportBackupSheet
     @ViewBuilder private(set) var importBackupSheetContent: () -> ImportBackupSheet
 
     @State private var isExportBackupSheetPresented: Bool = false
@@ -33,19 +35,33 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
     @State private var isBackupPickerPresented: Bool = false
     @State private var selectedFileURL: URL?
 
+    /// `nil` means the ExportBackupSheet has not been opened or has been dismissed without the texport action.
+    @State private var exportBackupPassword: String?
+
     var body: some View {
         List {
+            // backup
             Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
-                Button {
-                    isExportBackupSheetPresented.toggle()
-                } label: {
+                Button(action: { isExportBackupSheetPresented.toggle() }) {
                     Text(L10n.Localizable.Settings.ExportBackup.action)
                         .wireTextStyle(.body2)
                         .foregroundStyle(Color.primaryText)
                 }
-                .sheet(isPresented: $isExportBackupSheetPresented, content: exportBackupSheetContent)
+                .sheet(
+                    isPresented: $isExportBackupSheetPresented,
+                    onDismiss: {
+                        // if the ExportBackupSheet left a password after dismiss, trigger the action
+                        exportBackupPassword.map { viewModel.backupActiveAccount(password: $0) }
+                        exportBackupPassword = nil
+                    }) {
+                        // get the password from the ExportBackupSheet
+                        exportBackupSheetContent({ password in
+                            exportBackupPassword = password
+                        })
+                    }
             }
 
+            // restore
             Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
                 Button {
                     viewModel.confirmBackupRestore {

@@ -40,9 +40,7 @@ private struct ExportBackup_Preview: View {
                 ExportBackupView(
                     viewModel: .init(
                         passwordValidator: MockBackupPasswordValidator(),
-                        activityPresenter: PreviewActivityPresenter(),
-                        alertPresenter: PreviewAlertPresenter(),
-                        exportBackupUseCase: PreviewUseCase()
+                        exportBackupAction: { _ in }
                     )
                 )
             }
@@ -52,18 +50,18 @@ private struct ExportBackup_Preview: View {
     }
 }
 
-private struct PreviewAlertPresenter: BackupRestoreAlertPresenterProtocol {
-    func todo() async -> Bool {
-        fatalError("not implemented")
-    }
-}
+//private struct PreviewAlertPresenter: BackupRestoreAlertPresenterProtocol {
+//    func todo() async -> Bool {
+//        fatalError("not implemented")
+//    }
+//}
+//
+//private struct PreviewUseCase: ExportBackupUseCaseProtocol {
+//    func invoke(password: String) async throws {
+//        fatalError("not implemented")
+//    }
+//}
 
-private struct PreviewUseCase: ExportBackupUseCaseProtocol {
-    func invoke(password: String, activityPresenter: some ExportBackupActivityPresenterProtocol) async throws {
-        fatalError("not implemented")
-    }
-}
-
-private struct PreviewActivityPresenter: ExportBackupActivityPresenterProtocol {
-    func present(backup: URL) async {}
-}
+//private struct PreviewActivityPresenter: ExportBackupActivityPresenterProtocol {
+//    func present(backup: URL) async {}
+//}

@@ -39,7 +39,7 @@ struct ExportBackupView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        CloseButton(action: didTapClose)
+                        CloseButton { dismiss() }
                             .accessibilityLabel(Text(L10n.Accessibility.SetBackupPassword.Close.label))
                     }
                 }
@@ -90,10 +90,6 @@ struct ExportBackupView: View {
                 .padding()
             }
         }
-    }
-
-    private func didTapClose() {
-        dismiss()
     }
 
 }
