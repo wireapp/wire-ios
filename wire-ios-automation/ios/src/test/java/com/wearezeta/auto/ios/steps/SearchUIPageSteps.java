@@ -166,11 +166,6 @@ public class SearchUIPageSteps {
         getSearchUIPage().tapCloseButton();
     }
 
-    @When("^I tap Send Invite button on Search UI page$")
-    public void ITapSendInviteButton() {
-        getSearchUIPage().tapSendInviteButton();
-    }
-
     @When("^I tap Copy Invite button on Search UI page$")
     public void ITapCopyInviteButton() {
         getSearchUIPage().tapCopyInviteButton();

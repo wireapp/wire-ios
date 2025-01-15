@@ -141,8 +141,8 @@ node("Job_distributor") {
                 file(credentialsId: 'KUBECONFIG_chala', variable: 'KUBECONFIG_chala'),
                 file(credentialsId: 'KUBECONFIG_foma', variable: 'KUBECONFIG_foma'),
                 file(credentialsId: 'KUBECONFIG_gudja_offline_ios', variable: 'KUBECONFIG_gudja_offline_ios'),
-                file(credentialsId: 'KUBECONFIG_bund_next_column_1', variable: 'KUBECONFIG_bund_next_column_1'),
-                file(credentialsId: 'KUBECONFIG_bund_qa_column_1', variable: 'KUBECONFIG_bund_qa_column_1'),
+                file(credentialsId: 'KUBECONFIG_next_column_1', variable: 'KUBECONFIG_next_column_1'),
+                file(credentialsId: 'KUBECONFIG_qa_column_1', variable: 'KUBECONFIG_qa_column_1'),
                 string(credentialsId: "${credentialsId}", variable: 'JENKINSBOT_SECRET')
         ]) {
 

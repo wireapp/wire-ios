@@ -10,10 +10,6 @@ import org.openqa.selenium.WebElement;
 import java.util.function.Function;
 
 public class SelfProfilePage extends IOSPage {
-/**
-   @iOSXCUITFindBy(iOSNsPredicate = "label == 'Settings' AND name == 'Settings' AND type == 'XCUIElementTypeStaticText'")
-    WebElement settingsButton;
- */
 
     @iOSXCUITFindBy(accessibility = "user image")
     private WebElement profilePicture;

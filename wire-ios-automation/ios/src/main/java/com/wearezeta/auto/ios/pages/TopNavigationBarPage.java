@@ -12,11 +12,6 @@ public class TopNavigationBarPage extends IOSPage {
     @iOSXCUITFindBy(accessibility = "legalhold")
     private WebElement legalHoldIndicator;
 
-
-//  @iOSXCUITFindBy(accessibility = "Name")
-//    private WebElement userProfileName;
-//
-
     @iOSXCUITFindBy(iOSClassChain = "**/XCUIElementTypeNavigationBar[`name == \"Conversations\"`]/XCUIElementTypeOther/XCUIElementTypeButton/XCUIElementTypeOther[1]/XCUIElementTypeImage")
     private WebElement userProfileImage;
 

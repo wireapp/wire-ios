@@ -42,8 +42,6 @@ public class IOSDriverBuilder {
         "com.wearezeta.zclient.development",
         "com.wearezeta.zclient.rc",
         "com.wearezeta.zclient.ios-release",
-        "com.wearezeta.zclient.internal",
-        "com.wearezeta.zclient.ios-playground",
         "com.wearezeta.zclient.ios.beta"
     };
 
