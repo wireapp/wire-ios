@@ -32,7 +32,8 @@ struct BackupSource: BackupSourceProtocol, ExportBackupUseCaseProtocol {
         guard let sessionManager = SessionManager.shared else {
             throw BackupSourceError.missingSessionManager
         }
-        return try sessionManager.backupActiveAccount(password: password)
+//        return try sessionManager.backupActiveAccount(password: password)
+        fatalError()
     }
 
     // TODO: remove
@@ -42,7 +43,9 @@ struct BackupSource: BackupSourceProtocol, ExportBackupUseCaseProtocol {
 
     @MainActor
     func invoke(url: URL, password: String) async throws {
-        let url = try SessionManager.shared?.backupActiveAccount(password: password)
+        SessionManager.shared?.backupActiveAccount(password: password) { result in
+            print(result) // TODO: result contains a temporary url, use the provided url argument to move the file
+        }
     }
 
 }

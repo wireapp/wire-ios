@@ -40,36 +40,40 @@ extension SessionManager {
         case unknown
     }
 
-    public func backupActiveAccount(password: String) throws -> URL {
+    public func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) {
         guard
             let userId = accountManager.selectedAccount?.userIdentifier,
             let clientId = activeUserSession?.selfUserClient?.remoteIdentifier,
             let handle = activeUserSession.flatMap(ZMUser.selfUser)?.handle,
             let activeUserSession
         else {
-            throw BackupError.noActiveAccount
+            return completion(.failure(BackupError.noActiveAccount))
         }
 
-        do {
-            let backupInfo = try CoreDataStack.backupLocalStorage(
-                accountIdentifier: userId,
-                clientIdentifier: clientId,
-                applicationContainer: sharedContainerURL,
-                dispatchGroup: dispatchGroup,
-                databaseKey: activeUserSession.managedObjectContext.databaseKey
-            )
+        CoreDataStack.backupLocalStorage(
+            accountIdentifier: userId,
+            clientIdentifier: clientId,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup,
+            databaseKey: activeUserSession.managedObjectContext.databaseKey,
+            completion: { [dispatchGroup] result in
+                switch result {
+                case .success:
+                    break
+                case .failure:
+                    activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)
+                }
 
-            return try SessionManager.handle(
-                result: .success(backupInfo),
-                password: password,
-                accountId: userId,
-                dispatchGroup: dispatchGroup,
-                handle: handle
-            )
-        } catch {
-            activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)
-            throw error
-        }
+                SessionManager.handle(
+                    result: result,
+                    password: password,
+                    accountId: userId,
+                    dispatchGroup: dispatchGroup,
+                    completion: completion,
+                    handle: handle
+                )
+            }
+        )
     }
 
     private static func handle(
@@ -77,11 +81,11 @@ extension SessionManager {
         password: String,
         accountId: UUID,
         dispatchGroup: ZMSDispatchGroup,
+        completion: @escaping (Result<URL, Error>) -> Void,
         handle: String
-    ) throws -> URL {
-        try workerQueue.sync { // TODO: async
-            switch result {
-            case let .success(info):
+    ) {
+        workerQueue.async(group: dispatchGroup) {
+            let encrypted = result.flatMap { info in
                 do {
                     // 1. Compress the backup
                     let compressed = try compress(backup: info)
@@ -89,12 +93,14 @@ extension SessionManager {
                     // 2. Encrypt the backup
                     let url = targetBackupURL(for: info, handle: handle)
                     try encrypt(from: compressed, to: url, password: password, accountId: accountId)
-                    return url
+                    return .success(url)
                 } catch {
-                    throw error
+                    return .failure(error)
                 }
-            case let .failure(error):
-                throw error
+            }
+
+            DispatchQueue.main.async(group: dispatchGroup) {
+                completion(encrypted)
             }
         }
     }
