@@ -22,17 +22,24 @@ import WireFoundation
 import WireReusableUIComponents
 
 struct RestoreBackupView: View {
+
     @Environment(\.dismiss) private var dismiss
+
+    // TODO: move to view model?
+    @State private var password: String = ""
+    @State private var isPasswordVisible: Bool = false
+    @State private var contentFits: Bool = true
+
     private let importBackup: (String) -> Void
 
-    public init(
+    init(
         importBackup: @escaping (String) -> Void
     ) {
         self.importBackup = importBackup
     }
 
-    public var body: some View {
-        PasswordBackupView(importBackup: importBackup)
+    var body: some View {
+        passwordBackupView
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
             .navigationTitle(
@@ -50,21 +57,9 @@ struct RestoreBackupView: View {
     private func didTapClose() {
         dismiss()
     }
-}
 
-private struct PasswordBackupView: View {
-    @Environment(\.dismiss) var dismiss
-    @State private var password: String = ""
-    @State private var isPasswordVisible: Bool = false
-    @State private var contentFits: Bool = true
-
-    private let importBackup: (String) -> Void
-
-    init(importBackup: @escaping (String) -> Void) {
-        self.importBackup = importBackup
-    }
-
-    var body: some View {
+    @ViewBuilder
+    private var passwordBackupView: some View {
         GeometryReader { geometry in
             VStack {
                 ScrollView {
@@ -76,10 +71,7 @@ private struct PasswordBackupView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
 
-                        EnterPasswordFieldView(
-                            password: $password,
-                            isPasswordVisible: $isPasswordVisible
-                        )
+                        enterPasswordFieldView
                     }
                     .background(
                         GeometryReader { contentGeometry in
@@ -108,13 +100,9 @@ private struct PasswordBackupView: View {
             }
         }
     }
-}
 
-private struct EnterPasswordFieldView: View {
-    @Binding var password: String
-    @Binding var isPasswordVisible: Bool
-
-    var body: some View {
+    @ViewBuilder
+    private var enterPasswordFieldView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(L10n.Localizable.RestoreFromBackup.EnterPassword.title)
                 .font(.subheadline)
