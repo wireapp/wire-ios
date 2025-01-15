@@ -49,8 +49,7 @@ struct ExportBackupView: View {
         .presentationDetents([.medium])
     }
 
-    @ViewBuilder
-    private var setBackupPasswordView: some View {
+    @ViewBuilder private var setBackupPasswordView: some View {
         GeometryReader { geometry in
             VStack {
                 ScrollView {

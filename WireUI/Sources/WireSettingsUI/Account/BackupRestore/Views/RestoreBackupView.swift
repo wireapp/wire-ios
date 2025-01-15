@@ -32,12 +32,6 @@ struct RestoreBackupView: View {
 
     private let importBackup: (String) -> Void
 
-    init(
-        importBackup: @escaping (String) -> Void
-    ) {
-        self.importBackup = importBackup
-    }
-
     var body: some View {
         passwordBackupView
             .background(Color.viewBackground)
@@ -58,8 +52,7 @@ struct RestoreBackupView: View {
         dismiss()
     }
 
-    @ViewBuilder
-    private var passwordBackupView: some View {
+    @ViewBuilder private var passwordBackupView: some View {
         GeometryReader { geometry in
             VStack {
                 ScrollView {

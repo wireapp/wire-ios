@@ -63,7 +63,7 @@ public final class BackupRestoreViewController: UIViewController {
             hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
             view.trailingAnchor.constraint(equalTo: hostingController.view.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor),
+            view.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor)
         ])
         hostingController.didMove(toParent: self)
     }

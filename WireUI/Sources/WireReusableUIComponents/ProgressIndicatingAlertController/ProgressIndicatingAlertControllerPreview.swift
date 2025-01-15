@@ -30,7 +30,8 @@ func ProgressIndicatingAlertControllerPreview() -> UIViewController {
     label.adjustsFontForContentSizeCategory = true
     vc.view.addSubview(label)
     label.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor).isActive = true
-    label.topAnchor.constraint(equalToSystemSpacingBelow: vc.view.safeAreaLayoutGuide.topAnchor, multiplier: 3).isActive = true
+    label.topAnchor.constraint(equalToSystemSpacingBelow: vc.view.safeAreaLayoutGuide.topAnchor, multiplier: 3)
+        .isActive = true
 
     let alertController = ProgressIndicatingAlertController(
         title: "Creating Backup",

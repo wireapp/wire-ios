@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDesign
 import UIKit
+import WireDesign
 
 /// A custom view controller which displays an alert-like interface with a progress bar and a cancel button.
 public final class ProgressIndicatingAlertController: UIViewController {
@@ -134,7 +134,10 @@ public final class ProgressIndicatingAlertController: UIViewController {
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 2),
             titleLabel.topAnchor.constraint(equalToSystemSpacingBelow: containerView.topAnchor, multiplier: 2.5),
-            containerView.trailingAnchor.constraint(equalToSystemSpacingAfter: titleLabel.trailingAnchor, multiplier: 2),
+            containerView.trailingAnchor.constraint(
+                equalToSystemSpacingAfter: titleLabel.trailingAnchor,
+                multiplier: 2
+            ),
 
             messageLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             messageLabel.topAnchor.constraint(equalToSystemSpacingBelow: titleLabel.bottomAnchor, multiplier: 1),
@@ -150,13 +153,14 @@ public final class ProgressIndicatingAlertController: UIViewController {
             cancelButton.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             cancelButton.topAnchor.constraint(equalToSystemSpacingBelow: progressView.bottomAnchor, multiplier: 1),
             titleLabel.trailingAnchor.constraint(equalTo: cancelButton.trailingAnchor),
-            containerView.bottomAnchor.constraint(equalToSystemSpacingBelow: cancelButton.bottomAnchor, multiplier: 1),
+            containerView.bottomAnchor.constraint(equalToSystemSpacingBelow: cancelButton.bottomAnchor, multiplier: 1)
         ])
     }
 
     // MARK: - Action Handling
 
-    @objc private func handleCancel(_ sender: UIButton) {
+    @objc
+    private func handleCancel(_ sender: UIButton) {
         cancelAction.handler()
         presentingViewController?.dismiss(animated: true)
     }
@@ -187,7 +191,8 @@ public final class ProgressIndicatingAlertController: UIViewController {
         label.adjustsFontForContentSizeCategory = true
         vc.view.addSubview(label)
         label.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor).isActive = true
-        label.topAnchor.constraint(equalToSystemSpacingBelow: vc.view.safeAreaLayoutGuide.topAnchor, multiplier: 3).isActive = true
+        label.topAnchor.constraint(equalToSystemSpacingBelow: vc.view.safeAreaLayoutGuide.topAnchor, multiplier: 3)
+            .isActive = true
 
         let alertController = UIAlertController(title: "title", message: "message", preferredStyle: .alert)
 
