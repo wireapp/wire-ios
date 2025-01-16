@@ -312,8 +312,6 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5902F8D72BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */; };
 		5902F8E32BF7B18B00F1D392 /* ArchivedListViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */; };
-		5904BAF32D31673F00E866D1 /* WireImportExport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5904BAF22D31673F00E866D1 /* WireImportExport.framework */; };
-		5904BAF42D31673F00E866D1 /* WireImportExport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5904BAF22D31673F00E866D1 /* WireImportExport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
 		59076F972C934AA100AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F962C934AA100AE7529 /* WireAccountImageUI */; };
 		590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */; };
@@ -1939,7 +1937,6 @@
 				EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */,
 				EE33C48E296485FA00C058D1 /* WireShareEngine.framework in Embed Frameworks */,
 				EEE25B5129719D2F0008B894 /* avs.xcframework in Embed Frameworks */,
-				5904BAF42D31673F00E866D1 /* WireImportExport.framework in Embed Frameworks */,
 				EE67F73F296F0E7D001D7C88 /* Ziphy.framework in Embed Frameworks */,
 				EEE25B4229719C750008B894 /* WireRequestStrategy.framework in Embed Frameworks */,
 				EEE25B5429719D540008B894 /* libPhoneNumberiOS.xcframework in Embed Frameworks */,
@@ -2277,7 +2274,6 @@
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerDelegate.swift; sourceTree = "<group>"; };
 		5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
-		5904BAF22D31673F00E866D1 /* WireImportExport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireImportExport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+notifications.swift"; sourceTree = "<group>"; };
 		590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedViewControllerDelegate.swift; sourceTree = "<group>"; };
 		5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCaseProtocol.swift; sourceTree = "<group>"; };
@@ -3887,7 +3883,6 @@
 				EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */,
 				407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */,
 				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
-				5904BAF32D31673F00E866D1 /* WireImportExport.framework in Frameworks */,
 				591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */,
 				59537D952CFFA11A00920B59 /* WireLogging in Frameworks */,
 				E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */,
@@ -5375,7 +5370,6 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5904BAF22D31673F00E866D1 /* WireImportExport.framework */,
 				E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */,
 				E970F6E42CC90115007A2CEB /* WireTransport.framework */,
 				EE67F740296F0EBC001D7C88 /* WireCanvas.framework */,
