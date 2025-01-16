@@ -968,6 +968,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
+
+            let useCase = PerformPostMembershipCleanUpUseCase(
+                context: managedObjectContext,
+                userID: nil,
+                shouldCreateMissingMemberships: true
+            )
+            do {
+                try await useCase.invoke()
+            } catch {
+                WireLogger.individualToTeamMigration.error("Error performing post membership cleanup")
+            }
         }
 
         recurringActionService.performActionsIfNeeded()

@@ -208,6 +208,19 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
             for: user,
             authoritative: false
         )
+
+        if userProfile.updatedKeys.contains(.teamID) {
+            let useCase = PerformPostMembershipCleanUpUseCase(
+                context: managedObjectContext,
+                userID: user.objectID,
+                shouldCreateMissingMemberships: false
+            )
+            do {
+                try useCase.invoke()
+            } catch {
+                WireLogger.individualToTeamMigration.error("Error performing post membership cleanup")
+            }
+        }
     }
 
     func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
