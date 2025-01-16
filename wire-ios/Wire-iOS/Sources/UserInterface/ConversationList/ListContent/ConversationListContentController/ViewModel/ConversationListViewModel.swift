@@ -23,6 +23,7 @@ import WireMainNavigationUI
 import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
+import Combine
 
 final class ConversationListViewModel: NSObject {
 
@@ -218,6 +219,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     private var conversationDirectoryToken: Any?
+    private var tokens = Set<AnyCancellable>()
 
     let userSession: UserSession?
 
@@ -232,6 +234,17 @@ final class ConversationListViewModel: NSObject {
 
     private func setupObservers() {
         conversationDirectoryToken = userSession?.conversationDirectory.addObserver(self)
+
+        // Temporary hack
+        NotificationCenter
+            .default
+            .publisher(for: .selfUserTeamDidChange)
+            .receive(on: RunLoop.main)
+            .sink { [weak userSession] _ in
+                guard let userSession else { return }
+
+                userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
+        }.store(in: &tokens)
     }
 
     func sectionHeaderTitle(sectionIndex: Int) -> String? {

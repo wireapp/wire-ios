@@ -28,6 +28,10 @@ protocol UserProfilePayloadProcessing {
     )
 }
 
+public extension Notification.Name {
+    static let selfUserTeamDidChange = Notification.Name("SelfUserTeamDidChange")
+}
+
 final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
     /// Update all user entities with the data from the user profiles.
@@ -87,6 +91,11 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
         if payload.updatedKeys.contains(.teamID) || authoritative {
             user.teamIdentifier = payload.teamID
             user.createOrDeleteMembershipIfBelongingToTeam()
+
+            // HACK: Let's see if it works then improve it
+            if user.isSelfUser {
+                NotificationCenter.default.post(name: .selfUserTeamDidChange, object: nil)
+            }
         }
 
         if payload.SSOID != nil || authoritative {
