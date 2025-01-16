@@ -29,6 +29,7 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
 
     @ViewBuilder private(set) var exportBackupSheetContent: (@escaping ExportBackupAction) -> ExportBackupSheet
     @ViewBuilder private(set) var importBackupSheetContent: () -> ImportBackupSheet
+    private(set) var presentActivityViewController: (_ url: URL) async -> Void
 
     @State private var isExportBackupSheetPresented: Bool = false
     @State private var isImportBackupSheetPresented: Bool = false
@@ -51,7 +52,9 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
                     isPresented: $isExportBackupSheetPresented,
                     onDismiss: {
                         // if the ExportBackupSheet left a password after dismiss, trigger the action
-                        exportBackupPassword.map { viewModel.backupActiveAccount(password: $0) }
+                        exportBackupPassword.map { password in
+                            viewModel.backupActiveAccount(password: password, export: presentActivityViewController)
+                        }
                         exportBackupPassword = nil
                     }) {
                         // get the password from the ExportBackupSheet

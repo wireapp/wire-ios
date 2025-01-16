@@ -34,12 +34,12 @@ func BackupRestoreViewPreview() -> some View {
                 onConfirmation: { _ in },
                 onFailure: {}
             )
-//            passwordValidator: MockBackupPasswordValidator()
         ),
         exportBackupSheetContent: { exportBackupAction in
             EmptyView()
         },
-        importBackupSheetContent: { EmptyView() }
+        importBackupSheetContent: { EmptyView() },
+        presentActivityViewController: { _ in }
     )
 }
 

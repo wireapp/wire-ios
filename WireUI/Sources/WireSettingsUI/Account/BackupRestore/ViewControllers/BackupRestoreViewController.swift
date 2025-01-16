@@ -67,6 +67,9 @@ public final class BackupRestoreViewController: UIViewController {
                     }
                 }
                 .presentationDetents([.medium])
+            },
+            presentActivityViewController: { [weak self] backupURL in
+                await self?.presentExportActivity(url: backupURL)
             }
         )
 
@@ -91,7 +94,7 @@ public final class BackupRestoreViewController: UIViewController {
 
 extension BackupRestoreViewController: ExportBackupActivityProtocol {
 
-    public func presentExportActivity(url: URL) async {
+   /*private*/ public func presentExportActivity(url: URL) async {
         await withCheckedContinuation { continuation in
             let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: .none)
             activityViewController.completionWithItemsHandler = { _, _, _, _ in
