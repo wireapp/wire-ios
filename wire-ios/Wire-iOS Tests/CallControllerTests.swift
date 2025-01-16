@@ -251,11 +251,3 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
         presentUnsupportedVersionAlertIsCalled = true
     }
 }
-
-// MARK: - MockCallConversationProvider
-
-final class MockCallConversationProvider: CallConversationProvider {
-    var priorityCallConversation: ZMConversation?
-    var ongoingCallConversation: ZMConversation?
-    var ringingCallConversation: ZMConversation?
-}
