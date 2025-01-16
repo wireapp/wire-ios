@@ -18,16 +18,24 @@
 
 import SwiftUI
 
+@MainActor
 public final class BackupRestoreViewModel: ObservableObject {
+    
+    /// `nil` means no backup is in progress.
+    @Published private(set) var backupProgress: Float?
 
     private let backupSource: any BackupSourceProtocol
     private let restoreSource: any RestoreSourceProtocol
     private let backupResultHandler: BackupResultHandler
     private let restoreBackupResultHandler: RestoreBackupResultHandler
 
+    private let exportBackupUseCase: any ExportBackupUseCaseProtocol
+
     public init(
-        //
+        exportBackupUseCase: any ExportBackupUseCaseProtocol
     ) {
+        self.exportBackupUseCase = exportBackupUseCase
+
         // TODO: fix
         backupSource = DummyBackupSource()
         restoreSource = DummyRestoreSource()
@@ -49,20 +57,32 @@ public final class BackupRestoreViewModel: ObservableObject {
         backupResultHandler: BackupResultHandler,
         restoreBackupResultHandler: RestoreBackupResultHandler
     ) {
+        exportBackupUseCase = DummyExportBackupUseCase()
+
         self.backupSource = backupSource
         self.restoreSource = restoreSource
         self.backupResultHandler = backupResultHandler
         self.restoreBackupResultHandler = restoreBackupResultHandler
+
+        struct DummyExportBackupUseCase: ExportBackupUseCaseProtocol {
+            func invoke(password: String, export: @escaping (URL) async -> Void) async throws {
+                fatalError()
+            }
+        }
     }
 
-    func backupActiveAccount(password: String) {
-        do {
-            let backupPath = try backupSource.backupActiveAccount(password: password)
-            backupResultHandler.onSuccess(backupPath) { [weak self] in
-                self?.backupSource.clearPreviousBackups()
+    func backupActiveAccount(
+        password: String,
+        export: @MainActor @escaping (_ url: URL) async -> Void
+    ) {
+        // TODO: activity indicator with progress
+        Task {
+            do {
+                try await exportBackupUseCase.invoke(password: password, export: export)
+            } catch {
+                fatalError("TODO")
+                /*backupResultHandler.onFailure()*/
             }
-        } catch {
-            backupResultHandler.onFailure()
         }
     }
 

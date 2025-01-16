@@ -23,17 +23,14 @@ public final class BackupRestoreViewController: UIViewController {
     private let viewModel: BackupRestoreViewModel
     // TODO: move into ViewModel
     private let backupPasswordValidator: any BackupPasswordValidatorProtocol
-    private let exportBackupUseCase: any ExportBackupUseCaseProtocol
 
     public init(
         viewModel: BackupRestoreViewModel,
         // TODO: move into ViewModel
-        backupPasswordValidator: any BackupPasswordValidatorProtocol,
-        exportBackupUseCase: any ExportBackupUseCaseProtocol
+        backupPasswordValidator: any BackupPasswordValidatorProtocol
     ) {
         self.viewModel = viewModel
         self.backupPasswordValidator = backupPasswordValidator
-        self.exportBackupUseCase = exportBackupUseCase
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -92,11 +89,11 @@ public final class BackupRestoreViewController: UIViewController {
 
 // MARK: - BackupRestoreViewController + ExportBackupActivityPresenterProtocol
 
-extension BackupRestoreViewController: ExportBackupActivityPresenterProtocol {
+extension BackupRestoreViewController: ExportBackupActivityProtocol {
 
-    public func present(backup: URL) async {
+    public func presentExportActivity(url: URL) async {
         await withCheckedContinuation { continuation in
-            let activityViewController = UIActivityViewController(activityItems: [backup], applicationActivities: .none)
+            let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: .none)
             activityViewController.completionWithItemsHandler = { _, _, _, _ in
                 //
                 continuation.resume()

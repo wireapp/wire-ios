@@ -16,7 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 /// A use case to export the current app state using a provided `password`.
 public protocol ExportBackupUseCaseProtocol {
-    func invoke(password: String) async throws
+
+    /// A backup file will be created and saved to a temporary location and the `export` closure is called.
+    /// After the closure returns the backup file is cleaned up.
+    func invoke(
+        password: String,
+        export: @escaping (_ url: URL) async -> Void
+//        exportBackupActivityPresenter: some ExportBackupActivityProtocol
+    ) async throws
 }

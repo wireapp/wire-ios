@@ -18,8 +18,8 @@
 
 import Foundation
 
-/// A conforming type must allow the user to export/share the file at the provided `backup` URL.
+/// A conforming type must allow the user to export/share the file at the provided `url`.
 /// The async method must only complete when the backup file can safely be deleted.
-protocol ExportBackupActivityPresenterProtocol {
-    func present(backup: URL) async
+public protocol ExportBackupActivityProtocol {
+    func presentExportActivity(url: URL) async
 }

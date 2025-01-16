@@ -50,7 +50,7 @@ struct BackupSource: BackupSourceProtocol, ExportBackupUseCaseProtocol {
     @MainActor
     func invoke(
         password: String,
-        activityPresenter: some ExportBackupActivityPresenterProtocol
+        export: @escaping (_ url: URL) async -> Void
     ) async throws {
         let sessionManager = sessionManager()
 
@@ -59,7 +59,7 @@ struct BackupSource: BackupSourceProtocol, ExportBackupUseCaseProtocol {
                 continuation.resume(with: result)
             }
         }
-        await activityPresenter.present(backup: url)
+        await export(url)
         sessionManager.clearPreviousBackups()
     }
 

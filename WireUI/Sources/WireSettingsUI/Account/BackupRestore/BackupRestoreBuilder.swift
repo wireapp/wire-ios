@@ -33,11 +33,10 @@ public struct BackupRestoreBuilder {
 
     @MainActor
     public func build() -> UIViewController {
-        let viewModel = BackupRestoreViewModel()
+        let viewModel = BackupRestoreViewModel(exportBackupUseCase: exportBackupUseCase)
         return BackupRestoreViewController(
             viewModel: viewModel,
-            backupPasswordValidator: backupPasswordValidator,
-            exportBackupUseCase: exportBackupUseCase
+            backupPasswordValidator: backupPasswordValidator
         )
     }
 }
