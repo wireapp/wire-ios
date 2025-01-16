@@ -147,7 +147,7 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         let clients = [
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString()),
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString())
-        ].map { AVSClientVideoStream(client: $0) }
+        ]
 
         // When
         sut.callGridViewController(viewController, perform: .requestVideoStreamsForClients(clients))
