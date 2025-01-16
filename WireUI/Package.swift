@@ -51,7 +51,7 @@ let package = Package(
             name: "WireIndividualToTeamMigrationUI",
             dependencies: [
                 "WireAnalytics",
-                .product(name: "WireDomainAPI", package: "WireDomainPackage"),
+                .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
                 "WireReusableUIComponents"
             ]
