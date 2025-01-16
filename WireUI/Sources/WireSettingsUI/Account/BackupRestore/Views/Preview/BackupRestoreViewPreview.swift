@@ -39,7 +39,7 @@ func BackupRestoreViewPreview() -> some View {
             EmptyView()
         },
         importBackupSheetContent: { EmptyView() },
-        presentActivityViewController: { _ in }
+        presentActivityViewController: { _, _ in }
     )
 }
 

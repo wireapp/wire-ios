@@ -68,8 +68,8 @@ public final class BackupRestoreViewController: UIViewController {
                 }
                 .presentationDetents([.medium])
             },
-            presentActivityViewController: { [weak self] backupURL in
-                await self?.presentExportActivity(url: backupURL)
+            presentActivityViewController: { [weak self] backupURL, anchorView in
+                await self?.presentExportActivity(url: backupURL, anchorView: anchorView)
             }
         )
 
@@ -88,40 +88,16 @@ public final class BackupRestoreViewController: UIViewController {
 
         hostingController.didMove(toParent: self)
     }
-}
 
-// MARK: - BackupRestoreViewController + ExportBackupActivityPresenterProtocol
-
-extension BackupRestoreViewController: ExportBackupActivityProtocol {
-
-   /*private*/ public func presentExportActivity(url: URL) async {
+    private func presentExportActivity(url: URL, anchorView: UIView) async {
         await withCheckedContinuation { continuation in
             let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: .none)
-            activityViewController.completionWithItemsHandler = { _, _, _, _ in
-                //
-                continuation.resume()
-            }
+            activityViewController.completionWithItemsHandler = { _, _, _, _ in continuation.resume() }
             if let popoverPresentationController = activityViewController.popoverPresentationController {
-                fatalError("TODO")
+                popoverPresentationController.sourceView = anchorView.superview
+                popoverPresentationController.sourceRect = anchorView.frame
             }
             present(activityViewController, animated: true)
         }
     }
 }
-
-// TODO: remove
-
-private struct DummyAlertPresenter: BackupRestoreAlertPresenterProtocol {
-    func todo() async -> Bool {
-        fatalError("not implemented")
-    }
-}
-
-//private struct DummyUseCase: ExportBackupUseCaseProtocol {
-//
-//    let action: (String) -> Void
-//
-//    func invoke(password: String) async {
-//        action(password)
-//    }
-//}
