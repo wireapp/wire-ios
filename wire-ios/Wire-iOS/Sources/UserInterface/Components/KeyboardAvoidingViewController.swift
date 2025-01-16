@@ -45,10 +45,6 @@ class KeyboardAvoidingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override var shouldAutorotate: Bool {
-        viewController.shouldAutorotate
-    }
-
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         viewController.supportedInterfaceOrientations
     }
