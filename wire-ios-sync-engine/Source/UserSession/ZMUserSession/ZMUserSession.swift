@@ -969,11 +969,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
 
-            let useCase = PerformPostMembershipCleanUpUseCase(
-                context: managedObjectContext,
-                userID: nil,
-                shouldCreateMissingMemberships: true
-            )
+            let useCase = PerformPostMembershipCleanUpUseCase(context: managedObjectContext, userID: nil)
             do {
                 try await useCase.invoke()
             } catch {

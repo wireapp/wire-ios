@@ -26,16 +26,13 @@ public class PerformPostMembershipCleanUpUseCase {
 
     private let context: NSManagedObjectContext
     private let userID: NSManagedObjectID?
-    private let shouldCreateMissingMemberships: Bool
 
     public init(
         context: NSManagedObjectContext,
-        userID: NSManagedObjectID?,
-        shouldCreateMissingMemberships: Bool
+        userID: NSManagedObjectID?
     ) {
         self.context = context
         self.userID = userID
-        self.shouldCreateMissingMemberships = false
     }
 
     public func invoke() async throws {
@@ -74,7 +71,7 @@ public class PerformPostMembershipCleanUpUseCase {
         }
 
         if user.isSelfUser {
-            try removeSameTeamConnections(selfUserTeamID: selfUserTeamID)
+            try invokeForAllUsers(selfUserTeamID: selfUserTeamID)
         } else if let connection = user.connection, !keepConnectionStatuses().contains(connection.status) {
             try removeConnections([connection], withTeamID: selfUserTeamID)
         }

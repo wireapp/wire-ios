@@ -210,11 +210,7 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
         )
 
         if userProfile.updatedKeys.contains(.teamID) {
-            let useCase = PerformPostMembershipCleanUpUseCase(
-                context: managedObjectContext,
-                userID: user.objectID,
-                shouldCreateMissingMemberships: false
-            )
+            let useCase = PerformPostMembershipCleanUpUseCase(context: managedObjectContext, userID: user.objectID)
             do {
                 try useCase.invoke()
             } catch {
