@@ -29,15 +29,17 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
 
     @ViewBuilder private(set) var exportBackupSheetContent: (@escaping ExportBackupAction) -> ExportBackupSheet
     @ViewBuilder private(set) var importBackupSheetContent: () -> ImportBackupSheet
+
     /// Workaround for not being able to use `ShareLink` because 1. there is no callback which allows us to delete
     /// the temporary file and 2. another step would be needed: A view showing the `ShareLink` right after the backup file became ready.
     private(set) var presentActivityViewController: (_ url: URL, _ anchor: UIViewController) async -> Void
 
-    @State private var isExportBackupSheetPresented: Bool = false
-    @State private var isImportBackupSheetPresented: Bool = false
-    @State private var isBackupPickerPresented: Bool = false
-    @State private var selectedFileURL: URL?
+    @State private var isExportBackupSheetPresented = false
+    @State private var isBackupPickerPresented = false
     @State private var popoverPresenter = UIViewController()
+
+    @State private var isImportBackupSheetPresented = false
+    @State private var selectedFileURL: URL?
 
     /// `nil` means the ExportBackupSheet has not been opened or has been dismissed without the texport action.
     @State private var exportBackupPassword: String?
