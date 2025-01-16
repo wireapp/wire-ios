@@ -19,7 +19,6 @@
 import Foundation
 import UniformTypeIdentifiers
 import WireDataModel
-import WireImportExport
 import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
