@@ -29,6 +29,8 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
 
     @ViewBuilder private(set) var exportBackupSheetContent: (@escaping ExportBackupAction) -> ExportBackupSheet
     @ViewBuilder private(set) var importBackupSheetContent: () -> ImportBackupSheet
+    /// Workaround for not being able to use `ShareLink` because 1. there is no callback which allows us to delete
+    /// the temporary file and 2. another step would be needed: A view showing the `ShareLink` right after the backup file became ready.
     private(set) var presentActivityViewController: (_ url: URL, _ anchor: UIViewController) async -> Void
 
     @State private var isExportBackupSheetPresented: Bool = false
@@ -105,6 +107,7 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
 
 private struct PopoverPresenter: UIViewControllerRepresentable {
 
+    /// Used for extracting the reference to the created view controller.
     let viewControllerCreated: (UIViewController) -> Void
 
     func makeUIViewController(context: Context) -> UIViewController {
@@ -115,19 +118,6 @@ private struct PopoverPresenter: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
-
-//private struct PopoverAnchorView: UIViewRepresentable {
-//
-//    let viewCreated: (UIView) -> Void
-//
-//    func makeUIView(context: Context) -> UIView {
-//        let view = UIView()
-//        viewCreated(view)
-//        return view
-//    }
-//    
-//    func updateUIView(_ uiView: UIView, context: Context) {}
-//}
 
 #Preview {
     BackupRestoreViewPreview()
