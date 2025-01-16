@@ -45,12 +45,18 @@ struct E2EIdentityCertificateDetailsView: View {
         .overlay {
             HStack {
                 Spacer()
-                CloseButton {
-                    dismiss()
-                    didDismiss?()
-                }
+                Button(
+                    action: {
+                        dismiss()
+                        didDismiss?()
+                    },
+                    label: {
+                        Image
+                            .close
+                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
+                    }
+                )
                 .accessibilityIdentifier("CloseButton")
-                .accessibilityLabel(Text(L10n.Localizable.General.close))
                 .padding(.all, ViewConstants.Padding.standard)
             }
         }

@@ -22,6 +22,7 @@ import WireDesign
 public struct CloseButton: View {
 
     private let action: () -> Void
+    private let accessibilityLabel: String
 
     public var body: some View {
         Button(action: action) {
@@ -29,11 +30,13 @@ public struct CloseButton: View {
         }
         .buttonStyle(.plain)
         .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
+        .accessibilityLabel(Text(accessibilityLabel))
         .accessibilityIdentifier("close")
     }
 
-    public init(action: @escaping @MainActor () -> Void) {
+    public init(action: @escaping @MainActor () -> Void, accessibilityLabel: String) {
         self.action = action
+        self.accessibilityLabel = accessibilityLabel
     }
 
 }
@@ -43,7 +46,7 @@ public struct CloseButton: View {
         Text("Hello, World!")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    CloseButton { print("Close") }
+                    CloseButton(action: { print("Close") }, accessibilityLabel: "Close")
                 }
             }
     }
