@@ -31,13 +31,6 @@
   },
   "testTargets" : [
     {
-      "target" : {
-        "containerPath" : "container:WireImportExport.xcodeproj",
-        "identifier" : "59049E382D3146CE00E866D1",
-        "name" : "WireImportExportTests"
-      }
-    },
-    {
       "skippedTests" : [
         "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()"
       ],

@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireDomainAPI
+import WireDomainPkg
 
 public struct MockUseCase: IndividualToTeamMigrationUseCaseProtocol {
     let error: (any Error)?

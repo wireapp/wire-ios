@@ -162,9 +162,6 @@
       location = "group:wire-ios-request-strategy/WireRequestStrategy.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireDomain/WireImportExport.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:WireDomain/WireDomain Project.xcodeproj">
    </FileRef>
    <FileRef

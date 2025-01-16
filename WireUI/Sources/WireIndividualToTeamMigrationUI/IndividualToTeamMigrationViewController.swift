@@ -19,7 +19,7 @@
 import SwiftUI
 import WireAnalytics
 import WireDesign
-import WireDomainAPI
+import WireDomainPkg
 import WireFoundation
 import WireReusableUIComponents
 

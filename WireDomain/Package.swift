@@ -7,15 +7,16 @@ let package = Package(
     name: "WireDomainPackage",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
-        .library(name: "WireDomainAPI", targets: ["WireDomainAPI"])
+        .library(name: "WireDomainPackage", targets: ["WireDomainPkg"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0")
     ],
     targets: [
         .target(
-            name: "WireDomainAPI",
-            path: "./Sources/WireDomainAPI"
+            name: "WireDomainPkg",
+            path: "./Sources/WireDomain",
+            sources: ["./UseCases/Protocols/IndividualToTeamMigrationUseCaseProtocol.swift"]
         )
     ]
 )
