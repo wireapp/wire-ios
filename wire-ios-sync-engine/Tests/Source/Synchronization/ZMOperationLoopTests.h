@@ -38,7 +38,6 @@
 @property (nonatomic) RecordingMockTransportSession *mockTransportSesssion;
 @property (nonatomic) ApplicationStatusDirectory *applicationStatusDirectory;
 @property (nonatomic) PushNotificationStatus *pushNotificationStatus;
-@property (nonatomic) CallEventStatus *callEventStatus;
 @property (nonatomic) SyncStatus *syncStatus;
 @property (nonatomic) OperationStatus *operationStatus;
 @property (nonatomic) MockRequestStrategy *mockRequestStrategy;
