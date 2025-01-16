@@ -49,8 +49,8 @@ struct E2EIdentityCertificateDetailsView: View {
                     dismiss()
                     didDismiss?()
                 }, accessibilityLabel: L10n.Localizable.General.close)
-                .accessibilityIdentifier("CloseButton")
-                .padding(.all, ViewConstants.Padding.standard)
+                    .accessibilityIdentifier("CloseButton")
+                    .padding(.all, ViewConstants.Padding.standard)
             }
         }
     }
