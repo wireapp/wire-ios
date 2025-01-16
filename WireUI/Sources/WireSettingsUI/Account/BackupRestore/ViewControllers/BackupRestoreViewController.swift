@@ -89,15 +89,15 @@ public final class BackupRestoreViewController: UIViewController {
         hostingController.didMove(toParent: self)
     }
 
-    private func presentExportActivity(url: URL, anchorView: UIView) async {
+    private func presentExportActivity(url: URL, anchorView: UIViewController) async {
         await withCheckedContinuation { continuation in
             let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: .none)
             activityViewController.completionWithItemsHandler = { _, _, _, _ in continuation.resume() }
             if let popoverPresentationController = activityViewController.popoverPresentationController {
-                popoverPresentationController.sourceView = anchorView.superview
-                popoverPresentationController.sourceRect = anchorView.frame
+                popoverPresentationController.sourceView = anchorView.view
+                popoverPresentationController.sourceRect = anchorView.view.bounds.insetBy(dx: -10, dy: -10)
             }
-            present(activityViewController, animated: true)
+            anchorView.present(activityViewController, animated: true)
         }
     }
 }

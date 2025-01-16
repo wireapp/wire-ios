@@ -29,13 +29,13 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
 
     @ViewBuilder private(set) var exportBackupSheetContent: (@escaping ExportBackupAction) -> ExportBackupSheet
     @ViewBuilder private(set) var importBackupSheetContent: () -> ImportBackupSheet
-    private(set) var presentActivityViewController: (_ url: URL, _ anchor: UIView) async -> Void
+    private(set) var presentActivityViewController: (_ url: URL, _ anchor: UIViewController) async -> Void
 
     @State private var isExportBackupSheetPresented: Bool = false
     @State private var isImportBackupSheetPresented: Bool = false
     @State private var isBackupPickerPresented: Bool = false
     @State private var selectedFileURL: URL?
-    @State private var popoverAnchorView = UIView()
+    @State private var popoverPresenter = UIViewController()
 
     /// `nil` means the ExportBackupSheet has not been opened or has been dismissed without the texport action.
     @State private var exportBackupPassword: String?
@@ -49,10 +49,9 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
                         .wireTextStyle(.body2)
                         .foregroundStyle(Color.primaryText)
                 }
-                .clipShape(Rectangle())
                 .background {
-                    // a dummy view just for providing `sourceView` and `sourceRect` for popover presentation via UIKit
-                    PopoverAnchorView { popoverAnchorView = $0 }
+                    // a view controller just for presenting a popover presentation
+                    PopoverPresenter { popoverPresenter = $0 }
                 }
                 .sheet(
                     isPresented: $isExportBackupSheetPresented,
@@ -62,7 +61,7 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
                             viewModel.backupActiveAccount(
                                 password: password,
                                 export: { url in
-                                    await presentActivityViewController(url, .init())
+                                    await presentActivityViewController(url, popoverPresenter)
                                 }
                             )
                         }
@@ -104,18 +103,31 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
     }
 }
 
-private struct PopoverAnchorView: UIViewRepresentable {
+private struct PopoverPresenter: UIViewControllerRepresentable {
 
-    let viewCreated: (UIView) -> Void
+    let viewControllerCreated: (UIViewController) -> Void
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        viewCreated(view)
-        return view
+    func makeUIViewController(context: Context) -> UIViewController {
+        let viewController = UIViewController()
+        viewControllerCreated(viewController)
+        return viewController
     }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {}
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
+
+//private struct PopoverAnchorView: UIViewRepresentable {
+//
+//    let viewCreated: (UIView) -> Void
+//
+//    func makeUIView(context: Context) -> UIView {
+//        let view = UIView()
+//        viewCreated(view)
+//        return view
+//    }
+//    
+//    func updateUIView(_ uiView: UIView, context: Context) {}
+//}
 
 #Preview {
     BackupRestoreViewPreview()
