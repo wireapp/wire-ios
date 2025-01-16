@@ -235,12 +235,12 @@ final class ConversationListViewModel: NSObject {
     private func setupObservers() {
         conversationDirectoryToken = userSession?.conversationDirectory.addObserver(self)
 
-        // Temporary hack
-        NotificationCenter
-            .default
-            .publisher(for: .selfUserTeamDidChange)
+        guard let user = userSession?.selfUser as? ZMUser else { return }
+
+        user.publisher(for: \.teamIdentifier)
             .receive(on: RunLoop.main)
-            .sink { [weak userSession] _ in
+            .removeDuplicates()
+            .sink { [weak userSession] change in
                 guard let userSession else { return }
 
                 userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
