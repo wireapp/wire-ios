@@ -24,10 +24,12 @@ private let zmsLog = ZMSLog(tag: "backend-environment")
 public extension BackendEnvironment {
     static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
     static var shared: BackendEnvironment = {
-        // read from userDefaults first
-        var environmentType: EnvironmentType? = EnvironmentType(userDefaults: .applicationGroup)
+        let environmentType: EnvironmentType
         if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
             environmentType = EnvironmentType(stringValue: typeOverride)
+        } else {
+            // read from userDefaults first
+            environmentType = EnvironmentType(userDefaults: .applicationGroup)
         }
 
         guard let environment = BackendEnvironment(type: environmentType) else {
