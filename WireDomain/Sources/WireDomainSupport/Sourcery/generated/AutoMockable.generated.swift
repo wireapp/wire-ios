@@ -1507,6 +1507,35 @@ class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
 
 }
 
+public class MockPullSelfUserClientsProtocol: PullSelfUserClientsProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullSelfClients
+
+    public var pullSelfClients_Invocations: [Void] = []
+    public var pullSelfClients_MockError: Error?
+    public var pullSelfClients_MockMethod: (() async throws -> Void)?
+
+    public func pullSelfClients() async throws {
+        pullSelfClients_Invocations.append(())
+
+        if let error = pullSelfClients_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfClients_MockMethod else {
+            fatalError("no mock for `pullSelfClients`")
+        }
+
+        try await mock()
+    }
+
+}
+
 public class MockPushSupportedProtocolsUseCaseProtocol: PushSupportedProtocolsUseCaseProtocol {
 
     // MARK: - Life cycle

@@ -20,14 +20,6 @@ import UIKit
 
 final class RotationAwareNavigationController: UINavigationController {
 
-    override var shouldAutorotate: Bool {
-        if let topController = viewControllers.last {
-            topController.shouldAutorotate
-        } else {
-            super.shouldAutorotate
-        }
-    }
-
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if let topController = viewControllers.last {
             topController.supportedInterfaceOrientations

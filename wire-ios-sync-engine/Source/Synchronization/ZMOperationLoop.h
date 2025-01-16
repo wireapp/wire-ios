@@ -29,7 +29,6 @@
 @class OperationStatus;
 @class SyncStatus;
 @class PushNotificationStatus;
-@class CallEventStatus;
 @class ZMSyncStrategy;
 
 extern NSString * const ZMPushChannelIsOpenKey;
@@ -47,7 +46,6 @@ extern NSString * const ZMPushChannelIsOpenKey;
                          operationStatus:(OperationStatus *)operationStatus
                               syncStatus:(SyncStatus *)syncStatus
                   pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
-                         callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled;

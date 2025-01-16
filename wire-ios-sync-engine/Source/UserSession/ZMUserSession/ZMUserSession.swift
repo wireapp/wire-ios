@@ -21,6 +21,7 @@ import Foundation
 import WireAnalytics
 import WireAPI
 import WireDataModel
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireSystem
@@ -576,6 +577,7 @@ public final class ZMUserSession: NSObject {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
@@ -629,7 +631,6 @@ public final class ZMUserSession: NSObject {
             operationStatus: applicationStatusDirectory.operationStatus,
             syncStatus: applicationStatusDirectory.syncStatus,
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-            callEventStatus: applicationStatusDirectory.callEventStatus,
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled
@@ -1000,6 +1001,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
         -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
+
         let resolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
@@ -1008,7 +1010,27 @@ extension ZMUserSession: ZMSyncStateDelegate {
         return ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: supportedProtocolService,
-            resolver: resolver
+            resolver: resolver,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory
+        )
+    }
+
+    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsProtocol {
+        guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
+            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
+        }
+        guard let apiVersion = BackendInfo.apiVersion,
+              let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+            WireLogger.backend.warn("apiVersion not resolved")
+
+            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
+
+        }
+
+        return PullSelfUserClients.make(
+            apiService: apiService,
+            apiVersion: wireAPIVersion,
+            context: context
         )
     }
 
@@ -1087,12 +1109,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
         WireLogger.updateEvent.info("process pending call events")
         Task {
             do {
+                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
                 try await updateEventProcessor!.processBufferedEvents()
                 await managedObjectContext.perform {
                     completionHandler()
                 }
             } catch {
-                WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
+                WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }

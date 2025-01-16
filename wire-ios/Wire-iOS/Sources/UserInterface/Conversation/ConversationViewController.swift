@@ -287,10 +287,6 @@ final class ConversationViewController: UIViewController {
 
     // MARK: - Device orientation
 
-    override var shouldAutorotate: Bool {
-        true
-    }
-
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
             .portrait
