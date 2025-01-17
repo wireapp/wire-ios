@@ -21,7 +21,7 @@ import WireDataModel
 import WireLogging
 
 struct ConversationNotificationBuilder: NotificationBuilder {
-    
+
     private struct Context {
         let senderID: UserID
         let conversationID: ConversationID
@@ -80,56 +80,56 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
             let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
-            
+
             guard let genericMessage = getGenericMessage(
                 decryptedMessage: decryptedMessage
             ) else { return UNMutableNotificationContent() }
-            
+
             if genericMessage.hasCalling {
-                
+
                 guard let callBuilder = await makeCallBuilder(
                     calling: genericMessage.calling,
                     at: context.eventTimeStamp
                 ) else { return UNMutableNotificationContent() }
-                
+
                 builder = callBuilder
-                
+
             } else {
-                
+
                 builder = await NewMessageNotificationBuilder(
                     message: genericMessage,
                     conversationID: mlsMessageEvent.conversationID,
                     senderID: mlsMessageEvent.senderID
                 )
-                
+
             }
 
         case let .proteusMessageAdd(proteusMessageEvent):
             let decryptedMessage = proteusMessageEvent.message.decryptedMessage
             let externalEncryptedMessage = proteusMessageEvent.externalData?.encryptedMessage
-            
+
             guard let genericMessage = getGenericMessage(
                 decryptedMessage: decryptedMessage,
                 externalMessage: externalEncryptedMessage
             ) else { return UNMutableNotificationContent() }
 
             if genericMessage.hasCalling {
-                
+
                 guard let callBuilder = await makeCallBuilder(
                     calling: genericMessage.calling,
                     at: context.eventTimeStamp
                 ) else { return UNMutableNotificationContent() }
-                
+
                 builder = callBuilder
-                
+
             } else {
-                
+
                 builder = await NewMessageNotificationBuilder(
                     message: genericMessage,
                     conversationID: proteusMessageEvent.conversationID,
                     senderID: proteusMessageEvent.senderID
                 )
-                
+
             }
 
         default: // TODO: [WPB-11175] - Generate notifications for other events
@@ -158,9 +158,9 @@ struct ConversationNotificationBuilder: NotificationBuilder {
 
         return true
     }
-    
+
     // MARK: - Helpers
-    
+
     private func makeCallBuilder(
         calling: Calling,
         at date: Date?
@@ -169,7 +169,7 @@ struct ConversationNotificationBuilder: NotificationBuilder {
             calling: calling,
             at: date
         )
-        
+
         // Checking early on that the builder should actually build the `CallKit` notification
         // if not we fallback to the regular call notification builder.
         if let callKitBuilder, await callKitBuilder.shouldBuildNotification() {
@@ -183,7 +183,7 @@ struct ConversationNotificationBuilder: NotificationBuilder {
             return nil
         }
     }
-    
+
     private func makeCallKitNotificationBuilder(
         calling: Calling,
         at date: Date?
@@ -196,10 +196,10 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         ) else {
             return nil
         }
-        
+
         return callKitNotifBuilder
     }
-    
+
     private func makeCallRegularNotificationBuilder(
         calling: Calling,
         at date: Date?
@@ -212,10 +212,10 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         ) else {
             return nil
         }
-        
+
         return callNotifBuilder
     }
-    
+
     private func getGenericMessage(
         decryptedMessage: String?,
         externalMessage: String? = nil
@@ -225,8 +225,8 @@ struct ConversationNotificationBuilder: NotificationBuilder {
                   from: decryptedMessage,
                   externalData: externalMessage
               ) else { return nil }
-        
+
         return genericMessage
     }
-    
+
 }

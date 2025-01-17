@@ -24,11 +24,11 @@ struct CallNotificationBodyComposer {
     // TODO: [WPB-15153] - Localize strings
     func make() -> String {
         switch format {
-        case .isCalling(let senderName):
+        case let .isCalling(senderName):
             senderName != nil ? "\(senderName!) is calling" : "Incoming call"
-        case .isCallingWithVideo(let senderName):
+        case let .isCallingWithVideo(senderName):
             senderName != nil ? "\(senderName!) is calling with video" : "Incoming video call"
-        case .called(let senderName):
+        case let .called(senderName):
             senderName != nil ? "\(senderName!) called" : "Missed call"
         }
     }

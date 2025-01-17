@@ -24,7 +24,7 @@ struct CallContent: Decodable {
     let callerUserID: String?
     let callerClientID: String
     let resp: Bool
-    
+
     enum CodingKeys: String, CodingKey {
         case type
         case properties = "props"
@@ -32,10 +32,10 @@ struct CallContent: Decodable {
         case callerClientID = "src_clientid"
         case resp
     }
-    
+
     struct Properties: Decodable {
         private let videosend: String
-        
+
         var isVideo: Bool {
             videosend == "true"
         }
@@ -45,14 +45,13 @@ struct CallContent: Decodable {
 extension CallContent {
     static func decode(from calling: Calling) -> Self? {
         let decoder = JSONDecoder()
-       
+
         guard let data = calling.content.data(using: .utf8) else {
             return nil
         }
-        
+
         do {
-            let callContent = try decoder.decode(Self.self, from: data)
-            return callContent
+            return try decoder.decode(Self.self, from: data)
         } catch {
             return nil
         }

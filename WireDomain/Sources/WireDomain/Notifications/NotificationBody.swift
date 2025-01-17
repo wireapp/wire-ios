@@ -32,14 +32,14 @@ enum NotificationBody {
             )
 
             return newMessageBodyComposer.make()
-            
+
         case let .call(callBodyFormat):
             let callBodyComposer = CallNotificationBodyComposer(
                 format: callBodyFormat
             )
-            
+
             return callBodyComposer.make()
-            
+
         case let .bundled(count):
             return "\(count) new messages."
         }
@@ -78,7 +78,7 @@ extension NotificationBody {
         /// `New message`
         case hidden
     }
-    
+
     /// The expected formats for the body of a call notification.
     enum CallBodyFormat {
         /// `[sender name] is calling` or `Incoming call` if sender is nil.

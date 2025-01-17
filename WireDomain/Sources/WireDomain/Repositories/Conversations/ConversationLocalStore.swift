@@ -419,7 +419,7 @@ public protocol ConversationLocalStoreProtocol {
     ) async -> Bool
 
     func shouldHideNotification() async -> Bool
-    
+
     func conversationNeedsBackendUpdate(
         _ conversation: ZMConversation
     ) async -> Bool
@@ -886,7 +886,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-    
+
     public func conversationNeedsBackendUpdate(
         _ conversation: ZMConversation
     ) async -> Bool {

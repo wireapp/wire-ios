@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CallKit
 import WireAPI
 import WireDataModel
-import CallKit
 import WireLogging
 
 protocol CallKitReporting {
@@ -26,26 +26,26 @@ protocol CallKitReporting {
 }
 
 extension CXProvider: CallKitReporting {
-    static func reportIncomingCall(payload: [AnyHashable : Any]) async throws {
+    static func reportIncomingCall(payload: [AnyHashable: Any]) async throws {
         try await CXProvider.reportNewIncomingVoIPPushPayload(payload)
     }
 }
 
 /// Handles a `CallKit` notification related to an incoming / ending call
 struct CallKitNotificationBuilder: NotificationBuilder {
-    
+
     private enum CallKitState: Equatable {
         case initiatesRinging
         case terminatesRinging
         case unhandled
-        
+
         init(callContent: CallContent, wasCallHandleReported: Bool) {
             let isStartCall = callContent.type.isOne(of: ["SETUP", "GROUPSTART", "CONFSTART"])
             let isIncomingCall = isStartCall && !callContent.resp
             let isEndCall = callContent.type.isOne(of: ["CANCEL", "GROUPEND", "CONFEND"])
             let isAnsweredElsewhere = isStartCall && callContent.resp
             let isRejected = callContent.type == "REJECT"
-            
+
             if isIncomingCall && !wasCallHandleReported {
                 self = .initiatesRinging
             } else if isEndCall || isAnsweredElsewhere || isRejected {
@@ -55,7 +55,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             }
         }
     }
-    
+
     private struct Context {
         let accountID: String
         let conversationID: String
@@ -66,7 +66,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         let shouldRing: Bool
         let isVideo: Bool
     }
-    
+
     private struct Validator {
         let isConversationMuted: Bool
         let conversationNeedsBackendUpdate: Bool
@@ -77,22 +77,22 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         let wasCallHandleReported: Bool
         let isCallerSelf: Bool
         let isCallStateValid: Bool
-        
+
         func validate() -> Bool {
             !conversationNeedsBackendUpdate
-            && !isConversationMuted
-            && !isConversationForcedReadOnly
-            && isAVSReady
-            && isCallKitReady
-            && isUserSessionLoaded
-            && isCallStateValid
+                && !isConversationMuted
+                && !isConversationForcedReadOnly
+                && isAVSReady
+                && isCallKitReady
+                && isUserSessionLoaded
+                && isCallStateValid
         }
     }
-    
+
     private let context: Context
     private let validator: Validator
     private let callKitReporter: CallKitReporting.Type
-    
+
     init?(
         calling: Calling,
         conversationID: ConversationID,
@@ -104,19 +104,19 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         guard let callContent: CallContent = .decode(from: calling) else {
             return nil
         }
-        
+
         let handle = "\(accountID.transportString())+\(conversationID.uuid.transportString())"
         let knownCallHandles = userDefaults.object(forKey: "knownCalls") as? [String] ?? []
         let wasCallHandleReported = knownCallHandles.contains(handle)
-        
+
         let callKitState = CallKitState(
             callContent: callContent,
             wasCallHandleReported: wasCallHandleReported
         )
-        
+
         let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
         let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
-       
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
@@ -126,11 +126,12 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             id: senderID.uuid,
             domain: senderID.domain
         )
-        
+
         // Validation criteria
-        
+
         let needsToBeUpdatedFromBackend = await conversationLocalStore.conversationNeedsBackendUpdate(conversation)
-        let mutedMessagesTypes = await conversationLocalStore.conversationMutedMessageTypesIncludingAvailability(conversation)
+        let mutedMessagesTypes = await conversationLocalStore
+            .conversationMutedMessageTypesIncludingAvailability(conversation)
         let isConversationMuted = mutedMessagesTypes == .all
         let isConversationForcedReadOnly = await conversationLocalStore.isConversationForcedReadOnly(conversation)
         let isAVSReady = userDefaults.bool(forKey: "isAVSReady")
@@ -138,7 +139,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         let loadedUserSessions = userDefaults.object(forKey: "loadedUserSessions") as? [String] ?? []
         let loaderUserSessionsIDs = loadedUserSessions.compactMap(UUID.init(uuidString:))
         let isUserSessionLoaded = loaderUserSessionsIDs.contains(accountID)
-        
+
         self.validator = Validator(
             isConversationMuted: isConversationMuted,
             conversationNeedsBackendUpdate: needsToBeUpdatedFromBackend,
@@ -150,14 +151,14 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             isCallerSelf: selfUser == caller,
             isCallStateValid: callKitState != .unhandled
         )
-        
+
         // Context
-        
+
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
         let conversationName = await conversationLocalStore.name(for: conversation)
         let teamName = await userLocalStore.teamName(for: selfUser)
         let callerName = await userLocalStore.name(for: caller)
-        
+
         self.context = Context(
             accountID: accountID.uuidString,
             conversationID: conversationID.uuid.uuidString,
@@ -168,15 +169,15 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             shouldRing: callKitState == .initiatesRinging,
             isVideo: callContent.properties?.isVideo ?? false
         )
-        
+
         self.callKitReporter = callKitReporting
     }
-    
-    
+
+
     func shouldBuildNotification() async -> Bool {
         validator.validate()
     }
-    
+
     func buildContent() async -> UNMutableNotificationContent {
         let payload: [String: Any] = [
             "accountID": context.accountID,
@@ -185,23 +186,23 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             "callerName": makeTitle() ?? "",
             "hasVideo": context.isVideo
         ]
-        
+
         do {
             WireLogger.calling.info("waking up main app to handle call event")
             try await callKitReporter.reportIncomingCall(payload: payload)
-        } catch let error {
+        } catch {
             WireLogger.calling.error(
                 "failed to wake up main app: \(error.localizedDescription)"
             )
         }
-        
+
         // `CallKit` notification is automatically generated by the system.
         // so we simply return an empty notification to comply with the protocol requirement.
         return UNMutableNotificationContent()
     }
-    
+
     // MARK: - Helpers
-    
+
     private func makeTitle() -> String? {
         let isGroupConversation = context.isGroupConversation
         let teamName = context.teamName
@@ -230,7 +231,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             .newMessage(format)
             .make()
     }
-    
+
 }
 
 

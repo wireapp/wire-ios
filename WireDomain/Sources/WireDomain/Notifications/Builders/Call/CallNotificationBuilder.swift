@@ -21,17 +21,17 @@ import WireDataModel
 
 /// Handles a regular push notification related to an incoming / missed call
 struct CallNotificationBuilder: NotificationBuilder {
-    
+
     private enum CallState: Equatable {
         case incomingCall(video: Bool)
         case missedCall
         case unhandled
-        
+
         init(callContent: CallContent) {
             let isStartCall = callContent.type.isOne(of: ["SETUP", "GROUPSTART", "CONFSTART"])
             let isIncomingCall = isStartCall && !callContent.resp
             let isEndCall = callContent.type.isOne(of: ["CANCEL", "GROUPEND", "CONFEND"])
-            
+
             if isIncomingCall {
                 self = .incomingCall(video: callContent.properties?.isVideo ?? false)
             } else if isEndCall {
@@ -39,10 +39,10 @@ struct CallNotificationBuilder: NotificationBuilder {
             } else {
                 self = .unhandled
             }
-            
+
         }
     }
-    
+
     private struct Context {
         let callState: CallState
         let callerID: UUID?
@@ -53,24 +53,24 @@ struct CallNotificationBuilder: NotificationBuilder {
         let conversationID: WireAPI.QualifiedID
         let selfUserID: UUID
     }
-    
+
     private struct Validator {
         let isCallStateValid: Bool
         let isCallerSelf: Bool
         let isConversationMuted: Bool
         let isCallTimedOut: Bool
-        
+
         func validate() -> Bool {
             isCallStateValid
-            && !isCallerSelf
-            && !isConversationMuted
-            && !isCallTimedOut
+                && !isCallerSelf
+                && !isConversationMuted
+                && !isCallTimedOut
         }
     }
-    
+
     private let context: Context
     private let validator: Validator
-    
+
     init?(
         calling: Calling,
         at time: Date?,
@@ -80,46 +80,47 @@ struct CallNotificationBuilder: NotificationBuilder {
         guard let callContent: CallContent = .decode(from: calling) else {
             return nil
         }
-        
+
         let callState = CallState(callContent: callContent)
-        
+
         let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
         let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
-        
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
         )
-        
+
         let selfUser = await userLocalStore.fetchSelfUser()
-        
+
         let caller = await userLocalStore.fetchOrCreateUser(
             id: senderID.uuid,
             domain: senderID.domain
         )
-        
+
         // Validation criteria
-        
-        let mutedMessagesTypes = await conversationLocalStore.conversationMutedMessageTypesIncludingAvailability(conversation)
+
+        let mutedMessagesTypes = await conversationLocalStore
+            .conversationMutedMessageTypesIncludingAvailability(conversation)
         let isConversationMuted = mutedMessagesTypes == .all
         let isCallTimeOut = time != nil ? Int(Date.now.timeIntervalSince(time!)) > 30 : true
-        
+
         self.validator = Validator(
             isCallStateValid: callState != .unhandled,
             isCallerSelf: selfUser == caller,
             isConversationMuted: isConversationMuted,
             isCallTimedOut: isCallTimeOut
         )
-        
+
         // Context
-        
+
         let conversationName = await conversationLocalStore.name(for: conversation)
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
         let selfUserID = await userLocalStore.id(for: selfUser)
         let teamName = await userLocalStore.teamName(for: selfUser)
         let callerName = await userLocalStore.name(for: caller)
         let callerID = callContent.callerUserID.flatMap(UUID.init(transportString:))
-        
+
         self.context = Context(
             callState: callState,
             callerID: callerID,
@@ -131,14 +132,14 @@ struct CallNotificationBuilder: NotificationBuilder {
             selfUserID: selfUserID
         )
     }
-    
+
     func shouldBuildNotification() async -> Bool {
         validator.validate()
     }
-    
+
     func buildContent() async -> UNMutableNotificationContent {
         switch context.callState {
-        case .incomingCall(let isVideo):
+        case let .incomingCall(isVideo):
             buildIncomingCallNotification(isVideo: isVideo)
         case .missedCall:
             buildMissedCallNotification()
@@ -146,9 +147,9 @@ struct CallNotificationBuilder: NotificationBuilder {
             fatalError()
         }
     }
-    
+
     // MARK: - Build notifications
-    
+
     private func buildIncomingCallNotification(isVideo: Bool) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         let isGroupConversation = context.isGroupConversation
@@ -172,7 +173,7 @@ struct CallNotificationBuilder: NotificationBuilder {
 
         return content
     }
-    
+
     private func buildMissedCallNotification() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         let isGroupConversation = context.isGroupConversation
@@ -194,9 +195,9 @@ struct CallNotificationBuilder: NotificationBuilder {
 
         return content
     }
-    
+
     // MARK: - Helpers
-    
+
     private func makeTitle() -> String? {
         let isGroupConversation = context.isGroupConversation
         let teamName = context.teamName
@@ -235,11 +236,11 @@ struct CallNotificationBuilder: NotificationBuilder {
         case .unhandled:
             fatalError()
         }
-        
+
         let notificationSoundName = UNNotificationSoundName(notificationSound.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
-    
+
     private func makeCategory() -> String {
         switch context.callState {
         case .incomingCall:
