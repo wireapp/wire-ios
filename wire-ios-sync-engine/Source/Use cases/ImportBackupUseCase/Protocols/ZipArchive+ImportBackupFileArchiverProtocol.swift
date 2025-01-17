@@ -21,6 +21,6 @@ import ZipArchive
 struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
 
     func unzipFile(at path: String, to destination: String) -> Bool {
-        ZipArchive.unzipFile(atPath: path, toDestination: destination)
+        SSZipArchive.unzipFile(atPath: path, toDestination: destination)
     }
 }

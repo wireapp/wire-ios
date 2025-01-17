@@ -24,18 +24,18 @@ import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    var activeUserSession: ZMUserSession
-    var dispatchGroup: ZMSDispatchGroup
-    var fileArchiver: ImportBackupFileArchiverProtocol
-    var entityStorage: ImportBackupEntityStorageProtocol
-    var sharedContainerURL: URL
-    var logger: WireLogger = .localStorage
+    let activeUserSession: ZMUserSession // TODO: use account directly if possible
+    let dispatchGroup: ZMSDispatchGroup
+    let fileArchiver: ImportBackupFileArchiverProtocol
+    let entityStorage: ImportBackupEntityStorageProtocol
+    let appStateUpdater: ImportBackupAppStateUpdaterProtocol
+
+    let sharedContainerURL: URL
+    let logger: WireLogger = .localStorage
 
     private let workerQueue = DispatchQueue(label: "import-backup")
 
     func invoke(url: URL, password: String) async throws {
-
-        // TODO: background activity? no
 
         let account = activeUserSession.account
 
@@ -47,9 +47,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             accountID: account.userIdentifier
         )
 
-        // TODO: request UI to migrating state
-
-        // TODO: get self client
+        appStateUpdater.reportImportProgress(progress: 0.5)
 
         _ = try await entityStorage.replacePersistentStore(
             accountIdentifier: account.userIdentifier,
@@ -58,11 +56,16 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             dispatchGroup: dispatchGroup
         )
 
+        // TODO: get self client
+
         // TODO: insert the self client (A) in the new db
-//        mark A as self client in persistentstore metadata
-//        trigger slow sync
+        //        mark A as self client in persistentstore metadata
+
+        appStateUpdater.reportMigrationNeeded()
 
         // TODO: select the account from the first step, which will transition the UI back to the conversation list
+
+        // TODO: trigger slow sync
     }
 
     private func verifyFileExtension(_ url: URL) throws {
