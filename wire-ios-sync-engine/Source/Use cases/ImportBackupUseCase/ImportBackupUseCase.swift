@@ -57,8 +57,19 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             accountID: userSession.account.userIdentifier
         )
 
-        // TODO: get self client
-        let selfClient = userSession.selfUserClient
+        let selfClientBackup = await userSession.managedObjectContext.perform {
+            userSession.selfUserClient?.backup() ?? [:]
+        }
+
+        print(selfClientBackup)
+        debugPrint(selfClientBackup)
+
+        // TODO: delete
+//        await userSession.managedObjectContext.perform {
+//            let uc = UserClient.restore(from: selfClientBackup, context: userSession.managedObjectContext)
+//        }
+
+        await appStateUpdater.reportMigrationNeeded()
 
         _ = try await entityStorage.replacePersistentStore(
             accountIdentifier: userSession.account.userIdentifier,
@@ -69,8 +80,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
         // TODO: insert the self client (A) in the new db
         //        mark A as self client in persistentstore metadata
-
-        await appStateUpdater.reportMigrationNeeded()
 
         // TODO: select the account from the first step, which will transition the UI back to the conversation list
 
@@ -134,6 +143,7 @@ private enum BackupFileExtensions: String, CaseIterable {
 // MARK: -
 
 private enum BackupError: Error {
+    // TODO: remove if not needed
 //    case notAuthenticated
 //    case noActiveAccount
     case compressionError
@@ -141,4 +151,25 @@ private enum BackupError: Error {
     case keyCreationFailed
     case decryptionError
     case unknown
+}
+
+// MARK: -
+
+private extension UserClient {
+
+    func backup() -> [String: Any] {
+        var dict: [String: Any] = [:]
+        for key in entity.attributesByName.keys {
+            dict[key] = value(forKey: key)
+        }
+        return dict
+    }
+
+    static func restore(from dict: [String: Any], context: NSManagedObjectContext) -> Self {
+        let userClient = insertNewObject(in: context)
+        for (key, value) in dict {
+            userClient.setValue(value, forKey: key)
+        }
+        return userClient
+    }
 }
