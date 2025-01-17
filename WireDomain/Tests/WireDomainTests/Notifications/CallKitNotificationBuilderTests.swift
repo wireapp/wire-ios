@@ -266,7 +266,6 @@ final class CallKitNotificationBuilderTests: XCTestCase {
         }
     }
 
-
     private func getCallKitTestUseCases() -> [CallKitTestUseCase] {
         let startAudioCallJson = setupCallingContentMock(type: "SETUP")
         let startVideoCallJson = setupCallingContentMock(type: "SETUP", isVideo: true)
@@ -347,4 +346,3 @@ final class CallKitNotificationBuilderTests: XCTestCase {
     }
 
 }
-

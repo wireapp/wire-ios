@@ -192,7 +192,6 @@ final class CallNotificationBuilderTests: XCTestCase {
         }
         """
 
-
         var calling = Calling()
         calling.content = unhandledCallJson
 

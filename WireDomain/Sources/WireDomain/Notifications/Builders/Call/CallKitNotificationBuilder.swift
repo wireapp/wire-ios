@@ -74,7 +74,6 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         let isAVSReady: Bool
         let isCallKitReady: Bool
         let isUserSessionLoaded: Bool
-        let wasCallHandleReported: Bool
         let isCallerSelf: Bool
         let isCallStateValid: Bool
 
@@ -147,7 +146,6 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             isAVSReady: isAVSReady,
             isCallKitReady: isCallKitReady,
             isUserSessionLoaded: isUserSessionLoaded,
-            wasCallHandleReported: wasCallHandleReported,
             isCallerSelf: selfUser == caller,
             isCallStateValid: callKitState != .unhandled
         )
@@ -172,7 +170,6 @@ struct CallKitNotificationBuilder: NotificationBuilder {
 
         self.callKitReporter = callKitReporting
     }
-
 
     func shouldBuildNotification() async -> Bool {
         validator.validate()
@@ -233,7 +230,3 @@ struct CallKitNotificationBuilder: NotificationBuilder {
     }
 
 }
-
-
-
-

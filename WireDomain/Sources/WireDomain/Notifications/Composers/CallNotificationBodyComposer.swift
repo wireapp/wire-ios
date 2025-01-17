@@ -33,4 +33,3 @@ struct CallNotificationBodyComposer {
         }
     }
 }
-
