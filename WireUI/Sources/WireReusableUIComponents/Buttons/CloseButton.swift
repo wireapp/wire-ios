@@ -26,7 +26,7 @@ public struct CloseButton: View {
 
     public var body: some View {
         Button(action: action) {
-            Image.close
+            Image(.close)
         }
         .buttonStyle(.plain)
         .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
