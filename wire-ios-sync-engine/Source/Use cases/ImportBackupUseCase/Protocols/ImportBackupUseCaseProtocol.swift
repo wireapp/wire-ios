@@ -18,6 +18,6 @@
 
 import Foundation
 
-protocol ImportBackupUseCaseProtocol {
+public protocol ImportBackupUseCaseProtocol {
     func invoke(url: URL, password: String) async throws
 }

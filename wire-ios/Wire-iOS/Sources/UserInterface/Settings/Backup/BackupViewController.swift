@@ -20,6 +20,8 @@ import UIKit
 import WireDesign
 import WireReusableUIComponents
 
+import class WireSyncEngine.SessionManager
+
 final class BackupViewController: UIViewController {
 
     private let tableView = UITableView(frame: .zero)
@@ -41,6 +43,9 @@ final class BackupViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupLayout()
+
+        let tgr = UITapGestureRecognizer(target: self, action: #selector(tapView(_:)))
+        view.addGestureRecognizer(tgr)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -72,6 +77,16 @@ final class BackupViewController: UIViewController {
 
     private func setupLayout() {
         tableView.fitIn(view: view)
+    }
+
+    @objc
+    private func tapView(_ sender: UIGestureRecognizer) {
+        guard let sessionManager = SessionManager.shared else { return }
+
+        sessionManager.activeUserSession.importBackupUseCase(
+            dispatchGroup: sessionManager.dispatchGroup,
+            sharedContainerURL: sessionManager.sharedContainerURL
+        )
     }
 }
 

@@ -255,6 +255,37 @@ public final class ZMUserSession: NSObject {
         }
     }
 
+    private func importBackupUseCase(
+        dispatchGroup: ZMSDispatchGroup,
+        sharedContainerURL: URL
+    ) -> ImportBackupUseCaseProtocol {
+        return ImportBackupUseCase(
+            userSession: self,
+            dispatchGroup: dispatchGroup,
+            fileArchiver: IBFA(),
+            entityStorage: IBES(),
+            appStateUpdater: IBASU(),
+            sharedContainerURL: sharedContainerURL
+        )
+
+        struct IBFA: ImportBackupFileArchiverProtocol {
+            func unzipFile(at path: String, to destination: String) -> Bool { fatalError() }
+        }
+        struct IBES: ImportBackupEntityStorageProtocol {
+            func replacePersistentStore(
+                accountIdentifier: UUID,
+                from backupDirectory: URL,
+                applicationContainer: URL,
+                dispatchGroup: ZMSDispatchGroup
+            ) async throws -> URL { fatalError() }
+        }
+        struct IBASU: ImportBackupAppStateUpdaterProtocol {
+            func reportImportProgress(progress: Float) { fatalError() }
+            func reportImportCompletion() { fatalError() }
+            func reportMigrationNeeded() async { fatalError() }
+        }
+    }
+
     /// - Note: this is safe if coredataStack and proteus are ready
     public var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         GetUserClientFingerprintUseCase(

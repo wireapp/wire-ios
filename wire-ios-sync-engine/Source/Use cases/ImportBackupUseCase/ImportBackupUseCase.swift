@@ -24,7 +24,7 @@ import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    let activeUserSession: ZMUserSession // TODO: use account directly if possible
+    let userSession: ZMUserSession // TODO: use account directly if possible
     let dispatchGroup: ZMSDispatchGroup
     let fileArchiver: ImportBackupFileArchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
@@ -37,7 +37,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     func invoke(url: URL, password: String) async throws {
 
-        let account = activeUserSession.account
+        let account = userSession.account
 
         try verifyFileExtension(url)
 
@@ -61,7 +61,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         // TODO: insert the self client (A) in the new db
         //        mark A as self client in persistentstore metadata
 
-        appStateUpdater.reportMigrationNeeded()
+        await appStateUpdater.reportMigrationNeeded()
 
         // TODO: select the account from the first step, which will transition the UI back to the conversation list
 

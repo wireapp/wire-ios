@@ -114,17 +114,7 @@ final class BackupRestoreController: NSObject {
             return
         }
 
-        Task { @MainActor in
-            activityIndicator.start()
-            defer { activityIndicator.stop() }
-
-            let useCase: ImportBackupUseCaseProtocol? = nil
-            do {
-                try await useCase?.invoke(url: url, password: password)
-            } catch {
-                fatalError("TODO: Hanlde error")
-            }
-        }
+        Task { @MainActor in activityIndicator.start() }
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {
