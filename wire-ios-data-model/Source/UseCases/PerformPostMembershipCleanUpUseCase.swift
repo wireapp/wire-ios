@@ -83,9 +83,8 @@ public class PerformPostMembershipCleanUpUseCase {
     }
 
     private func removeSameTeamConnections(selfUserTeamID: UUID) throws {
-        let keepStatuses: [ZMConnectionStatus] = [.accepted, .blocked]
         let fetchRequest = NSFetchRequest<ZMConnection>(entityName: ZMConnection.entityName())
-        fetchRequest.predicate = NSPredicate(format: "NOT (status IN %@)", keepStatuses.map(\.rawValue))
+        fetchRequest.predicate = NSPredicate(format: "NOT (status IN %@)", keepConnectionStatuses().map(\.rawValue))
 
         let connections = try context.fetch(fetchRequest)
         try removeConnections(connections, withTeamID: selfUserTeamID)
