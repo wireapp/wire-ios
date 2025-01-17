@@ -49,7 +49,7 @@ package struct AuthenticationIdentityInputView: View {
             Text(L10n.Authentication.Identity.Input.body)
                 .wireTextStyle(.body1)
             LabeledTextField(
-                isMandatory: true,
+                isMandatory: false,
                 placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
                 title: L10n.Authentication.Identity.Input.Field.title,
                 string: $identity
