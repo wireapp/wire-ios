@@ -56,7 +56,7 @@ public class PerformPostMembershipCleanUpUseCase {
     private func internalInvoke() throws {
         guard let teamID = ZMUser.selfUser(in: context).teamIdentifier else { return }
 
-        if let userID = userID {
+        if let userID {
             try invokeForSingleUser(userID: userID, selfUserTeamID: teamID)
         } else {
             try invokeForAllUsers(selfUserTeamID: teamID)
@@ -85,7 +85,7 @@ public class PerformPostMembershipCleanUpUseCase {
     private func removeSameTeamConnections(selfUserTeamID: UUID) throws {
         let keepStatuses: [ZMConnectionStatus] = [.accepted, .blocked]
         let fetchRequest = NSFetchRequest<ZMConnection>(entityName: ZMConnection.entityName())
-        fetchRequest.predicate = NSPredicate(format: "NOT (status IN %@)", keepStatuses.map { $0.rawValue })
+        fetchRequest.predicate = NSPredicate(format: "NOT (status IN %@)", keepStatuses.map(\.rawValue))
 
         let connections = try context.fetch(fetchRequest)
         try removeConnections(connections, withTeamID: selfUserTeamID)
@@ -96,8 +96,8 @@ public class PerformPostMembershipCleanUpUseCase {
         for connection in connections where connection.to.teamIdentifier == teamID {
             if
                 let conversation = connection.to.oneOnOneConversation,
-                removeConversationTypes.contains(conversation.conversationType)  {
-                    context.delete(conversation)
+                removeConversationTypes.contains(conversation.conversationType) {
+                context.delete(conversation)
             }
             context.delete(connection)
         }
@@ -110,7 +110,7 @@ public class PerformPostMembershipCleanUpUseCase {
             andPredicateWithSubpredicates: [
                 NSPredicate(format: "membership == nil"),
                 NSPredicate(format: "teamIdentifier_data != nil"),
-                NSPredicate(format: "isAccountDeleted == NO"), // Avoid a loop of creating / deleting memberships
+                NSPredicate(format: "isAccountDeleted == NO") // Avoid a loop of creating / deleting memberships
             ]
         )
 

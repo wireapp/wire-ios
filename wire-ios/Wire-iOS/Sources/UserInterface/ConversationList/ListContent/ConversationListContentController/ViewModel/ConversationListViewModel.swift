@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import DifferenceKit
 import Foundation
 import WireDataModel
@@ -23,7 +24,6 @@ import WireMainNavigationUI
 import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
-import Combine
 
 final class ConversationListViewModel: NSObject {
 
@@ -240,11 +240,11 @@ final class ConversationListViewModel: NSObject {
         user.publisher(for: \.teamIdentifier)
             .receive(on: RunLoop.main)
             .removeDuplicates()
-            .sink { [weak userSession] change in
+            .sink { [weak userSession] _ in
                 guard let userSession else { return }
 
                 userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
-        }.store(in: &tokens)
+            }.store(in: &tokens)
     }
 
     func sectionHeaderTitle(sectionIndex: Int) -> String? {
