@@ -20,7 +20,7 @@ import CoreData
 
 public class PerformPostMembershipCleanUpUseCase {
 
-    enum Failure: Swift.Error {
+    public enum Failure: Swift.Error, Equatable {
         case userNotFound
     }
 
