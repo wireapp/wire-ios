@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireSystem
-import WireLogging
 import WireCrypto
+import WireLogging
+import WireSystem
 import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
@@ -42,10 +42,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             accountID: account.userIdentifier
         )
 
-
-
-
-
     }
 
     private func verifyFileExtension(_ url: URL) throws {
@@ -67,10 +63,17 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             workerQueue.async(group: dispatchGroup) {
                 do {
 
-                    guard let inputStream = InputStream(url: url) else { throw BackupError.unknown }
-                    guard let outputStream = OutputStream(url: decryptedURL, append: false) else { throw BackupError.unknown }
+                    guard
+                        let inputStream = InputStream(url: url),
+                        let outputStream = OutputStream(url: decryptedURL, append: false)
+                    else { throw BackupError.unknown }
+
                     let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountID)
-                    try ChaCha20Poly1305.StreamEncryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+                    try ChaCha20Poly1305.StreamEncryption.decrypt(
+                        input: inputStream,
+                        output: outputStream,
+                        passphrase: passphrase
+                    )
 
                 } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
                     continuation.resume(throwing: BackupError.decryptionError)
