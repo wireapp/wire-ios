@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol ImportBackupAppStateUpdaterProtocol {
+public protocol ImportBackupAppStateUpdaterProtocol {
 
     /// Inform the user about the current progress (percentage).
     /// - Parameter progress: A value between 0.0 and 1.0.

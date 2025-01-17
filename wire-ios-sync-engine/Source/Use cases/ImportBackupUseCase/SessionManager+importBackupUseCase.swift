@@ -18,12 +18,22 @@
 
 import Foundation
 
-public protocol ImportBackupEntityStorageProtocol {
+extension SessionManager {
 
-    func replacePersistentStore(
-        accountIdentifier: UUID,
-        from backupDirectory: URL,
-        applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup
-    ) async throws -> URL
+    public func importBackupUseCase(
+        fileArchiver: ImportBackupFileArchiverProtocol,
+        entityStorage: ImportBackupEntityStorageProtocol,
+        appStateUpdater: ImportBackupAppStateUpdaterProtocol
+    ) -> ImportBackupUseCaseProtocol? {
+        guard let activeUserSession else { return nil }
+
+        return ImportBackupUseCase(
+            userSession: activeUserSession,
+            dispatchGroup: dispatchGroup,
+            fileArchiver: fileArchiver,
+            entityStorage: entityStorage,
+            appStateUpdater: appStateUpdater,
+            sharedContainerURL: sharedContainerURL
+        )
+    }
 }

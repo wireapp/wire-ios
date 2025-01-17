@@ -24,6 +24,7 @@ import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
+    var account: Account { userSession.account }
     let userSession: ZMUserSession // TODO: use account directly if possible
     let dispatchGroup: ZMSDispatchGroup
     let fileArchiver: ImportBackupFileArchiverProtocol
@@ -37,9 +38,20 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     func invoke(url: URL, password: String) async throws {
 
-        let account = userSession.account
+        let backupFileExtension = BackupFileExtensions(rawValue: url.pathExtension)
+        switch backupFileExtension {
 
-        try verifyFileExtension(url)
+        case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
+            try await importIOSBackup(url, password)
+
+        case nil:
+            throw BackupError.invalidFileExtension
+        }
+    }
+
+    private func importIOSBackup(_ url: URL, _ password: String) async throws {
+
+        appStateUpdater.reportImportProgress(progress: 0.5)
 
         let unzippedURL = try await decryptAndUnzipBackup(
             url: url,
@@ -47,7 +59,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             accountID: account.userIdentifier
         )
 
-        appStateUpdater.reportImportProgress(progress: 0.5)
+        // TODO: get self client
 
         _ = try await entityStorage.replacePersistentStore(
             accountIdentifier: account.userIdentifier,
@@ -55,8 +67,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup
         )
-
-        // TODO: get self client
 
         // TODO: insert the self client (A) in the new db
         //        mark A as self client in persistentstore metadata
@@ -68,12 +78,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         // TODO: trigger slow sync
     }
 
-    private func verifyFileExtension(_ url: URL) throws {
-        guard BackupFileExtensions(rawValue: url.pathExtension) != nil else {
-            throw BackupError.invalidFileExtension
-        }
-    }
-
     private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) async throws -> URL {
         logger.debug("coordinated file access at: \(url.absoluteString)")
 
@@ -83,7 +87,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         let unzippedURL = CoreDataStack.importsDirectory
             .appendingPathComponent(url.deletingPathExtension().lastPathComponent)
 
-        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<URL, any Error>) in
+        return try await withCheckedThrowingContinuation { continuation in
             workerQueue.async(group: dispatchGroup) {
                 do {
 

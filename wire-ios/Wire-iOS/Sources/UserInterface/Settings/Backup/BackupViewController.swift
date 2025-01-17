@@ -19,8 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
-
-import class WireSyncEngine.SessionManager
+import WireSyncEngine
 
 final class BackupViewController: UIViewController {
 
@@ -81,13 +80,50 @@ final class BackupViewController: UIViewController {
 
     @objc
     private func tapView(_ sender: UIGestureRecognizer) {
-        guard let sessionManager = SessionManager.shared else { return }
+        guard
+            let sessionManager = SessionManager.shared,
+            let useCase = sessionManager.importBackupUseCase(
+                fileArchiver: IBFA(),
+                entityStorage: IBES(),
+                appStateUpdater: IBASU()
+            )
+        else { return }
 
-        sessionManager.activeUserSession.importBackupUseCase(
-            dispatchGroup: sessionManager.dispatchGroup,
-            sharedContainerURL: sessionManager.sharedContainerURL
-        )
+        fatalError("TODO: file picker")
+//        useCase.invoke(url: <#T##URL#>, password: <#T##String#>)
+
+        struct IBFA: ImportBackupFileArchiverProtocol {
+            func unzipFile(at path: String, to destination: String) -> Bool { fatalError() }
+        }
+        struct IBES: ImportBackupEntityStorageProtocol {
+            func replacePersistentStore(
+                accountIdentifier: UUID,
+                from backupDirectory: URL,
+                applicationContainer: URL,
+                dispatchGroup: ZMSDispatchGroup
+            ) async throws -> URL { fatalError() }
+        }
+        struct IBASU: ImportBackupAppStateUpdaterProtocol {
+            func reportImportProgress(progress: Float) { fatalError() }
+            func reportImportCompletion() { fatalError() }
+            func reportMigrationNeeded() async { fatalError() }
+        }
     }
+
+//    private func importBackupUseCase(
+//        dispatchGroup: ZMSDispatchGroup,
+//        sharedContainerURL: URL
+//    ) -> ImportBackupUseCaseProtocol {
+//        return ImportBackupUseCase(
+//            userSession: self,
+//            dispatchGroup: dispatchGroup,
+//            fileArchiver: IBFA(),
+//            entityStorage: IBES(),
+//            appStateUpdater: IBASU(),
+//            sharedContainerURL: sharedContainerURL
+//        )
+//
+//    }
 }
 
 // MARK: - UITableViewDataSource & UITableViewDelegate
