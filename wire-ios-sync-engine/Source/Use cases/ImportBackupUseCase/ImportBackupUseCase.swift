@@ -26,22 +26,43 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     var activeUserSession: ZMUserSession
     var dispatchGroup: ZMSDispatchGroup
+    var fileArchiver: ImportBackupFileArchiverProtocol
+    var entityStorage: ImportBackupEntityStorageProtocol
+    var sharedContainerURL: URL
     var logger: WireLogger = .localStorage
 
     private let workerQueue = DispatchQueue(label: "import-backup")
 
     func invoke(url: URL, password: String) async throws {
 
+        // TODO: background activity? no
+
         let account = activeUserSession.account
 
         try verifyFileExtension(url)
 
-        let decryptedURL = try await decryptAndUnzipBackup(
+        let unzippedURL = try await decryptAndUnzipBackup(
             url: url,
             password: password,
             accountID: account.userIdentifier
         )
 
+        // TODO: request UI to migrating state
+
+        // TODO: get self client
+
+        _ = try await entityStorage.replacePersistentStore(
+            accountIdentifier: account.userIdentifier,
+            from: unzippedURL,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup
+        )
+
+        // TODO: insert the self client (A) in the new db
+//        mark A as self client in persistentstore metadata
+//        trigger slow sync
+
+        // TODO: select the account from the first step, which will transition the UI back to the conversation list
     }
 
     private func verifyFileExtension(_ url: URL) throws {
@@ -85,7 +106,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     continuation.resume(throwing: error)
                 }
 
-                if SSZipArchive.unzipFile(atPath: decryptedURL.path, toDestination: unzippedURL.path) {
+                if fileArchiver.unzipFile(at: decryptedURL.path, to: unzippedURL.path) {
                     continuation.resume(returning: unzippedURL)
                 } else {
                     continuation.resume(throwing: BackupError.compressionError)
