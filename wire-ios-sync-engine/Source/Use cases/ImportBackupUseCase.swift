@@ -18,11 +18,15 @@
 
 import Foundation
 import WireSystem
+import WireLogging
+import WireCrypto
+import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     var activeUserSession: ZMUserSession
     var dispatchGroup: ZMSDispatchGroup
+    var logger: WireLogger = .localStorage
 
     private let workerQueue = DispatchQueue(label: "import-backup")
 
@@ -30,56 +34,59 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
         let account = activeUserSession.account
 
-        // Verify the imported file has the correct file extension.
+        try verifyFileExtension(url)
+
+        let decryptedURL = try await decryptAndUnzipBackup(
+            url: url,
+            password: password,
+            accountID: account.userIdentifier
+        )
+
+
+
+
+
+    }
+
+    private func verifyFileExtension(_ url: URL) throws {
         guard BackupFileExtensions(rawValue: url.pathExtension) != nil else {
             throw BackupError.invalidFileExtension
         }
+    }
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
-            workerQueue.async(group: dispatchGroup) { [weak self] in
-//                guard let self else {
-//                    completion(.failure(NSError(
-//                        userSessionErrorCode: .unknownError,
-//                        userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"]
-//                    )))
-//                    return
-//                }
-//
-//                let decryptedURL = SessionManager.temporaryURL(for: location)
-//
-//                WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
-//
-//                do {
-//                    try SessionManager.decrypt(
-//                        from: location,
-//                        to: decryptedURL,
-//                        password: password,
-//                        accountId: userId
-//                    )
-//                } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
-//                    return complete(.failure(BackupError.decryptionError))
-//
-//                } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
-//                    return complete(.failure(BackupError.keyCreationFailed))
-//
-//                } catch {
-//                    return complete(.failure(error))
-//                }
-//
-//                let url = SessionManager.unzippedBackupURL(for: location)
-//
-//                guard decryptedURL.unzip(to: url) else {
-//                    return complete(.failure(BackupError.compressionError))
-//                }
-//
-//                CoreDataStack.importLocalStorage(
-//                    accountIdentifier: userId,
-//                    from: url,
-//                    applicationContainer: sharedContainerURL,
-//                    dispatchGroup: dispatchGroup
-//                ) { result in
-//                    completion(result.map { _ in })
-//                }
+    private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) async throws -> URL {
+        logger.debug("coordinated file access at: \(url.absoluteString)")
+
+        let decryptedURL = url
+            .deletingLastPathComponent()
+            .appendingPathComponent(UUID().uuidString)
+        let unzippedURL = CoreDataStack.importsDirectory
+            .appendingPathComponent(url.deletingPathExtension().lastPathComponent)
+
+        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<URL, any Error>) in
+            workerQueue.async(group: dispatchGroup) {
+                do {
+
+                    guard let inputStream = InputStream(url: url) else { throw BackupError.unknown }
+                    guard let outputStream = OutputStream(url: decryptedURL, append: false) else { throw BackupError.unknown }
+                    let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountID)
+                    try ChaCha20Poly1305.StreamEncryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+
+                } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
+                    continuation.resume(throwing: BackupError.decryptionError)
+
+                } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
+                    continuation.resume(throwing: BackupError.keyCreationFailed)
+
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+
+                if SSZipArchive.unzipFile(atPath: decryptedURL.path, toDestination: unzippedURL.path) {
+                    continuation.resume(returning: unzippedURL)
+                } else {
+                    continuation.resume(throwing: BackupError.compressionError)
+                }
             }
         }
     }
@@ -99,9 +106,9 @@ private enum BackupFileExtensions: String, CaseIterable {
 private enum BackupError: Error {
 //    case notAuthenticated
 //    case noActiveAccount
-//    case compressionError
+    case compressionError
     case invalidFileExtension
-//    case keyCreationFailed
-//    case decryptionError
-//    case unknown
+    case keyCreationFailed
+    case decryptionError
+    case unknown
 }

@@ -256,7 +256,7 @@ private extension BackupMetadata {
 
 // MARK: - Zip Helper
 
-extension URL {
+private extension URL {
     func zipDirectory(to url: URL) -> Bool {
         SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
     }
