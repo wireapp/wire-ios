@@ -42,7 +42,7 @@ struct TeamNameView: View {
                 .frame(height: 24)
 
             LabeledTextField(
-                mandatory: true,
+                isMandatory: true,
                 placeholder: .localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module),
                 title: .localized(key: "individualToTeam.teamName.field.title", bundle: .module),
                 string: $teamName
