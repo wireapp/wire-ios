@@ -17,13 +17,12 @@
 //
 
 import SwiftUI
-import WireFoundation
 import WireTestingPackage
 import XCTest
 
-@testable import WireDesign
+@testable import WireIndividualToTeamMigrationUI
 
-final class LinkButtonStyleUITests: XCTestCase {
+final class SelfProfileViewCallToActionBannerSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -39,13 +38,8 @@ final class LinkButtonStyleUITests: XCTestCase {
     @MainActor @ViewBuilder static var view: some View {
         let screenBounds = UIScreen.main.bounds
 
-        Button(
-            action: {},
-            label: { Text("Label") }
-        )
-        .wireButtonStyle(.link)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-        .frame(width: screenBounds.width, height: screenBounds.height)
+        SelfProfileViewCallToActionBanner(actionCallback: { _ in })
+            .frame(width: screenBounds.width, height: screenBounds.height)
     }
 
     @MainActor
