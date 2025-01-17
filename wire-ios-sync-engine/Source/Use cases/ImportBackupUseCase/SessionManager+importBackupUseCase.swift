@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension SessionManager {
 
     public func importBackupUseCase(
@@ -33,7 +31,8 @@ extension SessionManager {
             fileArchiver: fileArchiver,
             entityStorage: entityStorage,
             appStateUpdater: appStateUpdater,
-            sharedContainerURL: sharedContainerURL
+            sharedContainerURL: sharedContainerURL,
+            logger: .localStorage
         )
     }
 }

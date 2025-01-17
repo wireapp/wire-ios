@@ -24,22 +24,20 @@ import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    var account: Account { userSession.account }
-    let userSession: ZMUserSession // TODO: use account directly if possible
+    let userSession: ZMUserSession
     let dispatchGroup: ZMSDispatchGroup
     let fileArchiver: ImportBackupFileArchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
     let appStateUpdater: ImportBackupAppStateUpdaterProtocol
 
     let sharedContainerURL: URL
-    let logger: WireLogger = .localStorage
+    let logger: WireLogger
 
     private let workerQueue = DispatchQueue(label: "import-backup")
 
     func invoke(url: URL, password: String) async throws {
 
-        let backupFileExtension = BackupFileExtensions(rawValue: url.pathExtension)
-        switch backupFileExtension {
+        switch BackupFileExtensions(rawValue: url.pathExtension) {
 
         case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
             try await importIOSBackup(url, password)
@@ -56,13 +54,14 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         let unzippedURL = try await decryptAndUnzipBackup(
             url: url,
             password: password,
-            accountID: account.userIdentifier
+            accountID: userSession.account.userIdentifier
         )
 
         // TODO: get self client
+        let selfClient = userSession.selfUserClient
 
         _ = try await entityStorage.replacePersistentStore(
-            accountIdentifier: account.userIdentifier,
+            accountIdentifier: userSession.account.userIdentifier,
             from: unzippedURL,
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup
@@ -104,19 +103,19 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     )
 
                 } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
-                    continuation.resume(throwing: BackupError.decryptionError)
+                    return continuation.resume(throwing: BackupError.decryptionError)
 
                 } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
-                    continuation.resume(throwing: BackupError.keyCreationFailed)
+                    return continuation.resume(throwing: BackupError.keyCreationFailed)
 
                 } catch {
-                    continuation.resume(throwing: error)
+                    return continuation.resume(throwing: error)
                 }
 
                 if fileArchiver.unzipFile(at: decryptedURL.path, to: unzippedURL.path) {
-                    continuation.resume(returning: unzippedURL)
+                    return continuation.resume(returning: unzippedURL)
                 } else {
-                    continuation.resume(throwing: BackupError.compressionError)
+                    return continuation.resume(throwing: BackupError.compressionError)
                 }
             }
         }
