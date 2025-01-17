@@ -38,6 +38,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         let senderID: UUID
         let selfUserID: UUID
         let hidesNotificationContent: Bool
+        let isConversationReadOnly: Bool
     }
 
     private let message: GenericMessage
@@ -75,6 +76,7 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
         )
         let selfUserID = await userLocalStore.id(for: selfUser)
         let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
+        let isConversationReadOnly = await conversationLocalStore.isConversationForcedReadOnly(conversation)
 
         self.context = Context(
             senderName: senderName,
@@ -85,12 +87,13 @@ struct NewMessageNotificationBuilder: NotificationBuilder {
             conversationID: conversationID,
             senderID: senderID.uuid,
             selfUserID: selfUserID,
-            hidesNotificationContent: shouldHideNotification
+            hidesNotificationContent: shouldHideNotification,
+            isConversationReadOnly: isConversationReadOnly
         )
     }
 
     func shouldBuildNotification() async -> Bool {
-        !context.isMessageSilenced
+        !context.isMessageSilenced && !context.isConversationReadOnly
     }
 
     func buildContent() async -> UNMutableNotificationContent {

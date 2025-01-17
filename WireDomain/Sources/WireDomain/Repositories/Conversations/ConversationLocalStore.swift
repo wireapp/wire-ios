@@ -419,6 +419,10 @@ public protocol ConversationLocalStoreProtocol {
     ) async -> Bool
 
     func shouldHideNotification() async -> Bool
+    
+    func conversationNeedsBackendUpdate(
+        _ conversation: ZMConversation
+    ) async -> Bool
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -880,6 +884,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 with: groupID,
                 in: context
             )
+        }
+    }
+    
+    public func conversationNeedsBackendUpdate(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.needsToBeUpdatedFromBackend
         }
     }
 

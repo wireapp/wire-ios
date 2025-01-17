@@ -949,6 +949,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - conversationNeedsBackendUpdate
+
+    public var conversationNeedsBackendUpdate_Invocations: [ZMConversation] = []
+    public var conversationNeedsBackendUpdate_MockMethod: ((ZMConversation) async -> Bool)?
+    public var conversationNeedsBackendUpdate_MockValue: Bool?
+
+    public func conversationNeedsBackendUpdate(_ conversation: ZMConversation) async -> Bool {
+        conversationNeedsBackendUpdate_Invocations.append(conversation)
+
+        if let mock = conversationNeedsBackendUpdate_MockMethod {
+            return await mock(conversation)
+        } else if let mock = conversationNeedsBackendUpdate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationNeedsBackendUpdate`")
+        }
+    }
+
 }
 
 public class MockConversationProtobufMessageProcessorProtocol: ConversationProtobufMessageProcessorProtocol {

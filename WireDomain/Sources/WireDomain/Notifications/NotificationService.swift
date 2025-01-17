@@ -113,6 +113,7 @@ final class NotificationService: UNNotificationServiceExtension {
         )
 
         return NotificationSession(
+            accountID: userID,
             updateEventsRepository: updateEventsRepository
         ) { [weak self] notificationContent in
             self?.finishWithNotification(content: notificationContent)

@@ -317,6 +317,7 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
         userLocalStore.fetchSelfUser_MockValue = await context.perform { [self] in
             modelHelper.createSelfUser(in: context)
         }
+        conversationLocalStore.isConversationForcedReadOnly_MockValue = false
         conversationLocalStore.isMessageSilencedSenderIDConversation_MockValue = false
         userLocalStore.idFor_MockValue = .mockID1
         userLocalStore.teamNameFor_MockValue = .some(isTeam ? Scaffolding.teamName : nil)

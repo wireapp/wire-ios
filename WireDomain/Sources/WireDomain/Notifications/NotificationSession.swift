@@ -31,15 +31,18 @@ final class NotificationSession {
 
     // MARK: - Properties
 
+    private let accountID: UUID
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
     private var subscription: AnyCancellable?
 
     // MARK: - Object lifecycle
 
     init(
+        accountID: UUID,
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
         onNotificationContent: @escaping (UNMutableNotificationContent) -> Void
     ) {
+        self.accountID = accountID
         self.updateEventsRepository = updateEventsRepository
         self.subscription = updateEventsRepository.observePendingEvents()
             .collect() // Collects all the events batches.
@@ -93,7 +96,8 @@ final class NotificationSession {
             switch event {
             case let .conversation(conversationEvent):
                 notificationBuilder = await ConversationNotificationBuilder(
-                    event: conversationEvent
+                    event: conversationEvent,
+                    accountID: accountID
                 )
             // TODO: [WPB-10218] - Generate notif for other update events
             case let .featureConfig(featureConfigEvent):
@@ -113,6 +117,7 @@ final class NotificationSession {
             }
 
             let notificationContent = await notificationBuilder.buildContent()
+            notificationContent.interruptionLevel = .timeSensitive
             notifications.append(notificationContent)
         }
 

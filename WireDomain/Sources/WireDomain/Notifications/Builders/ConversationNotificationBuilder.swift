@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UserNotifications
 import WireAPI
 import WireDataModel
+import WireLogging
 
 struct ConversationNotificationBuilder: NotificationBuilder {
-
+    
     private struct Context {
         let senderID: UserID
         let conversationID: ConversationID
+        let accountID: UUID
         let isSelfUser: Bool
         let isConversationMuted: Bool
         let eventTimeStamp: Date?
@@ -35,7 +36,8 @@ struct ConversationNotificationBuilder: NotificationBuilder {
     private let context: Context
 
     init(
-        event: ConversationEvent
+        event: ConversationEvent,
+        accountID: UUID
     ) async {
         self.event = event
 
@@ -64,6 +66,7 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         self.context = Context(
             senderID: event.senderID,
             conversationID: event.conversationID,
+            accountID: accountID,
             isSelfUser: isSelfUser == true,
             isConversationMuted: isConversationMuted,
             eventTimeStamp: eventTimeStamp,
@@ -77,37 +80,57 @@ struct ConversationNotificationBuilder: NotificationBuilder {
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
             let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
-
-            guard let decryptedMessage,
-                  let (genericMessage, _) = ProtobufMessageHelper.getProtobufMessage(
-                      from: decryptedMessage
-                  ) else {
-                return UNMutableNotificationContent()
+            
+            guard let genericMessage = getGenericMessage(
+                decryptedMessage: decryptedMessage
+            ) else { return UNMutableNotificationContent() }
+            
+            if genericMessage.hasCalling {
+                
+                guard let callBuilder = await makeCallBuilder(
+                    calling: genericMessage.calling,
+                    at: context.eventTimeStamp
+                ) else { return UNMutableNotificationContent() }
+                
+                builder = callBuilder
+                
+            } else {
+                
+                builder = await NewMessageNotificationBuilder(
+                    message: genericMessage,
+                    conversationID: mlsMessageEvent.conversationID,
+                    senderID: mlsMessageEvent.senderID
+                )
+                
             }
-
-            builder = await NewMessageNotificationBuilder(
-                message: genericMessage,
-                conversationID: mlsMessageEvent.conversationID,
-                senderID: mlsMessageEvent.senderID
-            )
 
         case let .proteusMessageAdd(proteusMessageEvent):
             let decryptedMessage = proteusMessageEvent.message.decryptedMessage
             let externalEncryptedMessage = proteusMessageEvent.externalData?.encryptedMessage
+            
+            guard let genericMessage = getGenericMessage(
+                decryptedMessage: decryptedMessage,
+                externalMessage: externalEncryptedMessage
+            ) else { return UNMutableNotificationContent() }
 
-            guard let decryptedMessage,
-                  let (genericMessage, _) = ProtobufMessageHelper.getProtobufMessage(
-                      from: decryptedMessage,
-                      externalData: externalEncryptedMessage
-                  ) else {
-                return UNMutableNotificationContent()
+            if genericMessage.hasCalling {
+                
+                guard let callBuilder = await makeCallBuilder(
+                    calling: genericMessage.calling,
+                    at: context.eventTimeStamp
+                ) else { return UNMutableNotificationContent() }
+                
+                builder = callBuilder
+                
+            } else {
+                
+                builder = await NewMessageNotificationBuilder(
+                    message: genericMessage,
+                    conversationID: proteusMessageEvent.conversationID,
+                    senderID: proteusMessageEvent.senderID
+                )
+                
             }
-
-            builder = await NewMessageNotificationBuilder(
-                message: genericMessage,
-                conversationID: proteusMessageEvent.conversationID,
-                senderID: proteusMessageEvent.senderID
-            )
 
         default: // TODO: [WPB-11175] - Generate notifications for other events
             return UNMutableNotificationContent()
@@ -131,11 +154,79 @@ struct ConversationNotificationBuilder: NotificationBuilder {
               let eventTimeStamp,
               let lastReadTimestamp,
               lastReadTimestamp.compare(eventTimeStamp) != .orderedAscending
-        else {
-            return false
-        }
+        else { return false }
 
         return true
     }
-
+    
+    // MARK: - Helpers
+    
+    private func makeCallBuilder(
+        calling: Calling,
+        at date: Date?
+    ) async -> NotificationBuilder? {
+        let callKitBuilder = await makeCallKitNotificationBuilder(
+            calling: calling,
+            at: date
+        )
+        
+        // Checking early on that the builder should actually build the `CallKit` notification
+        // if not we fallback to the regular call notification builder.
+        if let callKitBuilder, await callKitBuilder.shouldBuildNotification() {
+            return callKitBuilder
+        } else if let callNotifBuilder = await makeCallRegularNotificationBuilder(
+            calling: calling,
+            at: date
+        ) {
+            return callNotifBuilder
+        } else {
+            return nil
+        }
+    }
+    
+    private func makeCallKitNotificationBuilder(
+        calling: Calling,
+        at date: Date?
+    ) async -> NotificationBuilder? {
+        guard let callKitNotifBuilder = await CallKitNotificationBuilder(
+            calling: calling,
+            conversationID: context.conversationID,
+            senderID: context.senderID,
+            accountID: context.accountID
+        ) else {
+            return nil
+        }
+        
+        return callKitNotifBuilder
+    }
+    
+    private func makeCallRegularNotificationBuilder(
+        calling: Calling,
+        at date: Date?
+    ) async -> NotificationBuilder? {
+        guard let callNotifBuilder = await CallNotificationBuilder(
+            calling: calling,
+            at: date,
+            conversationID: context.conversationID,
+            senderID: context.senderID
+        ) else {
+            return nil
+        }
+        
+        return callNotifBuilder
+    }
+    
+    private func getGenericMessage(
+        decryptedMessage: String?,
+        externalMessage: String? = nil
+    ) -> GenericMessage? {
+        guard let decryptedMessage,
+              let (genericMessage, _) = ProtobufMessageHelper.getProtobufMessage(
+                  from: decryptedMessage,
+                  externalData: externalMessage
+              ) else { return nil }
+        
+        return genericMessage
+    }
+    
 }

@@ -115,6 +115,7 @@ final class NotificationSessionTests: XCTestCase {
         )
 
         sut = NotificationSession(
+            accountID: .mockID5,
             updateEventsRepository: updateEventsRepository,
             onNotificationContent: { _ in
                 // Then, all 3 events batches have been received

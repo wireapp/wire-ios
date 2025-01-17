@@ -21,6 +21,7 @@ import Foundation
 enum NotificationBody {
 
     case newMessage(MessageBodyFormat)
+    case call(CallBodyFormat)
     case bundled(messagesCount: Int)
 
     func make() -> String {
@@ -31,7 +32,14 @@ enum NotificationBody {
             )
 
             return newMessageBodyComposer.make()
-
+            
+        case let .call(callBodyFormat):
+            let callBodyComposer = CallNotificationBodyComposer(
+                format: callBodyFormat
+            )
+            
+            return callBodyComposer.make()
+            
         case let .bundled(count):
             return "\(count) new messages."
         }
@@ -69,6 +77,16 @@ extension NotificationBody {
         case ping(senderName: String?)
         /// `New message`
         case hidden
+    }
+    
+    /// The expected formats for the body of a call notification.
+    enum CallBodyFormat {
+        /// `[sender name] is calling` or `Incoming call` if sender is nil.
+        case isCalling(senderName: String?)
+        /// `[sender name] is calling with video` or `Incoming video call` if sender is nil.
+        case isCallingWithVideo(senderName: String?)
+        /// `[sender name] called` or `Missed called` if sender is nil.
+        case called(senderName: String?)
     }
 
 }
