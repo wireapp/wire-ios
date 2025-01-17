@@ -238,8 +238,8 @@ final class ConversationListViewModel: NSObject {
         guard let user = userSession?.selfUser as? ZMUser else { return }
 
         user.publisher(for: \.teamIdentifier)
-            .receive(on: RunLoop.main)
             .removeDuplicates()
+            .receive(on: RunLoop.main)
             .sink { [weak userSession] _ in
                 guard let userSession else { return }
 
