@@ -501,18 +501,9 @@ extension AuthenticationCoordinator {
 
     // MARK: - Modals
 
-    /// Opens the browser and reopens the current alert upon dismissal if needed.
+    /// Opens the URL in the selected browser
     private func openURL(_ url: URL) {
-        let browser = BrowserViewController(url: url)
-        browser.onDismiss = {
-            if let alertModel = self.pendingAlert {
-                self.presenter?.isLoadingViewVisible = false
-                self.presentAlert(for: alertModel)
-                self.pendingAlert = nil
-            }
-        }
-
-        self.presenter?.present(browser, animated: true, completion: nil)
+        url.open()
     }
 
     /// Presents an error alert.
