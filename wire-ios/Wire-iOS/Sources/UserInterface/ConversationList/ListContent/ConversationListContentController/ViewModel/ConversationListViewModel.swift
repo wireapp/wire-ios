@@ -235,6 +235,7 @@ final class ConversationListViewModel: NSObject {
     private func setupObservers() {
         conversationDirectoryToken = userSession?.conversationDirectory.addObserver(self)
 
+        // TODO: [WPB-15469] Remove casting and see if there is a better way to call `refreshAllLists`.
         guard let user = userSession?.selfUser as? ZMUser else { return }
 
         user.publisher(for: \.teamIdentifier)
