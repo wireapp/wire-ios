@@ -19,7 +19,6 @@
 public enum PersistentMetadataKey: String {
 
     case lastUpdateEventID = "LastUpdateEventID"
-    case pushKitToken = "ZMPushKitToken"
     case encryptMessagesAtRest
     case appLock
 
