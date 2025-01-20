@@ -409,6 +409,7 @@ extension SettingsCellDescriptorFactory {
             presentationStyle: .modal,
             presentationAction: {
                 URL.wr_passwordReset.open()
+                return nil
             },
             previewGenerator: .none
         )

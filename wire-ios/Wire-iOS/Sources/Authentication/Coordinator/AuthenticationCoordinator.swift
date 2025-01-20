@@ -507,7 +507,7 @@ extension AuthenticationCoordinator {
     private func openURL(_ url: URL) {
         url.open()
         if let alertModel = pendingAlert {
-            presenter?.isLoadingViewVisible = false
+            stopActivityIndicator()
             presentAlert(for: alertModel)
             pendingAlert = nil
         }
