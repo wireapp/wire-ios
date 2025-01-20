@@ -640,7 +640,7 @@ static NSString *const PrimaryKey = @"primaryKey";
     //store session object id in persistent metadata, so we can retrieve it from other context
     moc.userInfo[SessionObjectIDKey] = session.objectID;
     [moc setPersistentStoreMetadata:session.objectID.URIRepresentation.absoluteString forKey:SessionObjectIDAsStringKey];
-    NOT_USED([moc makeMetadataPersistent]); // TODO: relevant for import?
+    NOT_USED([moc makeMetadataPersistent]);
     // This needs to be a 'real' save, to make sure we push the metadata:
     RequireString([moc save:&error], "Failed to save self user: %lu", (long) error.code);
 
@@ -653,7 +653,7 @@ static NSString *const PrimaryKey = @"primaryKey";
     return boxed.selfUser;
 }
 
-+ (void)boxSelfUser:(ZMUser *)selfUser inContextUserInfo:(NSManagedObjectContext *)moc // TODO: relevant for import?
++ (void)boxSelfUser:(ZMUser *)selfUser inContextUserInfo:(NSManagedObjectContext *)moc
 {
     ZMBoxedSelfUser *boxed = [[ZMBoxedSelfUser alloc] init];
     boxed.selfUser = selfUser;
