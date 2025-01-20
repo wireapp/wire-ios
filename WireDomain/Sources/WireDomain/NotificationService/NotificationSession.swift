@@ -19,38 +19,74 @@
 import Combine
 import WireAPI
 import WireDataModel
+import NeedleFoundation
+
+protocol NotificationSessionDependency: Dependency {
+    var userLocalStore: UserLocalStoreProtocol { get }
+    var updateEventsAPI: UpdateEventsAPI { get }
+    var pushChannel: PushChannelProtocol { get }
+    var updateEventsLocalStore: UpdateEventsLocalStoreProtocol { get }
+    var updateEventsDecryptor: UpdateEventDecryptorProtocol { get }
+    var backendEnvironmentProvider: BackendEnvironmentProvider { get }
+}
 
 /// Observes pending events, process them and generates new notifications content.
-final class NotificationSession {
+final class NotificationSession: Component<NotificationSessionDependency> {
 
     // MARK: - Failure
-
+    
     enum Failure: Error {
         case unableToPullPendingEvents(Error)
+        case missingSelfClientID
+        case notAuthenticated
     }
 
     // MARK: - Properties
 
-    private let updateEventsRepository: any UpdateEventsRepositoryProtocol
+    private var updateEventsRepository: UpdateEventsRepositoryProtocol!
     private var subscription: AnyCancellable?
-
-    // MARK: - Object lifecycle
-
-    init(
-        updateEventsRepository: any UpdateEventsRepositoryProtocol,
+    
+    // MARK: - Setup
+    
+    func setup(
+        userID: UUID,
         onNotificationContent: @escaping (UNMutableNotificationContent) -> Void
-    ) {
+    ) async throws {
+        let userLocalStore = dependency.userLocalStore
+        let selfUserInfo = await userLocalStore.selfUserInfo()
+        let environment = dependency.backendEnvironmentProvider
+        
+        let cookieStorage = ZMPersistentCookieStorage(
+            forServerName: environment.backendURL.host!,
+            userIdentifier: userID,
+            useCache: false
+        )
+        
+        let isAuthenticated = cookieStorage.isAuthenticated
+
+        guard isAuthenticated else {
+            throw Failure.notAuthenticated
+        }
+
+        guard let selfClientID = selfUserInfo.clientId else {
+            throw Failure.missingSelfClientID
+        }
+        
+        let updateEventsRepository = UpdateEventsRepository(
+            userID: userID,
+            selfClientID: selfClientID,
+            updateEventsAPI: dependency.updateEventsAPI,
+            pushChannel: dependency.pushChannel,
+            updateEventDecryptor: dependency.updateEventsDecryptor,
+            updateEventsLocalStore: dependency.updateEventsLocalStore
+        )
+        
         self.updateEventsRepository = updateEventsRepository
         self.subscription = updateEventsRepository.observePendingEvents()
             .collect() // Collects all the events batches.
             .map { $0.flatMap { $0 } }
             .map(generateNotificationContent)
             .sink(receiveValue: onNotificationContent)
-    }
-
-    deinit {
-        subscription?.cancel()
-        subscription = nil
     }
 
     // MARK: - Notifications

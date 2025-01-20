@@ -19,32 +19,44 @@
 import WireAPI
 import WireDataModel
 import WireFoundation
+import NeedleFoundation
 
-public final class Assembly {
+public typealias RootComponent = BootstrapComponent
+
+public final class Assembly: RootComponent {
 
     private let userID: UUID
     private let clientID: String
+    private let teamID: UUID
     private let context: NSManagedObjectContext
     private let sharedUserDefaults: UserDefaults
     private let proteusService: any ProteusServiceInterface
     private let apiService: any APIServiceProtocol
     private let apiVersion: WireAPI.APIVersion
-    private let pushChannel: any PushChannelProtocol
-    private let backendEnvironmentProvider: BackendEnvironmentProvider
+    private let mlsService: MLSServiceInterface
+    private let mlsProvider: MLSProvider
+    private let mlsDecryptionService: any MLSDecryptionServiceInterface
+    let pushChannel: any PushChannelProtocol
+    let backendEnvironmentProvider: BackendEnvironmentProvider
 
     init(
         userID: UUID,
         clientID: String,
+        teamID: UUID,
         context: NSManagedObjectContext,
         sharedUserDefaults: UserDefaults,
         proteusService: any ProteusServiceInterface,
         apiService: any APIServiceProtocol,
         apiVersion: WireAPI.APIVersion,
         pushChannel: any PushChannelProtocol,
-        backendEnvironmentProvider: BackendEnvironmentProvider
+        mlsService: any MLSServiceInterface,
+        mlsDecryptionService: any MLSDecryptionServiceInterface,
+        mlsProvider: MLSProvider,
+        backendEnvironmentProvider: any BackendEnvironmentProvider
     ) {
         self.userID = userID
         self.clientID = clientID
+        self.teamID = teamID
         self.context = context
         self.sharedUserDefaults = sharedUserDefaults
         self.proteusService = proteusService
@@ -52,53 +64,132 @@ public final class Assembly {
         self.apiVersion = apiVersion
         self.pushChannel = pushChannel
         self.backendEnvironmentProvider = backendEnvironmentProvider
-
-        registerNotificationServiceDependencies()
+        self.mlsService = mlsService
+        self.mlsProvider = mlsProvider
+        self.mlsDecryptionService = mlsDecryptionService
     }
 
-    // MARK: - API Init
+    // MARK: - API
 
-    private lazy var updateEventsAPI = UpdateEventsAPIBuilder(
+    lazy var updateEventsAPI = UpdateEventsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+    
+    private lazy var usersAPI = UsersAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+    
+    private lazy var selfUserAPI = SelfUserAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+    
+    private lazy var userPropertiesAPI = UserPropertiesBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+    
+    private lazy var conversationsAPI = ConversationsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+    
+    private lazy var teamsAPI = TeamsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    // MARK: - Repositories and local stores Init
+    // MARK: - Repositories
+    
+    private lazy var conversationLabelsRepository = ConversationLabelsRepository(
+        userPropertiesAPI: userPropertiesAPI,
+        conversationLabelsLocalStore: conversationLabelsLocalStore
+    )
+    
+    private lazy var teamRepository = TeamRepository(
+        selfTeamID: teamID,
+        userRepository: userRepository,
+        teamLocalStore: teamLocalStore,
+        teamsAPI: teamsAPI
+    )
+    
+    private lazy var conversationRepository = ConversationRepository(
+        conversationsAPI: conversationsAPI,
+        conversationsLocalStore: conversationsLocalStore,
+        userRepository: userRepository,
+        teamRepository: teamRepository,
+        messageRepository: messageRepository,
+        backendInfo: .init(domain: "", isFederationEnabled: true, isMLSEnabled: true),
+        mlsProvider: mlsProvider
+    )
+    
+    private lazy var userRepository = UserRepository(
+        usersAPI: usersAPI,
+        selfUserAPI: selfUserAPI,
+        conversationLabelsRepository: conversationLabelsRepository,
+        userLocalStore: userLocalStore
+    )
+    
+    private lazy var messageRepository = MessageRepository(
+        localStore: messagesLocalStore
+    )
+    
+    // MARK: - Local stores
+    
+    private lazy var conversationLabelsLocalStore = ConversationLabelsLocalStore(
+        context: context
+    )
+    
+    private lazy var conversationsLocalStore = ConversationLocalStore(
+        context: context,
+        mlsService: mlsService,
+        messageLocalStore: messagesLocalStore
+    )
+    
+    private lazy var teamLocalStore = TeamLocalStore(
+        context: context,
+        userLocalStore: userLocalStore
+    )
 
-    private lazy var userLocalStore = UserLocalStore(context: context)
+    lazy var userLocalStore: UserLocalStoreProtocol = UserLocalStore(
+        context: context,
+        conversationLocalStore: conversationsLocalStore
+    )
+    
+    private lazy var messagesLocalStore = MessageLocalStore(
+        context: context
+    )
 
-    private lazy var updateEventsLocalStore = UpdateEventsLocalStore(
+    lazy var updateEventsLocalStore: UpdateEventsLocalStoreProtocol = UpdateEventsLocalStore(
         context: context,
         userID: userID,
         sharedUserDefaults: sharedUserDefaults
     )
-
-}
-
-extension Assembly {
-
-    /// Register some domain dependencies to be resolved by the `NotificationService`.
-    /// Since `NotificationService` is not initializable, the injector provides a lightweight dependency injection
-    /// mechanism to retrieve some already initialized dependencies that the notification service requires.
-
-    private func registerNotificationServiceDependencies() {
-        Injector.register(UserLocalStoreProtocol.self) {
-            self.userLocalStore
-        }
-
-        Injector.register(UpdateEventsAPI.self) {
-            self.updateEventsAPI
-        }
-
-        Injector.register(PushChannelProtocol.self) {
-            self.pushChannel
-        }
-
-        Injector.register(BackendEnvironmentProvider.self) {
-            self.backendEnvironmentProvider
-        }
-
-        Injector.register(UpdateEventsLocalStoreProtocol.self) {
-            self.updateEventsLocalStore
-        }
+    
+    private lazy var userClientsLocalStore = UserClientsLocalStore(
+        context: context,
+        userLocalStore: userLocalStore
+    )
+    
+    // MARK: - Decryptors
+    
+    private lazy var proteusMessageDecryptor = ProteusMessageDecryptor(
+        proteusService: proteusService,
+        userClientsLocalStore: userClientsLocalStore,
+        userRepository: userRepository
+    )
+    
+    private lazy var mlsMessageDecryptor = MLSMessageDecryptor(
+        mlsDecryptionService: mlsDecryptionService,
+        mlsService: mlsService,
+        conversationLocalStore: conversationsLocalStore
+    )
+    
+    lazy var updateEventsDecryptor: UpdateEventDecryptorProtocol = UpdateEventDecryptor(
+        proteusMessageDecryptor: proteusMessageDecryptor,
+        mlsMessageDecryptor: mlsMessageDecryptor,
+        messageRepository: messageRepository
+    )
+    
+    func setupNotificationSession() {
+        let session = NotificationSession(parent: self)
+        NotificationService.notificationSession = session
     }
+
 }
