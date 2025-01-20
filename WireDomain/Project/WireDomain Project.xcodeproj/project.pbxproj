@@ -21,6 +21,8 @@
 		59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59EA774E2D00CE0C002CA0B8 /* WireLogging */; };
 		766BE3C52D036D5000148CB6 /* WireDomainAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 766BE3C42D036D5000148CB6 /* WireDomainAPI */; };
 		C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
+		C9A6CCAD2D3E53D70058D4A4 /* NeedleFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = C9A6CCAC2D3E53D70058D4A4 /* NeedleFoundation */; };
+		C9A6CCAF2D3E53D70058D4A4 /* NeedleFoundationTest in Frameworks */ = {isa = PBXBuildFile; productRef = C9A6CCAE2D3E53D70058D4A4 /* NeedleFoundationTest */; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 /* End PBXBuildFile section */
@@ -88,8 +90,10 @@
 				598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */,
 				591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */,
 				594904952D0710BF00238104 /* WireAnalytics in Frameworks */,
+				C9A6CCAD2D3E53D70058D4A4 /* NeedleFoundation in Frameworks */,
 				59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */,
 				59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */,
+				C9A6CCAF2D3E53D70058D4A4 /* NeedleFoundationTest in Frameworks */,
 				01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -194,6 +198,7 @@
 				01D0DCA22C1C8C870076CB1C /* Sources */,
 				01D0DCA32C1C8C870076CB1C /* Frameworks */,
 				01D0DCA42C1C8C870076CB1C /* Resources */,
+				C9A6CCA92D3E4BED0058D4A4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -209,6 +214,8 @@
 				59EA774E2D00CE0C002CA0B8 /* WireLogging */,
 				766BE3C42D036D5000148CB6 /* WireDomainAPI */,
 				594904942D0710BF00238104 /* WireAnalytics */,
+				C9A6CCAC2D3E53D70058D4A4 /* NeedleFoundation */,
+				C9A6CCAE2D3E53D70058D4A4 /* NeedleFoundationTest */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -271,6 +278,7 @@
 			);
 			mainGroup = 01D0DC9C2C1C8C870076CB1C;
 			packageReferences = (
+				C9A6CCAB2D3E53D70058D4A4 /* XCRemoteSwiftPackageReference "needle" */,
 			);
 			productRefGroup = 01D0DCA72C1C8C870076CB1C /* Products */;
 			projectDirPath = "";
@@ -326,6 +334,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "../../scripts/run-sourcery.sh --config ../Sources/WireDomainSupport/Sourcery/config.yml\n";
+		};
+		C9A6CCA92D3E4BED0058D4A4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SOURCEKIT_LOGGING=0 && /opt/homebrew/bin/needle generate ../Sources/NeedleGenerated.swift ../Sources/\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -724,6 +749,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		C9A6CCAB2D3E53D70058D4A4 /* XCRemoteSwiftPackageReference "needle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/uber/needle";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		594904942D0710BF00238104 /* WireAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -752,6 +788,16 @@
 		766BE3C42D036D5000148CB6 /* WireDomainAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDomainAPI;
+		};
+		C9A6CCAC2D3E53D70058D4A4 /* NeedleFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9A6CCAB2D3E53D70058D4A4 /* XCRemoteSwiftPackageReference "needle" */;
+			productName = NeedleFoundation;
+		};
+		C9A6CCAE2D3E53D70058D4A4 /* NeedleFoundationTest */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9A6CCAB2D3E53D70058D4A4 /* XCRemoteSwiftPackageReference "needle" */;
+			productName = NeedleFoundationTest;
 		};
 		C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;

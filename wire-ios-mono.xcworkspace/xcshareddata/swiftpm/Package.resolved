@@ -74,6 +74,15 @@
         }
       },
       {
+        "package": "NeedleFoundation",
+        "repositoryURL": "https://github.com/uber/needle",
+        "state": {
+          "branch": "master",
+          "revision": "4f43ec612307012b34664b9e95ac680c75622906",
+          "version": null
+        }
+      },
+      {
         "package": "opentelemetry-swift",
         "repositoryURL": "https://github.com/DataDog/opentelemetry-swift-packages.git",
         "state": {
