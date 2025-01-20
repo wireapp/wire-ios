@@ -49,37 +49,37 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     private func importIOSBackup(_ url: URL, _ password: String) async throws {
 
-        let selfClientBackup: [String: Any]
-        let account: Account
-        if let userSession = userSession() {
-
-            account = userSession.account
-
-            appStateUpdater.reportImportProgress(progress: 0.5)
-
-            let unzippedURL = try await decryptAndUnzipBackup(
-                url: url,
-                password: password,
-                accountID: userSession.account.userIdentifier
+        guard let (account, selfClient, context) = userSession().map({ userSession in
+            (
+                userSession.account,
+                userSession.selfUserClient,
+                userSession.managedObjectContext
             )
-
-            selfClientBackup = await userSession.managedObjectContext.perform {
-                userSession.selfUserClient?.backup() ?? [:]
-            }
-
-            await appStateUpdater.reportMigrationNeeded()
-
-            // user session will be destroyed now
-            _ = try await entityStorage.replacePersistentStore(
-                accountIdentifier: userSession.account.userIdentifier,
-                from: unzippedURL,
-                applicationContainer: sharedContainerURL,
-                dispatchGroup: dispatchGroup
-            )
-
-        } else {
+        }) else {
             throw BackupError.noActiveAccount
         }
+
+        appStateUpdater.reportImportProgress(progress: 0.5)
+
+        let unzippedURL = try await decryptAndUnzipBackup(
+            url: url,
+            password: password,
+            accountID: account.userIdentifier
+        )
+
+        let selfClientBackup = await context.perform {
+            selfClient?.backup() ?? [:]
+        }
+
+        await appStateUpdater.reportMigrationNeeded()
+
+        // user session will be destroyed now
+        _ = try await entityStorage.replacePersistentStore(
+            accountIdentifier: account.userIdentifier,
+            from: unzippedURL,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup
+        )
 
         // import the self client
         let temporaryStack = try await entityStorage.contextProvider(
