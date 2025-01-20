@@ -16,4 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.117.0
+import SwiftUI
+
+struct Logo: View {
+    var body: some View {
+        GeometryReader { geometry in
+            Image(ImageResource(name: "logo", bundle: .module))
+                .resizable()
+                .scaledToFit()
+                .padding(.all, min(geometry.size.height, geometry.size.width) / 2.97)
+        }
+    }
+}
+
+#Preview {
+    Logo()
+        .frame(height: 95)
+}

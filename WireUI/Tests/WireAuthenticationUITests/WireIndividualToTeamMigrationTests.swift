@@ -16,4 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.117.0
+import XCTest
+@testable import WireAuthenticationUI
+
+class WireAuthenticationUITests: XCTestCase {
+    func testExample() throws {
+        throw XCTSkip("[WPB-15229] Not yet implemented")
+    }
+}

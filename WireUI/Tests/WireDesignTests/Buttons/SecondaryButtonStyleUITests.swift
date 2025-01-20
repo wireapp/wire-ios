@@ -23,7 +23,7 @@ import XCTest
 
 @testable import WireDesign
 
-final class LinkButtonStyleUITests: XCTestCase {
+final class SecondaryButtonStyleUITests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -43,7 +43,7 @@ final class LinkButtonStyleUITests: XCTestCase {
             action: {},
             label: { Text("Label") }
         )
-        .wireButtonStyle(.link)
+        .wireButtonStyle(.secondary)
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         .frame(width: screenBounds.width, height: screenBounds.height)
     }
