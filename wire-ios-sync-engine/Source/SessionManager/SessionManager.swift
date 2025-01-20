@@ -747,8 +747,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 account,
                 from: selectedAccount,
                 userSessionCanBeTornDown: { [weak self] in
-                    self?.activeUserSession = nil
-                    tearDownCompletion?()
+                    self?.tearDownActiveSession(completion: tearDownCompletion)
                     guard let self else {
                         completion?(nil)
                         return
@@ -1008,6 +1007,15 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate?.sessionManagerAsksToRetryStart()
     }
 
+    /// The active user session will be torn down and the app goes into migration state.
+    public func prepareForRestoreWithMigration(completion: @escaping () -> Void) {
+        guard let delegate else { return completion() }
+
+        delegate.sessionManagerWillMigrateAccount {
+            self.tearDownActiveSession(completion: completion)
+        }
+    }
+
     private func setupUserSession(
         account: Account,
         onCompletion: @escaping (ZMUserSession?) -> Void
@@ -1181,6 +1189,13 @@ public final class SessionManager: NSObject, SessionManagerType {
                 WireLogger.sessionManager.error("Failed to delete messages older than the retention limit")
             }
         }
+    }
+
+    private func tearDownActiveSession(completion: (() -> Void)?) {
+        activeUserSession = nil
+        completion?()
+
+        // TODO: what about background sessions and observers?
     }
 
     // Creates the user session for @c account given, calls @c completion when done.

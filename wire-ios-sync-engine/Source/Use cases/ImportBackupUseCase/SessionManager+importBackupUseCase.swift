@@ -23,16 +23,19 @@ extension SessionManager {
         entityStorage: ImportBackupEntityStorageProtocol,
         appStateUpdater: ImportBackupAppStateUpdaterProtocol
     ) -> ImportBackupUseCaseProtocol? {
-        guard let activeUserSession else { return nil }
 
-        return ImportBackupUseCase(
-            userSession: activeUserSession,
-            dispatchGroup: dispatchGroup,
-            fileArchiver: fileArchiver,
-            entityStorage: entityStorage,
-            appStateUpdater: appStateUpdater,
-            sharedContainerURL: sharedContainerURL,
-            logger: .localStorage
-        )
+        // return `nil` immediately if there is no active user session
+        activeUserSession.map { _ in
+
+            ImportBackupUseCase(
+                userSession: { [weak self] in self?.activeUserSession },
+                dispatchGroup: dispatchGroup,
+                fileArchiver: fileArchiver,
+                entityStorage: entityStorage,
+                appStateUpdater: appStateUpdater,
+                sharedContainerURL: sharedContainerURL,
+                logger: .localStorage
+            )
+        }
     }
 }

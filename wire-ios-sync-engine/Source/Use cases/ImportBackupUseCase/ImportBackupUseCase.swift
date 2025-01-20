@@ -24,7 +24,7 @@ import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    let userSession: ZMUserSession
+    let userSession: () -> ZMUserSession?
     let dispatchGroup: ZMSDispatchGroup
     let fileArchiver: ImportBackupFileArchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
@@ -49,36 +49,48 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     private func importIOSBackup(_ url: URL, _ password: String) async throws {
 
-        appStateUpdater.reportImportProgress(progress: 0.5)
+        let selfClientBackup: [String : Any]
+        if let userSession = userSession() {
 
-        let unzippedURL = try await decryptAndUnzipBackup(
-            url: url,
-            password: password,
-            accountID: userSession.account.userIdentifier
-        )
+            appStateUpdater.reportImportProgress(progress: 0.5)
 
-        let selfClientBackup = await userSession.managedObjectContext.perform {
-            userSession.selfUserClient?.backup() ?? [:]
+            let unzippedURL = try await decryptAndUnzipBackup(
+                url: url,
+                password: password,
+                accountID: userSession.account.userIdentifier
+            )
+
+            selfClientBackup = await userSession.managedObjectContext.perform {
+                userSession.selfUserClient?.backup() ?? [:]
+            }
+
+  // TODO: delete
+  //        await userSession.managedObjectContext.perform {
+  //            let uc = UserClient.restore(from: selfClientBackup, context: userSession.managedObjectContext)
+  //        }
+
+            await appStateUpdater.reportMigrationNeeded()
+
+            // user session will be destroyed now
+            _ = try await entityStorage.replacePersistentStore(
+                accountIdentifier: userSession.account.userIdentifier,
+                from: unzippedURL,
+                applicationContainer: sharedContainerURL,
+                dispatchGroup: dispatchGroup
+            )
+
+        } else {
+            throw BackupError.noActiveAccount
         }
+
+        print(userSession())
+
+        // TODO: how to get the new context?
 
         print(selfClientBackup)
         debugPrint(selfClientBackup)
 
-        // TODO: delete
-//        await userSession.managedObjectContext.perform {
-//            let uc = UserClient.restore(from: selfClientBackup, context: userSession.managedObjectContext)
-//        }
-
-        await appStateUpdater.reportMigrationNeeded()
-
-        _ = try await entityStorage.replacePersistentStore(
-            accountIdentifier: userSession.account.userIdentifier,
-            from: unzippedURL,
-            applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
-        )
-
-        // TODO: insert the self client (A) in the new db
+        // TODO: insert the self client (A) into the new db
         //        mark A as self client in persistentstore metadata
 
         // TODO: select the account from the first step, which will transition the UI back to the conversation list
@@ -145,7 +157,7 @@ private enum BackupFileExtensions: String, CaseIterable {
 private enum BackupError: Error {
     // TODO: remove if not needed
 //    case notAuthenticated
-//    case noActiveAccount
+    case noActiveAccount
     case compressionError
     case invalidFileExtension
     case keyCreationFailed
