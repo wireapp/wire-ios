@@ -66,7 +66,7 @@ Feature: MLS Col 3
     And I select search result item <Member2> on Group Add People page
     And I tap Done keyboard button
     Then I see participant names <TeamOwner>,<Member2>,<TeamOwner2> on Group Details page
-    When I close Group Details
+    When I tap X button on Group Details page
     Then I see "You added <Member2>" system message in the conversation view
         # I want to send and receive messages in the MLS conversation
     When User <Member2> sends 1 default message to conversation <GroupName>
@@ -88,7 +88,7 @@ Feature: MLS Col 3
     And I tap Remove From Group… conversation action button
     And I tap Remove From Group conversation action button
     Then I do not see participant name <Member2> on Group Details page
-    When I close Group Details
+    When I tap X button on Group Details page
     Then I see "You removed <Member2>" system message in the conversation view
 
     Examples:

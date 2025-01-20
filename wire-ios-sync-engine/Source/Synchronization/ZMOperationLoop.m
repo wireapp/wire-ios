@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +61,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
               operationStatus:(OperationStatus *)operationStatus
                               syncStatus:(SyncStatus *)syncStatus
                   pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
-                         callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
@@ -74,7 +73,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.operationStatus = operationStatus;
         self.syncStatus = syncStatus;
         self.pushNotificationStatus = pushNotificationStatus;
-        self.callEventStatus = callEventStatus;
         self.transportSession = transportSession;
         self.requestStrategy = requestStrategy;
         self.updateEventProcessor = updateEventProcessor;

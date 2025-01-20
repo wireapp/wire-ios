@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireAnalytics
 import WireDataModel
 import WireLogging
 import WireRequestStrategy
@@ -28,13 +29,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     // MARK: - Private Properties
 
-    private static let logger = Logger(subsystem: "VoIP Push", category: "CallingRequestStrategy")
+    private static let logger = WireLogger.calling
 
     private let messageSender: MessageSenderInterface
     private let flowManager: FlowManagerType
     private let decoder = JSONDecoder()
-
-    private let callEventStatus: CallEventStatus
 
     private var callConfigRequestSync: ZMSingleRequestSync! = nil
     private var callConfigCompletion: CallConfigRequestCompletion?
@@ -58,13 +57,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         applicationStatus: ApplicationStatus,
         clientRegistrationDelegate: ClientRegistrationDelegate,
         flowManager: FlowManagerType,
-        callEventStatus: CallEventStatus,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
         messageSender: MessageSenderInterface
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
-        self.callEventStatus = callEventStatus
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
@@ -177,7 +174,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             }
 
             guard response.httpStatus == 412 else {
-                Self.logger.warning("Expected 412 response: missing clients")
+                Self.logger.warn("Expected 412 response: missing clients")
                 return
             }
 
@@ -236,7 +233,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     // MARK: - Event Consumer
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        Self.logger.trace("process events: \(events)")
+        Self.logger.debug("process events: \(events.count)")
         events.forEach(processEvent)
     }
 
@@ -245,7 +242,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
 
         if let genericMessage = GenericMessage(from: event), genericMessage.hasCalling {
-
+            Self.logger.debug("process call event", attributes: [.eventId: event.safeUUID])
             guard
                 let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
 
@@ -259,6 +256,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             }
 
             guard !callEventContent.isRemoteMute else {
+                Self.logger.debug("isRemoteMute", attributes: [.eventId: event.safeUUID])
                 callCenter?.isMuted = true
                 return
             }
@@ -312,10 +310,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             clientId: clientId
         )
 
-        callEventStatus.scheduledCallEventForProcessing()
-        callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
-            self?.callEventStatus.finishedProcessingCallEvent()
-        })
+        callCenter?.processCallEvent(callEvent)
     }
 
 }

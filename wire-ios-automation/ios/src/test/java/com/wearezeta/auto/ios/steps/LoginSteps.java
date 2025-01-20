@@ -51,7 +51,15 @@ public class LoginSteps {
   @When("I login to Wire as (.*)")
   public void iLogin(String name) {
     ClientUser user = context.getUsersManager().findUserByNameOrNameAlias(name);
-
+    getCommonPage().openDeepLinkForDefault();
+    context.startPinging();
+    Timedelta.ofSeconds(3).sleep();
+    context.stopPinging();
+    getWebViewPage().tapOpenButton();
+    context.startPinging();
+    Timedelta.ofSeconds(3).sleep();
+    context.stopPinging();
+    getCustomBackendRedirectionPage().tapProceedButton();
     getWelcomePage().tapLoginButton();
     getLoginPage().loginAs(user.getEmail(), user.getPassword());
     if (getCommonPage().isNotNowOnPasswordPromptVisible()) {

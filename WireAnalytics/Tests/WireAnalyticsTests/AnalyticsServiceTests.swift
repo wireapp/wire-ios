@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -356,23 +356,23 @@ private enum Scaffolding {
 
     static let event = AnalyticsEvent(
         name: "foo",
-        segmentation: [segmentationEntry]
+        segmentation: [segmentation]
     )
 
-    static let segmentationEntry = SegmentationEntry(
+    static let segmentation = AnalyticsEvent.Segmentation(
         key: "bar",
         value: "car"
     )
 
-    static let baseSegmentation: Set<SegmentationEntry> = [
+    static let baseSegmentation: Set<AnalyticsEvent.Segmentation> = [
         .deviceModel("simulator"),
-        .deviceOS("iOS")
+        .osVersion("iOS")
     ]
 
     static func expectedSegmentation(for user: AnalyticsUser) -> [String: String] {
         let segmentation = baseSegmentation.union([
-            .isSelfTeamMember(user.teamInfo != nil),
-            segmentationEntry
+            .Team.isSelfTeamMember(user.teamInfo != nil),
+            segmentation
         ])
 
         return Dictionary(uniqueKeysWithValues: segmentation.map {

@@ -25,7 +25,7 @@ Feature: E2EE Verification
     And I tap Verify switcher on Device Details page
     And I tap Back button on Device Details page
     And I tap Back button on Group participant profile page
-    And I close Group Details
+    And I tap X button on Group Details page
     And I see 2 default messages in the conversation view
     When Users of team owned by <TeamOwner> adds the following 2FA devices: {"<Member1>": [{"name": "<DeviceName2>", "label": "<DeviceLabel2>"}]}
     # Wait for sync

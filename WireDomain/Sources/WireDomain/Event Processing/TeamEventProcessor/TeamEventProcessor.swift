@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,21 +18,6 @@
 
 import Foundation
 import WireAPI
-
-/// Process team update events.
-
-protocol TeamEventProcessorProtocol {
-
-    /// Process a team update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A team update event.
-
-    func processEvent(_ event: TeamEvent) async throws
-
-}
 
 struct TeamEventProcessor {
 

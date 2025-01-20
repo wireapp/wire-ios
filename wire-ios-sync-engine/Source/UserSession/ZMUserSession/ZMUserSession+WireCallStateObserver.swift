@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Foundation
 import WireAnalytics
 import WireDataModel
+import WireLogging
 
 extension ZMUserSession: WireCallCenterCallStateObserver {
 
@@ -29,52 +30,26 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
         timestamp: Date?,
         previousCallState: CallState?
     ) {
-        guard let conversationId = conversation.remoteIdentifier else { return }
         // Prevent duplicate tracking if state hasn't changed
         guard callState != previousCallState else { return }
 
-        let isVideoCall = isVideoCall(for: conversation)
+        let isVideo = conversation.voiceChannel?.isVideoCall ?? false
+        let conversationType = AnalyticsEvent.Segmentation.Conversation.ConversationType(conversation.conversationType)
+        guard let conversationType else {
+            return analyiticsLogger.error(
+                "ZMUserSession.callCenterDidChange: unexpected conversation type: \(conversation.conversationType)"
+            )
+        }
 
         switch callState {
         case .outgoing:
-            trackCallInitialized(isVideo: isVideoCall, conversationType: conversation.conversationType)
+            trackAnalyticsEvent(.Calling.initiatedCall(isVideo: isVideo, conversationType: conversationType))
         case .answered:
             // Currently, there is a limitation where we cannot track if isVideo is on or off for group calls.
             // This tracking is only possible in one-on-one calls.
-            trackCallJoined(isVideo: isVideoCall, conversationType: conversation.conversationType)
+            trackAnalyticsEvent(.Calling.joinedCall(isVideo: isVideo, conversationType: conversationType))
         default:
             break
-        }
-    }
-
-    private func isVideoCall(for conversation: ZMConversation) -> Bool {
-        conversation.voiceChannel?.isVideoCall ?? false
-    }
-
-    private func trackCallInitialized(isVideo: Bool, conversationType: ZMConversationType) {
-        let event = AnalyticsEvent.Calling.initiatedCall(
-            isVideo: isVideo,
-            conversationType: mapConversationType(conversationType)
-        )
-        trackAnalyticsEvent(event)
-    }
-
-    private func trackCallJoined(isVideo: Bool, conversationType: ZMConversationType) {
-        let event = AnalyticsEvent.Calling.joinedCall(
-            isVideo: isVideo,
-            conversationType: mapConversationType(conversationType)
-        )
-        trackAnalyticsEvent(event)
-    }
-
-    private func mapConversationType(_ type: ZMConversationType) -> ConversationType {
-        switch type {
-        case .group:
-            .group
-        case .oneOnOne:
-            .oneOnOne
-        default:
-            .unknown
         }
     }
 }

@@ -10,11 +10,11 @@ node('built-in') {
 
     def commit_hash = ""
     def commit_msg = ""
-    stage('Checkout wire-ios-mono') {
-      def scmVars = git branch: "$GIT_BRANCH_IOS", url: 'https://github.com/wireapp/wire-ios-mono'
+    stage('Checkout wire-ios') {
+      def scmVars = git branch: "$GIT_BRANCH_IOS", url: 'https://github.com/wireapp/wire-ios'
       commit_hash = scmVars.GIT_COMMIT
       commit_msg = sh returnStdout: true, script: 'git log -n 1 --pretty=format:"%an: %s"'
-      commit_msg = "[${commit_msg}](https://github.com/wireapp/wire-ios-mono/commit/${commit_hash})"
+      commit_msg = "[${commit_msg}](https://github.com/wireapp/wire-ios/commit/${commit_hash})"
     }
 
     stage('Check build state') {

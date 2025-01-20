@@ -20,9 +20,6 @@ public class SearchUIPage extends IOSPage {
     @iOSXCUITFindBy(accessibility = "Copy")
     private WebElement copyInviteButton;
 
-    @iOSXCUITFindBy(accessibility = "Invite More People")
-    private WebElement inviteMorePeopleButton;
-
     /**
     @iOSXCUITFindBy(accessibility = "button.searchui.creategroup")
     private WebElement createGroupButton;
@@ -73,10 +70,6 @@ public class SearchUIPage extends IOSPage {
 
     public void tapCloseButton() {
         closeButton.click();
-    }
-
-    public void tapSendInviteButton() {
-        inviteMorePeopleButton.click();
     }
 
     public void tapCopyInviteButton() {

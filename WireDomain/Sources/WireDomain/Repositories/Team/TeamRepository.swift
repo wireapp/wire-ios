@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,55 +20,6 @@ import Foundation
 import WireAPI
 import WireDataModel
 
-// sourcery: AutoMockable
-/// Facilitate access to team related domain objects.
-///
-/// A repository provides an abstraction for the access and storage
-/// of domain models, concealing how and where the models are stored
-/// as well as the possible source(s) of the models.
-public protocol TeamRepositoryProtocol {
-
-    /// Pull self team metadata from the server and store locally.
-
-    func pullSelfTeam() async throws
-
-    /// Pull team roles for the self team from the server and store locally.
-
-    func pullSelfTeamRoles() async throws
-
-    /// Pull team members for the self team from the server and store locally.
-
-    func pullSelfTeamMembers() async throws
-
-    /// Fetches the legalhold info for the self user from the server.
-    /// - returns: The legalhold info.
-
-    func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo
-
-    /// Deletes the member of a team.
-    /// - Parameter userID: The ID of the team member.
-    /// - Parameter domain: The domain of the team member.
-    /// - Parameter date: The time the member left the team.
-
-    func deleteMembership(
-        userID: UUID,
-        domain: String?,
-        date: Date
-    ) async throws
-
-    /// Sets the team member `needsToBeUpdatedFromBackend` flag to true.
-    /// - Parameter membershipID: The id of the team member.
-
-    func storeTeamMemberNeedsBackendUpdate(
-        membershipID: UUID
-    ) async throws
-
-    /// Pulls and stores legalhold info locally.
-
-    func pullSelfLegalholdInfo() async throws
-
-}
-
 public class TeamRepository: TeamRepositoryProtocol {
 
     // MARK: - Properties
@@ -77,6 +28,10 @@ public class TeamRepository: TeamRepositoryProtocol {
     private let userRepository: any UserRepositoryProtocol
     private let teamsAPI: any TeamsAPI
     private let teamLocalStore: any TeamLocalStoreProtocol
+
+    private let pullSelfTeamSync: PullSelfTeamSync
+    private let pullSelfTeamRolesSync: PullSelfTeamRolesSync
+    private let pullSelfTeamMembersSync: PullSelfTeamMembersSync
 
     // MARK: - Object lifecycle
 
@@ -90,46 +45,32 @@ public class TeamRepository: TeamRepositoryProtocol {
         self.userRepository = userRepository
         self.teamLocalStore = teamLocalStore
         self.teamsAPI = teamsAPI
+        self.pullSelfTeamSync = PullSelfTeamSync(
+            api: teamsAPI,
+            store: teamLocalStore
+        )
+        self.pullSelfTeamRolesSync = PullSelfTeamRolesSync(
+            api: teamsAPI,
+            store: teamLocalStore
+        )
+        self.pullSelfTeamMembersSync = PullSelfTeamMembersSync(
+            api: teamsAPI,
+            store: teamLocalStore
+        )
     }
 
     // MARK: - Public
 
     public func pullSelfTeam() async throws {
-        let team = try await fetchSelfTeamRemotely()
-
-        await teamLocalStore.storeTeam(
-            id: team.id,
-            name: team.name,
-            creatorID: team.creatorID,
-            logoID: team.logoID,
-            logoKey: team.logoKey
-        )
+        try await pullSelfTeamSync.pull(selfTeamID: selfTeamID)
     }
 
     public func pullSelfTeamRoles() async throws {
-        let teamRoles = try await fetchSelfTeamRolesRemotely()
-
-        let teamRolesInfo = teamRoles.map {
-            $0.toDomainModel()
-        }
-
-        try await teamLocalStore.storeTeamRoles(
-            selfTeamID: selfTeamID,
-            teamRolesInfo: teamRolesInfo
-        )
+        try await pullSelfTeamRolesSync.pull(selfTeamID: selfTeamID)
     }
 
     public func pullSelfTeamMembers() async throws {
-        let teamMembers = try await fetchSelfTeamMembersRemotely()
-
-        let teamMembersInfo = teamMembers.map {
-            $0.toDomainModel()
-        }
-
-        try await teamLocalStore.storeTeamMembers(
-            selfTeamID: selfTeamID,
-            teamMembersInfo: teamMembersInfo
-        )
+        try await pullSelfTeamMembersSync.pull(selfTeamID: selfTeamID)
     }
 
     public func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
@@ -182,22 +123,22 @@ public class TeamRepository: TeamRepositoryProtocol {
     }
 
     public func pullSelfLegalholdInfo() async throws {
-        let selfUser = await userRepository.fetchSelfUser()
-
-        let (selfUserID, selfClientID) = await teamLocalStore.selfUserInfo()
-
+        let (selfUserID, _) = await teamLocalStore.selfUserInfo()
         let selfUserLegalHold = try await fetchSelfLegalholdInfo()
 
         switch selfUserLegalHold.status {
         case .pending:
-            guard let selfClientID else {
+            guard
+                let clientID = selfUserLegalHold.clientID,
+                let lastPrekey = selfUserLegalHold.prekey
+            else {
                 return
             }
 
             await userRepository.addLegalHoldRequest(
                 userID: selfUserID,
-                clientID: selfClientID,
-                lastPrekey: selfUserLegalHold.prekey
+                clientID: clientID,
+                lastPrekey: lastPrekey
             )
 
         case .disabled:
@@ -215,35 +156,6 @@ public class TeamRepository: TeamRepositoryProtocol {
             for: selfTeamID,
             userID: selfUserID
         )
-    }
-
-    // MARK: - Private
-
-    private func fetchSelfTeamRemotely() async throws -> WireAPI.Team {
-        do {
-            return try await teamsAPI.getTeam(for: selfTeamID)
-        } catch {
-            throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
-    }
-
-    private func fetchSelfTeamRolesRemotely() async throws -> [WireAPI.ConversationRole] {
-        do {
-            return try await teamsAPI.getTeamRoles(for: selfTeamID)
-        } catch {
-            throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
-    }
-
-    private func fetchSelfTeamMembersRemotely() async throws -> [WireAPI.TeamMember] {
-        do {
-            return try await teamsAPI.getTeamMembers(
-                for: selfTeamID,
-                maxResults: 2000
-            )
-        } catch {
-            throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
     }
 
 }

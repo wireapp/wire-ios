@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -151,13 +151,27 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
-            // move local messages from proteus conversation if it exists
+            // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both
+            // conversations here.
+            let proteusConversations: [ZMConversation] = fetchAllTeamOneOnOneProteusConversations(
+                otherUserID: userID,
+                in: context
+            )
+
+            var allProteusConversations = Set(proteusConversations)
             if let existingConversation = otherUser.oneOnOneConversation,
                existingConversation.messageProtocol == .proteus {
+                allProteusConversations.insert(existingConversation)
+            }
+
+            // move local messages from proteus conversations if they exist
+            for proteusConversation in allProteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(existingConversation.allMessages)
+                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+            }
 
+            if !proteusConversations.isEmpty {
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }
@@ -165,6 +179,37 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             // switch active conversation
             otherUser.oneOnOneConversation = mlsConversation
         }
+    }
+
+    func fetchAllTeamOneOnOneProteusConversations(
+        otherUserID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
+        guard let otherUser = ZMUser.fetch(with: otherUserID, in: context) else {
+            return []
+        }
+        let selfUser = ZMUser.selfUser(in: context)
+        guard selfUser.team != nil else {
+            return []
+        }
+
+        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        let teamOneOnOnePredicate = ZMConversation.predicateForTeamOneToOneConversation()
+
+        let sameParticipant = NSPredicate(
+            format: "ANY %K.user == %@ AND ANY %K.user == %@",
+            ZMConversationParticipantRolesKey,
+            otherUser,
+            ZMConversationParticipantRolesKey,
+            selfUser
+        )
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            teamOneOnOnePredicate,
+            sameParticipant
+        ])
+
+        return context.fetchOrAssert(request: request)
     }
 
     private func createOrJoinMLSConversationIfNeeded(

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -422,20 +422,6 @@ final class UserRepositoryTests: XCTestCase {
 
         XCTAssertEqual(userLocalStore.fetchAllUserIDsWithOneOnOneConversation_Invocations.count, 1)
         XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
-    }
-
-    func testPullSelfUser() async throws {
-        // Mock
-        selfUsersAPI.getSelfUser_MockValue = Scaffolding.selfUser
-        userLocalStore.persistUserUserInfo_MockMethod = { _ in }
-
-        // When
-
-        try await sut.pullSelfUser()
-
-        // Then
-
-        XCTAssertEqual(userLocalStore.persistUserUserInfo_Invocations.count, 1)
     }
 
     func testFetchAllUserIdsWithOneOnOneConversation() async throws {

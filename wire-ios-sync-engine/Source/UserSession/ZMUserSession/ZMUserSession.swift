@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import Foundation
 import WireAnalytics
 import WireAPI
 import WireDataModel
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireSystem
@@ -106,6 +107,8 @@ public final class ZMUserSession: NSObject {
     public var topConversationsDirectory: TopConversationsDirectory
 
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
+
+    let analyiticsLogger: WireLogger
 
     // MARK: Computed Properties
 
@@ -352,6 +355,11 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
+    private lazy var  mlsClientManager = MLSClientManager(
+        coreCryptoProvider: coreCryptoProvider,
+        mlsService: mlsService
+    )
+
     // MARK: Dependency Injection
 
     let dependencies: UserSessionDependencies
@@ -364,7 +372,7 @@ public final class ZMUserSession: NSObject {
     // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
 
-    var callStateObserverToken: Any?
+    var callStateObserverToken: AnyObject?
 
     // MARK: - Initialize
 
@@ -424,6 +432,7 @@ public final class ZMUserSession: NSObject {
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
+        self.analyiticsLogger = .analytics
 
         super.init()
     }
@@ -499,6 +508,12 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
 
+        // Proactively keep the self user in sync, which helps add resilience
+        // in cases where the self client may otherwise only have limited
+        // one time opportunities to discover important changes.
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        selfUser.needsToBeUpdatedFromBackend = true
+
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
         }
@@ -562,6 +577,7 @@ public final class ZMUserSession: NSObject {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
@@ -615,7 +631,6 @@ public final class ZMUserSession: NSObject {
             operationStatus: applicationStatusDirectory.operationStatus,
             syncStatus: applicationStatusDirectory.syncStatus,
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-            callEventStatus: applicationStatusDirectory.callEventStatus,
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled
@@ -660,7 +675,10 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setupCallStateObserverForAnalytics() {
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: self)
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: contextProvider
+        )
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
@@ -931,18 +949,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: notificationContext
         ).post()
 
-        func performsMLSClientUpdates() async {
-            // these operations are not dependent and should not be executed in same do/catch
-            do {
-                // rework implementation of following method - WPB-6053
-                try await mlsService.performPendingJoins()
-            } catch {
-                WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
-            }
-            await mlsService.uploadKeyPackagesIfNeeded()
-            await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
-        }
-
         WaitingGroupTask(context: syncContext) { [self] in
             await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
@@ -953,18 +959,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
             }
 
-            if hasRegisteredMLSClient {
-                await performsMLSClientUpdates()
+            if let qualifiedSelfClientID {
+                await mlsClientManager.initializeMLSClientIfNeeded(
+                    for: qualifiedSelfClientID,
+                    hasRegisteredMLSClient: hasRegisteredMLSClient,
+                    mlsFeature: mlsFeature
+                )
             } else {
-                // If we discover that
-                // there are MLS public keys on the backend, the MLS feature is enabled and there is no registered MLS
-                // client,
-                // we should create one.
-                let needsToRegisterMLSClient = BackendInfo.isMLSEnabled && mlsFeature.isEnabled
-                if let qualifiedSelfClientID, needsToRegisterMLSClient {
-                    await createMLSClient(qualifiedID: qualifiedSelfClientID)
-                    await performsMLSClientUpdates()
-                }
+                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
             }
 
             if mlsFeature.isEnabled {
@@ -999,6 +1001,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
         -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
+
         let resolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
@@ -1007,7 +1010,27 @@ extension ZMUserSession: ZMSyncStateDelegate {
         return ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: supportedProtocolService,
-            resolver: resolver
+            resolver: resolver,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory
+        )
+    }
+
+    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsProtocol {
+        guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
+            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
+        }
+        guard let apiVersion = BackendInfo.apiVersion,
+              let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+            WireLogger.backend.warn("apiVersion not resolved")
+
+            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
+
+        }
+
+        return PullSelfUserClients.make(
+            apiService: apiService,
+            apiVersion: wireAPIVersion,
+            context: context
         )
     }
 
@@ -1049,17 +1072,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    private func createMLSClient(qualifiedID: QualifiedClientID) async {
-        let mlsClientID = await syncContext.perform {
-            MLSClientID(qualifiedClientID: qualifiedID)
-        }
-        do {
-            try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
-        } catch {
-            WireLogger.mls.error("Failed to initialise mls client: \(error)")
-        }
-    }
-
     func processEvents() {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
@@ -1097,12 +1109,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
         WireLogger.updateEvent.info("process pending call events")
         Task {
             do {
+                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
                 try await updateEventProcessor!.processBufferedEvents()
                 await managedObjectContext.perform {
                     completionHandler()
                 }
             } catch {
-                WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
+                WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }

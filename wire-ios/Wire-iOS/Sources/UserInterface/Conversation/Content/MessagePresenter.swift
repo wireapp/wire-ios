@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,17 +109,15 @@ final class MessagePresenter: NSObject {
         }
     }
 
-    // MARK: - AVPlayerViewController dismissial
+    // MARK: - AVPlayerViewController dismissal
 
-    fileprivate func observePlayerDismissial() {
+    fileprivate func observePlayerDismissal() {
         videoPlayerObserver = NotificationCenter.default.addObserver(
             forName: .dismissingAVPlayer,
             object: nil,
             queue: OperationQueue.main
         ) { _ in
             self.mediaPlayerController?.tearDown()
-
-            UIViewController.attemptRotationToDeviceOrientation()
 
             if let videoPlayerObserver = self.videoPlayerObserver {
                 NotificationCenter.default.removeObserver(videoPlayerObserver)
@@ -173,7 +171,7 @@ final class MessagePresenter: NSObject {
             let playerViewController = AVPlayerViewController()
             playerViewController.player = player
 
-            observePlayerDismissial()
+            observePlayerDismissal()
 
             targetViewController?.present(playerViewController, animated: true) {
                 player.play()

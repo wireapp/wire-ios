@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,6 @@
 //
 
 import WireAPI
-
-/// Process user update events.
-
-protocol UserUpdateEventProcessorProtocol {
-
-    /// Process a user update event.
-    ///
-    /// - Parameter event: A user update event.
-
-    func processEvent(_ event: UserUpdateEvent) async throws
-
-}
 
 struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
 

@@ -1,7 +1,7 @@
 Feature: New Person Onboarding
 
   @flows @01 @TC-8583
-  Scenario Outline: New Employee Onboarding
+  Scenario Outline: New Employee Onboarding 0
 # PreReqs
 # Team exists
 # New employee invited to team

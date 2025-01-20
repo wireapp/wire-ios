@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,8 +86,8 @@ public struct CallEventContent: Codable {
 
     // MARK: - Methods
 
-    public var callerID: UUID? {
-        callerUserID.flatMap(UUID.init(transportString:))
+    public var callerID: AVSIdentifier? {
+        callerUserID.flatMap(AVSIdentifier.init(string:))
     }
 
     public var callState: LocalNotificationType.CallState? {

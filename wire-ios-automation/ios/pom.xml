@@ -27,10 +27,6 @@
         <enableAppiumOutput>false</enableAppiumOutput>
         <UDID></UDID>
         <driverTimeoutSeconds>10</driverTimeoutSeconds>
-        <defaultEmail>smoketester@wire.com</defaultEmail>
-        <defaultEmailPassword>bsmquxrcdverabbp</defaultEmailPassword>
-        <specialEmail>smoketester.android@wire.com</specialEmail>
-        <specialPassword>esjasabkpuugatao</specialPassword>
         <deviceName>iPhone 11</deviceName>
         <perfDuration>1</perfDuration> <!-- Performance test duration, minutes -->
         <perfUsersCount>11</perfUsersCount> <!-- The number of contacts for perf test -->

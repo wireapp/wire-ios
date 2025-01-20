@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,23 +20,6 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-/// Facilitates access to conversation labels related domain objects.
-public protocol ConversationLabelsRepositoryProtocol {
-
-    /// Pulls conversation labels from the server and stores locally
-
-    func pullConversationLabels() async throws
-
-    /// Updates conversation labels locally
-    /// - parameters:
-    ///     - conversationLabels: The conversation labels to update locally.
-
-    func updateConversationLabels(
-        _ conversationLabels: [ConversationLabel]
-    ) async throws
-}
-
 public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
 
     // MARK: - Properties
@@ -44,6 +27,8 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
     private let userPropertiesAPI: any UserPropertiesAPI
     private let conversationLabelsLocalStore: any ConversationLabelsLocalStoreProtocol
     private let logger = WireLogger(tag: "conversation-labels")
+
+    private let pullConversationLabelsSync: PullConversationLabelsSync
 
     // MARK: - Object lifecycle
 
@@ -53,56 +38,26 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
     ) {
         self.userPropertiesAPI = userPropertiesAPI
         self.conversationLabelsLocalStore = conversationLabelsLocalStore
+        self.pullConversationLabelsSync = PullConversationLabelsSync(
+            api: userPropertiesAPI,
+            store: conversationLabelsLocalStore
+        )
     }
 
     // MARK: - Public
 
     public func pullConversationLabels() async throws {
-        let conversationLabels = try await userPropertiesAPI.getLabels()
-        try await updateConversationLabels(conversationLabels)
+        try await pullConversationLabelsSync.pull()
     }
 
     public func updateConversationLabels(
         _ conversationLabels: [ConversationLabel]
     ) async throws {
-        await storeLabelsLocally(conversationLabels)
-
-        try await conversationLabelsLocalStore.deleteOldLabelsLocally(
-            excludedLabels: conversationLabels.map { $0.toDomainModel() }
-        )
-    }
-
-    // MARK: - Private
-
-    private func storeLabelsLocally(
-        _ conversationLabels: [ConversationLabel]
-    ) async {
-        await withThrowingTaskGroup(of: Void.self) { taskGroup in
-            for conversationLabel in conversationLabels {
-                taskGroup.addTask { [self] in
-                    try await conversationLabelsLocalStore.storeLabel(
-                        conversationLabel.toDomainModel()
-                    )
-                }
-            }
-
-            /// Iterates through the group child tasks results and logs the error if any.
-            while let result = await taskGroup.nextResult() {
-                switch result {
-                case .success:
-                    continue
-                case let .failure(error):
-                    let repoError = error as? ConversationLabelsLocalStore.Failure
-                    if case let .failedToStoreLabelLocally(id) = repoError {
-                        logger
-                            .error(
-                                "Failed to store conversation label with id \(id.safeForLoggingDescription): \(error)"
-                            )
-                    } else {
-                        logger.error("Failed to store conversation with error: \(error)")
-                    }
-                }
-            }
+        let localLabels = conversationLabels.map {
+            $0.toDomainModel()
         }
+
+        try await conversationLabelsLocalStore.setLabels(localLabels)
     }
+
 }

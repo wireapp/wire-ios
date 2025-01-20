@@ -128,6 +128,7 @@ node("Job_distributor") {
             [envVar: 'MS_PASSWORD', secretRef: 'op://QA automation/MS_CREDENTIALS/password'],
             [envVar: 'BLACKLIST_S3_SECRET', secretRef: 'op://QA automation/BLACKLIST_S3_SECRET/password'],
             [envVar: 'TESTINY_API_KEY', secretRef: 'op://QA automation/TESTINY_API_KEY_IOS/password'],
+            [envVar: 'CALLINGSERVICE_BASIC_AUTH', secretRef: 'op://QA automation/CALLINGSERVICE_BASIC_AUTH/password'],
     ]
 
     // Use 1Password secrets
@@ -140,8 +141,8 @@ node("Job_distributor") {
                 file(credentialsId: 'KUBECONFIG_chala', variable: 'KUBECONFIG_chala'),
                 file(credentialsId: 'KUBECONFIG_foma', variable: 'KUBECONFIG_foma'),
                 file(credentialsId: 'KUBECONFIG_gudja_offline_ios', variable: 'KUBECONFIG_gudja_offline_ios'),
-                file(credentialsId: 'KUBECONFIG_bund_next_column_1', variable: 'KUBECONFIG_bund_next_column_1'),
-                file(credentialsId: 'KUBECONFIG_bund_qa_column_1', variable: 'KUBECONFIG_bund_qa_column_1'),
+                file(credentialsId: 'KUBECONFIG_next_column_1', variable: 'KUBECONFIG_next_column_1'),
+                file(credentialsId: 'KUBECONFIG_qa_column_1', variable: 'KUBECONFIG_qa_column_1'),
                 string(credentialsId: "${credentialsId}", variable: 'JENKINSBOT_SECRET')
         ]) {
 
@@ -163,10 +164,11 @@ node("Job_distributor") {
 
                 checkout([$class: 'GitSCM',
                           branches: [[name: '*/${Branch}']],
-                          doGenerateSubmoduleConfigurations: false,
+                          doGenerateSubmoduleConfigurations: true,
                           extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'wire-ios'],
-                                       [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'wire-ios-automation/ios'], [path: 'wire-ios-automation/tools']]],
+                                       [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'wire-ios-automation/ios'], [path: 'wire-ios-automation/tools'], [path: 'wire-ios-automation/ios-automation-assets']]],
                                        [$class: 'CheckoutOption', timeout: 30],
+                                       [$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, trackingSubmodules: false, depth: 1, shallow: true],
                                        [$class: 'CloneOption', depth: 0, noTags: true, reference: '', shallow: true, timeout: 30],
                                        [$class: 'BuildChooserSetting', buildChooser: [$class: 'DefaultBuildChooser']]],
                           submoduleCfg: [],

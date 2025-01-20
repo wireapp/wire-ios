@@ -23,11 +23,6 @@ public class GroupParticipantConnectedProfilePageSteps {
         getPage().tapRemoveFromConversationButton();
     }
 
-    @When("I confirm removal from group")
-    public void ConfirmRemoval() {
-        getPage().confirmRemove();
-    }
-
     @When("^I tap Open Conversation button on Group participant profile page$")
     public void ITapOpenConversationButton() {
         getPage().tapOpenConversationButton();

@@ -650,7 +650,6 @@
 			baseConfigurationReference = 0927584A1B70C23B00AD5A78 /* WireImages.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 				VALIDATE_WORKSPACE = YES;
@@ -694,6 +693,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5471F8201B73E6E000460C35 /* project-debug.xcconfig */;
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Debug;
@@ -702,6 +703,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5471F8211B73E6E000460C35 /* project.xcconfig */;
 			buildSettings = {
+				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};

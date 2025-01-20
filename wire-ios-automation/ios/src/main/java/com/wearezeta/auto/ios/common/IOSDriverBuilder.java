@@ -15,7 +15,6 @@ import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebDriver;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,18 +39,10 @@ public class IOSDriverBuilder {
     private Boolean allowNotifications = false;
     private Boolean uninstallAllOtherVersions = false;
     private static final String[] bundleIDs = {
-            "com.wearezeta.zclient.development",
-            "com.wearezeta.zclient.rc",
-            "com.wearezeta.zclient.ios-release",
-            "com.wearezeta.zclient.internal",
-            "com.wire.ios.bund.columnf.release",
-            "com.wire.bund.ios.c3",
-            "com.wearezeta.zclient.ios-playground",
-            "com.wire.bund.ios.beta.column3",
-            "com.wearezeta.zclient.alpha",
-            "com.wire.bund.ios.beta",
-            "com.wire.bund.ios.column3",
-            "com.wearezeta.zclient.ios.beta"
+        "com.wearezeta.zclient.development",
+        "com.wearezeta.zclient.rc",
+        "com.wearezeta.zclient.ios-release",
+        "com.wearezeta.zclient.ios.beta"
     };
 
     public IOSDriverBuilder withCapabilities(Capabilities capabilities) {

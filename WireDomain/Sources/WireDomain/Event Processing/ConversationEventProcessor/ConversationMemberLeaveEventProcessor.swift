@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,6 @@
 
 import WireAPI
 import WireDataModel
-
-/// Process conversation member leave events.
-
-protocol ConversationMemberLeaveEventProcessorProtocol {
-
-    /// Process a conversation member leave event.
-    ///
-    /// - Parameter event: A conversation member leave event.
-
-    func processEvent(_ event: ConversationMemberLeaveEvent) async throws
-
-}
 
 struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProcessorProtocol {
 

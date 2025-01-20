@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,22 +32,6 @@ private enum PushNotificationType: String {
 
 @objc
 public extension ZMOperationLoop {
-
-    @objc(fetchEventsFromPushChannelPayload:completionHandler:)
-    func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any], completionHandler: @escaping () -> Void) {
-        guard let nonce = messageNonce(fromPushChannelData: payload) else {
-            return completionHandler()
-        }
-
-        pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
-            self.callEventStatus.waitForCallEventProcessingToComplete { [weak self] in
-                guard let self else { return completionHandler() }
-                syncMOC.performGroupedBlock {
-                    completionHandler()
-                }
-            }
-        })
-    }
 
     func messageNonce(fromPushChannelData payload: [AnyHashable: Any]) -> UUID? {
         guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],

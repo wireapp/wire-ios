@@ -28,9 +28,6 @@ public class ConversationsListPage extends IOSPage {
     @iOSXCUITFindBy(iOSNsPredicate = "name == 'action_button' AND type == 'XCUIElementTypeButton'")
     private WebElement joinButton;
 
-    @iOSXCUITFindBy(iOSNsPredicate = "name == 'title' AND label == 'One person waiting'")
-    private WebElement pendingRequest;
-
     @iOSXCUITFindBy(accessibility = "EVERYTHING ARCHIVED")
     private WebElement conversationListPlaceholder;
 
@@ -108,13 +105,9 @@ public class ConversationsListPage extends IOSPage {
         super(driver);
     }
 
-    public void openConversationCalled(String name) {
+    public void tapConversationItemRecentList(String name) {
         final By locator = predicateStrConversationByLabel.apply(name);
         getDriver().findElement(locator).click();
-    }
-
-    public void openConnectionRequest() {
-        pendingRequest.click();
     }
 
     // TODO: Not sure if I like how handling the context menu at the moment

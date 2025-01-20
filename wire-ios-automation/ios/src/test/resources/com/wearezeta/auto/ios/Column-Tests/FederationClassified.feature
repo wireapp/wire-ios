@@ -68,7 +68,7 @@ Feature: Federation Classified
     And I type search query "<TeamOwner2>" on Group Add People page
     And I select search result item <TeamOwner2> on Group Add People page
     And I tap Add Participants button on Group Add People page
-    And I close Group Details
+    And I tap X button on Group Details page
     Then I see unclassified domain label in the conversation
 
     Examples:
@@ -102,7 +102,7 @@ Feature: Federation Classified
     And I type search query "<TeamOwner2>" on Group Add People page
     When I select search result item <TeamOwner2> on Group Add People page
     And I tap Done keyboard button
-    And I close Group Details
+    And I tap X button on Group Details page
     Then I see unclassified domain label in the conversation
     When I restore Calling overlay
     And I see Video Calling overlay

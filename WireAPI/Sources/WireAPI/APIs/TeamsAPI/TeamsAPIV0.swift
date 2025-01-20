@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -325,19 +325,30 @@ struct LegalHoldLastPrekeyV0: Decodable, ToAPIModelConvertible {
 
 struct TeamMemberLegalholdResponseV0: Decodable, ToAPIModelConvertible {
 
-    let lastPrekey: LegalHoldLastPrekeyV0
     let status: LegalholdStatusV0
+    let client: LegalholdClientV0?
+    let lastPrekey: LegalHoldLastPrekeyV0?
 
     enum CodingKeys: String, CodingKey {
+
         case status
+        case client
         case lastPrekey = "last_prekey"
+
     }
 
     func toAPIModel() -> TeamMemberLegalholdInfo {
         TeamMemberLegalholdInfo(
             status: status.toAPIModel(),
-            prekey: lastPrekey.toAPIModel()
+            clientID: client.map(\.id),
+            prekey: lastPrekey.map { $0.toAPIModel() }
         )
     }
+
+}
+
+struct LegalholdClientV0: Decodable {
+
+    let id: String
 
 }

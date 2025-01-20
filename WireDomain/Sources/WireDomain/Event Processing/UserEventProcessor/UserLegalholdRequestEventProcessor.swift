@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,6 @@
 //
 
 import WireAPI
-
-/// Process user legalhold request events.
-
-protocol UserLegalholdRequestEventProcessorProtocol {
-
-    /// Process a user legalhold request event.
-    ///
-    /// - Parameter event: A user legalhold request event.
-
-    func processEvent(_ event: UserLegalholdRequestEvent) async throws
-
-}
 
 struct UserLegalholdRequestEventProcessor: UserLegalholdRequestEventProcessorProtocol {
 

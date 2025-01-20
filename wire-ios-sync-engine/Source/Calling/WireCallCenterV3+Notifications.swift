@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -200,12 +200,18 @@ extension WireCallCenterV3 {
 
     public class func addCallErrorObserver(
         observer: WireCallCenterCallErrorObserver,
-        userSession: ZMUserSession
-    ) -> Any {
-        addCallErrorObserver(observer: observer, context: userSession.managedObjectContext)
+        contextProvider: ContextProvider
+    ) -> AnyObject {
+        addCallErrorObserver(
+            observer: observer,
+            context: contextProvider.viewContext
+        )
     }
 
-    class func addCallErrorObserver(observer: WireCallCenterCallErrorObserver, context: NSManagedObjectContext) -> Any {
+    class func addCallErrorObserver(
+        observer: WireCallCenterCallErrorObserver,
+        context: NSManagedObjectContext
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterCallErrorNotification.notificationName,
             context: context.notificationContext,
@@ -222,14 +228,17 @@ extension WireCallCenterV3 {
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addCallStateObserver(
         observer: WireCallCenterCallStateObserver,
-        userSession: ZMUserSession
-    ) -> Any {
-        addCallStateObserver(observer: observer, context: userSession.managedObjectContext)
+        contextProvider: ContextProvider
+    ) -> AnyObject {
+        addCallStateObserver(
+            observer: observer,
+            context: contextProvider.viewContext
+        )
     }
 
     /// Register observer of the call center call state in all user sessions.
     /// Returns a token which needs to be retained as long as the observer should be active.
-    class func addGlobalCallStateObserver(observer: WireCallCenterCallStateObserver) -> Any {
+    class func addGlobalCallStateObserver(observer: WireCallCenterCallStateObserver) -> AnyObject {
         NotificationInContext.addUnboundedObserver(
             name: WireCallCenterCallStateNotification.notificationName,
             context: nil
@@ -261,7 +270,10 @@ extension WireCallCenterV3 {
 
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
-    class func addCallStateObserver(observer: WireCallCenterCallStateObserver, context: NSManagedObjectContext) -> Any {
+    class func addCallStateObserver(
+        observer: WireCallCenterCallStateObserver,
+        context: NSManagedObjectContext
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterCallStateNotification.notificationName,
             context: context.notificationContext,
@@ -296,7 +308,7 @@ extension WireCallCenterV3 {
         observer: WireCallCenterCallStateObserver,
         for conversation: ZMConversation,
         userSession: ZMUserSession
-    ) -> Any {
+    ) -> AnyObject {
         addCallStateObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
     }
 
@@ -306,7 +318,7 @@ extension WireCallCenterV3 {
         observer: WireCallCenterCallStateObserver,
         for conversation: ZMConversation,
         context: NSManagedObjectContext
-    ) -> Any {
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterCallStateNotification.notificationName,
             context: context.notificationContext,
@@ -337,7 +349,7 @@ extension WireCallCenterV3 {
     public class func addMissedCallObserver(
         observer: WireCallCenterMissedCallObserver,
         userSession: ZMUserSession
-    ) -> Any {
+    ) -> AnyObject {
         addMissedCallObserver(observer: observer, context: userSession.managedObjectContext)
     }
 
@@ -346,7 +358,7 @@ extension WireCallCenterV3 {
     class func addMissedCallObserver(
         observer: WireCallCenterMissedCallObserver,
         context: NSManagedObjectContext
-    ) -> Any {
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterMissedCallNotification.notificationName,
             context: context.notificationContext,
@@ -377,7 +389,7 @@ extension WireCallCenterV3 {
 
     /// Register observer of missed calls for in all user sessions
     /// Returns a token which needs to be retained as long as the observer should be active.
-    class func addGlobalMissedCallObserver(observer: WireCallCenterMissedCallObserver) -> Any {
+    class func addGlobalMissedCallObserver(observer: WireCallCenterMissedCallObserver) -> AnyObject {
         NotificationInContext.addUnboundedObserver(
             name: WireCallCenterMissedCallNotification.notificationName,
             context: nil
@@ -411,7 +423,7 @@ extension WireCallCenterV3 {
     public class func addConstantBitRateObserver(
         observer: ConstantBitRateAudioObserver,
         userSession: ZMUserSession
-    ) -> Any {
+    ) -> AnyObject {
         addConstantBitRateObserver(observer: observer, context: userSession.managedObjectContext)
     }
 
@@ -420,7 +432,7 @@ extension WireCallCenterV3 {
     class func addConstantBitRateObserver(
         observer: ConstantBitRateAudioObserver,
         context: NSManagedObjectContext
-    ) -> Any {
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterCBRNotification.notificationName,
             context: context.notificationContext,
@@ -438,9 +450,13 @@ extension WireCallCenterV3 {
     public class func addCallParticipantObserver(
         observer: WireCallCenterCallParticipantObserver,
         for conversation: ZMConversation,
-        userSession: ZMUserSession
-    ) -> Any {
-        addCallParticipantObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
+        contextProvider: ContextProvider
+    ) -> AnyObject {
+        addCallParticipantObserver(
+            observer: observer,
+            for: conversation,
+            context: contextProvider.viewContext
+        )
     }
 
     /// Add observer of call particpants in a conversation. Returns a token which needs to be retained as long as the
@@ -450,7 +466,7 @@ extension WireCallCenterV3 {
         observer: WireCallCenterCallParticipantObserver,
         for conversation: ZMConversation,
         context: NSManagedObjectContext
-    ) -> Any {
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterCallParticipantNotification.notificationName,
             context: context.notificationContext,
@@ -476,7 +492,7 @@ extension WireCallCenterV3 {
         observer: VoiceGainObserver,
         for conversation: ZMConversation,
         userSession: ZMUserSession
-    ) -> Any {
+    ) -> AnyObject {
         addVoiceGainObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
     }
 
@@ -486,7 +502,7 @@ extension WireCallCenterV3 {
         observer: VoiceGainObserver,
         for conversation: ZMConversation,
         context: NSManagedObjectContext
-    ) -> Any {
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: VoiceGainNotification.notificationName,
             context: context.notificationContext,
@@ -511,7 +527,7 @@ extension WireCallCenterV3 {
         observer: NetworkQualityObserver,
         for conversation: ZMConversation,
         userSession: ZMUserSession
-    ) -> Any {
+    ) -> AnyObject {
         addNetworkQualityObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
     }
 
@@ -521,7 +537,7 @@ extension WireCallCenterV3 {
         observer: NetworkQualityObserver,
         for conversation: ZMConversation,
         context: NSManagedObjectContext
-    ) -> Any {
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterNetworkQualityNotification.notificationName,
             context: context.notificationContext,
@@ -541,13 +557,13 @@ extension WireCallCenterV3 {
 
     /// Add observer of mute state. Returns a token which needs to be retained as long as the observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
-    public class func addMuteStateObserver(observer: MuteStateObserver, userSession: ZMUserSession) -> Any {
+    public class func addMuteStateObserver(observer: MuteStateObserver, userSession: ZMUserSession) -> AnyObject {
         addMuteStateObserver(observer: observer, context: userSession.managedObjectContext)
     }
 
     /// Add observer of mute state. Returns a token which needs to be retained as long as the observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
-    class func addMuteStateObserver(observer: MuteStateObserver, context: NSManagedObjectContext) -> Any {
+    class func addMuteStateObserver(observer: MuteStateObserver, context: NSManagedObjectContext) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterMutedNotification.notificationName,
             context: context.notificationContext,
@@ -565,7 +581,7 @@ extension WireCallCenterV3 {
     public class func addActiveSpeakersObserver(
         observer: ActiveSpeakersObserver,
         context: NSManagedObjectContext
-    ) -> Any {
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterActiveSpeakersNotification.notificationName,
             context: context.notificationContext
@@ -581,7 +597,7 @@ extension WireCallCenterV3 {
     public class func addConferenceCallingUnavailableObserver(
         observer: ConferenceCallingUnavailableObserver,
         userSession: ZMUserSession
-    ) -> Any {
+    ) -> AnyObject {
         NotificationInContext.addObserver(
             name: WireCallCenterConferenceCallingUnavailableNotification.notificationName,
             context: userSession.managedObjectContext.notificationContext,

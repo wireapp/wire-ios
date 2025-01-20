@@ -1,29 +1,20 @@
 Feature: Video Calls
 
-  @flows @TC-8586
+  @flows @05
   Scenario Outline: Team members attending stand up (Video call)
     Given I allow camera access
     And I allow microphone access
     And There is a team owner "<TeamOwner>" with team "<TeamName>"
-    And There is a team owner "<TeamGuest>" with team "Guest"
     And TeamOwner "<TeamOwner>" waits and enables conference calling feature for team <TeamName> via backdoor
-    And User <TeamOwner> adds user <Member1>, <Member2>, <Member3>,<Member4>, <Member5> to team <TeamName> with role Member
-    And User <TeamOwner> is connected to <TeamGuest>
-    And User <TeamOwner> has conversation <ConversationTitle> with <Member1>,<Member2>, <Member3>, <Member4> in team <TeamName>
-    And User <Member1> has conversation <ConversationTitle2> with <Member2>,<Member4>, <TeamOwner> in team <TeamName>
-    And <Member1>,<Member2>,<Member3>, <Member4>, <Member5>, <TeamGuest> starts instance using <CallBackend>
+    And User <TeamOwner> adds user <Member1>, <Member2>, <Member3>,<Member4>, <Member5>, <Member6> to team <TeamName> with role Member
+    And User <TeamOwner> has conversation <ConversationTitle> with <Member1>,<Member2>, <Member3>, <Member4>, <Member5>, <Member6> in team <TeamName>
+    And User <Member1> has conversation <ConversationTitle2> with <Member2>,<Member4>, <Member5>, <TeamOwner> in team <TeamName>
+    And <Member1>,<Member2>,<Member3>, <Member4>, <Member5>, <Member6> starts instance using <CallBackend>
     And User <TeamOwner> is me
     And <Member1>,<Member2>,<Member3>, <Member4>,<Member5>,<Member6> accepts next incoming call automatically
-    When I login to Wire as <TeamOwner>
+    When I sign in user <TeamOwner> with fast login
     And I accept alert if visible
     And I open group conversation "<ConversationTitle>" in conversation list
-    And I copy the group invite link
-    And I close Group Details
-    And I navigate back to conversations list
-    And I open conversation "<TeamGuest>" in conversation list
-    And I send what is in my pasteboard
-    And I navigate back to conversations list
-    And I open conversation "<ConversationTitle>" in conversation list
     # Enabling calling needs to happen away from team creation to avoid iblis
     And I tap Video Call button
     And I tap call button on start call alert
@@ -61,5 +52,5 @@ Feature: Video Calls
     #And I see link preview source is equal to https://www.wire.com/
 
     Examples:
-      | Member1   | TeamOwner | TeamName  | CallBackend | Member2   | ConversationTitle   | Member3   | Member4   | Member5   | Member6   | ConversationTitle2 | TeamGuest |
-      | user1Name | user3Name | SuperTeam | chrome      | user2Name | conversation        | user4Name | user5Name | user6Name | user7Name | EngineeringTeam    | user7Name |
+      | Member1   | TeamOwner | TeamName  | CallBackend | Member2   | ConversationTitle   | Member3   | Member4   | Member5   | Member6   | ConversationTitle2 |
+      | user1Name | user3Name | SuperTeam | chrome      | user2Name | conversation        | user4Name | user5Name | user6Name | user7Name | EngineeringTeam    |

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,18 +20,6 @@ import WireAPI
 import WireDataModel
 import WireLogging
 import WireSystem
-
-/// Process conversation mls message add events.
-
-protocol ConversationMLSMessageAddEventProcessorProtocol {
-
-    /// Process a conversation mls message add event.
-    ///
-    /// - Parameter event: A conversation mls message add event.
-
-    func processEvent(_ event: ConversationMLSMessageAddEvent) async throws
-
-}
 
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
 

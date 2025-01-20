@@ -14,12 +14,6 @@ public class GroupConnectedParticipantProfilePage extends IOSPage {
     @iOSXCUITFindBy(accessibility = "left_button")
     private WebElement leftActionButton;
 
-    @iOSXCUITFindBy(accessibility = "Remove From Group…")
-    private WebElement removeFromGroup;
-
-    @iOSXCUITFindBy(accessibility = "Remove From Group")
-    private WebElement confirmRemove;
-
     @iOSXCUITFindBy(accessibility = "right_button")
     private WebElement rightActionButton;
 
@@ -142,10 +136,5 @@ public class GroupConnectedParticipantProfilePage extends IOSPage {
 
     public void tapDevicesTab() {
         devicesTab.click();
-    }
-
-    public void confirmRemove() {
-        removeFromGroup.click();
-        confirmRemove.click();
     }
 }

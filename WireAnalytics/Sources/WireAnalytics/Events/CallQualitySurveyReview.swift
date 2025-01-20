@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,26 +36,26 @@ public enum CallQualitySurveyReview {
         case muted
     }
 
-    var segmentation: Set<SegmentationEntry> {
+    var segmentation: Set<AnalyticsEvent.Segmentation> {
         switch self {
         case let .notDisplayed(reason, duration):
             [
                 .callLabel("not-displayed"),
-                .callDuration(duration),
-                .callIgnoreReason(reason.rawValue)
+                .Removed.callDuration(duration),
+                .Removed.callIgnoreReason(reason.rawValue)
             ]
 
         case let .answered(score, duration):
             [
                 .callLabel("answered"),
                 .callScore(score),
-                .callDuration(duration)
+                .Removed.callDuration(duration)
             ]
 
         case let .dismissed(duration):
             [
                 .callLabel("dismissed"),
-                .callDuration(duration)
+                .Removed.callDuration(duration)
             ]
         }
     }

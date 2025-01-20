@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public class SinglePendingUserIncomingConnectionProfilePage extends IOSPage {
 
-    @iOSXCUITFindBy(accessibility = "Connect")
+    @iOSXCUITFindBy(accessibility = "CONNECT")
     private WebElement connectButton;
 
     @iOSXCUITFindBy(accessibility = "IGNORE")
@@ -26,7 +26,7 @@ public class SinglePendingUserIncomingConnectionProfilePage extends IOSPage {
         super(driver);
     }
 
-    public void tapConnect() {
+    public void tapConnectInboxStyleButton() {
         connectButton.click();
     }
 

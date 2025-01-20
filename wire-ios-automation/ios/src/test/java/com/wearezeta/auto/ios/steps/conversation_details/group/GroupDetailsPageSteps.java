@@ -36,8 +36,8 @@ public class GroupDetailsPageSteps {
     public void ITapAddPeopleButton() {
         getGroupDetailsPage().tapAddPeopleButton();
     }
-    
-    @When("^I close Group Details$")
+
+    @When("^I tap X button on Group Details page$")
     public void ITapXButton() {
         getGroupDetailsPage().tapXButton();
     }

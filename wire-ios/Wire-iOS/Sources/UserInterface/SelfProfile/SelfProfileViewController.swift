@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import WireAnalytics
 import WireAPI
 import WireCommonComponents
 import WireDesign
-import WireDomainAPI
+import WireDomainPkg
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireReusableUIComponents
@@ -262,7 +262,7 @@ final class SelfProfileViewController: UIViewController {
         }
     }
 
-    private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
+    private func userDidTapCreateTeam(useCase: any IndividualToTeamMigrationUseCaseProtocol, userName: String) {
 
         analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
 
@@ -281,14 +281,25 @@ final class SelfProfileViewController: UIViewController {
                             presentedViewController?.dismiss(animated: true)
                         case .toLearnMoreAboutPlans:
                             _ = WireURLs.shared.wireEnterpriseInfo.open()
-                        case .completionGoToApp:
+                        case .completionDismiss:
                             dismissIndividualToTeamMigrationBanner()
                             presentedViewController?.dismiss(animated: true)
+                        case .completionGoToConversations:
+                            dismissIndividualToTeamMigrationBanner()
+                            if let presentingViewController {
+                                presentingViewController.dismiss(animated: true)
+                            } else {
+                                presentedViewController?.dismiss(animated: true)
+                            }
                         case .completionGoToTeamManagement:
                             dismissIndividualToTeamMigrationBanner()
-                            presentedViewController?.dismiss(animated: true, completion: { [weak self] in
-                                self?.navigateToTeam()
-                            })
+                            if let presentingViewController {
+                                presentingViewController.dismiss(animated: true) {
+                                    URL.manageTeam(source: .settings).open()
+                                }
+                            } else {
+                                presentedViewController?.dismiss(animated: true)
+                            }
                         }
                     }
                 }

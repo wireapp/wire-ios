@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -284,6 +284,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var environment: BackendEnvironment {
         didSet {
+            apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
             authenticatedSessionFactory.environment = environment
@@ -552,7 +553,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
             deviceModel: UIDevice.current.model,
-            deviceOS: UIDevice.current.systemVersion,
+            osVersion: UIDevice.current.systemVersion,
             countlyProvider: countlyProvider
         )
 

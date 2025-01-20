@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import WireUtilities
 
 public struct ZMFilterableConversationAdapter: FilterableConversation {
 
-    private let conversation: ZMConversation
+    public let conversation: ZMConversation
 
     public var name: String {
         conversation.normalizedUserDefinedName ?? conversation.displayName?.normalizedForSearch() as String? ?? ""
@@ -35,6 +35,10 @@ public struct ZMFilterableConversationAdapter: FilterableConversation {
                         .normalizedForSearch() as String? ?? ""
                 )
             }
+    }
+
+    public var isOneOnOne: Bool {
+        conversation.conversationType == .oneOnOne && conversation.oneOnOneUser != nil
     }
 
     public init(conversation: ZMConversation) {

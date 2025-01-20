@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
+        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?
     ) {
 
@@ -71,6 +72,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache
         )
 
@@ -110,6 +112,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
+        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
@@ -141,6 +144,10 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         let oneOnOneResolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
+        )
+        let mlsClientManager = MLSClientManager(
+            coreCryptoProvider: coreCryptoProvider,
+            mlsService: mlsService
         )
 
         return [
@@ -292,7 +299,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
                 flowManager: flowManager,
-                callEventStatus: applicationStatusDirectory.callEventStatus,
                 messageSender: messageSender
             ),
             LegalHoldRequestStrategy(
@@ -357,7 +363,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus
+                syncProgress: applicationStatusDirectory.syncStatus,
+                mlsClientManager: mlsClientManager
             ),
             FetchBackendMLSPublicKeysRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -377,7 +384,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 resolveOneOnOneConversations: makeResolveOneOnOneConversationsUseCase(
                     context: syncMOC,
-                    resolver: oneOnOneResolver
+                    resolver: oneOnOneResolver,
+                    pullSelfUserClientsFactory: pullSelfUserClientsFactory
                 )
             ),
             ResetSessionRequestStrategy(
@@ -412,12 +420,15 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
     private static func makeResolveOneOnOneConversationsUseCase(
         context: NSManagedObjectContext,
-        resolver: any OneOnOneResolverInterface
+        resolver: any OneOnOneResolverInterface,
+        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory
     ) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+
         ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: SupportedProtocolsService(context: context),
-            resolver: resolver
+            resolver: resolver,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory
         )
     }
 }
