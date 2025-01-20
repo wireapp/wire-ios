@@ -506,10 +506,10 @@ extension AuthenticationCoordinator {
     /// Opens the URL in the selected browser
     private func openURL(_ url: URL) {
         url.open()
-        if let alertModel = self.pendingAlert {
-            self.presenter?.isLoadingViewVisible = false
-            self.presentAlert(for: alertModel)
-            self.pendingAlert = nil
+        if let alertModel = pendingAlert {
+            presenter?.isLoadingViewVisible = false
+            presentAlert(for: alertModel)
+            pendingAlert = nil
         }
     }
 
