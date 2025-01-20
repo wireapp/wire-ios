@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol ImportBackupEntityStorageProtocol {
 
     func replacePersistentStore(
