@@ -207,19 +207,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let conversationLocalStore: any ConversationLocalStoreProtocol
-    let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
-        context: NSManagedObjectContext,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
-        userLocalStore: any UserLocalStoreProtocol
+        context: NSManagedObjectContext
     ) {
         self.context = context
-        self.conversationLocalStore = conversationLocalStore
-        self.userLocalStore = userLocalStore
     }
 
     // MARK: - Public
@@ -229,10 +223,16 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async {
-        guard let conversation = await conversationLocalStore.fetchConversation(
-            id: conversationID,
-            domain: conversationDomain
-        ) else { return }
+        
+        let conversation = await context.perform { [context] in
+            ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            )
+        }
+        
+        guard let conversation else { return }
 
         let systemMessages = await createSystemMessages(
             from: messageType,
@@ -249,7 +249,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversation: ZMConversation,
         senderID: UUID
     ) async -> Bool {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        let selfUser = await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
 
         return await context.perform {
             let isSelf = conversation.isSelfConversation && senderID != selfUser.remoteIdentifier
@@ -645,14 +647,20 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 return []
             }
 
-            let newUsers = await userLocalStore.fetchOrCreateUsers(
-                userIDs: participants
-            )
+            let newUsers = await context.perform { [context] in
+                participants.map {
+                    ZMUser.fetchOrCreate(
+                        with: $0.id,
+                        domain: $0.domain,
+                        in: context
+                    )
+                }
+            }
 
             let systemMessage = await createSystemMessage(
                 messageType: .participantsAdded,
                 sender: sender,
-                users: newUsers
+                users: Set(newUsers)
             )
 
             return [systemMessage]
@@ -881,10 +889,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             return [systemMessage]
 
         case let .sessionReset(sender, senderClientID, date):
-            let sender = await userLocalStore.fetchOrCreateUser(
-                id: sender.id,
-                domain: sender.domain
-            )
+            let sender = await context.perform { [context] in
+                ZMUser.fetchOrCreate(
+                    with: sender.id,
+                    domain: sender.domain,
+                    in: context
+                )
+            }
 
             let client = await context.perform {
                 UserClient.fetchUserClient(
@@ -1028,14 +1039,19 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         id: UUID,
         domain: String?
     ) async -> ZMUser? {
-        try? await userLocalStore.fetchUser(
-            id: id,
-            domain: domain
-        )
+        await context.perform { [context] in
+            ZMUser.fetch(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
     }
 
     private func fetchSelfUser() async -> ZMUser {
-        await userLocalStore.fetchSelfUser()
+        await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
     }
 
     private func editMessage(

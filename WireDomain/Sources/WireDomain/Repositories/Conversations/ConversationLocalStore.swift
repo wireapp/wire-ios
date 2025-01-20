@@ -411,7 +411,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
-    let userLocalStore: any UserLocalStoreProtocol
     let messageLocalStore: any MessageLocalStoreProtocol
 
     // MARK: - Object lifecycle
@@ -419,12 +418,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public init(
         context: NSManagedObjectContext,
         mlsService: MLSServiceInterface,
-        userLocalStore: any UserLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.context = context
         self.mlsService = mlsService
-        self.userLocalStore = userLocalStore
         self.messageLocalStore = messageLocalStore
     }
 
@@ -627,10 +624,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         let usersAndRoles = await withTaskGroup(of: UserAndRole?.self) { taskGroup in
             for newParticipant in participants {
                 taskGroup.addTask { [self] in
-                    let user = await userLocalStore.fetchOrCreateUser(
-                        id: newParticipant.id,
-                        domain: newParticipant.domain
-                    )
+                    let user = await context.perform { [context] in
+                        ZMUser.fetchOrCreate(
+                            with: newParticipant.id,
+                            domain: newParticipant.domain,
+                            in: context
+                        )
+                    }
 
                     if let participantRole = newParticipant.role {
                         let role = await fetchOrCreateRole(
@@ -910,10 +910,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         in conversation: ZMConversation,
         date: Date
     ) async {
-        guard let participant = try? await userLocalStore.fetchUser(
-            id: participantID,
-            domain: participantDomain
-        ) else {
+        let participant = await context.perform { [context] in
+            ZMUser.fetch(
+                with: participantID,
+                domain: participantDomain,
+                in: context
+            )
+        }
+        guard let participant else {
             return
         }
 
@@ -983,11 +987,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         participantDomain: String?,
         date: Date
     ) async throws {
-
-        let user = try await userLocalStore.fetchUser(
-            id: participantID,
-            domain: participantDomain
-        )
+        
+        let user = await context.perform { [context] in
+            ZMUser.fetchOrCreate(
+                with: participantID,
+                domain: participantDomain,
+                in: context
+            )
+        }
 
         let allGroupConversations = await context.perform {
             // swiftformat:disable:next redundantProperty

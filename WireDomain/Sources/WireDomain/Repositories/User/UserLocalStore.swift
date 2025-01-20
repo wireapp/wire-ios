@@ -137,6 +137,12 @@ public protocol UserLocalStoreProtocol {
     /// - returns: the user ID and the client ID.
 
     func selfUserInfo() async -> (id: UUID, clientId: String?)
+    
+    func removeUserFromAllConversations(
+        id: UUID,
+        domain: String?,
+        date: Date
+    ) async throws
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -148,16 +154,19 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let userDefaults: UserDefaults
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
         userDefaults: UserDefaults = .standard
     ) {
         self.context = context
         self.userDefaults = userDefaults
+        self.conversationLocalStore = conversationLocalStore
     }
 
     public func fetchSelfUser() async -> ZMUser {
@@ -323,6 +332,18 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
             ZMUser.selfUser(in: context).analyticsIdentifier = analyticsID
         }
+    }
+    
+    public func removeUserFromAllConversations(
+        id: UUID,
+        domain: String?,
+        date: Date
+    ) async throws {
+        try await conversationLocalStore.removeParticipantFromAllGroupConversations(
+            participantID: id,
+            participantDomain: domain,
+            date: date
+        )
     }
 
     public func persistUser(userInfo: NewUserInfo) async {
