@@ -89,7 +89,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         )
         let selfClient = try await temporaryStack.viewContext.perform {
             let selfClient = UserClient.restore(from: selfClientBackup, context: temporaryStack.viewContext)
-            selfClient.todo()
+            selfClient.todo() // TODO: do we need to do this for all contexts?
             try temporaryStack.viewContext.save()
             return selfClient
         }
