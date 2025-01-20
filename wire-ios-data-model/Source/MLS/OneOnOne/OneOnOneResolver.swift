@@ -107,7 +107,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         case .mls where isMLSEnabled:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
-            return await resolveCommonUserProtocolProteus(with: userID, in: context)
+            return try await resolveCommonUserProtocolProteus(with: userID, in: context)
         case .mixed:
             // This should never happen:
             // Users can only support proteus and mls protocols.
@@ -221,16 +221,13 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     private func resolveCommonUserProtocolProteus(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async -> OneOnOneConversationResolution {
-        // Look at potential conversations excluding MLS ((multiple)fake 1:1, real proteus 1:1, valid pending)
-        // Pick one conversation - prioritize team over 1:1 via connection (established, pending)
-        // Move messages into picked conversation
-
-        // TODO: Guard against userID being self user?
+    ) async throws -> OneOnOneConversationResolution {
+        // TODO: Question - Do we need to guard against userID being self user?
         guard let user = ZMUser.fetch(with: userID, in: context) else {
-            // TODO: Handle this safely
-            fatalError("User not found")
+            throw OneOnOneResolverError.userNotFound
         }
+
+        // 1. Find conversations excluding MLS (fake team 1:1, proteus 1:1, proteus 1:1 pending)
 
         let selfUser = ZMUser.selfUser(in: context)
         let predicate = NSPredicate.any(of: [
@@ -242,19 +239,25 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         fetchRequest.predicate = predicate
 
-        // FIXME: Allow throwing ?
-        let conversations = try! context.fetch(fetchRequest)
+        let conversations = try context.fetch(fetchRequest)
         if !conversations.isEmpty {
+
+            // 2. Pick the best conversation
+
             let oneOnOneConversation = bestOneOnOneFrom(
                 conversations: conversations,
                 selfUser: selfUser,
                 otherUser: user
             )
 
+            // 3. Move messages into picked conversation
+
             for conversation in conversations where conversation != oneOnOneConversation {
                 oneOnOneConversation.mutableMessages.union(conversation.allMessages)
                 oneOnOneConversation.needsToBeUpdatedFromBackend = true // Is this necessary?
             }
+
+            // 4. Assign the conversation to the user
 
             user.oneOnOneConversation = oneOnOneConversation
         }
