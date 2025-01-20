@@ -27,7 +27,7 @@ public protocol ImportBackupEntityStorageProtocol {
         dispatchGroup: ZMSDispatchGroup
     ) async throws -> URL
 
-    func contextProvider(
+    func createContextProvider(
         account: Account,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup?

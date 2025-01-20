@@ -62,8 +62,8 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         let selfClientBackup: [String: Any]
         // we want to avoid keeping strong a reference to the user
         // session, the managed object context and the user client
-        if let context = userSession?.managedObjectContext, let selfClient = userSession?.selfUserClient {
-            selfClientBackup = await context.perform { selfClient.backup() }
+        if let context = userSession?.managedObjectContext {
+            selfClientBackup = await context.perform { userSession?.selfUserClient?.backup() ?? [:] }
         } else {
             throw BackupError.unknown
         }
@@ -86,7 +86,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         )
 
         // import the self client from the backup
-        let temporaryStack = try await entityStorage.contextProvider(
+        var temporaryStack = try await entityStorage.createContextProvider(
             account: account,
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup
