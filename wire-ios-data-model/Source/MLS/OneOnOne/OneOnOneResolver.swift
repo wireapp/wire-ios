@@ -244,8 +244,20 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         // FIXME: Allow throwing ?
         let conversations = try! context.fetch(fetchRequest)
+        if !conversations.isEmpty {
+            let oneOnOneConversation = bestOneOnOneFrom(
+                conversations: conversations,
+                selfUser: selfUser,
+                otherUser: user
+            )
 
+            for conversation in conversations where conversation != oneOnOneConversation {
+                oneOnOneConversation.mutableMessages.union(conversation.allMessages)
+                oneOnOneConversation.needsToBeUpdatedFromBackend = true // Is this necessary?
+            }
 
+            user.oneOnOneConversation = oneOnOneConversation
+        }
 
         WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
         await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
@@ -253,6 +265,36 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     }
 
     // MARK: - Helpers
+
+    private func bestOneOnOneFrom(
+        conversations: [ZMConversation],
+        selfUser: ZMUser,
+        otherUser: ZMUser
+    ) -> ZMConversation {
+        var mls: [ZMConversation] = []
+        var fakeProteusTeam: [ZMConversation] = []
+        var proteusOnOnOne: [ZMConversation] = []
+        var pendingProteusOneOnOne: [ZMConversation] = []
+
+        for conversation in conversations {
+            if NSPredicate.mlsOneOnOne(otherUser: otherUser).evaluate(with: conversation) {
+                mls.append(conversation)
+            } else if NSPredicate.fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: otherUser).evaluate(with: conversation) {
+                fakeProteusTeam.append(conversation)
+            } else if NSPredicate.proteusOneOnOne(otherUser: otherUser).evaluate(with: conversation) {
+                proteusOnOnOne.append(conversation)
+            } else if NSPredicate.pendingProteusOneOnOne(otherUser: otherUser).evaluate(with: conversation) {
+                pendingProteusOneOnOne.append(conversation)
+            }
+        }
+
+        return bestOneOnOneFrom(
+            mls: mls,
+            fakeProteusTeam: fakeProteusTeam,
+            proteusOnOnOne: proteusOnOnOne,
+            pendingProteusOneOnOne: pendingProteusOneOnOne
+        )
+    }
 
     private func bestOneOnOneFrom(
         mls: [ZMConversation],
@@ -265,7 +307,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         } else if fakeProteusTeam.count > 0 {
             return fakeProteusTeam[0]
         } else if proteusOnOnOne.count > 0 {
-            return proteusOnOnOne[0] // FIXME: Return the correct one.
+            return proteusOnOnOne.sorted { $0.primaryKey < $1.primaryKey }[0]
         } else if pendingProteusOneOnOne.count > 0 {
             return pendingProteusOneOnOne[0]
         } else {
