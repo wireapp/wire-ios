@@ -130,17 +130,27 @@ final class BackupViewController: UIViewController {
                     }
                 }
             }
-
+            @MainActor
             func contextProvider(
                 account: Account,
                 applicationContainer: URL,
                 dispatchGroup: ZMSDispatchGroup?
-            ) -> any ContextProvider {
-                CoreDataStack(
+            ) async throws -> any ContextProvider {
+                let stack = CoreDataStack(
                     account: account,
                     applicationContainer: applicationContainer,
                     dispatchGroup: dispatchGroup
                 )
+                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                    stack.loadStores { error in
+                        if let error {
+                            continuation.resume(throwing: error)
+                        } else {
+                            continuation.resume()
+                        }
+                    }
+                }
+                return stack
             }
         }
         struct IBASU: ImportBackupAppStateUpdaterProtocol {
@@ -155,6 +165,7 @@ final class BackupViewController: UIViewController {
                     sessionManager.prepareForRestoreWithMigration(completion: continuation.resume)
                 }
             }
+            @MainActor
             func selectAccountAndTriggerSlowSync(_ account: Account) async {
                 let userSession = await withCheckedContinuation { continuation in
                     SessionManager.shared?.select(account, completion: { continuation.resume(returning: $0) })

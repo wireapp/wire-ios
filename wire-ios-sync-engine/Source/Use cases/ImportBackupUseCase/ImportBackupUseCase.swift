@@ -81,7 +81,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             throw BackupError.noActiveAccount
         }
 
-        let temporaryStack = entityStorage.contextProvider(
+        let temporaryStack = try await entityStorage.contextProvider(
             account: account,
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup
