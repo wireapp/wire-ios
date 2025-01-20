@@ -15,3 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import SwiftUI
+
+package struct BackgroundView: View {
+    package var body: some View {
+        Image(ImageResource(name: "background", bundle: .module))
+            .resizable()
+            .scaledToFill()
+            .ignoresSafeArea()
+            .background(.black)
+    }
+}
+
+#Preview {
+    BackgroundView()
+}

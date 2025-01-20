@@ -11,6 +11,7 @@ let package = Package(
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
         .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
+        .library(name: "WireAuthenticationUI", targets: ["WireAuthenticationUI"]),
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
@@ -38,6 +39,12 @@ let package = Package(
             ]
         ),
         .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
+
+        .target(
+            name: "WireAuthenticationUI",
+            dependencies: ["WireDesign", "WireFoundation", "WireReusableUIComponents"]
+        ),
+        .testTarget(name: "WireAuthenticationUITests", dependencies: ["WireAuthenticationUI"]),
 
         .target(name: "WireConversationListUI"),
         .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI", "WireSettingsUI"]),
