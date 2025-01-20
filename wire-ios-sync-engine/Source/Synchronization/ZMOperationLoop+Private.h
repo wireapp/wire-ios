@@ -36,6 +36,5 @@
 @property (nonatomic, weak) id<UpdateEventProcessor> updateEventProcessor;
 @property (nonatomic, weak) NSManagedObjectContext *syncMOC;
 @property (nonatomic) PushNotificationStatus *pushNotificationStatus;
-@property (nonatomic) CallEventStatus *callEventStatus;
 @property (nonatomic) SyncStatus *syncStatus;
 @end

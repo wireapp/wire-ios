@@ -18,6 +18,18 @@
 
 import SwiftUI
 
-public extension Image {
-    static let close = Image(.close)
+struct Logo: View {
+    var body: some View {
+        GeometryReader { geometry in
+            Image(ImageResource(name: "logo", bundle: .module))
+                .resizable()
+                .scaledToFit()
+                .padding(.all, min(geometry.size.height, geometry.size.width) / 2.97)
+        }
+    }
+}
+
+#Preview {
+    Logo()
+        .frame(height: 95)
 }
