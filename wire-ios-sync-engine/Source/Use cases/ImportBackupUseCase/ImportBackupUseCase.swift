@@ -24,7 +24,7 @@ import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    let userSession: () -> ZMUserSession?
+    let userSession: () -> ZMUserSession? // TODO: UserSession protocol
     let dispatchGroup: ZMSDispatchGroup
     let fileArchiver: ImportBackupFileArchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
@@ -49,17 +49,24 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     private func importIOSBackup(_ url: URL, _ password: String) async throws {
 
-        guard let (account, selfClient, context) = userSession().map({ userSession in
-            (
-                userSession.account,
-                userSession.selfUserClient,
-                userSession.managedObjectContext
-            )
-        }) else {
+        // to start with we need an active user session, later the session will be torn down
+        weak var userSession = userSession()
+        guard let account = userSession?.account else {
             throw BackupError.noActiveAccount
         }
 
+        // before we start the first operation let the user know, the progress has started
         appStateUpdater.reportImportProgress(progress: 0.5)
+
+        // backup the self client
+        let selfClientBackup: [String: Any]
+        // we want to avoid keeping strong a reference to the user
+        // session, the managed object context and the user client
+        if let context = userSession?.managedObjectContext, let selfClient = userSession?.selfUserClient {
+            selfClientBackup = await context.perform { selfClient.backup() }
+        } else {
+            throw BackupError.unknown
+        }
 
         let unzippedURL = try await decryptAndUnzipBackup(
             url: url,
@@ -67,13 +74,10 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             accountID: account.userIdentifier
         )
 
-        let selfClientBackup = await context.perform {
-            selfClient?.backup() ?? [:]
-        }
-
+        // user session nees to be torn down
         await appStateUpdater.reportMigrationNeeded()
 
-        // user session will be destroyed now
+        // the imported file replaces the existing persistent store
         _ = try await entityStorage.replacePersistentStore(
             accountIdentifier: account.userIdentifier,
             from: unzippedURL,
@@ -81,7 +85,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             dispatchGroup: dispatchGroup
         )
 
-        // import the self client
+        // import the self client from the backup
         let temporaryStack = try await entityStorage.contextProvider(
             account: account,
             applicationContainer: sharedContainerURL,
