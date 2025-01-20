@@ -17,13 +17,12 @@
 //
 
 import SwiftUI
-import WireFoundation
 import WireTestingPackage
 import XCTest
 
-@testable import WireDesign
+@testable import WireIndividualToTeamMigrationUI
 
-final class LinkButtonStyleUITests: XCTestCase {
+final class CheckboxSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -36,21 +35,23 @@ final class LinkButtonStyleUITests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @MainActor @ViewBuilder static var view: some View {
+    @MainActor @ViewBuilder static var checked: some View {
         let screenBounds = UIScreen.main.bounds
 
-        Button(
-            action: {},
-            label: { Text("Label") }
-        )
-        .wireButtonStyle(.link)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-        .frame(width: screenBounds.width, height: screenBounds.height)
+        Checkbox(isChecked: .constant(true), title: "Checkbox")
+            .frame(width: screenBounds.width, height: screenBounds.height)
+    }
+
+    @MainActor @ViewBuilder static var unchecked: some View {
+        let screenBounds = UIScreen.main.bounds
+
+        Checkbox(isChecked: .constant(false), title: "Checkbox")
+            .frame(width: screenBounds.width, height: screenBounds.height)
     }
 
     @MainActor
-    func testColorSchemeVariants() {
-        let view = Self.view
+    func testUncheckedColorSchemeVariants() {
+        let view = Self.unchecked
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -61,8 +62,33 @@ final class LinkButtonStyleUITests: XCTestCase {
     }
 
     @MainActor
-    func testDynamicTypeVariants() {
-        let view = Self.view
+    func testCheckedColorSchemeVariants() {
+        let view = Self.checked
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testUncheckedDynamicTypeVariants() {
+        let view = Self.unchecked
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
+    @MainActor
+    func testCheckedDynamicTypeVariants() {
+        let view = Self.checked
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
