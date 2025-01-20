@@ -168,7 +168,7 @@ final class BackupViewController: UIViewController {
             }
 
             @MainActor
-            func selectAccountAndTriggerSlowSync(_ account: Account, selfClient: UserClient) async {
+            func selectAccountAndTriggerSlowSync(_ account: Account) async {
                 let userSession = await withCheckedContinuation { continuation in
                     SessionManager.shared?.select(account, completion: { continuation.resume(returning: $0) })
                 }

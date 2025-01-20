@@ -38,7 +38,7 @@ extension Int: SwiftPersistableInMetadata {}
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: Swift 4
 // extension Array where Element == SwiftPersistableInMetadata: SwiftPersistableInMetadata {}
-public extension NSManagedObjectContext { // TODO: needed on import?
+public extension NSManagedObjectContext {
 
     @objc(setPersistentStoreMetadata:forKey:)
     func setPersistentStoreMetadata(

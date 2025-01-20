@@ -87,17 +87,16 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup
         )
-        let selfClient = try await temporaryStack.viewContext.perform {
+        try await temporaryStack.viewContext.perform {
             let userClient = UserClient.restore(from: selfClientBackup, context: temporaryStack.viewContext)
 
             // TODO: do we need to do this for all contexts?
             userClient.markAsSelfClient()
 
             try temporaryStack.viewContext.save()
-            return userClient
         }
 
-        await appStateUpdater.selectAccountAndTriggerSlowSync(account, selfClient: selfClient)
+        await appStateUpdater.selectAccountAndTriggerSlowSync(account)
     }
 
     private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) async throws -> URL {
@@ -157,8 +156,6 @@ private enum BackupFileExtensions: String, CaseIterable {
 // MARK: -
 
 private enum BackupError: Error {
-    // TODO: remove if not needed
-//    case notAuthenticated
     case noActiveAccount
     case compressionError
     case invalidFileExtension
