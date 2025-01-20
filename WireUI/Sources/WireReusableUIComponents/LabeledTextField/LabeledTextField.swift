@@ -61,7 +61,7 @@ public struct LabeledTextField: View {
                     .focused($isFocused)
                     .foregroundStyle(Self.labelColor(isEnabled: isEnabled))
                     .padding(.vertical, 12)
-                if !string.isEmpty && isEnabled {
+                if !string.isEmpty, isEnabled {
                     Button(action: {
                         string = ""
                     }, label: {
@@ -89,7 +89,7 @@ public struct LabeledTextField: View {
     }
 
     static func titleColor(isEnabled: Bool, isFocused: Bool) -> Color {
-        if isEnabled && isFocused {
+        if isEnabled, isFocused {
             return ColorTheme.Base.onPrimaryVariant.color
         }
         if isEnabled {
@@ -113,7 +113,7 @@ public struct LabeledTextField: View {
     }
 
     static func labelBorderColor(isEnabled: Bool, isFocused: Bool) -> Color {
-        if isEnabled && isFocused {
+        if isEnabled, isFocused {
             return ColorTheme.Base.onPrimaryVariant.color
         }
         if isEnabled {
