@@ -279,6 +279,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
 
     private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
+    private let deletionQueue: DispatchQueue = .init(label: "accountDeletionQueue", qos: .userInitiated)
+    private var deletingAccounts = Set<String>()
 
     private(set) var reachability: ReachabilityWrapper
 
@@ -794,24 +796,38 @@ public final class SessionManager: NSObject, SessionManagerType {
             delete(account: activeAccount, reason: reason)
         }
     }
-
+    
+    
     func delete(account: Account, reason: ZMAccountDeletedReason) {
-        WireLogger.sessionManager.debug("Deleting account \(account.userIdentifier)...")
-        if let secondAccount = accountManager.accounts.first(where: { $0.userIdentifier != account.userIdentifier }) {
-            // Deleted an account but we can switch to another account
-            select(secondAccount, tearDownCompletion: { [weak self] in
-                self?.tearDownSessionAndDelete(account: account)
-            })
-        } else if accountManager.selectedAccount != account {
-            // Deleted an inactive account, there's no need notify the UI
-            tearDownSessionAndDelete(account: account)
-        } else {
-            // Deleted the last account so we need to return to the logged out area
-            logoutCurrentSession(
-                deleteCookie: true,
-                deleteAccount: true,
-                error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason])
-            )
+        deletionQueue.async { [weak self] in
+            guard let self = self else { return }
+            
+            let accountID = account.userIdentifier
+//            
+//            if self.deletingAccounts.contains(accountID.uuidString) {
+//                WireLogger.sessionManager.debug("Skipping deletion of account \(accountID) as it's already being deleted.")
+//                return
+//            }
+//            
+//            self.deletingAccounts.insert(accountID.uuidString)
+//            
+            WireLogger.sessionManager.debug("Deleting account \(account.userIdentifier)...")
+            if let secondAccount = accountManager.accounts.first(where: { $0.userIdentifier != account.userIdentifier }) {
+                // Deleted an account but we can switch to another account
+                select(secondAccount, tearDownCompletion: { [weak self] in
+                    self?.tearDownSessionAndDelete(account: account)
+                })
+            } else if accountManager.selectedAccount != account {
+                // Deleted an inactive account, there's no need notify the UI
+                tearDownSessionAndDelete(account: account)
+            } else {
+                // Deleted the last account so we need to return to the logged out area
+                logoutCurrentSession(
+                    deleteCookie: true,
+                    deleteAccount: true,
+                    error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason])
+                )
+            }
         }
     }
 
