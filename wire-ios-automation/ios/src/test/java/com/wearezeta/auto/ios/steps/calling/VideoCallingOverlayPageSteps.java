@@ -34,6 +34,14 @@ public class VideoCallingOverlayPageSteps {
                     getVideoCallingOverlayPage().iDontSeeLeaveCallButton());
         }
     }
+    @Then("^I tap on active mute button$")
+    public void  activeMuteButton(){
+        getVideoCallingOverlayPage().tapActiveMuteButton();
+    }
+    @Then("^I tap on inactive mute button$")
+    public void  inactiveMuteButton(){
+        getVideoCallingOverlayPage().tapInactiveMuteButton();
+    }
 
     @Then("^I (do not )?see alert about New device$")
     public void ISeeAlert(String shouldNotBeVisible) {
