@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension SessionManager {
+public extension SessionManager {
 
-    public func importBackupUseCase(
+    func importBackupUseCase(
         fileArchiver: ImportBackupFileArchiverProtocol,
         entityStorage: ImportBackupEntityStorageProtocol,
         appStateUpdater: ImportBackupAppStateUpdaterProtocol

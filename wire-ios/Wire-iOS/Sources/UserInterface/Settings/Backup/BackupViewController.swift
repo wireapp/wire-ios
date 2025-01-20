@@ -17,10 +17,10 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
-import UniformTypeIdentifiers
 
 final class BackupViewController: UIViewController {
 
@@ -130,6 +130,7 @@ final class BackupViewController: UIViewController {
                     }
                 }
             }
+
             @MainActor
             func contextProvider(
                 account: Account,
@@ -165,6 +166,7 @@ final class BackupViewController: UIViewController {
                     sessionManager.prepareForRestoreWithMigration(completion: continuation.resume)
                 }
             }
+
             @MainActor
             func selectAccountAndTriggerSlowSync(_ account: Account, selfClient: UserClient) async {
                 let userSession = await withCheckedContinuation { continuation in

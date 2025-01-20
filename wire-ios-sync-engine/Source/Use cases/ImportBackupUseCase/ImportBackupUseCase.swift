@@ -49,7 +49,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     private func importIOSBackup(_ url: URL, _ password: String) async throws {
 
-        let selfClientBackup: [String : Any]
+        let selfClientBackup: [String: Any]
         let account: Account
         if let userSession = userSession() {
 
