@@ -27,7 +27,8 @@ extension ZMConversationMessage {
         }
 
         guard let user = SelfUser.provider?.providedSelfUser else {
-            assertionFailure("expected available 'user'!")
+            // this can happen if selfUser is removed from team
+//            assertionFailure("expected available 'user'!")
             return false
         }
 
