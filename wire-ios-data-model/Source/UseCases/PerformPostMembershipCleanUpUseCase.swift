@@ -18,6 +18,122 @@
 
 import CoreData
 
+/// Searches and corrects invalid connections in the database.
+
+// Run on launch all connections - user session setup
+// During event processing - targeted (user.update)
+public class ConnectionValidator {
+
+    struct SearchResult {
+        let invalidConnections: [NSManagedObjectID]
+        let connectionsToCancel: [NSManagedObjectID]
+        let connectionsToIgnore: [NSManagedObjectID]
+    }
+
+    private let context: NSManagedObjectContext
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    public func run() async throws {
+        let teamID = await context.perform { [context] in
+            ZMUser.selfUser(in: context).teamIdentifier
+        }
+
+        guard let teamID else { return }
+
+        let connectionIDs = try await context.perform { [context] in
+            let fetchRequest = NSFetchRequest<ZMConnection>(entityName: ZMConnection.entityName())
+            fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                NSPredicate(format: "NOT (status IN %@)", Self.keepConnectionStatuses().map(\.rawValue)),
+                NSPredicate(format: "to.teamIdentifier_data == %@", teamID.uuidData as NSData) // Do we need to check `to` is not nil?
+            ])
+
+            let connections = try context.fetch(fetchRequest)
+            var invalidConnections: [NSManagedObjectID] = []
+            var connectionsToCancel: [NSManagedObjectID] = []
+            var connectionsToIgnore: [NSManagedObjectID] = []
+
+
+            for invalidConnection in connections {
+                invalidConnections.append(invalidConnection.objectID)
+                switch invalidConnection.status {
+                case .pending:
+                    connectionsToIgnore.append(invalidConnection.objectID)
+                case .sent:
+                    connectionsToCancel.append(invalidConnection.objectID)
+                default: // TODO: Consider blocked for legal hold?
+                    break
+                }
+            }
+
+            return SearchResult(
+                invalidConnections: invalidConnections,
+                connectionsToCancel: connectionsToCancel,
+                connectionsToIgnore: connectionsToIgnore
+            )
+        }
+
+
+
+        for connectionID in connectionIDs.connectionsToCancel {
+            try await Self.updateConnectionStatus(connectionID: connectionID, newStatus: .cancelled, context: context)
+        }
+
+        for connectionID in connectionIDs.connectionsToIgnore {
+            try await Self.updateConnectionStatus(connectionID: connectionID, newStatus: .ignored, context: context)
+        }
+
+        try await context.perform { [context] in
+            let connections = try connectionIDs.invalidConnections.map { try context.existingObject(with: $0) as! ZMConnection }
+            for connection in connections {
+                if connection.to?.oneOnOneConversation?.conversationType.isOne(of: .invalid, .connection) == true {
+                    connection.to?.oneOnOneConversation?.conversationType = .invalid
+                    connection.to?.oneOnOneConversation = nil
+                }
+            }
+
+            try context.save()
+        }
+
+
+
+        // find invalid connections
+        // - search for pending connections
+        // - checking user
+        // - are they part of same team
+        // - If they are then considered invalid
+        // - result is array
+
+        // correct invalid connection
+        // for each invalid connection
+        // reject (cancel or ignore)
+
+        // Deal with 1 on 1
+        // If there is 1 on 1 conversation and type connection we should mark as invalid and unlink
+
+        // Leave conversation fixing to 1 on 1 resolver
+    }
+
+    static private func keepConnectionStatuses() -> [ZMConnectionStatus] {
+        [.accepted, .blocked]
+    }
+
+    static private func updateConnectionStatus(
+        connectionID: NSManagedObjectID,
+        newStatus: ZMConnectionStatus,
+        context: NSManagedObjectContext
+    ) async throws {
+        var action = UpdateConnectionAction(connectionID: connectionID, newStatus: newStatus)
+        try await action.perform(in: context.notificationContext)
+    }
+
+}
+
+
+
+
 public class PerformPostMembershipCleanUpUseCase {
 
     public enum Failure: Swift.Error, Equatable {
@@ -36,12 +152,16 @@ public class PerformPostMembershipCleanUpUseCase {
     }
 
     public func invoke() async throws {
+        return
+
         try await context.perform { [self] in
             try internalInvoke()
         }
     }
 
     public func invoke() throws {
+        return
+
         try context.performAndWait { [self] in
             try internalInvoke()
         }

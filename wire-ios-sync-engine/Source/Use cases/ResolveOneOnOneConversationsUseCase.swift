@@ -49,6 +49,7 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
             }
         }
 
+        // TODO: Remove check
         if newProtocols.contains(.mls) {
             try await resolver.resolveAllOneOnOneConversations(in: context)
         }

@@ -32,6 +32,10 @@ public protocol OneOnOneResolverInterface {
 
 }
 
+private extension WireLogger {
+    static let conversationResolver = WireLogger(tag: "conversationResolver")
+}
+
 public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Dependencies
@@ -71,6 +75,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
     }
 
+    // Make sure to call after user update event
     @discardableResult
     public func resolveOneOnOneConversation(
         with userID: QualifiedID,
@@ -78,10 +83,26 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
+
+
+        // - Maybe multiple 1-1 conversations
+        // - User just wants 1
+        // - May or may not be the connected conversation
+        // - Should not rely on connection
+
+        // Types of conversations:
+        // - Pending connection (proteus)
+        // - Established connection (proteus)
+        // - MLS 1:1
+        // - Fake team 1:1 (proteus)
+        // - Nothing - just return early
+
+
+
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
         switch messageProtocol {
-        case .none where isMLSEnabled:
+        case .none where isMLSEnabled: // This check is probably not necessary
             return await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls where isMLSEnabled:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
@@ -108,6 +129,13 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         in context: NSManagedObjectContext
     ) async -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("no common protocols found")
+
+        // mls 1-1
+
+
+        // Pick conversation
+        // Order - MLS, Proteus Team, Proteus 1:1 (established then pending)
+        // Move messages
 
         await context.perform {
             guard
@@ -194,6 +222,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async -> OneOnOneConversationResolution {
+        // Look at potential conversations excluding MLS ((multiple)fake 1:1, real proteus 1:1, valid pending)
+        // Pick one conversation - prioritize team over 1:1 via connection (established, pending)
+        // Move messages into picked conversation
+
         WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
         await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
         return .noAction
@@ -205,6 +237,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         -> [QualifiedID] {
         try await context.perform {
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            // Fetch all users that are not self
             request.predicate = ZMUser.predicateForUsersWithOneOnOneConversation()
 
             return try context
@@ -218,4 +251,72 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 }
         }
     }
+}
+
+private extension NSPredicate {
+
+    static func mlsOneOnOne(otherUser: ZMUser) -> NSPredicate {
+        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isMLS = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
+
+        return .all(of: [
+            isOneOnOne,
+            isMLS,
+            hasTwoParticipants,
+            hasParticipant(user: otherUser)
+        ])
+    }
+
+    static let hasTwoParticipants = NSPredicate(format: "%K.@count == 2", ZMConversationParticipantRolesKey)
+
+    static func hasParticipant(user: ZMUser) -> NSPredicate {
+        NSPredicate(format: "ANY %K.user == %@", ZMConversationParticipantRolesKey, user)
+    }
+
+    static func fakeProteusTeamOneOnOne(selfUser: ZMUser, otherUser: ZMUser) -> NSPredicate {
+        guard let selfTeam = selfUser.team, selfUser != otherUser else {
+            return NSPredicate(value: false)
+        }
+
+        let sameTeam = NSPredicate(format: "team == %@", selfTeam)
+        let groupConversation = NSPredicate(
+            format: "%K == %d",
+            ZMConversationConversationTypeKey,
+            ZMConversationType.group.rawValue
+        )
+        let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
+
+        return .all(of: [
+            sameTeam,
+            groupConversation,
+            noUserDefinedName,
+            hasTwoParticipants,
+            hasParticipant(user: selfUser),
+            hasParticipant(user: otherUser)
+        ])
+    }
+
+    static func proteusOneOnOne(otherUser: ZMUser) -> NSPredicate {
+        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
+
+        return .all(of: [
+            isOneOnOne,
+            isProteus,
+            hasTwoParticipants,
+            hasParticipant(user: otherUser)
+        ])
+    }
+
+    static func pendingProteusOneOnOne(otherUser: ZMUser) -> NSPredicate {
+        let isConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
+
+        return .all(of: [
+            isConnection,
+            isProteus,
+            hasParticipant(user: otherUser)
+        ])
+    }
+
 }

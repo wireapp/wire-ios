@@ -151,6 +151,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
+            // TODO: Fetch all possible proteus and for all copy across the messages
             // move local messages from proteus conversation if it exists
             if let existingConversation = otherUser.oneOnOneConversation,
                existingConversation.messageProtocol == .proteus {
