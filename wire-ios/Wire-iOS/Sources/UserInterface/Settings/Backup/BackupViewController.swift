@@ -130,6 +130,18 @@ final class BackupViewController: UIViewController {
                     }
                 }
             }
+
+            func contextProvider(
+                account: Account,
+                applicationContainer: URL,
+                dispatchGroup: ZMSDispatchGroup?
+            ) -> any ContextProvider {
+                CoreDataStack(
+                    account: account,
+                    applicationContainer: applicationContainer,
+                    dispatchGroup: dispatchGroup
+                )
+            }
         }
         struct IBASU: ImportBackupAppStateUpdaterProtocol {
             func reportImportProgress(progress: Float) { print("importProgress: \(Int(round(progress * 100)))%") }

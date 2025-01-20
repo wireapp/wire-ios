@@ -50,7 +50,10 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
     private func importIOSBackup(_ url: URL, _ password: String) async throws {
 
         let selfClientBackup: [String : Any]
+        let account: Account
         if let userSession = userSession() {
+
+            account = userSession.account
 
             appStateUpdater.reportImportProgress(progress: 0.5)
 
@@ -63,11 +66,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             selfClientBackup = await userSession.managedObjectContext.perform {
                 userSession.selfUserClient?.backup() ?? [:]
             }
-
-  // TODO: delete
-  //        await userSession.managedObjectContext.perform {
-  //            let uc = UserClient.restore(from: selfClientBackup, context: userSession.managedObjectContext)
-  //        }
 
             await appStateUpdater.reportMigrationNeeded()
 
@@ -83,15 +81,18 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             throw BackupError.noActiveAccount
         }
 
-        print(userSession())
+        let temporaryStack = entityStorage.contextProvider(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup
+        )
+        try await temporaryStack.viewContext.perform {
+            _ = UserClient.restore(from: selfClientBackup, context: temporaryStack.viewContext)
+            try temporaryStack.viewContext.save()
+            withExtendedLifetime(temporaryStack) {}
+        }
 
-        // TODO: how to get the new context?
-
-        print(selfClientBackup)
-        debugPrint(selfClientBackup)
-
-        // TODO: insert the self client (A) into the new db
-        //        mark A as self client in persistentstore metadata
+        // TODO: mark A as self client in persistentstore metadata?
 
         // TODO: select the account from the first step, which will transition the UI back to the conversation list
 
