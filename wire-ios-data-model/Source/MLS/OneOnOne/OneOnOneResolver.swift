@@ -103,7 +103,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         switch messageProtocol {
         case .none where isMLSEnabled: // This check is probably not necessary
-            return await resolveCommonUserProtocolNone(with: userID, in: context)
+            return try await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls where isMLSEnabled:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
@@ -127,7 +127,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     private func resolveCommonUserProtocolNone(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async -> OneOnOneConversationResolution {
+    ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("no common protocols found")
 
         // mls 1-1
@@ -223,43 +223,46 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
         // TODO: Question - Do we need to guard against userID being self user?
-        guard let user = ZMUser.fetch(with: userID, in: context) else {
-            throw OneOnOneResolverError.userNotFound
-        }
 
-        // 1. Find conversations excluding MLS (fake team 1:1, proteus 1:1, proteus 1:1 pending)
-
-        let selfUser = ZMUser.selfUser(in: context)
-        let predicate = NSPredicate.any(of: [
-            .fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: user),
-            .proteusOneOnOne(otherUser: user),
-            .pendingProteusOneOnOne(otherUser: user)
-        ])
-
-        let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-        fetchRequest.predicate = predicate
-
-        let conversations = try context.fetch(fetchRequest)
-        if !conversations.isEmpty {
-
-            // 2. Pick the best conversation
-
-            let oneOnOneConversation = bestOneOnOneFrom(
-                conversations: conversations,
-                selfUser: selfUser,
-                otherUser: user
-            )
-
-            // 3. Move messages into picked conversation
-
-            for conversation in conversations where conversation != oneOnOneConversation {
-                oneOnOneConversation.mutableMessages.union(conversation.allMessages)
-                oneOnOneConversation.needsToBeUpdatedFromBackend = true // Is this necessary?
+        try await context.perform { [context] in
+            guard let user = ZMUser.fetch(with: userID, in: context) else {
+                throw OneOnOneResolverError.userNotFound
             }
 
-            // 4. Assign the conversation to the user
+            // 1. Find conversations excluding MLS (fake team 1:1, proteus 1:1, proteus 1:1 pending)
 
-            user.oneOnOneConversation = oneOnOneConversation
+            let selfUser = ZMUser.selfUser(in: context)
+            let predicate = NSPredicate.any(of: [
+                .fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: user),
+                .proteusOneOnOne(otherUser: user),
+                .pendingProteusOneOnOne(otherUser: user)
+            ])
+
+            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+            fetchRequest.predicate = predicate
+
+            let conversations = try context.fetch(fetchRequest)
+            if !conversations.isEmpty {
+
+                // 2. Pick the best conversation
+
+                let oneOnOneConversation = Self.bestOneOnOneFrom(
+                    conversations: conversations,
+                    selfUser: selfUser,
+                    otherUser: user
+                )
+
+                // 3. Move messages into picked conversation
+
+                for conversation in conversations where conversation != oneOnOneConversation {
+                    oneOnOneConversation.mutableMessages.union(conversation.allMessages)
+                    oneOnOneConversation.needsToBeUpdatedFromBackend = true // Is this necessary?
+                }
+
+                // 4. Assign the conversation to the user
+
+                user.oneOnOneConversation = oneOnOneConversation
+            }
         }
 
         WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
@@ -269,7 +272,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Helpers
 
-    private func bestOneOnOneFrom(
+    private static func bestOneOnOneFrom(
         conversations: [ZMConversation],
         selfUser: ZMUser,
         otherUser: ZMUser
@@ -299,7 +302,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         )
     }
 
-    private func bestOneOnOneFrom(
+    private static func bestOneOnOneFrom(
         mls: [ZMConversation],
         fakeProteusTeam: [ZMConversation],
         proteusOnOnOne: [ZMConversation],
