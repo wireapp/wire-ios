@@ -112,16 +112,29 @@ final class BackupViewController: UIViewController {
         }
 
         struct IBES: ImportBackupEntityStorageProtocol {
+            @MainActor
             func replacePersistentStore(
                 accountIdentifier: UUID,
                 from backupDirectory: URL,
                 applicationContainer: URL,
                 dispatchGroup: ZMSDispatchGroup
-            ) async throws -> URL { fatalError() }
+            ) async throws -> URL {
+                try await withCheckedThrowingContinuation { continuation in
+                    CoreDataStack.importLocalStorage(
+                        accountIdentifier: accountIdentifier,
+                        from: backupDirectory,
+                        applicationContainer: applicationContainer,
+                        dispatchGroup: dispatchGroup
+                    ) { result in
+                        continuation.resume(with: result)
+                    }
+                }
+            }
         }
         struct IBASU: ImportBackupAppStateUpdaterProtocol {
             func reportImportProgress(progress: Float) { print("importProgress: \(Int(round(progress * 100)))%") }
             func reportImportCompletion() { print("reportImportCompletion") }
+            @MainActor
             func reportMigrationNeeded() async {
                 await withCheckedContinuation { continuation in
                     guard let sessionManager = SessionManager.shared else {
