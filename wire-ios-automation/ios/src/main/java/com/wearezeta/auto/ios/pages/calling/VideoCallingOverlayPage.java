@@ -322,6 +322,12 @@ public class VideoCallingOverlayPage extends IOSPage {
         return waitUntilElementVisible(nameUnclassifiedDomainLabel);
     }
 
+    public void tapActiveMuteButton() {
+        activeMuteButton.click();
+    }
+    public void tapInactiveMuteButton() {
+        inactiveMuteButton.click();
+    }
     public boolean isUnclassifiedLabelInvisibleOnCallingOverlay() {
         return waitUntilElementInvisible(nameUnclassifiedDomainLabel);
     }
