@@ -88,13 +88,14 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             dispatchGroup: dispatchGroup
         )
         let selfClient = try await temporaryStack.viewContext.perform {
-            let selfClient = UserClient.restore(from: selfClientBackup, context: temporaryStack.viewContext)
-            selfClient.todo() // TODO: do we need to do this for all contexts?
-            try temporaryStack.viewContext.save()
-            return selfClient
-        }
+            let userClient = UserClient.restore(from: selfClientBackup, context: temporaryStack.viewContext)
 
-        // TODO: mark A as self client in persistentstore metadata?
+            // TODO: do we need to do this for all contexts?
+            userClient.markAsSelfClient()
+
+            try temporaryStack.viewContext.save()
+            return userClient
+        }
 
         await appStateUpdater.selectAccountAndTriggerSlowSync(account, selfClient: selfClient)
     }

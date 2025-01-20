@@ -202,7 +202,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         return userClient
     }
 
-    public func todo() {
+    public func markAsSelfClient() {
         guard let context = managedObjectContext else { return }
         context.setPersistentStoreMetadata(remoteIdentifier, key: ZMPersistedClientIdKey)
         _ = context.makeMetadataPersistent()
