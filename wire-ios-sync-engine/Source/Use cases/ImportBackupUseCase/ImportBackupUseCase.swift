@@ -89,14 +89,11 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         try await temporaryStack.viewContext.perform {
             _ = UserClient.restore(from: selfClientBackup, context: temporaryStack.viewContext)
             try temporaryStack.viewContext.save()
-            withExtendedLifetime(temporaryStack) {}
         }
 
         // TODO: mark A as self client in persistentstore metadata?
 
-        // TODO: select the account from the first step, which will transition the UI back to the conversation list
-
-        // TODO: trigger slow sync
+        await appStateUpdater.selectAccountAndTriggerSlowSync(account)
     }
 
     private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) async throws -> URL {

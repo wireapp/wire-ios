@@ -155,6 +155,15 @@ final class BackupViewController: UIViewController {
                     sessionManager.prepareForRestoreWithMigration(completion: continuation.resume)
                 }
             }
+            func selectAccountAndTriggerSlowSync(_ account: Account) async {
+                let userSession = await withCheckedContinuation { continuation in
+                    SessionManager.shared?.select(account, completion: { continuation.resume(returning: $0) })
+                }
+                guard let userSession else { return }
+                userSession.syncManagedObjectContext.performGroupedBlock {
+                    userSession.syncStatus.forceSlowSync()
+                }
+            }
         }
     }
 }
