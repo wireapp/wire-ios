@@ -69,9 +69,8 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
 
-    private enum Keys {
-        static let PushToken = "pushToken"
-        static let DeviceClass = "deviceClass"
+    private enum Keys: String {
+        case pushToken
     }
 
     // DO NOT USE THIS PROPERTY.
@@ -85,33 +84,22 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged private var primitivePushToken: Data?
     private var pushToken: PushToken? {
         get {
-            willAccessValue(forKey: Keys.PushToken)
+            willAccessValue(forKey: Keys.pushToken.rawValue)
             let token: PushToken? = if let data = primitivePushToken {
                 try? JSONDecoder().decode(PushToken.self, from: data)
             } else {
                 nil
             }
-            didAccessValue(forKey: Keys.PushToken)
+            didAccessValue(forKey: Keys.pushToken.rawValue)
             return token
         }
         set {
             if newValue != pushToken {
-                willChangeValue(forKey: Keys.PushToken)
+                willChangeValue(forKey: Keys.pushToken.rawValue)
                 primitivePushToken = try? JSONEncoder().encode(newValue)
-                didChangeValue(forKey: Keys.PushToken)
+                didChangeValue(forKey: Keys.pushToken.rawValue)
             }
         }
-
-    }
-
-    /// Fetches and removes the old push token from the self client.
-    ///
-    /// - returns: the legacy push token if it exists.
-
-    public func retrieveLegacyPushToken() -> PushToken? {
-        guard let token = pushToken else { return nil }
-        pushToken = nil
-        return token
     }
 
     /// Clients that are trusted by self client.
