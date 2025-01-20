@@ -18,85 +18,11 @@
 
 import SwiftUI
 
-//struct SwitchBackendConfirmationView: View {
-//
-//    private typealias Strings = L10n.Localizable.UrlAction.SwitchBackendConfirmation
-//
-//    let viewModel: SwitchBackendConfirmationViewModel
-//
-//    @Environment(\.dismiss) var dismiss
-//
-//    var body: some View {
-//        VStack(spacing: 24) {
-//            title
-//            backendDetails
-//            buttons
-//        }
-//        .padding()
-//        .interactiveDismissDisabled()
-//    }
-//
-//    @ViewBuilder private var title: some View {
-//        Text(Strings.title)
-//            .font(.textStyle(.h2))
-//            .foregroundStyle(Color.primaryText)
-//    }
-//
-//    @ViewBuilder private var backendDetails: some View {
-//        ScrollView {
-//            VStack(spacing: 16) {
-//                Text(Strings.message)
-//                    .foregroundStyle(Color.primaryText)
-//
-//                itemView(
-//                    title: Strings.backendName,
-//                    value: viewModel.backendName
-//                )
-//
-//                itemView(
-//                    title: Strings.backendUrl,
-//                    value: viewModel.backendURL,
-//                    isURL: true
-//                )
-//
-//                itemView(
-//                    title: Strings.backendWsurl,
-//                    value: viewModel.backendWSURL,
-//                    isURL: true
-//                )
-//
-//                itemView(
-//                    title: Strings.blacklistUrl,
-//                    value: viewModel.blacklistURL,
-//                    isURL: true
-//                )
-//
-//                itemView(
-//                    title: Strings.teamsUrl,
-//                    value: viewModel.teamsURL,
-//                    isURL: true
-//                )
-//
-//                itemView(
-//                    title: Strings.accountsUrl,
-//                    value: viewModel.accountsURL,
-//                    isURL: true
-//                )
-//
-//                itemView(
-//                    title: Strings.websiteUrl,
-//                    value: viewModel.websiteURL,
-//                    isURL: true
-//                )
-//            }
-//        }
-//    }
 struct SwitchBackendConfirmationView: View {
 
-    private typealias Strings = L10n.Localizable.UrlAction.SwitchBackendConfirmation
+    private typealias Strings = L10n.SwitchBackendConfirmation
 
-    let viewModel: SwitchBackendConfirmationViewModel
-    let changeHeight: () -> Void
+    let viewModel: SwitchBackendConfirmationViewModel_V2
 
     @Environment(\.dismiss) var dismiss
     @State private var showFullDetails: Bool = false
@@ -168,7 +94,6 @@ struct SwitchBackendConfirmationView: View {
                     }
                 }
             } else {
-                // Show short details
                 itemView(
                     title: Strings.backendName,
                     value: viewModel.backendName
@@ -180,14 +105,13 @@ struct SwitchBackendConfirmationView: View {
                     isURL: true
                 )
 
-                // Show the "Show details" button in short mode
                 Button {
                     withAnimation {
                         showFullDetails.toggle()
-                        changeHeight()
+                        viewModel.handleEvent(.showDetails)
                     }
                 } label: {
-                    Text(Strings.backendName)
+                    Text(Strings.showDetails)
                         .font(.textStyle(.body1))
                         .foregroundStyle(Color.primaryText)
                         .underline()
@@ -224,10 +148,10 @@ struct SwitchBackendConfirmationView: View {
             viewModel.handleEvent(.userDidCancel)
             dismiss()
         } label: {
-            Text(L10n.Localizable.General.cancel)
+            Text(Strings.cancel)
                 .font(.textStyle(.buttonBig))
         }
-        .buttonStyle(SecondaryButtonStyle())
+        //.buttonStyle(SecondaryButtonStyle())
     }
 
     @ViewBuilder private var proceedButton: some View {
@@ -238,9 +162,9 @@ struct SwitchBackendConfirmationView: View {
             Text(Strings.proceed)
                 .font(.textStyle(.buttonBig))
         }
-        .buttonStyle(PrimaryButtonStyle())
+        //.buttonStyle(PrimaryButtonStyle())
     }
-    
+
 
 }
 
@@ -248,7 +172,7 @@ struct SwitchBackendConfirmationView: View {
 
 #Preview {
     SwitchBackendConfirmationView(
-        viewModel: SwitchBackendConfirmationViewModel(
+        viewModel: SwitchBackendConfirmationViewModel_V2(
             backendName: "Staging",
             backendURL: "www.staging.com",
             backendWSURL: "www.ws.staging.com",
@@ -256,8 +180,8 @@ struct SwitchBackendConfirmationView: View {
             teamsURL: "www.teams.staging.com",
             accountsURL: "www.accounts.staging.com",
             websiteURL: "www.wire.com",
-            didConfirm: { _ in }
-        ),
-        changeHeight: {}
+            didConfirm: { _ in },
+            showDetails: {}
+        )
     )
 }

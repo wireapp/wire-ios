@@ -295,6 +295,20 @@ extension URLActionRouter: PresentationDelegate {
         }
     }
 
+//    private func requestUserConfirmationToSwitchBackend(
+//        _ environment: BackendEnvironment,
+//        didConfirm: @escaping (Bool) -> Void
+//    ) {
+//        let viewModel = SwitchBackendConfirmationViewModel(
+//            environment: environment,
+//            didConfirm: didConfirm
+//        )
+//
+//        let view = SwitchBackendConfirmationView(viewModel: viewModel)
+//        let hostingController = UIHostingController(rootView: view)
+//        rootViewController().present(hostingController, animated: true)
+//    }
+
     private func requestUserConfirmationToSwitchBackend(
         _ environment: BackendEnvironment,
         didConfirm: @escaping (Bool) -> Void
@@ -304,11 +318,63 @@ extension URLActionRouter: PresentationDelegate {
             didConfirm: didConfirm
         )
 
-        let view = SwitchBackendConfirmationView(viewModel: viewModel)
-        let hostingController = UIHostingController(rootView: view)
+       // let view = SwitchBackendConfirmationView(viewModel: viewModel)
+        let hostingController = SheetViewController(viewModel: viewModel)
+        if let sheet = hostingController.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+        }
+
         rootViewController().present(hostingController, animated: true)
     }
 
+
+}
+
+class SheetViewController: UIHostingController<SwitchBackendConfirmationView> {
+
+    private let viewModel: SwitchBackendConfirmationViewModel
+
+    public init(
+        viewModel: SwitchBackendConfirmationViewModel
+    ) {
+        self.viewModel = viewModel
+
+        super.init(rootView: SwitchBackendConfirmationView(viewModel: viewModel, changeHeight: {}))
+
+        rootView = SwitchBackendConfirmationView(viewModel: viewModel, changeHeight: { [weak self] in
+            self?.changeHeight()
+        })
+    }
+
+    @available(*, unavailable)
+    @MainActor
+    dynamic required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func changeHeight() {
+        guard let sheet = sheetPresentationController else {
+            return
+        }
+        let oldValue = sheet.selectedDetentIdentifier ?? .medium
+        sheet.animateChanges {
+            sheet.selectedDetentIdentifier = oldValue.oppositeValue
+        }
+    }
+}
+
+extension UISheetPresentationController.Detent.Identifier {
+    var oppositeValue: UISheetPresentationController.Detent.Identifier {
+        switch self {
+        case .medium:
+            return .large
+        case .large:
+            return .medium
+        default:
+            fatalError("Unsupported value")
+        }
+    }
 }
 
 // MARK: - Errors
