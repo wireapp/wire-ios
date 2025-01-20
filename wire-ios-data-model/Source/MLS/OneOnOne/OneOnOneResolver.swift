@@ -206,7 +206,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         await context.perform {
             guard
                 let otherUser = ZMUser.fetch(with: userID, in: context),
-                let conversation = otherUser.oneOnOneConversation,
+                let conversation = otherUser.oneOnOneConversation, // Check this isn't called until ready
                 conversation.isForcedReadOnly != readOnly
             else {
                 return
@@ -226,12 +226,52 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         // Pick one conversation - prioritize team over 1:1 via connection (established, pending)
         // Move messages into picked conversation
 
+        // TODO: Guard against userID being self user?
+        guard let user = ZMUser.fetch(with: userID, in: context) else {
+            // TODO: Handle this safely
+            fatalError("User not found")
+        }
+
+        let selfUser = ZMUser.selfUser(in: context)
+        let predicate = NSPredicate.any(of: [
+            .fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: user),
+            .proteusOneOnOne(otherUser: user),
+            .pendingProteusOneOnOne(otherUser: user)
+        ])
+
+        let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        fetchRequest.predicate = predicate
+
+        // FIXME: Allow throwing ?
+        let conversations = try! context.fetch(fetchRequest)
+
+
+
         WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
         await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
         return .noAction
     }
 
     // MARK: - Helpers
+
+    private func bestOneOnOneFrom(
+        mls: [ZMConversation],
+        fakeProteusTeam: [ZMConversation],
+        proteusOnOnOne: [ZMConversation],
+        pendingProteusOneOnOne: [ZMConversation]
+    ) -> ZMConversation {
+        if mls.count > 0 {
+            return mls[0]
+        } else if fakeProteusTeam.count > 0 {
+            return fakeProteusTeam[0]
+        } else if proteusOnOnOne.count > 0 {
+            return proteusOnOnOne[0] // FIXME: Return the correct one.
+        } else if pendingProteusOneOnOne.count > 0 {
+            return pendingProteusOneOnOne[0]
+        } else {
+            fatalError("No 1-1 conversation found")
+        }
+    }
 
     private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws
         -> [QualifiedID] {
@@ -255,6 +295,13 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
 private extension NSPredicate {
 
+    // TODO: OPTIMIZATION:
+    // As far as I know it is better to run one fetch for a 1000 items then 1000 fetches for one item. E.g. we should
+    // limit fetches. Therefore, wouldn't it be better to modify our predicates to remove the user constraint, fetch all
+    // conversations that match the updated predicates then loop over the result and put into some data structure with
+    // fast access by user id. We could do this once in `resolveAllOneOnOneConversations` and pass this data structure
+    // through to it's sub calls.
+
     static func mlsOneOnOne(otherUser: ZMUser) -> NSPredicate {
         let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
         let isMLS = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
@@ -265,12 +312,6 @@ private extension NSPredicate {
             hasTwoParticipants,
             hasParticipant(user: otherUser)
         ])
-    }
-
-    static let hasTwoParticipants = NSPredicate(format: "%K.@count == 2", ZMConversationParticipantRolesKey)
-
-    static func hasParticipant(user: ZMUser) -> NSPredicate {
-        NSPredicate(format: "ANY %K.user == %@", ZMConversationParticipantRolesKey, user)
     }
 
     static func fakeProteusTeamOneOnOne(selfUser: ZMUser, otherUser: ZMUser) -> NSPredicate {
@@ -317,6 +358,14 @@ private extension NSPredicate {
             isProteus,
             hasParticipant(user: otherUser)
         ])
+    }
+
+    // MARK: - Helpers
+
+    static let hasTwoParticipants = NSPredicate(format: "%K.@count == 2", ZMConversationParticipantRolesKey)
+
+    static func hasParticipant(user: ZMUser) -> NSPredicate {
+        NSPredicate(format: "ANY %K.user == %@", ZMConversationParticipantRolesKey, user)
     }
 
 }
