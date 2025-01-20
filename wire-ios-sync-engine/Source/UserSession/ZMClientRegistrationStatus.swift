@@ -386,7 +386,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     @objc
-    public func prepareForClientRegistration() {
+    public func prepareForClientRegistration() { // TODO: is this relevant for import backup use case?
         WireLogger.userClient.info("preparing for client registration")
 
         guard needsToRegisterClient else {
