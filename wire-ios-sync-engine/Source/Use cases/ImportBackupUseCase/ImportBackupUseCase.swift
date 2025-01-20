@@ -81,19 +81,22 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             throw BackupError.noActiveAccount
         }
 
+        // import the self client
         let temporaryStack = try await entityStorage.contextProvider(
             account: account,
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup
         )
-        try await temporaryStack.viewContext.perform {
-            _ = UserClient.restore(from: selfClientBackup, context: temporaryStack.viewContext)
+        let selfClient = try await temporaryStack.viewContext.perform {
+            let selfClient = UserClient.restore(from: selfClientBackup, context: temporaryStack.viewContext)
+            selfClient.todo()
             try temporaryStack.viewContext.save()
+            return selfClient
         }
 
         // TODO: mark A as self client in persistentstore metadata?
 
-        await appStateUpdater.selectAccountAndTriggerSlowSync(account)
+        await appStateUpdater.selectAccountAndTriggerSlowSync(account, selfClient: selfClient)
     }
 
     private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) async throws -> URL {

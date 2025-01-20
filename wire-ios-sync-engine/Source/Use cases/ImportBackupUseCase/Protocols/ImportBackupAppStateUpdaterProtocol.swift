@@ -28,5 +28,5 @@ public protocol ImportBackupAppStateUpdaterProtocol {
     /// The user session needs to be unloaded.
     func reportMigrationNeeded() async
 
-    func selectAccountAndTriggerSlowSync(_ account: Account) async
+    func selectAccountAndTriggerSlowSync(_ account: Account, selfClient: UserClient) async
 }

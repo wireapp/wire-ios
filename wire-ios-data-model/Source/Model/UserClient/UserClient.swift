@@ -202,6 +202,12 @@ public class UserClient: ZMManagedObject, UserClientType {
         return userClient
     }
 
+    public func todo() {
+        guard let context = managedObjectContext else { return }
+        context.setPersistentStoreMetadata(remoteIdentifier, key: ZMPersistedClientIdKey)
+        _ = context.makeMetadataPersistent()
+    }
+
     public static func fetchUserClient(
         withRemoteId remoteIdentifier: String,
         forUser user: ZMUser,
@@ -428,7 +434,7 @@ public extension UserClient {
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
     @objc
-    static func createOrUpdateSelfUserClient(
+    static func createOrUpdateSelfUserClient( // TODO: relevant for import use case?
         _ payloadData: [String: AnyObject],
         context: NSManagedObjectContext
     ) -> UserClient? {

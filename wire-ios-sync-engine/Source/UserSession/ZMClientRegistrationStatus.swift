@@ -481,7 +481,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     @objc(didRegisterProteusClient:)
-    public func didRegisterProteusClient(_ client: UserClient) {
+    public func didRegisterProteusClient(_ client: UserClient) { // TODO: relevant for import?
         WireLogger.authentication.info("Did register proteus client")
 
         managedObjectContext.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
@@ -579,7 +579,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         invalidateCookieAndNotify()
     }
 
-    func invalidateSelfClient() {
+    func invalidateSelfClient() { // TODO: relevant for import?
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         guard let selfClient = selfUser.selfClient() else {

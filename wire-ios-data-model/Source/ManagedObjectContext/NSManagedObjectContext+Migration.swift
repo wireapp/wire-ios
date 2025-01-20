@@ -31,7 +31,7 @@ public extension NSManagedObjectContext {
     }
 
     /// use to trigger slow sync after some CoreData migrations
-    func setMigrationNeedsSlowSync() throws {
+    func setMigrationNeedsSlowSync() throws { // TODO: needed on import?
         setPersistentStoreMetadata(1, key: migrationsNeedToSlowSyncKey)
         if !makeMetadataPersistent() {
             throw MigrationNeedsSlowSyncError.couldNotPersistMetadata

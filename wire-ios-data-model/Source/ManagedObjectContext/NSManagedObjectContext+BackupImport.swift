@@ -21,7 +21,8 @@ import Foundation
 extension NSManagedObjectContext {
 
     /// Prepare a backed up database for being imported, deleting self client, push token etc.
-    func prepareToImportBackup() {
+    func prepareToImportBackup() { // TODO: does this have to be reverted on import?
+//        todo
         setPersistentStoreMetadata(nil as Data?, key: ZMPersistedClientIdKey)
         setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.pushToken.rawValue)
         setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.pushKitToken.rawValue)

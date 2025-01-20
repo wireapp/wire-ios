@@ -31,7 +31,7 @@ public extension NSManagedObjectContext {
     }
 
     /// use to trigger sync resources after some CoreData migrations
-    func setMigrationNeedsSyncResources() throws {
+    func setMigrationNeedsSyncResources() throws { // TODO: needed on import?
         setPersistentStoreMetadata(1, key: migrationsNeedToSyncResourcesKey)
         if !makeMetadataPersistent() {
             throw MigrationNeedsSlowSyncError.couldNotPersistMetadata
