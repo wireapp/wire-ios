@@ -130,29 +130,46 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("no common protocols found")
 
-        // mls 1-1
+        return try await context.perform {
+            guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
 
+            let selfUser = ZMUser.selfUser(in: context)
 
-        // Pick conversation
-        // Order - MLS, Proteus Team, Proteus 1:1 (established then pending)
-        // Move messages
+            let predicate = NSPredicate.any(of: [
+                .mlsOneOnOne(otherUser: user),
+                .fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: user),
+                .proteusOneOnOne(otherUser: user),
+                .pendingProteusOneOnOne(otherUser: user)
+            ])
 
-        await context.perform {
-            guard
-                let otherUser = ZMUser.fetch(with: userID, in: context),
-                let conversation = otherUser.oneOnOneConversation
-            else {
-                return
+            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+            fetchRequest.predicate = predicate
+
+            let conversations = try context.fetch(fetchRequest)
+            guard !conversations.isEmpty else { return .noAction }
+
+            let oneOnOneConversation = Self.bestOneOnOneFrom(
+                conversations: conversations,
+                selfUser: selfUser,
+                otherUser: user
+            )
+
+            for conversation in conversations where conversation != oneOnOneConversation {
+                oneOnOneConversation.mutableMessages.union(conversation.allMessages)
+                oneOnOneConversation.needsToBeUpdatedFromBackend = true // Is this necessary?
             }
+
+            user.oneOnOneConversation = oneOnOneConversation
+
 
             self.makeConversationReadOnly(
                 selfUser: ZMUser.selfUser(in: context),
-                otherUser: otherUser,
-                conversation: conversation
+                otherUser: user,
+                conversation: oneOnOneConversation
             )
-        }
 
-        return .archivedAsReadOnly
+            return .archivedAsReadOnly
+        }
     }
 
     private func makeConversationReadOnly(
