@@ -141,6 +141,7 @@ public struct SwitchBackendConfirmationView_V2: View {
             }
         }
     }
+
     @ViewBuilder
     private func itemView(
         title: String,
@@ -185,7 +186,6 @@ public struct SwitchBackendConfirmationView_V2: View {
         .wireButtonStyle(.primary)
     }
 
-
 }
 
 // MARK: - Previews
@@ -197,4 +197,3 @@ public struct SwitchBackendConfirmationView_V2: View {
 #Preview("Details - Expanded") {
     SwitchBackendConfirmationViewPreview(showFullDetails: true)
 }
-
