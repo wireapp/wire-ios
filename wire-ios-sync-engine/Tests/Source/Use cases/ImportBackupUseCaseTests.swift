@@ -50,6 +50,8 @@ final class ImportBackupUseCaseTests: XCTestCase {
         coreDataStack = try await CoreDataStackHelper()
             .createStack(inMemoryStore: true)
 
+        mockUserSession = .init()
+
         sut = .init(
             userSession: { [weak self] in self?.mockUserSession },
             dispatchGroup: dispatchGroup,
@@ -64,6 +66,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
     override func tearDownWithError() throws {
         sut = nil
         mockUserSession = nil
+        mockUserSession = nil
         coreDataStack = nil
         dispatchGroup = nil
         mockAppStateUpdater = nil
@@ -71,7 +74,43 @@ final class ImportBackupUseCaseTests: XCTestCase {
         mockFileArchiver = nil
     }
 
-    func testExample() throws {
+    func testFileExtensionsAreAccepted() async throws {
+        // Given
+        let extensions = ["ios_Wbu", "ioS-wbu"]
+        mockUserSession = nil // expect `BackupError.noActiveAccount`
+
+        for extensions in extensions {
+            do {
+                // When
+                let filePath = "/path/to/file.\(extensions)"
+                try await sut.invoke(url: URL(fileURLWithPath: filePath), password: "")
+                XCTFail("Unexpected success")
+            } catch BackupError.noActiveAccount {
+                // Then
+            }
+        }
+    }
+
+    func testUnknownFileExtensionsThrow() async throws {
+        // Given
+        let extensions = ["zip"]
+        mockUserSession = nil
+
+        for extensions in extensions {
+            do {
+                // When
+                let filePath = "/path/to/file.\(extensions)"
+                try await sut.invoke(url: URL(fileURLWithPath: filePath), password: "")
+                XCTFail("Unexpected success")
+            } catch BackupError.invalidFileExtension {
+                // Then
+            }
+        }
+    }
+
+    func testExample() async throws {
+        let url = URL(string: "backup")!
+        try await sut.invoke(url: url, password: "c<%I2f41\"6!'")
         XCTFail("TODO: create test")
     }
 

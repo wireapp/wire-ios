@@ -37,7 +37,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     func invoke(url: URL, password: String) async throws {
 
-        switch BackupFileExtensions(rawValue: url.pathExtension) {
+        switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {
 
         case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
             try await importIOSBackup(url, password)
@@ -156,7 +156,7 @@ private enum BackupFileExtensions: String, CaseIterable {
 
 // MARK: -
 
-private enum BackupError: Error {
+enum BackupError: Error {
     case noActiveAccount
     case compressionError
     case invalidFileExtension
