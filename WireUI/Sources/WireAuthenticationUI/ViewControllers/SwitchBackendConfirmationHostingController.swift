@@ -56,9 +56,9 @@ private extension UISheetPresentationController.Detent.Identifier {
     var oppositeValue: UISheetPresentationController.Detent.Identifier {
         switch self {
         case .medium:
-                .large
+            .large
         case .large:
-                .medium
+            .medium
         default:
             fatalError("Unsupported value")
         }
