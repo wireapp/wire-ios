@@ -103,7 +103,7 @@ struct SwitchBackendConfirmationView: View {
                 .foregroundStyle(Color.secondaryText)
             Text(value)
                 .foregroundStyle(Color.primaryText)
-            // Helps VoiceOver read the URLs better.
+                // Helps VoiceOver read the URLs better.
                 .accessibilityTextContentType(isURL ? .fileSystem : .plain)
         }
     }

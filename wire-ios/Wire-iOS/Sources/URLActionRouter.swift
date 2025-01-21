@@ -142,7 +142,7 @@ class URLActionRouter: URLActionRouterProtocol {
 // MARK: - PresentationDelegate
 
 extension URLActionRouter: PresentationDelegate {
-    
+
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
         
@@ -182,19 +182,19 @@ extension URLActionRouter: PresentationDelegate {
             pendingAlert = alertController
         }
     }
-    
+
     // MARK: - Public Implementation
-    
+
     func failedToPerformAction(_ action: URLAction, error: Error) {
         let localizedError = mapToLocalizedError(error)
         presentLocalizedErrorAlert(localizedError)
     }
-    
+
     func completedURLAction(_ action: URLAction) {
         guard case URLAction.companyLoginSuccess = action else { return }
         notifyCompanyLoginCompletion()
     }
-    
+
     func shouldPerformAction(_ action: URLAction, decisionHandler: @escaping (Bool) -> Void) {
         typealias UrlAction = L10n.Localizable.UrlAction
         switch action {
@@ -212,7 +212,7 @@ extension URLActionRouter: PresentationDelegate {
             decisionHandler(true)
         }
     }
-    
+
     func shouldPerformActionWithMessage(
         _ message: String,
         action: URLAction,
@@ -229,29 +229,29 @@ extension URLActionRouter: PresentationDelegate {
             decisionHandler(true)
         }
     }
-    
+
     func showConnectionRequest(userId: UUID) {
         navigate(to: .connectionRequest(userId))
     }
-    
+
     func showUserProfile(user: UserType) {
         navigate(to: .userProfile(user))
     }
-    
+
     func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {
         navigate(to: .conversation(conversation, message))
     }
-    
+
     func showConversationList() {
         navigate(to: .conversationList)
     }
-    
+
     // MARK: - Private Implementation
     
     private func notifyCompanyLoginCompletion() {
         NotificationCenter.default.post(name: .companyLoginDidFinish, object: self)
     }
-    
+
     private func presentConfirmationAlert(title: String?, message: String, decisionHandler: @escaping (Bool) -> Void) {
         
         let alert = UIAlertController(
@@ -268,7 +268,7 @@ extension URLActionRouter: PresentationDelegate {
         
         presentAlert(alert)
     }
-    
+
     private func switchBackend(configURL: URL) {
         guard
             SecurityFlags.customBackend.isEnabled,
@@ -276,7 +276,7 @@ extension URLActionRouter: PresentationDelegate {
         else {
             return
         }
-        
+
         sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
             guard let self else { return }
             
@@ -294,7 +294,7 @@ extension URLActionRouter: PresentationDelegate {
             }
         }
     }
-    
+
     private func requestUserConfirmationToSwitchBackend(
         _ environment: BackendEnvironment,
         didConfirm: @escaping (Bool) -> Void
@@ -307,19 +307,6 @@ extension URLActionRouter: PresentationDelegate {
         let view = SwitchBackendConfirmationView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
         rootViewController().present(hostingController, animated: true)
-    }
-}
-
-extension UISheetPresentationController.Detent.Identifier {
-    var oppositeValue: UISheetPresentationController.Detent.Identifier {
-        switch self {
-        case .medium:
-            return .large
-        case .large:
-            return .medium
-        default:
-            fatalError("Unsupported value")
-        }
     }
 }
 

@@ -64,4 +64,5 @@ extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
         let hostingController = UIHostingController(rootView: view)
         presenter?.present(hostingController, animated: true)
     }
+
 }
