@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 struct TeamNameView: View {
 
@@ -39,18 +40,13 @@ struct TeamNameView: View {
                 .wireTextStyle(.body1)
             Spacer()
                 .frame(height: 24)
-            (
-                Text(String.localized(key: "individualToTeam.teamName.field.title", bundle: .module)) +
-                    Text(verbatim: " *")
-                    .foregroundColor(ColorTheme.Base.requiredField.color)
+
+            LabeledTextField(
+                isMandatory: true,
+                placeholder: .localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module),
+                title: .localized(key: "individualToTeam.teamName.field.title", bundle: .module),
+                string: $teamName
             )
-            .wireTextStyle(.h4)
-            TextField(
-                String.localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module),
-                text: $teamName
-            )
-            .textFieldStyle(.roundedBorder)
-            .wireTextStyle(.body1)
 
             Spacer()
 
