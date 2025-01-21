@@ -17,28 +17,38 @@
 //
 
 import XCTest
+import WireDataModelSupport
 
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
 final class ImportBackupUseCaseTests: XCTestCase {
 
+    private var coreDataStack: CoreDataStack!
     private var sut: ImportBackupUseCase!
 
-    override func setUpWithError() throws {
-        sut = .init(
-            userSession: <#T##() -> ZMUserSession?#>,
-            dispatchGroup: <#T##ZMSDispatchGroup#>,
-            fileArchiver: <#T##any ImportBackupFileArchiverProtocol#>,
-            entityStorage: <#T##any ImportBackupEntityStorageProtocol#>,
-            appStateUpdater: <#T##any ImportBackupAppStateUpdaterProtocol#>,
-            sharedContainerURL: <#T##URL#>,
-            logger: .init(tag: "mock")
-        )
+    override func setUp() async throws {
+
+        coreDataStack = try await CoreDataStackHelper()
+            .createStack(inMemoryStore: true)
+
+//        let selfUser = ModelHelper()
+//            .createSelfUser(in: coreDataStack.viewContext)
+
+//        sut = .init(
+//            userSession: <#T##() -> ZMUserSession?#>,
+//            dispatchGroup: <#T##ZMSDispatchGroup#>,
+//            fileArchiver: <#T##any ImportBackupFileArchiverProtocol#>,
+//            entityStorage: <#T##any ImportBackupEntityStorageProtocol#>,
+//            appStateUpdater: <#T##any ImportBackupAppStateUpdaterProtocol#>,
+//            sharedContainerURL: <#T##URL#>,
+//            logger: .init(tag: "mock")
+//        )
     }
 
     override func tearDownWithError() throws {
         sut = nil
+        coreDataStack = nil
     }
 
     func testExample() throws {

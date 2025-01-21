@@ -24,7 +24,7 @@ import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    let userSession: () -> ZMUserSession?
+    let userSession: () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
     let fileArchiver: ImportBackupFileArchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
@@ -51,7 +51,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
         // to start with we need an active user session, later the session will be torn down
         weak var userSession = userSession()
-        guard let account = userSession?.account else {
+        guard let account = userSession?.contextProvider.account else {
             throw BackupError.noActiveAccount
         }
 
@@ -62,7 +62,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         let selfClientBackup: [String: Any]
         // we want to avoid keeping strong a reference to the user
         // session, the managed object context and the user client
-        if let context = userSession?.managedObjectContext {
+        if let context = userSession?.contextProvider.viewContext {
             selfClientBackup = await context.perform { userSession?.selfUserClient?.backup() ?? [:] }
         } else {
             throw BackupError.unknown
