@@ -24,39 +24,55 @@ import WireDataModelSupport
 
 final class ImportBackupUseCaseTests: XCTestCase {
 
+    private var mockFileArchiver: MockImportBackupFileArchiverProtocol!
+    private var mockEntityStorage: MockImportBackupEntityStorageProtocol!
+    private var mockAppStateUpdater: MockImportBackupAppStateUpdaterProtocol!
+    private var dispatchGroup: ZMSDispatchGroup!
+    private var sharedContainerURL: URL!
     private var coreDataStack: CoreDataStack!
+    private var mockUserSession: MockUserSession!
     private var sut: ImportBackupUseCase!
 
     override func setUp() async throws {
 
+        mockFileArchiver = .init()
+
+        mockEntityStorage = .init()
+
+        mockAppStateUpdater = .init()
+
+        dispatchGroup = .init(label: UUID().uuidString)
+
+        sharedContainerURL = FileManager()
+            .temporaryDirectory
+            .appending(path: UUID().uuidString)
+
         coreDataStack = try await CoreDataStackHelper()
             .createStack(inMemoryStore: true)
 
-//        let selfUser = ModelHelper()
-//            .createSelfUser(in: coreDataStack.viewContext)
-
-//        sut = .init(
-//            userSession: <#T##() -> ZMUserSession?#>,
-//            dispatchGroup: <#T##ZMSDispatchGroup#>,
-//            fileArchiver: <#T##any ImportBackupFileArchiverProtocol#>,
-//            entityStorage: <#T##any ImportBackupEntityStorageProtocol#>,
-//            appStateUpdater: <#T##any ImportBackupAppStateUpdaterProtocol#>,
-//            sharedContainerURL: <#T##URL#>,
-//            logger: .init(tag: "mock")
-//        )
+        sut = .init(
+            userSession: { [weak self] in self?.mockUserSession },
+            dispatchGroup: dispatchGroup,
+            fileArchiver: mockFileArchiver,
+            entityStorage: mockEntityStorage,
+            appStateUpdater: mockAppStateUpdater,
+            sharedContainerURL: sharedContainerURL,
+            logger: .init(tag: "mock")
+        )
     }
 
     override func tearDownWithError() throws {
         sut = nil
+        mockUserSession = nil
         coreDataStack = nil
+        dispatchGroup = nil
+        mockAppStateUpdater = nil
+        mockEntityStorage = nil
+        mockFileArchiver = nil
     }
 
     func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+        XCTFail("TODO: create test")
     }
 
 }
