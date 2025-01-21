@@ -247,28 +247,50 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
             in: context
         )
 
-        guard payload.connection.status == .accepted, let userID = payload.connection.qualifiedTo else {
-            return
-        }
+        guard let userID = payload.connection.qualifiedTo else { return }
 
-        WaitingGroupTask(context: context) { [self] in
-            do {
-                // The client who accepts the connection resolves the conversation immediately.
-                // Other clients (from self and other user) resolve after a delay to avoid a race condition,
-                // but also to re-attempt resolution in case of failure.
-                try await Task.sleep(for: .seconds(oneOnOneResolutionDelay))
+        if payload.connection.status == .accepted {
+            WaitingGroupTask(context: context) { [self] in
+                do {
+                    // The client who accepts the connection resolves the conversation immediately.
+                    // Other clients (from self and other user) resolve after a delay to avoid a race condition,
+                    // but also to re-attempt resolution in case of failure.
+                    try await Task.sleep(for: .seconds(oneOnOneResolutionDelay))
 
-                let resolver = oneOnOneResolver
-                try await resolver.resolveOneOnOneConversation(with: userID, in: context)
+                    let resolver = oneOnOneResolver
+                    try await resolver.resolveOneOnOneConversation(with: userID, in: context)
 
-                await context.perform {
-                    _ = context.saveOrRollback()
+                    await context.perform {
+                        _ = context.saveOrRollback()
+                    }
+                } catch {
+                    WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
+                    assertionFailure("Error resolving one-on-one conversation: \(error)")
                 }
-            } catch {
-                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
-                assertionFailure("Error resolving one-on-one conversation: \(error)")
+            }
+        } else {
+            Task {
+                let userObjectID = await managedObjectContext.perform { [context] in
+                    ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: context)?.objectID
+                }
+
+                guard let userObjectID else {
+                    WireLogger.individualToTeamMigration.error("User not found for connection event")
+                    return
+                }
+
+                do {
+                    let connectionValidator = ConnectionValidator(context: context)
+                    try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
+                    try await oneOnOneResolver.resolveOneOnOneConversation(with: userID, in: context)
+                } catch {
+                    WireLogger.individualToTeamMigration.error(
+                        "failed to clean up invalid connection: \(String(describing: error))"
+                    )
+                }
             }
         }
+
     }
 }
 

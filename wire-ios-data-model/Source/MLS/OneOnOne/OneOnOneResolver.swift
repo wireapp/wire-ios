@@ -83,43 +83,34 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
-
-
-        // - Maybe multiple 1-1 conversations
-        // - User just wants 1
-        // - May or may not be the connected conversation
-        // - Should not rely on connection
-
-        // Types of conversations:
-        // - Pending connection (proteus)
-        // - Established connection (proteus)
-        // - MLS 1:1
-        // - Fake team 1:1 (proteus)
-        // - Nothing - just return early
-
-
-
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
+        let action: OneOnOneConversationResolution
         switch messageProtocol {
         case .none where isMLSEnabled: // This check is probably not necessary
-            return try await resolveCommonUserProtocolNone(with: userID, in: context)
+            action = try await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls where isMLSEnabled:
-            return try await resolveCommonUserProtocolMLS(with: userID, in: context)
+            action = try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
-            return try await resolveCommonUserProtocolProteus(with: userID, in: context)
+            action = try await resolveCommonUserProtocolProteus(with: userID, in: context)
         case .mixed:
             // This should never happen:
             // Users can only support proteus and mls protocols.
             // Mixed protocol is used by conversations to represent
             // the migration state when migrating from proteus to mls.
             assertionFailure("users should not have mixed protocol")
-            return .noAction
+            action = .noAction
         default:
             // if mls not enabled, there is nothing to take action
             // fixes locked conversations
-            return .noAction
+            action = .noAction
         }
+
+        try await context.perform {
+            try context.save()
+        }
+
+        return action
     }
 
     // MARK: Resolve - None
