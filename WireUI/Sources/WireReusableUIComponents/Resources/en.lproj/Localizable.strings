@@ -1,0 +1,11 @@
+/* 
+  Localizable.strings
+  WireUI
+
+  Created by Thomas Léger on 21/01/2025.
+  
+*/
+
+"passwordtextfield.preview.title" = "Password (OPTIONAL)";
+"passwordtextfield.preview.placeholder" = "Enter password";
+"passwordtextfield.preview.passwordrules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
