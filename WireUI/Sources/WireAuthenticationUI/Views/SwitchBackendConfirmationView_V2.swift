@@ -151,7 +151,7 @@ struct SwitchBackendConfirmationView_V2: View {
             Text(Strings.cancel)
                 .font(.textStyle(.buttonBig))
         }
-        //.buttonStyle(SecondaryButtonStyle())
+        .wireButtonStyle(.secondary)
     }
 
     @ViewBuilder private var proceedButton: some View {
@@ -162,7 +162,7 @@ struct SwitchBackendConfirmationView_V2: View {
             Text(Strings.proceed)
                 .font(.textStyle(.buttonBig))
         }
-        //.buttonStyle(PrimaryButtonStyle())
+        .wireButtonStyle(.primary)
     }
 
 
