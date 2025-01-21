@@ -246,7 +246,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         -> [QualifiedID] {
         try await context.perform {
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-            // Fetch all users that are not self
             request.predicate = ZMUser.predicateForUsersWithOneOnOneConversation()
 
             return try context
