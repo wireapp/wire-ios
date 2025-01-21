@@ -68,7 +68,7 @@ final class OneOnOneSource {
     func fetchOneOnOnes(user: ZMUser, types: [OneOnOneType]) throws -> [ZMConversation] {
         let selfUser = ZMUser.selfUser(in: context)
         let predicate = NSPredicate.all(
-            of: types.map { Self.predicate(type: $0, selfUser: user, otherUser: user) }
+            of: types.map { Self.predicate(type: $0, selfUser: selfUser, otherUser: user) }
         )
 
         let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
