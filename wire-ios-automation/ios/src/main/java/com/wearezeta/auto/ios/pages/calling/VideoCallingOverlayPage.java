@@ -348,6 +348,13 @@ public class VideoCallingOverlayPage extends IOSPage {
         waitUntilElementVisible(okButton);
         okButton.click();
     }
+    public void tapSwitchOffCameraButton() {
+        switchOffCameraButton.click();
+    }
+
+    public void tapSwitchOnCameraButton() {
+        switchONCameraButton.click();
+    }
 
     public void swipeUpParticipantsList(){
         Dimension dimension = getDriver().manage().window().getSize();
