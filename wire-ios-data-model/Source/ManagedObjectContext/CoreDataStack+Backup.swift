@@ -331,7 +331,7 @@ public extension CoreDataStack {
         try coordinator.remove(store)
     }
 
-    private static func prepareStoreForBackupImport( // TODO: relevant for import use case?
+    private static func prepareStoreForBackupImport(
         coordinator: NSPersistentStoreCoordinator,
         location: URL,
         options: [String: Any]
