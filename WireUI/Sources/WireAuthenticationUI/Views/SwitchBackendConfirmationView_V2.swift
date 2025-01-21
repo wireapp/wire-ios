@@ -134,10 +134,8 @@ public struct SwitchBackendConfirmationView_V2: View {
                 } label: {
                     Text(Strings.showDetails)
                         .font(.textStyle(.body1))
-                        .foregroundStyle(Color.primaryText)
-                        .underline()
-                        .padding(.top, 8)
                 }
+                .wireButtonStyle(.link)
             }
         }
     }
