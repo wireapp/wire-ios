@@ -30,6 +30,22 @@ public class ConnectionValidator {
         let invalidConnections: [NSManagedObjectID]
         let connectionsToCancel: [NSManagedObjectID]
         let connectionsToIgnore: [NSManagedObjectID]
+
+        init(
+            invalidConnections: [NSManagedObjectID] = [],
+            connectionsToCancel: [NSManagedObjectID] = [],
+            connectionsToIgnore: [NSManagedObjectID] = []
+        ) {
+            self.invalidConnections = invalidConnections
+            self.connectionsToCancel = connectionsToCancel
+            self.connectionsToIgnore = connectionsToIgnore
+        }
+    }
+
+    public enum Failure: Error {
+
+        case userNotFound
+
     }
 
     private let context: NSManagedObjectContext
@@ -40,7 +56,7 @@ public class ConnectionValidator {
         self.context = context
     }
 
-    /// Reject invalid connections.
+    /// Clean up all invalid connections.
     ///
     /// Invoking this method will search the local database for invalid
     /// invalid connections and reject them all. As a result, only valid
@@ -55,7 +71,7 @@ public class ConnectionValidator {
     /// honored, and any new communciation with team members are via implicit
     /// team connections.
 
-    public func rejectInvalidConnections() async throws {
+    public func cleanUpAllInvalidConnections() async throws {
         let teamID = await context.perform { [context] in
             ZMUser.selfUser(in: context).teamIdentifier
         }
@@ -67,7 +83,7 @@ public class ConnectionValidator {
         }
 
         // Fetch ids of invalid connections.
-        let connectionIDs = try await context.perform { [context] in
+        let searchResult = try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<ZMConnection>(entityName: ZMConnection.entityName())
             fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 NSPredicate(format: "NOT (status IN %@)", Self.keepConnectionStatuses().map(\.rawValue)),
@@ -86,7 +102,8 @@ public class ConnectionValidator {
                     connectionsToIgnore.append(invalidConnection.objectID)
                 case .sent:
                     connectionsToCancel.append(invalidConnection.objectID)
-                default: // TODO: Consider blocked for legal hold?
+                default:
+                    // TODO: Consider blocked for legal hold?
                     break
                 }
             }
@@ -98,8 +115,63 @@ public class ConnectionValidator {
             )
         }
 
+        try await cleanUpState(for: searchResult)
+    }
+
+
+    /// Clean up the invalid connection to the given user if needed.
+    ///
+    /// - Parameter userObjectID: An object id to another user.
+
+    public func cleanUpInvalidConnectionIfNeeded(userObjectID: NSManagedObjectID) async throws {
+        let searchResult = try await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+
+            // If there is no team, there are no invalid connections.
+            guard let teamID = selfUser.teamIdentifier else {
+                return SearchResult()
+            }
+
+            guard let user = try context.existingObject(with: userObjectID) as? ZMUser else {
+                throw Failure.userNotFound
+            }
+
+            // Ensure this is an invalid connection.
+            guard
+                user.teamIdentifier == teamID,
+                let connection = user.connection,
+                !connection.status.isOne(of: .accepted, .blocked)
+            else {
+                return SearchResult()
+            }
+
+            var invalidConnections = [connection.objectID]
+            var connectionsToCancel: [NSManagedObjectID] = []
+            var connectionsToIgnore: [NSManagedObjectID] = []
+
+            switch connection.status {
+            case .sent:
+                connectionsToCancel = [connection.objectID]
+            case .pending:
+                connectionsToIgnore = [connection.objectID]
+            default:
+                // TODO: Consider blocked for legal hold?
+                break
+            }
+
+            return SearchResult(
+                invalidConnections: invalidConnections,
+                connectionsToCancel: connectionsToCancel,
+                connectionsToIgnore: connectionsToIgnore
+            )
+        }
+
+        try await cleanUpState(for: searchResult)
+    }
+
+    private func cleanUpState(for searchResult: SearchResult) async throws {
         // Cancel outgoing connections.
-        for connectionID in connectionIDs.connectionsToCancel {
+        for connectionID in searchResult.connectionsToCancel {
             try await updateConnectionStatus(
                 connectionID: connectionID,
                 newStatus: .cancelled,
@@ -108,7 +180,7 @@ public class ConnectionValidator {
         }
 
         // Ignore incoming connections.
-        for connectionID in connectionIDs.connectionsToIgnore {
+        for connectionID in searchResult.connectionsToIgnore {
             try await updateConnectionStatus(
                 connectionID: connectionID,
                 newStatus: .ignored,
@@ -118,7 +190,7 @@ public class ConnectionValidator {
 
         // Invalidate and unlink the associated conversation.
         try await context.perform { [context] in
-            let connections = try connectionIDs.invalidConnections.map {
+            let connections = try searchResult.invalidConnections.map {
                 try context.existingObject(with: $0) as! ZMConnection
             }
 
