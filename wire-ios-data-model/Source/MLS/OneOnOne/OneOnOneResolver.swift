@@ -142,30 +142,23 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 .pendingProteusOneOnOne(otherUser: user)
             ])
 
-            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-            fetchRequest.predicate = predicate
-
-            let conversations = try context.fetch(fetchRequest)
-            guard !conversations.isEmpty else { return .noAction }
-
-            let oneOnOneConversation = Self.bestOneOnOneFrom(
-                conversations: conversations,
+            guard let (best, other) = try Self.oneOnOneConversations(
+                predicate: predicate,
+                context: context,
                 selfUser: selfUser,
                 otherUser: user
-            )
+            ) else { return .noAction }
 
-            for conversation in conversations where conversation != oneOnOneConversation {
-                oneOnOneConversation.mutableMessages.union(conversation.allMessages)
-                oneOnOneConversation.needsToBeUpdatedFromBackend = true // Is this necessary?
+            for conversation in other {
+                best.mutableMessages.union(conversation.allMessages)
+                best.needsToBeUpdatedFromBackend = true // Is this necessary?
             }
-
-            user.oneOnOneConversation = oneOnOneConversation
-
+            user.oneOnOneConversation = best
 
             self.makeConversationReadOnly(
                 selfUser: ZMUser.selfUser(in: context),
                 otherUser: user,
-                conversation: oneOnOneConversation
+                conversation: best
             )
 
             return .archivedAsReadOnly
@@ -246,8 +239,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 throw OneOnOneResolverError.userNotFound
             }
 
-            // 1. Find conversations excluding MLS (fake team 1:1, proteus 1:1, proteus 1:1 pending)
-
             let selfUser = ZMUser.selfUser(in: context)
             let predicate = NSPredicate.any(of: [
                 .fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: user),
@@ -255,30 +246,18 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 .pendingProteusOneOnOne(otherUser: user)
             ])
 
-            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-            fetchRequest.predicate = predicate
-
-            let conversations = try context.fetch(fetchRequest)
-            if !conversations.isEmpty {
-
-                // 2. Pick the best conversation
-
-                let oneOnOneConversation = Self.bestOneOnOneFrom(
-                    conversations: conversations,
-                    selfUser: selfUser,
-                    otherUser: user
-                )
-
-                // 3. Move messages into picked conversation
-
-                for conversation in conversations where conversation != oneOnOneConversation {
-                    oneOnOneConversation.mutableMessages.union(conversation.allMessages)
-                    oneOnOneConversation.needsToBeUpdatedFromBackend = true // Is this necessary?
+            if let (best, other) = try Self.oneOnOneConversations(
+                predicate: predicate,
+                context: context,
+                selfUser: selfUser,
+                otherUser: user
+            ) {
+                for conversation in other {
+                    best.mutableMessages.union(conversation.allMessages)
+                    best.needsToBeUpdatedFromBackend = true // Is this necessary?
                 }
 
-                // 4. Assign the conversation to the user
-
-                user.oneOnOneConversation = oneOnOneConversation
+                user.oneOnOneConversation = best
             }
         }
 
@@ -288,6 +267,24 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     }
 
     // MARK: - Helpers
+
+    private static func oneOnOneConversations(
+        predicate: NSPredicate,
+        context: NSManagedObjectContext,
+        selfUser: ZMUser,
+        otherUser: ZMUser
+    ) throws -> (best: ZMConversation, others: [ZMConversation])? {
+        let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "primaryKey", ascending: true)] // Should we sort here?
+
+        let conversations = try context.fetch(fetchRequest)
+        guard !conversations.isEmpty else { return nil }
+
+        let best = bestOneOnOneFrom(conversations: conversations, selfUser: selfUser, otherUser: otherUser)
+
+        return (best: best, others: conversations.filter { $0 != best })
+    }
 
     private static func bestOneOnOneFrom(
         conversations: [ZMConversation],
@@ -330,7 +327,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         } else if fakeProteusTeam.count > 0 {
             return fakeProteusTeam[0]
         } else if proteusOnOnOne.count > 0 {
-            return proteusOnOnOne.sorted { $0.primaryKey < $1.primaryKey }[0]
+            return proteusOnOnOne[0]
         } else if pendingProteusOneOnOne.count > 0 {
             return pendingProteusOneOnOne[0]
         } else {
