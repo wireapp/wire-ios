@@ -247,13 +247,13 @@ extension URLActionRouter: PresentationDelegate {
     }
 
     // MARK: - Private Implementation
-    
+
     private func notifyCompanyLoginCompletion() {
         NotificationCenter.default.post(name: .companyLoginDidFinish, object: self)
     }
 
     private func presentConfirmationAlert(title: String?, message: String, decisionHandler: @escaping (Bool) -> Void) {
-        
+
         let alert = UIAlertController(
             title: title,
             message: message,
@@ -308,6 +308,7 @@ extension URLActionRouter: PresentationDelegate {
         let hostingController = UIHostingController(rootView: view)
         rootViewController().present(hostingController, animated: true)
     }
+
 }
 
 // MARK: - Errors
