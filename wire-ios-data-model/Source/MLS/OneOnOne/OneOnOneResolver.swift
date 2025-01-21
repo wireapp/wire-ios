@@ -75,7 +75,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
     }
 
-    // Make sure to call after user update event
     @discardableResult
     public func resolveOneOnOneConversation(
         with userID: QualifiedID,
@@ -87,7 +86,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         let action: OneOnOneConversationResolution
         switch messageProtocol {
-        case .none where isMLSEnabled: // This check is probably not necessary
+        case .none where isMLSEnabled:
             action = try await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls where isMLSEnabled:
             action = try await resolveCommonUserProtocolMLS(with: userID, in: context)
@@ -216,8 +215,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        // TODO: Question - Do we need to guard against userID being self user?
-
         try await context.perform { [context] in
             guard let user = ZMUser.fetch(with: userID, in: context) else {
                 throw OneOnOneResolverError.userNotFound

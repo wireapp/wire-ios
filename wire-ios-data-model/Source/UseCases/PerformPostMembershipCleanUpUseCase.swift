@@ -18,9 +18,6 @@
 
 import CoreData
 
-// TODO: Run on launch all connections - user session setup
-// TODO: During event processing - targeted (user.update)
-
 /// An object responsible for correcting invalid state regarding
 /// user connections.
 
@@ -88,9 +85,9 @@ public class ConnectionValidator {
             fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 NSPredicate(format: "NOT (status IN %@)", Self.keepConnectionStatuses().map(\.rawValue)),
                 NSPredicate(
-                    format: "to.teamIdentifier_data == %@",
+                    format: "to != nil AND to.teamIdentifier_data == %@",
                     teamID.uuidData as NSData
-                ) // TODO: Do we need to check `to` is not nil?
+                ) // TODO: [WPB-15469] Is `to != nil` necessary?
             ])
 
             let connections = try context.fetch(fetchRequest)
@@ -106,7 +103,7 @@ public class ConnectionValidator {
                 case .sent:
                     connectionsToCancel.append(invalidConnection.objectID)
                 default:
-                    // TODO: Consider blocked for legal hold?
+                    // TODO: [WPB-15469] Consider blocked for legal hold?
                     break
                 }
             }
@@ -157,7 +154,7 @@ public class ConnectionValidator {
             case .pending:
                 connectionsToIgnore = [connection.objectID]
             default:
-                // TODO: Consider blocked for legal hold?
+                // TODO: [WPB-15469] Consider blocked for legal hold?
                 break
             }
 
