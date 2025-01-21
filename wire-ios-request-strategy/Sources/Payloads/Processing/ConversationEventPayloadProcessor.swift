@@ -705,17 +705,25 @@ struct ConversationEventPayloadProcessor {
             WireLogger.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
-
+        var isInitialFetch = false
         return await context.perform {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
                 in: context
             )
+            
+            isInitialFetch = conversation.isPendingInitialFetch
 
             conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
             updateAttributes(from: payload, for: conversation, context: context)
-            assignMessageProtocol(from: payload, for: conversation, in: context)
+          
+            if isInitialFetch {
+                assignMessageProtocol(from: payload, for: conversation, in: context)
+            } else {
+                updateMessageProtocol(from: payload, for: conversation, in: context)
+            }
+            
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
@@ -860,14 +868,22 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
+        switch (conversation.messageProtocol, newMessageProtocol) {
+        case (.proteus, .mls):
+            let sender = ZMUser.selfUser(in: context)
+            let date = conversation.lastModifiedDate ?? .now
+            conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+        default:
+            break
+        }
         conversation.messageProtocol = newMessageProtocol
     }
 
-    private func updateMessageProtocol(
-        from payload: Payload.Conversation,
-        for conversation: ZMConversation,
-        in context: NSManagedObjectContext
-    ) {
+        private func updateMessageProtocol(
+            from payload: Payload.Conversation,
+            for conversation: ZMConversation,
+            in context: NSManagedObjectContext
+        ) {
 
         guard let messageProtocolString = payload.messageProtocol else {
             WireLogger.eventProcessing.warn("message protocol is missing")
@@ -891,6 +907,8 @@ struct ConversationEventPayloadProcessor {
                 conversation.messageProtocol = newMessageProtocol
             case .mls:
                 let date = conversation.lastModifiedDate ?? .now
+                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: date)
+
                 conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
                 conversation.messageProtocol = newMessageProtocol
             }
