@@ -18,10 +18,12 @@
 
 import CoreData
 
-/// Searches and corrects invalid connections in the database.
+// TODO: Run on launch all connections - user session setup
+// TODO: During event processing - targeted (user.update)
 
-// Run on launch all connections - user session setup
-// During event processing - targeted (user.update)
+/// An object responsible for correcting invalid state regarding
+/// user connections.
+
 public class ConnectionValidator {
 
     struct SearchResult {
@@ -32,29 +34,50 @@ public class ConnectionValidator {
 
     private let context: NSManagedObjectContext
 
-    init(context: NSManagedObjectContext) {
+    /// Create a new `ConnectionValidator`.
+
+    public init(context: NSManagedObjectContext) {
         self.context = context
     }
 
-    public func run() async throws {
+    /// Reject invalid connections.
+    ///
+    /// Invoking this method will search the local database for invalid
+    /// invalid connections and reject them all. As a result, only valid
+    /// connections will remain in the database.
+    ///
+    /// A connection is considered invalid if it is pending (i.e not accepted,
+    /// not blocked) and between the self user and a fellow team member. This
+    /// can happen if the a pending connection exists between the self user
+    /// and another user while both users are not in the same team, but then
+    /// later become part of the same team (e.g via invitation). Already
+    /// established connections with users that later become team members are
+    /// honored, and any new communciation with team members are via implicit
+    /// team connections.
+
+    public func rejectInvalidConnections() async throws {
         let teamID = await context.perform { [context] in
             ZMUser.selfUser(in: context).teamIdentifier
         }
 
-        guard let teamID else { return }
+        // If there's no self team, all connections are consider
+        // valid.
+        guard let teamID else {
+            return
+        }
 
+        // Fetch ids of invalid connections.
         let connectionIDs = try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<ZMConnection>(entityName: ZMConnection.entityName())
             fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 NSPredicate(format: "NOT (status IN %@)", Self.keepConnectionStatuses().map(\.rawValue)),
-                NSPredicate(format: "to.teamIdentifier_data == %@", teamID.uuidData as NSData) // Do we need to check `to` is not nil?
+                NSPredicate(format: "to.teamIdentifier_data == %@", teamID.uuidData as NSData) // TODO: Do we need to check `to` is not nil?
             ])
 
             let connections = try context.fetch(fetchRequest)
             var invalidConnections: [NSManagedObjectID] = []
             var connectionsToCancel: [NSManagedObjectID] = []
             var connectionsToIgnore: [NSManagedObjectID] = []
-
 
             for invalidConnection in connections {
                 invalidConnections.append(invalidConnection.objectID)
@@ -75,52 +98,54 @@ public class ConnectionValidator {
             )
         }
 
-
-
+        // Cancel outgoing connections.
         for connectionID in connectionIDs.connectionsToCancel {
-            try await Self.updateConnectionStatus(connectionID: connectionID, newStatus: .cancelled, context: context)
+            try await updateConnectionStatus(
+                connectionID: connectionID,
+                newStatus: .cancelled,
+                context: context
+            )
         }
 
+        // Ignore incoming connections.
         for connectionID in connectionIDs.connectionsToIgnore {
-            try await Self.updateConnectionStatus(connectionID: connectionID, newStatus: .ignored, context: context)
+            try await updateConnectionStatus(
+                connectionID: connectionID,
+                newStatus: .ignored,
+                context: context
+            )
         }
 
+        // Invalidate and unlink the associated conversation.
         try await context.perform { [context] in
-            let connections = try connectionIDs.invalidConnections.map { try context.existingObject(with: $0) as! ZMConnection }
+            let connections = try connectionIDs.invalidConnections.map {
+                try context.existingObject(with: $0) as! ZMConnection
+            }
+
             for connection in connections {
-                if connection.to?.oneOnOneConversation?.conversationType.isOne(of: .invalid, .connection) == true {
-                    connection.to?.oneOnOneConversation?.conversationType = .invalid
-                    connection.to?.oneOnOneConversation = nil
+                guard let existinOneOnOne = connection.to?.oneOnOneConversation else {
+                    continue
                 }
+
+                // We also check for `invalid` because rejecting the connection may change
+                // the conversation type to invalid.
+                guard existinOneOnOne.conversationType.isOne(of: .invalid, .connection) else {
+                    continue
+                }
+
+                existinOneOnOne.conversationType = .invalid
+                existinOneOnOne.oneOnOneUser = nil
             }
 
             try context.save()
         }
-
-
-
-        // find invalid connections
-        // - search for pending connections
-        // - checking user
-        // - are they part of same team
-        // - If they are then considered invalid
-        // - result is array
-
-        // correct invalid connection
-        // for each invalid connection
-        // reject (cancel or ignore)
-
-        // Deal with 1 on 1
-        // If there is 1 on 1 conversation and type connection we should mark as invalid and unlink
-
-        // Leave conversation fixing to 1 on 1 resolver
     }
 
     static private func keepConnectionStatuses() -> [ZMConnectionStatus] {
         [.accepted, .blocked]
     }
 
-    static private func updateConnectionStatus(
+    private func updateConnectionStatus(
         connectionID: NSManagedObjectID,
         newStatus: ZMConnectionStatus,
         context: NSManagedObjectContext
@@ -130,9 +155,6 @@ public class ConnectionValidator {
     }
 
 }
-
-
-
 
 public class PerformPostMembershipCleanUpUseCase {
 
