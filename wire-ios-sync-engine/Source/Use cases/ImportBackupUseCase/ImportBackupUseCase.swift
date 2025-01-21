@@ -100,6 +100,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         await appStateUpdater.selectAccountAndTriggerSlowSync(account)
     }
 
+    // TODO: extract?
     private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) async throws -> URL {
         logger.debug("coordinated file access at: \(url.absoluteString)")
 

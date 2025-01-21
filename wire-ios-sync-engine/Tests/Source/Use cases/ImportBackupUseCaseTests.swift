@@ -40,6 +40,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
         mockEntityStorage = .init()
 
         mockAppStateUpdater = .init()
+        mockAppStateUpdater.reportImportProgressProgress_MockMethod = { _ in }
 
         dispatchGroup = .init(label: UUID().uuidString)
 
@@ -51,6 +52,8 @@ final class ImportBackupUseCaseTests: XCTestCase {
             .createStack(inMemoryStore: true)
 
         mockUserSession = .init()
+        mockUserSession.contextProvider = coreDataStack
+        mockUserSession.selfUserClient = nil // TODO: set
 
         sut = .init(
             userSession: { [weak self] in self?.mockUserSession },
@@ -109,7 +112,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
     }
 
     func testExample() async throws {
-        let url = URL(string: "backup")!
+        let url = URL(fileURLWithPath: "backup.ios_wbu")
         try await sut.invoke(url: url, password: "c<%I2f41\"6!'")
         XCTFail("TODO: create test")
     }
