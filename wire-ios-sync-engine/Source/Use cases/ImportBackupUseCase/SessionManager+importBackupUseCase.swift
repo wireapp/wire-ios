@@ -18,11 +18,7 @@
 
 public extension SessionManager {
 
-    func importBackupUseCase(
-        fileArchiver: ImportBackupFileArchiverProtocol,
-        entityStorage: ImportBackupEntityStorageProtocol,
-        appStateUpdater: ImportBackupAppStateUpdaterProtocol
-    ) -> ImportBackupUseCaseProtocol? {
+    func importBackupUseCase(appStateUpdater: ImportBackupAppStateUpdaterProtocol) -> ImportBackupUseCaseProtocol? {
 
         // return `nil` immediately if there is no active user session
         activeUserSession.map { _ in
@@ -30,8 +26,9 @@ public extension SessionManager {
             ImportBackupUseCase(
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
-                fileArchiver: fileArchiver,
-                entityStorage: entityStorage,
+                streamDecryptor: ImportBackupStreamDecryptor(),
+                fileArchiver: ImportBackupFileArchiver(),
+                entityStorage: ImportBackupEntityStorage(),
                 appStateUpdater: appStateUpdater,
                 sharedContainerURL: sharedContainerURL,
                 logger: .localStorage

@@ -454,6 +454,15 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
     public init() {}
 
+    // MARK: - importsDirectory
+
+    public var importsDirectory: URL {
+        get { return underlyingImportsDirectory }
+        set(value) { underlyingImportsDirectory = value }
+    }
+
+    public var underlyingImportsDirectory: URL!
+
 
     // MARK: - replacePersistentStore
 
@@ -503,29 +512,59 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
 }
 
-public class MockImportBackupFileArchiverProtocol: ImportBackupFileArchiverProtocol {
+class MockImportBackupFileArchiverProtocol: ImportBackupFileArchiverProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - unzipFile
+
+    var unzipFileAtTo_Invocations: [(sourceURL: URL, destinationURL: URL)] = []
+    var unzipFileAtTo_MockError: Error?
+    var unzipFileAtTo_MockMethod: ((URL, URL) throws -> Void)?
+
+    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        unzipFileAtTo_Invocations.append((sourceURL: sourceURL, destinationURL: destinationURL))
+
+        if let error = unzipFileAtTo_MockError {
+            throw error
+        }
+
+        guard let mock = unzipFileAtTo_MockMethod else {
+            fatalError("no mock for `unzipFileAtTo`")
+        }
+
+        try mock(sourceURL, destinationURL)
+    }
+
+}
+
+public class MockImportBackupStreamDecryptorProtocol: ImportBackupStreamDecryptorProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - unzipFile
+    // MARK: - decrypt
 
-    public var unzipFileAtTo_Invocations: [(path: String, destination: String)] = []
-    public var unzipFileAtTo_MockMethod: ((String, String) -> Bool)?
-    public var unzipFileAtTo_MockValue: Bool?
+    public var decryptInputOutputAccountIDPassword_Invocations: [(input: InputStream, output: OutputStream, accountID: UUID, password: String)] = []
+    public var decryptInputOutputAccountIDPassword_MockError: Error?
+    public var decryptInputOutputAccountIDPassword_MockMethod: ((InputStream, OutputStream, UUID, String) throws -> Void)?
 
-    public func unzipFile(at path: String, to destination: String) -> Bool {
-        unzipFileAtTo_Invocations.append((path: path, destination: destination))
+    public func decrypt(input: InputStream, output: OutputStream, accountID: UUID, password: String) throws {
+        decryptInputOutputAccountIDPassword_Invocations.append((input: input, output: output, accountID: accountID, password: password))
 
-        if let mock = unzipFileAtTo_MockMethod {
-            return mock(path, destination)
-        } else if let mock = unzipFileAtTo_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `unzipFileAtTo`")
+        if let error = decryptInputOutputAccountIDPassword_MockError {
+            throw error
         }
+
+        guard let mock = decryptInputOutputAccountIDPassword_MockMethod else {
+            fatalError("no mock for `decryptInputOutputAccountIDPassword`")
+        }
+
+        try mock(input, output, accountID, password)
     }
 
 }

@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import ZipArchive
+import Foundation
 
-public struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
+// sourcery: AutoMockable
+public protocol ImportBackupStreamDecryptorProtocol {
 
-    public init() {}
+    func decrypt(
+        input: InputStream,
+        output: OutputStream,
+        accountID: UUID,
+        password: String
+    ) throws
 
-    public func unzipFile(at path: String, to destination: String) -> Bool {
-        SSZipArchive.unzipFile(atPath: path, toDestination: destination)
-    }
 }

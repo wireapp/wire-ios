@@ -26,6 +26,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     let userSession: () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
+    let streamDecryptor: ImportBackupStreamDecryptorProtocol
     let fileArchiver: ImportBackupFileArchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
     let appStateUpdater: ImportBackupAppStateUpdaterProtocol
@@ -43,7 +44,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             try await importIOSBackup(url, password)
 
         case nil:
-            throw BackupError.invalidFileExtension
+            throw BackupRestoreError.invalidFileExtension
         }
     }
 
@@ -52,7 +53,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         // to start with we need an active user session, later the session will be torn down
         weak var userSession = userSession()
         guard let account = userSession?.contextProvider.account else {
-            throw BackupError.noActiveAccount
+            throw BackupRestoreError.noActiveAccount
         }
 
         // before we start the first operation let the user know, the progress has started
@@ -65,7 +66,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         if let context = userSession?.contextProvider.viewContext {
             selfClientBackup = await context.perform { userSession?.selfUserClient?.backup() ?? [:] }
         } else {
-            throw BackupError.unknown
+            throw BackupRestoreError.unknown
         }
 
         let unzippedURL = try await decryptAndUnzipBackup(
@@ -86,7 +87,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         )
 
         // import the self client from the backup
-        var temporaryStack = try await entityStorage.createContextProvider(
+        let temporaryStack = try await entityStorage.createContextProvider(
             account: account,
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup
@@ -100,15 +101,11 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         await appStateUpdater.selectAccountAndTriggerSlowSync(account)
     }
 
-    // TODO: extract?
     private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) async throws -> URL {
         logger.debug("coordinated file access at: \(url.absoluteString)")
 
-        let decryptedURL = url
-            .deletingLastPathComponent()
-            .appendingPathComponent(UUID().uuidString)
-        let unzippedURL = CoreDataStack.importsDirectory
-            .appendingPathComponent(url.deletingPathExtension().lastPathComponent)
+        let decryptedURL = decryptedURL(for: url)
+        let unzippedURL = unzippedURL(for: url)
 
         return try await withCheckedThrowingContinuation { continuation in
             workerQueue.async(group: dispatchGroup) {
@@ -117,33 +114,35 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     guard
                         let inputStream = InputStream(url: url),
                         let outputStream = OutputStream(url: decryptedURL, append: false)
-                    else { throw BackupError.unknown }
+                    else { throw BackupRestoreError.unknown }
 
-                    let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountID)
-                    try ChaCha20Poly1305.StreamEncryption.decrypt(
+                    try streamDecryptor.decrypt(
                         input: inputStream,
                         output: outputStream,
-                        passphrase: passphrase
+                        accountID: accountID,
+                        password: password
                     )
 
-                } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
-                    return continuation.resume(throwing: BackupError.decryptionError)
-
-                } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
-                    return continuation.resume(throwing: BackupError.keyCreationFailed)
+                    try fileArchiver.unzipFile(at: decryptedURL, to: unzippedURL)
+                    continuation.resume(returning: unzippedURL)
 
                 } catch {
-                    return continuation.resume(throwing: error)
-                }
-
-                if fileArchiver.unzipFile(at: decryptedURL.path, to: unzippedURL.path) {
-                    return continuation.resume(returning: unzippedURL)
-                } else {
-                    return continuation.resume(throwing: BackupError.compressionError)
+                    continuation.resume(throwing: error)
                 }
             }
         }
     }
+
+    private func decryptedURL(for url: URL) -> URL {
+        let randomPathComponent = UUID().uuidString
+        return url.deletingLastPathComponent().appendingPathComponent(randomPathComponent)
+    }
+
+    private func unzippedURL(for url: URL) -> URL {
+        let filename = url.deletingPathExtension().lastPathComponent
+        return entityStorage.importsDirectory.appendingPathComponent(filename)
+    }
+
 }
 
 // MARK: -
@@ -153,17 +152,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 private enum BackupFileExtensions: String, CaseIterable {
     case fileExtensionWithUnderscore = "ios_wbu"
     case fileExtensionWithHyphen = "ios-wbu"
-}
-
-// MARK: -
-
-enum BackupError: Error {
-    case noActiveAccount
-    case compressionError
-    case invalidFileExtension
-    case keyCreationFailed
-    case decryptionError
-    case unknown
 }
 
 // MARK: -

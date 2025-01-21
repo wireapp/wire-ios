@@ -16,14 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import ZipArchive
 
-// sourcery: AutoMockable
-protocol ImportBackupFileArchiverProtocol {
+struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
 
-    func unzipFile(
-        at sourceURL: URL,
-        to destinationURL: URL
-    ) throws
+    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
 
+        let success = SSZipArchive.unzipFile(
+            atPath: sourceURL.path,
+            toDestination: destinationURL.path
+        )
+
+        guard success else {
+            throw BackupRestoreError.compressionError
+        }
+
+    }
 }

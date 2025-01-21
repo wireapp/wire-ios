@@ -20,6 +20,8 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol ImportBackupEntityStorageProtocol {
+    
+    var importsDirectory: URL { get }
 
     func replacePersistentStore(
         accountIdentifier: UUID,

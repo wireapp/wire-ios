@@ -24,6 +24,7 @@ import WireDataModelSupport
 
 final class ImportBackupUseCaseTests: XCTestCase {
 
+    private var mockStreamDecryptor: MockImportBackupStreamDecryptorProtocol!
     private var mockFileArchiver: MockImportBackupFileArchiverProtocol!
     private var mockEntityStorage: MockImportBackupEntityStorageProtocol!
     private var mockAppStateUpdater: MockImportBackupAppStateUpdaterProtocol!
@@ -34,6 +35,8 @@ final class ImportBackupUseCaseTests: XCTestCase {
     private var sut: ImportBackupUseCase!
 
     override func setUp() async throws {
+
+        mockStreamDecryptor = .init()
 
         mockFileArchiver = .init()
 
@@ -58,6 +61,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
         sut = .init(
             userSession: { [weak self] in self?.mockUserSession },
             dispatchGroup: dispatchGroup,
+            streamDecryptor: mockStreamDecryptor,
             fileArchiver: mockFileArchiver,
             entityStorage: mockEntityStorage,
             appStateUpdater: mockAppStateUpdater,
@@ -69,18 +73,18 @@ final class ImportBackupUseCaseTests: XCTestCase {
     override func tearDownWithError() throws {
         sut = nil
         mockUserSession = nil
-        mockUserSession = nil
         coreDataStack = nil
         dispatchGroup = nil
         mockAppStateUpdater = nil
         mockEntityStorage = nil
         mockFileArchiver = nil
+        mockStreamDecryptor = nil
     }
 
     func testFileExtensionsAreAccepted() async throws {
         // Given
         let extensions = ["ios_Wbu", "ioS-wbu"]
-        mockUserSession = nil // expect `BackupError.noActiveAccount`
+        mockUserSession = nil // expect `BackupRestoreError.noActiveAccount`
 
         for extensions in extensions {
             do {
@@ -88,7 +92,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
                 let filePath = "/path/to/file.\(extensions)"
                 try await sut.invoke(url: URL(fileURLWithPath: filePath), password: "")
                 XCTFail("Unexpected success")
-            } catch BackupError.noActiveAccount {
+            } catch BackupRestoreError.noActiveAccount {
                 // Then
             }
         }
@@ -105,7 +109,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
                 let filePath = "/path/to/file.\(extensions)"
                 try await sut.invoke(url: URL(fileURLWithPath: filePath), password: "")
                 XCTFail("Unexpected success")
-            } catch BackupError.invalidFileExtension {
+            } catch BackupRestoreError.invalidFileExtension {
                 // Then
             }
         }

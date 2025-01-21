@@ -16,14 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-// sourcery: AutoMockable
-protocol ImportBackupFileArchiverProtocol {
-
-    func unzipFile(
-        at sourceURL: URL,
-        to destinationURL: URL
-    ) throws
-
+enum BackupRestoreError: Error {
+    case noActiveAccount
+    case compressionError
+    case invalidFileExtension
+    case keyCreationFailed
+    case decryptionError
+    case unknown
 }
