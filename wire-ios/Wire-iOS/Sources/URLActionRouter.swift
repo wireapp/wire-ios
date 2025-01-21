@@ -145,36 +145,36 @@ extension URLActionRouter: PresentationDelegate {
 
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
-        
+
         let alertController = UIAlertController(
             title: ConversationAlert.title(conversationName),
             message: ConversationAlert.message,
             preferredStyle: .alert
         )
-        
+
         alertController.addTextField { textField in
             textField.placeholder = ConversationAlert.Textfield.placeholder
             textField.isSecureTextEntry = true
         }
-        
+
         let joinAction = UIAlertAction(title: ConversationAlert.JoinAction.title, style: .default) { _ in
             let password = alertController.textFields?.first?.text
             completion(password)
         }
-        
+
         let helpLinkURL = WireURLs.shared.guestLinksInfo
         let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
             UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
         }
-        
+
         let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { _ in
             completion(nil)
         }
-        
+
         alertController.addAction(joinAction)
         alertController.addAction(learnMoreAction)
         alertController.addAction(cancelAction)
-        
+
         // Use the rootViewController to present the alert
         if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
             rootViewController().present(alertController, animated: true)
@@ -259,13 +259,13 @@ extension URLActionRouter: PresentationDelegate {
             message: message,
             preferredStyle: .alert
         )
-        
+
         let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
         alert.addAction(agreeAction)
-        
+
         let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
         alert.addAction(cancelAction)
-        
+
         presentAlert(alert)
     }
 
@@ -279,7 +279,7 @@ extension URLActionRouter: PresentationDelegate {
 
         sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
             guard let self else { return }
-            
+
             switch result {
             case let .success(backendEnvironment):
                 requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
@@ -287,7 +287,7 @@ extension URLActionRouter: PresentationDelegate {
                     sessionManager.switchBackend(to: backendEnvironment)
                     BackendEnvironment.shared = backendEnvironment
                 }
-                
+
             case let .failure(error):
                 let localizedError = mapToLocalizedError(error)
                 presentLocalizedErrorAlert(localizedError)
@@ -303,7 +303,7 @@ extension URLActionRouter: PresentationDelegate {
             environment: environment,
             didConfirm: didConfirm
         )
-        
+
         let view = SwitchBackendConfirmationView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
         rootViewController().present(hostingController, animated: true)

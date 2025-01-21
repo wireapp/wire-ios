@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct SwitchBackendConfirmationView: View {
+struct SwitchBackendConfirmationView_V2: View {
 
     private typealias Strings = L10n.SwitchBackendConfirmation
 
@@ -171,7 +171,7 @@ struct SwitchBackendConfirmationView: View {
 // MARK: - Previews
 
 #Preview {
-    SwitchBackendConfirmationView(
+    SwitchBackendConfirmationView_V2(
         viewModel: SwitchBackendConfirmationViewModel_V2(
             backendName: "Staging",
             backendURL: "www.staging.com",
