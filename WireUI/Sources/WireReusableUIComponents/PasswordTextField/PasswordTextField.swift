@@ -19,13 +19,8 @@
 import SwiftUI
 import WireDesign
 
-public protocol PasswordValidator {
-    func validate(_ password: String) -> Bool
-
-    var localizedRulesDescription: String? { get }
-}
-
 public class PasswordFieldViewModel: ObservableObject {
+
     @Published public private(set) var arePasswordRulesVisible: Bool
     @Published public fileprivate(set) var isPasswordValid: Bool
     @Published public fileprivate(set) var isPasswordVisible: Bool
