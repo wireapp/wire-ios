@@ -210,11 +210,15 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
         )
 
         if userProfile.updatedKeys.contains(.teamID) {
-            let useCase = PerformPostMembershipCleanUpUseCase(context: managedObjectContext, userID: user.objectID)
-            do {
-                try useCase.invoke()
-            } catch {
-                WireLogger.individualToTeamMigration.error("Error performing post membership cleanup")
+            let userObjectID = user.objectID
+
+            Task {
+                do {
+                    let connectionValidator = ConnectionValidator(context: managedObjectContext)
+                    try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
+                } catch {
+                    WireLogger.individualToTeamMigration.error("failed to clean up invalid connectin: \(String(describing: error))")
+                }
             }
         }
     }
