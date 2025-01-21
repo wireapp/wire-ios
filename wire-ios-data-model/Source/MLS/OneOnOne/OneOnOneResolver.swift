@@ -133,23 +133,16 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         return try await context.perform {
             guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
 
-            let selfUser = ZMUser.selfUser(in: context)
+            let source = OneOnOneSource(context: context)
+            guard let conversations = try source.fetchOneOnOnes(
+                user: user,
+                types: [.mls, .fake, .proteus, .proteusPending]
+            ) else {
+                return .noAction
+            }
 
-            let predicate = NSPredicate.any(of: [
-                .mlsOneOnOne(otherUser: user),
-                .fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: user),
-                .proteusOneOnOne(otherUser: user),
-                .pendingProteusOneOnOne(otherUser: user)
-            ])
-
-            guard let (best, other) = try Self.oneOnOneConversations(
-                predicate: predicate,
-                context: context,
-                selfUser: selfUser,
-                otherUser: user
-            ) else { return .noAction }
-
-            for conversation in other {
+            let best = conversations.candidate
+            for conversation in conversations.others {
                 best.mutableMessages.union(conversation.allMessages)
                 best.needsToBeUpdatedFromBackend = true // Is this necessary?
             }
@@ -239,22 +232,15 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 throw OneOnOneResolverError.userNotFound
             }
 
-            let selfUser = ZMUser.selfUser(in: context)
-            let predicate = NSPredicate.any(of: [
-                .fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: user),
-                .proteusOneOnOne(otherUser: user),
-                .pendingProteusOneOnOne(otherUser: user)
-            ])
-
-            if let (best, other) = try Self.oneOnOneConversations(
-                predicate: predicate,
-                context: context,
-                selfUser: selfUser,
-                otherUser: user
+            let source = OneOnOneSource(context: context)
+            if let conversations = try source.fetchOneOnOnes(
+                user: user,
+                types: [.fake, .proteus, .proteusPending]
             ) {
-                for conversation in other {
+                let best = conversations.candidate
+                for conversation in conversations.others {
                     best.mutableMessages.union(conversation.allMessages)
-                    best.needsToBeUpdatedFromBackend = true // Is this necessary?
+                    best.needsToBeUpdatedFromBackend = true
                 }
 
                 user.oneOnOneConversation = best
@@ -267,73 +253,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     }
 
     // MARK: - Helpers
-
-    private static func oneOnOneConversations(
-        predicate: NSPredicate,
-        context: NSManagedObjectContext,
-        selfUser: ZMUser,
-        otherUser: ZMUser
-    ) throws -> (best: ZMConversation, others: [ZMConversation])? {
-        let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-        fetchRequest.predicate = predicate
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "primaryKey", ascending: true)] // Should we sort here?
-
-        let conversations = try context.fetch(fetchRequest)
-        guard !conversations.isEmpty else { return nil }
-
-        let best = bestOneOnOneFrom(conversations: conversations, selfUser: selfUser, otherUser: otherUser)
-
-        return (best: best, others: conversations.filter { $0 != best })
-    }
-
-    private static func bestOneOnOneFrom(
-        conversations: [ZMConversation],
-        selfUser: ZMUser,
-        otherUser: ZMUser
-    ) -> ZMConversation {
-        var mls: [ZMConversation] = []
-        var fakeProteusTeam: [ZMConversation] = []
-        var proteusOnOnOne: [ZMConversation] = []
-        var pendingProteusOneOnOne: [ZMConversation] = []
-
-        for conversation in conversations {
-            if NSPredicate.mlsOneOnOne(otherUser: otherUser).evaluate(with: conversation) {
-                mls.append(conversation)
-            } else if NSPredicate.fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: otherUser).evaluate(with: conversation) {
-                fakeProteusTeam.append(conversation)
-            } else if NSPredicate.proteusOneOnOne(otherUser: otherUser).evaluate(with: conversation) {
-                proteusOnOnOne.append(conversation)
-            } else if NSPredicate.pendingProteusOneOnOne(otherUser: otherUser).evaluate(with: conversation) {
-                pendingProteusOneOnOne.append(conversation)
-            }
-        }
-
-        return bestOneOnOneFrom(
-            mls: mls,
-            fakeProteusTeam: fakeProteusTeam,
-            proteusOnOnOne: proteusOnOnOne,
-            pendingProteusOneOnOne: pendingProteusOneOnOne
-        )
-    }
-
-    private static func bestOneOnOneFrom(
-        mls: [ZMConversation],
-        fakeProteusTeam: [ZMConversation],
-        proteusOnOnOne: [ZMConversation],
-        pendingProteusOneOnOne: [ZMConversation]
-    ) -> ZMConversation {
-        if mls.count > 0 {
-            return mls[0]
-        } else if fakeProteusTeam.count > 0 {
-            return fakeProteusTeam[0]
-        } else if proteusOnOnOne.count > 0 {
-            return proteusOnOnOne[0]
-        } else if pendingProteusOneOnOne.count > 0 {
-            return pendingProteusOneOnOne[0]
-        } else {
-            fatalError("No 1-1 conversation found")
-        }
-    }
 
     private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws
         -> [QualifiedID] {
@@ -353,81 +272,4 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 }
         }
     }
-}
-
-private extension NSPredicate {
-
-    // TODO: OPTIMIZATION:
-    // As far as I know it is better to run one fetch for a 1000 items then 1000 fetches for one item. E.g. we should
-    // limit fetches. Therefore, wouldn't it be better to modify our predicates to remove the user constraint, fetch all
-    // conversations that match the updated predicates then loop over the result and put into some data structure with
-    // fast access by user id. We could do this once in `resolveAllOneOnOneConversations` and pass this data structure
-    // through to it's sub calls.
-
-    static func mlsOneOnOne(otherUser: ZMUser) -> NSPredicate {
-        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
-        let isMLS = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
-
-        return .all(of: [
-            isOneOnOne,
-            isMLS,
-            hasTwoParticipants,
-            hasParticipant(user: otherUser)
-        ])
-    }
-
-    static func fakeProteusTeamOneOnOne(selfUser: ZMUser, otherUser: ZMUser) -> NSPredicate {
-        guard let selfTeam = selfUser.team, selfUser != otherUser else {
-            return NSPredicate(value: false)
-        }
-
-        let sameTeam = NSPredicate(format: "team == %@", selfTeam)
-        let groupConversation = NSPredicate(
-            format: "%K == %d",
-            ZMConversationConversationTypeKey,
-            ZMConversationType.group.rawValue
-        )
-        let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
-
-        return .all(of: [
-            sameTeam,
-            groupConversation,
-            noUserDefinedName,
-            hasTwoParticipants,
-            hasParticipant(user: selfUser),
-            hasParticipant(user: otherUser)
-        ])
-    }
-
-    static func proteusOneOnOne(otherUser: ZMUser) -> NSPredicate {
-        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
-        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
-
-        return .all(of: [
-            isOneOnOne,
-            isProteus,
-            hasTwoParticipants,
-            hasParticipant(user: otherUser)
-        ])
-    }
-
-    static func pendingProteusOneOnOne(otherUser: ZMUser) -> NSPredicate {
-        let isConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
-        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
-
-        return .all(of: [
-            isConnection,
-            isProteus,
-            hasParticipant(user: otherUser)
-        ])
-    }
-
-    // MARK: - Helpers
-
-    static let hasTwoParticipants = NSPredicate(format: "%K.@count == 2", ZMConversationParticipantRolesKey)
-
-    static func hasParticipant(user: ZMUser) -> NSPredicate {
-        NSPredicate(format: "ANY %K.user == %@", ZMConversationParticipantRolesKey, user)
-    }
-
 }

@@ -519,6 +519,7 @@
 		BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */; };
 		C9D574D32CEF630500012A0E /* TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D22CEF630500012A0E /* TypingUsers.swift */; };
 		C9D574D52CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */; };
+		CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */; };
 		CB1BF6FC2C8AF6A5001EC670 /* ExpirationReason+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */; };
 		CB4039C62D3A560E00115E17 /* PerformPostMembershipCleanUpUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB4039C52D3A560E00115E17 /* PerformPostMembershipCleanUpUseCaseTests.swift */; };
 		CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979172C747652006FBA58 /* WireTransportSupport.framework */; };
@@ -1433,6 +1434,7 @@
 		BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Deletion.swift"; sourceTree = "<group>"; };
 		C9D574D22CEF630500012A0E /* TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingUsers.swift; sourceTree = "<group>"; };
 		C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+TypingUsers.swift"; sourceTree = "<group>"; };
+		CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneSource.swift; sourceTree = "<group>"; };
 		CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExpirationReason+Description.swift"; sourceTree = "<group>"; };
 		CB4039C52D3A560E00115E17 /* PerformPostMembershipCleanUpUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformPostMembershipCleanUpUseCaseTests.swift; sourceTree = "<group>"; };
 		CB7979172C747652006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2740,6 +2742,7 @@
 		EEF09CA52B1DE09800D729A1 /* OneOnOne */ = {
 			isa = PBXGroup;
 			children = (
+				CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */,
 				EEF09C9F2B1DB0C600D729A1 /* OneOnOneProtocolSelector.swift */,
 				EEF09CA12B1DB3F500D729A1 /* OneOnOneMigrator.swift */,
 				EEF09CA32B1DBC8700D729A1 /* OneOnOneResolver.swift */,
@@ -4360,6 +4363,7 @@
 				EE2BA00625CB3AA8001EB606 /* InvalidFeatureRemoval.swift in Sources */,
 				EE8B09AD25B86AB10057E85C /* AppLockError.swift in Sources */,
 				63C2EABD2A93B174008A0AB7 /* AddParticipantAction.swift in Sources */,
+				CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */,
 				1687ABAE20ECD51E0007C240 /* ZMSearchUser.swift in Sources */,
 				EEF09CA02B1DB0C600D729A1 /* OneOnOneProtocolSelector.swift in Sources */,
 				163C92AA2630A80400F8DC14 /* NSManagedObjectContext+SelfUser.swift in Sources */,
