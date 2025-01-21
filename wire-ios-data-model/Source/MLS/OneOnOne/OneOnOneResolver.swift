@@ -134,7 +134,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
 
             let source = OneOnOneSource(context: context)
-            guard let conversations = try source.fetchOneOnOnes(
+            guard let conversations = try source.fetchOneOnOnesWithCandidate(
                 user: user,
                 types: [.mls, .fake, .proteus, .proteusPending]
             ) else {
@@ -233,7 +233,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             }
 
             let source = OneOnOneSource(context: context)
-            if let conversations = try source.fetchOneOnOnes(
+            if let conversations = try source.fetchOneOnOnesWithCandidate(
                 user: user,
                 types: [.fake, .proteus, .proteusPending]
             ) {

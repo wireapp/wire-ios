@@ -43,9 +43,10 @@ final class OneOnOneSource {
     ///
     /// - warning: This method must be called within a `NSManagedObjectContext.perform` block.
 
-    func fetchOneOnOnes(user: ZMUser, types: [OneOnOneType]) throws -> Result? {
+    func fetchOneOnOnesWithCandidate(user: ZMUser, types: [OneOnOneType]) throws -> Result? {
+        let selfUser = ZMUser.selfUser(in: context)
         let predicate = NSPredicate.all(
-            of: types.map { Self.predicate(type: $0, selfUser: user, otherUser: user) }
+            of: types.map { Self.predicate(type: $0, selfUser: selfUser, otherUser: user) }
         )
 
         let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
@@ -75,6 +76,18 @@ final class OneOnOneSource {
             candidate: candidate,
             others: conversations.filter { $0 != candidate }
         )
+    }
+
+    func fetchOneOnOnes(user: ZMUser, types: [OneOnOneType]) throws -> [ZMConversation] {
+        let selfUser = ZMUser.selfUser(in: context)
+        let predicate = NSPredicate.all(
+            of: types.map { Self.predicate(type: $0, selfUser: user, otherUser: user) }
+        )
+
+        let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        fetchRequest.predicate = predicate
+
+        return try context.fetch(fetchRequest)
     }
 
     // MARK: - Private
