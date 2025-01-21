@@ -65,6 +65,10 @@ final class OneOnOneSource {
         )
     }
 
+    /// Fetches all one-on-one conversations for `user` which match one of the given `types`.
+    ///
+    /// - warning: This method must be called within a `NSManagedObjectContext.perform` block.
+
     func fetchOneOnOnes(user: ZMUser, types: [OneOnOneType]) throws -> [ZMConversation] {
         let selfUser = ZMUser.selfUser(in: context)
         let predicate = NSPredicate.all(
