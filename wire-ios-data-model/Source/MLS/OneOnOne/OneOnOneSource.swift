@@ -45,36 +45,23 @@ final class OneOnOneSource {
 
     func fetchOneOnOnesWithCandidate(user: ZMUser, types: [OneOnOneType]) throws -> Result? {
         let selfUser = ZMUser.selfUser(in: context)
-        let predicate = NSPredicate.all(
-            of: types.map { Self.predicate(type: $0, selfUser: selfUser, otherUser: user) }
-        )
-
-        let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-        fetchRequest.predicate = predicate
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "primaryKey", ascending: true)]
-
-        let conversations = try context.fetch(fetchRequest)
-        guard !conversations.isEmpty else { return nil }
-
-        var conversationsByType: [OneOnOneType: [ZMConversation]] = [:]
-        for conversation in conversations {
-            let type = Self.oneOnOneType(for: conversation, selfUser: user, otherUser: user)
-            conversationsByType[type, default: []].append(conversation)
-        }
 
         var candidate: ZMConversation?
+        var allConversations: [ZMConversation] = []
         for type in types {
-            if let conversation = conversationsByType[type]?.first {
-                candidate = conversation
-                break
+            let conversations = try sortedConversations(type: type, selfUser: selfUser, otherUser: user)
+            if candidate == nil {
+                candidate = conversations.first
             }
+
+            allConversations.append(contentsOf: conversations)
         }
 
-        guard let candidate = candidate else { fatalError("No candidate found") }
+        guard let candidate = candidate else { return nil }
 
         return Result(
             candidate: candidate,
-            others: conversations.filter { $0 != candidate }
+            others: allConversations.filter { $0 != candidate }
         )
     }
 
@@ -105,21 +92,16 @@ final class OneOnOneSource {
         }
     }
 
-    private static func oneOnOneType(
-        for conversation: ZMConversation,
+    private func sortedConversations(
+        type: OneOnOneType,
         selfUser: ZMUser,
         otherUser: ZMUser
-    ) -> OneOnOneType {
-        if NSPredicate.mlsOneOnOne(otherUser: otherUser).evaluate(with: conversation) {
-            return .mls
-        } else if NSPredicate.fakeProteusTeamOneOnOne(selfUser: selfUser, otherUser: otherUser).evaluate(with: conversation) {
-            return .fake
-        } else if NSPredicate.proteusOneOnOne(otherUser: otherUser).evaluate(with: conversation) {
-            return .proteus
-        } else if NSPredicate.pendingProteusOneOnOne(otherUser: otherUser).evaluate(with: conversation) {
-            return .proteusPending
-        }
-        fatalError("OneOnOneType")
+    ) throws -> [ZMConversation] {
+        let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        fetchRequest.predicate = Self.predicate(type: type, selfUser: selfUser, otherUser: otherUser)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "primaryKey", ascending: true)]
+
+        return try context.fetch(fetchRequest)
     }
 }
 
