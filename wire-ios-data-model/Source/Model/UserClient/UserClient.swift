@@ -434,7 +434,7 @@ public extension UserClient {
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
     @objc
-    static func createOrUpdateSelfUserClient( // TODO: relevant for import use case?
+    static func createOrUpdateSelfUserClient(
         _ payloadData: [String: AnyObject],
         context: NSManagedObjectContext
     ) -> UserClient? {

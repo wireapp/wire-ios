@@ -93,6 +93,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             dispatchGroup: dispatchGroup
         )
         try await temporaryStack.viewContext.perform {
+            // TODO: use `UserClient.createOrUpdateSelfUserClient(selfClientBackup, context: temporaryStack.viewContext)`
             let userClient = UserClient.restore(from: selfClientBackup, context: temporaryStack.viewContext)
             userClient.markAsSelfClient()
             try temporaryStack.viewContext.save()
