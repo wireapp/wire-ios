@@ -523,7 +523,7 @@
 		CB1BF6FC2C8AF6A5001EC670 /* ExpirationReason+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */; };
 		CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979172C747652006FBA58 /* WireTransportSupport.framework */; };
 		CB79791B2C7476AC006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79791A2C7476AC006FBA58 /* TestSetup.swift */; };
-		CBF4F17F2D36935300C9638B /* PerformPostMembershipCleanUpUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF4F17E2D36935300C9638B /* PerformPostMembershipCleanUpUseCase.swift */; };
+		CBF4F17F2D36935300C9638B /* ConnectionValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF4F17E2D36935300C9638B /* ConnectionValidator.swift */; };
 		CE4EDC091D6D9A3D002A20AA /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4EDC081D6D9A3D002A20AA /* Reaction.swift */; };
 		CE4EDC0B1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4EDC0A1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift */; };
 		CE58A3FF1CD3B3580037B626 /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */; };
@@ -1437,7 +1437,7 @@
 		CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExpirationReason+Description.swift"; sourceTree = "<group>"; };
 		CB7979172C747652006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79791A2C7476AC006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
-		CBF4F17E2D36935300C9638B /* PerformPostMembershipCleanUpUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformPostMembershipCleanUpUseCase.swift; sourceTree = "<group>"; };
+		CBF4F17E2D36935300C9638B /* ConnectionValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionValidator.swift; sourceTree = "<group>"; };
 		CE4EDC081D6D9A3D002A20AA /* Reaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Reaction.swift; path = Reaction/Reaction.swift; sourceTree = "<group>"; };
 		CE4EDC0A1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationMessage+Reaction.swift"; sourceTree = "<group>"; };
 		CE58A3FE1CD3B3580037B626 /* ConversationMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationMessage.swift; sourceTree = "<group>"; };
@@ -2315,7 +2315,6 @@
 				59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */,
 				0667958F2B8C9E4700FF6A25 /* UpdateMLSGroupVerificationStatusUseCase.swift */,
 				638941ED2AF4FD4B0051ABFD /* RemoveLocalConversationUseCase.swift */,
-				CBF4F17E2D36935300C9638B /* PerformPostMembershipCleanUpUseCase.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -2481,6 +2480,14 @@
 				C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */,
 			);
 			path = TypingUsers;
+			sourceTree = "<group>";
+		};
+		CB181F2E2D400B4B00A80AB4 /* EntityValidation */ = {
+			isa = PBXGroup;
+			children = (
+				CBF4F17E2D36935300C9638B /* ConnectionValidator.swift */,
+			);
+			path = EntityValidation;
 			sourceTree = "<group>";
 		};
 		CE4EDC071D6D9A04002A20AA /* Reaction */ = {
@@ -3544,6 +3551,7 @@
 			children = (
 				E6E504332BC542C5004948E7 /* Authentication */,
 				069BCC4F2B30945500DF4EC2 /* E2EIdentity */,
+				CB181F2E2D400B4B00A80AB4 /* EntityValidation */,
 				638941EC2AF4FD170051ABFD /* UseCases */,
 				1639A81122608FEB00868AB9 /* Patches */,
 				F9A705C91CAEE01D00C2F5FE /* ManagedObjectContext */,
@@ -4490,7 +4498,7 @@
 				63D41E7124597E420076826F /* GenericMessage+Flags.swift in Sources */,
 				5473CC731E14245C00814C03 /* NSManagedObjectContext+Debugging.swift in Sources */,
 				BF46662A1DCB71B0007463FF /* V3Asset.swift in Sources */,
-				CBF4F17F2D36935300C9638B /* PerformPostMembershipCleanUpUseCase.swift in Sources */,
+				CBF4F17F2D36935300C9638B /* ConnectionValidator.swift in Sources */,
 				F9A706991CAEE01D00C2F5FE /* ZMManagedObject.m in Sources */,
 				F1FDF2F821B152BC00E037A1 /* GenericMessage+Hashing.swift in Sources */,
 				BF491CE41F063EDB0055EE44 /* Account.swift in Sources */,
