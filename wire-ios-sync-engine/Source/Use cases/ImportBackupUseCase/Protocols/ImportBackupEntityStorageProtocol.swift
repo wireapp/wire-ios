@@ -22,7 +22,9 @@ import Foundation
 public protocol ImportBackupEntityStorageProtocol {
     
     var importsDirectory: URL { get }
-
+    
+    /// Replace all the data of the storage.
+    /// - Returns: The directory where all data was written to.
     func replacePersistentStore(
         accountIdentifier: UUID,
         from backupDirectory: URL,

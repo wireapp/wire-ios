@@ -401,21 +401,6 @@ public class MockImportBackupAppStateUpdaterProtocol: ImportBackupAppStateUpdate
         mock(progress)
     }
 
-    // MARK: - reportImportCompletion
-
-    public var reportImportCompletion_Invocations: [Void] = []
-    public var reportImportCompletion_MockMethod: (() -> Void)?
-
-    public func reportImportCompletion() {
-        reportImportCompletion_Invocations.append(())
-
-        guard let mock = reportImportCompletion_MockMethod else {
-            fatalError("no mock for `reportImportCompletion`")
-        }
-
-        mock()
-    }
-
     // MARK: - reportMigrationNeeded
 
     public var reportMigrationNeeded_Invocations: [Void] = []

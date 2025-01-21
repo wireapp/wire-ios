@@ -24,39 +24,59 @@ import WireDataModelSupport
 
 final class ImportBackupUseCaseTests: XCTestCase {
 
+    private var coreDataStack: CoreDataStack!
     private var mockStreamDecryptor: MockImportBackupStreamDecryptorProtocol!
     private var mockFileArchiver: MockImportBackupFileArchiverProtocol!
     private var mockEntityStorage: MockImportBackupEntityStorageProtocol!
     private var mockAppStateUpdater: MockImportBackupAppStateUpdaterProtocol!
     private var dispatchGroup: ZMSDispatchGroup!
     private var sharedContainerURL: URL!
-    private var coreDataStack: CoreDataStack!
     private var mockUserSession: MockUserSession!
     private var sut: ImportBackupUseCase!
 
     override func setUp() async throws {
-
-        mockStreamDecryptor = .init()
-
-        mockFileArchiver = .init()
-
-        mockEntityStorage = .init()
-
-        mockAppStateUpdater = .init()
-        mockAppStateUpdater.reportImportProgressProgress_MockMethod = { _ in }
-
-        dispatchGroup = .init(label: UUID().uuidString)
-
-        sharedContainerURL = FileManager()
-            .temporaryDirectory
-            .appending(path: UUID().uuidString)
+        let fileManager = FileManager()
 
         coreDataStack = try await CoreDataStackHelper()
             .createStack(inMemoryStore: true)
 
+        mockStreamDecryptor = .init()
+        mockStreamDecryptor.decryptInputOutputAccountIDPassword_MockMethod = { _, _, _, _ in }
+
+        mockFileArchiver = .init()
+        mockFileArchiver.unzipFileAtTo_MockMethod = { _, _ in }
+
+        mockEntityStorage = .init()
+        mockEntityStorage.importsDirectory = fileManager
+            .temporaryDirectory
+            .appending(path: UUID().uuidString)
+        mockEntityStorage.createContextProviderAccountApplicationContainerDispatchGroup_MockMethod = { _, _, _ in
+            try await CoreDataStackHelper()
+                .createStack(inMemoryStore: true)
+        }
+        mockEntityStorage
+            .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod = { _, _, _, _ in
+                URL(filePath: "/accountDataFolder/")
+            }
+
+        mockAppStateUpdater = .init()
+        mockAppStateUpdater.reportImportProgressProgress_MockMethod = { _ in }
+        mockAppStateUpdater.reportMigrationNeeded_MockMethod = {
+            self.coreDataStack = nil
+        }
+        mockAppStateUpdater.selectAccountAndTriggerSlowSync_MockMethod = { _ in }
+
+        dispatchGroup = .init(label: UUID().uuidString)
+
+        sharedContainerURL = fileManager
+            .temporaryDirectory
+            .appending(path: UUID().uuidString)
+
         mockUserSession = .init()
         mockUserSession.contextProvider = coreDataStack
-        mockUserSession.selfUserClient = nil // TODO: set
+        await coreDataStack.viewContext.perform {
+            self.mockUserSession.selfUserClient = .init(context: self.coreDataStack.viewContext)
+        }
 
         sut = .init(
             userSession: { [weak self] in self?.mockUserSession },
@@ -73,12 +93,12 @@ final class ImportBackupUseCaseTests: XCTestCase {
     override func tearDownWithError() throws {
         sut = nil
         mockUserSession = nil
-        coreDataStack = nil
         dispatchGroup = nil
         mockAppStateUpdater = nil
         mockEntityStorage = nil
         mockFileArchiver = nil
         mockStreamDecryptor = nil
+        coreDataStack = nil
     }
 
     func testFileExtensionsAreAccepted() async throws {
@@ -115,10 +135,25 @@ final class ImportBackupUseCaseTests: XCTestCase {
         }
     }
 
-    func testExample() async throws {
+    func testWithMocks() async throws {
+        // Given
         let url = URL(fileURLWithPath: "backup.ios_wbu")
+        let accountID = coreDataStack.account.userIdentifier
+
+        // When
         try await sut.invoke(url: url, password: "c<%I2f41\"6!'")
-        XCTFail("TODO: create test")
+
+        // Then
+        XCTAssertFalse(mockAppStateUpdater.reportImportProgressProgress_Invocations.isEmpty)
+        XCTAssertEqual(mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.accountID, accountID)
+        XCTAssertEqual(
+            mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.password,
+            "c<%I2f41\"6!'"
+        )
+    }
+
+    func testRealImport() throws {
+        throw XCTSkip("not yet implemented")
     }
 
 }

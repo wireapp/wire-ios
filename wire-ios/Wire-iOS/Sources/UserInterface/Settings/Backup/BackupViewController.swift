@@ -109,7 +109,6 @@ final class BackupViewController: UIViewController {
 
         struct IBASU: ImportBackupAppStateUpdaterProtocol {
             func reportImportProgress(progress: Float) { print("importProgress: \(Int(round(progress * 100)))%") }
-            func reportImportCompletion() { print("reportImportCompletion") }
             @MainActor
             func reportMigrationNeeded() async {
                 await withCheckedContinuation { continuation in

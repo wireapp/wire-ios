@@ -23,9 +23,6 @@ public protocol ImportBackupAppStateUpdaterProtocol {
     /// - Parameter progress: A value between 0.0 and 1.0.
     func reportImportProgress(progress: Float)
 
-    /// The progress indicator can be removed and a completion alert shown.
-    func reportImportCompletion()
-
     /// The user session needs to be unloaded.
     func reportMigrationNeeded() async
 
