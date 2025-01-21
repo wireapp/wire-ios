@@ -25,7 +25,7 @@ struct SwitchBackendConfirmationView_V2: View {
     let viewModel: SwitchBackendConfirmationViewModel_V2
 
     @Environment(\.dismiss) var dismiss
-    @State private var showFullDetails: Bool = false
+    @Binding var showFullDetails: Bool
 
     var body: some View {
         VStack(spacing: 20) {
@@ -41,12 +41,14 @@ struct SwitchBackendConfirmationView_V2: View {
         Text(Strings.title)
             .font(.textStyle(.h2))
             .foregroundStyle(Color.primaryText)
+            .multilineTextAlignment(.center)
     }
 
     @ViewBuilder private var backendDetails: some View {
         VStack(spacing: 16) {
             Text(Strings.message)
                 .foregroundStyle(Color.primaryText)
+                .multilineTextAlignment(.center)
 
             if showFullDetails {
                 ScrollView {
@@ -131,7 +133,6 @@ struct SwitchBackendConfirmationView_V2: View {
                 .foregroundStyle(Color.secondaryText)
             Text(value)
                 .foregroundStyle(Color.primaryText)
-                // Helps VoiceOver read the URLs better.
                 .accessibilityTextContentType(isURL ? .fileSystem : .plain)
         }
     }
@@ -170,18 +171,11 @@ struct SwitchBackendConfirmationView_V2: View {
 
 // MARK: - Previews
 
-#Preview {
-    SwitchBackendConfirmationView_V2(
-        viewModel: SwitchBackendConfirmationViewModel_V2(
-            backendName: "Staging",
-            backendURL: "www.staging.com",
-            backendWSURL: "www.ws.staging.com",
-            blacklistURL: "www.blacklist.staging.com",
-            teamsURL: "www.teams.staging.com",
-            accountsURL: "www.accounts.staging.com",
-            websiteURL: "www.wire.com",
-            didConfirm: { _ in },
-            showDetails: {}
-        )
-    )
+#Preview("Details - Collapsed") {
+    SwitchBackendConfirmationViewPreview(showFullDetails: false)
 }
+
+#Preview("Details - Expanded") {
+    SwitchBackendConfirmationViewPreview(showFullDetails: true)
+}
+
