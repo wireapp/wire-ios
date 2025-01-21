@@ -386,8 +386,8 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateQRCodeButton() {
-        let qrCodeAction = UIAction { _ in
-            self.qrCodeButtonTapped()
+        let qrCodeAction = UIAction { [weak self] _ in
+            self?.qrCodeButtonTapped()
         }
         qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
         qrCodeButton.isHidden = !user.isSelfUser
