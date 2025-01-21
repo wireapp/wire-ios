@@ -134,7 +134,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             let best = conversations.candidate
             for conversation in conversations.others {
                 best.mutableMessages.union(conversation.allMessages)
-                best.needsToBeUpdatedFromBackend = true // Is this necessary?
+                best.needsToBeUpdatedFromBackend = true
             }
             user.oneOnOneConversation = best
 
@@ -199,7 +199,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         await context.perform {
             guard
                 let otherUser = ZMUser.fetch(with: userID, in: context),
-                let conversation = otherUser.oneOnOneConversation, // Check this isn't called until ready
+                let conversation = otherUser.oneOnOneConversation,
                 conversation.isForcedReadOnly != readOnly
             else {
                 return
