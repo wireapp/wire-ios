@@ -26,10 +26,10 @@ public protocol PasswordValidator {
 }
 
 public class PasswordFieldViewModel: ObservableObject {
-    @Published private(set) public var arePasswordRulesVisible: Bool
-    @Published fileprivate(set) public var isPasswordValid: Bool
-    @Published fileprivate(set) public var isPasswordVisible: Bool
-    @Published fileprivate(set) public var password: String
+    @Published public private(set) var arePasswordRulesVisible: Bool
+    @Published public fileprivate(set) var isPasswordValid: Bool
+    @Published public fileprivate(set) var isPasswordVisible: Bool
+    @Published public fileprivate(set) var password: String
 
     fileprivate let passwordValidator: any PasswordValidator
 
@@ -74,8 +74,8 @@ public struct PasswordField: View {
             ZStack {
                 if viewModel.isPasswordVisible {
                     TextField(placeholder, text: $viewModel.password)
-                    .wireTextStyle(.body1)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .wireTextStyle(.body1)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                 } else {
                     SecureField(placeholder, text: $viewModel.password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -99,7 +99,8 @@ public struct PasswordField: View {
                     )
             )
 
-            if let passwordRules = viewModel.passwordValidator.localizedRulesDescription, viewModel.arePasswordRulesVisible {
+            if let passwordRules = viewModel.passwordValidator.localizedRulesDescription,
+               viewModel.arePasswordRulesVisible {
                 Text(passwordRules)
                     .font(.caption)
                     .foregroundColor(calculatedColor)
