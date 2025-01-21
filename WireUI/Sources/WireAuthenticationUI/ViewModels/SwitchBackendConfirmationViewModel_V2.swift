@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class SwitchBackendConfirmationViewModel_V2 {
+public class SwitchBackendConfirmationViewModel_V2 {
 
     // MARK: - State
 
@@ -33,12 +33,10 @@ final class SwitchBackendConfirmationViewModel_V2 {
     // MARK: - Life cycle
 
     private let didConfirm: (Bool) -> Void
-    private let showDetails: () -> Void
 
-    convenience init(
+    public convenience init(
         environment: BackendEnvironmentInfo,
-        didConfirm: @escaping (Bool) -> Void,
-        showDetails: @escaping () -> Void
+        didConfirm: @escaping (Bool) -> Void
     ) {
         self.init(
             backendName: environment.title,
@@ -48,8 +46,7 @@ final class SwitchBackendConfirmationViewModel_V2 {
             teamsURL: environment.teamsURL.absoluteString,
             accountsURL: environment.accountsURL.absoluteString,
             websiteURL: environment.websiteURL.absoluteString,
-            didConfirm: didConfirm,
-            showDetails: showDetails
+            didConfirm: didConfirm
         )
     }
 
@@ -61,8 +58,7 @@ final class SwitchBackendConfirmationViewModel_V2 {
         teamsURL: String,
         accountsURL: String,
         websiteURL: String,
-        didConfirm: @escaping (Bool) -> Void,
-        showDetails: @escaping () -> Void
+        didConfirm: @escaping (Bool) -> Void
     ) {
         self.backendName = backendName
         self.backendURL = backendURL
@@ -72,7 +68,6 @@ final class SwitchBackendConfirmationViewModel_V2 {
         self.accountsURL = accountsURL
         self.websiteURL = websiteURL
         self.didConfirm = didConfirm
-        self.showDetails = showDetails
     }
 
     // MARK: - Events
@@ -81,7 +76,6 @@ final class SwitchBackendConfirmationViewModel_V2 {
 
         case userDidCancel
         case userDidConfirm
-        case showDetails
 
     }
 
@@ -92,11 +86,8 @@ final class SwitchBackendConfirmationViewModel_V2 {
 
         case .userDidConfirm:
             didConfirm(true)
-
-        case .showDetails:
-            showDetails()
         }
-    }
 
+    }
 }
 

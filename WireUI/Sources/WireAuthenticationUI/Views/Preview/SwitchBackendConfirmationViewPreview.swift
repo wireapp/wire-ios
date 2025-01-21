@@ -20,10 +20,10 @@ import SwiftUI
 
 struct SwitchBackendConfirmationViewPreview: View {
 
-    @State private var showFullDetails: Bool
+    @State private var showFullDetails: Bool?
 
-    init(showFullDetails: Bool = false) {
-        self.showFullDetails = showFullDetails
+    init(showFullDetails: Bool) {
+        _showFullDetails = State(initialValue: showFullDetails)
     }
 
     var body: some View {
@@ -37,10 +37,10 @@ struct SwitchBackendConfirmationViewPreview: View {
                     teamsURL: "www.teams.staging.com",
                     accountsURL: "www.accounts.staging.com",
                     websiteURL: "www.wire.com",
-                    didConfirm: { _ in },
-                    showDetails: {}
+                    didConfirm: { _ in }
                 ),
-                showFullDetails: $showFullDetails
+                onShowDetails: {},
+                externalShowFullDetails: $showFullDetails
             )
         }
     }

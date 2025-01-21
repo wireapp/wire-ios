@@ -39,7 +39,7 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
     func testColorSchemeVariantsCollapsed() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = SwitchBackendConfirmationViewPreview()
+        let view = SwitchBackendConfirmationViewPreview(showFullDetails: false)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -54,7 +54,7 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
     func testDynamicTypeVariantsCollapsed() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = SwitchBackendConfirmationViewPreview()
+        let view = SwitchBackendConfirmationViewPreview(showFullDetails: false)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

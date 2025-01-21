@@ -18,16 +18,35 @@
 
 import SwiftUI
 
-struct SwitchBackendConfirmationView_V2: View {
+public struct SwitchBackendConfirmationView_V2: View {
+
+    // MARK: - Properties
+
+    @Environment(\.dismiss) var dismiss
+    @State private var internalShowFullDetails: Bool = false
+    // The purpose is to change `showFullDetails` in tests.
+    @Binding var externalShowFullDetails: Bool?
 
     private typealias Strings = L10n.SwitchBackendConfirmation
 
-    let viewModel: SwitchBackendConfirmationViewModel_V2
+    private let viewModel: SwitchBackendConfirmationViewModel_V2
+    private let onShowDetails: () -> Void
 
-    @Environment(\.dismiss) var dismiss
-    @Binding var showFullDetails: Bool
+    private var showFullDetails: Bool {
+        externalShowFullDetails ?? internalShowFullDetails
+    }
 
-    var body: some View {
+    init(
+        viewModel: SwitchBackendConfirmationViewModel_V2,
+        onShowDetails: @escaping () -> Void,
+        externalShowFullDetails: Binding<Bool?> = .constant(nil)
+    ) {
+        self.viewModel = viewModel
+        self.onShowDetails = onShowDetails
+        self._externalShowFullDetails = externalShowFullDetails
+    }
+
+    public var body: some View {
         VStack(spacing: 20) {
             title
             backendDetails
@@ -109,8 +128,8 @@ struct SwitchBackendConfirmationView_V2: View {
 
                 Button {
                     withAnimation {
-                        showFullDetails.toggle()
-                        viewModel.handleEvent(.showDetails)
+                        internalShowFullDetails.toggle()
+                        onShowDetails()
                     }
                 } label: {
                     Text(Strings.showDetails)
