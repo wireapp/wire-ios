@@ -64,6 +64,8 @@ extension ConversationLocalStore {
             case .mls:
                 let date = localConversation.lastModifiedDate ?? .now
 
+                localConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: date)
+
                 localConversation.appendMLSMigrationPotentialGapSystemMessage(
                     sender: sender, at: date
                 )
