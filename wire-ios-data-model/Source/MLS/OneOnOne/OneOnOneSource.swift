@@ -57,7 +57,7 @@ final class OneOnOneSource {
             allConversations.append(contentsOf: conversations)
         }
 
-        guard let candidate = candidate else { return nil }
+        guard let candidate else { return nil }
 
         return Result(
             candidate: candidate,
@@ -108,7 +108,8 @@ final class OneOnOneSource {
 private extension NSPredicate {
 
     static func mlsOneOnOne(otherUser: ZMUser) -> NSPredicate {
-        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isOneOnOne =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
         let isMLS = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
 
         return .all(of: [
@@ -143,8 +144,10 @@ private extension NSPredicate {
     }
 
     static func proteusOneOnOne(otherUser: ZMUser) -> NSPredicate {
-        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
-        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
+        let isOneOnOne =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isProteus =
+            NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
 
         return .all(of: [
             isOneOnOne,
@@ -155,8 +158,10 @@ private extension NSPredicate {
     }
 
     static func pendingProteusOneOnOne(otherUser: ZMUser) -> NSPredicate {
-        let isConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
-        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
+        let isConnection =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+        let isProteus =
+            NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
 
         return .all(of: [
             isConnection,

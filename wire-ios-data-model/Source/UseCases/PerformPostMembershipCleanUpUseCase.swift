@@ -87,7 +87,10 @@ public class ConnectionValidator {
             let fetchRequest = NSFetchRequest<ZMConnection>(entityName: ZMConnection.entityName())
             fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 NSPredicate(format: "NOT (status IN %@)", Self.keepConnectionStatuses().map(\.rawValue)),
-                NSPredicate(format: "to.teamIdentifier_data == %@", teamID.uuidData as NSData) // TODO: Do we need to check `to` is not nil?
+                NSPredicate(
+                    format: "to.teamIdentifier_data == %@",
+                    teamID.uuidData as NSData
+                ) // TODO: Do we need to check `to` is not nil?
             ])
 
             let connections = try context.fetch(fetchRequest)
@@ -117,7 +120,6 @@ public class ConnectionValidator {
 
         try await cleanUpState(for: searchResult)
     }
-
 
     /// Clean up the invalid connection to the given user if needed.
     ///
@@ -213,7 +215,7 @@ public class ConnectionValidator {
         }
     }
 
-    static private func keepConnectionStatuses() -> [ZMConnectionStatus] {
+    private static func keepConnectionStatuses() -> [ZMConnectionStatus] {
         [.accepted, .blocked]
     }
 

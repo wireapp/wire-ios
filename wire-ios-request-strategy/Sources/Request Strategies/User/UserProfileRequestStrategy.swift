@@ -230,11 +230,15 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
                     } else {
                         try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
                         if let userID {
-                            try await oneOnOneResolver.resolveOneOnOneConversation(with: userID, in: managedObjectContext)
+                            try await oneOnOneResolver.resolveOneOnOneConversation(
+                                with: userID,
+                                in: managedObjectContext
+                            )
                         }
                     }
                 } catch {
-                    WireLogger.individualToTeamMigration.error("failed to clean up invalid connection: \(String(describing: error))")
+                    WireLogger.individualToTeamMigration
+                        .error("failed to clean up invalid connection: \(String(describing: error))")
                 }
             }
         }

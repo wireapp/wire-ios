@@ -237,7 +237,6 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
     // 4 possible 1:1 conversations . May also be duplicate fake 1:1 conversations
     // Before resolving make sure there is a correct 1:1 conversation linked to user
 
-
     private func processUserConnectionEvent(_ payload: Payload.UserConnectionEvent) {
         let context = managedObjectContext
 
