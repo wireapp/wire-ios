@@ -47,6 +47,9 @@ static NSString * const FirstEnqueuedSaveKey = @"ZMTimeOfLastSave";
 static NSString * const FailedToEstablishSessionStoreKey = @"FailedToEstablishSessionStoreKey";
 static NSString * const DisplayNameGeneratorKey = @"DisplayNameGeneratorKey";
 static NSString * const DelayedSaveActivityKey = @"DelayedSaveActivityKey";
+static NSString * const WireCoreDataErrorDomain = @"ZMCoreDataDomain";
+
+static NSUInteger const CoreDataNoStoreError = 1;
 
 static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 //
@@ -258,7 +261,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     ZMLogDebug(@"%@ <%@: %p>.", NSStringFromSelector(_cmd), self.class, self);
     NSPersistentStore* store = [self firstPersistentStore];
     if(store == nil) {
-        NSError* error = [NSError errorWithDomain:@"WireCoreDataError" code:1 userInfo:nil];
+        NSError* error = [NSError errorWithDomain:WireCoreDataErrorDomain code:CoreDataNoStoreError userInfo:nil];
         [WireLoggerObjC logSaveCoreDataError:error];
         return YES;
     }
