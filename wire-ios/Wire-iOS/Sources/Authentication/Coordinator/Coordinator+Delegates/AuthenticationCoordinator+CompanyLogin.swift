@@ -21,7 +21,7 @@ import UIKit
 import WireTransport
 
 extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
-    
+
     func controller(_ controller: CompanyLoginController, presentAlert alert: UIAlertController) {
         if presenter?.view.window == nil {
             // the alert cannot be presented now, queue it for later
@@ -30,7 +30,7 @@ extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
             presenter?.present(alert, animated: true)
         }
     }
-    
+
     func controller(_ controller: CompanyLoginController, showLoadingView: Bool) {
         if showLoadingView {
             startActivityIndicator()
@@ -38,19 +38,19 @@ extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
             stopActivityIndicator()
         }
     }
-    
+
     func controllerDidStartBackendSwitch(_ controller: CompanyLoginController, toURL url: URL) {
         stateController.transition(to: .switchBackend(url: url), mode: .replace)
     }
-    
+
     func controllerDidStartCompanyLoginFlow(_ controller: CompanyLoginController) {
         stateController.transition(to: .companyLogin)
     }
-    
+
     func controllerDidCancelCompanyLoginFlow(_ controller: CompanyLoginController) {
         cancelCompanyLogin()
     }
-    
+
     func controller(
         _ controller: CompanyLoginController,
         didRequestUserConfirmationToSwitchToBackend environment: BackendEnvironment,
@@ -60,49 +60,8 @@ extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
             environment: environment,
             didConfirm: didConfirm
         )
-        let view = SwitchBackendConfirmationView(viewModel: viewModel, changeHeight: {})
+        let view = SwitchBackendConfirmationView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
         presenter?.present(hostingController, animated: true)
     }
 }
-
-//    func controller(
-//        _ controller: CompanyLoginController,
-//        didRequestUserConfirmationToSwitchToBackend environment: BackendEnvironment,
-//        didConfirm: @escaping (Bool) -> Void
-//    ) {
-//        let viewModel = SwitchBackendConfirmationViewModel(
-//            environment: environment,
-//            didConfirm: didConfirm
-//        )
-//        let view = SwitchBackendConfirmationView(viewModel: viewModel)
-//        let hostingController = UIHostingController(rootView: view)
-//
-//        if let sheet = hostingController.sheetPresentationController {
-//            sheet.detents = [.medium()/*, .large()*/]
-//            sheet.prefersGrabberVisible = true
-//            sheet.selectedDetentIdentifier = .medium
-//        }
-//
-//        presenter?.present(hostingController, animated: true)
-//    }
-
-//    func controller(
-//        _ controller: CompanyLoginController,
-//        didRequestUserConfirmationToSwitchToBackend environment: BackendEnvironment,
-//        didConfirm: @escaping (Bool) -> Void
-//    ) {
-//        let sheetViewController = SheetViewController()
-//        if let sheet = sheetViewController.sheetPresentationController {
-//            sheet.detents = [.medium()]
-//        }
-//        presenter?.present(sheetViewController, animated: true)
-//    }
-//
-//}
-//
-//class SheetViewController: UIViewController {
-//    override func viewDidLoad() {
-//        self.view.backgroundColor = .red
-//    }
-//}

@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct BackendEnvironment: Sendable {
+public struct BackendEnvironmentInfo: Sendable {
 
     let title: String
     let backendURL: URL

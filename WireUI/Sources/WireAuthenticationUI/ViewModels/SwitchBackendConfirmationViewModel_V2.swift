@@ -36,7 +36,7 @@ final class SwitchBackendConfirmationViewModel_V2 {
     private let showDetails: () -> Void
 
     convenience init(
-        environment: BackendEnvironment,
+        environment: BackendEnvironmentInfo,
         didConfirm: @escaping (Bool) -> Void,
         showDetails: @escaping () -> Void
     ) {

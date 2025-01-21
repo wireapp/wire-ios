@@ -142,39 +142,39 @@ class URLActionRouter: URLActionRouterProtocol {
 // MARK: - PresentationDelegate
 
 extension URLActionRouter: PresentationDelegate {
-
+    
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
-
+        
         let alertController = UIAlertController(
             title: ConversationAlert.title(conversationName),
             message: ConversationAlert.message,
             preferredStyle: .alert
         )
-
+        
         alertController.addTextField { textField in
             textField.placeholder = ConversationAlert.Textfield.placeholder
             textField.isSecureTextEntry = true
         }
-
+        
         let joinAction = UIAlertAction(title: ConversationAlert.JoinAction.title, style: .default) { _ in
             let password = alertController.textFields?.first?.text
             completion(password)
         }
-
+        
         let helpLinkURL = WireURLs.shared.guestLinksInfo
         let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
             UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
         }
-
+        
         let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { _ in
             completion(nil)
         }
-
+        
         alertController.addAction(joinAction)
         alertController.addAction(learnMoreAction)
         alertController.addAction(cancelAction)
-
+        
         // Use the rootViewController to present the alert
         if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
             rootViewController().present(alertController, animated: true)
@@ -182,19 +182,19 @@ extension URLActionRouter: PresentationDelegate {
             pendingAlert = alertController
         }
     }
-
+    
     // MARK: - Public Implementation
-
+    
     func failedToPerformAction(_ action: URLAction, error: Error) {
         let localizedError = mapToLocalizedError(error)
         presentLocalizedErrorAlert(localizedError)
     }
-
+    
     func completedURLAction(_ action: URLAction) {
         guard case URLAction.companyLoginSuccess = action else { return }
         notifyCompanyLoginCompletion()
     }
-
+    
     func shouldPerformAction(_ action: URLAction, decisionHandler: @escaping (Bool) -> Void) {
         typealias UrlAction = L10n.Localizable.UrlAction
         switch action {
@@ -212,7 +212,7 @@ extension URLActionRouter: PresentationDelegate {
             decisionHandler(true)
         }
     }
-
+    
     func shouldPerformActionWithMessage(
         _ message: String,
         action: URLAction,
@@ -229,46 +229,46 @@ extension URLActionRouter: PresentationDelegate {
             decisionHandler(true)
         }
     }
-
+    
     func showConnectionRequest(userId: UUID) {
         navigate(to: .connectionRequest(userId))
     }
-
+    
     func showUserProfile(user: UserType) {
         navigate(to: .userProfile(user))
     }
-
+    
     func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {
         navigate(to: .conversation(conversation, message))
     }
-
+    
     func showConversationList() {
         navigate(to: .conversationList)
     }
-
+    
     // MARK: - Private Implementation
-
+    
     private func notifyCompanyLoginCompletion() {
         NotificationCenter.default.post(name: .companyLoginDidFinish, object: self)
     }
-
+    
     private func presentConfirmationAlert(title: String?, message: String, decisionHandler: @escaping (Bool) -> Void) {
-
+        
         let alert = UIAlertController(
             title: title,
             message: message,
             preferredStyle: .alert
         )
-
+        
         let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
         alert.addAction(agreeAction)
-
+        
         let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
         alert.addAction(cancelAction)
-
+        
         presentAlert(alert)
     }
-
+    
     private func switchBackend(configURL: URL) {
         guard
             SecurityFlags.customBackend.isEnabled,
@@ -276,10 +276,10 @@ extension URLActionRouter: PresentationDelegate {
         else {
             return
         }
-
+        
         sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
             guard let self else { return }
-
+            
             switch result {
             case let .success(backendEnvironment):
                 requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
@@ -287,28 +287,14 @@ extension URLActionRouter: PresentationDelegate {
                     sessionManager.switchBackend(to: backendEnvironment)
                     BackendEnvironment.shared = backendEnvironment
                 }
-
+                
             case let .failure(error):
                 let localizedError = mapToLocalizedError(error)
                 presentLocalizedErrorAlert(localizedError)
             }
         }
     }
-
-//    private func requestUserConfirmationToSwitchBackend(
-//        _ environment: BackendEnvironment,
-//        didConfirm: @escaping (Bool) -> Void
-//    ) {
-//        let viewModel = SwitchBackendConfirmationViewModel(
-//            environment: environment,
-//            didConfirm: didConfirm
-//        )
-//
-//        let view = SwitchBackendConfirmationView(viewModel: viewModel)
-//        let hostingController = UIHostingController(rootView: view)
-//        rootViewController().present(hostingController, animated: true)
-//    }
-
+    
     private func requestUserConfirmationToSwitchBackend(
         _ environment: BackendEnvironment,
         didConfirm: @escaping (Bool) -> Void
@@ -317,50 +303,10 @@ extension URLActionRouter: PresentationDelegate {
             environment: environment,
             didConfirm: didConfirm
         )
-
-       // let view = SwitchBackendConfirmationView(viewModel: viewModel)
-        let hostingController = SheetViewController(viewModel: viewModel)
-        if let sheet = hostingController.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
-            sheet.prefersGrabberVisible = true
-        }
-
+        
+        let view = SwitchBackendConfirmationView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: view)
         rootViewController().present(hostingController, animated: true)
-    }
-
-
-}
-
-class SheetViewController: UIHostingController<SwitchBackendConfirmationView> {
-
-    private let viewModel: SwitchBackendConfirmationViewModel
-
-    public init(
-        viewModel: SwitchBackendConfirmationViewModel
-    ) {
-        self.viewModel = viewModel
-
-        super.init(rootView: SwitchBackendConfirmationView(viewModel: viewModel, changeHeight: {}))
-
-        rootView = SwitchBackendConfirmationView(viewModel: viewModel, changeHeight: { [weak self] in
-            self?.changeHeight()
-        })
-    }
-
-    @available(*, unavailable)
-    @MainActor
-    dynamic required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func changeHeight() {
-        guard let sheet = sheetPresentationController else {
-            return
-        }
-        let oldValue = sheet.selectedDetentIdentifier ?? .medium
-        sheet.animateChanges {
-            sheet.selectedDetentIdentifier = oldValue.oppositeValue
-        }
     }
 }
 
