@@ -217,7 +217,7 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
                     let connectionValidator = ConnectionValidator(context: managedObjectContext)
                     try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
                 } catch {
-                    WireLogger.individualToTeamMigration.error("failed to clean up invalid connectin: \(String(describing: error))")
+                    WireLogger.individualToTeamMigration.error("failed to clean up invalid connection: \(String(describing: error))")
                 }
             }
         }
