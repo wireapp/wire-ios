@@ -19,7 +19,7 @@
 import SwiftUI
 import WireDesign
 
-public class PasswordFieldViewModel: ObservableObject {
+public final class PasswordFieldViewModel: ObservableObject {
 
     @Published public private(set) var arePasswordRulesVisible: Bool
     @Published public fileprivate(set) var isPasswordValid: Bool
@@ -44,6 +44,7 @@ public class PasswordFieldViewModel: ObservableObject {
     }
 }
 
+// [WPB-15571] Add accessibility strings to the mask / unmask buttons
 public struct PasswordField: View {
     @ObservedObject private var viewModel: PasswordFieldViewModel
 
@@ -123,18 +124,18 @@ public struct PasswordField: View {
 
 // MARK: - Previews
 
-struct MockPasswordValidator: PasswordValidator {
+package struct MockPasswordValidator: PasswordValidator {
     let validationCallback: @Sendable (String) -> Bool
 
-    init(validationCallback: @Sendable @escaping (String) -> Bool) {
+    package init(validationCallback: @Sendable @escaping (String) -> Bool) {
         self.validationCallback = validationCallback
     }
 
-    func validate(_ password: String) -> Bool {
+    package func validate(_ password: String) -> Bool {
         validationCallback(password)
     }
 
-    var localizedRulesDescription: String? {
+    package var localizedRulesDescription: String? {
         "Password rules"
     }
 }
