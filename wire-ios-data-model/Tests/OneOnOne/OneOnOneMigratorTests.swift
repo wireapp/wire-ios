@@ -305,10 +305,14 @@ final class OneOnOneMigratorTests: XCTestCase {
         connection.lastUpdateDate = .now
 
         let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.conversationType = .connection
+        conversation.conversationType = .oneOnOne
         conversation.remoteIdentifier = .create()
         conversation.domain = "local@domain.com"
         conversation.oneOnOneUser = connection.to
+
+        let selfUser = ZMUser.selfUser(in: context)
+        ParticipantRole.create(managedObjectContext: context, user: selfUser, conversation: conversation)
+        ParticipantRole.create(managedObjectContext: context, user: user, conversation: conversation)
 
         return (connection, conversation)
     }

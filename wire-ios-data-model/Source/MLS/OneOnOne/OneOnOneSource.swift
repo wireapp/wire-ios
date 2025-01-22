@@ -71,7 +71,7 @@ final class OneOnOneSource {
 
     func fetchOneOnOnes(user: ZMUser, types: [OneOnOneType]) throws -> [ZMConversation] {
         let selfUser = ZMUser.selfUser(in: context)
-        let predicate = NSPredicate.all(
+        let predicate = NSPredicate.any(
             of: types.map { Self.predicate(type: $0, selfUser: selfUser, otherUser: user) }
         )
 

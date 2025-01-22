@@ -61,7 +61,7 @@ final class ConnectionPayloadProcessor {
         conversation.lastModifiedDate = payload.lastUpdate
         conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
-        // This conversation we link here may be wrong and may need to be unset using `ConnectionValidator`.
+        // The conversation we link here may be wrong and may need to be unset using `ConnectionValidator`.
         connection.to.oneOnOneConversation = conversation
         connection.status = payload.status.internalStatus
         connection.lastUpdateDateInGMT = payload.lastUpdate
