@@ -43,7 +43,7 @@ public final class PasswordFieldViewModel: ObservableObject {
     }
 }
 
-// [WPB-15571] Add accessibility strings to the mask / unmask buttons
+// TODO: [WPB-15571] Add accessibility strings to the mask / unmask buttons
 public struct PasswordField: View {
     @FocusState private var isFocused: Bool
     @ObservedObject private var viewModel: PasswordFieldViewModel
