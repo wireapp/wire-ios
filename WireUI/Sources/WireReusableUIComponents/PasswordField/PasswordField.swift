@@ -47,6 +47,9 @@ public final class PasswordFieldViewModel: ObservableObject {
 public struct PasswordField: View {
     @FocusState private var isFocused: Bool
     @ObservedObject private var viewModel: PasswordFieldViewModel
+    // TextField and SecureField have different heights. Switching between them causes the view to jump.
+    // But we also want their height to change with dynamic font sizes. Hence @ScaledMetric.
+    @ScaledMetric private var fieldHeight: CGFloat = 48
 
     private let placeholder: String
     private let title: String
@@ -67,28 +70,26 @@ public struct PasswordField: View {
                 .font(.subheadline)
                 .foregroundColor(calculatedColor)
 
-            ZStack {
+            HStack {
                 if viewModel.isPasswordVisible {
                     TextField(placeholder, text: $viewModel.password)
                         .wireTextStyle(.body1)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(height: fieldHeight)
                         .focused($isFocused)
                 } else {
                     SecureField(placeholder, text: $viewModel.password)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(height: fieldHeight)
                         .focused($isFocused)
                 }
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        viewModel.isPasswordVisible.toggle()
-                    }, label: {
-                        Image(systemName: viewModel.isPasswordVisible ? "eye" : "eye.slash")
-                            .foregroundColor(.gray)
-                    })
-                    .padding(.trailing, 10)
-                }
+                Spacer()
+                Button(action: {
+                    viewModel.isPasswordVisible.toggle()
+                }, label: {
+                    Image(systemName: viewModel.isPasswordVisible ? "eye" : "eye.slash")
+                        .foregroundColor(.gray)
+                })
             }
+            .padding(.horizontal, 12)
             .overlay(
                 RoundedRectangle(cornerRadius: 5)
                     .stroke(
