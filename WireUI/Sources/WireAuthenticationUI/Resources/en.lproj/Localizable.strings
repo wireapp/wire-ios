@@ -36,6 +36,6 @@
 "switch_backend_confirmation.show_details" = "Show details";
 
 "verification_code.title" = "You’ve got mail";
-"verification_code.message" = "Enter the verification code we sent to name.name@mail.com.";
+"verification_code.message" = "Enter the verification code we sent to (%@).";
 "verification_code.confirm" = "Confirm";
 "verification_code.resend_code" = "Resend Code";

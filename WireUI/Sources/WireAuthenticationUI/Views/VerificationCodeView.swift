@@ -18,32 +18,35 @@
 
 import SwiftUI
 
-struct VerificationCodeView: View {
+public struct VerificationCodeView: View {
 
     @State private var code: [String]
     @FocusState private var focusedIndex: Int?
 
+    private let receiver: String
     private let onConfirm: ([String]) -> Void
     private let onResend: () -> Void
 
-    init(
+    public init(
         initialCode: [String] = Array(repeating: "", count: 6),
+        receiver: String,
         onConfirm: @escaping ([String]) -> Void,
         onResend: @escaping () -> Void
     ) {
         self._code = State(initialValue: initialCode)
+        self.receiver = receiver
         self.onConfirm = onConfirm
         self.onResend = onResend
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 20) {
             Text(L10n.VerificationCode.title)
                 .font(.textStyle(.h2))
                 .foregroundStyle(Color.primaryText)
                 .multilineTextAlignment(.center)
 
-            Text(L10n.VerificationCode.message)
+            Text(L10n.VerificationCode.message(receiver))
                 .wireTextStyle(.body1)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
@@ -102,6 +105,7 @@ struct VerificationCodeView: View {
 
 #Preview("Empty code") {
     VerificationCodeView(
+        receiver: "name@name.com",
         onConfirm: {_ in },
         onResend: {}
     )
@@ -110,6 +114,7 @@ struct VerificationCodeView: View {
 #Preview("Not empty code") {
     VerificationCodeView(
         initialCode: ["1", "2", "3", "4", "5", ""],
+        receiver: "name@name.com",
         onConfirm: {_ in },
         onResend: {}
     )

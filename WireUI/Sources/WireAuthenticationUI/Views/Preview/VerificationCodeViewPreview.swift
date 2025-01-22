@@ -25,6 +25,7 @@ struct VerificationCodeView_Previews: View {
     var body: some View {
         VerificationCodeView(
             initialCode: code,
+            receiver: "name@name.com",
             onConfirm: {_ in },
             onResend: {}
         )
