@@ -160,10 +160,10 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             )
 
             // Move local messages from all proteus conversations
-            for conversation in proteusConversations {
+            for proteusConversation in proteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(conversation.allMessages)
+                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
             }
 
             if !proteusConversations.isEmpty {
