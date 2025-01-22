@@ -65,6 +65,11 @@ public struct UpdateConnectionAction: EntityAction {
         self.connectionID = connection.objectID
         self.newStatus = newStatus
     }
+
+    public init(connectionID: NSManagedObjectID, newStatus: ZMConnectionStatus) {
+        self.connectionID = connectionID
+        self.newStatus = newStatus
+    }
 }
 
 public extension ZMUser {
