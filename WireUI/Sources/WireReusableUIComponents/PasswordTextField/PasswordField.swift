@@ -20,7 +20,6 @@ import SwiftUI
 import WireDesign
 
 public final class PasswordFieldViewModel: ObservableObject {
-
     @Published public private(set) var arePasswordRulesVisible: Bool
     @Published public fileprivate(set) var isPasswordValid: Bool
     @Published public fileprivate(set) var isPasswordVisible: Bool
@@ -46,6 +45,7 @@ public final class PasswordFieldViewModel: ObservableObject {
 
 // [WPB-15571] Add accessibility strings to the mask / unmask buttons
 public struct PasswordField: View {
+    @FocusState private var isFocused: Bool
     @ObservedObject private var viewModel: PasswordFieldViewModel
 
     private let placeholder: String
@@ -72,9 +72,11 @@ public struct PasswordField: View {
                     TextField(placeholder, text: $viewModel.password)
                         .wireTextStyle(.body1)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .focused($isFocused)
                 } else {
                     SecureField(placeholder, text: $viewModel.password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .focused($isFocused)
                 }
                 HStack {
                     Spacer()

@@ -25,6 +25,7 @@ import XCTest
 final class PasswordFieldSnapshotTests: XCTestCase {
 
     // MARK: - Properties
+
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
@@ -124,12 +125,12 @@ final class PasswordFieldSnapshotTests: XCTestCase {
 }
 
 @MainActor @ViewBuilder
-fileprivate func view(for viewModel: PasswordFieldViewModel) -> some View {
+private func view(for viewModel: PasswordFieldViewModel) -> some View {
     let screenBounds = UIScreen.main.bounds
     PasswordField(
-       viewModel: viewModel,
-       placeholder: L10n.Passwordtextfield.Preview.placeholder,
-       title: L10n.Passwordtextfield.Preview.title
-   )
-   .frame(width: screenBounds.width, height: screenBounds.height)
+        viewModel: viewModel,
+        placeholder: L10n.Passwordtextfield.Preview.placeholder,
+        title: L10n.Passwordtextfield.Preview.title
+    )
+    .frame(width: screenBounds.width, height: screenBounds.height)
 }
