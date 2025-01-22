@@ -56,12 +56,12 @@ public class ConnectionValidator {
     /// Clean up all invalid connections.
     ///
     /// Invoking this method will search the local database for invalid
-    /// invalid connections and reject them all. As a result, only valid
-    /// connections will remain in the database.
+    /// connections and reject them all. As a result, only connections will
+    /// remain in the database.
     ///
     /// A connection is considered invalid if it is pending (i.e not accepted,
     /// not blocked) and between the self user and a fellow team member. This
-    /// can happen if the a pending connection exists between the self user
+    /// can happen if the pending connection exists between the self user
     /// and another user while both users are not in the same team, but then
     /// later become part of the same team (e.g via invitation). Already
     /// established connections with users that later become team members are
