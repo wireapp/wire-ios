@@ -107,7 +107,7 @@ public struct VerificationCodeView: View {
     VerificationCodeView(
         receiver: "name@name.com",
         onConfirm: { _ in },
-        onResend: { }
+        onResend: {}
     )
 }
 
@@ -116,6 +116,6 @@ public struct VerificationCodeView: View {
         initialCode: ["1", "2", "3", "4", "5", ""],
         receiver: "name@name.com",
         onConfirm: { _ in },
-        onResend: { }
+        onResend: {}
     )
 }
