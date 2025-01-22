@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class AuthenticationIdentityInputView: XCTestCase {
+class AuthenticationIdentityInputViewTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
