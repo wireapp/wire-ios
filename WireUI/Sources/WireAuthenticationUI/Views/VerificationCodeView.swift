@@ -20,8 +20,21 @@ import SwiftUI
 
 struct VerificationCodeView: View {
 
-    @State private var code: [String] = Array(repeating: "", count: 6)
+    @State private var code: [String]
     @FocusState private var focusedIndex: Int?
+
+    private let onConfirm: ([String]) -> Void
+    private let onResend: () -> Void
+
+    init(
+        initialCode: [String] = Array(repeating: "", count: 6),
+        onConfirm: @escaping ([String]) -> Void,
+        onResend: @escaping () -> Void
+    ) {
+        self._code = State(initialValue: initialCode)
+        self.onConfirm = onConfirm
+        self.onResend = onResend
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -38,29 +51,37 @@ struct VerificationCodeView: View {
             HStack(spacing: 10) {
                 ForEach(0..<6, id: \.self) { index in
                     TextField("", text: $code[index])
-                        .frame(width: 50, height: 50)
+                        .frame(width: 50, height: 56)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(
+                                    focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
+                                    lineWidth: 1
+                                )
+                        )
                         .multilineTextAlignment(.center)
-                        .font(.title2)
+                        .font(.textStyle(.h2))
                         .foregroundColor(.primary)
                         .keyboardType(.numberPad)
                         .focused($focusedIndex, equals: index)
-                        .textFieldStyle(.roundedBorder)
                         .onChange(of: code[index]) { newValue in
                             if newValue.count > 1 {
-                                code[index] = String(newValue.prefix(1)) // Keep only 1 character
+                                code[index] = String(newValue.prefix(1))
                             }
                             if !newValue.isEmpty && index < 5 {
-                                focusedIndex = index + 1 // Move to the next field
+                                focusedIndex = index + 1
                             } else if newValue.isEmpty && index > 0 {
-                                focusedIndex = index - 1 // Move to the previous field
+                                focusedIndex = index - 1
                             }
+                        }
+                        .onChange(of: focusedIndex) { newValue in
+                            print("Focused Index changed to: \(newValue ?? -1)")
                         }
                 }
             }
 
             Button(action: {
-                confirmCode()
-//                actionCallback(.submit(identity: identity))
+                onConfirm(code)
             }, label: {
                 Text(L10n.VerificationCode.confirm)
             })
@@ -68,8 +89,7 @@ struct VerificationCodeView: View {
             .padding(.horizontal)
 
             Button(action: {
-                resendCode()
-//                actionCallback(.submit(identity: identity))
+                onResend()
             }, label: {
                 Text(L10n.VerificationCode.resendCode)
             })
@@ -78,22 +98,19 @@ struct VerificationCodeView: View {
         .padding()
     }
 
-    private func confirmCode() {
-        print("Code entered: \(code.joined())")
-    }
-
-    private func resendCode() {
-        print("Resend code tapped")
-    }
-
 }
 
-//struct VerificationCodeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VerificationCodeView()
-//    }
-//}
+#Preview("Empty code") {
+    VerificationCodeView(
+        onConfirm: {_ in },
+        onResend: {}
+    )
+}
 
-#Preview {
-    VerificationCodeView()
+#Preview("Not empty code") {
+    VerificationCodeView(
+        initialCode: ["1", "2", "3", "4", "5", ""],
+        onConfirm: {_ in },
+        onResend: {}
+    )
 }
