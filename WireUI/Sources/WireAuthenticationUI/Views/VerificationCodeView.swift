@@ -52,7 +52,7 @@ public struct VerificationCodeView: View {
                 .foregroundStyle(Color.primaryText)
 
             HStack(spacing: 10) {
-                ForEach(0..<6, id: \.self) { index in
+                ForEach(0 ..< 6, id: \.self) { index in
                     TextField("", text: $code[index])
                         .frame(width: 50, height: 56)
                         .background(
@@ -71,9 +71,9 @@ public struct VerificationCodeView: View {
                             if newValue.count > 1 {
                                 code[index] = String(newValue.prefix(1))
                             }
-                            if !newValue.isEmpty && index < 5 {
+                            if !newValue.isEmpty, index < 5 {
                                 focusedIndex = index + 1
-                            } else if newValue.isEmpty && index > 0 {
+                            } else if newValue.isEmpty, index > 0 {
                                 focusedIndex = index - 1
                             }
                         }
@@ -106,8 +106,8 @@ public struct VerificationCodeView: View {
 #Preview("Empty code") {
     VerificationCodeView(
         receiver: "name@name.com",
-        onConfirm: {_ in },
-        onResend: {}
+        onConfirm: { _ in },
+        onResend: { }
     )
 }
 
@@ -115,7 +115,7 @@ public struct VerificationCodeView: View {
     VerificationCodeView(
         initialCode: ["1", "2", "3", "4", "5", ""],
         receiver: "name@name.com",
-        onConfirm: {_ in },
-        onResend: {}
+        onConfirm: { _ in },
+        onResend: { }
     )
 }
