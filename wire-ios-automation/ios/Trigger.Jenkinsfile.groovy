@@ -80,6 +80,6 @@ node('built-in') {
     }
 
     stage('Trigger test job') {
-      build job: "$TEST_JOB", parameters: [string(name: 'TAGS', value: "$TAGS"), string(name: 'GIT_BRANCH', value: "$GIT_BRANCH"), string(name: 'Track', value: "Development"), string(name: 'AppBuildNumber', value: "latest")], wait: false
+      build job: "$TEST_JOB", parameters: [string(name: 'TAGS', value: "$TAGS"), string(name: 'GIT_BRANCH', value: "$GIT_BRANCH_IOS"), string(name: 'Track', value: "Development"), string(name: 'AppBuildNumber', value: "latest")], wait: false
     }
 }
