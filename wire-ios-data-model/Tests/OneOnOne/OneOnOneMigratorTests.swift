@@ -300,7 +300,6 @@ final class OneOnOneMigratorTests: XCTestCase {
     ) -> (ZMConnection, ZMConversation) {
         let connection = ZMConnection.insertNewObject(in: context)
         connection.to = user
-        connection.status = status
         connection.message = "Connect to me"
         connection.lastUpdateDate = .now
 
@@ -309,6 +308,13 @@ final class OneOnOneMigratorTests: XCTestCase {
         conversation.remoteIdentifier = .create()
         conversation.domain = "local@domain.com"
         conversation.oneOnOneUser = connection.to
+
+        let selfUser = ZMUser.selfUser(in: context)
+        ParticipantRole.create(managedObjectContext: context, user: selfUser, conversation: conversation)
+        ParticipantRole.create(managedObjectContext: context, user: user, conversation: conversation)
+
+        // Setting `status` late as it also updates `conversation.conversationType` to be correct.
+        connection.status = status
 
         return (connection, conversation)
     }

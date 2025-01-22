@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import DifferenceKit
 import Foundation
 import WireDataModel
@@ -218,6 +219,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     private var conversationDirectoryToken: Any?
+    private var tokens = Set<AnyCancellable>()
 
     let userSession: UserSession?
 
@@ -232,6 +234,18 @@ final class ConversationListViewModel: NSObject {
 
     private func setupObservers() {
         conversationDirectoryToken = userSession?.conversationDirectory.addObserver(self)
+
+        // TODO: [WPB-15469] Remove casting and see if there is a better way to call `refreshAllLists`.
+        guard let user = userSession?.selfUser as? ZMUser else { return }
+
+        user.publisher(for: \.teamIdentifier)
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sink { [weak userSession] _ in
+                guard let userSession else { return }
+
+                userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
+            }.store(in: &tokens)
     }
 
     func sectionHeaderTitle(sectionIndex: Int) -> String? {
