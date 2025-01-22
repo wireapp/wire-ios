@@ -89,32 +89,32 @@ public struct LabeledTextField: View {
     }
 
     private var titleColor: Color {
-            if isEnabled && isFocused {
-                return ColorTheme.Base.onPrimaryVariant.color
-            }
-            if isEnabled {
-                return ColorTheme.Base.labelTitle.color
-            }
+        if isEnabled, isFocused {
+            return ColorTheme.Base.onPrimaryVariant.color
+        }
+        if isEnabled {
             return ColorTheme.Base.labelTitle.color
         }
+        return ColorTheme.Base.labelTitle.color
+    }
 
-        private var labelColor: Color {
-            isEnabled ? .primaryText : ColorTheme.Base.onDisabled.color
+    private var labelColor: Color {
+        isEnabled ? .primaryText : ColorTheme.Base.onDisabled.color
+    }
+
+    private var labelBackgroundColor: Color {
+        isEnabled ? .clear : ColorTheme.Backgrounds.background.color
+    }
+
+    private var labelBorderColor: Color {
+        if isEnabled, isFocused {
+            return ColorTheme.Base.onPrimaryVariant.color
         }
-
-        private var labelBackgroundColor: Color {
-            isEnabled ? .clear : ColorTheme.Backgrounds.background.color
-        }
-
-        private var labelBorderColor: Color {
-            if isEnabled && isFocused {
-                return ColorTheme.Base.onPrimaryVariant.color
-            }
-            if isEnabled {
-                return ColorTheme.Strokes.outline.color
-            }
+        if isEnabled {
             return ColorTheme.Strokes.outline.color
         }
+        return ColorTheme.Strokes.outline.color
+    }
 }
 
 #Preview {
