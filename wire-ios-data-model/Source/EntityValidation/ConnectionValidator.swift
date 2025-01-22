@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import WireLogging
 
 /// An object responsible for correcting invalid state regarding
 /// user connections.
@@ -144,7 +145,7 @@ public class ConnectionValidator {
                 return SearchResult()
             }
 
-            var invalidConnections = [connection.objectID]
+            let invalidConnections = [connection.objectID]
             var connectionsToCancel: [NSManagedObjectID] = []
             var connectionsToIgnore: [NSManagedObjectID] = []
 
@@ -169,43 +170,59 @@ public class ConnectionValidator {
     }
 
     private func cleanUpState(for searchResult: SearchResult) async throws {
+        var allInvalidConnections = searchResult.invalidConnections
+
         // Cancel outgoing connections.
         for connectionID in searchResult.connectionsToCancel {
-            try await updateConnectionStatus(
-                connectionID: connectionID,
-                newStatus: .cancelled,
-                context: context
-            )
+            do {
+                try await updateConnectionStatus(
+                    connectionID: connectionID,
+                    newStatus: .cancelled,
+                    context: context
+                )
+            } catch {
+                WireLogger.connectionValidator.warn("Failed to cancel connection with error: \(error)")
+                allInvalidConnections.removeAll { $0 == connectionID }
+            }
         }
 
         // Ignore incoming connections.
         for connectionID in searchResult.connectionsToIgnore {
-            try await updateConnectionStatus(
-                connectionID: connectionID,
-                newStatus: .ignored,
-                context: context
-            )
+            do {
+                try await updateConnectionStatus(
+                    connectionID: connectionID,
+                    newStatus: .ignored,
+                    context: context
+                )
+            } catch {
+                WireLogger.connectionValidator.warn("Failed to ignore connection with error: \(error)")
+                allInvalidConnections.removeAll { $0 == connectionID }
+            }
         }
 
         // Invalidate and unlink the associated conversation.
         try await context.perform { [context] in
-            let connections = try searchResult.invalidConnections.map {
-                try context.existingObject(with: $0) as! ZMConnection
+            let connections: [ZMConnection] = allInvalidConnections.compactMap {
+                guard let connection = try? context.existingObject(with: $0) as? ZMConnection else {
+                    WireLogger.connectionValidator.error("Failed to fetch connection with objectID: \($0)")
+                    return nil
+                }
+                return connection
             }
 
             for connection in connections {
-                guard let existinOneOnOne = connection.to?.oneOnOneConversation else {
+                guard let existingOneOnOne = connection.to?.oneOnOneConversation else {
                     continue
                 }
 
                 // We also check for `invalid` because rejecting the connection may change
                 // the conversation type to invalid.
-                guard existinOneOnOne.conversationType.isOne(of: .invalid, .connection) else {
+                guard existingOneOnOne.conversationType.isOne(of: .invalid, .connection) else {
                     continue
                 }
 
-                existinOneOnOne.conversationType = .invalid
-                existinOneOnOne.oneOnOneUser = nil
+                existingOneOnOne.conversationType = .invalid
+                existingOneOnOne.oneOnOneUser = nil
             }
 
             try context.save()
@@ -225,4 +242,8 @@ public class ConnectionValidator {
         try await action.perform(in: context.notificationContext)
     }
 
+}
+
+private extension WireLogger {
+    static let connectionValidator = WireLogger(tag: "ConnectionValidator")
 }
