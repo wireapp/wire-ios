@@ -19,15 +19,15 @@
 import Foundation
 import SwiftUI
 
-package class SwitchBackendConfirmationHostingController: UIHostingController<SwitchBackendConfirmationView_V2> {
+package class SwitchBackendConfirmationHostingController: UIHostingController<SwitchBackendConfirmationView> {
 
-    private let viewModel: SwitchBackendConfirmationViewModel_V2
+    private let viewModel: SwitchBackendConfirmationViewModel
 
-    public init(viewModel: SwitchBackendConfirmationViewModel_V2) {
+    public init(viewModel: SwitchBackendConfirmationViewModel) {
         self.viewModel = viewModel
 
-        super.init(rootView: SwitchBackendConfirmationView_V2(viewModel: viewModel, onShowDetails: {}))
-        rootView = SwitchBackendConfirmationView_V2(
+        super.init(rootView: SwitchBackendConfirmationView(viewModel: viewModel, onShowDetails: {}))
+        rootView = SwitchBackendConfirmationView(
             viewModel: viewModel,
             onShowDetails: changeViewState
         )

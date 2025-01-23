@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-package struct SwitchBackendConfirmationView_V2: View {
+package struct SwitchBackendConfirmationView: View {
 
     // MARK: - Properties
 
@@ -29,7 +29,7 @@ package struct SwitchBackendConfirmationView_V2: View {
 
     private typealias Strings = L10n.SwitchBackendConfirmation
 
-    private let viewModel: SwitchBackendConfirmationViewModel_V2
+    private let viewModel: SwitchBackendConfirmationViewModel
     private let onShowDetails: () -> Void
 
     private var showFullDetails: Bool {
@@ -37,7 +37,7 @@ package struct SwitchBackendConfirmationView_V2: View {
     }
 
     init(
-        viewModel: SwitchBackendConfirmationViewModel_V2,
+        viewModel: SwitchBackendConfirmationViewModel,
         onShowDetails: @escaping () -> Void,
         externalShowFullDetails: Binding<Bool?> = .constant(nil)
     ) {
@@ -56,21 +56,18 @@ package struct SwitchBackendConfirmationView_V2: View {
         .interactiveDismissDisabled()
     }
 
-    @ViewBuilder
-    private var title: some View {
+    @ViewBuilder private var title: some View {
         Text(Strings.title)
             .font(.textStyle(.h2))
             .foregroundStyle(Color.primaryText)
             .multilineTextAlignment(.center)
     }
 
-    @ViewBuilder
-    private var backendDetails: some View {
+    @ViewBuilder private var backendDetails: some View {
         (showFullDetails ? AnyView(fullDetails) : AnyView(shortDetails))
     }
 
-    @ViewBuilder
-    private var fullDetails: some View {
+    @ViewBuilder private var fullDetails: some View {
         ScrollView {
             VStack(spacing: 16) {
                 Text(Strings.message)
@@ -121,8 +118,7 @@ package struct SwitchBackendConfirmationView_V2: View {
         }
     }
 
-    @ViewBuilder
-    private var shortDetails: some View {
+    @ViewBuilder private var shortDetails: some View {
         ScrollView {
             VStack(spacing: 16) {
                 Text(Strings.message)
@@ -153,8 +149,7 @@ package struct SwitchBackendConfirmationView_V2: View {
         }
     }
 
-    @ViewBuilder
-    private func itemView(
+    @ViewBuilder private func itemView(
         title: String,
         value: String,
         isURL: Bool = false
@@ -177,7 +172,7 @@ package struct SwitchBackendConfirmationView_V2: View {
 
     @ViewBuilder private var cancelButton: some View {
         Button {
-            viewModel.handleEvent(.userDidCancel)
+            viewModel.handleEvent(.didCancel)
             dismiss()
         } label: {
             Text(Strings.cancel)
@@ -188,7 +183,7 @@ package struct SwitchBackendConfirmationView_V2: View {
 
     @ViewBuilder private var proceedButton: some View {
         Button {
-            viewModel.handleEvent(.userDidConfirm)
+            viewModel.handleEvent(.didConfirm)
             dismiss()
         } label: {
             Text(Strings.proceed)

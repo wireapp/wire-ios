@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class SwitchBackendConfirmationViewModel_V2 {
+package class SwitchBackendConfirmationViewModel {
 
     // MARK: - State
 
@@ -32,11 +32,11 @@ public class SwitchBackendConfirmationViewModel_V2 {
 
     // MARK: - Life cycle
 
-    private let didConfirm: (Bool) -> Void
+    private let action: (Event) -> Void
 
-    public convenience init(
+    convenience init(
         environment: BackendEnvironmentInfo,
-        didConfirm: @escaping (Bool) -> Void
+        action: @escaping (Event) -> Void
     ) {
         self.init(
             backendName: environment.title,
@@ -46,7 +46,7 @@ public class SwitchBackendConfirmationViewModel_V2 {
             teamsURL: environment.teamsURL.absoluteString,
             accountsURL: environment.accountsURL.absoluteString,
             websiteURL: environment.websiteURL.absoluteString,
-            didConfirm: didConfirm
+            action: action
         )
     }
 
@@ -58,7 +58,7 @@ public class SwitchBackendConfirmationViewModel_V2 {
         teamsURL: String,
         accountsURL: String,
         websiteURL: String,
-        didConfirm: @escaping (Bool) -> Void
+        action: @escaping (Event) -> Void
     ) {
         self.backendName = backendName
         self.backendURL = backendURL
@@ -67,26 +67,19 @@ public class SwitchBackendConfirmationViewModel_V2 {
         self.teamsURL = teamsURL
         self.accountsURL = accountsURL
         self.websiteURL = websiteURL
-        self.didConfirm = didConfirm
+        self.action = action
     }
 
     // MARK: - Events
 
     enum Event {
 
-        case userDidCancel
-        case userDidConfirm
+        case didCancel
+        case didConfirm
 
     }
 
     func handleEvent(_ event: Event) {
-        switch event {
-        case .userDidCancel:
-            didConfirm(false)
-
-        case .userDidConfirm:
-            didConfirm(true)
-        }
-
+        action(event)
     }
 }
