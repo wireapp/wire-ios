@@ -160,6 +160,28 @@ final class OneOnOneSourceTests: XCTestCase {
         }
     }
 
+    func testFetchOneOnOnes_allTypes() async throws {
+        // Given all valid 1:1 conversations
+        let allConversations = try await createConversations([
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 MLS with UserA
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 MLS with UserA
+            .init(.group, .proteus, team: team, users: [selfUser, userA], name: nil), // <- 1:1 proteus fake with UserA
+            .init(.group, .proteus, team: team, users: [selfUser, userA], name: nil), // <- 1:1 proteus fake with UserA
+            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 proteus with UserA
+            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 proteus with UserA
+            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 prot. pending UserA
+            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 prot. pending UserA
+        ])
+
+        try await context.perform { [self] in
+            // When fetching all types of 1:1 conversations
+            let conversations = try sut.fetchOneOnOnes(user: userA, types: [.mls, .fake, .proteus, .proteusPending])
+
+            // Then all conversations are fetched
+            XCTAssertEqual(conversations.count, 8)
+        }
+    }
+
     // MARK: - Helpers
 
     private func createConversations(_ data: [ConversationData]) async throws -> [ZMConversation] {
