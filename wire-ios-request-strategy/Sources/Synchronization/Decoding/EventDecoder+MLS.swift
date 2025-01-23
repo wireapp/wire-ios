@@ -96,48 +96,43 @@ extension EventDecoder {
             return []
         }
 
-        do {
-            let results = try await decryptionService.decrypt(
-                message: payload.data,
-                for: groupID,
-                subconversationType: payload.subconversationType
-            )
+        let results = try await decryptionService.decrypt(
+            message: payload.data,
+            for: groupID,
+            subconversationType: payload.subconversationType
+        )
 
-            if results.isEmpty {
-                WireLogger.mls.info("successfully decrypted mls message but no result was returned")
-                return []
-            }
+        if results.isEmpty {
+            WireLogger.mls.info("successfully decrypted mls message but no result was returned")
+            return []
+        }
 
-            var events = [ZMUpdateEvent]()
-            for result in results {
+        var events = [ZMUpdateEvent]()
+        for result in results {
 
-                switch result {
-                case let .message(decryptedData, senderClientID):
-                    if let event = updateEvent.decryptedMLSEvent(
-                        decryptedData: decryptedData,
-                        senderClientID: senderClientID
-                    ) {
-                        events.append(event)
-                    }
+            switch result {
+            case let .message(decryptedData, senderClientID):
+                if let event = updateEvent.decryptedMLSEvent(
+                    decryptedData: decryptedData,
+                    senderClientID: senderClientID
+                ) {
+                    events.append(event)
+                }
 
-                case let .proposal(commitDelay):
-                    let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
-                    let mlsService = await context.perform {
-                        conversation?.commitPendingProposalDate = scheduledDate
-                        return context.mlsService
-                    }
+            case let .proposal(commitDelay):
+                let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
+                let mlsService = await context.perform {
+                    conversation?.commitPendingProposalDate = scheduledDate
+                    return context.mlsService
+                }
 
-                    if let mlsService, updateEvent.source == .webSocket {
-                        mlsService.commitPendingProposalsIfNeeded()
-                    }
+                if let mlsService, updateEvent.source == .webSocket {
+                    mlsService.commitPendingProposalsIfNeeded()
                 }
             }
-            return events
-
-        } catch {
-            WireLogger.mls.warn("failed to decrypt mls message: \(String(describing: error))")
-            throw error
         }
+
+        return events
     }
 
 }

@@ -228,7 +228,10 @@ extension EventDecoder {
             return decryptedEvents
 
         } catch {
-            // MLS message decryption failed
+            WireLogger.mls.warn(
+                "failed to decrypt mls message: \(String(describing: error))"
+            )
+
             return []
         }
     }
