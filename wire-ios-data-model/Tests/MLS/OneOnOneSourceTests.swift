@@ -73,20 +73,47 @@ final class OneOnOneSourceTests: XCTestCase {
         userB = nil
     }
 
+    // MARK: - fetchOneOnOne
+
     func testFetchOneOnOnes_mls() async throws {
         // Given
         let allConversations = try await createConversations([
-            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil), // 1:1 (MLS)
-            .init(.group, .proteus, team: team, users: [selfUser, userA], name: nil), // 1:1 (proteus fake)
-            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil), // 1:1 (proteus)
-            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil), // 1:1 (proteus pending)
-            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA, userB], name: nil), // Invalid 1:1
-            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userB], name: nil), // 1:1 (MLS) with other user
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 MLS with UserA
+            .init(.group, .mls, team: nil, users: [selfUser, userA], name: nil),
+            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA, userB], name: nil),
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userB], name: nil),
         ])
 
         try await context.perform { [self] in
             // When
             let conversations = try sut.fetchOneOnOnes(user: userA, types: [.mls])
+
+            // Then
+            XCTAssertEqual(conversations.count, 1)
+            XCTAssertEqual(conversations[0], allConversations[0])
+        }
+    }
+
+    func testFetchOneOnOnes_fake() async throws {
+        // Given
+        let otherTeam = await context.perform { [context] in
+            Team.fetchOrCreate(with: UUID(), in: context)
+        }
+
+        let allConversations = try await createConversations([
+            .init(.group, .proteus, team: team, users: [selfUser, userA], name: nil), // <- 1:1 proteus fake with UserA
+            .init(.group, .proteus, team: otherTeam, users: [selfUser, userA], name: nil),
+            .init(.oneOnOne, .proteus, team: team, users: [selfUser, userA], name: nil),
+            .init(.group, .proteus, team: team, users: [selfUser, userA], name: "name"),
+            .init(.group, .proteus, team: team, users: [selfUser, userA, userB], name: nil),
+            .init(.group, .proteus, team: team, users: [selfUser, userB], name: nil),
+            .init(.group, .proteus, team: team, users: [userB, userA], name: nil),
+        ])
+
+        try await context.perform { [self] in
+            // When
+            let conversations = try sut.fetchOneOnOnes(user: userA, types: [.fake])
 
             // Then
             XCTAssertEqual(conversations.count, 1)
