@@ -56,7 +56,7 @@ extension EventDecoder {
     func decryptMlsMessage(
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext
-    ) async -> [ZMUpdateEvent] {
+    ) async throws -> [ZMUpdateEvent] {
         WireLogger.mls.info("decrypting mls message")
 
         guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
@@ -136,7 +136,7 @@ extension EventDecoder {
 
         } catch {
             WireLogger.mls.warn("failed to decrypt mls message: \(String(describing: error))")
-            return []
+            throw error
         }
     }
 
