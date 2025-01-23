@@ -24,12 +24,19 @@ import WireLogging
 /// content based on these events.
 final class NotificationService: UNNotificationServiceExtension {
 
+    // MARK: - Failure
+
+    enum Failure: Error {
+        case missingSelfClientID
+        case notAuthenticated
+    }
+
     // MARK: - Properties
-    
+
     private let logger = WireLogger.notifications
+    private var notificationSession: NotificationSession?
     private var contentHandler: ((UNNotificationContent) -> Void)?
     private var onGoingTask: Task<Void, Never>?
-    static var notificationSession: NotificationSession!
 
     // MARK: - Object lifecycle
 
@@ -54,14 +61,12 @@ final class NotificationService: UNNotificationServiceExtension {
                 let notification = try NotificationPayload(
                     userInfo: notificationUserInfo
                 )
-                
-                try await Self.notificationSession.setup(
-                    userID: notification.userID
-                ) { [weak self] in
-                    self?.finishWithNotification(content: $0)
-                }
 
-                try await Self.notificationSession.processPushNotification(
+                notificationSession = try await createNotificationSession(
+                    userID: notification.userID
+                )
+
+                try await notificationSession?.processPushNotification(
                     eventID: notification.eventID
                 )
 
@@ -75,6 +80,46 @@ final class NotificationService: UNNotificationServiceExtension {
     override func serviceExtensionTimeWillExpire() {
         logger.warn("legacy service extension will expire")
         finishWithEmptyNotification()
+    }
+
+    private func createNotificationSession(
+        userID: UUID
+    ) async throws -> NotificationSession {
+        let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
+        let selfUserInfo = await userLocalStore.selfUserInfo()
+        let environment: BackendEnvironmentProvider = Injector.resolve()
+
+        let cookieStorage = ZMPersistentCookieStorage(
+            forServerName: environment.backendURL.host!,
+            userIdentifier: userID,
+            useCache: false
+        )
+
+        let isAuthenticated = cookieStorage.isAuthenticated
+
+        guard isAuthenticated else {
+            throw Failure.notAuthenticated
+        }
+
+        guard let selfClientID = selfUserInfo.clientId else {
+            throw Failure.missingSelfClientID
+        }
+
+        let updateEventsRepository = UpdateEventsRepository(
+            userID: userID,
+            selfClientID: selfClientID,
+            // these were already initialized, resolving them
+            updateEventsAPI: Injector.resolve(),
+            pushChannel: Injector.resolve(),
+            updateEventDecryptor: Injector.resolve(),
+            updateEventsLocalStore: Injector.resolve()
+        )
+
+        return NotificationSession(
+            updateEventsRepository: updateEventsRepository
+        ) { [weak self] notificationContent in
+            self?.finishWithNotification(content: notificationContent)
+        }
     }
 
     private func finishWithNotification(content: UNNotificationContent) {
@@ -100,17 +145,6 @@ final class NotificationService: UNNotificationServiceExtension {
                 logger.error(
                     "failed to process notification: could not pull pending events: \(error.localizedDescription)"
                 )
-                
-            case .missingSelfClientID:
-                logger.error(
-                    "failed to create notification session: missing self client ID"
-                )
-                
-            case .notAuthenticated:
-                logger.error(
-                    "Not displaying notification because app is not authenticated"
-                )
-                
             }
 
         case let payloadError as NotificationPayload.Failure:
@@ -119,10 +153,23 @@ final class NotificationService: UNNotificationServiceExtension {
                 logger.error(
                     "failed to decode notification payload: missing user ID"
                 )
-                
+
             case .missingEventID:
                 logger.error(
                     "failed to decode notification payload: missing event ID"
+                )
+            }
+
+        case let serviceError as NotificationService.Failure:
+            switch serviceError {
+            case .missingSelfClientID:
+                logger.error(
+                    "failed to create notification session: missing self client ID"
+                )
+
+            case .notAuthenticated:
+                logger.error(
+                    "Not displaying notification because app is not authenticated"
                 )
             }
 
@@ -136,6 +183,7 @@ final class NotificationService: UNNotificationServiceExtension {
     private func terminate() {
         // Content handler should only be consumed once.
         contentHandler = nil
+        notificationSession = nil
         onGoingTask = nil
     }
 }

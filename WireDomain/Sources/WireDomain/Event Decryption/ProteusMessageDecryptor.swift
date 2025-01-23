@@ -39,7 +39,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
     let proteusService: any ProteusServiceInterface
     let userClientsLocalStore: any UserClientsLocalStoreProtocol
-    let userRepository: any UserRepositoryProtocol
+    let userLocalStore: any UserLocalStoreProtocol
 
     typealias Context = (
         selfClient: WireDataModel.UserClient,
@@ -53,11 +53,11 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     init(
         proteusService: any ProteusServiceInterface,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
-        userRepository: any UserRepositoryProtocol
+        userLocalStore: any UserLocalStoreProtocol
     ) {
         self.proteusService = proteusService
         self.userClientsLocalStore = userClientsLocalStore
-        self.userRepository = userRepository
+        self.userLocalStore = userLocalStore
     }
 
     func decryptedEventData(
@@ -106,7 +106,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
             throw ProteusMessageDecryptorError.selfClientNotFound
         }
 
-        let senderUser = await userRepository.fetchOrCreateUser(
+        let senderUser = await userLocalStore.fetchOrCreateUser(
             id: eventData.senderID.uuid,
             domain: eventData.senderID.domain
         )

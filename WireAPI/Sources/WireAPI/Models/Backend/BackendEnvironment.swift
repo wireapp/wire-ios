@@ -24,7 +24,7 @@ public struct BackendEnvironment {
 
     /// The `URL` of the backend.
 
-    let url: URL
+    public let url: URL
 
     /// The `URL` of the WebSocket endpoint.
 
@@ -32,7 +32,7 @@ public struct BackendEnvironment {
 
     /// The pinned keys for the backend for use with certificate pinning.
 
-    let pinnedKeys: [PinnedKey]
+    public let pinnedKeys: [PinnedKey]
 
     /// The proxy settings for the backend if any.
 

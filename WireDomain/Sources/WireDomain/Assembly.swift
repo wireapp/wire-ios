@@ -21,9 +21,7 @@ import WireDataModel
 import WireFoundation
 import NeedleFoundation
 
-public typealias RootComponent = BootstrapComponent
-
-public final class Assembly: RootComponent {
+public final class Assembly {
 
     private let userID: UUID
     private let clientID: String
@@ -163,8 +161,7 @@ public final class Assembly: RootComponent {
     )
     
     private lazy var userClientsLocalStore = UserClientsLocalStore(
-        context: context,
-        userLocalStore: userLocalStore
+        context: context
     )
     
     // MARK: - Decryptors
@@ -186,10 +183,5 @@ public final class Assembly: RootComponent {
         mlsMessageDecryptor: mlsMessageDecryptor,
         messageRepository: messageRepository
     )
-    
-    func setupNotificationSession() {
-        let session = NotificationSession(parent: self)
-        NotificationService.notificationSession = session
-    }
 
 }

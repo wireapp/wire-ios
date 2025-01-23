@@ -39,21 +39,21 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
     private let mlsMessageDecryptor: any MLSMessageDecryptorProtocol
-    private let messageRepository: any MessageRepositoryProtocol
+    private let messageLocalStore: any MessageLocalStoreProtocol
 
     init(
         proteusService: any ProteusServiceInterface,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
-        messageRepository: any MessageRepositoryProtocol,
-        userRepository: any UserRepositoryProtocol,
+        messageLocalStore: any MessageLocalStoreProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsLocalStore: userClientsLocalStore,
-            userRepository: userRepository
+            userLocalStore: userLocalStore
         )
 
         self.mlsMessageDecryptor = MLSMessageDecryptor(
@@ -62,17 +62,17 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             conversationLocalStore: conversationLocalStore
         )
 
-        self.messageRepository = messageRepository
+        self.messageLocalStore = messageLocalStore
     }
 
     init(
         proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
         mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
-        messageRepository: any MessageRepositoryProtocol
+        messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
         self.mlsMessageDecryptor = mlsMessageDecryptor
-        self.messageRepository = messageRepository
+        self.messageLocalStore = messageLocalStore
     }
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
@@ -154,7 +154,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             date: eventData.timestamp
         )
 
-        await messageRepository.addSystemMessage(
+        await messageLocalStore.addSystemMessage(
             messageType: systemMessageType,
             conversationID: eventData.conversationID.uuid,
             conversationDomain: eventData.conversationID.domain

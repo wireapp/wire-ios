@@ -127,23 +127,19 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     init(
-        context: NSManagedObjectContext,
-        userLocalStore: any UserLocalStoreProtocol
+        context: NSManagedObjectContext
     ) {
         self.context = context
-        self.userLocalStore = userLocalStore
     }
 
     public func fetchSelfClient() async -> UserClient? {
-        let selfUser = await userLocalStore.fetchSelfUser()
-
-        return await context.perform {
-            selfUser.selfClient()
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            return selfUser.selfClient()
         }
     }
 
@@ -181,10 +177,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     public func deletedSelfClients(
         newClients: [String]
     ) async -> [String] {
-        let selfUser = await userLocalStore.fetchSelfUser()
-
-        return await context.perform {
-            selfUser.clients
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            
+            return selfUser.clients
                 .compactMap(\.remoteIdentifier)
                 .filter {
                     !newClients.contains($0)
@@ -277,10 +273,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     }
 
     public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        let selfUser = await userLocalStore.fetchSelfUser()
-
-        return await context.perform {
-            selfUser.clients.all { userClient in
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            
+            return selfUser.clients.all { userClient in
                 let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
 
                 let isRecentlyActive: Bool = {

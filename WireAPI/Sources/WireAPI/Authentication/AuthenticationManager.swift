@@ -27,7 +27,7 @@ public protocol AuthenticationManagerProtocol {
 
 }
 
-actor AuthenticationManager: AuthenticationManagerProtocol {
+public actor AuthenticationManager: AuthenticationManagerProtocol {
 
     enum Failure: Error, Equatable {
 
@@ -47,7 +47,7 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
     private let cookieStorage: any CookieStorageProtocol
     private let networkService: NetworkService
 
-    init(
+    public init(
         clientID: String,
         cookieStorage: any CookieStorageProtocol,
         networkService: NetworkService
@@ -64,7 +64,7 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
     ///
     /// - Returns: A valid (non-expired) access token.
 
-    func getValidAccessToken() async throws -> AccessToken {
+    public func getValidAccessToken() async throws -> AccessToken {
         switch currentToken {
         case let .renewing(task):
             // A new token will come soon, wait
@@ -89,7 +89,7 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
     ///
     /// - Returns: A new access token.
 
-    func refreshAccessToken() async throws -> AccessToken {
+    public func refreshAccessToken() async throws -> AccessToken {
         if case let .renewing(task) = currentToken {
             // A new token will come soon, wait
             return try await task.value
