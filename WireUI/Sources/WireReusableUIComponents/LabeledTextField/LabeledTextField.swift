@@ -52,14 +52,14 @@ public struct LabeledTextField: View {
                             .foregroundColor(ColorTheme.Base.requiredField.color)
                     ) : Text(title)
                 )
-                .foregroundStyle(titleColor(isEnabled: isEnabled, isFocused: isFocused))
+                .foregroundStyle(titleColor)
                 .wireTextStyle(.subline1)
             }
             HStack(spacing: 0) {
                 TextField(placeholder ?? "", text: $string)
                     .wireTextStyle(.body1)
                     .focused($isFocused)
-                    .foregroundStyle(labelColor(isEnabled: isEnabled))
+                    .foregroundStyle(labelColor)
                     .padding(.vertical, 12)
                 if !string.isEmpty, isEnabled {
                     Button(action: {
@@ -76,51 +76,45 @@ public struct LabeledTextField: View {
             .background {
                 if #available(iOS 17.0, *) {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(labelBackgroundColor(isEnabled: isEnabled))
-                        .stroke(labelBorderColor(isEnabled: isEnabled, isFocused: isFocused), lineWidth: 1)
+                        .fill(labelBackgroundColor)
+                        .stroke(labelBorderColor, lineWidth: 1)
                 } else {
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(labelBorderColor(isEnabled: isEnabled, isFocused: isFocused), lineWidth: 1)
-                        .background(labelBackgroundColor(isEnabled: isEnabled))
+                        .stroke(labelBorderColor, lineWidth: 1)
+                        .background(labelBackgroundColor)
                         .cornerRadius(12)
                 }
             }
         }
     }
-}
 
-private func titleColor(isEnabled: Bool, isFocused: Bool) -> Color {
-    if isEnabled, isFocused {
-        return ColorTheme.Base.onPrimaryVariant.color
-    }
-    if isEnabled {
+    private var titleColor: Color {
+        if isEnabled, isFocused {
+            return ColorTheme.Base.onPrimaryVariant.color
+        }
+        if isEnabled {
+            return ColorTheme.Base.labelTitle.color
+        }
         return ColorTheme.Base.labelTitle.color
     }
-    return ColorTheme.Base.labelTitle.color
-}
 
-private func labelColor(isEnabled: Bool) -> Color {
-    if isEnabled {
-        return .primaryText
+    private var labelColor: Color {
+        isEnabled ? .primaryText : ColorTheme.Base.onDisabled.color
     }
-    return ColorTheme.Base.onDisabled.color
-}
 
-private func labelBackgroundColor(isEnabled: Bool) -> Color {
-    if isEnabled {
-        return .clear
+    private var labelBackgroundColor: Color {
+        isEnabled ? .clear : ColorTheme.Backgrounds.background.color
     }
-    return ColorTheme.Backgrounds.background.color
-}
 
-private func labelBorderColor(isEnabled: Bool, isFocused: Bool) -> Color {
-    if isEnabled, isFocused {
-        return ColorTheme.Base.onPrimaryVariant.color
-    }
-    if isEnabled {
+    private var labelBorderColor: Color {
+        if isEnabled, isFocused {
+            return ColorTheme.Base.onPrimaryVariant.color
+        }
+        if isEnabled {
+            return ColorTheme.Strokes.outline.color
+        }
         return ColorTheme.Strokes.outline.color
     }
-    return ColorTheme.Strokes.outline.color
 }
 
 #Preview {

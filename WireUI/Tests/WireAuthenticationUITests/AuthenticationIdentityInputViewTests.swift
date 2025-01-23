@@ -39,7 +39,7 @@ class AuthenticationIdentityInputViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = AuthenticationIdentityInputPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
+            .frame(width: screenBounds.width)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -54,7 +54,7 @@ class AuthenticationIdentityInputViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = AuthenticationIdentityInputPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
+            .frame(width: screenBounds.width)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

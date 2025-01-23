@@ -28,8 +28,8 @@ struct SwitchBackendConfirmationViewPreview: View {
 
     var body: some View {
         VStack {
-            SwitchBackendConfirmationView_V2(
-                viewModel: SwitchBackendConfirmationViewModel_V2(
+            SwitchBackendConfirmationView(
+                viewModel: SwitchBackendConfirmationViewModel(
                     backendName: "Staging",
                     backendURL: "www.staging.com",
                     backendWSURL: "www.ws.staging.com",
@@ -37,7 +37,7 @@ struct SwitchBackendConfirmationViewPreview: View {
                     teamsURL: "www.teams.staging.com",
                     accountsURL: "www.accounts.staging.com",
                     websiteURL: "www.wire.com",
-                    didConfirm: { _ in }
+                    action: { _ in }
                 ),
                 onShowDetails: {},
                 externalShowFullDetails: $showFullDetails
