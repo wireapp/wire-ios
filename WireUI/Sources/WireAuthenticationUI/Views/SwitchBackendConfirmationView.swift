@@ -64,7 +64,7 @@ package struct SwitchBackendConfirmationView: View {
     }
 
     @ViewBuilder private var backendDetails: some View {
-        (showFullDetails ? AnyView(fullDetails) : AnyView(shortDetails))
+        showFullDetails ? AnyView(fullDetails) : AnyView(shortDetails)
     }
 
     @ViewBuilder private var fullDetails: some View {
@@ -149,7 +149,8 @@ package struct SwitchBackendConfirmationView: View {
         }
     }
 
-    @ViewBuilder private func itemView(
+    @ViewBuilder
+    private func itemView(
         title: String,
         value: String,
         isURL: Bool = false
