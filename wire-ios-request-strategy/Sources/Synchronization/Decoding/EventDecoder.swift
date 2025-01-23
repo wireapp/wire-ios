@@ -224,9 +224,9 @@ extension EventDecoder {
                     self.lastEventIDRepository.storeLastEventID(eventUUID)
                 }
             }
-            
+
             return decryptedEvents
-            
+
         } catch {
             // MLS message decryption failed
             return []
