@@ -20,6 +20,11 @@ import Foundation
 import WireLogging
 
 extension EventDecoder {
+    
+    enum Failure: Error {
+        case mlsDecodingError
+        case missingMLSGroupID
+    }
 
     func processWelcomeMessage(
         from updateEvent: ZMUpdateEvent,
@@ -67,8 +72,7 @@ extension EventDecoder {
         let decoder = EventPayloadDecoder()
         guard let payload = try? decoder
             .decode(Payload.UpdateConversationMLSMessageAdd.self, from: updateEvent.payload) else {
-            WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
-            return []
+            throw Failure.mlsDecodingError
         }
 
         var conversation: ZMConversation?
@@ -92,8 +96,7 @@ extension EventDecoder {
         }
 
         guard let groupID else {
-            WireLogger.mls.error("failed to decrypt mls message: missing MLS group ID")
-            return []
+            throw Failure.missingMLSGroupID
         }
 
         let results = try await decryptionService.decrypt(

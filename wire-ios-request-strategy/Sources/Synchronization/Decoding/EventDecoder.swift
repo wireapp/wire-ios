@@ -227,6 +227,20 @@ extension EventDecoder {
 
             return decryptedEvents
 
+        } catch let error as Failure {
+            switch error {
+            case .mlsDecodingError:
+                WireLogger.mls.error(
+                    "failed to decrypt mls message: invalid update event payload"
+                )
+
+            case .missingMLSGroupID:
+                WireLogger.mls.error(
+                    "failed to decrypt mls message: missing MLS group ID"
+                )
+            }
+
+            return []
         } catch {
             WireLogger.mls.warn(
                 "failed to decrypt mls message: \(String(describing: error))"
