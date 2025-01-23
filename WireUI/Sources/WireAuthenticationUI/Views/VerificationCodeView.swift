@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-public struct VerificationCodeView: View {
+package struct VerificationCodeView: View {
 
     @State private var code: [String]
     @FocusState private var focusedIndex: Int?
@@ -27,7 +27,11 @@ public struct VerificationCodeView: View {
     private let onConfirm: ([String]) -> Void
     private let onResend: () -> Void
 
-    public init(
+    private var isConfirmButtonDisabled: Bool {
+        return code.contains(where: { $0.isEmpty })
+    }
+
+    init(
         initialCode: [String] = Array(repeating: "", count: 6),
         receiver: String,
         onConfirm: @escaping ([String]) -> Void,
@@ -39,7 +43,7 @@ public struct VerificationCodeView: View {
         self.onResend = onResend
     }
 
-    public var body: some View {
+    package var body: some View {
         VStack(spacing: 20) {
             Text(L10n.VerificationCode.title)
                 .font(.textStyle(.h2))
@@ -77,9 +81,6 @@ public struct VerificationCodeView: View {
                                 focusedIndex = index - 1
                             }
                         }
-                        .onChange(of: focusedIndex) { newValue in
-                            print("Focused Index changed to: \(newValue ?? -1)")
-                        }
                 }
             }
 
@@ -90,6 +91,7 @@ public struct VerificationCodeView: View {
             })
             .wireButtonStyle(.primary)
             .padding(.horizontal)
+            .disabled(isConfirmButtonDisabled)
 
             Button(action: {
                 onResend()
