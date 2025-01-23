@@ -38,7 +38,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     }
 
-    enum Item: Identifiable { 
+    enum Item: Identifiable {
 
         case button(ButtonItem)
         case text(TextItem)
@@ -296,7 +296,10 @@ final class DeveloperToolsViewModel: ObservableObject {
         let header = "Views"
 
         let items: [Item] = [
-            .destination(DestinationItem(title: "Authentication", makeView: { AnyView(WireAuthenticationUIDebugView()) }))
+            .destination(DestinationItem(
+                title: "Authentication",
+                makeView: { AnyView(WireAuthenticationUIDebugView()) }
+            ))
         ]
 
         return Section(

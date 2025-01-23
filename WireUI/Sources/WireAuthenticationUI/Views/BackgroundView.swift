@@ -19,7 +19,7 @@
 import SwiftUI
 
 package struct BackgroundView: View {
-    package init() { }
+    package init() {}
 
     package var body: some View {
         Image(ImageResource(name: "background", bundle: .module))

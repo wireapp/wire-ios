@@ -29,7 +29,7 @@ public struct WireAuthenticationUIDebugView: View {
 
     @State private var presentedItem: PresentationItem?
 
-    public init() { }
+    public init() {}
 
     public var body: some View {
         List {
@@ -41,12 +41,13 @@ public struct WireAuthenticationUIDebugView: View {
         .fullScreenCover(item: $presentedItem, content: { item in
             switch item {
             case .background:
-                presentationSheet(content: { BackgroundView() })
+                fullscreenCover(content: { BackgroundView() })
             }
         })
     }
 
-    @ViewBuilder private func presentationSheet<Content: View>(content: () -> Content) -> some View {
+    @ViewBuilder
+    private func fullscreenCover(content: () -> some View) -> some View {
         content()
             .overlay {
                 HStack {
