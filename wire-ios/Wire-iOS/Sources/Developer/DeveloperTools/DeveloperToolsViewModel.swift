@@ -22,6 +22,7 @@ import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
+import WireViewsDebugUI
 
 final class DeveloperToolsViewModel: ObservableObject {
 
@@ -37,7 +38,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     }
 
-    enum Item: Identifiable {
+    enum Item: Identifiable { 
 
         case button(ButtonItem)
         case text(TextItem)
@@ -138,6 +139,8 @@ final class DeveloperToolsViewModel: ObservableObject {
         setupPushToken()
 
         setupDatadog()
+
+        sections.append(debugViewSection)
     }
 
     // MARK: - Section Builders
@@ -288,6 +291,19 @@ final class DeveloperToolsViewModel: ObservableObject {
         guard let sessionManager = SessionManager.shared else { return false }
         return sessionManager.canSwitchBackend() == nil
     }
+
+    private lazy var debugViewSection: Section = {
+        let header = "Views"
+
+        let items: [Item] = [
+            .destination(DestinationItem(title: "Authentication", makeView: { AnyView(WireAuthenticationUIDebugView()) }))
+        ]
+
+        return Section(
+            header: header,
+            items: items
+        )
+    }()
 
     // MARK: - Events
 
