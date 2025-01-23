@@ -16,7 +16,7 @@
  // along with this program. If not, see http://www.gnu.org/licenses/.
  //
 
-"authentication.identity.input.body" = "Simply enter you email adress to start!";
+"authentication.identity.input.body" = "Simply enter your email adress to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
 "authentication.identity.input.submit" = "Next";
