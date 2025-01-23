@@ -507,10 +507,9 @@ extension EventDecoderTest {
         XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
         XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
     }
-    
-    
+
     func test_MLSEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
-        
+
         // Given
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
         let mockProteusService = MockProteusServiceInterface()
@@ -518,7 +517,7 @@ extension EventDecoderTest {
         mockProteusService.decryptDataForSession_MockMethod = { data, _ in
             (didCreateNewSession: false, decryptedData: data)
         }
-        
+
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
             throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage
         }
@@ -535,7 +534,7 @@ extension EventDecoderTest {
         await syncMOC.perform {
             self.syncMOC.proteusService = mockProteusService
         }
-        
+
         do {
             // When
             _ = try await sut.decryptAndStoreEvents([mlsEvent])
@@ -544,11 +543,11 @@ extension EventDecoderTest {
             XCTAssert(error == .failedToDecryptMessage)
             XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
         }
-        
+
     }
-    
+
     func test_MLSEventDecryptionStoresLastEventIdIfDecryptionSuccessWithEmptyResults() async throws {
-        
+
         // Given
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
         let mockProteusService = MockProteusServiceInterface()
@@ -569,24 +568,27 @@ extension EventDecoderTest {
         await syncMOC.perform {
             self.syncMOC.proteusService = mockProteusService
         }
-        
+
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
             [] // decryption success with empty results
         }
-        
+
         // When
         let decryptedEvents = try await sut.decryptAndStoreEvents([mlsEvent])
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // Then
         XCTAssertEqual(decryptedEvents.isEmpty, true) // no decrypted events
-        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 1) // last event ID updated locally because MLS decryption was successful
-        
+        XCTAssertEqual(
+            lastEventIDRepository.storeLastEventID_Invocations.count,
+            1
+        ) // last event ID updated locally because MLS decryption was successful
+
     }
-    
+
     func test_MLSEventDecryptionStoresLastEventIdIfDecryptionSuccessWithProposalResult() async throws {
-        
+
         // Given
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
         let mockProteusService = MockProteusServiceInterface()
@@ -607,20 +609,23 @@ extension EventDecoderTest {
         await syncMOC.perform {
             self.syncMOC.proteusService = mockProteusService
         }
-        
+
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
             [.proposal(10)] // decryption success with result of type `proposal`
         }
-        
+
         // When
         let decryptedEvents = try await sut.decryptAndStoreEvents([mlsEvent])
-        
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // Then
         XCTAssertEqual(decryptedEvents.isEmpty, true) // no decrypted events because decryption result is `proposal`
-        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 1) // last event ID updated locally because MLS decryption was successful
-        
+        XCTAssertEqual(
+            lastEventIDRepository.storeLastEventID_Invocations.count,
+            1
+        ) // last event ID updated locally because MLS decryption was successful
+
     }
 
     func test_ProteusEventDecryption_Legacy() async throws {
@@ -823,7 +828,7 @@ extension EventDecoderTest {
                 groupID: .random()
             )
         }
-        
+
         do {
             // When
             _ = try await sut.decryptMlsMessage(from: event, context: syncMOC)

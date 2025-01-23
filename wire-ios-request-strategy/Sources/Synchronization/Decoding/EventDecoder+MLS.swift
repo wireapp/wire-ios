@@ -20,7 +20,7 @@ import Foundation
 import WireLogging
 
 extension EventDecoder {
-    
+
     enum Failure: Error {
         case mlsDecodingError
         case missingMLSGroupID
