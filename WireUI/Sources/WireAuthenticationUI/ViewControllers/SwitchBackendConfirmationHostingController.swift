@@ -19,7 +19,7 @@
 import Foundation
 import SwiftUI
 
-public class SwitchBackendConfirmationHostingController: UIHostingController<SwitchBackendConfirmationView_V2> {
+package class SwitchBackendConfirmationHostingController: UIHostingController<SwitchBackendConfirmationView_V2> {
 
     private let viewModel: SwitchBackendConfirmationViewModel_V2
 

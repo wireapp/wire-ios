@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-public struct SwitchBackendConfirmationView_V2: View {
+package struct SwitchBackendConfirmationView_V2: View {
 
     // MARK: - Properties
 
@@ -46,7 +46,7 @@ public struct SwitchBackendConfirmationView_V2: View {
         self._externalShowFullDetails = externalShowFullDetails
     }
 
-    public var body: some View {
+    package var body: some View {
         VStack(spacing: 20) {
             title
             backendDetails
@@ -56,65 +56,78 @@ public struct SwitchBackendConfirmationView_V2: View {
         .interactiveDismissDisabled()
     }
 
-    @ViewBuilder private var title: some View {
+    @ViewBuilder
+    private var title: some View {
         Text(Strings.title)
             .font(.textStyle(.h2))
             .foregroundStyle(Color.primaryText)
             .multilineTextAlignment(.center)
     }
 
-    @ViewBuilder private var backendDetails: some View {
-        VStack(spacing: 16) {
-            Text(Strings.message)
-                .foregroundStyle(Color.primaryText)
-                .multilineTextAlignment(.center)
+    @ViewBuilder
+    private var backendDetails: some View {
+        (showFullDetails ? AnyView(fullDetails) : AnyView(shortDetails))
+    }
 
-            if showFullDetails {
-                ScrollView {
-                    VStack(spacing: 16) {
-                        itemView(
-                            title: Strings.backendName,
-                            value: viewModel.backendName
-                        )
+    @ViewBuilder
+    private var fullDetails: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                Text(Strings.message)
+                    .foregroundStyle(Color.primaryText)
+                    .multilineTextAlignment(.center)
 
-                        itemView(
-                            title: Strings.backendUrl,
-                            value: viewModel.backendURL,
-                            isURL: true
-                        )
+                itemView(
+                    title: Strings.backendName,
+                    value: viewModel.backendName
+                )
 
-                        itemView(
-                            title: Strings.backendWsurl,
-                            value: viewModel.backendWSURL,
-                            isURL: true
-                        )
+                itemView(
+                    title: Strings.backendUrl,
+                    value: viewModel.backendURL,
+                    isURL: true
+                )
 
-                        itemView(
-                            title: Strings.blacklistUrl,
-                            value: viewModel.blacklistURL,
-                            isURL: true
-                        )
+                itemView(
+                    title: Strings.backendWsurl,
+                    value: viewModel.backendWSURL,
+                    isURL: true
+                )
 
-                        itemView(
-                            title: Strings.teamsUrl,
-                            value: viewModel.teamsURL,
-                            isURL: true
-                        )
+                itemView(
+                    title: Strings.blacklistUrl,
+                    value: viewModel.blacklistURL,
+                    isURL: true
+                )
 
-                        itemView(
-                            title: Strings.accountsUrl,
-                            value: viewModel.accountsURL,
-                            isURL: true
-                        )
+                itemView(
+                    title: Strings.teamsUrl,
+                    value: viewModel.teamsURL,
+                    isURL: true
+                )
 
-                        itemView(
-                            title: Strings.websiteUrl,
-                            value: viewModel.websiteURL,
-                            isURL: true
-                        )
-                    }
-                }
-            } else {
+                itemView(
+                    title: Strings.accountsUrl,
+                    value: viewModel.accountsURL,
+                    isURL: true
+                )
+
+                itemView(
+                    title: Strings.websiteUrl,
+                    value: viewModel.websiteURL,
+                    isURL: true
+                )
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var shortDetails: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                Text(Strings.message)
+                    .foregroundStyle(Color.primaryText)
+                    .multilineTextAlignment(.center)
                 itemView(
                     title: Strings.backendName,
                     value: viewModel.backendName
