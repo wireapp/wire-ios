@@ -378,6 +378,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             modelHelper.createSelfUser(id: selfUserID.uuid, domain: selfUserID.domain, in: self.syncContext)
         }
 
+        let team = await syncContext.perform {
+            modelHelper.createTeam(in: self.syncContext)
+        }
+
         let (_, proteusConversation, mlsConversation) = await createConversations(
             userID: userID,
             mlsGroupID: mlsGroupID,
@@ -386,7 +390,6 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         let duplicateProteusConversation = try await syncContext.perform {
             let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
-            let team = modelHelper.createTeam(in: self.syncContext)
             modelHelper.addUsers([selfUser, otherUser], to: team, in: self.syncContext)
 
             proteusConversation.addParticipantAndUpdateConversationState(user: selfUser)
@@ -401,7 +404,6 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         let duplicateProteusConversation2 = try await syncContext.perform {
             let otherUser = try XCTUnwrap(ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: self.syncContext))
-            let team = modelHelper.createTeam(in: self.syncContext)
             modelHelper.addUsers([selfUser, otherUser], to: team, in: self.syncContext)
 
             proteusConversation.addParticipantAndUpdateConversationState(user: selfUser)
