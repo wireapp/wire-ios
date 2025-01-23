@@ -121,6 +121,26 @@ final class OneOnOneSourceTests: XCTestCase {
         }
     }
 
+    func testFetchOneOnOnes_proteus() async throws {
+        // Given
+        let allConversations = try await createConversations([
+            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 proteus with UserA
+            .init(.group, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil),
+            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA, userB], name: nil),
+            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userB], name: nil),
+        ])
+
+        try await context.perform { [self] in
+            // When
+            let conversations = try sut.fetchOneOnOnes(user: userA, types: [.proteus])
+
+            // Then
+            XCTAssertEqual(conversations.count, 1)
+            XCTAssertEqual(conversations[0], allConversations[0])
+        }
+    }
+
     // MARK: - Helpers
 
     private func createConversations(_ data: [ConversationData]) async throws -> [ZMConversation] {
