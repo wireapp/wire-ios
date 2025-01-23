@@ -514,6 +514,16 @@ public final class ZMUserSession: NSObject {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         selfUser.needsToBeUpdatedFromBackend = true
 
+        // Proactively ensure we clean up invalid connection state.
+        Task {
+            do {
+                let connectionValidator = ConnectionValidator(context: syncContext)
+                try await connectionValidator.cleanUpAllInvalidConnections()
+            } catch {
+                WireLogger.session.error("failed to clean up invalid connections: \(String(describing: error))")
+            }
+        }
+
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
         }

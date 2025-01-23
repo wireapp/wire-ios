@@ -38,13 +38,17 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     let actionSync: EntityActionSync
 
+    let oneOnOneResolver: any OneOnOneResolverInterface
+
     public init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncProgress: SyncProgress
+        syncProgress: SyncProgress,
+        oneOnOneResolver: any OneOnOneResolverInterface
     ) {
 
         self.syncProgress = syncProgress
+        self.oneOnOneResolver = oneOnOneResolver
         self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext)
         self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(context: managedObjectContext)
 
@@ -208,6 +212,36 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
             for: user,
             authoritative: false
         )
+
+        if userProfile.updatedKeys.contains(.teamID) {
+            // The user may have just been added to a team which may
+            // invalidate existing connections.
+            let isSelfUser = user.isSelfUser
+            let userObjectID = user.objectID
+            let userID = user.qualifiedID
+
+            Task {
+                do {
+                    let connectionValidator = ConnectionValidator(context: managedObjectContext)
+
+                    if isSelfUser {
+                        try await connectionValidator.cleanUpAllInvalidConnections()
+                        try await oneOnOneResolver.resolveAllOneOnOneConversations(in: managedObjectContext)
+                    } else {
+                        try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
+                        if let userID {
+                            try await oneOnOneResolver.resolveOneOnOneConversation(
+                                with: userID,
+                                in: managedObjectContext
+                            )
+                        }
+                    }
+                } catch {
+                    WireLogger.individualToTeamMigration
+                        .error("failed to clean up invalid connection: \(String(describing: error))")
+                }
+            }
+        }
     }
 
     func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
