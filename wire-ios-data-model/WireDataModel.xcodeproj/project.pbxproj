@@ -522,6 +522,7 @@
 		C9D574D32CEF630500012A0E /* TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D22CEF630500012A0E /* TypingUsers.swift */; };
 		C9D574D52CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */; };
 		CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */; };
+		CB1821A52D412FA100A80AB4 /* OneOnOneSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */; };
 		CB1BF6FC2C8AF6A5001EC670 /* ExpirationReason+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */; };
 		CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979172C747652006FBA58 /* WireTransportSupport.framework */; };
 		CB79791B2C7476AC006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79791A2C7476AC006FBA58 /* TestSetup.swift */; };
@@ -1439,6 +1440,7 @@
 		C9D574D22CEF630500012A0E /* TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingUsers.swift; sourceTree = "<group>"; };
 		C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+TypingUsers.swift"; sourceTree = "<group>"; };
 		CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneSource.swift; sourceTree = "<group>"; };
+		CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneSourceTests.swift; sourceTree = "<group>"; };
 		CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExpirationReason+Description.swift"; sourceTree = "<group>"; };
 		CB7979172C747652006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79791A2C7476AC006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
@@ -2678,6 +2680,7 @@
 				591362E52B70F45C000B210C /* MLSVerificationStatusTests.swift */,
 				EEDE7DB628EC1618007DC6A3 /* MockMLSActionExecutor.swift */,
 				EEF0BC3028EEC02400ED16CA /* MockSyncStatus.swift */,
+				CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */,
 				6326E4712AEBB2E4006EEA28 /* ProteusToMLSMigrationCoordinatorTests.swift */,
 				0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */,
 				EEF6E3C928D89251001C1799 /* StaleMLSKeyDetectorTests.swift */,
@@ -4766,6 +4769,7 @@
 				F1517922212DAE2E00BA3EBD /* ZMConversationTests+Services.swift in Sources */,
 				F9B71FF21CB2C4C6001DB03F /* AnyClassTupleTests.swift in Sources */,
 				EEF6E3CA28D89251001C1799 /* StaleMLSKeyDetectorTests.swift in Sources */,
+				CB1821A52D412FA100A80AB4 /* OneOnOneSourceTests.swift in Sources */,
 				F9A7083A1CAEEB7500C2F5FE /* MockEntity.m in Sources */,
 				F963E9741D9BF9ED00098AD3 /* ProtosTests.swift in Sources */,
 				EE7A90EE2B21DE3B00B58E84 /* OneOnOneProtocolSelectorTests.swift in Sources */,
