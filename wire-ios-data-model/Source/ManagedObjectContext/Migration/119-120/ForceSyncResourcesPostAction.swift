@@ -19,6 +19,8 @@
 import Foundation
 import WireLogging
 
+// TODO: check https://github.com/wireapp/wire-ios/pull/2240/files
+
 final class ForceSyncResourcesPostAction: CoreDataMigrationAction {
 
     override func execute(in context: NSManagedObjectContext) {
