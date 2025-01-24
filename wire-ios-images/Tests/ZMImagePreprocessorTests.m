@@ -46,11 +46,7 @@
 
 
 
-- (void)testThatItReturnsZeroSizeIfFileDoesNotExist
-{
-    NSURL *imageURL = [NSURL fileURLWithPath:@"/foo/bar"];
-    AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL], CGSizeZero);
-}
+
 
 - (void)testThatItCanCalculateTheSizeOfAnImageFromData
 {

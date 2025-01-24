@@ -121,4 +121,9 @@ final class ImagePreprocessorTests: ZMTBaseTest {
         let expected = CGSize(width: 450, height: 600)
         XCTAssertEqual(ZMImagePreprocessor.imageSize(fromProperties: properties), expected)
     }
+
+    func testThatItReturnsZeroSizeIfFileDoesNotExist() {
+        let imageURL = URL(fileURLWithPath: "/foo/bar")
+        XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(at: imageURL), CGSize.zero)
+    }
 }
