@@ -16,10 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-@interface NSOperationQueue (Helpers)
+extension OperationQueue {
 
-- (void)waitUntilAllOperationsAreFinishedWithTimeout:(NSTimeInterval)timeout;
+    @objc static func serialQueue(name: String) -> OperationQueue {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        queue.name = name
+        return queue
+    }
 
-@end
+}

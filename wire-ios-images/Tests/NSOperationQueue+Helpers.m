@@ -21,14 +21,6 @@
 
 @implementation NSOperationQueue (Helpers)
 
-+ (instancetype)serialQueueWithName:(NSString *)name;
-{
-    NSOperationQueue *queue = [[self alloc] init];
-    queue.maxConcurrentOperationCount = 1;
-    queue.name = name;
-    return queue;
-}
-
 - (void)waitUntilAllOperationsAreFinishedWithTimeout:(NSTimeInterval)timeout;
 {
     timeout = [ZMTBaseTest timeToUseForOriginalTime:timeout];
