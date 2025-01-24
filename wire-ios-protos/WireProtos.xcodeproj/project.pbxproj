@@ -31,9 +31,7 @@
 /* Begin PBXFileReference section */
 		016BDDED2A9F86E50054FB04 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		090837FE1B872DBF00629095 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		090838021B872DBF00629095 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		090838091B872DBF00629095 /* WireProtosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireProtosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0908380F1B872DC000629095 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		090838241B87347900629095 /* messages.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; name = messages.proto; path = "../Carthage/Checkouts/generic-message-proto/proto/messages.proto"; sourceTree = SOURCE_ROOT; };
 		099223A61BED06E400668091 /* otr.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; name = otr.proto; path = "../Carthage/Checkouts/generic-message-proto/proto/otr.proto"; sourceTree = SOURCE_ROOT; };
 		09B70B4D1B874390002667A6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
@@ -134,7 +132,6 @@
 		090838011B872DBF00629095 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				090838021B872DBF00629095 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -153,7 +150,6 @@
 		0908380E1B872DBF00629095 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				0908380F1B872DC000629095 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -373,7 +369,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
-				INFOPLIST_FILE = Protos/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -393,7 +389,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
-				INFOPLIST_FILE = Protos/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -409,7 +405,7 @@
 			baseConfigurationReference = 54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				INFOPLIST_FILE = ProtosTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -428,7 +424,7 @@
 			baseConfigurationReference = 54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				INFOPLIST_FILE = ProtosTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

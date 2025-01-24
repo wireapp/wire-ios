@@ -10,11 +10,6 @@
 		591B6E712C8B0A0D009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; };
 		591B6E742C8B0A10009F8A7B /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
 		591B6E772C8B0A17009F8A7B /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
-		870253E41DAB7AA00095D272 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E31DAB7AA00095D272 /* main.m */; };
-		870253E71DAB7AA00095D272 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E61DAB7AA00095D272 /* AppDelegate.m */; };
-		870253EA1DAB7AA00095D272 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E91DAB7AA00095D272 /* ViewController.m */; };
-		870253ED1DAB7AA00095D272 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 870253EB1DAB7AA00095D272 /* Main.storyboard */; };
-		870253EF1DAB7AA00095D272 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 870253EE1DAB7AA00095D272 /* Assets.xcassets */; };
 		EE98A0B5296EFD3F0055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; };
 		EE9AEC8A2BD158D600F7853F /* WireImages.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC892BD158D600F7853F /* WireImages.docc */; };
 /* End PBXBuildFile section */
@@ -40,14 +35,6 @@
 		0969600C1B663E7B006DF53B /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		096960161B663E7C006DF53B /* WireImages-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireImages-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		870253E01DAB7A9F0095D272 /* WireImages-iosTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WireImages-iosTestHost.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		870253E31DAB7AA00095D272 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		870253E51DAB7AA00095D272 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		870253E61DAB7AA00095D272 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		870253E81DAB7AA00095D272 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		870253E91DAB7AA00095D272 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		870253EC1DAB7AA00095D272 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		870253EE1DAB7AA00095D272 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		870253F31DAB7AA00095D272 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0B4296EFD3F0055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC892BD158D600F7853F /* WireImages.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireImages.docc; sourceTree = "<group>"; };
@@ -57,7 +44,6 @@
 		59AB64662D43D300005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
 				TestPlans/AllTests.xctestplan,
 			);
 			target = 096960151B663E7C006DF53B /* WireImages-iosTests */;
@@ -75,12 +61,20 @@
 			);
 			target = 0969600B1B663E7B006DF53B /* WireImages-ios */;
 		};
+		59AB73352D43D63F005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 870253DF1DAB7A9F0095D272 /* WireImages-iosTestHost */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		59AB643C2D43D300005D2D17 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59AB64662D43D300005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		59AB64712D43D303005D2D17 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		59AB64832D43D307005D2D17 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59AB64942D43D307005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Sources; sourceTree = "<group>"; };
+		59AB732E2D43D63F005D2D17 /* WireImages-iosTestHost */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59AB73352D43D63F005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "WireImages-iosTestHost"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,7 +122,7 @@
 				59AB64832D43D307005D2D17 /* Sources */,
 				59AB64712D43D303005D2D17 /* Resources */,
 				59AB643C2D43D300005D2D17 /* Tests */,
-				870253E11DAB7AA00095D272 /* WireImages-iosTestHost */,
+				59AB732E2D43D63F005D2D17 /* WireImages-iosTestHost */,
 				098CB1191B5FA6E100712DF9 /* Frameworks */,
 				09DD1EB31B5D41E1005EBCC4 /* Products */,
 			);
@@ -146,29 +140,6 @@
 				870253E01DAB7A9F0095D272 /* WireImages-iosTestHost.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		870253E11DAB7AA00095D272 /* WireImages-iosTestHost */ = {
-			isa = PBXGroup;
-			children = (
-				870253E51DAB7AA00095D272 /* AppDelegate.h */,
-				870253E61DAB7AA00095D272 /* AppDelegate.m */,
-				870253E81DAB7AA00095D272 /* ViewController.h */,
-				870253E91DAB7AA00095D272 /* ViewController.m */,
-				870253EB1DAB7AA00095D272 /* Main.storyboard */,
-				870253EE1DAB7AA00095D272 /* Assets.xcassets */,
-				870253F31DAB7AA00095D272 /* Info.plist */,
-				870253E21DAB7AA00095D272 /* Supporting Files */,
-			);
-			path = "WireImages-iosTestHost";
-			sourceTree = "<group>";
-		};
-		870253E21DAB7AA00095D272 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				870253E31DAB7AA00095D272 /* main.m */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,6 +209,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				59AB732E2D43D63F005D2D17 /* WireImages-iosTestHost */,
 			);
 			name = "WireImages-iosTestHost";
 			productName = "zimages-iosTestHost";
@@ -310,8 +284,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				870253EF1DAB7AA00095D272 /* Assets.xcassets in Resources */,
-				870253ED1DAB7AA00095D272 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,9 +309,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				870253EA1DAB7AA00095D272 /* ViewController.m in Sources */,
-				870253E71DAB7AA00095D272 /* AppDelegate.m in Sources */,
-				870253E41DAB7AA00095D272 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,24 +327,13 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		870253EB1DAB7AA00095D272 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				870253EC1DAB7AA00095D272 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		096960201B663E7C006DF53B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = 59AB64712D43D303005D2D17 /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireImages.xcconfig;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 				VALIDATE_WORKSPACE = YES;
@@ -387,7 +345,7 @@
 			baseConfigurationReferenceAnchor = 59AB64712D43D303005D2D17 /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireImages.xcconfig;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 				VALIDATE_WORKSPACE = YES;
@@ -397,7 +355,7 @@
 		096960231B663E7C006DF53B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireImages-iosTestHost.app/WireImages-iosTestHost";
@@ -408,7 +366,7 @@
 		096960241B663E7C006DF53B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireImages-iosTestHost.app/WireImages-iosTestHost";
