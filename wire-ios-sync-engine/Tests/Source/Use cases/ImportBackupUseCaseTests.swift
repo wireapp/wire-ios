@@ -135,7 +135,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
         }
     }
 
-    func testWithMocks() async throws {
+    func testDecryptorIsCalledCorrectly() async throws {
         // Given
         let url = URL(fileURLWithPath: "backup.ios_wbu")
         let accountID = coreDataStack.account.userIdentifier
@@ -150,10 +150,6 @@ final class ImportBackupUseCaseTests: XCTestCase {
             mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.password,
             "c<%I2f41\"6!'"
         )
-    }
-
-    func testRealImport() throws {
-        throw XCTSkip("not yet implemented")
     }
 
 }
