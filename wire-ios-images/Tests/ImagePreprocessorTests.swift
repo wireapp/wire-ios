@@ -131,4 +131,9 @@ final class ImagePreprocessorTests: ZMTBaseTest {
         let imageData = data(forResource: "unsplash_medium", extension: "jpg")
         XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData), CGSize(width: 531, height: 346))
     }
+
+    func testThatItReturnsZeroSizeIfDataIsNotAnImage() {
+        let imageData = data(forResource: "Lorem Ipsum", extension: "txt")
+        XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData), CGSize.zero)
+    }
 }
