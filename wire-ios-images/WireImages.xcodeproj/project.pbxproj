@@ -17,7 +17,6 @@
 		096960341B663EF0006DF53B /* ZMImagePreprocessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB13A1B5FAD5A00712DF9 /* ZMImagePreprocessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		096960351B663EF0006DF53B /* ZMImagePreprocessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 098CB13B1B5FAD5A00712DF9 /* ZMImagePreprocessor.m */; };
 		096960361B663EFC006DF53B /* WireImages.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB13C1B5FAD5A00712DF9 /* WireImages.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09B977381B669B6C00A30B38 /* ZMImageLoadOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */; };
 		09B977411B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */; };
 		09BCDB591BC664DA0020DCC7 /* ImageOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */; };
 		591B6E712C8B0A0D009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; };
@@ -109,7 +108,6 @@
 		098CB13C1B5FAD5A00712DF9 /* WireImages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireImages.h; sourceTree = "<group>"; };
 		098CB1621B5FAD6300712DF9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		098CB1661B5FAD6900712DF9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImageLoadOperationTests.m; sourceTree = "<group>"; };
 		09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImageDownsampleOperationTests.m; sourceTree = "<group>"; };
 		09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageOwner.swift; sourceTree = "<group>"; };
 		5471F81F1B73E6E000460C35 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
@@ -279,7 +277,6 @@
 			children = (
 				59D264372CF725AC0005317F /* TestPlans */,
 				098CB1661B5FAD6900712DF9 /* Info.plist */,
-				09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */,
 				09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */,
 				87B91C051E5C5D8600A5EC11 /* NSDataMetadataTests.swift */,
 				87B91C081E5C7E5D00A5EC11 /* Resources */,
@@ -601,7 +598,6 @@
 			files = (
 				CBBADE122D43CCAE0044B7B4 /* ImagePreprocessorTests.swift in Sources */,
 				87B91C061E5C5D8600A5EC11 /* NSDataMetadataTests.swift in Sources */,
-				09B977381B669B6C00A30B38 /* ZMImageLoadOperationTests.m in Sources */,
 				CBBAE4F02D43E2E60044B7B4 /* ImageLoadOperationTests.swift in Sources */,
 				09B977411B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m in Sources */,
 				CBBADE152D43D73A0044B7B4 /* OperationQueue+Helpers.swift in Sources */,
