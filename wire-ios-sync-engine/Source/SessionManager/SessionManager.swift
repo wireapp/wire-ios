@@ -1007,6 +1007,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate?.sessionManagerAsksToRetryStart()
     }
 
+    // TODO: [WPB-14616] use this method for restoring a backup from the settings
     /// The active user session will be torn down and the app goes into migration state.
     public func prepareForRestoreWithMigration(completion: @escaping () -> Void) {
         guard let delegate else { return completion() }

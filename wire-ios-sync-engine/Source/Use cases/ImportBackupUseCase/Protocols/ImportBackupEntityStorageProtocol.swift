@@ -25,6 +25,7 @@ public protocol ImportBackupEntityStorageProtocol {
     
     /// Replace all the data of the storage.
     /// - Returns: The directory where all data was written to.
+    @discardableResult
     func replacePersistentStore(
         accountIdentifier: UUID,
         from backupDirectory: URL,

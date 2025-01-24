@@ -69,7 +69,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         // backup the self user and the self client
         let selfUserQualifiedID: QualifiedID?
         let selfClientBackup: [String: Any]
-        // we want to avoid keeping strong a reference to the user
+        // we want to avoid keeping a strong reference to the user
         // session, the managed object context and the user client
         if let userSession, let (qualifiedID, backup) = await userSession.contextProvider.viewContext.perform({
             userSession.selfUserClient.map { ($0.user?.qualifiedID, $0.backup()) }})
@@ -84,7 +84,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         await appStateUpdater.reportMigrationNeeded()
 
         // the imported file replaces the existing persistent store
-        _ = try await entityStorage.replacePersistentStore(
+        try await entityStorage.replacePersistentStore(
             accountIdentifier: account.userIdentifier,
             from: unzippedURL,
             applicationContainer: sharedContainerURL,
@@ -102,22 +102,13 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             let userID = selfUserQualifiedID?.uuid
             let domain = selfUserQualifiedID?.domain
 
-//            let fr = UserClient.fetchRequest()
-//            let ucs = try temporaryStack.viewContext.fetch(fr) as! [UserClient]
-//            print(ucs.map { $0.backup() })
-//            for uc in ucs {
-//                print(" # uc: \(uc.user.map { $0.remoteIdentifier.uuidString } ?? "nil") \(uc))")
-//            }
-
-//            let user = userID.map { userID in ZMUser.fetch(with: userID, domain: domain, in: context) }
-
-            // import the self client from the backup and update the self user
+            // import the self client from the backup and set the correct self user relation
             var selfUser: ZMUser?
             if let userID {
                 selfUser = ZMUser.fetch(with: userID, domain: domain, in: context)
             }
 
-            // TODO: use `UserClient.createOrUpdateSelfUserClient(selfClientBackup, context: temporaryStack.viewContext)`
+            // TODO: there is also a method `UserClient.createOrUpdateSelfUserClient(_:context:)`
             let userClient = UserClient.restore(from: selfClientBackup, context: context)
             userClient.user = selfUser
             userClient.markAsSelfClient()

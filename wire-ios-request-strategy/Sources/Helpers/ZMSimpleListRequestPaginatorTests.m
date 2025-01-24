@@ -155,7 +155,7 @@
     return selfClient;
 }
 
-- (UserClient *)setupSelfClientInMoc:(NSManagedObjectContext *)moc; // TODO: relevant for import?
+- (UserClient *)setupSelfClientInMoc:(NSManagedObjectContext *)moc;
 {
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
     if (selfUser.remoteIdentifier == nil) {

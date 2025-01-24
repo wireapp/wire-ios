@@ -213,9 +213,6 @@ static NSString *const PrimaryKey = @"primaryKey";
     if (persistedClientId == nil) {
         return nil;
     }
-    [self.clients enumerateObjectsUsingBlock:^(UserClient * _Nonnull userClient, BOOL * _Nonnull stop) {
-        NSLog(@"UserClient: '%@'", userClient);
-    }];
     return [self.clients.allObjects firstObjectMatchingWithBlock:^BOOL(UserClient *aClient) {
         return [aClient.remoteIdentifier isEqualToString:persistedClientId];
     }];

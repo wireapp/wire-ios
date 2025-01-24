@@ -107,6 +107,8 @@ extension SessionManager {
 
     // MARK: - Import
 
+    // TODO: [WPB-14616] delete import related code when the restore button from the authentication flow is removed
+
     /// Restores the account database from the Wire iOS database back up file.
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
     /// is called.
