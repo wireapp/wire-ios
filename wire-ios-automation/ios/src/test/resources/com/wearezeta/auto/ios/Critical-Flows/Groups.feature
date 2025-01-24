@@ -1,6 +1,6 @@
 Feature: Video Calls
 
-  @flows @05
+  @flows @TC-8586
   Scenario Outline: Team members attending stand up (Video call)
     Given I allow camera access
     And I allow microphone access
@@ -37,7 +37,6 @@ Feature: Video Calls
     And I Switch ON camera button
     When I tap Leave button on Calling overlay
     Then I do not see Calling overlay
-
 
     Examples:
       | Member1   | TeamOwner | TeamName  |  Member2   | ConversationTitle   |

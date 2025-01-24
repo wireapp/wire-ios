@@ -1,6 +1,6 @@
 Feature: Account Management
 
-  @flows @012
+  @flows @TC-8588
   Scenario Outline: Account Management
     Given There is a team owner "<TeamOwner>" with team "<TeamName>"
     And User <TeamOwner> adds user <Member1> to team <TeamName> with role Member
@@ -30,10 +30,6 @@ Feature: Account Management
     When I enter "<NewUsername>" name on Unique Username page
     When I tap Save button on Unique Username page
     And I select settings item Reset Password
-
-
-
-
 
     Examples:
       | Member1   | TeamOwner | TeamName  | Member2   | ConversationTitle | Member2Email  | Password      | Member2UniqueUsername | Device  | LockPasscode | NewUsername |

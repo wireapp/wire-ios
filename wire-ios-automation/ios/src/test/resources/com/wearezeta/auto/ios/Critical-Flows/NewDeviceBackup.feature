@@ -1,5 +1,6 @@
 Feature: New Device with Backup
-  @flows
+
+  @flows @TC-8582
   Scenario Outline: Employee setting up  a new device using backup
     Given There is a team owner "<TeamOwner>" with team "<TeamName>"
     And User <TeamOwner> adds user <Member1>,<Member2> to team <TeamName> with role Member

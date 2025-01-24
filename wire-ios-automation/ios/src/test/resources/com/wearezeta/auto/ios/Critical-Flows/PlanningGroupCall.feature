@@ -1,6 +1,6 @@
 Feature: Planning Group Calls
 
-  @flows
+  @flows @TC-8580
   Scenario Outline: Team owner planning a group call
     Given I allow camera access
     And I allow microphone access

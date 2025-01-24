@@ -1,6 +1,6 @@
 Feature: Personal Account Lifecycle
 
-  @flows @011
+  @flows @TC-8587
   Scenario Outline: Personal account lifecycle
     Given There are personal account users <PersonalAccount>
     When I tap Create An Account button on Welcome page
