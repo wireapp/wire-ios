@@ -1,4 +1,4 @@
-name: Development
+name: Edge
 
 on:
   workflow_dispatch:
@@ -15,6 +15,6 @@ jobs:
     with:
       countly_enabled: true
       datadog_enabled: true
-      fastlane_action: development
+      fastlane_action: edge
       is_cloud_build: true
     secrets: inherit
