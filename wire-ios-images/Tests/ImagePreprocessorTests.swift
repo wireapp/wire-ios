@@ -90,4 +90,35 @@ final class ImagePreprocessorTests: ZMTBaseTest {
         let expected = CGSize(width: 600, height: 450)
         XCTAssertEqual(ZMImagePreprocessor.imageSize(fromProperties: properties), expected)
     }
+
+    func testThatItReturnsTheRotatedSizeForImagesWithTIFFOrientation7() {
+        let properties: [String: Any] = [
+            "ColorModel": "RGB",
+            "DPIHeight": 72,
+            "DPIWidth": 72,
+            "Depth": 8,
+            "Orientation": 7,
+            "PixelHeight": 450,
+            "PixelWidth": 600,
+            "ProfileName": "Generic RGB Profile",
+            "{Exif}": [
+                "PixelXDimension": 600,
+                "PixelYDimension": 450,
+            ],
+            "{JFIF}": [
+                "DensityUnit": 1,
+                "JFIFVersion": [1, 0, 1],
+                "XDensity": 72,
+                "YDensity": 72,
+            ],
+            "{TIFF}": [
+                "Orientation": 7,
+                "ResolutionUnit": 2,
+                "XResolution": 72,
+                "YResolution": 72,
+            ],
+        ]
+        let expected = CGSize(width: 450, height: 600)
+        XCTAssertEqual(ZMImagePreprocessor.imageSize(fromProperties: properties), expected)
+    }
 }
