@@ -67,6 +67,7 @@
 		87B91C4E1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */; };
 		A9626B4B26932BEA0043CC31 /* ZMImageDownsampleOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */; };
 		CBBADE0D2D43C58C0044B7B4 /* ImageProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBBADE0C2D43C58C0044B7B4 /* ImageProperties.swift */; };
+		CBBADE122D43CCAE0044B7B4 /* ImagePreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBBADE112D43CCAE0044B7B4 /* ImagePreprocessorTests.swift */; };
 		EE98A0B5296EFD3F0055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; };
 		EE9AEC8A2BD158D600F7853F /* WireImages.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC892BD158D600F7853F /* WireImages.docc */; };
 		EEB7138B2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB7138A2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift */; };
@@ -165,6 +166,7 @@
 		87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_small_profile.jpg; sourceTree = "<group>"; };
 		A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMImageDownsampleOperation.swift; sourceTree = "<group>"; };
 		CBBADE0C2D43C58C0044B7B4 /* ImageProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProperties.swift; sourceTree = "<group>"; };
+		CBBADE112D43CCAE0044B7B4 /* ImagePreprocessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreprocessorTests.swift; sourceTree = "<group>"; };
 		EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0B4296EFD3F0055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC892BD158D600F7853F /* WireImages.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireImages.docc; sourceTree = "<group>"; };
@@ -284,6 +286,7 @@
 				09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */,
 				87B91C051E5C5D8600A5EC11 /* NSDataMetadataTests.swift */,
 				87B91C081E5C7E5D00A5EC11 /* Resources */,
+				CBBADE112D43CCAE0044B7B4 /* ImagePreprocessorTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -596,6 +599,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CBBADE122D43CCAE0044B7B4 /* ImagePreprocessorTests.swift in Sources */,
 				09B977451B669CEC00A30B38 /* NSOperationQueue+Helpers.m in Sources */,
 				87B91C061E5C5D8600A5EC11 /* NSDataMetadataTests.swift in Sources */,
 				09B977381B669B6C00A30B38 /* ZMImageLoadOperationTests.m in Sources */,

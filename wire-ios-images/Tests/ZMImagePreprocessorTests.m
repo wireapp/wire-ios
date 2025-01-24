@@ -44,12 +44,6 @@
     [super tearDown];
 }
 
-- (void)testThatItCanCalculateTheSizeOfAnImage
-{
-    NSURL *imageURL = [self fileURLForResource:@"unsplash_medium" extension:@"jpg"];
-    AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL], CGSizeMake(531, 346));
-}
-
 - (void)testThatItReturnsZeroSizeIfFileIsNotAnImage
 {
     NSURL *imageURL = [self fileURLForResource:@"Lorem Ipsum" extension:@"txt"];
