@@ -9,5 +9,6 @@ jobs:
   public_app_release:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      countly_enabled: true
       fastlane_action: appstore_public
     secrets: inherit

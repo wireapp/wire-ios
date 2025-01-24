@@ -201,8 +201,10 @@ node("Job_distributor") {
                             env.OLD_APP_PATH = "$WORKSPACE/Previous/Payload/Wire.app"
                             env.APP_PATH = "$WORKSPACE/Payload/Wire.app"
 
-                            // Download builds via s3 proxy
-                            sh "curl http://192.168.2.39:8000/z-lohika/${S3AppPath} -o \"$WORKSPACE/Wire.ipa\""
+                            // Download builds from S3
+                            withAWS(region: 'eu-west-1', credentials: "S3_CREDENTIALS") {
+                                s3Download(file: "$WORKSPACE/Wire.ipa", bucket: 'z-lohika', path: "${S3AppPath}", force: true)
+                            }
 
                             // grab wire.app from the ipa
                             sh "unzip -o $WORKSPACE/Wire.ipa"
@@ -218,8 +220,10 @@ node("Job_distributor") {
                             if ("${OldS3AppPath}" == "") {
                                 echo("No OldS3AppPath given.")
                             } else {
-                                // Download old build via s3 proxy
-                                sh "curl http://192.168.2.39:8000/z-lohika/${OldS3AppPath} -o \"$WORKSPACE/Previous.ipa\""
+                                // Download old build from S3
+                                withAWS(region: 'eu-west-1', credentials: "S3_CREDENTIALS") {
+                                    s3Download(file: "$WORKSPACE/Previous.ipa", bucket: 'z-lohika', path: "${OldS3AppPath}", force: true)
+                                }
                                 sh "unzip -o $WORKSPACE/Previous.ipa -d $WORKSPACE/Previous/"
                             }
 
