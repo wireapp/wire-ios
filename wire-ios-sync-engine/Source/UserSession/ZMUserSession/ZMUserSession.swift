@@ -209,7 +209,7 @@ public final class ZMUserSession: NSObject {
 
     // swiftlint:disable:next todo_requires_jira_link
     public var selfUserClient: WireDataModel.UserClient? { // TODO: jacob we don't want this to be public
-        ZMUser.selfUser(in: managedObjectContext).selfClient() // TODO: after restore this returns nil
+        ZMUser.selfUser(in: managedObjectContext).selfClient()
     }
 
     public var userProfile: UserProfile {
@@ -459,10 +459,9 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        // TODO: do we end up here after restart?
         syncManagedObjectContext.performGroupedAndWait { [self] in
             localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
-            configureTransportSession() // TODO: do we run this after restart? yes all good
+            configureTransportSession()
 
             // need to be before we create strategies since it is passed
             proteusProvider = ProteusProvider(
@@ -515,6 +514,16 @@ public final class ZMUserSession: NSObject {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         selfUser.needsToBeUpdatedFromBackend = true
 
+        // Proactively ensure we clean up invalid connection state.
+        Task {
+            do {
+                let connectionValidator = ConnectionValidator(context: syncContext)
+                try await connectionValidator.cleanUpAllInvalidConnections()
+            } catch {
+                WireLogger.session.error("failed to clean up invalid connections: \(String(describing: error))")
+            }
+        }
+
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
         }
@@ -553,14 +562,7 @@ public final class ZMUserSession: NSObject {
     // MARK: - Methods
 
     private func configureTransportSession() {
-        let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
-        print("selfUser", selfUser)
-        let selfUserClient = selfUser.selfClient() // TODO: the
-        print("selfUserClient", selfUserClient)
-        let remoteIdentifier = selfUserClient?.remoteIdentifier
-        print("remoteIdentifier", remoteIdentifier)
-        transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier // TODO: fix
-        print("transportSession.pushChannel.clientID", transportSession.pushChannel.clientID)
+        transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
         transportSession.setNetworkStateDelegate(self)
         transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
@@ -1092,7 +1094,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
             do {
                 try await updateEventProcessor?.processBufferedEvents()
             } catch {
-                WireLogger.sync.error("pocessEvents error: \(String(describing: error))")
                 processingInterrupted = true
             }
 

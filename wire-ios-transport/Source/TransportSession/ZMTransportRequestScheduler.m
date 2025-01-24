@@ -339,7 +339,7 @@ ZM_EMPTY_ASSERTING_INIT();
     id<ZMTransportRequestSchedulerSession> aSession = self.session;
     Check(session == aSession);
     
-    NSArray *items = [self.pendingRequestsRequiringAuthentication copy]; // at the next launch after restore we don't have any ZMOpenPushChannelRequests here
+    NSArray *items = [self.pendingRequestsRequiringAuthentication copy];
     [self.pendingRequestsRequiringAuthentication removeAllObjects];
     
     for (id<ZMTransportRequestSchedulerItem> item in items) {

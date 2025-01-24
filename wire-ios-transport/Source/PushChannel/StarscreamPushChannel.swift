@@ -56,14 +56,11 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     var canOpenConnection: Bool {
-        print("canOpenConnection: keepOpen: \(keepOpen) websocketURL: \(websocketURL != nil) consumer: \(consumer != nil)")
-        return keepOpen && websocketURL != nil && consumer != nil
+        keepOpen && websocketURL != nil && consumer != nil
     }
 
-    var websocketURL: URL? { // TODO: is it nil after restore??
-        guard let clientID else {
-            return nil
-        }
+    var websocketURL: URL? {
+        guard let clientID else { return nil }
 
         let url = environment.backendWSURL.appendingPathComponent("/await")
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
@@ -199,10 +196,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         webSocket = nil
         stopPingTimer()
 
-        let uuid = UUID()
-        print("onClose 0 \(uuid.uuidString)")
         consumerQueue?.performGroupedBlock {
-            print("onClose 1 \(uuid.uuidString)")
             self.consumer?.pushChannelDidClose()
         }
 

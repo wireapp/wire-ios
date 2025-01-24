@@ -39,7 +39,6 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
             if currentSyncPhase != oldValue {
                 log()
                 zmLog.debug("did change sync phase: \(currentSyncPhase)")
-                print("did change sync phase: \(currentSyncPhase)")
                 notifySyncPhaseDidStart()
             }
         }
@@ -66,8 +65,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     private var isForceQuickSync = false
 
     public var isSyncing: Bool {
-        print("currentSyncPhase: \(currentSyncPhase) + pushChannel: \(isPushChannelOpen ? "open" : "closed") -> isSyncing: \(currentSyncPhase.isSyncing || !isPushChannelOpen)")
-        return currentSyncPhase.isSyncing || !isPushChannelOpen
+        currentSyncPhase.isSyncing || !isPushChannelOpen
     }
 
     public var isSyncingInBackground: Bool {
@@ -220,8 +218,7 @@ public extension SyncStatus {
     }
 
     internal var hasPersistedLastEventID: Bool {
-        print("hasPersistedLastEventID: \(lastEventIDRepository.fetchLastEventID() != nil)")
-        return lastEventIDRepository.fetchLastEventID() != nil
+        lastEventIDRepository.fetchLastEventID() != nil
     }
 
     func updateLastUpdateEventID(eventID: UUID) {

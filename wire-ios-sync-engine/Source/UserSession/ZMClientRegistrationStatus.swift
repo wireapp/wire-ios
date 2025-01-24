@@ -386,7 +386,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     @objc
-    public func prepareForClientRegistration() { // TODO: is this relevant for import backup use case?
+    public func prepareForClientRegistration() {
         WireLogger.userClient.info("preparing for client registration")
 
         guard needsToRegisterClient else {
@@ -579,7 +579,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         invalidateCookieAndNotify()
     }
 
-    func invalidateSelfClient() { // TODO: relevant for import?
+    func invalidateSelfClient() {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         guard let selfClient = selfUser.selfClient() else {
