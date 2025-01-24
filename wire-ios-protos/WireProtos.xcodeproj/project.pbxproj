@@ -8,12 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0908380A1B872DBF00629095 /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 090837FE1B872DBF00629095 /* WireProtos.framework */; };
-		5E13807D21A30A9D004A646C /* messages.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13807B21A30A9D004A646C /* messages.pb.swift */; };
-		5E13807E21A30A9D004A646C /* otr.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13807C21A30A9D004A646C /* otr.pb.swift */; };
-		638BBCF129150CEF007491FF /* mls.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BBCF029150CEE007491FF /* mls.pb.swift */; };
 		CBF4FEAD2C806F9B00EA6E06 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CBF4FEAC2C806F9B00EA6E06 /* SwiftProtobuf */; };
 		EE9AEC902BD1594600F7853F /* WireProtos.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8F2BD1594600F7853F /* WireProtos.docc */; };
-		F1FDF2E021B043F400E037A1 /* WireProtos.h in Headers */ = {isa = PBXBuildFile; fileRef = F1FDF2DF21B043F400E037A1 /* WireProtos.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,14 +26,7 @@
 		016BDDED2A9F86E50054FB04 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		090837FE1B872DBF00629095 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		090838091B872DBF00629095 /* WireProtosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireProtosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		090838241B87347900629095 /* messages.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; name = messages.proto; path = "../Carthage/Checkouts/generic-message-proto/proto/messages.proto"; sourceTree = SOURCE_ROOT; };
-		099223A61BED06E400668091 /* otr.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; name = otr.proto; path = "../Carthage/Checkouts/generic-message-proto/proto/otr.proto"; sourceTree = SOURCE_ROOT; };
-		5E13807B21A30A9D004A646C /* messages.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = messages.pb.swift; sourceTree = "<group>"; };
-		5E13807C21A30A9D004A646C /* otr.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = otr.pb.swift; sourceTree = "<group>"; };
-		638BBCF029150CEE007491FF /* mls.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mls.pb.swift; sourceTree = "<group>"; };
-		638BBCF229150D4C007491FF /* mls.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; name = mls.proto; path = "../Carthage/Checkouts/generic-message-proto/proto/mls.proto"; sourceTree = SOURCE_ROOT; };
 		EE9AEC8F2BD1594600F7853F /* WireProtos.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireProtos.docc; sourceTree = "<group>"; };
-		F1FDF2DF21B043F400E037A1 /* WireProtos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireProtos.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -49,11 +38,24 @@
 			);
 			target = 090838081B872DBF00629095 /* WireProtosTests */;
 		};
+		59ABA3DE2D43EBD0005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				messages.proto,
+				mls.proto,
+				otr.proto,
+			);
+			publicHeaders = (
+				WireProtos.h,
+			);
+			target = 090837FD1B872DBF00629095 /* WireProtos */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		59AB79502D43D79B005D2D17 /* ProtosTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59AB79532D43D79B005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ProtosTests; sourceTree = "<group>"; };
 		59ABA3CE2D43EA55005D2D17 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
+		59ABA3D62D43EBD0005D2D17 /* Protos */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59ABA3DE2D43EBD0005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Protos; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,7 +83,7 @@
 			children = (
 				016BDDED2A9F86E50054FB04 /* Scripts */,
 				EE9AEC8F2BD1594600F7853F /* WireProtos.docc */,
-				090838001B872DBF00629095 /* Protos */,
+				59ABA3D62D43EBD0005D2D17 /* Protos */,
 				59AB79502D43D79B005D2D17 /* ProtosTests */,
 				59ABA3CE2D43EA55005D2D17 /* Resources */,
 				67FFDFDA66F3EEA3F9461130 /* Frameworks */,
@@ -102,20 +104,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		090838001B872DBF00629095 /* Protos */ = {
-			isa = PBXGroup;
-			children = (
-				090838241B87347900629095 /* messages.proto */,
-				099223A61BED06E400668091 /* otr.proto */,
-				638BBCF229150D4C007491FF /* mls.proto */,
-				5E13807B21A30A9D004A646C /* messages.pb.swift */,
-				5E13807C21A30A9D004A646C /* otr.pb.swift */,
-				638BBCF029150CEE007491FF /* mls.pb.swift */,
-				F1FDF2DF21B043F400E037A1 /* WireProtos.h */,
-			);
-			path = Protos;
-			sourceTree = "<group>";
-		};
 		67FFDFDA66F3EEA3F9461130 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,7 +118,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1FDF2E021B043F400E037A1 /* WireProtos.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,6 +136,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				59ABA3D62D43EBD0005D2D17 /* Protos */,
 			);
 			name = WireProtos;
 			packageProductDependencies = (
@@ -242,9 +232,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE9AEC902BD1594600F7853F /* WireProtos.docc in Sources */,
-				5E13807E21A30A9D004A646C /* otr.pb.swift in Sources */,
-				5E13807D21A30A9D004A646C /* messages.pb.swift in Sources */,
-				638BBCF129150CEF007491FF /* mls.pb.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
