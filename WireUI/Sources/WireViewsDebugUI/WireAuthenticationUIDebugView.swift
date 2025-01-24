@@ -21,10 +21,25 @@ import WireAuthenticationUI
 
 public struct WireAuthenticationUIDebugView: View {
 
+    enum PresentationStyle {
+        case fullScreen
+        case sheet
+    }
+
     enum PresentationItem: String, Identifiable {
         var id: String { rawValue }
 
         case background
+        case switchBackend
+
+        var presentationStyle: PresentationStyle {
+            switch self {
+            case .background:
+                .fullScreen
+            case .switchBackend:
+                .sheet
+            }
+        }
     }
 
     @State private var presentedItem: PresentationItem?
@@ -37,13 +52,36 @@ public struct WireAuthenticationUIDebugView: View {
                 action: { presentedItem = .background },
                 label: { Text("Background") }
             )
+            Button(
+                action: { presentedItem = .switchBackend },
+                label: { Text("Switch backend confirmation") }
+            )
         }
-        .fullScreenCover(item: $presentedItem, content: { item in
-            switch item {
-            case .background:
-                fullscreenCover(content: { BackgroundView() })
+//        .fullScreenCover(item: $presentedItem) { item in
+//            if item.presentationStyle == .fullScreen {
+//                fullScreenCoverContent(for: item)
+//            }
+//        }
+        .sheet(item: $presentedItem) { item in
+            if item.presentationStyle == .sheet {
+                sheetContent(for: item)
             }
-        })
+        }
+
+    }
+
+    @ViewBuilder
+    private func fullScreenCoverContent(for item: PresentationItem) -> some View {
+        if item == .background {
+            fullscreenCover(content: { BackgroundView() })
+        }
+    }
+
+    @ViewBuilder
+    private func sheetContent(for item: PresentationItem) -> some View {
+        if item == .switchBackend {
+            SwitchBackendHostingViewControllerWrapper()
+        }
     }
 
     @ViewBuilder
@@ -69,6 +107,38 @@ public struct WireAuthenticationUIDebugView: View {
                 .padding(.trailing, 20)
             }
     }
+
+    private struct SwitchBackendHostingViewControllerWrapper: UIViewControllerRepresentable {
+        func makeUIViewController(context: Context) -> UIHostingController<SwitchBackendConfirmationView> {
+            createSwitchBackendSheetController(
+                viewModel: SwitchBackendConfirmationViewModel(
+                    backendName: "Backend Name",
+                    backendURL: "https://backend.url",
+                    backendWSURL: "wss://backend.ws.url",
+                    blacklistURL: "https://blacklist.url",
+                    teamsURL: "https://teams.url",
+                    accountsURL: "https://accounts.url",
+                    websiteURL: "https://website.url",
+                    action: { _ in }
+                )
+            )
+        }
+
+        func updateUIViewController(_ uiViewController: UIHostingController<SwitchBackendConfirmationView>, context: Context) {}
+
+        func createSwitchBackendSheetController(viewModel: SwitchBackendConfirmationViewModel) ->  UIHostingController<SwitchBackendConfirmationView> {
+            let hostingController = SwitchBackendConfirmationHostingController(viewModel: viewModel)
+            hostingController.modalPresentationStyle = .pageSheet
+
+            if let sheet = hostingController.sheetPresentationController {
+                sheet.detents = [.medium(), .large()]
+                sheet.prefersGrabberVisible = true
+            }
+
+            return hostingController
+        }
+    }
+
 }
 
 #Preview {

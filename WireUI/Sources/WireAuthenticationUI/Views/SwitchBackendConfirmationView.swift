@@ -36,7 +36,7 @@ package struct SwitchBackendConfirmationView: View {
         externalShowFullDetails ?? internalShowFullDetails
     }
 
-    init(
+    package init(
         viewModel: SwitchBackendConfirmationViewModel,
         onShowDetails: @escaping () -> Void,
         externalShowFullDetails: Binding<Bool?> = .constant(nil)

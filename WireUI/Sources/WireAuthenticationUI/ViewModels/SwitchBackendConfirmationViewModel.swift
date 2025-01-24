@@ -46,7 +46,7 @@ package class SwitchBackendConfirmationViewModel {
         )
     }
 
-    init(
+    package init(
         backendName: String,
         backendURL: String,
         backendWSURL: String,
@@ -70,7 +70,7 @@ package class SwitchBackendConfirmationViewModel {
 
     // MARK: - Events
 
-    enum Event {
+    package enum Event {
 
         case didCancel
         case didConfirm
@@ -83,11 +83,10 @@ package class SwitchBackendConfirmationViewModel {
 
     // MARK: - Model
 
-    struct ItemUIModel {
+    package struct ItemUIModel {
         let title: String
         let value: String
         let isURL: Bool
     }
 
 }
-
