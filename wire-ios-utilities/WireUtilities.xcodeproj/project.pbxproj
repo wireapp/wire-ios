@@ -7,11 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		09F028D31B78BE2700BADDB6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F028D21B78BE2700BADDB6 /* main.m */; };
-		09F028D61B78BE2700BADDB6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F028D51B78BE2700BADDB6 /* AppDelegate.m */; };
-		09F028D91B78BE2700BADDB6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F028D81B78BE2700BADDB6 /* ViewController.m */; };
-		09F028DC1B78BE2700BADDB6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DA1B78BE2700BADDB6 /* Main.storyboard */; };
-		09F028DE1B78BE2700BADDB6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DD1B78BE2700BADDB6 /* Images.xcassets */; };
 		591B6E7A2C8B0A1B009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; };
 		591B6E7C2C8B0A1E009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		591B6E7E2C8B0A23009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; };
@@ -55,15 +50,6 @@
 
 /* Begin PBXFileReference section */
 		09F028CE1B78BE2700BADDB6 /* WireUtilities-tests-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WireUtilities-tests-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		09F028D11B78BE2700BADDB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		09F028D21B78BE2700BADDB6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		09F028D41B78BE2700BADDB6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		09F028D51B78BE2700BADDB6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		09F028D71B78BE2700BADDB6 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		09F028D81B78BE2700BADDB6 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		09F028DB1B78BE2700BADDB6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		09F028DD1B78BE2700BADDB6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		09F028F61B78BEBB00BADDB6 /* WireUtilities-tests-host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WireUtilities-tests-host.entitlements"; sourceTree = "<group>"; };
 		3E88BD381B1F3EA300232589 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BD431B1F3EA300232589 /* WireUtilities-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireUtilities-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,6 +91,13 @@
 			);
 			target = 3E88BD371B1F3EA300232589 /* WireUtilities */;
 		};
+		59AB8B882D43D96C005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 09F028CD1B78BE2700BADDB6 /* WireUtilities-tests-host */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -112,6 +105,7 @@
 		595F72812D43CE6900E5ECBE /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		595F730E2D43D1B900E5ECBE /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		59AB60532D43D269005D2D17 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59AB60AA2D43D269005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
+		59AB8B812D43D96C005D2D17 /* WireUtilities-tests-host */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59AB8B882D43D96C005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "WireUtilities-tests-host"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,30 +147,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		09F028CF1B78BE2700BADDB6 /* WireUtilities-tests-host */ = {
-			isa = PBXGroup;
-			children = (
-				09F028F61B78BEBB00BADDB6 /* WireUtilities-tests-host.entitlements */,
-				09F028D41B78BE2700BADDB6 /* AppDelegate.h */,
-				09F028D51B78BE2700BADDB6 /* AppDelegate.m */,
-				09F028D71B78BE2700BADDB6 /* ViewController.h */,
-				09F028D81B78BE2700BADDB6 /* ViewController.m */,
-				09F028DA1B78BE2700BADDB6 /* Main.storyboard */,
-				09F028DD1B78BE2700BADDB6 /* Images.xcassets */,
-				09F028D01B78BE2700BADDB6 /* Supporting Files */,
-			);
-			path = "WireUtilities-tests-host";
-			sourceTree = "<group>";
-		};
-		09F028D01B78BE2700BADDB6 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				09F028D11B78BE2700BADDB6 /* Info.plist */,
-				09F028D21B78BE2700BADDB6 /* main.m */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		3E88BD291B1F3E8400232589 = {
 			isa = PBXGroup;
 			children = (
@@ -185,7 +155,7 @@
 				59AB60532D43D269005D2D17 /* Source */,
 				595F72672D43CDB600E5ECBE /* Support */,
 				595F730E2D43D1B900E5ECBE /* Tests */,
-				09F028CF1B78BE2700BADDB6 /* WireUtilities-tests-host */,
+				59AB8B812D43D96C005D2D17 /* WireUtilities-tests-host */,
 				3E88BE5E1B1F496600232589 /* Frameworks */,
 				3E88BD391B1F3EA300232589 /* Products */,
 			);
@@ -247,6 +217,9 @@
 			);
 			dependencies = (
 				F1D567B3207BA4CF00CCDD77 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59AB8B812D43D96C005D2D17 /* WireUtilities-tests-host */,
 			);
 			name = "WireUtilities-tests-host";
 			productName = "WireUtilities-tests-host";
@@ -384,8 +357,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09F028DC1B78BE2700BADDB6 /* Main.storyboard in Resources */,
-				09F028DE1B78BE2700BADDB6 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,9 +410,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09F028D91B78BE2700BADDB6 /* ViewController.m in Sources */,
-				09F028D61B78BE2700BADDB6 /* AppDelegate.m in Sources */,
-				09F028D31B78BE2700BADDB6 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -491,17 +459,6 @@
 			targetProxy = F1D567B2207BA4CF00CCDD77 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		09F028DA1B78BE2700BADDB6 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				09F028DB1B78BE2700BADDB6 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		09F028EE1B78BE2800BADDB6 /* Debug */ = {
