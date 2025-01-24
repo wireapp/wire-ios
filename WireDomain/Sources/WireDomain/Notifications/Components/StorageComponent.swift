@@ -32,11 +32,8 @@ protocol StorageDependency: Dependency {
 
 class StorageComponent: Component<StorageDependency> {
     
-    var coreData: CoreDataStack {
-        let coreData = CoreDataStack(
-            account: dependency.selectedAccount,
-            applicationContainer: dependency.applicationContainer
-        )
+    override init(parent: any Scope) {
+        super.init(parent: parent)
         
         coreData.loadStores { error in
             if let error {
@@ -46,19 +43,34 @@ class StorageComponent: Component<StorageDependency> {
             }
         }
         
+        coreData.syncContext.performAndWait {
+            if DeveloperFlag.proteusViaCoreCrypto.isOn { // do we need this ?
+                coreData.syncContext.proteusService = proteusService
+            }
+            
+            let mlsFeature = featureRepository.fetchMLS()
+            
+            if mlsFeature.isEnabled {
+                coreData.syncContext.mlsDecryptionService = mlsDecryptionService
+            }
+        }
+    }
+    
+    var coreData: CoreDataStack {
+        let coreData = CoreDataStack(
+            account: dependency.selectedAccount,
+            applicationContainer: dependency.applicationContainer
+        )
+        
         return coreData
     }
     
-    var cookieStorage: CookieStorageProtocol {
+    var cookieStorage: any CookieStorageProtocol {
         CookieStorage(
             userID: dependency.userIdentifier,
             cookieEncryptionKey: cookiesEncryptionKey,
             keychain: keychain
         )
-    }
-    
-    var keychain: KeychainProtocol {
-        Keychain()
     }
     
     var userDefaults: UserDefaults {
@@ -69,7 +81,59 @@ class StorageComponent: Component<StorageDependency> {
     
     // MARK: - Private
     
-    // TODO: SETUP MLS SERVICE / MLS DECRYPTION SERVICE / PROTEUS SERVICE
+    private var keychain: any KeychainProtocol {
+        Keychain()
+    }
+    
+    private var proteusService: any ProteusServiceInterface {
+        ProteusService(
+            coreCryptoProvider: coreCryptoProvider
+        )
+    }
+    
+    private var mlsDecryptionService: any MLSDecryptionServiceInterface {
+        MLSDecryptionService(
+            context: coreData.syncContext,
+            mlsActionExecutor: mlsActionExecutor
+        )
+    }
+    
+    private var coreCryptoProvider: any CoreCryptoProviderProtocol {
+        CoreCryptoProvider(
+            selfUserID: dependency.userIdentifier,
+            sharedContainerURL: dependency.applicationContainer,
+            accountDirectory: accountContainer,
+            syncContext: coreData.syncContext,
+            cryptoboxMigrationManager: CryptoboxMigrationManager(),
+            allowCreation: false
+        )
+    }
+    
+    private var accountContainer: URL {
+        CoreDataStack.accountDataFolder(
+            accountIdentifier: dependency.userIdentifier,
+            applicationContainer: dependency.applicationContainer
+        )
+    }
+    
+    private var commitSender: any CommitSending {
+        CommitSender(
+            coreCryptoProvider: coreCryptoProvider,
+            notificationContext: coreData.syncContext.notificationContext
+        )
+    }
+    
+    private var mlsActionExecutor: any MLSActionExecutorProtocol {
+        MLSActionExecutor(
+            coreCryptoProvider: coreCryptoProvider,
+            commitSender: commitSender,
+            featureRepository: featureRepository
+        )
+    }
+    
+    private var featureRepository: any FeatureRepositoryInterface {
+        FeatureRepository(context: coreData.syncContext)
+    }
     
     private var cookiesEncryptionKey: Data {
         let cookieKey = "ZMCookieKey"

@@ -38,13 +38,13 @@ class AuthenticationComponent: Component<AuthenticationDependency> {
         storageComponent.userDefaults
     }
     
-    var authenticatedComponent: AuthenticatedComponent {
-        AuthenticatedComponent(parent: self)
-    }
-    
-    // MARK: - Private
+    // MARK: - Child components
     
     private var storageComponent: StorageComponent {
         StorageComponent(parent: self)
+    }
+    
+    private var authenticatedComponent: AuthenticatedComponent {
+        AuthenticatedComponent(parent: self)
     }
 }

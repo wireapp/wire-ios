@@ -28,7 +28,7 @@ protocol APIDependency: Dependency {
 
 class APIComponent: Component<APIDependency> {
     
-    var updateEventsAPI: UpdateEventsAPI {
+    var updateEventsAPI: any UpdateEventsAPI {
         get async {
             UpdateEventsAPIBuilder(
                 apiService: await apiService
@@ -36,7 +36,7 @@ class APIComponent: Component<APIDependency> {
         }
     }
     
-    var selfUserAPI: SelfUserAPI {
+    var selfUserAPI: any SelfUserAPI {
         get async {
             SelfUserAPIBuilder(
                 apiService: await apiService
@@ -44,7 +44,7 @@ class APIComponent: Component<APIDependency> {
         }
     }
     
-    var usersAPI: UsersAPI {
+    var usersAPI: any UsersAPI {
         get async {
             UsersAPIBuilder(
                 apiService: await apiService
@@ -54,7 +54,7 @@ class APIComponent: Component<APIDependency> {
     
     // MARK: - Private
     
-    private var apiService: APIServiceProtocol {
+    private var apiService: any APIServiceProtocol {
         get async {
             APIService(
                 networkService: await networkService,
@@ -105,7 +105,7 @@ class APIComponent: Component<APIDependency> {
         }
     }
     
-    private var authenticationManager: AuthenticationManagerProtocol {
+    private var authenticationManager: any AuthenticationManagerProtocol {
         get async {
             AuthenticationManager(
                 clientID: dependency.selfClientID,
@@ -130,6 +130,8 @@ class APIComponent: Component<APIDependency> {
     private var minTLSVersion: String? {
         environmentComponent.appMainBundle.infoForKey("MinTLSVersion")
     }
+    
+    // MARK: - Child components
     
     private var environmentComponent: EnvironmentComponent {
         EnvironmentComponent(parent: self)

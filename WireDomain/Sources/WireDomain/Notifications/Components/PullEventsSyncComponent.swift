@@ -33,32 +33,8 @@ class PullEventsSyncComponent: Component<PullEventsSyncDependency> {
         self.selfClientID = selfClientID
         super.init(parent: parent)
     }
-    
-    var updateEventDecryptor: UpdateEventDecryptorProtocol {
-        UpdateEventDecryptor(
-            proteusMessageDecryptor: proteusMessageDecryptor,
-            mlsMessageDecryptor: mlsMessageDecryptor,
-            messageLocalStore: localStoreComponent.messageLocalStore
-        )
-    }
-    
-    var proteusMessageDecryptor: ProteusMessageDecryptor {
-        ProteusMessageDecryptor(
-            proteusService: dependency.context.proteusService!,
-            userClientsLocalStore: dependency.userClientsLocalStore,
-            userLocalStore: localStoreComponent.userLocalStore
-        )
-    }
-    
-    var mlsMessageDecryptor: any MLSMessageDecryptorProtocol {
-        MLSMessageDecryptor(
-            mlsDecryptionService: dependency.context.mlsDecryptionService!,
-            mlsService: dependency.context.mlsService!,
-            conversationLocalStore: localStoreComponent.conversationLocalStore
-        )
-    }
 
-    var pullUpdateEventsSync: PullUpdateEventsSyncProtocol {
+    var pullUpdateEventsSync: any PullUpdateEventsSyncProtocol {
         get async {
             await PullUpdateEventsSync(
                 selfClientID: selfClientID,
@@ -70,6 +46,31 @@ class PullEventsSyncComponent: Component<PullEventsSyncDependency> {
     }
     
     // MARK: - Private
+    
+    private var updateEventDecryptor: any UpdateEventDecryptorProtocol {
+        UpdateEventDecryptor(
+            proteusMessageDecryptor: proteusMessageDecryptor,
+            mlsMessageDecryptor: mlsMessageDecryptor,
+            messageLocalStore: localStoreComponent.messageLocalStore
+        )
+    }
+    
+    private var proteusMessageDecryptor: any ProteusMessageDecryptorProtocol {
+        ProteusMessageDecryptor(
+            proteusService: dependency.context.proteusService!,
+            userClientsLocalStore: dependency.userClientsLocalStore,
+            userLocalStore: localStoreComponent.userLocalStore
+        )
+    }
+    
+    private var mlsMessageDecryptor: any MLSMessageDecryptorProtocol {
+        MLSMessageDecryptor(
+            mlsDecryptionService: dependency.context.mlsDecryptionService!,
+            conversationLocalStore: localStoreComponent.conversationLocalStore
+        )
+    }
+    
+    // MARK: - Child components
     
     private var apiComponent: APIComponent {
         APIComponent(parent: self)

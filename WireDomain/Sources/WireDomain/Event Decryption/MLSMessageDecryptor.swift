@@ -39,7 +39,6 @@ protocol MLSMessageDecryptorProtocol {
 struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
     let mlsDecryptionService: any MLSDecryptionServiceInterface
-    let mlsService: any MLSServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
     func decryptedEventData(

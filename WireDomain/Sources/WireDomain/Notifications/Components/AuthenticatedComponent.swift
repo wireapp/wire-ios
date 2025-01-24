@@ -29,9 +29,11 @@ class AuthenticatedComponent: Component<AuthenticatedDependency> {
         dependency.coreData.syncContext
     }
     
-    var userClientsLocalStore: UserClientsLocalStoreProtocol {
+    var userClientsLocalStore: any UserClientsLocalStoreProtocol {
         UserClientsLocalStore(context: context)
     }
+    
+    // MARK: - Child components
     
     func eventsSyncComponent(selfClientID: String) -> PullEventsSyncComponent {
         PullEventsSyncComponent(
