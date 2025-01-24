@@ -126,4 +126,9 @@ final class ImagePreprocessorTests: ZMTBaseTest {
         let imageURL = URL(fileURLWithPath: "/foo/bar")
         XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(at: imageURL), CGSize.zero)
     }
+
+    func testThatItCanCalculateTheSizeOfAnImageFromData() {
+        let imageData = data(forResource: "unsplash_medium", extension: "jpg")
+        XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData), CGSize(width: 531, height: 346))
+    }
 }

@@ -48,11 +48,6 @@
 
 
 
-- (void)testThatItCanCalculateTheSizeOfAnImageFromData
-{
-    NSData *imageData = [self dataForResource:@"unsplash_medium" extension:@"jpg"];
-    AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageWithData:imageData], CGSizeMake(531, 346));
-}
 
 - (void)testThatItReturnsZeroSizeIfDataIsNotAnImage
 {
