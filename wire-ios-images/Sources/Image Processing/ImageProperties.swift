@@ -16,15 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import CoreGraphics;
-@import Foundation;
+import CoreGraphics
+import Foundation
 
-@interface ZMIImageProperties : NSObject
+@objc public class ZMIImageProperties: NSObject {
+    @objc public let size: CGSize
+    @objc public let length: UInt
+    @objc public let mimeType: String
 
-@property (nonatomic, readonly) CGSize size;
-@property (nonatomic, readonly) NSUInteger length;
-@property (nonatomic, readonly, copy) NSString *mimeType;
+    @objc public init(size: CGSize, length: UInt, mimeType: String) {
+        self.size = size
+        self.length = length
+        self.mimeType = mimeType
+    }
 
-+ (instancetype)imagePropertiesWithSize:(CGSize)size length:(NSUInteger)length mimeType:(NSString *)type;
-
-@end
+    public override var description: String {
+        "{ length: \(length), type: \(mimeType), size: (\(size.width), \(size.height)}"
+    }
+}

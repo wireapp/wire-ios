@@ -18,7 +18,6 @@
 
 @import Foundation;
 @import CoreGraphics;
-#import "ZMIImageProperties.h"
 
 typedef NS_ENUM(NSUInteger, ZMImageFormat) {
     ZMImageFormatInvalid = 0,
