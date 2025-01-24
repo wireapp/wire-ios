@@ -169,10 +169,6 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             if !proteusConversations.isEmpty {
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
-            } else {
-                // we migrated from proteus, let's inform the user
-                let sender = ZMUser.selfUser(in: context)
-                mlsConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
             }
 
             // switch active conversation
