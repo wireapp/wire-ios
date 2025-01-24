@@ -119,8 +119,8 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC892BD158D600F7853F /* WireImages.docc */,
-				59AB64832D43D307005D2D17 /* Sources */,
 				59AB64712D43D303005D2D17 /* Resources */,
+				59AB64832D43D307005D2D17 /* Sources */,
 				59AB643C2D43D300005D2D17 /* Tests */,
 				59AB732E2D43D63F005D2D17 /* WireImages-iosTestHost */,
 				098CB1191B5FA6E100712DF9 /* Frameworks */,
