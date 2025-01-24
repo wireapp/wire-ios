@@ -69,39 +69,6 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
 
-    private enum Keys: String {
-        case pushToken
-    }
-
-    // DO NOT USE THIS PROPERTY.
-    //
-    // Storing the push token on the self user client is now deprecated.
-    // From now on, we store the push token in the user defaults and is
-    // no longer the responsibility of the data model project. We keep
-    // it here so that it can still be fetched when migrating the token
-    // to user defaults, it can be deleted after some time.
-
-    @NSManaged private var primitivePushToken: Data?
-    private var pushToken: PushToken? {
-        get {
-            willAccessValue(forKey: Keys.pushToken.rawValue)
-            let token: PushToken? = if let data = primitivePushToken {
-                try? JSONDecoder().decode(PushToken.self, from: data)
-            } else {
-                nil
-            }
-            didAccessValue(forKey: Keys.pushToken.rawValue)
-            return token
-        }
-        set {
-            if newValue != pushToken {
-                willChangeValue(forKey: Keys.pushToken.rawValue)
-                primitivePushToken = try? JSONEncoder().encode(newValue)
-                didChangeValue(forKey: Keys.pushToken.rawValue)
-            }
-        }
-    }
-
     /// Clients that are trusted by self client.
     @NSManaged public var trustedClients: Set<UserClient>
 
