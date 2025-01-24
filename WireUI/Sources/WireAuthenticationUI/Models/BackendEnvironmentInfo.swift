@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct BackendEnvironmentInfo: Sendable {
+struct BackendEnvironmentInfo: Sendable {
 
     let title: String
     let backendURL: URL
@@ -27,23 +27,5 @@ public struct BackendEnvironmentInfo: Sendable {
     let teamsURL: URL
     let accountsURL: URL
     let websiteURL: URL
-
-    public init(
-        title: String,
-        backendURL: URL,
-        backendWSURL: URL,
-        blacklistURL: URL,
-        teamsURL: URL,
-        accountsURL: URL,
-        websiteURL: URL
-    ) {
-        self.title = title
-        self.backendURL = backendURL
-        self.backendWSURL = backendWSURL
-        self.blacklistURL = blacklistURL
-        self.teamsURL = teamsURL
-        self.accountsURL = accountsURL
-        self.websiteURL = websiteURL
-    }
 
 }

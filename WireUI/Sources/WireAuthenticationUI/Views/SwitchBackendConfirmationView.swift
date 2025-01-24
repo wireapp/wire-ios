@@ -56,85 +56,48 @@ package struct SwitchBackendConfirmationView: View {
         .interactiveDismissDisabled()
     }
 
-    @ViewBuilder private var title: some View {
+    private var title: some View {
         Text(Strings.title)
             .font(.textStyle(.h2))
             .foregroundStyle(Color.primaryText)
             .multilineTextAlignment(.center)
     }
 
-    @ViewBuilder private var backendDetails: some View {
+    private var backendDetails: some View {
         showFullDetails ? AnyView(fullDetails) : AnyView(shortDetails)
     }
 
-    @ViewBuilder private var fullDetails: some View {
+    private var fullDetails: some View {
         ScrollView {
             VStack(spacing: 16) {
                 Text(Strings.message)
                     .foregroundStyle(Color.primaryText)
                     .multilineTextAlignment(.center)
 
-                itemView(
-                    title: Strings.backendName,
-                    value: viewModel.backendName
-                )
-
-                itemView(
-                    title: Strings.backendUrl,
-                    value: viewModel.backendURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.backendWsurl,
-                    value: viewModel.backendWSURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.blacklistUrl,
-                    value: viewModel.blacklistURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.teamsUrl,
-                    value: viewModel.teamsURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.accountsUrl,
-                    value: viewModel.accountsURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.websiteUrl,
-                    value: viewModel.websiteURL,
-                    isURL: true
-                )
+                ForEach(viewModel.items, id: \.title) { model in
+                    itemView(
+                        title: model.title,
+                        value: model.value,
+                        isURL: model.isURL
+                    )
+                }
             }
         }
     }
 
-    @ViewBuilder private var shortDetails: some View {
+    private var shortDetails: some View {
         ScrollView {
             VStack(spacing: 16) {
                 Text(Strings.message)
                     .foregroundStyle(Color.primaryText)
                     .multilineTextAlignment(.center)
-                itemView(
-                    title: Strings.backendName,
-                    value: viewModel.backendName
-                )
-
-                itemView(
-                    title: Strings.backendUrl,
-                    value: viewModel.backendURL,
-                    isURL: true
-                )
-
+                ForEach(viewModel.items.prefix(2), id: \.title) { model in
+                    itemView(
+                        title: model.title,
+                        value: model.value,
+                        isURL: model.isURL
+                    )
+                }
                 Button {
                     withAnimation {
                         internalShowFullDetails.toggle()
@@ -149,7 +112,6 @@ package struct SwitchBackendConfirmationView: View {
         }
     }
 
-    @ViewBuilder
     private func itemView(
         title: String,
         value: String,
@@ -164,14 +126,14 @@ package struct SwitchBackendConfirmationView: View {
         }
     }
 
-    @ViewBuilder private var buttons: some View {
+    private var buttons: some View {
         VStack(spacing: 6) {
             cancelButton
             proceedButton
         }
     }
 
-    @ViewBuilder private var cancelButton: some View {
+    private var cancelButton: some View {
         Button {
             viewModel.handleEvent(.didCancel)
             dismiss()
@@ -182,7 +144,7 @@ package struct SwitchBackendConfirmationView: View {
         .wireButtonStyle(.secondary)
     }
 
-    @ViewBuilder private var proceedButton: some View {
+    private var proceedButton: some View {
         Button {
             viewModel.handleEvent(.didConfirm)
             dismiss()

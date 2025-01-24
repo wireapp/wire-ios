@@ -20,19 +20,15 @@ import Foundation
 
 package class SwitchBackendConfirmationViewModel {
 
+    private typealias Strings = L10n.SwitchBackendConfirmation
+
     // MARK: - State
 
-    let backendName: String
-    let backendURL: String
-    let backendWSURL: String
-    let blacklistURL: String
-    let teamsURL: String
-    let accountsURL: String
-    let websiteURL: String
-
-    // MARK: - Life cycle
+    let items: [ItemUIModel]
 
     private let action: (Event) -> Void
+
+    // MARK: - Life cycle
 
     convenience init(
         environment: BackendEnvironmentInfo,
@@ -60,14 +56,16 @@ package class SwitchBackendConfirmationViewModel {
         websiteURL: String,
         action: @escaping (Event) -> Void
     ) {
-        self.backendName = backendName
-        self.backendURL = backendURL
-        self.backendWSURL = backendWSURL
-        self.blacklistURL = blacklistURL
-        self.teamsURL = teamsURL
-        self.accountsURL = accountsURL
-        self.websiteURL = websiteURL
         self.action = action
+        self.items = [
+            ItemUIModel(title: Strings.backendName, value: backendName, isURL: false),
+            ItemUIModel(title: Strings.backendUrl, value: backendURL, isURL: true),
+            ItemUIModel(title: Strings.backendWsurl, value: backendWSURL, isURL: true),
+            ItemUIModel(title: Strings.blacklistUrl, value: blacklistURL, isURL: true),
+            ItemUIModel(title: Strings.teamsUrl, value: teamsURL, isURL: true),
+            ItemUIModel(title: Strings.accountsUrl, value: accountsURL, isURL: true),
+            ItemUIModel(title: Strings.websiteUrl, value: websiteURL, isURL: true)
+        ]
     }
 
     // MARK: - Events
@@ -82,4 +80,14 @@ package class SwitchBackendConfirmationViewModel {
     func handleEvent(_ event: Event) {
         action(event)
     }
+
+    // MARK: - Model
+
+    struct ItemUIModel {
+        let title: String
+        let value: String
+        let isURL: Bool
+    }
+
 }
+
