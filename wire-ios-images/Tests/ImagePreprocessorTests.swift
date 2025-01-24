@@ -59,4 +59,35 @@ final class ImagePreprocessorTests: ZMTBaseTest {
         let imageURL3 = fileURL(forResource: "unsplash_medium_exif_8", extension: "jpg")
         XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(at: imageURL3), CGSize(width: 531, height: 346))
     }
+
+    func testThatItReturnsTheRotatedSizeForImagesWithTIFFOrientation5() {
+        let properties: [String: Any] = [
+            "ColorModel": "RGB",
+            "DPIHeight": 72,
+            "DPIWidth": 72,
+            "Depth": 8,
+            "Orientation": 5,
+            "PixelHeight": 600,
+            "PixelWidth": 450,
+            "ProfileName": "Generic RGB Profile",
+            "{Exif}": [
+                "PixelXDimension": 450,
+                "PixelYDimension": 600,
+            ],
+            "{JFIF}": [
+                "DensityUnit": 1,
+                "JFIFVersion": [1, 0, 1],
+                "XDensity": 72,
+                "YDensity": 72,
+            ],
+            "{TIFF}": [
+                "Orientation": 5,
+                "ResolutionUnit": 2,
+                "XResolution": 72,
+                "YResolution": 72,
+            ]
+        ]
+        let expected = CGSize(width: 600, height: 450)
+        XCTAssertEqual(ZMImagePreprocessor.imageSize(fromProperties: properties), expected)
+    }
 }
