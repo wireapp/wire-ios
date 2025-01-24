@@ -19,12 +19,14 @@
 import CoreGraphics
 import Foundation
 
-@objc public class ZMIImageProperties: NSObject {
+@objc
+public class ZMIImageProperties: NSObject {
     @objc public let size: CGSize
     @objc public let length: UInt
     @objc public let mimeType: String
 
-    @objc public init(size: CGSize, length: UInt, mimeType: String) {
+    @objc
+    public init(size: CGSize, length: UInt, mimeType: String) {
         self.size = size
         self.length = length
         self.mimeType = mimeType

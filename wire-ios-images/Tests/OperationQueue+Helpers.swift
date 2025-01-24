@@ -20,7 +20,8 @@ import Foundation
 
 extension OperationQueue {
 
-    @objc static func serialQueue(name: String) -> OperationQueue {
+    @objc
+    static func serialQueue(name: String) -> OperationQueue {
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
         queue.name = name

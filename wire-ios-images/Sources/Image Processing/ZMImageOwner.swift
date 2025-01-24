@@ -18,13 +18,16 @@
 
 import Foundation
 
-@objc public protocol ZMImageOwner: NSObjectProtocol {
+@objc
+public protocol ZMImageOwner: NSObjectProtocol {
 
     /// The image formats that this ``ZMImageOwner`` wants preprocessed. Order of formats determines order in which data
     /// is preprocessed
 
-    @objc func requiredImageFormats() -> NSOrderedSet
+    @objc
+    func requiredImageFormats() -> NSOrderedSet
 
-    @objc func originalImageData() -> Data?
+    @objc
+    func originalImageData() -> Data?
 
 }

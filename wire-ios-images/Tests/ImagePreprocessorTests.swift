@@ -28,13 +28,13 @@ final class ImagePreprocessorTests: ZMTBaseTest {
     override func setUp() {
         super.setUp()
 
-        self.processingQueue = OperationQueue()
-        self.processingQueue.name = "\(name).processingQueue"
+        processingQueue = OperationQueue()
+        processingQueue.name = "\(name).processingQueue"
 
     }
 
-    override func tearDown()  {
-        self.processingQueue = nil
+    override func tearDown() {
+        processingQueue = nil
 
         super.tearDown()
     }
@@ -72,19 +72,19 @@ final class ImagePreprocessorTests: ZMTBaseTest {
             "ProfileName": "Generic RGB Profile",
             "{Exif}": [
                 "PixelXDimension": 450,
-                "PixelYDimension": 600,
+                "PixelYDimension": 600
             ],
             "{JFIF}": [
                 "DensityUnit": 1,
                 "JFIFVersion": [1, 0, 1],
                 "XDensity": 72,
-                "YDensity": 72,
+                "YDensity": 72
             ],
             "{TIFF}": [
                 "Orientation": 5,
                 "ResolutionUnit": 2,
                 "XResolution": 72,
-                "YResolution": 72,
+                "YResolution": 72
             ]
         ]
         let expected = CGSize(width: 600, height: 450)
@@ -103,20 +103,20 @@ final class ImagePreprocessorTests: ZMTBaseTest {
             "ProfileName": "Generic RGB Profile",
             "{Exif}": [
                 "PixelXDimension": 600,
-                "PixelYDimension": 450,
+                "PixelYDimension": 450
             ],
             "{JFIF}": [
                 "DensityUnit": 1,
                 "JFIFVersion": [1, 0, 1],
                 "XDensity": 72,
-                "YDensity": 72,
+                "YDensity": 72
             ],
             "{TIFF}": [
                 "Orientation": 7,
                 "ResolutionUnit": 2,
                 "XResolution": 72,
-                "YResolution": 72,
-            ],
+                "YResolution": 72
+            ]
         ]
         let expected = CGSize(width: 450, height: 600)
         XCTAssertEqual(ZMImagePreprocessor.imageSize(fromProperties: properties), expected)

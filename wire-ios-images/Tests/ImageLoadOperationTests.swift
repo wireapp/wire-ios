@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//import MobileCoreServices
-import UniformTypeIdentifiers;
+import UniformTypeIdentifiers
 import WireTesting
 import XCTest
 
@@ -46,7 +45,7 @@ final class ImageLoadOperationTests: ZMTBaseTest {
         XCTAssertEqual(sut.sourceImageProperties[kCGImagePropertyPixelWidth] as? Double, 531)
         XCTAssertEqual(sut.originalImageData, imageData)
         XCTAssertEqual(sut.computedImageProperties.mimeType, UTType.jpeg.identifier)
-        XCTAssertEqual(sut.tiffOrientation, 2);
+        XCTAssertEqual(sut.tiffOrientation, 2)
         XCTAssertEqual(sut.computedImageProperties.size, CGSize(width: 531, height: 346))
     }
 
