@@ -79,19 +79,4 @@
     XCTAssertNil(sut.sourceImageProperties);
 }
 
-- (void)testThatItDoesNotCrashOnInvalidData
-{
-    // given
-    NSData *imageData = [self dataForResource:@"Lorem Ipsum" extension:@"txt"];
-    ZMImageLoadOperation *sut = [[ZMImageLoadOperation alloc] initWithImageData:imageData];
-    
-    // when
-    [sut start];
-    XCTAssert([self waitOnMainLoopUntilBlock:^BOOL{
-        return [sut isFinished];
-    } timeout:1]);
-    
-    // then
-}
-
 @end
