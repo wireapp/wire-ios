@@ -19,47 +19,36 @@
 import SwiftUI
 import WireDesign
 
-public final class PasswordFieldViewModel: ObservableObject {
-    @Published public private(set) var arePasswordRulesVisible: Bool
-    @Published public fileprivate(set) var isPasswordValid: Bool
-    @Published public fileprivate(set) var isPasswordVisible: Bool
-    @Published public fileprivate(set) var password: String
-
-    fileprivate let passwordValidator: any PasswordValidator
-
-    public init(
-        arePasswordRulesVisible: Bool = false,
-        isPasswordVisible: Bool = false,
-        password: String = "",
-        passwordValidator: any PasswordValidator
-    ) {
-        self.arePasswordRulesVisible = arePasswordRulesVisible
-
-        self.isPasswordVisible = isPasswordVisible
-        self.password = password
-        self.passwordValidator = passwordValidator
-
-        self.isPasswordValid = passwordValidator.validate(password)
-    }
-}
-
 // TODO: [WPB-15571] Add accessibility strings to the mask / unmask buttons
 public struct PasswordField: View {
     @FocusState private var isFocused: Bool
-    @ObservedObject private var viewModel: PasswordFieldViewModel
     // TextField and SecureField have different heights. Switching between them causes the view to jump.
     // But we also want their height to change with dynamic font sizes. Hence @ScaledMetric.
     @ScaledMetric private var fieldHeight: CGFloat = 48
 
+    @State public private(set) var arePasswordRulesVisible: Bool
+    @State public fileprivate(set) var isPasswordVisible: Bool
+    @Binding public fileprivate(set) var isPasswordValid: Bool
+    @Binding public fileprivate(set) var password: String
+
+    private let passwordValidator: any PasswordValidator
     private let placeholder: String
     private let title: String
 
     public init(
-        viewModel: PasswordFieldViewModel,
+        arePasswordRulesVisible: Bool = false,
+        isPasswordVisible: Bool = false,
+        isPasswordValid: Binding<Bool>,
+        password: Binding<String>,
+        passwordValidator: any PasswordValidator,
         placeholder: String,
         title: String
     ) {
-        self.viewModel = viewModel
+        self.arePasswordRulesVisible = arePasswordRulesVisible
+        self.isPasswordVisible = isPasswordVisible
+        self._isPasswordValid = isPasswordValid
+        self._password = password
+        self.passwordValidator = passwordValidator
         self.placeholder = placeholder
         self.title = title
     }
@@ -71,21 +60,21 @@ public struct PasswordField: View {
                 .foregroundColor(calculatedColor)
 
             HStack {
-                if viewModel.isPasswordVisible {
-                    TextField(placeholder, text: $viewModel.password)
+                if isPasswordVisible {
+                    TextField(placeholder, text: $password)
                         .wireTextStyle(.body1)
                         .frame(height: fieldHeight)
                         .focused($isFocused)
                 } else {
-                    SecureField(placeholder, text: $viewModel.password)
+                    SecureField(placeholder, text: $password)
                         .frame(height: fieldHeight)
                         .focused($isFocused)
                 }
                 Spacer()
                 Button(action: {
-                    viewModel.isPasswordVisible.toggle()
+                    isPasswordVisible.toggle()
                 }, label: {
-                    Image(systemName: viewModel.isPasswordVisible ? "eye" : "eye.slash")
+                    Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                         .foregroundColor(.gray)
                 })
             }
@@ -94,27 +83,27 @@ public struct PasswordField: View {
                 RoundedRectangle(cornerRadius: 5)
                     .stroke(
                         calculatedColor,
-                        lineWidth: viewModel.password.isEmpty ? 0 : 1
+                        lineWidth: password.isEmpty ? 0 : 1
                     )
             )
 
-            if let passwordRules = viewModel.passwordValidator.localizedRulesDescription,
-               viewModel.arePasswordRulesVisible {
+            if let passwordRules = passwordValidator.localizedRulesDescription,
+               arePasswordRulesVisible {
                 Text(passwordRules)
                     .font(.caption)
                     .foregroundColor(calculatedColor)
             }
         }
         .padding(.horizontal)
-        .onChange(of: viewModel.password, perform: { newPassword in
-            viewModel.isPasswordValid = viewModel.passwordValidator.validate(newPassword)
+        .onChange(of: password, perform: { newPassword in
+            isPasswordValid = passwordValidator.validate(newPassword)
         })
     }
 
     // MARK: - Helper
 
     private var calculatedColor: Color {
-        switch (viewModel.password.isEmpty, viewModel.isPasswordValid) {
+        switch (password.isEmpty, isPasswordValid) {
         case (_, false):
             ColorTheme.Base.error.color
         case (true, _):
@@ -146,11 +135,10 @@ package struct MockPasswordValidator: PasswordValidator {
 @available(iOS 17, *)
 #Preview("Invalid Password - Hidden") {
     PasswordField(
-        viewModel: PasswordFieldViewModel(
-            isPasswordVisible: false,
-            password: "Invalid password",
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in false })
-        ),
+        isPasswordVisible: false,
+        isPasswordValid: .constant(false),
+        password: .constant("Invalid password"),
+        passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title
     )
@@ -159,11 +147,10 @@ package struct MockPasswordValidator: PasswordValidator {
 @available(iOS 17, *)
 #Preview("Invalid Password - Visible") {
     PasswordField(
-        viewModel: PasswordFieldViewModel(
-            isPasswordVisible: true,
-            password: "Invalid password",
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in false })
-        ),
+        isPasswordVisible: true,
+        isPasswordValid: .constant(false),
+        password: .constant("Invalid password"),
+        passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title
     )
@@ -172,11 +159,10 @@ package struct MockPasswordValidator: PasswordValidator {
 @available(iOS 17, *)
 #Preview("Valid Password - Hidden") {
     PasswordField(
-        viewModel: PasswordFieldViewModel(
-            isPasswordVisible: false,
-            password: "Valid password!",
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true })
-        ),
+        isPasswordVisible: false,
+        isPasswordValid: .constant(true),
+        password: .constant("Valid password!"),
+        passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title
     )
@@ -185,11 +171,10 @@ package struct MockPasswordValidator: PasswordValidator {
 @available(iOS 17, *)
 #Preview("Valid Password - Visible") {
     PasswordField(
-        viewModel: PasswordFieldViewModel(
-            isPasswordVisible: true,
-            password: "Valid password!",
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true })
-        ),
+        isPasswordVisible: true,
+        isPasswordValid: .constant(true),
+        password: .constant("Valid password!"),
+        passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title
     )
