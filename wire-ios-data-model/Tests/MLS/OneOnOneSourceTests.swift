@@ -201,6 +201,103 @@ final class OneOnOneSourceTests: XCTestCase {
             XCTAssertNil(result)
         }
     }
+
+    func testFetchOneOnOnesWithCandidate_whenConversationsOfEveryType() async throws {
+        // Given a mix of all 1:1 conversation types with UserA & UserB
+        let userAConversations = try await createConversations([
+            // 1:1 MLS with UserA
+            .init(id: UUID(suffix: "8"), .oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil),
+            .init(id: UUID(suffix: "7"), .oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil),
+            // 1:1 proteus fake with UserA
+            .init(id: UUID(suffix: "6"), .group, .proteus, team: team, users: [selfUser, userA], name: nil),
+            .init(id: UUID(suffix: "5"), .group, .proteus, team: team, users: [selfUser, userA], name: nil),
+            // 1:1 proteus with UserA
+            .init(id: UUID(suffix: "4"), .oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            .init(id: UUID(suffix: "3"), .oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            // 1:1 proteus pending UserA
+            .init(id: UUID(suffix: "2"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            .init(id: UUID(suffix: "1"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil),
+        ])
+        _ = try await createConversations([
+            // 1:1s with UserB
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userB], name: nil),
+            .init(.group, .proteus, team: team, users: [selfUser, userB], name: nil),
+            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userB], name: nil),
+            .init(.connection, .proteus, team: nil, users: [selfUser, userB], name: nil),
+        ])
+
+        try await context.perform { [self] in
+            // When fetching all types of 1:1 conversations for `userA` with `mls` as a priority
+            let result = try XCTUnwrap(
+                sut.fetchOneOnOnesWithCandidate(user: userA, types: [.mls, .fake, .proteus, .proteusPending])
+            )
+
+            // Then the candidate is the matching 1:1 MLS conversation with the lowest UUID
+            let expectedCandidate = userAConversations[1]
+            XCTAssertEqual(result.candidate, expectedCandidate)
+
+            // Then the other conversations are all matching conversations minus the candidate.
+            let expectedOthers = userAConversations.filter { $0 != expectedCandidate }
+            XCTAssertEqual(Set(result.others), Set(expectedOthers))
+        }
+    }
+
+    func testFetchOneOnOnesWithCandidate_whenConversationsOfSomeTypes() async throws {
+        // Given 1:1 conversation of `proteus` and `proteusPending` types
+        let conversations = try await createConversations([
+            // 1:1 proteus with UserA
+            .init(id: UUID(suffix: "4"), .oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            .init(id: UUID(suffix: "3"), .oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            // 1:1 proteus pending UserA
+            .init(id: UUID(suffix: "2"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            .init(id: UUID(suffix: "1"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil),
+        ])
+
+        try await context.perform { [self] in
+            // When fetching `all` types of 1:1s with `proteus` given greater priority than `proteusPending`
+            let result = try XCTUnwrap(
+                sut.fetchOneOnOnesWithCandidate(user: userA, types: [.mls, .fake, .proteus, .proteusPending])
+            )
+
+            // Then the candidate is the matching proteus 1:1 with the lowest UUID
+            let expectedCandidate = conversations[1]
+            XCTAssertEqual(result.candidate, expectedCandidate)
+
+            // Then the other conversations are all matching conversations minus the candidate.
+            let expectedOthers = conversations.filter { $0 != expectedCandidate }
+            XCTAssertEqual(Set(result.others), Set(expectedOthers))
+        }
+    }
+
+    func testFetchOneOnOnesWithCandidate_respectsOrderOfTypes() async throws {
+        // Given 1:1 conversations of each type
+        let conversations = try await createConversations([
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 MLS with UserA
+            .init(.group, .proteus, team: team, users: [selfUser, userA], name: nil), // <- 1:1 proteus fake with UserA
+            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 proteus with UserA
+            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 prot. pending UserA
+        ])
+
+        let testCases: [(types: [OneOnOneType], expectedCandidate: ZMConversation)] = [
+            ([.mls, .fake, .proteus, .proteusPending], expectedCandidate: conversations[0]),
+            ([.fake, .proteus, .proteusPending, .mls], expectedCandidate: conversations[1]),
+            ([.proteus, .proteusPending, .mls, .fake], expectedCandidate: conversations[2]),
+            ([.proteusPending, .mls, .fake, .proteus], expectedCandidate: conversations[3])
+        ]
+
+        try await context.perform { [self] in
+            for testCase in testCases {
+                // When
+                let result = try XCTUnwrap(
+                    sut.fetchOneOnOnesWithCandidate(user: userA, types: testCase.types)
+                )
+
+                // Then
+                XCTAssertEqual(result.candidate, testCase.expectedCandidate)
+            }
+        }
+    }
+
     // MARK: - Helpers
 
     private func createConversations(_ data: [ConversationData]) async throws -> [ZMConversation] {
@@ -216,6 +313,7 @@ final class OneOnOneSourceTests: XCTestCase {
 // MARK: Helpers
 
 private struct ConversationData {
+    let id: UUID
     let conversationType: ZMConversationType
     let messageProtocol: MessageProtocol
     let team: Team?
@@ -223,12 +321,14 @@ private struct ConversationData {
     let name: String?
 
     init(
+        id: UUID = .init(),
         _ conversationType: ZMConversationType,
         _ messageProtocol: MessageProtocol,
         team: Team?,
         users: [ZMUser],
         name: String?
     ) {
+        self.id = id
         self.conversationType = conversationType
         self.messageProtocol = messageProtocol
         self.team = team
@@ -242,11 +342,22 @@ private struct ConversationData {
         conversation.messageProtocol = messageProtocol
         conversation.team = team
         conversation.userDefinedName = name
+        conversation.remoteIdentifier = id
 
         for user in users {
             ParticipantRole.create(managedObjectContext: context, user: user, conversation: conversation)
         }
 
         return conversation
+    }
+}
+
+private extension UUID {
+    init(suffix: String) {
+        var uuidString = "00000000-0000-0000-0000-000000000000"
+        let replacementRange = uuidString.index(uuidString.endIndex, offsetBy: -suffix.count)..<uuidString.endIndex
+        uuidString.replaceSubrange(replacementRange, with: suffix)
+
+        self = UUID(uuidString: uuidString)!
     }
 }
