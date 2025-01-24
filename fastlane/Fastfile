@@ -166,16 +166,17 @@ platform :ios do
         build_and_upload_app(options)
     end
 
-    desc "Build & Upload Development build"
+    desc "Build & Upload Edge build"
     lane :edge do |options|
-        options[:build_type] = "Development"
+        options[:build_type] = "Edge"
         options[:upload_app_center] = false
         options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
-        save_app_name('Development')
+        save_app_name('Edge')
         build_and_upload_app(options)
+        `export TEMP='BUILD_INSTALL_LINK=#{ENV['EDGE_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Playground build"
@@ -833,6 +834,10 @@ class Build
         @build_type == "Beta"
     end
 
+    def edge_build
+        @build_type == "Edge"
+    end
+
     def debug_build
         @configuration == "Debug"
     end
@@ -844,7 +849,7 @@ class Build
     def export_method
         if debug_build
             "development"
-        elsif appstore_build || beta_build || rc_build || playground_build
+        elsif appstore_build || beta_build || rc_build || playground_build || edge_build
             "app-store"
         else 
             "ad-hoc"
@@ -852,7 +857,7 @@ class Build
     end
 
     def should_sigh_adhoc
-        !appstore_build && !rc_build && !beta_build && !playground_build
+        !appstore_build && !rc_build && !beta_build && !playground_build && !edge_build
     end
 
     # Paths
@@ -893,6 +898,8 @@ class Build
             result = "playground-#{normalized_branch_name}/#{suffix}"
         when "Development"
             result = "development/#{suffix}"
+        when "Edge"
+            result = "edge/#{suffix}"
         when "AppStore"
             result = "release/appstore"
         when "RC"
