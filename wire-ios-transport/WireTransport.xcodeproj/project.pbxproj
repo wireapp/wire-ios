@@ -192,9 +192,9 @@
 			children = (
 				EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */,
 				EF1A09A51FF6BEE300F89634 /* testing.modulemap */,
+				59AB6D482D43D4F9005D2D17 /* Resources */,
 				59AB72AD2D43D599005D2D17 /* Source */,
 				59AB720B2D43D562005D2D17 /* Tests */,
-				59AB6D482D43D4F9005D2D17 /* Resources */,
 				59AB6D332D43D4D8005D2D17 /* WireTransport-tests-host */,
 				59AB6D252D43D497005D2D17 /* WireTransportSupport */,
 				3E88BDE01B1F44FB00232589 /* Frameworks */,

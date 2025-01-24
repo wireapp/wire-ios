@@ -490,8 +490,8 @@
 				54C9024F1B7532F6007162A8 /* Resources */,
 				54C902351B7532DD007162A8 /* Source */,
 				54C902421B7532DD007162A8 /* Tests */,
-				54C902341B7532DD007162A8 /* Products */,
 				54C902651B753419007162A8 /* Frameworks */,
+				54C902341B7532DD007162A8 /* Products */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";

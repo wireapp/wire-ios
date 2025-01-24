@@ -107,12 +107,12 @@
 		BA7EF9551B7109B600204A8E = {
 			isa = PBXGroup;
 			children = (
-				59AB793F2D43D780005D2D17 /* WireCryptobox */,
 				59AB792F2D43D6B1005D2D17 /* Resources */,
-				59AB791B2D43D6AD005D2D17 /* WireCryptoboxTests */,
 				59AB731D2D43D5BB005D2D17 /* test-host */,
-				BA7EF95F1B7109B600204A8E /* Products */,
+				59AB793F2D43D780005D2D17 /* WireCryptobox */,
+				59AB791B2D43D6AD005D2D17 /* WireCryptoboxTests */,
 				F10C8E221E9296BA00020408 /* Frameworks */,
+				BA7EF95F1B7109B600204A8E /* Products */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";

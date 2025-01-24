@@ -88,13 +88,13 @@
 		090837F41B872DBF00629095 = {
 			isa = PBXGroup;
 			children = (
-				EE9AEC8F2BD1594600F7853F /* WireProtos.docc */,
 				016BDDED2A9F86E50054FB04 /* Scripts */,
-				09B70B4B1B874390002667A6 /* Resources */,
+				EE9AEC8F2BD1594600F7853F /* WireProtos.docc */,
 				090838001B872DBF00629095 /* Protos */,
 				59AB79502D43D79B005D2D17 /* ProtosTests */,
-				090837FF1B872DBF00629095 /* Products */,
+				09B70B4B1B874390002667A6 /* Resources */,
 				67FFDFDA66F3EEA3F9461130 /* Frameworks */,
+				090837FF1B872DBF00629095 /* Products */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";

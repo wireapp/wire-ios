@@ -109,8 +109,8 @@
 				59AB6D102D43D47E005D2D17 /* WireLinkPreview */,
 				59AB6CCC2D43D44D005D2D17 /* WireLinkPreviewTests */,
 				59AB687E2D43D375005D2D17 /* WireLinkPreviewTestsHost */,
-				BFF0578B1D25434D004A2C29 /* Products */,
 				16A5FE0F215A868700AEEBBD /* Frameworks */,
+				BFF0578B1D25434D004A2C29 /* Products */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
