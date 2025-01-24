@@ -23,9 +23,25 @@ import XCTest
 
 final class ImageLoadOperationTests: ZMTBaseTest {
 
+    func testThatItDoesNotLoadWhenCancelled() throws {
+        // given
+        let imageData = try XCTUnwrap(data(forResource: "unsplash_medium", extension: "jpg"))
+        let sut = try XCTUnwrap(ZMImageLoadOperation(imageData: imageData))
+        sut.cancel()
+        expectation(for: NSPredicate(format: "isFinished == YES"), evaluatedWith: sut, handler: nil)
+
+        // when
+        sut.start()
+        waitForExpectations(timeout: 5)
+
+        // then
+        XCTAssertNil(sut.cgImage)
+        XCTAssertNil(sut.sourceImageProperties)
+    }
+
     func testThatItDoesNotCrashOnInvalidData() throws {
         // given
-        let imageData = data(forResource: "Lorem Ipsum", extension: "txt")
+        let imageData = try XCTUnwrap(data(forResource: "Lorem Ipsum", extension: "txt"))
         let sut = try XCTUnwrap(ZMImageLoadOperation(imageData: imageData))
         expectation(for: NSPredicate(format: "isFinished == YES"), evaluatedWith: sut, handler: nil)
 

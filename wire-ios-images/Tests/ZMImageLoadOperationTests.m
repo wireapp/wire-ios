@@ -59,24 +59,4 @@
     AssertEqualSizes(sut.computedImageProperties.size, CGSizeMake(531, 346));
 }
 
-- (void)testThatItDoesNotLoadWhenCancelled
-{
-    // given
-    NSData *imageData = [self dataForResource:@"unsplash_medium" extension:@"jpg"];
-    XCTAssertNotNil(imageData);
-    ZMImageLoadOperation *sut = [[ZMImageLoadOperation alloc] initWithImageData:imageData];
-    [sut cancel];
-    
-    // when
-    [sut start];
-    XCTAssert([self waitOnMainLoopUntilBlock:^BOOL{
-        return [sut isFinished];
-    } timeout:1]);
-    
-    // then
-    XCTAssertNotNil(sut);
-    XCTAssertEqual(sut.CGImage, NULL);
-    XCTAssertNil(sut.sourceImageProperties);
-}
-
 @end
