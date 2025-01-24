@@ -162,7 +162,7 @@ final class OneOnOneSourceTests: XCTestCase {
 
     func testFetchOneOnOnes_allTypes() async throws {
         // Given all valid 1:1 conversations
-        let allConversations = try await createConversations([
+        _ = try await createConversations([
             .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 MLS with UserA
             .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 MLS with UserA
             .init(.group, .proteus, team: team, users: [selfUser, userA], name: nil), // <- 1:1 proteus fake with UserA
@@ -182,6 +182,25 @@ final class OneOnOneSourceTests: XCTestCase {
         }
     }
 
+    // MARK: - fetchOneOnOnesWithCandidate
+
+    func testFetchOneOnOnesWithCandidate_whenNoMatchingConversations() async throws {
+        // Given a 1:1 conversations with UserB
+        _ = try await createConversations([
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userB], name: nil), // <- 1:1 MLS with UserB
+        ])
+
+        try await context.perform { [self] in
+            // When fetching all types of 1:1 conversations with UserA
+            let result = try sut.fetchOneOnOnesWithCandidate(
+                user: userA,
+                types: [.mls, .fake, .proteus, .proteusPending]
+            )
+
+            // Then
+            XCTAssertNil(result)
+        }
+    }
     // MARK: - Helpers
 
     private func createConversations(_ data: [ConversationData]) async throws -> [ZMConversation] {
