@@ -556,10 +556,13 @@ extension EventDecoderTest {
             (didCreateNewSession: false, decryptedData: data)
         }
 
+        let eventID = UUID.create()
+
         let mlsEvent: ZMUpdateEvent = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
                 data: Data.random().base64EncodedString(),
-                groupID: .random()
+                groupID: .random(),
+                eventID: eventID
             )
         }
 
@@ -584,6 +587,10 @@ extension EventDecoderTest {
             lastEventIDRepository.storeLastEventID_Invocations.count,
             1
         ) // last event ID updated locally because MLS decryption was successful
+        XCTAssertEqual(
+            lastEventIDRepository.storeLastEventID_Invocations.first,
+            eventID
+        )
 
     }
 
@@ -597,10 +604,13 @@ extension EventDecoderTest {
             (didCreateNewSession: false, decryptedData: data)
         }
 
+        let eventID = UUID.create()
+
         let mlsEvent: ZMUpdateEvent = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
                 data: Data.random().base64EncodedString(),
-                groupID: .random()
+                groupID: .random(),
+                eventID: eventID
             )
         }
 
@@ -625,7 +635,10 @@ extension EventDecoderTest {
             lastEventIDRepository.storeLastEventID_Invocations.count,
             1
         ) // last event ID updated locally because MLS decryption was successful
-
+        XCTAssertEqual(
+            lastEventIDRepository.storeLastEventID_Invocations.first,
+            eventID
+        )
     }
 
     func test_ProteusEventDecryption_Legacy() async throws {
@@ -771,9 +784,9 @@ extension EventDecoderTest {
         do {
             // When
             _ = try await sut.decryptMlsMessage(from: event, context: syncMOC)
-        } catch let error as EventDecoder.Failure {
+        } catch {
             // Then
-            XCTAssert(error == .mlsDecodingError)
+            XCTAssert(error is DecodingError)
         }
 
     }
@@ -906,7 +919,7 @@ extension EventDecoderTest {
     }
 
     /// Returns a `conversation.mls-message-add` event
-    func mlsMessageAddEvent(data: Any, groupID: MLSGroupID? = nil) -> ZMUpdateEvent {
+    func mlsMessageAddEvent(data: Any, groupID: MLSGroupID? = nil, eventID: UUID = .create()) -> ZMUpdateEvent {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         conversation.mlsGroupID = groupID
@@ -919,7 +932,7 @@ extension EventDecoderTest {
             time: Date()
         )
 
-        return ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID().create())!
+        return ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: eventID)!
     }
 
     /// Returns a `conversation.mls-welcome` event

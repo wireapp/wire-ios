@@ -22,7 +22,6 @@ import WireLogging
 extension EventDecoder {
 
     enum Failure: Error {
-        case mlsDecodingError
         case missingMLSGroupID
     }
 
@@ -70,10 +69,10 @@ extension EventDecoder {
         }
 
         let decoder = EventPayloadDecoder()
-        guard let payload = try? decoder
-            .decode(Payload.UpdateConversationMLSMessageAdd.self, from: updateEvent.payload) else {
-            throw Failure.mlsDecodingError
-        }
+        let payload = try decoder.decode(
+            Payload.UpdateConversationMLSMessageAdd.self,
+            from: updateEvent.payload
+        )
 
         var conversation: ZMConversation?
         let groupID: MLSGroupID? = await context.perform {
