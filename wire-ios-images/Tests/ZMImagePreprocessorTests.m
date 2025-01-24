@@ -44,23 +44,6 @@
     [super tearDown];
 }
 
-- (void)testThatItReturnsTheRotatedSizeForImagesWithATIFFOrientation
-{
-    NSURL *imageURL;
-    imageURL = [self fileURLForResource:@"unsplash_medium_exif_3" extension:@"jpg"];
-    XCTAssertNotNil(imageURL);
-    CGSize orientation3Size = [ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL];
-    AssertEqualSizes(orientation3Size, CGSizeMake(531, 346));
-    imageURL = [self fileURLForResource:@"unsplash_medium_exif_6" extension:@"jpg"];
-    XCTAssertNotNil(imageURL);
-    CGSize orientation6Size = [ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL];
-    AssertEqualSizes(orientation6Size, CGSizeMake(531, 346));
-    imageURL = [self fileURLForResource:@"unsplash_medium_exif_8" extension:@"jpg"];
-    XCTAssertNotNil(imageURL);
-    CGSize orientation8Size = [ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL];
-    AssertEqualSizes(orientation8Size, CGSizeMake(531, 346));
-}
-
 - (void)testThatItReturnsTheRotatedSizeForImagesWithTIFFOrientation5;
 {
     NSDictionary *properties = @{

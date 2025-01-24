@@ -48,4 +48,15 @@ final class ImagePreprocessorTests: ZMTBaseTest {
         let imageURL = fileURL(forResource: "Lorem Ipsum", extension: "txt")
         XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(at: imageURL), CGSize.zero)
     }
+
+    func testThatItReturnsTheRotatedSizeForImagesWithATIFFOrientation() {
+        let imageURL = fileURL(forResource: "unsplash_medium_exif_3", extension: "jpg")
+        XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(at: imageURL), CGSize(width: 531, height: 346))
+
+        let imageURL2 = fileURL(forResource: "unsplash_medium_exif_6", extension: "jpg")
+        XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(at: imageURL2), CGSize(width: 531, height: 346))
+
+        let imageURL3 = fileURL(forResource: "unsplash_medium_exif_8", extension: "jpg")
+        XCTAssertEqual(ZMImagePreprocessor.sizeOfPrerotatedImage(at: imageURL3), CGSize(width: 531, height: 346))
+    }
 }
