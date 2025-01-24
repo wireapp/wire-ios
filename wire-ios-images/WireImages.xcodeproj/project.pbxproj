@@ -19,7 +19,6 @@
 		096960361B663EFC006DF53B /* WireImages.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB13C1B5FAD5A00712DF9 /* WireImages.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09B977381B669B6C00A30B38 /* ZMImageLoadOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */; };
 		09B977411B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */; };
-		09B977451B669CEC00A30B38 /* NSOperationQueue+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */; };
 		09BCDB591BC664DA0020DCC7 /* ImageOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */; };
 		591B6E712C8B0A0D009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; };
 		591B6E742C8B0A10009F8A7B /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
@@ -111,8 +110,6 @@
 		098CB1661B5FAD6900712DF9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImageLoadOperationTests.m; sourceTree = "<group>"; };
 		09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImageDownsampleOperationTests.m; sourceTree = "<group>"; };
-		09B977421B669CEC00A30B38 /* NSOperationQueue+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+Helpers.h"; sourceTree = "<group>"; };
-		09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+Helpers.m"; sourceTree = "<group>"; };
 		09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageOwner.swift; sourceTree = "<group>"; };
 		5471F81F1B73E6E000460C35 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		5471F8201B73E6E000460C35 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
@@ -282,8 +279,6 @@
 				098CB1661B5FAD6900712DF9 /* Info.plist */,
 				09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */,
 				09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */,
-				09B977421B669CEC00A30B38 /* NSOperationQueue+Helpers.h */,
-				09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */,
 				87B91C051E5C5D8600A5EC11 /* NSDataMetadataTests.swift */,
 				87B91C081E5C7E5D00A5EC11 /* Resources */,
 				CBBADE112D43CCAE0044B7B4 /* ImagePreprocessorTests.swift */,
@@ -602,7 +597,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CBBADE122D43CCAE0044B7B4 /* ImagePreprocessorTests.swift in Sources */,
-				09B977451B669CEC00A30B38 /* NSOperationQueue+Helpers.m in Sources */,
 				87B91C061E5C5D8600A5EC11 /* NSDataMetadataTests.swift in Sources */,
 				09B977381B669B6C00A30B38 /* ZMImageLoadOperationTests.m in Sources */,
 				09B977411B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m in Sources */,
