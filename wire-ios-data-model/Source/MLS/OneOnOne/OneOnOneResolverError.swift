@@ -20,4 +20,5 @@ import Foundation
 
 enum OneOnOneResolverError: Error {
     case migratorNotFound
+    case userNotFound
 }
