@@ -456,6 +456,7 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
     public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod: ((UUID, URL, URL, ZMSDispatchGroup) async throws -> URL)?
     public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue: URL?
 
+    @discardableResult
     public func replacePersistentStore(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup) async throws -> URL {
         replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.append((accountIdentifier: accountIdentifier, backupDirectory: backupDirectory, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
 

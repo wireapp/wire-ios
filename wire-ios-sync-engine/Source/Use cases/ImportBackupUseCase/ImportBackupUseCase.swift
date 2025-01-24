@@ -91,7 +91,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             dispatchGroup: dispatchGroup
         )
 
-        // import the self client from the backup
+        // import the self client from the backup and set the correct self user relation
         let temporaryStack = try await entityStorage.createContextProvider( // TODO: does it cause warning: Multiple NSEntityDescriptions claim the NSManagedObject subclass 'WireDataModel.UserClient' so +entity is unable to disambiguate?
             account: account,
             applicationContainer: sharedContainerURL,
@@ -102,7 +102,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             let userID = selfUserQualifiedID?.uuid
             let domain = selfUserQualifiedID?.domain
 
-            // import the self client from the backup and set the correct self user relation
             var selfUser: ZMUser?
             if let userID {
                 selfUser = ZMUser.fetch(with: userID, domain: domain, in: context)

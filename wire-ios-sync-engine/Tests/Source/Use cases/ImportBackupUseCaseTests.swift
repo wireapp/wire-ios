@@ -36,6 +36,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
 
     override func setUp() async throws {
         let fileManager = FileManager()
+        let selfUserQualifiedID = QualifiedID.random()
 
         coreDataStack = try await CoreDataStackHelper()
             .createStack(inMemoryStore: true)
@@ -51,8 +52,15 @@ final class ImportBackupUseCaseTests: XCTestCase {
             .temporaryDirectory
             .appending(path: UUID().uuidString)
         mockEntityStorage.createContextProviderAccountApplicationContainerDispatchGroup_MockMethod = { _, _, _ in
-            try await CoreDataStackHelper()
+            let stack = try await CoreDataStackHelper()
                 .createStack(inMemoryStore: true)
+            try await stack.viewContext.perform {
+                let user = ZMUser.selfUser(in: stack.viewContext)
+                user.remoteIdentifier = selfUserQualifiedID.uuid
+                user.domain = selfUserQualifiedID.domain
+                try stack.viewContext.save()
+            }
+            return stack
         }
         mockEntityStorage
             .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod = { _, _, _, _ in
@@ -72,10 +80,27 @@ final class ImportBackupUseCaseTests: XCTestCase {
             .temporaryDirectory
             .appending(path: UUID().uuidString)
 
+        let viewContext = coreDataStack.viewContext
+        let selfUser = await viewContext.perform {
+            let user = ZMUser.selfUser(in: viewContext)
+            user.remoteIdentifier = selfUserQualifiedID.uuid
+            user.domain = selfUserQualifiedID.domain
+            return user
+        }
+
         mockUserSession = .init()
         mockUserSession.contextProvider = coreDataStack
-        await coreDataStack.viewContext.perform {
-            self.mockUserSession.selfUserClient = .init(context: self.coreDataStack.viewContext)
+        mockUserSession.selfUser = selfUser
+        try await viewContext.perform { [viewContext] in
+            let selfUserClient = UserClient.insertNewSelfClient(
+                in: viewContext,
+                selfUser: selfUser,
+                model: "",
+                label: ""
+            )
+            selfUserClient.markAsSelfClient()
+            self.mockUserSession.selfUserClient = selfUserClient
+            try viewContext.save()
         }
 
         sut = .init(
@@ -135,7 +160,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
         }
     }
 
-    func testDecryptorIsCalledCorrectly() async throws {
+    func testMockInvocations() async throws {
         // Given
         let url = URL(fileURLWithPath: "backup.ios_wbu")
         let accountID = coreDataStack.account.userIdentifier
@@ -150,6 +175,10 @@ final class ImportBackupUseCaseTests: XCTestCase {
             mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.password,
             "c<%I2f41\"6!'"
         )
+        XCTAssertFalse(mockFileArchiver.unzipFileAtTo_Invocations.isEmpty)
+        XCTAssertFalse(mockAppStateUpdater.reportMigrationNeeded_Invocations.isEmpty)
+        XCTAssertFalse(mockEntityStorage.replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.isEmpty)
+        XCTAssertFalse(mockAppStateUpdater.selectAccountAndTriggerSlowSync_Invocations.isEmpty)
     }
 
 }
