@@ -1216,7 +1216,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
 
         // Then we try to commit pending proposals twice, once for the subgroup, once for the parent
-        var mockCommitPendingProposalArguments = await commitPendingProposalsArgumentsActor.items
+        let mockCommitPendingProposalArguments = await commitPendingProposalsArgumentsActor.items
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
         let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
 
