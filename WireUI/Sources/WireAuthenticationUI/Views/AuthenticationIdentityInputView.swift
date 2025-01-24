@@ -48,21 +48,25 @@ package struct AuthenticationIdentityInputView: View {
             }
             Text(L10n.Authentication.Identity.Input.body)
                 .wireTextStyle(.body1)
+                .lineLimit(nil)
             LabeledTextField(
                 isMandatory: false,
                 placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
                 title: L10n.Authentication.Identity.Input.Field.title,
                 string: $identity
             )
+            .lineLimit(nil)
             Button(action: {
                 actionCallback(.submit(identity: identity))
             }, label: {
                 Text(L10n.Authentication.Identity.Input.submit)
+                    .lineLimit(nil)
             })
             .wireButtonStyle(.primary)
             Text(AttributedString.markdown(from: L10n.Authentication.Identity.Input.terms(termsURL.absoluteString)))
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.subline1)
+                .lineLimit(nil)
         }
     }
 }
@@ -79,5 +83,23 @@ struct AuthenticationIdentityInputPreview: View {
 }
 
 #Preview {
-    AuthenticationIdentityInputPreview()
+    BackgroundView()
+        .overlay {
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(maxHeight: .infinity)
+                if #available(iOS 16.4, *) {
+                    ScrollView(.vertical) {
+                        AuthenticationIdentityInputPreview()
+                    }
+                    .background()
+                    .scrollBounceBehavior(.basedOnSize)
+                } else {
+                    ScrollView(.vertical) {
+                        AuthenticationIdentityInputPreview()
+                    }
+                    .background()
+                }
+            }
+        }
 }
