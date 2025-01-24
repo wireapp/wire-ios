@@ -44,12 +44,6 @@
     [super tearDown];
 }
 
-- (void)testThatItReturnsZeroSizeIfFileIsNotAnImage
-{
-    NSURL *imageURL = [self fileURLForResource:@"Lorem Ipsum" extension:@"txt"];
-    AssertEqualSizes([ZMImagePreprocessor sizeOfPrerotatedImageAtURL:imageURL], CGSizeZero);
-}
-
 - (void)testThatItReturnsTheRotatedSizeForImagesWithATIFFOrientation
 {
     NSURL *imageURL;
