@@ -105,9 +105,9 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC852BD1589E00F7853F /* WireTesting.docc */,
+				595F61EB2D43CC5400E5ECBE /* Resources */,
 				5930F4952D43C7D9009E3514 /* Source */,
 				595F61D62D43CC0700E5ECBE /* Tests */,
-				595F61EB2D43CC5400E5ECBE /* Resources */,
 				096AD7EC1B68D8DF00E007A8 /* Frameworks */,
 				096AD7BC1B68D41D00E007A8 /* Products */,
 			);
