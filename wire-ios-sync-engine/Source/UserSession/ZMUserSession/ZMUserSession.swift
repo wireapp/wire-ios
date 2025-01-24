@@ -209,7 +209,7 @@ public final class ZMUserSession: NSObject {
 
     // swiftlint:disable:next todo_requires_jira_link
     public var selfUserClient: WireDataModel.UserClient? { // TODO: jacob we don't want this to be public
-        ZMUser.selfUser(in: managedObjectContext).selfClient()
+        ZMUser.selfUser(in: managedObjectContext).selfClient() // TODO: after restore this returns nil
     }
 
     public var userProfile: UserProfile {
@@ -459,9 +459,10 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
+        // TODO: do we end up here after restart?
         syncManagedObjectContext.performGroupedAndWait { [self] in
             localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
-            configureTransportSession()
+            configureTransportSession() // TODO: do we run this after restart? yes all good
 
             // need to be before we create strategies since it is passed
             proteusProvider = ProteusProvider(
@@ -552,7 +553,14 @@ public final class ZMUserSession: NSObject {
     // MARK: - Methods
 
     private func configureTransportSession() {
-        transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
+        let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
+        print("selfUser", selfUser)
+        let selfUserClient = selfUser.selfClient() // TODO: the
+        print("selfUserClient", selfUserClient)
+        let remoteIdentifier = selfUserClient?.remoteIdentifier
+        print("remoteIdentifier", remoteIdentifier)
+        transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier // TODO: fix
+        print("transportSession.pushChannel.clientID", transportSession.pushChannel.clientID)
         transportSession.setNetworkStateDelegate(self)
         transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
@@ -1084,6 +1092,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             do {
                 try await updateEventProcessor?.processBufferedEvents()
             } catch {
+                WireLogger.sync.error("pocessEvents error: \(String(describing: error))")
                 processingInterrupted = true
             }
 
