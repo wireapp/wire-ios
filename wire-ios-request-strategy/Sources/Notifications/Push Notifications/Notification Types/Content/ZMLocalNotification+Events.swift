@@ -120,11 +120,6 @@ private class EventNotificationBuilder: NotificationBuilder {
                 // don't show notifications that have already been read
                 return false
             }
-        } else if let context = sender?.managedObjectContext {
-            // conversation is `nil`
-            switch ZMUser.selfUser(in: context).availability {
-                
-            }
         }
 
         tmpLoggerRS?.warning("[tLRS] shouldCreateNotification final return true")
@@ -206,6 +201,17 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
 
     override var notificationType: LocalNotificationType {
         LocalNotificationType.event(.conversationCreated)
+    }
+
+    override func shouldCreateNotification() -> Bool {
+        if conversation == nil {
+            // WPB-8946: fixes bug: notifications shown even though availability is busy or away
+            let availability = moc.performAndWait { ZMUser.selfUser(in: moc).availability }
+            return [.none, .available].contains(availability)
+        }
+
+        // default behavior
+        return super.shouldCreateNotification()
     }
 
 }
