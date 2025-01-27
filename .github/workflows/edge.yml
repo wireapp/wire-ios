@@ -15,6 +15,6 @@ jobs:
     with:
       countly_enabled: true
       datadog_enabled: true
-      fastlane_action: edge
+      fastlane_action: development
       is_cloud_build: true
     secrets: inherit

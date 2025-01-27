@@ -166,9 +166,9 @@ platform :ios do
         build_and_upload_app(options)
     end
 
-    desc "Build & Upload Edge build"
-    lane :edge do |options|
-        options[:build_type] = "Edge"
+    desc "Build & Upload Development build"
+    lane :development do |options|
+        options[:build_type] = "Development"
         options[:upload_app_center] = false
         options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
@@ -834,10 +834,6 @@ class Build
         @build_type == "Beta"
     end
 
-    def edge_build
-        @build_type == "Edge"
-    end
-
     def debug_build
         @configuration == "Debug"
     end
@@ -849,7 +845,7 @@ class Build
     def export_method
         if debug_build
             "development"
-        elsif appstore_build || beta_build || rc_build || playground_build || edge_build
+        elsif appstore_build || beta_build || rc_build || playground_build
             "app-store"
         else 
             "ad-hoc"
@@ -857,7 +853,7 @@ class Build
     end
 
     def should_sigh_adhoc
-        !appstore_build && !rc_build && !beta_build && !playground_build && !edge_build
+        !appstore_build && !rc_build && !beta_build && !playground_build
     end
 
     # Paths
@@ -898,8 +894,6 @@ class Build
             result = "playground-#{normalized_branch_name}/#{suffix}"
         when "Development"
             result = "development/#{suffix}"
-        when "Edge"
-            result = "edge/#{suffix}"
         when "AppStore"
             result = "release/appstore"
         when "RC"
