@@ -17,10 +17,8 @@
 //
 
 import UIKit
-import UniformTypeIdentifiers
 import WireDesign
 import WireReusableUIComponents
-import WireSyncEngine
 
 final class BackupViewController: UIViewController {
 
@@ -43,10 +41,6 @@ final class BackupViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupLayout()
-
-        let tgr = UITapGestureRecognizer(target: self, action: #selector(tapView(_:)))
-        tgr.delegate = self
-        view.addGestureRecognizer(tgr)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -78,71 +72,6 @@ final class BackupViewController: UIViewController {
 
     private func setupLayout() {
         tableView.fitIn(view: view)
-    }
-
-    private var didPickDocumentsAtURL: (URL) -> Void = { _ in }
-
-    @objc
-    private func tapView(_ sender: UIGestureRecognizer) {
-        guard
-            let sessionManager = SessionManager.shared,
-            let useCase = sessionManager.importBackupUseCase(appStateUpdater: IBASU())
-        else { return }
-
-        let picker = UIDocumentPickerViewController(
-            forOpeningContentTypes: BackupRestoreController.WireBackupUTIs.compactMap { UTType($0) },
-            asCopy: true
-        )
-        picker.delegate = self
-        present(picker, animated: true)
-
-        didPickDocumentsAtURL = { url in
-            self.didPickDocumentsAtURL = { _ in }
-            Task {
-                do {
-                    try await useCase.invoke(url: url, password: url.deletingPathExtension().lastPathComponent)
-                } catch {
-                    print(String(reflecting: error))
-                }
-            }
-        }
-
-        struct IBASU: ImportBackupAppStateUpdaterProtocol {
-            func reportImportProgress(progress: Float) { print("importProgress: \(Int(round(progress * 100)))%") }
-            @MainActor
-            func reportMigrationNeeded() async {
-                await withCheckedContinuation { continuation in
-                    guard let sessionManager = SessionManager.shared else {
-                        return continuation.resume()
-                    }
-                    sessionManager.prepareForRestoreWithMigration(completion: continuation.resume)
-                }
-            }
-
-            @MainActor
-            func selectAccountAndTriggerSlowSync(_ account: Account) async {
-                let userSession = await withCheckedContinuation { continuation in
-                    SessionManager.shared?.select(account, completion: { continuation.resume(returning: $0) })
-                }
-                guard let userSession else { return }
-                userSession.syncManagedObjectContext.performGroupedBlock {
-                    userSession.syncStatus.forceSlowSync()
-                }
-            }
-        }
-    }
-}
-
-extension BackupViewController: UIDocumentPickerDelegate, UIGestureRecognizerDelegate {
-
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        if let url = urls.first {
-            didPickDocumentsAtURL(url)
-        }
-    }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        touch.location(in: view).y > view.bounds.height / 2
     }
 }
 
