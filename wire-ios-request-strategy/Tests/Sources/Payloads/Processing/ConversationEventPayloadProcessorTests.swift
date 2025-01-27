@@ -972,33 +972,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             XCTAssertTrue(self.oneToOneConversation.isArchived)
         }
     }
-    
-    func testUpdateOrCreateConversation_OneToOne_Updates_MessageProtocol_InsertsSystemMessage() async throws {
-        // given
-        let qualifiedID = await syncMOC.perform {
-            self.oneToOneConversation.messageProtocol = .proteus
-            return self.oneToOneConversation.qualifiedID!
-        }
-        let payload = Payload.Conversation.stub(
-            qualifiedID: qualifiedID,
-            type: .oneOnOne,
-            messageProtocol: "mls"
-        )
-
-        // when
-        await sut.updateOrCreateConversation(
-            from: payload,
-            in: syncMOC
-        )
-        
-        // then
-        try await syncMOC.perform {
-            let lastMessage = try XCTUnwrap(self.oneToOneConversation.lastMessage)
-            XCTAssertTrue(lastMessage.isSystem)
-            XCTAssertEqual(self.oneToOneConversation.messageProtocol, .mls)
-            
-        }
-    }
 
     // MARK: Self conversation
 

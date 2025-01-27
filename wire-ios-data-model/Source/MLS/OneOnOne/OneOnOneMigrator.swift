@@ -75,12 +75,8 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             in: context
         )
 
-        
-        
-        
         await context.perform {
-         
-            
+
             _ = context.saveOrRollback()
         }
 

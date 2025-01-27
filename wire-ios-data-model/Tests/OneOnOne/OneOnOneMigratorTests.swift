@@ -250,7 +250,7 @@ final class OneOnOneMigratorTests: XCTestCase {
             XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
             XCTAssertTrue(mlsMessages[1].isKnock)
             XCTAssertTrue(mlsMessages[2].isImage)
-            
+
             let systemMessage = try XCTUnwrap(mlsMessages[3] as? ZMSystemMessage)
             XCTAssertEqual(systemMessage.systemMessageType, .mlsMigrationFinalized)
 

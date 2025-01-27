@@ -712,11 +712,11 @@ struct ConversationEventPayloadProcessor {
                 domain: payload.qualifiedID?.domain,
                 in: context
             )
-            
+
             conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
             updateAttributes(from: payload, for: conversation, context: context)
             assignMessageProtocol(from: payload, for: conversation, in: context)
-          
+
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
@@ -864,11 +864,11 @@ struct ConversationEventPayloadProcessor {
         conversation.messageProtocol = newMessageProtocol
     }
 
-        private func updateMessageProtocol(
-            from payload: Payload.Conversation,
-            for conversation: ZMConversation,
-            in context: NSManagedObjectContext
-        ) {
+    private func updateMessageProtocol(
+        from payload: Payload.Conversation,
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) {
 
         guard let messageProtocolString = payload.messageProtocol else {
             WireLogger.eventProcessing.warn("message protocol is missing")
