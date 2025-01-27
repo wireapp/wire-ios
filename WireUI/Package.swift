@@ -83,7 +83,11 @@ let package = Package(
         ),
         .testTarget(name: "WireMoveToFolderUITests", dependencies: ["WireMoveToFolderUI", "WireMoveToFolderUISupport"]),
 
-        .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
+        .target(
+            name: "WireReusableUIComponents",
+            dependencies: ["WireDesign", "WireFoundation"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
 
         .target(name: "WireSettingsUI"),
