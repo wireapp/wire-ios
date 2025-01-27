@@ -21,14 +21,21 @@ import WireDesign
 import WireFoundation
 
 public struct LabeledTextField: View {
+    @Environment(\.isEnabled) private var isEnabled
 
     private let isMandatory: Bool
     private let placeholder: String?
     private let title: String?
 
+    @FocusState var isFocused: Bool
     @Binding private var string: String
 
-    public init(isMandatory: Bool = false, placeholder: String?, title: String?, string: Binding<String>) {
+    public init(
+        isMandatory: Bool = false,
+        placeholder: String?,
+        title: String?,
+        string: Binding<String>
+    ) {
         self.isMandatory = isMandatory
         self.placeholder = placeholder
         self.title = title
@@ -36,7 +43,7 @@ public struct LabeledTextField: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 2) {
             if let title {
                 (
                     isMandatory ? (
@@ -45,12 +52,68 @@ public struct LabeledTextField: View {
                             .foregroundColor(ColorTheme.Base.requiredField.color)
                     ) : Text(title)
                 )
-                .wireTextStyle(.h4)
+                .foregroundStyle(titleColor)
+                .wireTextStyle(.subline1)
             }
-            TextField(placeholder ?? "", text: $string)
-                .textFieldStyle(.roundedBorder)
-                .wireTextStyle(.body1)
+            HStack(spacing: 0) {
+                TextField(placeholder ?? "", text: $string)
+                    .wireTextStyle(.body1)
+                    .focused($isFocused)
+                    .foregroundStyle(labelColor)
+                    .padding(.vertical, 12)
+                if !string.isEmpty, isEnabled {
+                    Button(action: {
+                        string = ""
+                    }, label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.black)
+                            .frame(width: 16, height: 16)
+                            .padding(19)
+                    })
+                }
+            }
+            .padding(.leading, 16)
+            .background {
+                if #available(iOS 17.0, *) {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(labelBackgroundColor)
+                        .stroke(labelBorderColor, lineWidth: 1)
+                } else {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(labelBorderColor, lineWidth: 1)
+                        .background(labelBackgroundColor)
+                        .cornerRadius(12)
+                }
+            }
         }
+    }
+
+    private var titleColor: Color {
+        if isEnabled, isFocused {
+            return ColorTheme.Base.onPrimaryVariant.color
+        }
+        if isEnabled {
+            return ColorTheme.Base.labelTitle.color
+        }
+        return ColorTheme.Base.labelTitle.color
+    }
+
+    private var labelColor: Color {
+        isEnabled ? .primaryText : ColorTheme.Base.onDisabled.color
+    }
+
+    private var labelBackgroundColor: Color {
+        isEnabled ? .clear : ColorTheme.Backgrounds.background.color
+    }
+
+    private var labelBorderColor: Color {
+        if isEnabled, isFocused {
+            return ColorTheme.Base.onPrimaryVariant.color
+        }
+        if isEnabled {
+            return ColorTheme.Strokes.outline.color
+        }
+        return ColorTheme.Strokes.outline.color
     }
 }
 
@@ -61,22 +124,34 @@ public struct LabeledTextField: View {
         title: nil,
         string: .constant("")
     )
+    .padding()
     LabeledTextField(
         isMandatory: false,
         placeholder: "Placeholder",
         title: "Some Title",
         string: .constant("")
     )
+    .padding()
     LabeledTextField(
         isMandatory: true,
         placeholder: "Placeholder",
         title: "Some Title",
         string: .constant("")
     )
+    .padding()
     LabeledTextField(
         isMandatory: true,
         placeholder: "Placeholder",
         title: "Some Title",
-        string: .constant("Lorem ipsum sic amet [...]")
+        string: .constant("Lorem ipsum dolor sit amet, consectetur [...]")
     )
+    .padding()
+    LabeledTextField(
+        isMandatory: true,
+        placeholder: "Placeholder",
+        title: "Some Title",
+        string: .constant("Lorem ipsum dolor sit amet, consectetur [...]")
+    )
+    .padding()
+    .disabled(true)
 }

@@ -16,11 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireAuthenticationUI
+import Foundation
 
-class WireAuthenticationUITests: XCTestCase {
-    func testExample() throws {
-        throw XCTSkip("[WPB-15229] Not yet implemented")
-    }
-}
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .path

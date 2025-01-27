@@ -46,6 +46,9 @@ public enum ColorTheme {
         public static let secondaryText = UIColor(light: .gray70, dark: .gray60)
 
         public static let requiredField = UIColor(light: .red500Light, dark: .red500Dark)
+
+        public static let labelTitle = UIColor(light: .gray80, dark: .gray50)
+        public static let onDisabled = UIColor(light: .gray80, dark: .gray50)
     }
 
     public enum Backgrounds {
@@ -145,6 +148,7 @@ public enum ColorTheme {
     public enum Strokes {
 
         public static let outline = UIColor(light: .gray40, dark: .gray90)
+        public static let disabledOutline = UIColor(light: .gray50, dark: .gray80)
         public static let dividersOutlineVariant = UIColor(light: .gray20, dark: .gray100)
     }
 
