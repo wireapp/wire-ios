@@ -346,7 +346,12 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
                     "Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced"
                 )
             return false
+        } else if conversation == nil {
+            // WPB-8946: fixes bug: notifications shown even though availability is busy or away
+            let availability = moc.performAndWait { ZMUser.selfUser(in: moc).availability }
+            return [.none, .available].contains(availability)
         }
+
         if ZMUser.selfUser(in: moc).remoteIdentifier == event.senderUUID {
             tmpLoggerRS?.warning("[tLRS] ZMUser.selfUser(in: moc).remoteIdentifier == event.senderUUID: \(ZMUser.selfUser(in: self.moc).remoteIdentifier == self.event.senderUUID)")
             return false
