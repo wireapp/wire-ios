@@ -16,15 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public protocol PasswordValidator {
 
-extension NSManagedObjectContext {
+    func validate(_ password: String) -> Bool
 
-    /// Prepare a backed up database for being imported, deleting self client, push token etc.
-    func prepareToImportBackup() {
-        setPersistentStoreMetadata(nil as Data?, key: ZMPersistedClientIdKey)
-        setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.lastUpdateEventID.rawValue)
-        _ = makeMetadataPersistent()
-    }
+    var localizedRulesDescription: String? { get }
 
 }

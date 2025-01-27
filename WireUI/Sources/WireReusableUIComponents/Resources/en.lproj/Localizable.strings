@@ -16,15 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-extension NSManagedObjectContext {
-
-    /// Prepare a backed up database for being imported, deleting self client, push token etc.
-    func prepareToImportBackup() {
-        setPersistentStoreMetadata(nil as Data?, key: ZMPersistedClientIdKey)
-        setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.lastUpdateEventID.rawValue)
-        _ = makeMetadataPersistent()
-    }
-
-}
+"passwordtextfield.preview.title" = "Password (OPTIONAL)";
+"passwordtextfield.preview.placeholder" = "Enter password";
+"passwordtextfield.preview.passwordrules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
