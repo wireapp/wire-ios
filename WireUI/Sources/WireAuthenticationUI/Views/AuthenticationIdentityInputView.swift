@@ -29,11 +29,9 @@ package struct AuthenticationIdentityInputView: View {
 
     @State private var identity: String = ""
     private let actionCallback: @Sendable (Action) -> Void
-    private let termsURL: URL
 
-    package init(actionCallback: @escaping @Sendable (Action) -> Void, termsURL: URL) {
+    package init(actionCallback: @escaping @Sendable (Action) -> Void) {
         self.actionCallback = actionCallback
-        self.termsURL = termsURL
     }
 
     package var body: some View {
@@ -47,8 +45,11 @@ package struct AuthenticationIdentityInputView: View {
                     .frame(maxWidth: .infinity)
             }
             Text(L10n.Authentication.Identity.Input.body)
+                .multilineTextAlignment(.leading)
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.trailing)
             LabeledTextField(
                 isMandatory: false,
                 placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
@@ -56,6 +57,7 @@ package struct AuthenticationIdentityInputView: View {
                 string: $identity
             )
             .lineLimit(nil)
+            .minimumScaleFactor(0.8)
             Button(action: {
                 actionCallback(.submit(identity: identity))
             }, label: {
@@ -63,10 +65,6 @@ package struct AuthenticationIdentityInputView: View {
                     .lineLimit(nil)
             })
             .wireButtonStyle(.primary)
-            Text(AttributedString.markdown(from: L10n.Authentication.Identity.Input.terms(termsURL.absoluteString)))
-                .multilineTextAlignment(.center)
-                .wireTextStyle(.subline1)
-                .lineLimit(nil)
         }
     }
 }
@@ -74,8 +72,7 @@ package struct AuthenticationIdentityInputView: View {
 struct AuthenticationIdentityInputPreview: View {
     var body: some View {
         AuthenticationIdentityInputView(
-            actionCallback: { _ in },
-            termsURL: URL(string: "https://example.com")!
+            actionCallback: { _ in }
         )
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         .padding(32)
@@ -102,4 +99,17 @@ struct AuthenticationIdentityInputPreview: View {
                 }
             }
         }
+}
+
+#Preview("Large font") {
+    BackgroundView()
+        .overlay {
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(maxHeight: .infinity)
+                AuthenticationIdentityInputPreview()
+                    .background()
+            }
+        }
+        .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
 }
