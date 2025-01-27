@@ -84,7 +84,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         self.contentHandler = contentHandler
 
         guard let accountID = request.content.accountID else {
-            tmpLogger.warning("[tL] failed to process request: payload missing account ID")
             WireLogger.notifications.error("failed to process request: payload missing account ID")
             return finishWithoutShowingNotification()
         }
@@ -92,7 +91,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         do {
             session = try createSession(accountID: accountID)
         } catch {
-            tmpLogger.warning("[tL] failed to process process request: could not create session: \(error.localizedDescription, privacy: .public)")
             WireLogger.notifications
                 .error("failed to process process request: could not create session: \(error.localizedDescription)")
             return finishWithoutShowingNotification()
@@ -117,14 +115,12 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         unreadConversationCount: Int
     ) {
         guard let notification else {
-            tmpLogger.warning("[tL] session did not generate a notification")
             WireLogger.notifications.info("session did not generate a notification")
             return finishWithoutShowingNotification()
         }
 
         removeNotification(withSameMessageId: notification.messageNonce)
 
-            tmpLogger.warning("[tL] session did generate a notification")
         WireLogger.notifications.info("session did generate a notification", attributes: notification.logAttributes)
 
         defer { tearDown() }
@@ -132,7 +128,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         guard let contentHandler else { return }
 
         guard let content = notification.content as? UNMutableNotificationContent else {
-            tmpLogger.warning("[tL] generated notification is not mutable")
             WireLogger.notifications.error("generated notification is not mutable")
             return finishWithoutShowingNotification()
         }
@@ -144,7 +139,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             content.badge = badgeCount
         }
 
-        tmpLogger.warning("[tL] showing notification to user")
         WireLogger.notifications.info("showing notification to user", attributes: notification.logAttributes)
         contentHandler(content)
     }

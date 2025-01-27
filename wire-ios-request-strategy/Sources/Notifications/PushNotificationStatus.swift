@@ -19,9 +19,6 @@
 import Foundation
 import WireDataModel
 import WireLogging
-import os
-
-public var tmpLoggerRS: os.Logger?
 
 private let zmLog = ZMSLog(tag: "PushNotificationStatus")
 
@@ -98,9 +95,7 @@ open class PushNotificationStatus: NSObject {
             return
         }
 
-        tmpLoggerRS?.warning("[tLRS] Scheduling to fetch events notified by push")
         WireLogger.eventProcessing.info("Scheduling to fetch events notified by push", attributes: logAttributes)
-        //tmpLoggerNE.warning("[tLNE] Scheduling to fetch events notified by push")
 
         eventIdRanking.add(eventId)
         completionHandlers[eventId] = completionHandler
@@ -123,8 +118,6 @@ open class PushNotificationStatus: NSObject {
         highestRankingEventId.map(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
-
-        tmpLoggerRS?.warning("[tLRS] finished fetching all available events, last event id: \(String(describing: lastEventId?.safeForLoggingDescription), privacy: .public)")
         WireLogger.updateEvent.info(
             "finished fetching all available events, last event id: " +
                 String(describing: lastEventId?.safeForLoggingDescription),

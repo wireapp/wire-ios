@@ -19,9 +19,6 @@
 import Foundation
 import WireLogging
 import WireRequestStrategy
-import os
-
-public var tmpLoggerNE: os.Logger?
 
 public enum NotificationSessionError: LocalizedError {
 
@@ -367,23 +364,18 @@ public final class NotificationSession {
         }
 
         WireLogger.notifications.info("attempting to fetch events")
-        tmpLoggerNE?.warning("[tLNE] attempting to fetch events ...")
         applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce) { result in
             switch result {
             case .success:
-                tmpLoggerNE?.warning("[tLNE] fetch events result: success")
                 break
 
             case .failure(.alreadyFetchedEvent):
-                tmpLoggerNE?.warning("[tLNE] fetch events result: error alreadyFetchedEvent")
                 self.delegate?.notificationSessionDidFailWithError(error: .alreadyFetchedEvent)
 
             case .failure(.invalidEventID):
-                tmpLoggerNE?.warning("[tLNE] fetch events result: error invalidEventID")
                 self.delegate?.notificationSessionDidFailWithError(error: .invalidEventID)
 
             case .failure(.unknown):
-                tmpLoggerNE?.warning("[tLNE] fetch events result: error unknown")
                 self.delegate?.notificationSessionDidFailWithError(error: .unknown)
             }
         }
@@ -424,7 +416,6 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
-        tmpLoggerNE?.warning("[tLNE] processing \(events.count, privacy: .public) decoded events...")
         WireLogger.notifications.info("processing \(events.count) decoded events...")
 
         // Dictionary to filter notifications fetched in same batch with same messageOnce
@@ -433,16 +424,13 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 
         for event in events {
             if let callEventPayload = callEventPayloadForCallKit(from: event) {
-                tmpLoggerNE?.warning("[tLNE] detected a call event")
                 WireLogger.calling.info("detected a call event", attributes: event.logAttributes)
                 // Only store the last call event.
                 callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
-                tmpLoggerNE?.warning("[tLNE] generated a notification from an event")
                 WireLogger.notifications.info("generated a notification from an event", attributes: event.logAttributes)
                 tempNotifications[notification.contentHashValue] = notification
             } else {
-                tmpLoggerNE?.warning("[tLNE] ignoring event")
                 WireLogger.notifications.info("ignoring event", attributes: event.logAttributes)
             }
         }
@@ -554,7 +542,6 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy) {
-        tmpLoggerNE?.warning("[tLNE] did finish processing events")
         WireLogger.notifications.info("did finish processing events")
         processCallEvent()
         processLocalNotifications()
@@ -574,7 +561,6 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     private func processLocalNotifications() {
         let notification: ZMLocalNotification?
 
-        tmpLoggerNE?.warning("[tLNE] localNotifications.count: \(self.localNotifications.count, privacy: .public)")
         if localNotifications.count > 1 {
             WireLogger.notifications.info("bundling \(localNotifications.count) notifications")
             notification = ZMLocalNotification.bundledMessages(count: localNotifications.count, in: context)
@@ -597,7 +583,6 @@ extension NotificationSession {
         var note: ZMLocalNotification?
 
         guard let conversationID = event.conversationUUID else {
-            tmpLoggerNE?.warning("[tLNE] failed to generate notification from event: missing conversation id")
             WireLogger.notifications.warn(
                 "failed to generate notification from event: missing conversation id",
                 attributes: event.logAttributes
@@ -619,15 +604,12 @@ extension NotificationSession {
                 caller != ZMUser.selfUser(in: context),
                 !isEventTimedOut(currentTimestamp: currentTimestamp, eventTimestamp: event.timestamp)
             else {
-                tmpLoggerNE?.warning("[tLNE] notification(from...) guard")
                 return nil
             }
 
-            tmpLoggerNE?.warning("[tLNE] notification(from...) ZMLocalNotification")
             note = ZMLocalNotification(callState: callState, conversation: conversation, caller: caller, moc: context)
 
         } else {
-            tmpLoggerNE?.warning("[tLNE] notification(from...) else")
             note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: context)
         }
 

@@ -30,7 +30,6 @@ public extension ZMLocalNotification {
     ) {
         var builderType: EventNotificationBuilder.Type?
 
-        tmpLoggerRS?.warning("[tLRS] ZMLocalNotification.convinit event.type \(String(describing: event.type), privacy: .public)")
         switch event.type {
         case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
             guard conversation?.isForcedReadOnly != true else { break }
@@ -59,10 +58,8 @@ public extension ZMLocalNotification {
         }
 
         if let builder = builderType?.init(event: event, conversation: conversation, managedObjectContext: moc) {
-            tmpLoggerRS?.warning("[tLRS] ZMLocalNotification.convinit self.init")
             self.init(builder: builder, moc: moc)
         } else {
-            tmpLoggerRS?.warning("[tLRS] ZMLocalNotification.convinit return nil")
             return nil
         }
     }
@@ -101,28 +98,20 @@ private class EventNotificationBuilder: NotificationBuilder {
 
     func shouldCreateNotification() -> Bool {
         // if there is a sender, it's not the selfUser
-        if let sender, sender.isSelfUser {
-            tmpLoggerRS?.warning("[tLRS] shouldCreateNotification sender.isSelfUser == false")
-            return false
-        }
+        if let sender, sender.isSelfUser { return false }
 
-        tmpLoggerRS?.warning("[tLRS] conversation == nil: \(self.conversation == nil)")
         if let conversation {
-            tmpLoggerRS?.warning("[tLRS] let conversation")
             if conversation.mutedMessageTypesIncludingAvailability != .none {
-                tmpLoggerRS?.warning("[tLRS] conversation.mutedMessageTypesIncludingAvailability != .none")
                 return false
             }
 
             if let timeStamp = event.timestamp,
                let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
-                tmpLoggerRS?.warning("[tLRS] let timeStamp, let lastRead, lastRead.compare(timeStamp) != .orderedAscending")
                 // don't show notifications that have already been read
                 return false
             }
         }
 
-        tmpLoggerRS?.warning("[tLRS] shouldCreateNotification final return true")
         return true
     }
 
@@ -340,7 +329,6 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
         if let conversation,
            let senderUUID = event.senderUUID,
            conversation.isMessageSilenced(message, senderID: senderUUID) {
-            tmpLoggerRS?.warning("[tLRS] Not creating local notification for message with nonce = \(self.event.messageNonce?.uuidString ?? "<nil>", privacy: .public) because conversation is silenced")
             Logging.push
                 .safePublic(
                     "Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced"
@@ -353,17 +341,14 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
         }
 
         if ZMUser.selfUser(in: moc).remoteIdentifier == event.senderUUID {
-            tmpLoggerRS?.warning("[tLRS] ZMUser.selfUser(in: moc).remoteIdentifier == event.senderUUID: \(ZMUser.selfUser(in: self.moc).remoteIdentifier == self.event.senderUUID)")
             return false
         }
 
         if let timeStamp = event.timestamp,
            let lastRead = conversation?.lastReadServerTimeStamp,
            lastRead.compare(timeStamp) != .orderedAscending {
-            tmpLoggerRS?.warning("[tLRS] return false")
             return false
         }
-        tmpLoggerRS?.warning("[tLRS] return true")
         return true
     }
 }

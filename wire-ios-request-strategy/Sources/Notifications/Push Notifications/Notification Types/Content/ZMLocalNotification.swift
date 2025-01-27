@@ -68,12 +68,7 @@ public class ZMLocalNotification: NSObject {
     public var userInfo: NotificationUserInfo?
 
     public init?(builder: NotificationBuilder, moc: NSManagedObjectContext) {
-        tmpLoggerRS?.warning("[tLRS] ZMLocalNotification.init builder: \(String(describing: builder), privacy: .public)")
-        guard builder.shouldCreateNotification() else {
-            tmpLoggerRS?.warning("[tLRS] ZMLocalNotification.init shouldCreateNotification == false")
-            return nil
-        }
-        tmpLoggerRS?.warning("[tLRS] ZMLocalNotification.init shouldCreateNotification == true")
+        guard builder.shouldCreateNotification() else { return nil }
         self.type = builder.notificationType
         self.title = builder.titleText()
         self.body = builder.bodyText()
