@@ -171,9 +171,8 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
             }
 
-            // insert system message
+            // insert system message that we moved from proteus to MLS
             let sender = ZMUser.selfUser(in: context)
-            let date = mlsConversation.lastModifiedDate ?? .now
             mlsConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
 
             if !proteusConversations.isEmpty {
