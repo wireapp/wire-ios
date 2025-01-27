@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public protocol PasswordValidator {
 
-enum OneOnOneResolverError: Error {
-    case migratorNotFound
-    case userNotFound
+    func validate(_ password: String) -> Bool
+
+    var localizedRulesDescription: String? { get }
+
 }
