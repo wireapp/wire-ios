@@ -75,7 +75,12 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             in: context
         )
 
+        
+        
+        
         await context.perform {
+         
+            
             _ = context.saveOrRollback()
         }
 
@@ -165,6 +170,11 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
             }
+
+            // insert system message
+            let sender = ZMUser.selfUser(in: context)
+            let date = mlsConversation.lastModifiedDate ?? .now
+            mlsConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
 
             if !proteusConversations.isEmpty {
                 // update just to be sure
