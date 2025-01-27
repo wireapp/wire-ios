@@ -178,8 +178,16 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // Then
 
-        await context.perform {
-            let migratedMessagesTexts = mlsOneOnOneConversation.allMessages
+        try await context.perform { [self] in
+            let allMessages = mlsOneOnOneConversation.allMessages
+            
+            try XCTAssertCount(allMessages, count: 3)
+            let mlsSystemMessage = try XCTUnwrap(mlsOneOnOneConversation.lastMessage as? ZMSystemMessage)
+            XCTAssertEqual(mlsSystemMessage.systemMessageType.rawValue, ZMSystemMessageType.mlsMigrationFinalized.rawValue)
+            
+            XCTAssertEqual(mlsOneOnOneConversation.needsToBeUpdatedFromBackend, true)
+            
+            let migratedMessagesTexts = allMessages
                 .compactMap(\.textMessageData)
                 .compactMap(\.messageText)
                 .sorted()
