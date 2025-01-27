@@ -57,7 +57,7 @@ package struct AuthenticationIdentityInputView: View {
                 string: $identity
             )
             .lineLimit(nil)
-            .minimumScaleFactor(0.8)
+            .fixedSize(horizontal: false, vertical: true)
             Button(action: {
                 actionCallback(.submit(identity: identity))
             }, label: {
@@ -65,6 +65,7 @@ package struct AuthenticationIdentityInputView: View {
                     .lineLimit(nil)
             })
             .wireButtonStyle(.primary)
+            .disabled(identity.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
 }
