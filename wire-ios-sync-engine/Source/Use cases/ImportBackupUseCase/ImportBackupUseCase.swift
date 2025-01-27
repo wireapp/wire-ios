@@ -106,7 +106,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                 selfUser = ZMUser.fetch(with: userID, domain: domain, in: context)
             }
 
-            // TODO: there is also a method `UserClient.createOrUpdateSelfUserClient(_:context:)`
             let userClient = UserClient.restore(from: selfClientBackup, context: context)
             userClient.user = selfUser
             userClient.markAsSelfClient()

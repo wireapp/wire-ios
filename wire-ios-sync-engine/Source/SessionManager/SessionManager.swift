@@ -1195,8 +1195,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func tearDownActiveSession(completion: (() -> Void)?) {
         activeUserSession = nil
         completion?()
-
-        // TODO: what about background sessions and observers?
     }
 
     // Creates the user session for @c account given, calls @c completion when done.
