@@ -18,9 +18,9 @@
 
 import Foundation
 import WireCrypto
+import WireDataModel
 import WireLogging
 import WireSystem
-import WireDataModel
 import ZipArchive
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
@@ -72,8 +72,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         // we want to avoid keeping a strong reference to the user
         // session, the managed object context and the user client
         if let userSession, let (qualifiedID, backup) = await userSession.contextProvider.viewContext.perform({
-            userSession.selfUserClient.map { ($0.user?.qualifiedID, $0.backup()) }})
-        {
+            userSession.selfUserClient.map { ($0.user?.qualifiedID, $0.backup()) } }) {
             selfUserQualifiedID = qualifiedID
             selfClientBackup = backup
         } else {

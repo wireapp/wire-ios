@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModelSupport
+import XCTest
 
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
@@ -177,7 +177,10 @@ final class ImportBackupUseCaseTests: XCTestCase {
         )
         XCTAssertFalse(mockFileArchiver.unzipFileAtTo_Invocations.isEmpty)
         XCTAssertFalse(mockAppStateUpdater.reportMigrationNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockEntityStorage.replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.isEmpty)
+        XCTAssertFalse(
+            mockEntityStorage
+                .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.isEmpty
+        )
         XCTAssertFalse(mockAppStateUpdater.selectAccountAndTriggerSlowSync_Invocations.isEmpty)
     }
 

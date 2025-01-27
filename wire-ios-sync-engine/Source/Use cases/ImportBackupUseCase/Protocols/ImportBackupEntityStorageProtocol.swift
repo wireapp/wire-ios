@@ -20,9 +20,9 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol ImportBackupEntityStorageProtocol {
-    
+
     var importsDirectory: URL { get }
-    
+
     /// Replace all the data of the storage.
     /// - Returns: The directory where all data was written to.
     @discardableResult
