@@ -17,13 +17,13 @@
 //
 
 import Foundation
-@preconcurrency import WireAPI
-@preconcurrency import WireDataModel
-import WireDomainAPI
+import WireAPI
+import WireDataModel
+import WireDomainPkg
 import WireLogging
 import WireSystem
 
-public struct IndividualToTeamMigrationUseCaseImplementation: IndividualToTeamMigrationUseCase {
+public struct IndividualToTeamMigrationUseCase: IndividualToTeamMigrationUseCaseProtocol {
 
     private let accountsAPI: AccountsAPI
     private let context: NSManagedObjectContext
