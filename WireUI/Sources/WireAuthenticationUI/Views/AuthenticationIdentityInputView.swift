@@ -63,6 +63,7 @@ package struct AuthenticationIdentityInputView: View {
                     .lineLimit(nil)
             })
             .wireButtonStyle(.primary)
+            .disabled(identity.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             Text(AttributedString.markdown(from: L10n.Authentication.Identity.Input.terms(termsURL.absoluteString)))
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.subline1)
