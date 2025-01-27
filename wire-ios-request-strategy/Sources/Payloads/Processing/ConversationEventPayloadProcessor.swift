@@ -716,7 +716,6 @@ struct ConversationEventPayloadProcessor {
             conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
             updateAttributes(from: payload, for: conversation, context: context)
             assignMessageProtocol(from: payload, for: conversation, in: context)
-
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
@@ -892,7 +891,6 @@ struct ConversationEventPayloadProcessor {
                 conversation.messageProtocol = newMessageProtocol
             case .mls:
                 let date = conversation.lastModifiedDate ?? .now
-
                 conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
                 conversation.messageProtocol = newMessageProtocol
             }
