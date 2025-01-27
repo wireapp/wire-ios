@@ -91,11 +91,13 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         )
 
         // import the self client from the backup and set the correct self user relation
-        let temporaryStack = try await entityStorage.createContextProvider( // TODO: does it cause warning: Multiple NSEntityDescriptions claim the NSManagedObject subclass 'WireDataModel.UserClient' so +entity is unable to disambiguate?
-            account: account,
-            applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
-        )
+        // TODO: [WPB-15714] causes warning: we should try to initialize the model only once
+        let temporaryStack = try await entityStorage
+            .createContextProvider(
+                account: account,
+                applicationContainer: sharedContainerURL,
+                dispatchGroup: dispatchGroup
+            )
         try await temporaryStack.viewContext.perform {
             let context = temporaryStack.viewContext
             let userID = selfUserQualifiedID?.uuid
