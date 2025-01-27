@@ -872,7 +872,7 @@ struct ConversationEventPayloadProcessor {
         case (.proteus, .mls):
             let sender = ZMUser.selfUser(in: context)
             let date = conversation.lastModifiedDate ?? .now
-            conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+            conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: date)
         default:
             break
         }
