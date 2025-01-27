@@ -892,7 +892,6 @@ struct ConversationEventPayloadProcessor {
                 conversation.messageProtocol = newMessageProtocol
             case .mls:
                 let date = conversation.lastModifiedDate ?? .now
-                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: date)
 
                 conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
                 conversation.messageProtocol = newMessageProtocol
