@@ -511,7 +511,10 @@ extension EventDecoderTest {
     func test_MLSEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
 
         // Given
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
+        }
         let mockProteusService = MockProteusServiceInterface()
 
         mockProteusService.decryptDataForSession_MockMethod = { data, _ in
@@ -528,8 +531,6 @@ extension EventDecoderTest {
                 groupID: .random()
             )
         }
-
-        proteusViaCoreCrypto.isOn = true
 
         await syncMOC.perform {
             self.syncMOC.proteusService = mockProteusService
@@ -549,7 +550,10 @@ extension EventDecoderTest {
     func test_MLSEventDecryptionStoresLastEventIdIfDecryptionSuccessWithEmptyResults() async throws {
 
         // Given
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
+        }
         let mockProteusService = MockProteusServiceInterface()
 
         mockProteusService.decryptDataForSession_MockMethod = { data, _ in
@@ -565,8 +569,6 @@ extension EventDecoderTest {
                 eventID: eventID
             )
         }
-
-        proteusViaCoreCrypto.isOn = true
 
         await syncMOC.perform {
             self.syncMOC.proteusService = mockProteusService
@@ -597,7 +599,10 @@ extension EventDecoderTest {
     func test_MLSEventDecryptionStoresLastEventIdIfDecryptionSuccessWithProposalResult() async throws {
 
         // Given
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
+        }
         let mockProteusService = MockProteusServiceInterface()
 
         mockProteusService.decryptDataForSession_MockMethod = { data, _ in
@@ -613,8 +618,6 @@ extension EventDecoderTest {
                 eventID: eventID
             )
         }
-
-        proteusViaCoreCrypto.isOn = true
 
         await syncMOC.perform {
             self.syncMOC.proteusService = mockProteusService
