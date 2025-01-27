@@ -151,12 +151,14 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
-            // move local messages from proteus conversation if it exists
-            if let existingConversation = otherUser.oneOnOneConversation,
-               existingConversation.messageProtocol == .proteus {
+            let source = OneOnOneSource(context: context)
+            let proteus = try source.fetchOneOnOnes(user: otherUser, types: [.fake, .proteus, .proteusPending])
+
+            // Move local messages from all proteus conversations
+            for conversation in proteus {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(existingConversation.allMessages)
+                mlsConversation.mutableMessages.union(conversation.allMessages)
 
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true

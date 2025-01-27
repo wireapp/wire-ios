@@ -50,4 +50,8 @@ class MockConversationDirectory: ConversationDirectoryType {
         }
     }
 
+    func refetchAllLists(in managedObjectContext: NSManagedObjectContext) {
+        // No op
+    }
+
 }
