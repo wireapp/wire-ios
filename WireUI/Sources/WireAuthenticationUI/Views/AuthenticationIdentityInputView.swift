@@ -111,5 +111,5 @@ struct AuthenticationIdentityInputPreview: View {
                     .background()
             }
         }
-        .environment(\.sizeCategory,.accessibilityExtraExtraExtraLarge)
+        .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
 }
