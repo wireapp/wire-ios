@@ -421,7 +421,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         userSession: UserSession,
         trackingManager: TrackingManager
     ) -> AuthenticatedRouter? {
-        guard let userSession = ZMUserSession.shared() else { return nil }
+        guard let userSession = userSession as? ZMUserSession else { return nil }
 
         return AuthenticatedRouter(
             mainWindow: mainWindow,
