@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import os
+import WireProtos
 
 @objc
 public enum MutedMessageOptionValue: Int32 {
@@ -63,7 +65,7 @@ public extension ZMConversation {
     @NSManaged var mutedStatus: Int32
 
     /// Returns an option set of messages types which should be muted
-    var mutedMessageTypes: MutedMessageTypes {
+    var mutedMessageTypes: MutedMessageTypes { // TODO: check
         get {
             guard let managedObjectContext else {
                 return .none
@@ -107,6 +109,16 @@ public extension ZMConversation {
         }
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
+
+        switch selfUser.availability {
+        case .available, .none:
+            tmpLoggerDM?.warning("[tLDM] selfUser.availability is .available or .none: mutedMessagesTypes is .none")
+        case .busy:
+            tmpLoggerDM?.warning("[tLDM] selfUser.availability is .busy: mutedMessagesTypes is .regular")
+        case .away:
+            tmpLoggerDM?.warning("[tLDM] selfUser.availability is .away: mutedMessagesTypes is .all")
+        }
+
         return selfUser.mutedMessagesTypes.union(mutedMessageTypes)
     }
 
@@ -127,38 +139,89 @@ extension ZMUser {
 
 }
 
+public var tmpLoggerDM: os.Logger?
+
 public extension ZMConversation {
     func isMessageSilenced(_ message: GenericMessage?, senderID: UUID?) -> Bool {
+        tmpLoggerDM?.warning("[tLDM] isMessageSilenced \(message?.messageID ?? "<nil>", privacy: .public)")
         guard let managedObjectContext else {
+            tmpLoggerDM?.warning("[tLDM] moc nil")
             return false
         }
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         if let senderID,
            let sender = ZMUser.fetch(with: senderID, in: managedObjectContext), sender.isSelfUser {
+            tmpLoggerDM?.warning("[tLDM] sender is self user")
             return true
         }
 
+        let mutedMessageTypesIncludingAvailability = mutedMessageTypesIncludingAvailability
+        let mutedMessageTypes = mutedMessageTypes
+        switch mutedMessageTypesIncludingAvailability {
+        case .none:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypesIncludingAvailability == .none")
+        case .all:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypesIncludingAvailability == .all")
+        case .regular:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypesIncludingAvailability == .regular")
+        case .mentionsAndReplies:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypesIncludingAvailability == .mentionsAndReplies")
+        default:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypesIncludingAvailability == unknown")
+        }
+        switch mutedMessageTypes {
+        case .none:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypes == .none")
+        case .all:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypes == .all")
+        case .regular:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypes == .regular")
+        case .mentionsAndReplies:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypes == .mentionsAndReplies")
+        default:
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypes == unknown")
+        }
+        switch selfUser.mutedMessagesTypes.union(mutedMessageTypes) {
+        case .none:
+            tmpLoggerDM?.warning("[tLDM] selfUser.mutedMessagesTypes.union(mutedMessageTypes) == .none")
+        case .all:
+            tmpLoggerDM?.warning("[tLDM] selfUser.mutedMessagesTypes.union(mutedMessageTypes) == .all")
+        case .regular:
+            tmpLoggerDM?.warning("[tLDM] selfUser.mutedMessagesTypes.union(mutedMessageTypes) == .regular")
+        case .mentionsAndReplies:
+            tmpLoggerDM?.warning("[tLDM] selfUser.mutedMessagesTypes.union(mutedMessageTypes) == .mentionsAndReplies")
+        default:
+            tmpLoggerDM?.warning("[tLDM] selfUser.mutedMessagesTypes.union(mutedMessageTypes) == unknown")
+        }
+
         if mutedMessageTypesIncludingAvailability == .none {
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypesIncludingAvailability == .none")
             return false
         }
 
         // We assume that all composite messages are alarming messages
         guard message?.compositeData == nil else {
+            tmpLoggerDM?.warning("[tLDM] compositeData != nil")
             return false
         }
 
         guard let textMessageData = message?.textData else {
+            tmpLoggerDM?.warning("[tLDM] textData == nil")
             return true
         }
 
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
         let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: self, in: managedObjectContext)
 
+        tmpLoggerDM?.warning("[tLDM] isMentioningSelf: \(textMessageData.isMentioningSelf(selfUser))")
+        tmpLoggerDM?.warning("[tLDM] isQuotingSelf: \(textMessageData.isQuotingSelf(quotedMessage))")
         if mutedMessageTypesIncludingAvailability == .regular,
            textMessageData.isMentioningSelf(selfUser) || textMessageData.isQuotingSelf(quotedMessage) {
+            tmpLoggerDM?.warning("[tLDM] mutedMessageTypesIncludingAvailability == .regular, isMentioningSelf: \(textMessageData.isMentioningSelf(selfUser)) || isQuotingSelf: \(textMessageData.isQuotingSelf(quotedMessage))")
             return false
         } else {
+            tmpLoggerDM?.warning("[tLDM] ... else")
             return true
         }
     }

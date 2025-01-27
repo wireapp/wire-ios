@@ -21,6 +21,12 @@ import UserNotifications
 import WireCommonComponents
 import WireLogging
 import WireUtilities
+import os
+import WireNotificationEngine
+import WireRequestStrategy
+import WireDataModel
+
+let tmpLogger = os.Logger(subsystem: "com.wearezeta.zclient.alpha.extension-notification", category: "NotificationService")
 
 final class NotificationService: UNNotificationServiceExtension {
 
@@ -39,6 +45,19 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
+
+        if tmpLoggerNE == nil {
+            tmpLoggerNE = tmpLogger
+        }
+        if tmpLoggerRS == nil {
+            tmpLoggerRS = tmpLogger
+        }
+        if tmpLoggerDM == nil {
+            tmpLoggerDM = tmpLogger
+        }
+
+        tmpLogger.warning("[tL] did receive notification request: \(request.debugDescription, privacy: .public)")
+
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         legacyService.didReceive(
