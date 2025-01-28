@@ -76,7 +76,7 @@ package struct SwitchBackendConfirmationView: View {
     }
 
     private var contentHeight: CGFloat {
-        return UIScreen.main.bounds.height * 0.4
+        UIScreen.main.bounds.height * 0.4
     }
 
     private var fullDetails: some View {
@@ -185,7 +185,7 @@ package struct SwitchBackendConfirmationView: View {
                 SwitchBackendConfirmationViewPreview()
                     .padding()
             }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         )
 }
 
@@ -196,7 +196,7 @@ package struct SwitchBackendConfirmationView: View {
                 SwitchBackendConfirmationViewPreview()
                     .padding()
             }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
         )
 }
