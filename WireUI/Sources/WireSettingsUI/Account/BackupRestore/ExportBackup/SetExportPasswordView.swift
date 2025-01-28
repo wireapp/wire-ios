@@ -93,6 +93,81 @@ struct SetExportPasswordView: View {
 
 // MARK: - Previews
 
+@available(iOS 17.0, *)
+#Preview("uikit") {
+    {
+        MainViewController()
+    }()
+}
+
 #Preview("Set Export Backup Password") {
     SetExportPasswordPreview()
+}
+
+class SecondViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        setupUI()
+    }
+
+    private func setupUI() {
+        // Add a label or any UI elements you need
+        let label = UILabel()
+        label.text = "This is a sheet! \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd"
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(label)
+
+        // Constraints
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+}
+
+class MainViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        setupPresentButton()
+    }
+
+    private func setupPresentButton() {
+        let button = UIButton(type: .system)
+        button.setTitle("Present Sheet", for: .normal)
+        button.addTarget(self, action: #selector(presentSheet), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(button)
+
+        // Constraints
+        NSLayoutConstraint.activate([
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+
+    @objc private func presentSheet() {
+        let sheetVC = SecondViewController()
+        sheetVC.modalPresentationStyle = .pageSheet
+
+        if let sheet = sheetVC.sheetPresentationController {
+            sheet.detents = [.customHeight(200)]
+            sheet.prefersGrabberVisible = true
+            sheet.largestUndimmedDetentIdentifier = .medium
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = true
+        }
+        present(sheetVC, animated: true, completion: nil)
+    }
+}
+
+extension UISheetPresentationController.Detent {
+    static func customHeight(_ height: CGFloat) -> UISheetPresentationController.Detent {
+        .custom { context in height }
+    }
 }
