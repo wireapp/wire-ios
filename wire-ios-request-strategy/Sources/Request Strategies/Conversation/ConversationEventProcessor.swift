@@ -67,12 +67,11 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 Payload.ConversationEvent<Payload.UpdateConversationName>.self,
                 from: event.payload
             ) else { return }
-            
-            
-            self.processor.processPayload(
+
+            processor.processPayload(
                 payload,
                 originalEvent: event,
-                in: self.context
+                in: context
             )
         }
     }
