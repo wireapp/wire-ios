@@ -24,7 +24,7 @@ struct Logo: View {
             Image(ImageResource(name: "logo", bundle: .module))
                 .resizable()
                 .scaledToFit()
-                .padding(.all, min(geometry.size.height, geometry.size.width) / 2.97)
+                .padding(.all, min(geometry.size.height, geometry.size.width) / 3)
         }
     }
 }
