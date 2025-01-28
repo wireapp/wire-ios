@@ -37,7 +37,7 @@ Feature: Video Calls
     And I Switch ON camera button
     When I tap Leave button on Calling overlay
     Then I do not see Calling overlay
-    
+
     Examples:
       | Member1   | TeamOwner | TeamName  |  Member2   | ConversationTitle   |
       | user1Name | user3Name | SuperTeam |  user2Name | conversation        |
