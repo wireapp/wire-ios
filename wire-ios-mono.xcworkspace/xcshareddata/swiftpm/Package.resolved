@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/openid/AppAuth-iOS.git",
         "state": {
           "branch": null,
-          "revision": "c89ed571ae140f8eb1142735e6e23d7bb8c34cb2",
-          "version": "1.7.5"
+          "revision": "2781038865a80e2c425a1da12cc1327bcd56501f",
+          "version": "1.7.6"
         }
       },
       {
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
-          "revision": "9cb486020ebf03bfa5b5df985387a14a98744537",
-          "version": "1.6.1"
+          "revision": "96a2f8a0fa41e9e09af4585e2724c4e825410b91",
+          "version": "1.6.2"
         }
       },
       {

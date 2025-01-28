@@ -32,6 +32,10 @@ public protocol OneOnOneResolverInterface {
 
 }
 
+private extension WireLogger {
+    static let conversationResolver = WireLogger(tag: "conversationResolver")
+}
+
 public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Dependencies
@@ -80,25 +84,32 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
+        let action: OneOnOneConversationResolution
         switch messageProtocol {
         case .none where isMLSEnabled:
-            return await resolveCommonUserProtocolNone(with: userID, in: context)
+            action = try await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls where isMLSEnabled:
-            return try await resolveCommonUserProtocolMLS(with: userID, in: context)
+            action = try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
-            return await resolveCommonUserProtocolProteus(with: userID, in: context)
+            action = try await resolveCommonUserProtocolProteus(with: userID, in: context)
         case .mixed:
             // This should never happen:
             // Users can only support proteus and mls protocols.
             // Mixed protocol is used by conversations to represent
             // the migration state when migrating from proteus to mls.
             assertionFailure("users should not have mixed protocol")
-            return .noAction
+            action = .noAction
         default:
             // if mls not enabled, there is nothing to take action
             // fixes locked conversations
-            return .noAction
+            action = .noAction
         }
+
+        try await context.perform {
+            try context.save()
+        }
+
+        return action
     }
 
     // MARK: Resolve - None
@@ -106,25 +117,35 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     private func resolveCommonUserProtocolNone(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async -> OneOnOneConversationResolution {
+    ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("no common protocols found")
 
-        await context.perform {
-            guard
-                let otherUser = ZMUser.fetch(with: userID, in: context),
-                let conversation = otherUser.oneOnOneConversation
-            else {
-                return
+        return try await context.perform {
+            guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
+
+            let source = OneOnOneSource(context: context)
+            guard let conversations = try source.fetchOneOnOnesWithCandidate(
+                user: user,
+                types: [.mls, .fake, .proteus, .proteusPending]
+            ) else {
+                return .noAction
             }
+
+            let best = conversations.candidate
+            for conversation in conversations.others {
+                best.mutableMessages.union(conversation.allMessages)
+                best.needsToBeUpdatedFromBackend = true
+            }
+            user.oneOnOneConversation = best
 
             self.makeConversationReadOnly(
                 selfUser: ZMUser.selfUser(in: context),
-                otherUser: otherUser,
-                conversation: conversation
+                otherUser: user,
+                conversation: best
             )
-        }
 
-        return .archivedAsReadOnly
+            return .archivedAsReadOnly
+        }
     }
 
     private func makeConversationReadOnly(
@@ -193,7 +214,27 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     private func resolveCommonUserProtocolProteus(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async -> OneOnOneConversationResolution {
+    ) async throws -> OneOnOneConversationResolution {
+        try await context.perform { [context] in
+            guard let user = ZMUser.fetch(with: userID, in: context) else {
+                throw OneOnOneResolverError.userNotFound
+            }
+
+            let source = OneOnOneSource(context: context)
+            if let conversations = try source.fetchOneOnOnesWithCandidate(
+                user: user,
+                types: [.fake, .proteus, .proteusPending]
+            ) {
+                let best = conversations.candidate
+                for conversation in conversations.others {
+                    best.mutableMessages.union(conversation.allMessages)
+                    best.needsToBeUpdatedFromBackend = true
+                }
+
+                user.oneOnOneConversation = best
+            }
+        }
+
         WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
         await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
         return .noAction

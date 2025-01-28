@@ -47,6 +47,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
         mockSyncProgress.failCurrentSyncPhasePhase_MockMethod = { _ in }
 
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
+        mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockValue = .noAction
 
         sut = ConnectionRequestStrategy(
             withManagedObjectContext: syncMOC,
