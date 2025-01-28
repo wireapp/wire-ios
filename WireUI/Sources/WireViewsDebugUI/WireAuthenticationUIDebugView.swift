@@ -49,7 +49,16 @@ public struct WireAuthenticationUIDebugView: View {
             case .background:
                 fullscreenCover(content: { BackgroundView() })
             case .switchBackend:
-                fullscreenCover(content: { SwitchBackendConfirmationViewPreview() })
+                fullscreenCover(content: {
+                    BackgroundView()
+                        .overlay(
+                            ZStack {
+                                SwitchBackendConfirmationViewPreview()
+                                    .padding()
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        )
+                })
             }
         })
     }
