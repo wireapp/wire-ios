@@ -250,6 +250,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
             mlsConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
 
             if !allProteusConversations.isEmpty {
+                mlsConversation.isForcedReadOnly = false
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }

@@ -171,7 +171,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             let sender = ZMUser.selfUser(in: context)
             mlsConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
 
-            if !allProteusConversations.isEmpty {
+            if !proteusConversations.isEmpty {
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }
