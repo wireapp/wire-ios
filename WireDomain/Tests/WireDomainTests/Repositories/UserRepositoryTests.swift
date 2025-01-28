@@ -32,7 +32,6 @@ final class UserRepositoryTests: XCTestCase {
     private var selfUsersAPI: MockSelfUserAPI!
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var conversationLabelsRepository: MockConversationLabelsRepositoryProtocol!
-    private var conversationsRepository: MockConversationRepositoryProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -48,14 +47,12 @@ final class UserRepositoryTests: XCTestCase {
         usersAPI = MockUsersAPI()
         selfUsersAPI = MockSelfUserAPI()
         conversationLabelsRepository = MockConversationLabelsRepositoryProtocol()
-        conversationsRepository = MockConversationRepositoryProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
 
         sut = UserRepository(
             usersAPI: usersAPI,
             selfUserAPI: selfUsersAPI,
             conversationLabelsRepository: conversationLabelsRepository,
-            conversationRepository: conversationsRepository,
             userLocalStore: userLocalStore
         )
     }
@@ -67,7 +64,6 @@ final class UserRepositoryTests: XCTestCase {
         userLocalStore = nil
         conversationLabelsRepository = nil
         sut = nil
-        conversationsRepository = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
@@ -270,10 +266,7 @@ final class UserRepositoryTests: XCTestCase {
 
         userLocalStore.isSelfUserIdDomain_MockValue = (user, false)
         userLocalStore.markAccountAsDeletedFor_MockMethod = { _ in }
-
-        conversationsRepository
-            .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in
-            }
+        userLocalStore.removeUserFromAllConversationsIdDomainDate_MockMethod = { _, _, _ in }
 
         // When
 
@@ -289,8 +282,8 @@ final class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(userLocalStore.markAccountAsDeletedFor_Invocations.count, 1)
 
         XCTAssertEqual(
-            conversationsRepository
-                .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_Invocations.count,
+            userLocalStore
+                .removeUserFromAllConversationsIdDomainDate_Invocations.count,
             1
         )
     }

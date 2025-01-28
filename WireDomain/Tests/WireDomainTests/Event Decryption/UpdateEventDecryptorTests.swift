@@ -29,7 +29,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
     var sut: UpdateEventDecryptor!
     var proteusMessageDecryptor: MockProteusMessageDecryptorProtocol!
     var mlsMessageDecryptor: MockMLSMessageDecryptorProtocol!
-    var messageRepository: MockMessageRepositoryProtocol!
+    var messageLocalStore: MockMessageLocalStoreProtocol!
 
     var stack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
@@ -45,12 +45,12 @@ final class UpdateEventDecryptorTests: XCTestCase {
         try await insertScaffoldingData()
         proteusMessageDecryptor = MockProteusMessageDecryptorProtocol()
         mlsMessageDecryptor = MockMLSMessageDecryptorProtocol()
-        messageRepository = MockMessageRepositoryProtocol()
+        messageLocalStore = MockMessageLocalStoreProtocol()
 
         sut = UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
-            messageRepository: messageRepository
+            messageLocalStore: messageLocalStore
         )
     }
 
@@ -58,7 +58,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         stack = nil
         proteusMessageDecryptor = nil
         mlsMessageDecryptor = nil
-        messageRepository = nil
+        messageLocalStore = nil
         modelHelper = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()

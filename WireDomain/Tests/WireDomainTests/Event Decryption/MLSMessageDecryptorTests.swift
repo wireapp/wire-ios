@@ -48,7 +48,6 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         sut = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
         )
     }

@@ -50,6 +50,100 @@ import WireDataModel
 
 
 
+class MockAuthenticatedSessionProtocol: AuthenticatedSessionProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - setup
+
+    var setup_Invocations: [Void] = []
+    var setup_MockError: Error?
+    var setup_MockMethod: (() throws -> Void)?
+
+    func setup() throws {
+        setup_Invocations.append(())
+
+        if let error = setup_MockError {
+            throw error
+        }
+
+        guard let mock = setup_MockMethod else {
+            fatalError("no mock for `setup`")
+        }
+
+        try mock()
+    }
+
+    // MARK: - startSync
+
+    var startSyncNewEventID_Invocations: [UUID] = []
+    var startSyncNewEventID_MockError: Error?
+    var startSyncNewEventID_MockMethod: ((UUID) async throws -> AsyncStream<[UpdateEvent]>)?
+    var startSyncNewEventID_MockValue: AsyncStream<[UpdateEvent]>?
+
+    func startSync(newEventID id: UUID) async throws -> AsyncStream<[UpdateEvent]> {
+        startSyncNewEventID_Invocations.append(id)
+
+        if let error = startSyncNewEventID_MockError {
+            throw error
+        }
+
+        if let mock = startSyncNewEventID_MockMethod {
+            return try await mock(id)
+        } else if let mock = startSyncNewEventID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `startSyncNewEventID`")
+        }
+    }
+
+}
+
+class MockAuthenticationServiceProtocol: AuthenticationServiceProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - authenticate
+
+    var authenticate_Invocations: [Void] = []
+    var authenticate_MockMethod: (() async -> Result<AuthenticatedSessionProtocol, Error>)?
+    var authenticate_MockValue: Result<AuthenticatedSessionProtocol, Error>?
+
+    func authenticate() async -> Result<AuthenticatedSessionProtocol, Error> {
+        authenticate_Invocations.append(())
+
+        if let mock = authenticate_MockMethod {
+            return await mock()
+        } else if let mock = authenticate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `authenticate`")
+        }
+    }
+
+}
+
+class MockAuthenticationServiceProvider: AuthenticationServiceProvider {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - authenticationService
+
+    var authenticationService: AuthenticationServiceProtocol {
+        get { return underlyingAuthenticationService }
+        set(value) { underlyingAuthenticationService = value }
+    }
+
+    var underlyingAuthenticationService: AuthenticationServiceProtocol!
+
+
+}
+
 class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -2275,6 +2369,24 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
         }
     }
 
+    // MARK: - fetchSelfClientID
+
+    public var fetchSelfClientID_Invocations: [Void] = []
+    public var fetchSelfClientID_MockMethod: (() async -> UUID)?
+    public var fetchSelfClientID_MockValue: UUID?
+
+    public func fetchSelfClientID() async -> UUID {
+        fetchSelfClientID_Invocations.append(())
+
+        if let mock = fetchSelfClientID_MockMethod {
+            return await mock()
+        } else if let mock = fetchSelfClientID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfClientID`")
+        }
+    }
+
 }
 
 public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
@@ -2722,6 +2834,26 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         } else {
             fatalError("no mock for `selfUserInfo`")
         }
+    }
+
+    // MARK: - removeUserFromAllConversations
+
+    public var removeUserFromAllConversationsIdDomainDate_Invocations: [(id: UUID, domain: String?, date: Date)] = []
+    public var removeUserFromAllConversationsIdDomainDate_MockError: Error?
+    public var removeUserFromAllConversationsIdDomainDate_MockMethod: ((UUID, String?, Date) async throws -> Void)?
+
+    public func removeUserFromAllConversations(id: UUID, domain: String?, date: Date) async throws {
+        removeUserFromAllConversationsIdDomainDate_Invocations.append((id: id, domain: domain, date: date))
+
+        if let error = removeUserFromAllConversationsIdDomainDate_MockError {
+            throw error
+        }
+
+        guard let mock = removeUserFromAllConversationsIdDomainDate_MockMethod else {
+            fatalError("no mock for `removeUserFromAllConversationsIdDomainDate`")
+        }
+
+        try await mock(id, domain, date)
     }
 
 }
