@@ -49,6 +49,9 @@ final class ServerTrustValidatorTests: XCTestCase {
     }
 
     func testValidate_whenNoMatchingPublicKey() async throws {
+        // NOTE: This test may fail due to certificate data being outdated. See comments in `SecTrust+Mock.swift` for
+        // instructions on how to update the certificate data.
+
         // GIVEN
         let sut = ServerTrustValidator(
             pinnedKeys: [
