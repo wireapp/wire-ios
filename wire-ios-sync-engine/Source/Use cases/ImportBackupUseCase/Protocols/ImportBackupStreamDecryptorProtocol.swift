@@ -17,25 +17,15 @@
 //
 
 import Foundation
-import WireAPI
-import WireDomain
-import WireDomainPkg
 
-public extension ZMUserSession {
-    func createIndividualToTeamMigrationUseCase(
-        apiVersion: WireAPI.APIVersion
-    ) -> IndividualToTeamMigrationUseCaseProtocol? {
-        guard let apiService else {
-            assertionFailure("apiService is nil")
-            return nil
-        }
+// sourcery: AutoMockable
+public protocol ImportBackupStreamDecryptorProtocol {
 
-        let builder = AccountsAPIBuilder(apiService: apiService)
-        let accountsAPI = builder.makeAPI(for: apiVersion)
+    func decrypt(
+        input: InputStream,
+        output: OutputStream,
+        accountID: UUID,
+        password: String
+    ) throws
 
-        return IndividualToTeamMigrationUseCase(
-            accountsAPI: accountsAPI,
-            context: syncContext
-        )
-    }
 }

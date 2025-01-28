@@ -16,26 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAPI
-import WireDomain
-import WireDomainPkg
+import ZipArchive
 
-public extension ZMUserSession {
-    func createIndividualToTeamMigrationUseCase(
-        apiVersion: WireAPI.APIVersion
-    ) -> IndividualToTeamMigrationUseCaseProtocol? {
-        guard let apiService else {
-            assertionFailure("apiService is nil")
-            return nil
+struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
+
+    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+
+        let success = SSZipArchive.unzipFile(
+            atPath: sourceURL.path,
+            toDestination: destinationURL.path
+        )
+
+        guard success else {
+            throw BackupRestoreError.compressionError
         }
 
-        let builder = AccountsAPIBuilder(apiService: apiService)
-        let accountsAPI = builder.makeAPI(for: apiVersion)
-
-        return IndividualToTeamMigrationUseCase(
-            accountsAPI: accountsAPI,
-            context: syncContext
-        )
     }
 }

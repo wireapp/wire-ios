@@ -17,25 +17,26 @@
 //
 
 import Foundation
-import WireAPI
-import WireDomain
-import WireDomainPkg
 
-public extension ZMUserSession {
-    func createIndividualToTeamMigrationUseCase(
-        apiVersion: WireAPI.APIVersion
-    ) -> IndividualToTeamMigrationUseCaseProtocol? {
-        guard let apiService else {
-            assertionFailure("apiService is nil")
-            return nil
-        }
+// sourcery: AutoMockable
+public protocol ImportBackupEntityStorageProtocol {
 
-        let builder = AccountsAPIBuilder(apiService: apiService)
-        let accountsAPI = builder.makeAPI(for: apiVersion)
+    var importsDirectory: URL { get }
 
-        return IndividualToTeamMigrationUseCase(
-            accountsAPI: accountsAPI,
-            context: syncContext
-        )
-    }
+    /// Replace all the data of the storage.
+    /// - Returns: The directory where all data was written to.
+    @discardableResult
+    func replacePersistentStore(
+        accountIdentifier: UUID,
+        from backupDirectory: URL,
+        applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup
+    ) async throws -> URL
+
+    func createContextProvider(
+        account: Account,
+        applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup?
+    ) async throws -> ContextProvider
+
 }
