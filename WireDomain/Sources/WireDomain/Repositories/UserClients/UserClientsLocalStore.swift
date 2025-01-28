@@ -120,6 +120,8 @@ public protocol UserClientsLocalStoreProtocol {
         forUser user: ZMUser,
         createIfNeeded: Bool
     ) async -> WireDataModel.UserClient?
+
+    func fetchSelfClientID() async -> UUID
 }
 
 public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
@@ -140,6 +142,13 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
             return selfUser.selfClient()
+        }
+    }
+
+    public func fetchSelfClientID() async -> UUID {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            return selfUser.remoteIdentifier
         }
     }
 
@@ -179,7 +188,7 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     ) async -> [String] {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
-            
+
             return selfUser.clients
                 .compactMap(\.remoteIdentifier)
                 .filter {
@@ -275,7 +284,7 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
-            
+
             return selfUser.clients.all { userClient in
                 let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
 

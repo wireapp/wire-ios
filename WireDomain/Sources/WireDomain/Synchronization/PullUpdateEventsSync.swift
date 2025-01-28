@@ -21,30 +21,40 @@ import WireAPI
 import WireLogging
 
 protocol PullUpdateEventsSyncProtocol {
-
-    func pull() async throws
-
+    func pull() async throws -> AsyncStream<[UpdateEvent]>
 }
 
-struct PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
+final class PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
     private let selfClientID: String
     private let api: any UpdateEventsAPI
     private let store: any UpdateEventsLocalStoreProtocol
     private let decryptor: any UpdateEventDecryptorProtocol
-    
+
+    init(
+        selfClientID: String,
+        apiProvider: any UpdateEventsAPIProvider,
+        storeProvider: any UpdateEventsLocalStoreProvider,
+        decryptor: any UpdateEventDecryptorProtocol
+    ) async {
+        self.selfClientID = selfClientID
+        self.api = await apiProvider.updateEventsAPI
+        self.store = storeProvider.updateEventsLocalStore
+        self.decryptor = decryptor
+    }
+
     init(
         selfClientID: String,
         api: any UpdateEventsAPI,
         store: any UpdateEventsLocalStoreProtocol,
         decryptor: any UpdateEventDecryptorProtocol
-    ) {
+    ) async {
         self.selfClientID = selfClientID
         self.api = api
         self.store = store
         self.decryptor = decryptor
     }
-    
-    func pull() async throws {
+
+    func pull() async throws -> AsyncStream<[UpdateEvent]> {
         WireLogger.sync.debug("pulling pending events")
         // We want all events since this event.
         guard let lastEventID = store.lastEventID() else {
@@ -53,6 +63,8 @@ struct PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
 
         // We'll insert new events from this index.
         var currentIndex = try await store.indexOfLastEventEnvelope() + 1
+        
+        var events: [UpdateEvent] = []
 
         // Events are fetched in batches.
         for try await envelopes in api.getUpdateEvents(
@@ -91,8 +103,8 @@ struct PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
                     decryptedEnvelopeData,
                     index: currentIndex
                 )
-
-//                onDecryptedEvents.send(decryptedEvents)
+                
+                events.append(contentsOf: decryptedEvents)
 
                 currentIndex += 1
 
@@ -103,12 +115,13 @@ struct PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
                 }
             }
         }
-
-//        // All events batches are now fetched.
-//        onDecryptedEvents.send(completion: .finished)
-//        onDecryptedEvents = .init()
+        
+        return AsyncStream {
+            $0.yield(events)
+            $0.finish()
+        }
     }
-    
+
     func storeLastEventEnvelopeID(_ id: UUID) {
         WireLogger.sync.debug(
             "storing last event id",
