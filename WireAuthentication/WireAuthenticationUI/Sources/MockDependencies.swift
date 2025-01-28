@@ -54,14 +54,6 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
 }
 
-extension MockDependencies: SubmitTwoFactorAuthenticationCodeUseCaseProtocol {
-
-    func invoke(code: String) async throws {
-        // Success
-    }
-
-}
-
 extension MockDependencies: DetermineAuthMethodBuilder {
 
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
