@@ -346,17 +346,17 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter() {
-        
+
         guard let sessionManager = createSessionManager() else {
             fatalError("sessionManager is not created")
         }
-        
+
         guard mainWindow != nil else {
             WireLogger.appDelegate.critical("no mainWindow this should not be possible at this point")
             assertionFailure("no mainWindow this should not be possible at this point")
             return
         }
-        
+
         appRootRouter = AppRootRouter(
             mainWindow: mainWindow,
             sessionManager: sessionManager,
