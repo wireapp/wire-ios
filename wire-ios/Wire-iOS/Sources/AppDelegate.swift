@@ -353,6 +353,7 @@ private extension AppDelegate {
         
         guard mainWindow != nil else {
             WireLogger.appDelegate.critical("no mainWindow this should not be possible at this point")
+            assertionFailure("no mainWindow this should not be possible at this point")
             return
         }
         
