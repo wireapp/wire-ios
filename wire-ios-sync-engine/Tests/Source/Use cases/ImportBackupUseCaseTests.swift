@@ -52,6 +52,9 @@ final class ImportBackupUseCaseTests: XCTestCase {
             .temporaryDirectory
             .appending(path: UUID().uuidString)
         mockEntityStorage.createContextProviderAccountApplicationContainerDispatchGroup_MockMethod = { _, _, _ in
+            // This closure is called after session tear down and the persistent store is replaced.
+            // It is called to create a temporary stack and restore the user client backup.
+            XCTAssertNil(self.coreDataStack)
             let stack = try await CoreDataStackHelper()
                 .createStack(inMemoryStore: true)
             try await stack.viewContext.perform {
@@ -60,6 +63,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
                 user.domain = selfUserQualifiedID.domain
                 try stack.viewContext.save()
             }
+            self.coreDataStack = stack
             return stack
         }
         mockEntityStorage
@@ -70,6 +74,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
         mockAppStateUpdater = .init()
         mockAppStateUpdater.reportImportProgressProgress_MockMethod = { _ in }
         mockAppStateUpdater.reportMigrationNeeded_MockMethod = {
+            // This closure is called when the user session should be torn down and the core data stack closed.
             self.coreDataStack = nil
         }
         mockAppStateUpdater.selectAccountAndTriggerSlowSync_MockMethod = { _ in }
@@ -80,6 +85,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
             .temporaryDirectory
             .appending(path: UUID().uuidString)
 
+        // setup self user and self user client
         let viewContext = coreDataStack.viewContext
         let selfUser = await viewContext.perform {
             let user = ZMUser.selfUser(in: viewContext)
@@ -87,7 +93,6 @@ final class ImportBackupUseCaseTests: XCTestCase {
             user.domain = selfUserQualifiedID.domain
             return user
         }
-
         mockUserSession = .init()
         mockUserSession.contextProvider = coreDataStack
         mockUserSession.selfUser = selfUser
@@ -95,9 +100,10 @@ final class ImportBackupUseCaseTests: XCTestCase {
             let selfUserClient = UserClient.insertNewSelfClient(
                 in: viewContext,
                 selfUser: selfUser,
-                model: "",
+                model: "some model",
                 label: ""
             )
+            selfUserClient.remoteIdentifier = UUID().uuidString
             selfUserClient.markAsSelfClient()
             self.mockUserSession.selfUserClient = selfUserClient
             try viewContext.save()
@@ -124,6 +130,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
         mockFileArchiver = nil
         mockStreamDecryptor = nil
         coreDataStack = nil
+        sharedContainerURL = nil
     }
 
     func testFileExtensionsAreAccepted() async throws {
@@ -182,6 +189,12 @@ final class ImportBackupUseCaseTests: XCTestCase {
                 .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.isEmpty
         )
         XCTAssertFalse(mockAppStateUpdater.selectAccountAndTriggerSlowSync_Invocations.isEmpty)
+        // ensure the user client was preserved
+        let model = await coreDataStack.viewContext.perform {
+            let selfClient = ZMUser.selfUser(in: self.coreDataStack.viewContext).selfClient()
+            return selfClient?.model
+        }
+        XCTAssertEqual(model, "some model")
     }
 
 }
