@@ -22,3 +22,9 @@
 "authentication.identity.input.submit" = "Next";
 "authentication.identity.input.terms" = "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)";
 
+"cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.email_header" = "Email";
+"cloud_user_login.submit" = "Next";
+"cloud_user_login.forgot_password" = "Forgot password?";
+"create_personal_account.title" = "Don’t have a Wire account?";
+"create_personal_account.button" = "Create Personal Account";
