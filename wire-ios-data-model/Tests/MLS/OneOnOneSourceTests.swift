@@ -22,10 +22,6 @@ import XCTest
 
 @testable import WireDataModel
 
-private enum OneOnOneSourceTestsError: Error {
-    case invalidUUID
-}
-
 final class OneOnOneSourceTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
@@ -37,7 +33,7 @@ final class OneOnOneSourceTests: XCTestCase {
     private var userA: ZMUser!
     private var userB: ZMUser!
 
-    override func setUp() async throws{
+    override func setUp() async throws {
         coreDataStack = try await CoreDataStackHelper().createStack()
         sut = OneOnOneSource(context: context)
 
@@ -82,7 +78,7 @@ final class OneOnOneSourceTests: XCTestCase {
             .init(.group, .mls, team: nil, users: [selfUser, userA], name: nil),
             .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil),
             .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA, userB], name: nil),
-            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userB], name: nil),
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userB], name: nil)
         ])
 
         try await context.perform { [self] in
@@ -108,7 +104,7 @@ final class OneOnOneSourceTests: XCTestCase {
             .init(.group, .proteus, team: team, users: [selfUser, userA], name: "name"),
             .init(.group, .proteus, team: team, users: [selfUser, userA, userB], name: nil),
             .init(.group, .proteus, team: team, users: [selfUser, userB], name: nil),
-            .init(.group, .proteus, team: team, users: [userB, userA], name: nil),
+            .init(.group, .proteus, team: team, users: [userB, userA], name: nil)
         ])
 
         try await context.perform { [self] in
@@ -128,7 +124,7 @@ final class OneOnOneSourceTests: XCTestCase {
             .init(.group, .proteus, team: nil, users: [selfUser, userA], name: nil),
             .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil),
             .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA, userB], name: nil),
-            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userB], name: nil),
+            .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userB], name: nil)
         ])
 
         try await context.perform { [self] in
@@ -147,7 +143,7 @@ final class OneOnOneSourceTests: XCTestCase {
             .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 prot. pending UserA
             .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil),
             .init(.connection, .mls, team: nil, users: [selfUser, userA], name: nil),
-            .init(.connection, .proteus, team: nil, users: [selfUser, userB], name: nil),
+            .init(.connection, .proteus, team: nil, users: [selfUser, userB], name: nil)
         ])
 
         try await context.perform { [self] in
@@ -170,7 +166,7 @@ final class OneOnOneSourceTests: XCTestCase {
             .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 proteus with UserA
             .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 proteus with UserA
             .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 prot. pending UserA
-            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 prot. pending UserA
+            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil) // <- 1:1 prot. pending UserA
         ])
 
         try await context.perform { [self] in
@@ -187,7 +183,7 @@ final class OneOnOneSourceTests: XCTestCase {
     func testFetchOneOnOnesWithCandidate_whenNoMatchingConversations() async throws {
         // Given a 1:1 conversations with UserB
         _ = try await createConversations([
-            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userB], name: nil), // <- 1:1 MLS with UserB
+            .init(.oneOnOne, .mls, team: nil, users: [selfUser, userB], name: nil) // <- 1:1 MLS with UserB
         ])
 
         try await context.perform { [self] in
@@ -216,14 +212,14 @@ final class OneOnOneSourceTests: XCTestCase {
             .init(id: UUID(suffix: "3"), .oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil),
             // 1:1 proteus pending UserA
             .init(id: UUID(suffix: "2"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil),
-            .init(id: UUID(suffix: "1"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            .init(id: UUID(suffix: "1"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil)
         ])
         _ = try await createConversations([
             // 1:1s with UserB
             .init(.oneOnOne, .mls, team: nil, users: [selfUser, userB], name: nil),
             .init(.group, .proteus, team: team, users: [selfUser, userB], name: nil),
             .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userB], name: nil),
-            .init(.connection, .proteus, team: nil, users: [selfUser, userB], name: nil),
+            .init(.connection, .proteus, team: nil, users: [selfUser, userB], name: nil)
         ])
 
         try await context.perform { [self] in
@@ -250,7 +246,7 @@ final class OneOnOneSourceTests: XCTestCase {
             .init(id: UUID(suffix: "3"), .oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil),
             // 1:1 proteus pending UserA
             .init(id: UUID(suffix: "2"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil),
-            .init(id: UUID(suffix: "1"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil),
+            .init(id: UUID(suffix: "1"), .connection, .proteus, team: nil, users: [selfUser, userA], name: nil)
         ])
 
         try await context.perform { [self] in
@@ -275,7 +271,7 @@ final class OneOnOneSourceTests: XCTestCase {
             .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 MLS with UserA
             .init(.group, .proteus, team: team, users: [selfUser, userA], name: nil), // <- 1:1 proteus fake with UserA
             .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 proteus with UserA
-            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 prot. pending UserA
+            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil) // <- 1:1 prot. pending UserA
         ])
 
         let testCases: [(types: [OneOnOneType], expectedCandidate: ZMConversation)] = [
@@ -355,7 +351,7 @@ private struct ConversationData {
 private extension UUID {
     init(suffix: String) {
         var uuidString = "00000000-0000-0000-0000-000000000000"
-        let replacementRange = uuidString.index(uuidString.endIndex, offsetBy: -suffix.count)..<uuidString.endIndex
+        let replacementRange = uuidString.index(uuidString.endIndex, offsetBy: -suffix.count) ..< uuidString.endIndex
         uuidString.replaceSubrange(replacementRange, with: suffix)
 
         self = UUID(uuidString: uuidString)!
