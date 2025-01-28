@@ -438,7 +438,8 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: URL.wr_passwordReset)
+                URL.wr_passwordReset.open()
+                return nil
             },
             previewGenerator: .none
         )

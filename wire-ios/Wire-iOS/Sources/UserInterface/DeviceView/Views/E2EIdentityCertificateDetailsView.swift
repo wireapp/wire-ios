@@ -45,13 +45,12 @@ struct E2EIdentityCertificateDetailsView: View {
         .overlay {
             HStack {
                 Spacer()
-                CloseButton {
+                CloseButton(action: {
                     dismiss()
                     didDismiss?()
-                }
-                .accessibilityIdentifier("CloseButton")
-                .accessibilityLabel(Text(L10n.Localizable.General.close))
-                .padding(.all, ViewConstants.Padding.standard)
+                }, accessibilityLabel: L10n.Localizable.General.close)
+                    .accessibilityIdentifier("CloseButton")
+                    .padding(.all, ViewConstants.Padding.standard)
             }
         }
     }

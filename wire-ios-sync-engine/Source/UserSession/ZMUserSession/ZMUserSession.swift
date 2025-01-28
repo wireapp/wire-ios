@@ -514,6 +514,16 @@ public final class ZMUserSession: NSObject {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         selfUser.needsToBeUpdatedFromBackend = true
 
+        // Proactively ensure we clean up invalid connection state.
+        Task {
+            do {
+                let connectionValidator = ConnectionValidator(context: syncContext)
+                try await connectionValidator.cleanUpAllInvalidConnections()
+            } catch {
+                WireLogger.session.error("failed to clean up invalid connections: \(String(describing: error))")
+            }
+        }
+
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
         }
@@ -631,7 +641,6 @@ public final class ZMUserSession: NSObject {
             operationStatus: applicationStatusDirectory.operationStatus,
             syncStatus: applicationStatusDirectory.syncStatus,
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-            callEventStatus: applicationStatusDirectory.callEventStatus,
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled
@@ -1110,12 +1119,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
         WireLogger.updateEvent.info("process pending call events")
         Task {
             do {
+                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
                 try await updateEventProcessor!.processBufferedEvents()
                 await managedObjectContext.perform {
                     completionHandler()
                 }
             } catch {
-                WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
+                WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }

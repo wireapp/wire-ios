@@ -276,7 +276,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus
+                syncProgress: applicationStatusDirectory.syncStatus,
+                oneOnOneResolver: oneOnOneResolver
             ),
             ZMLastUpdateEventIDTranscoder(
                 managedObjectContext: syncMOC,
@@ -299,7 +300,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
                 flowManager: flowManager,
-                callEventStatus: applicationStatusDirectory.callEventStatus,
                 messageSender: messageSender
             ),
             LegalHoldRequestStrategy(

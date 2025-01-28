@@ -21,7 +21,7 @@ import WireAnalytics
 import WireAPI
 import WireCommonComponents
 import WireDesign
-import WireDomainAPI
+import WireDomainPkg
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireReusableUIComponents
@@ -262,7 +262,7 @@ final class SelfProfileViewController: UIViewController {
         }
     }
 
-    private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
+    private func userDidTapCreateTeam(useCase: any IndividualToTeamMigrationUseCaseProtocol, userName: String) {
 
         analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
 
