@@ -19,12 +19,7 @@
 import SwiftUI
 
 package struct SwitchBackendConfirmationViewPreview: View {
-
-    @State private var showFullDetails: Bool?
-
-    package init(showFullDetails: Bool) {
-        _showFullDetails = State(initialValue: showFullDetails)
-    }
+    package init() {}
 
     package var body: some View {
         VStack {

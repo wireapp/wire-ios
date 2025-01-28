@@ -36,10 +36,10 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
     }
 
     @MainActor
-    func testColorSchemeVariantsCollapsed() {
+    func testColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = SwitchBackendConfirmationViewPreview(showFullDetails: false)
+        let view = SwitchBackendConfirmationViewPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -51,41 +51,10 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDynamicTypeVariantsCollapsed() {
+    func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = SwitchBackendConfirmationViewPreview(showFullDetails: false)
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
-    @MainActor
-    func testColorSchemeVariantsExpanded() {
-        let screenBounds = UIScreen.main.bounds
-
-        let view = SwitchBackendConfirmationViewPreview(showFullDetails: true)
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testDynamicTypeVariantsExpanded() {
-        let screenBounds = UIScreen.main.bounds
-
-        let view = SwitchBackendConfirmationViewPreview(showFullDetails: true)
+        let view = SwitchBackendConfirmationViewPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

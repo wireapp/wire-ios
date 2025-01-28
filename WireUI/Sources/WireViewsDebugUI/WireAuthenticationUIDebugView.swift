@@ -49,7 +49,7 @@ public struct WireAuthenticationUIDebugView: View {
             case .background:
                 fullscreenCover(content: { BackgroundView() })
             case .switchBackend:
-                fullscreenCover(content: { SwitchBackendConfirmationViewPreview(showFullDetails: false) })
+                fullscreenCover(content: { SwitchBackendConfirmationViewPreview() })
             }
         })
     }
