@@ -25,7 +25,7 @@ public final class NetworkService: NSObject {
     private var urlSession: URLSession?
     private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
 
-    public init(
+    init(
         baseURL: URL,
         serverTrustValidator: ServerTrustValidator
     ) {
@@ -37,7 +37,7 @@ public final class NetworkService: NSObject {
         urlSession?.invalidateAndCancel()
     }
 
-    public func configure(with urlSession: URLSession) {
+    func configure(with urlSession: URLSession) {
         self.urlSession = urlSession
     }
 
