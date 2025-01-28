@@ -19,33 +19,31 @@
 import Combine
 import WireAPI
 import WireDataModel
+import WireLogging
 
 /// Observes pending events, process them and generates new notifications content.
 final class NotificationSession {
 
-    // MARK: - Failure
-
-    enum Failure: Error {
-        case unableToPullPendingEvents(Error)
-    }
-
     // MARK: - Properties
 
-    private let updateEventsRepository: any UpdateEventsRepositoryProtocol
+    typealias NotificationHandler = (UNMutableNotificationContent) -> Void
+
+    private let authenticationServiceProvider: AuthenticationServiceProvider
+    private let notificationHandler: NotificationHandler
+    private let eventID: UUID
+
     private var subscription: AnyCancellable?
 
     // MARK: - Object lifecycle
 
     init(
-        updateEventsRepository: any UpdateEventsRepositoryProtocol,
-        onNotificationContent: @escaping (UNMutableNotificationContent) -> Void
+        eventID: UUID,
+        authenticationServiceProvider: any AuthenticationServiceProvider,
+        notificationHandler: @escaping NotificationHandler
     ) {
-        self.updateEventsRepository = updateEventsRepository
-        self.subscription = updateEventsRepository.observePendingEvents()
-            .collect() // Collects all the events batches.
-            .map { $0.flatMap { $0 } }
-            .map(generateNotificationContent)
-            .sink(receiveValue: onNotificationContent)
+        self.eventID = eventID
+        self.authenticationServiceProvider = authenticationServiceProvider
+        self.notificationHandler = notificationHandler
     }
 
     deinit {
@@ -55,43 +53,60 @@ final class NotificationSession {
 
     // MARK: - Notifications
 
-    func processPushNotification(
-        eventID newEventID: UUID
+    func start() async throws {
+        let authenticationService = authenticationServiceProvider.authenticationService
+
+        let authenticationResult = await authenticationService.authenticate()
+
+        switch authenticationResult {
+        case let .success(authenticatedSession):
+            try await process(with: authenticatedSession)
+        case let .failure(error):
+            throw error
+        }
+    }
+
+    private func process(
+        with authenticatedSession: AuthenticatedSessionProtocol
     ) async throws {
-        let lastEventId = updateEventsRepository.fetchLastEventEnvelopeID()
+        try authenticatedSession.setup()
 
-        if lastEventId == nil {
-            updateEventsRepository.storeLastEventEnvelopeID(newEventID)
-        }
+        let decodedEventsStream = try await authenticatedSession.startSync(
+            newEventID: eventID
+        )
 
-        do {
-            try await updateEventsRepository.pullPendingEvents()
-        } catch {
-            throw Failure.unableToPullPendingEvents(error)
+        for await decodedEvents in decodedEventsStream {
+            generateNotificationContent(for: decodedEvents)
         }
+        
     }
 
     private func generateNotificationContent(
         for events: [UpdateEvent]
-    ) -> UNMutableNotificationContent {
+    ) {
+        guard !events.isEmpty else {
+            return notificationHandler(UNMutableNotificationContent())
+        }
         // TODO: [WPB-11175] - Generate UNNotificationContent from update events
         for event in events {
+            let notification: UNMutableNotificationContent
+            
             switch event {
             case let .conversation(conversationEvent):
-                break
+                notification = UNMutableNotificationContent()
             case let .featureConfig(featureConfigEvent):
-                break
+                notification = UNMutableNotificationContent()
             case let .federation(federationEvent):
-                break
+                notification = UNMutableNotificationContent()
             case let .user(userEvent):
-                break
+                notification = UNMutableNotificationContent()
             case let .team(teamEvent):
-                break
+                notification = UNMutableNotificationContent()
             case let .unknown(eventType):
-                break
+                notification = UNMutableNotificationContent()
             }
+            
+            notificationHandler(notification)
         }
-
-        return UNMutableNotificationContent()
     }
 }

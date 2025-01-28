@@ -17,36 +17,49 @@
 //
 
 import NeedleFoundation
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 protocol PullEventsSyncDependency: Dependency {
-    var userClientsLocalStore: UserClientsLocalStoreProtocol { get }
-    var context: NSManagedObjectContext { get }
     var userIdentifier: UUID { get }
 }
 
-class PullEventsSyncComponent: Component<PullEventsSyncDependency> {
-    let selfClientID: String
-    
-    init(parent: any Scope, selfClientID: String) {
-        self.selfClientID = selfClientID
+protocol PullEventsSyncProvider {
+    func pullEventsSync(
+        selfClientID: String
+    ) async -> any PullUpdateEventsSyncProtocol
+}
+
+/// Provides sync objects.
+final class SyncComponent: Component<PullEventsSyncDependency>, PullEventsSyncProvider {
+    private let context: NSManagedObjectContext
+
+    init(
+        parent: any Scope,
+        context: NSManagedObjectContext
+    ) {
+        self.context = context
         super.init(parent: parent)
     }
 
-    var pullUpdateEventsSync: any PullUpdateEventsSyncProtocol {
-        get async {
-            await PullUpdateEventsSync(
-                selfClientID: selfClientID,
-                api: apiComponent.updateEventsAPI,
-                store: localStoreComponent.updateEventsLocalStore,
-                decryptor: updateEventDecryptor
-            )
-        }
+    func pullEventsSync(
+        selfClientID: String
+    ) async -> any PullUpdateEventsSyncProtocol {
+        let apiComponent = APIComponent(
+            parent: self,
+            selfClientID: selfClientID
+        )
+
+        return await PullUpdateEventsSync(
+            selfClientID: selfClientID,
+            apiProvider: apiComponent,
+            storeProvider: localStoreComponent,
+            decryptor: updateEventDecryptor
+        )
     }
-    
+
     // MARK: - Private
-    
+
     private var updateEventDecryptor: any UpdateEventDecryptorProtocol {
         UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
@@ -54,30 +67,26 @@ class PullEventsSyncComponent: Component<PullEventsSyncDependency> {
             messageLocalStore: localStoreComponent.messageLocalStore
         )
     }
-    
+
     private var proteusMessageDecryptor: any ProteusMessageDecryptorProtocol {
         ProteusMessageDecryptor(
-            proteusService: dependency.context.proteusService!,
-            userClientsLocalStore: dependency.userClientsLocalStore,
+            proteusService: context.proteusService!,
+            userClientsLocalStore: localStoreComponent.userClientsLocalStore,
             userLocalStore: localStoreComponent.userLocalStore
         )
     }
-    
+
     private var mlsMessageDecryptor: any MLSMessageDecryptorProtocol {
         MLSMessageDecryptor(
-            mlsDecryptionService: dependency.context.mlsDecryptionService!,
+            mlsDecryptionService: context.mlsDecryptionService!,
             conversationLocalStore: localStoreComponent.conversationLocalStore
         )
     }
-    
+
     // MARK: - Child components
-    
-    private var apiComponent: APIComponent {
-        APIComponent(parent: self)
+
+    var localStoreComponent: LocalStoreComponent {
+        LocalStoreComponent(parent: self, context: NSManagedObjectContext(.mainQueue))
     }
-    
-    private var localStoreComponent: LocalStoreComponent {
-        LocalStoreComponent(parent: self)
-    }
-    
+
 }

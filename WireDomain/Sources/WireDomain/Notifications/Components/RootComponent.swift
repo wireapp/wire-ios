@@ -19,44 +19,45 @@
 import NeedleFoundation
 import WireDataModel
 
+/// Root of the dependencies tree graph.
 final class RootComponent: BootstrapComponent {
-    
+
     enum Failure: Error {
         case missingApplicationGroupID
+        case userAccountNotFound
     }
-    
-    private let userIdentifier: UUID
-    private let applicationIdentifier: String
-    
-    init(userIdentifier: UUID) throws {
-        guard let appGroupID = Bundle.main.infoDictionary?["WireGroupId"] as? String else {
+
+    public let userIdentifier: UUID
+    public let applicationIdentifier: String
+    public let applicationContainer: URL
+    public let selectedAccount: Account
+
+    init(userID: UUID) throws {
+        let infoDictionary = Bundle.main.infoDictionary
+        guard let appGroupID = infoDictionary?["WireGroupId"] as? String else {
             throw Failure.missingApplicationGroupID
         }
-        
-        self.userIdentifier = userIdentifier
+
+        self.userIdentifier = userID
         self.applicationIdentifier = "group.\(appGroupID)"
-        
+        self.applicationContainer = FileManager.sharedContainerDirectory(for: applicationIdentifier)
+
+        let accountManager = AccountManager(sharedDirectory: applicationContainer)
+        guard let selectedAccount = accountManager.account(
+            with: userID
+        ) else {
+            throw Failure.userAccountNotFound
+        }
+
+        self.selectedAccount = selectedAccount
+
         super.init()
     }
-    
-    // MARK: - Components
-    
+
+    // MARK: - Child components
+
     var authenticationComponent: AuthenticationComponent {
         AuthenticationComponent(parent: self)
     }
-    
-    var applicationContainer: URL {
-        FileManager.sharedContainerDirectory(for: applicationIdentifier)
-    }
-    
-    var accountManager: AccountManager {
-        AccountManager(sharedDirectory: applicationContainer)
-    }
-    
-    var selectedAccount: Account {
-        accountManager.account(with: userIdentifier)!
-    }
-    
+
 }
-
-

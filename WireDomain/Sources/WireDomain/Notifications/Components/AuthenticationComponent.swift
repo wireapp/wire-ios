@@ -17,34 +17,32 @@
 //
 
 import NeedleFoundation
-import WireDataModel
 import WireAPI
+import WireDataModel
 
-protocol AuthenticationDependency: Dependency {
-    var userIdentifier: UUID { get }
+// sourcery: AutoMockable
+protocol AuthenticationServiceProvider {
+    var authenticationService: AuthenticationServiceProtocol { get }
 }
 
-class AuthenticationComponent: Component<AuthenticationDependency> {
-    
-    var cookieStorage: CookieStorageProtocol {
-        storageComponent.cookieStorage
+/// Provides an authentication service with injected components.
+final class AuthenticationComponent: Component<EmptyDependency>, AuthenticationServiceProvider {
+
+    var authenticationService: AuthenticationServiceProtocol {
+        AuthenticationService(
+            cookieStorageProvider: coreStorageComponent,
+            authenticatedSessionProvider: authenticatedComponent
+        )
     }
-    
-    var coreData: CoreDataStack {
-        storageComponent.coreData
-    }
-    
-    var userDefaultsStorage: UserDefaults {
-        storageComponent.userDefaults
-    }
-    
+
     // MARK: - Child components
-    
-    private var storageComponent: StorageComponent {
-        StorageComponent(parent: self)
+
+    var coreStorageComponent: CoreStorageComponent {
+        CoreStorageComponent(parent: self)
     }
-    
-    private var authenticatedComponent: AuthenticatedComponent {
+
+    var authenticatedComponent: AuthenticatedComponent {
         AuthenticatedComponent(parent: self)
     }
 }
+

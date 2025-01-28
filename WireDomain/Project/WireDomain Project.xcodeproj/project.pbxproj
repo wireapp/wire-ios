@@ -23,6 +23,7 @@
 		C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
 		C9A6CCAD2D3E53D70058D4A4 /* NeedleFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = C9A6CCAC2D3E53D70058D4A4 /* NeedleFoundation */; };
 		C9A6CCAF2D3E53D70058D4A4 /* NeedleFoundationTest in Frameworks */ = {isa = PBXBuildFile; productRef = C9A6CCAE2D3E53D70058D4A4 /* NeedleFoundationTest */; };
+		C9B4C1F72D4915F10072A0EE /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = C9B4C1F62D4915F10072A0EE /* WireCrypto */; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 /* End PBXBuildFile section */
@@ -92,6 +93,7 @@
 				594904952D0710BF00238104 /* WireAnalytics in Frameworks */,
 				C9A6CCAD2D3E53D70058D4A4 /* NeedleFoundation in Frameworks */,
 				59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */,
+				C9B4C1F72D4915F10072A0EE /* WireCrypto in Frameworks */,
 				59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */,
 				C9A6CCAF2D3E53D70058D4A4 /* NeedleFoundationTest in Frameworks */,
 				01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */,
@@ -216,6 +218,7 @@
 				594904942D0710BF00238104 /* WireAnalytics */,
 				C9A6CCAC2D3E53D70058D4A4 /* NeedleFoundation */,
 				C9A6CCAE2D3E53D70058D4A4 /* NeedleFoundationTest */,
+				C9B4C1F62D4915F10072A0EE /* WireCrypto */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -798,6 +801,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C9A6CCAB2D3E53D70058D4A4 /* XCRemoteSwiftPackageReference "needle" */;
 			productName = NeedleFoundationTest;
+		};
+		C9B4C1F62D4915F10072A0EE /* WireCrypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCrypto;
 		};
 		C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;

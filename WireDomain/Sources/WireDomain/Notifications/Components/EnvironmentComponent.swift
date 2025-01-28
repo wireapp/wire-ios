@@ -17,16 +17,17 @@
 //
 
 import NeedleFoundation
-import WireDataModel
 import WireAPI
+import WireDataModel
 import WireFoundation
 
 protocol EnvironmentDependency: Dependency {
     var applicationIdentifier: String { get }
 }
 
-class EnvironmentComponent: Component<EnvironmentDependency> {
-    
+/// Provides a backend environment.
+final class EnvironmentComponent: Component<EnvironmentDependency> {
+
     var backendEnvironment: WireAPI.BackendEnvironment {
         get async {
             BackendEnvironment(
@@ -49,12 +50,12 @@ class EnvironmentComponent: Component<EnvironmentDependency> {
             )
         }
     }
-    
+
     var appMainBundle: Bundle {
         let mainBundle: Bundle
-        
+
         let runningInExtension = Bundle.main.bundlePath.hasSuffix(".appex")
-        
+
         if runningInExtension {
             let extensionBundleURL = Bundle.main.bundleURL
             let mainAppBundleURL = extensionBundleURL.deletingLastPathComponent().deletingLastPathComponent()
@@ -65,15 +66,15 @@ class EnvironmentComponent: Component<EnvironmentDependency> {
         }
         return mainBundle
     }
-    
+
     var proxySettings: ProxySettings? {
         get async {
             guard let proxy = legacyBackendEnvironment.proxy else { return nil }
-            
+
             let keychain = WireFoundation.Keychain()
             let usernameItemID = "proxy-\(proxy.host):\(proxy.port)-username"
             let passwordItemID = "proxy-\(proxy.host):\(proxy.port)-password"
-            
+
             let proxyUsername: String? = try? await keychain.fetchItem(
                 query: [
                     .itemClass(.genericPassword),
@@ -81,7 +82,7 @@ class EnvironmentComponent: Component<EnvironmentDependency> {
                     .returningData(true)
                 ]
             )
-            
+
             let proxyPassword: String? = try? await keychain.fetchItem(
                 query: [
                     .itemClass(.genericPassword),
@@ -92,26 +93,39 @@ class EnvironmentComponent: Component<EnvironmentDependency> {
 
             if proxy.needsAuthentication {
                 guard let proxyUsername, let proxyPassword else {
-                    fatalInternal("Proxy needs authentication but credentials are missing")
+                    fatalInternal(
+                        "Proxy needs authentication but credentials are missing"
+                    )
+
                     return nil
                 }
 
-                return .authenticated(host: proxy.host, port: proxy.port, username: proxyUsername, password: proxyPassword)
+                return .authenticated(
+                    host: proxy.host,
+                    port: proxy.port,
+                    username: proxyUsername,
+                    password: proxyPassword
+                )
             } else {
-                return .unauthenticated(host: proxy.host, port: proxy.port)
+                return .unauthenticated(
+                    host: proxy.host,
+                    port: proxy.port
+                )
             }
         }
     }
-    
+
     // MARK: - Private
-    
+
     private var legacyBackendEnvironment: WireDataModel.BackendEnvironment {
         guard let backendEnvironmentTypeOverride else {
             fatalError()
         }
-        
-        let environmentType = EnvironmentType(stringValue: backendEnvironmentTypeOverride)
-        
+
+        let environmentType = EnvironmentType(
+            stringValue: backendEnvironmentTypeOverride
+        )
+
         guard let backendEnvironment = BackendEnvironment(
             userDefaults: userDefaults,
             configurationBundle: backendBundle,
@@ -119,20 +133,20 @@ class EnvironmentComponent: Component<EnvironmentDependency> {
         ) else {
             fatalError("Malformed backend configuration data")
         }
-        
+
         return backendEnvironment
     }
-    
+
     private var userDefaults: UserDefaults {
         let userDefaults = UserDefaults.standard
         userDefaults.addSuite(named: dependency.applicationIdentifier)
         return userDefaults
     }
-    
+
     private var backendEnvironmentTypeOverride: String? {
         userDefaults.string(forKey: "BackendEnvironmentTypeOverrideKey")
     }
-    
+
     private var backendBundle: Bundle {
         guard let backendBundlePath = appMainBundle.path(
             forResource: "Backend",
@@ -140,11 +154,11 @@ class EnvironmentComponent: Component<EnvironmentDependency> {
         ) else {
             fatalError("Could not find backend.bundle")
         }
-        
+
         guard let bundle = Bundle(path: backendBundlePath) else {
             fatalError("Could not load backend.bundle")
         }
-        
+
         return bundle
     }
 }

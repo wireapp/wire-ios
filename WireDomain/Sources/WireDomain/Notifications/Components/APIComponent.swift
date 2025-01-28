@@ -20,14 +20,22 @@ import NeedleFoundation
 import WireAPI
 import WireDataModel
 
-protocol APIDependency: Dependency {
-    var selfClientID: String { get }
-    var cookieStorage: CookieStorageProtocol { get }
-    var userDefaultsStorage: UserDefaults { get }
+protocol UpdateEventsAPIProvider {
+    var updateEventsAPI: any UpdateEventsAPI { get async }
 }
 
-class APIComponent: Component<APIDependency> {
-    
+/// Provides API objects.
+final class APIComponent: Component<EmptyDependency>, UpdateEventsAPIProvider {
+    private let selfClientID: String
+
+    init(
+        parent: any Scope,
+        selfClientID: String
+    ) {
+        self.selfClientID = selfClientID
+        super.init(parent: parent)
+    }
+
     var updateEventsAPI: any UpdateEventsAPI {
         get async {
             UpdateEventsAPIBuilder(
@@ -35,7 +43,7 @@ class APIComponent: Component<APIDependency> {
             ).makeAPI(for: apiVersion)
         }
     }
-    
+
     var selfUserAPI: any SelfUserAPI {
         get async {
             SelfUserAPIBuilder(
@@ -43,7 +51,7 @@ class APIComponent: Component<APIDependency> {
             ).makeAPI(for: apiVersion)
         }
     }
-    
+
     var usersAPI: any UsersAPI {
         get async {
             UsersAPIBuilder(
@@ -51,9 +59,9 @@ class APIComponent: Component<APIDependency> {
             ).makeAPI(for: apiVersion)
         }
     }
-    
+
     // MARK: - Private
-    
+
     private var apiService: any APIServiceProtocol {
         get async {
             APIService(
@@ -62,24 +70,24 @@ class APIComponent: Component<APIDependency> {
             )
         }
     }
-    
+
     private var apiVersion: WireAPI.APIVersion {
         let key = "SelectedAPIVersion"
-        guard dependency.userDefaultsStorage.object(forKey: key) != nil else {
-            return .v0
+        guard coreStorageComponent.userDefaults.object(forKey: key) != nil else {
+            fatalError("API version not found")
         }
-        
-        let storedValue = dependency.userDefaultsStorage.integer(forKey: key)
+
+        let storedValue = coreStorageComponent.userDefaults.integer(forKey: key)
         let legacyAPIVersion = APIVersion(rawValue: Int32(storedValue))
-        
+
         guard let legacyAPIVersion,
               let apiVersion = WireAPI.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
             return .v0
         }
-        
+
         return apiVersion
     }
-    
+
     private var networkService: NetworkService {
         get async {
             let service = NetworkService(
@@ -88,7 +96,7 @@ class APIComponent: Component<APIDependency> {
                     pinnedKeys: await backendEnvironment.pinnedKeys
                 )
             )
-            
+
             let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
             let config = URLSessionConfigurationFactory(
                 minTLSVersion: minTLSVersion,
@@ -100,41 +108,45 @@ class APIComponent: Component<APIDependency> {
                 delegateQueue: nil
             )
             service.configure(with: session)
-            
+
             return service
         }
     }
-    
+
     private var authenticationManager: any AuthenticationManagerProtocol {
         get async {
             AuthenticationManager(
-                clientID: dependency.selfClientID,
-                cookieStorage: dependency.cookieStorage,
+                clientID: selfClientID,
+                cookieStorage: coreStorageComponent.cookieStorage,
                 networkService: await networkService
             )
         }
     }
-    
+
     private var backendEnvironment: WireAPI.BackendEnvironment {
         get async {
             await environmentComponent.backendEnvironment
         }
     }
-    
+
     private var proxySettings: ProxySettings? {
         get async {
             await environmentComponent.proxySettings
         }
     }
-    
+
     private var minTLSVersion: String? {
         environmentComponent.appMainBundle.infoForKey("MinTLSVersion")
     }
-    
+
     // MARK: - Child components
-    
-    private var environmentComponent: EnvironmentComponent {
+
+    var environmentComponent: EnvironmentComponent {
         EnvironmentComponent(parent: self)
     }
-    
+
+    var coreStorageComponent: CoreStorageComponent {
+        CoreStorageComponent(parent: self)
+    }
+
 }

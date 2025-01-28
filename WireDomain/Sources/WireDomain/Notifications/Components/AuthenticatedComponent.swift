@@ -17,29 +17,48 @@
 //
 
 import NeedleFoundation
-import WireDataModel
+import Foundation
 
-protocol AuthenticatedDependency: Dependency {
-    var coreData: CoreDataStack { get }
+protocol AuthenticatedSessionProvider {
+    var authenticatedSession: AuthenticatedSessionProtocol { get }
 }
 
-class AuthenticatedComponent: Component<AuthenticatedDependency> {
-    
-    var context: NSManagedObjectContext {
-        dependency.coreData.syncContext
-    }
-    
-    var userClientsLocalStore: any UserClientsLocalStoreProtocol {
-        UserClientsLocalStore(context: context)
-    }
-    
-    // MARK: - Child components
-    
-    func eventsSyncComponent(selfClientID: String) -> PullEventsSyncComponent {
-        PullEventsSyncComponent(
-            parent: self,
-            selfClientID: selfClientID
+/// Provides an authenticated session with injected components.
+final class AuthenticatedComponent: Component<EmptyDependency>, AuthenticatedSessionProvider {
+
+    var authenticatedSession: AuthenticatedSessionProtocol {
+        AuthenticatedSession(
+            coreDataProvider: coreStorageComponent,
+            coreServiceProvider: coreServiceComponent,
+            localStoresProvider: localStoreComponent,
+            pullEventsSyncProvider: syncComponent
         )
     }
-    
+
+    // MARK: - Child components
+
+    var syncComponent: SyncComponent {
+        SyncComponent(
+            parent: self,
+            context: coreStorageComponent.coreData.syncContext
+        )
+    }
+
+    var coreStorageComponent: CoreStorageComponent {
+        CoreStorageComponent(parent: self)
+    }
+
+    var coreServiceComponent: CoreServiceComponent {
+        CoreServiceComponent(
+            parent: self,
+            coreData: coreStorageComponent.coreData
+        )
+    }
+
+    var localStoreComponent: LocalStoreComponent {
+        LocalStoreComponent(
+            parent: self,
+            context: coreStorageComponent.coreData.syncContext
+        )
+    }
 }

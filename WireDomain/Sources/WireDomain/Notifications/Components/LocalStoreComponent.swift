@@ -20,36 +20,56 @@ import NeedleFoundation
 import WireDataModel
 
 protocol LocalStoreDependency: Dependency {
-    var context: NSManagedObjectContext { get }
     var userIdentifier: UUID { get }
 }
 
-class LocalStoreComponent: Component<LocalStoreDependency> {
-    
+protocol UserClientsLocalStoreProvider {
+    var userClientsLocalStore: any UserClientsLocalStoreProtocol { get }
+}
+
+protocol UpdateEventsLocalStoreProvider {
+    var updateEventsLocalStore: any UpdateEventsLocalStoreProtocol { get }
+}
+
+/// Provides local stores.
+final class LocalStoreComponent: Component<LocalStoreDependency>, UserClientsLocalStoreProvider,
+    UpdateEventsLocalStoreProvider {
+    private let context: NSManagedObjectContext
+
+    init(parent: any Scope, context: NSManagedObjectContext) {
+        self.context = context
+        super.init(parent: parent)
+    }
+
     var updateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         UpdateEventsLocalStore(
-            context: dependency.context,
+            context: context,
             userID: dependency.userIdentifier,
             sharedUserDefaults: .standard
         )
     }
+
     var userLocalStore: UserLocalStoreProtocol {
         UserLocalStore(
-            context: dependency.context,
+            context: context,
             conversationLocalStore: conversationLocalStore
         )
     }
-    
+
     var conversationLocalStore: ConversationLocalStoreProtocol {
         ConversationLocalStore(
-            context: dependency.context,
-            mlsService: dependency.context.mlsService!,
+            context: context,
+            mlsService: context.mlsService!,
             messageLocalStore: messageLocalStore
         )
     }
-    
-    var messageLocalStore: any MessageLocalStoreProtocol {
-        MessageLocalStore(context: dependency.context)
+
+    var userClientsLocalStore: any UserClientsLocalStoreProtocol {
+        UserClientsLocalStore(context: context)
     }
-    
+
+    var messageLocalStore: any MessageLocalStoreProtocol {
+        MessageLocalStore(context: context)
+    }
+
 }
