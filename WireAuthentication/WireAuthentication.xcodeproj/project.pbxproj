@@ -19,7 +19,6 @@
 		EEC739372D023029003C0FC9 /* WireAuthenticationAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */; };
 		EEC739382D02302A003C0FC9 /* WireAuthenticationAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEC73BAC2D035B02003C0FC9 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EEC73BAB2D035B02003C0FC9 /* WireAPI */; };
-		EEC73BB12D03B290003C0FC9 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EEC73BB02D03B290003C0FC9 /* WireAPI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -195,7 +194,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE7442732D3132570025271D /* NeedleFoundation in Frameworks */,
-				EEC73BB12D03B290003C0FC9 /* WireAPI in Frameworks */,
 				EEC739292D022FE0003C0FC9 /* WireAuthenticationLogic.framework in Frameworks */,
 				EEC7392D2D022FE0003C0FC9 /* WireAuthenticationUI.framework in Frameworks */,
 			);
@@ -333,7 +331,6 @@
 			);
 			name = WireAuthentication;
 			packageProductDependencies = (
-				EEC73BB02D03B290003C0FC9 /* WireAPI */,
 				EE7442722D3132570025271D /* NeedleFoundation */,
 			);
 			productName = WireAuthentication;
@@ -1246,10 +1243,6 @@
 			productName = NeedleFoundation;
 		};
 		EEC73BAB2D035B02003C0FC9 /* WireAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireAPI;
-		};
-		EEC73BB02D03B290003C0FC9 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
 		};
