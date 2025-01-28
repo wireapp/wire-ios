@@ -16,11 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireAuthenticationUI
+import Foundation
 
-class WireAuthenticationUITests: XCTestCase {
-    func testExample() throws {
-        throw XCTSkip("[WPB-15229] Not yet implemented")
-    }
+// sourcery: AutoMockable
+public protocol ImportBackupEntityStorageProtocol {
+
+    var importsDirectory: URL { get }
+
+    /// Replace all the data of the storage.
+    /// - Returns: The directory where all data was written to.
+    @discardableResult
+    func replacePersistentStore(
+        accountIdentifier: UUID,
+        from backupDirectory: URL,
+        applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup
+    ) async throws -> URL
+
+    func createContextProvider(
+        account: Account,
+        applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup?
+    ) async throws -> ContextProvider
+
 }
