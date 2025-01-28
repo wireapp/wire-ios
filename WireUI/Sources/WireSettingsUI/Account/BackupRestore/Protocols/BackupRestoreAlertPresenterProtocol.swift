@@ -16,19 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireUI/Sources/WireSettingsUI/Account/BackupRestore/Protocols/BackupRestoreAlertPresenterProtocol.swift
 public protocol BackupRestoreAlertPresenterProtocol {
 
     /// <#Description#>
     /// - Returns: <#description#>
     @MainActor
     func todo() async -> Bool
-========
-public protocol PasswordValidator {
-
-    func validate(_ password: String) -> Bool
-
-    var localizedRulesDescription: String? { get }
-
->>>>>>>> 019c5676100d5d66e2dc87043a3542a57f403c5e:WireUI/Sources/WireReusableUIComponents/PasswordField/PasswordValidator.swift
 }
