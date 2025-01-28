@@ -22,7 +22,7 @@ public struct URLSessionConfigurationFactory {
 
     let minTLSVersion: TLSVersion
     let proxySettings: ProxySettings?
-    
+
     public init(
         minTLSVersion: TLSVersion,
         proxySettings: ProxySettings?

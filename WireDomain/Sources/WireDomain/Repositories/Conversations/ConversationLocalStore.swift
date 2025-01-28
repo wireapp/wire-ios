@@ -987,7 +987,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         participantDomain: String?,
         date: Date
     ) async throws {
-        
+
         let user = await context.perform { [context] in
             ZMUser.fetchOrCreate(
                 with: participantID,

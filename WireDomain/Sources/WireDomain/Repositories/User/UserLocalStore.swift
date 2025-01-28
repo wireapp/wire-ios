@@ -137,7 +137,7 @@ public protocol UserLocalStoreProtocol {
     /// - returns: the user ID and the client ID.
 
     func selfUserInfo() async -> (id: UUID, clientId: String?)
-    
+
     func removeUserFromAllConversations(
         id: UUID,
         domain: String?,
@@ -333,7 +333,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             ZMUser.selfUser(in: context).analyticsIdentifier = analyticsID
         }
     }
-    
+
     public func removeUserFromAllConversations(
         id: UUID,
         domain: String?,
