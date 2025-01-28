@@ -18,23 +18,14 @@
 
 import SwiftUI
 
-@ViewBuilder @MainActor
-func ExportBackupPreview() -> some View {
-    ExportBackup_Preview()
-}
+struct SetExportPasswordPreview: View {
 
-private struct ExportBackup_Preview: View {
     @State private var isPresented = true
 
     var body: some View {
-        Button(
-            action: {
-                isPresented.toggle()
-            },
-            label: {
-                Text(L10n.Localizable.ExportBackup.button)
-            }
-        )
+        Button(L10n.Localizable.ExportBackup.button) {
+            isPresented.toggle()
+        }
         .sheet(isPresented: $isPresented) {
             NavigationStack {
                 ExportBackupView(
@@ -44,8 +35,11 @@ private struct ExportBackup_Preview: View {
                     )
                 )
             }
+            .background(Color.blue)
+            .interactiveDismissDisabled()
             .presentationDragIndicator(.visible)
-            .presentationDetents([.medium])
+            .presentationDetents([.height(300)])
+//            .presentationDetents([.height(100), .fraction(20), .medium, .large])
         }
     }
 }

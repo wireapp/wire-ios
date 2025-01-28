@@ -49,10 +49,12 @@ public final class BackupRestoreViewController: UIViewController {
         let backupRestoreView = BackupRestoreView(
             viewModel: viewModel,
             exportBackupSheetContent: { [backupPasswordValidator] exportBackupAction in
-                ExportBackupView(viewModel: ExportBackupViewModel(
+                ExportBackupView(
+                    viewModel: SetExportPasswordViewModel(
                     passwordValidator: /*viewModel.*/ backupPasswordValidator,
                     exportBackupAction: /*viewModel.*/ exportBackupAction
-                ))
+                )
+                )
             },
             importBackupSheetContent: {
                 NavigationStack {

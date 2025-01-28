@@ -19,7 +19,7 @@
 import Foundation
 
 @MainActor
-final class ExportBackupViewModel: ObservableObject {
+final class SetExportPasswordViewModel: ObservableObject {
 
     @Published var password = "" {
         didSet { validatePassword() }

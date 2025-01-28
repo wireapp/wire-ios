@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// https://www.figma.com/design/sOAbcd6UVtlZ5ejK4BoEvX/iOS?node-id=2677-64193&t=cnnWkFySM8OCIAqU-1
+// ipad https://www.figma.com/design/j0FidctcrQrWfE8YGfO2cO/iPad?node-id=861-16074&t=a8mXlBMLg7I8z65t-1
+
 import UIKit
 import WireDesign
 

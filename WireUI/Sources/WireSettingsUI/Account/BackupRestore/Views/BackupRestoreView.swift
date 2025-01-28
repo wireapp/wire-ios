@@ -34,6 +34,7 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
     /// the temporary file and 2. another step would be needed: A view showing the `ShareLink` right after the backup file became ready.
     private(set) var presentActivityViewController: (_ url: URL, _ anchor: UIViewController) async -> Void
 
+    @State private var isSetExportPasswordUIPresented = false
     @State private var isExportBackupSheetPresented = false
     @State private var isBackupPickerPresented = false
     @State private var popoverPresenter = UIViewController()
@@ -44,15 +45,42 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
     /// `nil` means the ExportBackupSheet has not been opened or has been dismissed without the texport action.
     @State private var exportBackupPassword: String?
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     var body: some View {
         List {
-            // backup
-            Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
-                Button(action: { isExportBackupSheetPresented.toggle() }) {
-                    Text(L10n.Localizable.Settings.ExportBackup.action)
-                        .wireTextStyle(.body2)
-                        .foregroundStyle(Color.primaryText)
-                }
+            backupSection
+            restoreSection
+        }
+        .listStyle(.grouped)
+        .background(Color(ColorTheme.Backgrounds.background))
+        .scrollContentBackground(.hidden)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    }
+
+    @ViewBuilder
+    private var backupSection: some View {
+
+        let backUpNowButton = Button(action: { isSetExportPasswordUIPresented = true /*isExportBackupSheetPresented.toggle()*/ }) {
+            Text(L10n.Localizable.Settings.ExportBackup.action)
+                .wireTextStyle(.body2)
+                .foregroundStyle(Color.primaryText)
+        }
+
+        Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
+            if horizontalSizeClass == .regular, #available(iOS 18.0, *) {
+                backUpNowButton
+                    .sheet(isPresented: $isSetExportPasswordUIPresented) {
+                        Text("TODO")
+                            .frame(width: 300, height: 150)
+                            .presentationSizing(
+                                .page
+                                    .fitted(horizontal: true, vertical: true)
+                                    .sticky(horizontal: false, vertical: true)
+                            )
+                    }
+            } else {
+                backUpNowButton
                 .background {
                     // a view controller just for presenting a popover presentation
                     PopoverPresenter { popoverPresenter = $0 }
@@ -77,33 +105,31 @@ struct BackupRestoreView<ExportBackupSheet: View, ImportBackupSheet: View>: View
                         })
                     }
             }
-
-            // restore
-            Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
-                Button {
-                    viewModel.confirmBackupRestore {
-                        isBackupPickerPresented.toggle()
-                    }
-                } label: {
-                    Text(L10n.Localizable.Settings.RestoreFromBackup.action)
-                        .font(.textStyle(.body2))
-                        .foregroundStyle(Color.primaryText)
-                }
-                .fullScreenCover(isPresented: $isBackupPickerPresented) {
-                    BackupPicker { url in
-                        if let fileURL = url {
-                            selectedFileURL = fileURL
-                            isImportBackupSheetPresented = true
-                        }
-                    }
-                }
-                .sheet(isPresented: $isImportBackupSheetPresented, content: importBackupSheetContent)
-            }
         }
-        .listStyle(.grouped)
-        .background(Color(ColorTheme.Backgrounds.background))
-        .scrollContentBackground(.hidden)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    }
+
+    @ViewBuilder
+    private var restoreSection: some View {
+        Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
+            Button {
+                viewModel.confirmBackupRestore {
+                    isBackupPickerPresented.toggle()
+                }
+            } label: {
+                Text(L10n.Localizable.Settings.RestoreFromBackup.action)
+                    .font(.textStyle(.body2))
+                    .foregroundStyle(Color.primaryText)
+            }
+            .fullScreenCover(isPresented: $isBackupPickerPresented) {
+                BackupPicker { url in
+                    if let fileURL = url {
+                        selectedFileURL = fileURL
+                        isImportBackupSheetPresented = true
+                    }
+                }
+            }
+            .sheet(isPresented: $isImportBackupSheetPresented, content: importBackupSheetContent)
+        }
     }
 }
 
