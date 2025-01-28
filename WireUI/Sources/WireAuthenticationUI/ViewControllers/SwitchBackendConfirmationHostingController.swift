@@ -26,10 +26,9 @@ package class SwitchBackendConfirmationHostingController: UIHostingController<Sw
     package init(viewModel: SwitchBackendConfirmationViewModel) {
         self.viewModel = viewModel
         
-        super.init(rootView: SwitchBackendConfirmationView(viewModel: viewModel, onShowDetails: {}))
+        super.init(rootView: SwitchBackendConfirmationView(viewModel: viewModel))
         rootView = SwitchBackendConfirmationView(
-            viewModel: viewModel,
-            onShowDetails: changeViewState
+            viewModel: viewModel
         )
     }
 

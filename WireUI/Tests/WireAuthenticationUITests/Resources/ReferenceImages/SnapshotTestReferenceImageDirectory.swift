@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol PasswordValidator {
+import Foundation
 
-    func validate(_ password: String) -> Bool
-
-    var localizedRulesDescription: String? { get }
-
-}
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .path

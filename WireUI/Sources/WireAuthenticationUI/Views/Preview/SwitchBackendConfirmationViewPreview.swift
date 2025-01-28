@@ -18,15 +18,15 @@
 
 import SwiftUI
 
-struct SwitchBackendConfirmationViewPreview: View {
+package struct SwitchBackendConfirmationViewPreview: View {
 
     @State private var showFullDetails: Bool?
 
-    init(showFullDetails: Bool) {
+    package init(showFullDetails: Bool) {
         _showFullDetails = State(initialValue: showFullDetails)
     }
 
-    var body: some View {
+    package var body: some View {
         VStack {
             SwitchBackendConfirmationView(
                 viewModel: SwitchBackendConfirmationViewModel(
@@ -38,9 +38,7 @@ struct SwitchBackendConfirmationViewPreview: View {
                     accountsURL: "www.accounts.staging.com",
                     websiteURL: "www.wire.com",
                     action: { _ in }
-                ),
-                onShowDetails: {},
-                externalShowFullDetails: $showFullDetails
+                )
             )
         }
     }

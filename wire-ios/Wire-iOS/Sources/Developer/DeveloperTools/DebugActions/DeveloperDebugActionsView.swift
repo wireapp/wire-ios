@@ -18,50 +18,16 @@
 
 import SwiftUI
 
-//struct DeveloperDebugActionsView: View {
-//
-//    @ObservedObject var viewModel: DeveloperDebugActionsViewModel
-//
-//    var body: some View {
-//        List(viewModel.buttons) { button in
-//            Button(action: button.action) {
-//                Text(button.title)
-//            }
-//        }
-//    }
-//}
-
 struct DeveloperDebugActionsView: View {
 
     @ObservedObject var viewModel: DeveloperDebugActionsViewModel
-    @State private var showSheet: Bool = false // State to track the sheet presentation
 
     var body: some View {
-        Button("Show Small Sheet") {
-            showSheet = true
+        List(viewModel.buttons) { button in
+            Button(action: button.action) {
+                Text(button.title)
+            }
         }
-        .sheet(isPresented: $showSheet) {
-            SmallSheetView()
-                .presentationDetents([.medium])
-                .presentationDragIndicator(.visible)
-                .interactiveDismissDisabled(true) 
-        }
-    }
-}
-
-struct SmallSheetView: View {
-    var body: some View {
-        VStack(spacing: 20) {
-            Text("This is a small sheet!")
-                .font(.title2)
-                .bold()
-            Text("Using a custom detent to make the sheet small.")
-                .font(.body)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(Color.white)
     }
 }
 
