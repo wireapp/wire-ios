@@ -133,7 +133,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
             forName: UIApplication.willEnterForegroundNotification,
             object: nil,
             queue: .main,
-            using: { [internalDetectSSOCode] _ in internalDetectSSOCode(false) }
+            using: { [weak self] _ in self?.internalDetectSSOCode(onlyNew: false) }
         )
     }
 
