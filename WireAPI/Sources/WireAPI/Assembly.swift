@@ -41,10 +41,6 @@ public final class Assembly {
         self.cookieEncryptionKey = cookieEncryptionKey
     }
 
-    public func makeLoginStack(apiVersion: APIVersion) -> any LoginAPI {
-        return LoginAPIBuilder(networkService: apiNetworkService).makeAPI(for: apiVersion)
-    }
-
     private lazy var keychain: some KeychainProtocol = Keychain()
     private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(
         minTLSVersion: minTLSVersion,

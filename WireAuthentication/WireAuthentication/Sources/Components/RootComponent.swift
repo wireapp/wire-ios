@@ -18,52 +18,9 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 internal import WireAuthenticationUI
 
 class RootComponent: BootstrapComponent {
-
-    private let backendURL: URL
-    private let minTLSVersion: TLSVersion
-    public let apiVersion: APIVersion
-
-    public init(
-        backendURL: URL,
-        minTLSVersion: TLSVersion,
-        apiVersion: APIVersion
-    ) {
-        self.backendURL = backendURL
-        self.minTLSVersion = minTLSVersion
-        self.apiVersion = apiVersion
-    }
-
-    private var serverTrustValidator: ServerTrustValidator {
-        shared {
-            ServerTrustValidator(pinnedKeys: [])
-        }
-    }
-
-    private var urlSessionConfigurationFactory: URLSessionConfigurationFactory {
-        shared {
-            URLSessionConfigurationFactory(
-                minTLSVersion: minTLSVersion,
-                proxySettings: nil
-            )
-        }
-    }
-
-    public var networkService: NetworkService {
-        shared {
-            let service = NetworkService(
-                baseURL: backendURL,
-                serverTrustValidator: serverTrustValidator
-            )
-            let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-            let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
-            service.configure(with: session)
-            return service
-        }
-    }
 
     @MainActor
     public var router: Router {
@@ -72,9 +29,7 @@ class RootComponent: BootstrapComponent {
 
     @MainActor
     private var rootViewModel: RootViewModel {
-        shared {
-            RootViewModel()
-        }
+        RootViewModel()
     }
 
     @MainActor

@@ -42,12 +42,6 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var router: Router {
         return rootComponent.router
     }
-    var networkService: NetworkService {
-        return rootComponent.networkService
-    }
-    var apiVersion: APIVersion {
-        return rootComponent.apiVersion
-    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -68,15 +62,11 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-Router"
-        keyPathToName[\LoginViaEmailComponentDependency.networkService] = "networkService-NetworkService"
-        keyPathToName[\LoginViaEmailComponentDependency.apiVersion] = "apiVersion-APIVersion"
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
-        localTable["apiVersion-APIVersion"] = { [unowned self] in self.apiVersion as Any }
-        localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
         localTable["router-Router"] = { [unowned self] in self.router as Any }
     }
 }

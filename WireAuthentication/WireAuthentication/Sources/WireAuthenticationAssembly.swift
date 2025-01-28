@@ -19,7 +19,6 @@
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationCore
@@ -31,16 +30,8 @@ public struct WireAuthenticationAssembly {
     }
 
     @MainActor
-    public func assemble(
-        backendURL: URL,
-        minTLSVersion: TLSVersion,
-        apiVersion: APIVersion
-    ) -> some View {
-        RootComponent(
-            backendURL: backendURL,
-            minTLSVersion: minTLSVersion,
-            apiVersion: apiVersion
-        ).rootView
+    public func assemble() -> some View {
+        RootComponent().rootView
     }
 
 }

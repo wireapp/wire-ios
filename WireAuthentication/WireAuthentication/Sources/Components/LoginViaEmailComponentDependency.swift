@@ -18,7 +18,6 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationCore
@@ -27,25 +26,13 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
     @MainActor
     var router: Router { get }
-    var networkService: NetworkService { get }
-    var apiVersion: APIVersion { get }
 
 }
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, LoginViaEmailBuilder {
 
-    private var loginAPIBuilder: LoginAPIBuilder {
-        shared {
-            LoginAPIBuilder(networkService: dependency.networkService)
-        }
-    }
-
-    private var loginAPI: some LoginAPI {
-        loginAPIBuilder.makeAPI(for: dependency.apiVersion)
-    }
-
     private var loginViaEmailUseCase: some LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(loginAPI: loginAPI)
+        LoginViaEmailUseCase()
     }
 
     @MainActor

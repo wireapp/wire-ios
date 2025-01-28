@@ -17,74 +17,17 @@
 //
 
 import Foundation
-import WireAPI
 import WireAuthenticationAPI
 
 public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
 
     typealias Failure = LoginViaEmailUseCaseFailure
 
-    let loginAPI: any LoginAPI
-    // account manager
-    // session manager
-
-    public init(loginAPI: any LoginAPI) {
-        self.loginAPI = loginAPI
-    }
+    public init() {}
 
     public func invoke(
         email: String,
         password: String
-    ) async throws (LoginViaEmailUseCaseFailure) {
-        try validateCredentials(
-            email: email,
-            password: password
-        )
-
-        let (cookies, accessToken) = try await loginViaRemote(
-            email: email,
-            password: password
-        )
-
-        print("Got cookies: \(cookies.count)")
-        // Create account new account in account manager
-        // Store cookie for account
-        // Create an authentecated session
-    }
-
-    private func validateCredentials(
-        email: String,
-        password: String
-    ) throws (Failure) {
-        guard
-            !email.isEmpty,
-            !password.isEmpty
-        else {
-            throw .invalidCredentials
-        }
-    }
-
-    private func loginViaRemote(
-        email: String,
-        password: String
-    ) async throws (Failure) -> ([HTTPCookie], AccessToken) {
-        do {
-            return try await loginAPI.login(
-                email: email,
-                password: password,
-                twoFactorAuthenticationCode: nil
-            )
-        } catch LoginAPIError.invalidCredentials {
-            throw .invalidCredentials
-        } catch LoginAPIError.twoFactorAuthenticationRequired {
-            throw .verificationCodeRequired
-        } catch LoginAPIError.accountPendingActivation {
-            throw .accountPendingActivation
-        } catch LoginAPIError.accountSuspended {
-            throw .accountSuspended
-        } catch {
-            throw .other(message: error.localizedDescription)
-        }
-    }
+    ) async throws (LoginViaEmailUseCaseFailure) {}
 
 }
