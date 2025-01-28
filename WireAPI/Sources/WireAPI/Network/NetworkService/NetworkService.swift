@@ -25,10 +25,7 @@ public final class NetworkService: NSObject {
     private var urlSession: URLSession?
     private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
 
-    init(
-        baseURL: URL,
-        serverTrustValidator: ServerTrustValidator
-    ) {
+    init(baseURL: URL, serverTrustValidator: ServerTrustValidator) {
         self.baseURL = baseURL
         self.serverTrustValidator = serverTrustValidator
     }
