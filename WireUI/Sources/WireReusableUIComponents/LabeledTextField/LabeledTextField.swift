@@ -53,7 +53,7 @@ public struct LabeledTextField: View {
                     ) : Text(title)
                 )
                 .foregroundStyle(titleColor)
-                .wireTextStyle(.h5)
+                .wireTextStyle(.h4)
             }
             HStack(spacing: 0) {
                 TextField(placeholder ?? "", text: $string)
