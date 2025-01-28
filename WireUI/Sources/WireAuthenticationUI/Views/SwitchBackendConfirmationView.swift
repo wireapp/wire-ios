@@ -17,33 +17,23 @@
 //
 
 import SwiftUI
+import WireDesign
 
 package struct SwitchBackendConfirmationView: View {
 
     // MARK: - Properties
 
     @Environment(\.dismiss) var dismiss
-    @State private var internalShowFullDetails: Bool = false
-    // The purpose is to change `showFullDetails` in tests.
-    @Binding var externalShowFullDetails: Bool?
+    @State private var showFullDetails: Bool = false
 
     private typealias Strings = L10n.SwitchBackendConfirmation
 
     private let viewModel: SwitchBackendConfirmationViewModel
-    private let onShowDetails: () -> Void
 
-    private var showFullDetails: Bool {
-        externalShowFullDetails ?? internalShowFullDetails
-    }
-
-    init(
-        viewModel: SwitchBackendConfirmationViewModel,
-        onShowDetails: @escaping () -> Void,
-        externalShowFullDetails: Binding<Bool?> = .constant(nil)
+    package init(
+        viewModel: SwitchBackendConfirmationViewModel
     ) {
         self.viewModel = viewModel
-        self.onShowDetails = onShowDetails
-        self._externalShowFullDetails = externalShowFullDetails
     }
 
     package var body: some View {
@@ -54,91 +44,80 @@ package struct SwitchBackendConfirmationView: View {
         }
         .padding()
         .interactiveDismissDisabled()
+        .background(ColorTheme.Backgrounds.surface.color)
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
+        )
+        .fixedSize(horizontal: false, vertical: true)
     }
 
-    @ViewBuilder private var title: some View {
+    private var title: some View {
         Text(Strings.title)
             .font(.textStyle(.h2))
             .foregroundStyle(Color.primaryText)
             .multilineTextAlignment(.center)
+            .lineLimit(nil)
+            .minimumScaleFactor(0.8)
     }
 
-    @ViewBuilder private var backendDetails: some View {
-        showFullDetails ? AnyView(fullDetails) : AnyView(shortDetails)
-    }
-
-    @ViewBuilder private var fullDetails: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                Text(Strings.message)
-                    .foregroundStyle(Color.primaryText)
-                    .multilineTextAlignment(.center)
-
-                itemView(
-                    title: Strings.backendName,
-                    value: viewModel.backendName
-                )
-
-                itemView(
-                    title: Strings.backendUrl,
-                    value: viewModel.backendURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.backendWsurl,
-                    value: viewModel.backendWSURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.blacklistUrl,
-                    value: viewModel.blacklistURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.teamsUrl,
-                    value: viewModel.teamsURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.accountsUrl,
-                    value: viewModel.accountsURL,
-                    isURL: true
-                )
-
-                itemView(
-                    title: Strings.websiteUrl,
-                    value: viewModel.websiteURL,
-                    isURL: true
-                )
+    private var backendDetails: some View {
+        Group {
+            if showFullDetails {
+                fullDetails
+                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
+            } else {
+                shortDetails
+                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
             }
         }
+        .animation(.default, value: showFullDetails)
     }
 
-    @ViewBuilder private var shortDetails: some View {
+    private var contentHeight: CGFloat {
+        UIScreen.main.bounds.height * 0.4
+    }
+
+    private var fullDetails: some View {
         ScrollView {
             VStack(spacing: 16) {
                 Text(Strings.message)
                     .foregroundStyle(Color.primaryText)
                     .multilineTextAlignment(.center)
-                itemView(
-                    title: Strings.backendName,
-                    value: viewModel.backendName
-                )
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                itemView(
-                    title: Strings.backendUrl,
-                    value: viewModel.backendURL,
-                    isURL: true
-                )
+                ForEach(viewModel.items, id: \.title) { model in
+                    itemView(
+                        title: model.title,
+                        value: model.value,
+                        isURL: model.isURL
+                    )
+                }
+            }
+        }
+        .frame(maxHeight: contentHeight)
+    }
 
+    private var shortDetails: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                Text(Strings.message)
+                    .foregroundStyle(Color.primaryText)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                ForEach(viewModel.items.prefix(2), id: \.title) { model in
+                    itemView(
+                        title: model.title,
+                        value: model.value,
+                        isURL: model.isURL
+                    )
+                }
                 Button {
                     withAnimation {
-                        internalShowFullDetails.toggle()
-                        onShowDetails()
+                        showFullDetails.toggle()
                     }
                 } label: {
                     Text(Strings.showDetails)
@@ -147,9 +126,9 @@ package struct SwitchBackendConfirmationView: View {
                 .wireButtonStyle(.link)
             }
         }
+        .frame(maxHeight: contentHeight)
     }
 
-    @ViewBuilder
     private func itemView(
         title: String,
         value: String,
@@ -158,20 +137,22 @@ package struct SwitchBackendConfirmationView: View {
         VStack {
             Text(title)
                 .foregroundStyle(Color.secondaryText)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
             Text(value)
                 .foregroundStyle(Color.primaryText)
                 .accessibilityTextContentType(isURL ? .fileSystem : .plain)
         }
     }
 
-    @ViewBuilder private var buttons: some View {
+    private var buttons: some View {
         VStack(spacing: 6) {
             cancelButton
             proceedButton
         }
     }
 
-    @ViewBuilder private var cancelButton: some View {
+    private var cancelButton: some View {
         Button {
             viewModel.handleEvent(.didCancel)
             dismiss()
@@ -182,7 +163,7 @@ package struct SwitchBackendConfirmationView: View {
         .wireButtonStyle(.secondary)
     }
 
-    @ViewBuilder private var proceedButton: some View {
+    private var proceedButton: some View {
         Button {
             viewModel.handleEvent(.didConfirm)
             dismiss()
@@ -197,10 +178,25 @@ package struct SwitchBackendConfirmationView: View {
 
 // MARK: - Previews
 
-#Preview("Details - Collapsed") {
-    SwitchBackendConfirmationViewPreview(showFullDetails: false)
+#Preview("Regular fonts") {
+    BackgroundView()
+        .overlay(
+            ZStack {
+                SwitchBackendConfirmationViewPreview()
+                    .padding()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        )
 }
 
-#Preview("Details - Expanded") {
-    SwitchBackendConfirmationViewPreview(showFullDetails: true)
+#Preview("Large fonts") {
+    BackgroundView()
+        .overlay(
+            ZStack {
+                SwitchBackendConfirmationViewPreview()
+                    .padding()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+        )
 }
