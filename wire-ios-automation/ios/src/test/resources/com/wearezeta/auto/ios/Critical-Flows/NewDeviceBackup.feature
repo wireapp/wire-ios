@@ -23,10 +23,11 @@ Feature: New Device with Backup
     And I tap Next button on Backup password overlay
     And I tap Save to Files button on File Saving Popup
     When I tap Save button on File Saving Popup
-    When I tap Go back to Account navigation button on Settings page
+    And I tap on the account back button
     And I reset Wire
     And I wait for 2 seconds
     And I open default backend via deep link in safari
+    And I accept Open in Wire alert
     And I tap Proceed button on backend redirection page
     And I tap Login button on Welcome page
     And I sign in user <Member1> with email
@@ -36,6 +37,7 @@ Feature: New Device with Backup
     And I tap On My iPhone on File Choose Dialog
     And I tap file containing user1UniqueUsername in File Choose Dialog
     And I type "<BackupPassword>" text into the alert input field
+    And I accept alert
     And I wait for 5 seconds
     And I accept alert
     And I accept alert if visible
