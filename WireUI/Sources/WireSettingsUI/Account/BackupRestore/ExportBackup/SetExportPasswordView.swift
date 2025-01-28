@@ -133,14 +133,13 @@ class MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         setupPresentButton()
     }
 
     private func setupPresentButton() {
         let button = UIButton(type: .system)
-        button.setTitle("Present Sheet", for: .normal)
-        button.addTarget(self, action: #selector(presentSheet), for: .touchUpInside)
+        button.setTitle("Present Scrollable Sheet", for: .normal)
+        button.addTarget(self, action: #selector(presentScrollableSheet), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(button)
@@ -152,17 +151,78 @@ class MainViewController: UIViewController {
         ])
     }
 
-    @objc private func presentSheet() {
-        let sheetVC = SecondViewController()
+    @objc private func presentScrollableSheet() {
+        let sheetVC = SheetViewController()
         sheetVC.modalPresentationStyle = .pageSheet
 
         if let sheet = sheetVC.sheetPresentationController {
-            sheet.detents = [.customHeight(200)]
+            sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
-            sheet.largestUndimmedDetentIdentifier = .medium
-            sheet.prefersScrollingExpandsWhenScrolledToEdge = true
+//            sheet.largestUndimmedDetentIdentifier = .large
+//            sheet.preferredCornerRadius = 16
+            // Ensures the sheet interacts properly with the scroll view
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
         }
+
         present(sheetVC, animated: true, completion: nil)
+    }
+}
+
+class SheetViewController: UIViewController {
+
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        setupScrollView()
+        setupContent()
+    }
+
+    private func setupScrollView() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+
+        // Constraints for scrollView
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+
+        // Constraints for contentView
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+
+            contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
+        ])
+    }
+
+    private func setupContent() {
+        // Add your UI elements to contentView
+        let label = UITextField()
+        label.text = "This is a scrollable sheet!"
+//        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        contentView.addSubview(label)
+
+        // Constraints for label
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
+        ])
     }
 }
 
