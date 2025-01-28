@@ -20,8 +20,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EEC739052D022EF6003C0FC9"
-               BuildableName = "WireAuthenticationCoreTests.xctest"
-               BlueprintName = "WireAuthenticationCoreTests"
+               BuildableName = "WireAuthenticationLogicTests.xctest"
+               BlueprintName = "WireAuthenticationLogicTests"
                ReferencedContainer = "container:WireAuthentication.xcodeproj">
             </BuildableReference>
          </TestableReference>

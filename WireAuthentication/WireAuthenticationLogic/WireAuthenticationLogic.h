@@ -18,12 +18,12 @@
 
 #import <Foundation/Foundation.h>
 
-//! Project version number for WireAuthenticationCore.
-FOUNDATION_EXPORT double WireAuthenticationCoreVersionNumber;
+//! Project version number for WireAuthenticationLogic.
+FOUNDATION_EXPORT double WireAuthenticationLogicVersionNumber;
 
-//! Project version string for WireAuthenticationCore.
-FOUNDATION_EXPORT const unsigned char WireAuthenticationCoreVersionString[];
+//! Project version string for WireAuthenticationLogic.
+FOUNDATION_EXPORT const unsigned char WireAuthenticationLogicVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <WireAuthenticationCore/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <WireAuthenticationLogic/PublicHeader.h>
 
 

@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EEC738FC2D022EF5003C0FC9"
-               BuildableName = "WireAuthenticationCore.framework"
-               BlueprintName = "WireAuthenticationCore"
+               BuildableName = "WireAuthenticationLogic.framework"
+               BlueprintName = "WireAuthenticationLogic"
                ReferencedContainer = "container:WireAuthentication.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EEC738FC2D022EF5003C0FC9"
-            BuildableName = "WireAuthenticationCore.framework"
-            BlueprintName = "WireAuthenticationCore"
+            BuildableName = "WireAuthenticationLogic.framework"
+            BlueprintName = "WireAuthenticationLogic"
             ReferencedContainer = "container:WireAuthentication.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

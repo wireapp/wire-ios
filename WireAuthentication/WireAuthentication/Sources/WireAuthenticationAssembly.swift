@@ -21,7 +21,7 @@ import NeedleFoundation
 import SwiftUI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
-internal import WireAuthenticationCore
+internal import WireAuthenticationLogic
 
 public struct WireAuthenticationAssembly {
 

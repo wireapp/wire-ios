@@ -5,7 +5,7 @@ import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
-internal import WireAuthenticationCore
+internal import WireAuthenticationLogic
 internal import WireAuthenticationUI
 
 // swiftlint:disable unused_declaration
