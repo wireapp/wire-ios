@@ -157,6 +157,12 @@ public class UserClient: ZMManagedObject, UserClientType {
         return userClient
     }
 
+    public func markAsSelfClient() {
+        guard let context = managedObjectContext else { return }
+        context.setPersistentStoreMetadata(remoteIdentifier, key: ZMPersistedClientIdKey)
+        _ = context.makeMetadataPersistent()
+    }
+
     public static func fetchUserClient(
         withRemoteId remoteIdentifier: String,
         forUser user: ZMUser,
