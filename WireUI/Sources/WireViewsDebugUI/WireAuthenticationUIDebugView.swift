@@ -77,6 +77,7 @@ public struct WireAuthenticationUIDebugView: View {
                 .padding(.trailing, 20)
             }
     }
+}
 
 #Preview {
     NavigationView {
