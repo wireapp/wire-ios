@@ -23,6 +23,7 @@ import WireReusableUIComponents
 
 /// A view that allows to export the backup.
 
+
 struct ExportBackupView: View {
 
     @Environment(\.dismiss) private var dismiss
@@ -39,8 +40,10 @@ struct ExportBackupView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        CloseButton { dismiss() }
-                            .accessibilityLabel(Text(L10n.Accessibility.SetBackupPassword.Close.label))
+                        CloseButton(
+                            action: { dismiss() },
+                            accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
+                        )
                     }
                 }
         }
