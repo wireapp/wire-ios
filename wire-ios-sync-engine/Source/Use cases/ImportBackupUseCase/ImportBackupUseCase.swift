@@ -35,8 +35,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
     let sharedContainerURL: URL
     let logger: WireLogger
 
-    private let workerQueue = DispatchQueue(label: "import-backup")
-
     func invoke(url: URL, password: String) async throws {
 
         switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {
@@ -60,7 +58,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         // before we start the first operation let the user know, the progress has started
         appStateUpdater.reportImportProgress(progress: 0.25)
 
-        let unzippedURL = try await decryptAndUnzipBackup(
+        let unzippedURL = try decryptAndUnzipBackup(
             url: url,
             password: password,
             accountID: account.userIdentifier
@@ -119,36 +117,26 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         await appStateUpdater.selectAccountAndTriggerSlowSync(account)
     }
 
-    private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) async throws -> URL {
+    private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) throws -> URL {
         logger.debug("coordinated file access at: \(url.absoluteString)")
 
         let decryptedURL = decryptedURL(for: url)
         let unzippedURL = unzippedURL(for: url)
 
-        return try await withCheckedThrowingContinuation { continuation in
-            workerQueue.async(group: dispatchGroup) {
-                do {
+        guard
+            let inputStream = InputStream(url: url),
+            let outputStream = OutputStream(url: decryptedURL, append: false)
+        else { throw BackupRestoreError.unknown }
 
-                    guard
-                        let inputStream = InputStream(url: url),
-                        let outputStream = OutputStream(url: decryptedURL, append: false)
-                    else { throw BackupRestoreError.unknown }
+        try streamDecryptor.decrypt(
+            input: inputStream,
+            output: outputStream,
+            accountID: accountID,
+            password: password
+        )
 
-                    try streamDecryptor.decrypt(
-                        input: inputStream,
-                        output: outputStream,
-                        accountID: accountID,
-                        password: password
-                    )
-
-                    try fileArchiver.unzipFile(at: decryptedURL, to: unzippedURL)
-                    continuation.resume(returning: unzippedURL)
-
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
+        try fileArchiver.unzipFile(at: decryptedURL, to: unzippedURL)
+        return unzippedURL
     }
 
     private func decryptedURL(for url: URL) -> URL {
