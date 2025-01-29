@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 package struct VerificationCodeView: View {
 
@@ -28,10 +29,10 @@ package struct VerificationCodeView: View {
     private let onResend: () -> Void
 
     private var isConfirmButtonDisabled: Bool {
-        return code.contains(where: { $0.isEmpty })
+        code.contains { $0.isEmpty }
     }
 
-    init(
+    package init(
         initialCode: [String] = Array(repeating: "", count: 6),
         receiver: String,
         onConfirm: @escaping ([String]) -> Void,
@@ -55,34 +56,7 @@ package struct VerificationCodeView: View {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
 
-            HStack(spacing: 10) {
-                ForEach(0 ..< 6, id: \.self) { index in
-                    TextField("", text: $code[index])
-                        .frame(width: 50, height: 56)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(
-                                    focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
-                                    lineWidth: 1
-                                )
-                        )
-                        .multilineTextAlignment(.center)
-                        .font(.textStyle(.h2))
-                        .foregroundColor(.primary)
-                        .keyboardType(.numberPad)
-                        .focused($focusedIndex, equals: index)
-                        .onChange(of: code[index]) { newValue in
-                            if newValue.count > 1 {
-                                code[index] = String(newValue.prefix(1))
-                            }
-                            if !newValue.isEmpty, index < 5 {
-                                focusedIndex = index + 1
-                            } else if newValue.isEmpty, index > 0 {
-                                focusedIndex = index - 1
-                            }
-                        }
-                }
-            }
+            verificationCodeView
 
             Button(action: {
                 onConfirm(code)
@@ -99,15 +73,68 @@ package struct VerificationCodeView: View {
                 Text(L10n.VerificationCode.resendCode)
             })
             .wireButtonStyle(.link)
+            Spacer()
         }
         .padding()
+        .background(ColorTheme.Backgrounds.surface.color)
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
+        )
     }
 
+    private var verificationCodeView: some View {
+        HStack(spacing: 10) {
+            ForEach(0..<6, id: \.self) { index in
+                TextField("", text: $code[index])
+                    .frame(width: 50, height: 50)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(
+                                focusedIndex == index ? Color.primaryButtonBackground : Color.secondaryButtonBorder,
+                                lineWidth: 1
+                            )
+                    )
+                    .multilineTextAlignment(.center)
+                    .font(.textStyle(.h2))
+                    .keyboardType(.numberPad)
+                    .foregroundColor(.primary)
+                    .focused($focusedIndex, equals: index)
+                    .onChange(of: code[index]) { newValue in
+                        handleInput(newValue, index: index)
+                    }
+            }
+        }
+        .onAppear {
+            focusedIndex = 0
+        }
+    }
+
+    private func handleInput(_ newValue: String, index: Int) {
+        if let intValue = Int(newValue.prefix(1)), (0...9).contains(intValue) {
+            code[index] = String(intValue)
+        } else {
+            code[index] = ""
+        }
+
+        if !code[index].isEmpty {
+            if index < 5 {
+                focusedIndex = index + 1
+            } else {
+                focusedIndex = nil
+            }
+        } else {
+            if index > 0 {
+                focusedIndex = index - 1
+            }
+        }
+    }
 }
 
 #Preview("Empty code") {
     VerificationCodeView(
-        receiver: "name@name.com",
+        receiver: "name.name@mail.com",
         onConfirm: { _ in },
         onResend: {}
     )
@@ -116,8 +143,23 @@ package struct VerificationCodeView: View {
 #Preview("Not empty code") {
     VerificationCodeView(
         initialCode: ["1", "2", "3", "4", "5", ""],
-        receiver: "name@name.com",
+        receiver: "name.name@mail.com",
         onConfirm: { _ in },
         onResend: {}
     )
+}
+
+#Preview {
+    BackgroundView()
+        .overlay {
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(maxHeight: .infinity)
+                VerificationCodeView(
+                    receiver: "name.name@mail.com",
+                    onConfirm: { _ in },
+                    onResend: {}
+                )
+            }
+        }
 }
