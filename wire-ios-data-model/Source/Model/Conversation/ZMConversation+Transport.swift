@@ -136,13 +136,13 @@ public extension ZMConversation {
         guard let context = managedObjectContext else {
             return
         }
-        
+
         addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        
+
         if shouldRemoveParticipants {
             let allParticipants = Set(usersAndRoles.map(\.0))
             let removedParticipants = localParticipantsExcludingSelf.subtracting(allParticipants)
-            
+
             removeParticipantsAndUpdateConversationState(
                 users: removedParticipants,
                 initiatingUser: ZMUser.selfUser(in: context)

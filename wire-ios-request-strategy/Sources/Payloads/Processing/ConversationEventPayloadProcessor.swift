@@ -788,7 +788,11 @@ struct ConversationEventPayloadProcessor {
             in: context
         )?.1
 
-        conversation.updateMembers(otherMembers, selfUserRole: selfUserRole, shouldRemoveParticipants: shouldRemoveParticipants)
+        conversation.updateMembers(
+            otherMembers,
+            selfUserRole: selfUserRole,
+            shouldRemoveParticipants: shouldRemoveParticipants
+        )
     }
 
     func updateConversationTimestamps(
