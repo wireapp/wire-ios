@@ -16,26 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAPI
-import WireDomain
-import WireDomainPkg
+// sourcery: AutoMockable
+public protocol ImportBackupAppStateUpdaterProtocol {
 
-public extension ZMUserSession {
-    func createIndividualToTeamMigrationUseCase(
-        apiVersion: WireAPI.APIVersion
-    ) -> IndividualToTeamMigrationUseCaseProtocol? {
-        guard let apiService else {
-            assertionFailure("apiService is nil")
-            return nil
-        }
+    /// Inform the user about the current progress (percentage).
+    /// - Parameter progress: A value between 0.0 and 1.0.
+    func reportImportProgress(progress: Float)
 
-        let builder = AccountsAPIBuilder(apiService: apiService)
-        let accountsAPI = builder.makeAPI(for: apiVersion)
+    /// The user session needs to be unloaded.
+    func reportMigrationNeeded() async
 
-        return IndividualToTeamMigrationUseCase(
-            accountsAPI: accountsAPI,
-            context: syncContext
-        )
-    }
+    func selectAccountAndTriggerSlowSync(_ account: Account) async
 }

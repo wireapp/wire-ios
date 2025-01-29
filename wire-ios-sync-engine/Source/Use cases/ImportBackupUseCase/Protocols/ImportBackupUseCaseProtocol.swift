@@ -17,25 +17,8 @@
 //
 
 import Foundation
-import WireAPI
-import WireDomain
-import WireDomainPkg
 
-public extension ZMUserSession {
-    func createIndividualToTeamMigrationUseCase(
-        apiVersion: WireAPI.APIVersion
-    ) -> IndividualToTeamMigrationUseCaseProtocol? {
-        guard let apiService else {
-            assertionFailure("apiService is nil")
-            return nil
-        }
-
-        let builder = AccountsAPIBuilder(apiService: apiService)
-        let accountsAPI = builder.makeAPI(for: apiVersion)
-
-        return IndividualToTeamMigrationUseCase(
-            accountsAPI: accountsAPI,
-            context: syncContext
-        )
-    }
+// sourcery: AutoMockable
+public protocol ImportBackupUseCaseProtocol {
+    func invoke(url: URL, password: String) async throws
 }
