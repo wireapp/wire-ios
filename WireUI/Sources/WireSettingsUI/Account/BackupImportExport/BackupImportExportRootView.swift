@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct BackupRootView<ExportSection: View, ImportSection: View>: View {
+struct BackupImportExportRootView<ExportSection: View, ImportSection: View>: View {
 
     @ViewBuilder
     var exportSectionContent: () -> ExportSection
@@ -38,7 +38,7 @@ struct BackupRootView<ExportSection: View, ImportSection: View>: View {
 }
 
 #Preview {
-    BackupRootView(
+    BackupImportExportRootView(
         exportSectionContent: { ExportBackupView(viewModel: .init()) },
         importSectionContent: { ImportBackupView(viewModel: .init()) }
     )

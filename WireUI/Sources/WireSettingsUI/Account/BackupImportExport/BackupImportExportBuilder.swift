@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-public struct BackupRestoreBuilder {
+public struct BackupImportExportBuilder {
 
     public var backupPasswordValidator: any BackupPasswordValidatorProtocol
     public var exportBackupUseCase: any ExportBackupUseCaseProtocol
@@ -43,7 +43,7 @@ public struct BackupRestoreBuilder {
     @MainActor
     public static func tmp() -> some View {
 
-        BackupRootView(
+        BackupImportExportRootView(
             exportSectionContent: {
                 ExportBackupView(viewModel: .init())
             },
