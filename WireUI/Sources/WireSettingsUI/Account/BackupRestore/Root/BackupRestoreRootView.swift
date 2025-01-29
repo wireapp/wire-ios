@@ -30,8 +30,13 @@ struct BackupRestoreRootView: View {
         )
 
         .sheet(isPresented: $viewModel.isBackupProgressVisible) {
+            let state: BackupState = if let backupURL = viewModel.backupURL {
+                .ready(backupURL)
+            } else {
+                .inProgress(viewModel.backupProgress ?? 0)
+            }
             BackupProgressView(
-                state: .inProgress(viewModel.backupProgress ?? 0),
+                state: state,
                 cancelAction: { viewModel.cancel() }
             )
             .interactiveDismissDisabled()
@@ -48,6 +53,8 @@ struct BackupRestoreRootView: View {
 
     }
 }
+
+typealias BackupState = BackupProgressView.CreateBackupState
 
 #Preview {
     BackupRestoreRootView(viewModel: BackupRestoreRootViewModel())

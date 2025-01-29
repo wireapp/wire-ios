@@ -29,6 +29,7 @@ final class BackupRestoreRootViewModel: ObservableObject {
     @Published var isBackupProgressVisible = false
     @Published var isSetBackupPasswordVisible = false
     @Published private(set) var backupProgress: Float?
+    @Published private(set) var backupURL: URL?
 
     private var backupTask: Task<Void, any Error>?
 
@@ -142,6 +143,12 @@ final class BackupRestoreRootViewModel: ObservableObject {
         case .backup(.creatingBackup(let progress)):
             progress
         default:
+            nil
+        }
+
+        backupURL = if case .backup(.backupReady(let url)) = state {
+            url
+        } else {
             nil
         }
 
