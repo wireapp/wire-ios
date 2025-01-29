@@ -87,12 +87,6 @@ struct ConversationEventPayloadProcessor {
             WireLogger.eventProcessing.error("Conversation creation missing conversationID in event, aborting...")
             return
         }
-        guard await context.perform({
-            ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context) == nil
-        }) else {
-            WireLogger.eventProcessing.warn("Conversation already exists, aborting...")
-            return
-        }
 
         await updateOrCreateConversation(
             from: payload.data,
@@ -528,7 +522,7 @@ struct ConversationEventPayloadProcessor {
             conversation.isPendingInitialFetch = false
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)
-            updateMembers(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, shouldRemoveParticipants: false, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             updateConversationStatus(from: payload, for: conversation)
 
@@ -780,6 +774,7 @@ struct ConversationEventPayloadProcessor {
     func updateMembers(
         from payload: Payload.Conversation,
         for conversation: ZMConversation,
+        shouldRemoveParticipants: Bool = true,
         context: NSManagedObjectContext
     ) {
         guard let members = payload.members else {
@@ -798,7 +793,7 @@ struct ConversationEventPayloadProcessor {
             in: context
         )?.1
 
-        conversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
+        conversation.updateMembers(otherMembers, selfUserRole: selfUserRole, shouldRemoveParticipants: shouldRemoveParticipants)
     }
 
     func updateConversationTimestamps(
