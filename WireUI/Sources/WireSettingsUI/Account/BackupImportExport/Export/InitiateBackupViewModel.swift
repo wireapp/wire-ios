@@ -21,12 +21,12 @@ import Foundation
 @MainActor
 final class InitiateBackupViewModel: ObservableObject {
 
-    private var state: State? {
+    private var state: State? { // TODO: consider moving into separate file `ExportBackpuState`
         didSet { updatePublishedProperties() }
     }
 
-    // BackupProgress is the outer sheet, which contains/presents SetBackupPassword
-    @Published var isBackupProgressPresented = false
+    // CreatingBackupProgress is the outer sheet, which contains/presents SetBackupPassword
+    @Published var isCreatingBackupProgressPresented = false
     @Published var isSetBackupPasswordPresented = false
     @Published var isErrorAlertPresented = false
 
@@ -39,7 +39,7 @@ final class InitiateBackupViewModel: ObservableObject {
     func requestBackupPassword() {
         guard state == nil else { return assertionFailure() }
 
-        state = .backup(.enterPassword())
+        state = .enterPassword(password: "")
     }
 
     func createBackup(password: String) {
@@ -51,16 +51,16 @@ final class InitiateBackupViewModel: ObservableObject {
 
                 // TODO: backup use case
 
-                state = .backup(.creatingBackup(progress: 0))
+                state = .creatingBackup(progress: 0)
                 try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
-                state = .backup(.creatingBackup(progress: 0.25))
+                state = .creatingBackup(progress: 0.25)
                 try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
-                state = .backup(.creatingBackup(progress: 0.5))
+                state = .creatingBackup(progress: 0.5)
                 try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
-                state = .backup(.creatingBackup(progress: 0.75))
+                state = .creatingBackup(progress: 0.75)
 
                 if Bool.random() {
                     throw NSError(domain: "some", code: 0, userInfo: nil)
@@ -68,31 +68,29 @@ final class InitiateBackupViewModel: ObservableObject {
 
                 try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
-                state = .backup(.creatingBackup(progress: 1))
+                state = .creatingBackup(progress: 1)
                 try? await Task.sleep(for: .seconds(0.2))
                 if Task.isCancelled { throw CancellationError() }
                 let url = URL(fileURLWithPath: "/")
-                state = .backup(.backupReady(url: url))
+                state = .backupReady(url: url)
             } catch is CancellationError {
                 state = nil
             } catch {
-                state = .backup(.backupFailed(error))
+                state = .backupFailed(error)
             }
         }
     }
 
     func cancel() {
         switch state {
-        case .backup(.enterPassword):
+        case .enterPassword:
             state = nil
-        case .backup(.creatingBackup):
+        case .creatingBackup:
             backupTask?.cancel()
-        case .backup(.backupReady):
+        case .backupReady:
             // TODO: clean up
             state = nil
-        case .backup(.backupFailed(_)):
-            fatalError("not yet implemented")
-        case .restore:
+        case .backupFailed:
             fatalError("not yet implemented")
         case .none:
             assertionFailure()
@@ -101,34 +99,34 @@ final class InitiateBackupViewModel: ObservableObject {
 
     private func updatePublishedProperties() {
 
-        isSetBackupPasswordPresented = if case .backup(.enterPassword) = state {
+        isSetBackupPasswordPresented = if case .enterPassword = state {
             true
         } else {
             false
         }
 
-        isBackupProgressPresented = switch state {
-        case .backup(.enterPassword), .backup(.creatingBackup), .backup(.backupReady):
+        isCreatingBackupProgressPresented = switch state {
+        case .enterPassword, .creatingBackup, .backupReady:
             true
         default:
             false
         }
 
         isErrorAlertPresented = switch state {
-        case .backup(.backupFailed):
+        case .backupFailed:
             true
         default:
             false
         }
 
         backupProgress = switch state {
-        case .backup(.creatingBackup(let progress)):
+        case .creatingBackup(let progress):
             progress
         default:
             nil
         }
 
-        backupURL = if case .backup(.backupReady(let url)) = state {
+        backupURL = if case .backupReady(let url) = state {
             url
         } else {
             nil
@@ -142,15 +140,10 @@ final class InitiateBackupViewModel: ObservableObject {
 extension InitiateBackupViewModel {
 
     enum State {
-        case backup(BackupStep)
-        case restore
-
-        enum BackupStep {
-            case enterPassword(password: String = "")
-            case creatingBackup(progress: Float)
-            case backupReady(url: URL)
-            case backupFailed(any Error)
-        }
+        case enterPassword(password: String)
+        case creatingBackup(progress: Float)
+        case backupReady(url: URL)
+        case backupFailed(any Error)
     }
 }
 
@@ -159,7 +152,7 @@ extension InitiateBackupViewModel {
 private extension InitiateBackupViewModel.State {
 
     var backupError: (any Error)? {
-        if case .backup(.backupFailed(let error)) = self {
+        if case .backupFailed(let error) = self {
             error
         } else {
             .none
@@ -171,6 +164,6 @@ private extension InitiateBackupViewModel.State {
 
 extension InitiateBackupViewModel.State {
     fileprivate var isEnterBackupPasswordStep: Bool {
-        if case .backup(.enterPassword) = self { true } else { false }
+        if case .enterPassword = self { true } else { false }
     }
 }

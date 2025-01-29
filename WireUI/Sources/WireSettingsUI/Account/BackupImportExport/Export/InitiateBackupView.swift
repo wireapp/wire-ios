@@ -30,7 +30,7 @@ struct InitiateBackupView: View {
                 viewModel.requestBackupPassword()
             }
 
-            .sheet(isPresented: $viewModel.isBackupProgressPresented) {
+            .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
                 let progress: CreatingBackupProgress = if let backupURL = viewModel.backupURL {
                     .finished(backupURL)
                 } else {
