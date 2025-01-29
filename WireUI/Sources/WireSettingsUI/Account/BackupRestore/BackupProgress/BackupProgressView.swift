@@ -25,40 +25,36 @@ struct BackupProgressView: View {
     var cancelAction: () -> Void
 
     var body: some View {
-
         NavigationStack {
-            BackupProgressViewControllerRepresentable(state, cancelAction)
+            backupProgressViewControllerRepresentable
                 .navigationTitle("title")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         CloseButton(
-                            action: { /*dismiss()*/ },
+                            action: cancelAction,
                             accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
                         )
                     }
                 }
         }
+    }
 
-//        switch state {
-//        case .inProgress(let progress):
-//            VStack {
-//                Text("\(progress)")
-//                Button("cancel") {
-//                    cancelAction()
-//                }
-//            }
-//        case .ready(let url):
-//            VStack {
-//                Text("backup ready")
-//                ShareLink(
-//                    item: url,
-//                    preview: SharePreview("Backup File", image: Image(systemName: "archivebox"))
-//                ) {
-//                    Label("Share Backup", systemImage: "square.and.arrow.up")
-//                }
-//            }
-//        }
+    private var backupProgressViewControllerRepresentable: some View {
+        switch state {
+        case .inProgress(let progress):
+            BackupProgressViewControllerRepresentable(
+                progressDescription: "saving",
+                progressValue: progress,
+                isExportButtonEnabled: false
+            )
+        case .ready(let url):
+            BackupProgressViewControllerRepresentable(
+                progressDescription: "success",
+                progressValue: 1,
+                isExportButtonEnabled: true
+            )
+        }
     }
 
     enum CreateBackupState {
@@ -91,44 +87,67 @@ struct BackupProgressView: View {
 
 private struct BackupProgressViewControllerRepresentable: UIViewControllerRepresentable {
 
-    var state: BackupProgressView.CreateBackupState
-    var cancelAction: () -> Void
-
-    init(
-        _ state: BackupProgressView.CreateBackupState,
-        _ cancelAction: @escaping () -> Void
-    ) {
-        self.state = state
-        self.cancelAction = cancelAction
-    }
+    @State var progressDescription = ""
+    @State var progressValue = Float()
+    @State var isExportButtonEnabled = false
 
     func makeUIViewController(context: Context) -> BackupProgressViewController {
-        .init()
+        let viewController = BackupProgressViewController()
+        viewController.progressDescription = progressDescription
+        viewController.progressValue = progressValue
+        viewController.isExportButtonEnabled = isExportButtonEnabled
+        return viewController
     }
 
-    func updateUIViewController(_ uiViewController: BackupProgressViewController, context: Context) {
-        //
+    func updateUIViewController(_ viewController: BackupProgressViewController, context: Context) {
+        viewController.progressDescription = progressDescription
+        viewController.progressValue = progressValue
+        viewController.isExportButtonEnabled = isExportButtonEnabled
     }
 }
 
 private final class BackupProgressViewController: UIViewController {
 
+    var progressDescription: String {
+        get { descriptionLabel.text ?? "" }
+        set { descriptionLabel.text = newValue }
+    }
+
+    var progressValue: Float {
+        get { progressView.progress }
+        set { progressView.progress = newValue }
+    }
+
+    var isExportButtonEnabled: Bool { // TODO: url instead
+        get { exportButton.isEnabled }
+        set { exportButton.isEnabled = newValue }
+    }
+
+    private var descriptionLabel: UILabel!
+    private var progressView: UIProgressView!
+    private var exportButton: UIButton!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let button = UIButton(type: .system)
-        button.setTitle("save", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(showFileExporter(_:)), for: .primaryActionTriggered)
-        view.addSubview(button)
+        descriptionLabel = .init()
+
+        progressView = .init(progressViewStyle: .bar)
+
+        exportButton = .init(type: .system)
+        exportButton.setTitle("save", for: .normal)
+        exportButton.translatesAutoresizingMaskIntoConstraints = false
+        exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
+        view.addSubview(exportButton)
+
         NSLayoutConstraint.activate([
-            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            exportButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            exportButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
     @objc
-    private func showFileExporter(_ sender: UIButton) {
+    private func showActivityViewController(_ sender: UIButton) {
         let activityViewController = UIActivityViewController(activityItems: [URL(fileURLWithPath: "/")], applicationActivities: nil)
         if let popoverPresentationController = activityViewController.popoverPresentationController {
             popoverPresentationController.sourceView = sender.superview
