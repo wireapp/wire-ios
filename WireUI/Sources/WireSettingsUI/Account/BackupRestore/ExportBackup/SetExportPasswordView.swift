@@ -162,6 +162,10 @@ class MainViewController: UIViewController {
 //            sheet.preferredCornerRadius = 16
             // Ensures the sheet interacts properly with the scroll view
             sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+//                sheet.prefersGrabberVisible.toggle()
+            }
         }
 
         present(sheetVC, animated: true, completion: nil)
@@ -181,6 +185,7 @@ class SheetViewController: UIViewController {
     }
 
     private func setupScrollView() {
+//        scrollView.isScrollEnabled = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -208,11 +213,12 @@ class SheetViewController: UIViewController {
 
     private func setupContent() {
         // Add your UI elements to contentView
-        let label = UITextField()
-        label.text = "This is a scrollable sheet!"
-//        label.numberOfLines = 0
+        let label = UILabel()
+        label.text = "This is a scrollable sheet! \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd \n \n abd"
+        label.numberOfLines = 0
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = .green
 
         contentView.addSubview(label)
 
