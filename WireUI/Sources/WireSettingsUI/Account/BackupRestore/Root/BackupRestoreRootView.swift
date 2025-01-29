@@ -20,7 +20,7 @@ import SwiftUI
 
 struct BackupRestoreRootView: View {
 
-    @StateObject var viewModel: BackupRestoreRootViewModel
+    @StateObject var viewModel: BackupRestoreRootViewModel // TODO: split into two view models
 
     var body: some View {
 

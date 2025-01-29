@@ -26,7 +26,7 @@ struct BackupRestoreMainView: View {
     @State private var isFileImporterPresented = false
 
     var body: some View {
-        List {
+        List { // TODO: move this List into `BackupRestoreRootView`
             backupSection
             restoreSection
         }

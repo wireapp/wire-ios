@@ -48,6 +48,9 @@ final class BackupRestoreRootViewModel: ObservableObject {
         backupTask = Task {
             defer { backupTask = nil }
             do {
+
+                // TODO: backup use case
+
                 state = .backup(.creatingBackup(progress: 0))
                 try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
