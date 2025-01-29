@@ -25,6 +25,8 @@ public struct WireAuthenticationUIDebugView: View {
         var id: String { rawValue }
 
         case background
+        case switchBackend
+
     }
 
     @State private var presentedItem: PresentationItem?
@@ -37,11 +39,26 @@ public struct WireAuthenticationUIDebugView: View {
                 action: { presentedItem = .background },
                 label: { Text("Background") }
             )
+            Button(
+                action: { presentedItem = .switchBackend },
+                label: { Text("Switch backend confirmation") }
+            )
         }
         .fullScreenCover(item: $presentedItem, content: { item in
             switch item {
             case .background:
                 fullscreenCover(content: { BackgroundView() })
+            case .switchBackend:
+                fullscreenCover(content: {
+                    BackgroundView()
+                        .overlay(
+                            ZStack {
+                                SwitchBackendConfirmationViewPreview()
+                                    .padding()
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        )
+                })
             }
         })
     }
