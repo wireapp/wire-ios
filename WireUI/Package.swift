@@ -27,7 +27,8 @@ let package = Package(
         .package(path: "../WireAnalytics"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
-        .package(path: "../WirePlugins")
+        .package(path: "../WirePlugins"),
+        .package(path: "../WireLogging")
     ],
     targets: [
         .target(
