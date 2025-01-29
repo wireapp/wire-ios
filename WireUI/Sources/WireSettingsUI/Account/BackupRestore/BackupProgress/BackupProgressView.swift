@@ -21,23 +21,23 @@ import SwiftUI
 struct BackupProgressView: View {
 
     /// The percentage value of the progess or `nil` when the backup is ready.
-    var progress: Float?
-    var getItemAction: () -> URL
+    var state: CreateBackupState
     var cancelAction: () -> Void
 
     var body: some View {
-        if let progress {
+        switch state {
+        case .inProgress(let progress):
             VStack {
                 Text("\(progress)")
                 Button("cancel") {
                     cancelAction()
                 }
             }
-        } else {
+        case .ready(let url):
             VStack {
                 Text("backup ready")
                 ShareLink(
-                    item: getItemAction(), // TODO: FileRepresentation?
+                    item: url,
                     preview: SharePreview("Backup File", image: Image(systemName: "archivebox"))
                 ) {
                     Label("Share Backup", systemImage: "square.and.arrow.up")
@@ -45,11 +45,44 @@ struct BackupProgressView: View {
             }
         }
     }
+
+    enum CreateBackupState {
+        case inProgress(_ percentage: Float)
+        case ready(_ url: URL)
+    }
 }
 
-#Preview {
-    BackupProgressView(
-        getItemAction: { fatalError() },
-        cancelAction: {}
-    )
+#Preview("in progress") {
+    Color.white
+        .sheet(isPresented: .constant(true)) {
+            BackupProgressView(
+                state: .inProgress(0.25),
+                cancelAction: {}
+            )
+            .presentationDetents([.medium])
+        }
 }
+
+#Preview("ready") {
+    Color.white
+        .sheet(isPresented: .constant(true)) {
+            BackupProgressView(
+                state: .ready(.init(fileURLWithPath: "/")),
+                cancelAction: {}
+            )
+            .presentationDetents([.medium])
+        }
+}
+
+private struct BackupProgressViewControllerRepresentable: UIViewControllerRepresentable {
+
+    func makeUIViewController(context: Context) -> BackupProgressViewController {
+        .init()
+    }
+
+    func updateUIViewController(_ uiViewController: BackupProgressViewController, context: Context) {
+        //
+    }
+}
+
+private final class BackupProgressViewController: UIViewController {}

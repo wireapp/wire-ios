@@ -40,8 +40,7 @@ struct BackupRestoreRootView: View {
 
         .sheet(isPresented: $viewModel.isBackupProgressVisible) {
             BackupProgressView(
-                progress: viewModel.backupProgress,
-                getItemAction: { viewModel.getItemForExport() },
+                state: .inProgress(viewModel.backupProgress!),
                 cancelAction: { viewModel.cancel() }
             )
             .interactiveDismissDisabled()
