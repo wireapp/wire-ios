@@ -16,18 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-struct BackupRestoreMainView: View {
-
-    let backupAction: () -> Void
-    let restoreAction: (_ url: URL) -> Void
-
-    var body: some View {
-        List { // TODO: move this List into `BackupRestoreRootView`
-            InitiateBackupView(viewModel: .init(), onBackup: backupAction)
-            InitiateRestoreView(viewModel: .init(), onRestore: restoreAction)
-        }
-        .listStyle(.grouped)
-    }
-}
+final class InitiateRestoreViewModel: ObservableObject {}
