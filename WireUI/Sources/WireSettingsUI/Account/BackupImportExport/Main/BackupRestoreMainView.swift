@@ -27,17 +27,10 @@ struct BackupRestoreMainView: View {
 
     var body: some View {
         List { // TODO: move this List into `BackupRestoreRootView`
-            backupSection
+            InitiateBackupView(viewModel: .init(), onBackup: backupAction)
             restoreSection
         }
         .listStyle(.grouped)
-    }
-
-    @ViewBuilder
-    private var backupSection: some View {
-        Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
-            Button(L10n.Localizable.Settings.ExportBackup.action, action: backupAction)
-        }
     }
 
     @ViewBuilder
