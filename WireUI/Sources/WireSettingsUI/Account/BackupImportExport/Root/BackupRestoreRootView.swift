@@ -24,10 +24,11 @@ struct BackupRestoreRootView: View {
 
     var body: some View {
 
-        BackupRestoreMainView(
-            backupAction: { viewModel.requestBackupPassword() },
-            restoreAction: { _ in print("restore") }
-        )
+        List {
+            InitiateBackupView(viewModel: .init(), onBackup: { viewModel.requestBackupPassword() })
+            InitiateRestoreView(viewModel: .init(), onRestore: { _ in print("restore") })
+        }
+        .listStyle(.grouped)
 
         .sheet(isPresented: $viewModel.isBackupProgressPresented) {
             let state: BackupState = if let backupURL = viewModel.backupURL {
