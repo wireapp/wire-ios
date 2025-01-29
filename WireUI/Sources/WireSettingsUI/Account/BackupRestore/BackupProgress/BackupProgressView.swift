@@ -46,13 +46,13 @@ struct BackupProgressView: View {
             BackupProgressViewControllerRepresentable(
                 progressDescription: "saving",
                 progressValue: progress,
-                isExportButtonEnabled: false
+                backupURL: nil
             )
         case .ready(let url):
             BackupProgressViewControllerRepresentable(
                 progressDescription: "success",
                 progressValue: 1,
-                isExportButtonEnabled: true
+                backupURL: url
             )
         }
     }
@@ -87,40 +87,37 @@ struct BackupProgressView: View {
 
 private struct BackupProgressViewControllerRepresentable: UIViewControllerRepresentable {
 
-    @State var progressDescription = ""
-    @State var progressValue = Float()
-    @State var isExportButtonEnabled = false
+    var progressDescription = ""
+    var progressValue = Float()
+    var backupURL: URL?
 
     func makeUIViewController(context: Context) -> BackupProgressViewController {
         let viewController = BackupProgressViewController()
         viewController.progressDescription = progressDescription
         viewController.progressValue = progressValue
-        viewController.isExportButtonEnabled = isExportButtonEnabled
+        viewController.backupURL = backupURL
         return viewController
     }
 
     func updateUIViewController(_ viewController: BackupProgressViewController, context: Context) {
         viewController.progressDescription = progressDescription
         viewController.progressValue = progressValue
-        viewController.isExportButtonEnabled = isExportButtonEnabled
+        viewController.backupURL = backupURL
     }
 }
 
 private final class BackupProgressViewController: UIViewController {
 
-    var progressDescription: String {
-        get { descriptionLabel.text ?? "" }
-        set { descriptionLabel.text = newValue }
+    var progressDescription = "" {
+        didSet { descriptionLabel?.text = progressDescription }
     }
 
-    var progressValue: Float {
-        get { progressView.progress }
-        set { progressView.progress = newValue }
+    var progressValue = Float() {
+        didSet { progressView?.progress = progressValue }
     }
 
-    var isExportButtonEnabled: Bool { // TODO: url instead
-        get { exportButton.isEnabled }
-        set { exportButton.isEnabled = newValue }
+    var backupURL: URL? {
+        didSet { exportButton?.isEnabled = backupURL != nil }
     }
 
     private var descriptionLabel: UILabel!
@@ -131,13 +128,16 @@ private final class BackupProgressViewController: UIViewController {
         super.viewDidLoad()
 
         descriptionLabel = .init()
+        descriptionLabel.text = progressDescription
 
         progressView = .init(progressViewStyle: .bar)
+        progressView.progress = progressValue
 
         exportButton = .init(type: .system)
         exportButton.setTitle("save", for: .normal)
         exportButton.translatesAutoresizingMaskIntoConstraints = false
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
+        exportButton.isEnabled = backupURL != nil
         view.addSubview(exportButton)
 
         NSLayoutConstraint.activate([

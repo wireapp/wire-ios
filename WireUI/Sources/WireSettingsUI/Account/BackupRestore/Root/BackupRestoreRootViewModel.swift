@@ -25,8 +25,9 @@ final class BackupRestoreRootViewModel: ObservableObject {
         didSet { updatePublishedProperties() }
     }
 
-    @Published var isSetBackupPasswordVisible = false
+    // BackupProgress is the outer sheet, which contains/presents SetBackupPassword
     @Published var isBackupProgressVisible = false
+    @Published var isSetBackupPasswordVisible = false
     @Published private(set) var backupProgress: Float?
 
     private var backupTask: Task<Void, any Error>?
@@ -131,7 +132,7 @@ final class BackupRestoreRootViewModel: ObservableObject {
         }
 
         isBackupProgressVisible = switch state {
-        case .backup(.creatingBackup), .backup(.backupReady):
+        case .backup(.enterPassword), .backup(.creatingBackup), .backup(.backupReady):
             true
         default:
             false

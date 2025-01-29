@@ -20,7 +20,7 @@ import SwiftUI
 
 struct BackupRestoreRootView: View {
 
-    @ObservedObject var viewModel: BackupRestoreRootViewModel
+    @StateObject var viewModel: BackupRestoreRootViewModel
 
     var body: some View {
 
@@ -29,22 +29,21 @@ struct BackupRestoreRootView: View {
             restoreAction: { _ in print("restore") }
         )
 
-        .sheet(isPresented: $viewModel.isSetBackupPasswordVisible) {
-            SetBackupPasswordView { password in
-                guard let password else { return viewModel.cancel() }
-                viewModel.createBackup(password: password)
-            }
-            .interactiveDismissDisabled()
-            .presentationDetents([.large])
-        }
-
         .sheet(isPresented: $viewModel.isBackupProgressVisible) {
             BackupProgressView(
-                state: .inProgress(viewModel.backupProgress!),
+                state: .inProgress(viewModel.backupProgress ?? 0),
                 cancelAction: { viewModel.cancel() }
             )
             .interactiveDismissDisabled()
             .presentationDetents([.medium])
+            .sheet(isPresented: $viewModel.isSetBackupPasswordVisible) {
+                SetBackupPasswordView { password in
+                    guard let password else { return viewModel.cancel() }
+                    viewModel.createBackup(password: password)
+                }
+                .interactiveDismissDisabled()
+                .presentationDetents([.large])
+            }
         }
 
     }
