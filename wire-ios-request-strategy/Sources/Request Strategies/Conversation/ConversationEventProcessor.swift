@@ -67,7 +67,8 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             do {
                 let payload = try eventPayloadDecoder.decode(
                     Payload.ConversationEvent<Payload.UpdateConversationName>.self,
-                    from: event.payload)
+                    from: event.payload
+                )
 
                 processor.processPayload(
                     payload,
@@ -75,7 +76,8 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     in: context
                 )
             } catch {
-                WireLogger.eventProcessing.error("error processing UpdateConversationName: \(error.localizedDescription)")
+                WireLogger.eventProcessing
+                    .error("error processing UpdateConversationName: \(error.localizedDescription)")
             }
         }
     }
