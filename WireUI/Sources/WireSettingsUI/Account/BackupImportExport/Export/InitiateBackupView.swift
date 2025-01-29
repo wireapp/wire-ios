@@ -18,8 +18,6 @@
 
 import SwiftUI
 
-typealias BackupState = BackupProgressView.CreateBackupState
-
 struct InitiateBackupView: View {
 
     @StateObject var viewModel: InitiateBackupViewModel
@@ -27,48 +25,50 @@ struct InitiateBackupView: View {
     var body: some View {
 
         Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
+
             Button(L10n.Localizable.Settings.ExportBackup.action) {
                 viewModel.requestBackupPassword()
             }
-        }
 
-        .sheet(isPresented: $viewModel.isBackupProgressPresented) {
-            let state: BackupState = if let backupURL = viewModel.backupURL {
-                .ready(backupURL)
-            } else {
-                .inProgress(viewModel.backupProgress ?? 0)
-            }
-            BackupProgressView(
-                state: state,
-                cancelAction: { viewModel.cancel() }
-            )
-            .interactiveDismissDisabled()
-            .presentationDetents([.medium])
-            .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
-                SetBackupPasswordView(
-                    onProceed: { password in viewModel.createBackup(password: password) },
-                    onCancel: { viewModel.cancel() }
+            .sheet(isPresented: $viewModel.isBackupProgressPresented) {
+                let progress: CreatingBackupProgress = if let backupURL = viewModel.backupURL {
+                    .finished(backupURL)
+                } else {
+                    .ongoing(viewModel.backupProgress ?? 0)
+                }
+                CreatingBackupProgressView(
+                    progress: progress,
+                    cancelAction: { viewModel.cancel() }
                 )
                 .interactiveDismissDisabled()
-                .presentationDetents([.large])
+                .presentationDetents([.medium])
+                .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
+                    SetBackupPasswordView(
+                        onProceed: { password in viewModel.createBackup(password: password) },
+                        onCancel: { viewModel.cancel() }
+                    )
+                    .interactiveDismissDisabled()
+                    .presentationDetents([.large])
+                }
             }
-        }
 
-        .alert(
-            "Save failed.",
-            isPresented: $viewModel.isErrorAlertPresented,
-            presenting: viewModel.backupError
-        ) { details in
-            Button(role: .destructive) {
-                // Handle the deletion.
-            } label: {
-                Text("Delete \(details)")
+            .alert(
+                "Save failed.",
+                isPresented: $viewModel.isErrorAlertPresented,
+                presenting: viewModel.backupError
+            ) { details in
+                Button(role: .destructive) {
+                    // Handle the deletion.
+                } label: {
+                    Text("Delete \(details)")
+                }
+                Button("Retry") {
+                    // Handle the retry action.
+                }
+            } message: { details in
+                Text("details.error")
             }
-            Button("Retry") {
-                // Handle the retry action.
-            }
-        } message: { details in
-            Text("details.error")
+
         }
     }
 }

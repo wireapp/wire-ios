@@ -19,9 +19,9 @@
 import SwiftUI
 import WireReusableUIComponents
 
-struct BackupProgressView: View {
+struct CreatingBackupProgressView: View {
 
-    var state: CreateBackupState
+    var progress: CreatingBackupProgress
     var cancelAction: () -> Void
 
     var body: some View {
@@ -41,14 +41,14 @@ struct BackupProgressView: View {
     }
 
     private var backupProgressViewControllerRepresentable: some View {
-        switch state {
-        case .inProgress(let progress):
+        switch progress {
+        case .ongoing(let progress):
             BackupProgressViewControllerRepresentable(
                 progressDescription: "saving \n A b c de fkalfj d lsdkfjsdklfsdjk fsdlkjf sdlkfsdkl fjsdlk flskj dlsdjfl k",
                 progressValue: progress,
                 backupURL: nil
             )
-        case .ready(let url):
+        case .finished(let url):
             BackupProgressViewControllerRepresentable(
                 progressDescription: "success",
                 progressValue: 1,
@@ -57,17 +57,13 @@ struct BackupProgressView: View {
         }
     }
 
-    enum CreateBackupState {
-        case inProgress(_ percentage: Float)
-        case ready(_ url: URL)
-    }
 }
 
 #Preview("in progress") {
     Color.white
         .sheet(isPresented: .constant(true)) {
-            BackupProgressView(
-                state: .inProgress(0.25),
+            CreatingBackupProgressView(
+                progress: .ongoing(0.25),
                 cancelAction: {}
             )
             .presentationDetents([.medium])
@@ -77,8 +73,8 @@ struct BackupProgressView: View {
 #Preview("ready") {
     Color.white
         .sheet(isPresented: .constant(true)) {
-            BackupProgressView(
-                state: .ready(.init(fileURLWithPath: "/")),
+            CreatingBackupProgressView(
+                progress: .finished(.init(fileURLWithPath: "/")),
                 cancelAction: {}
             )
             .presentationDetents([.medium])
