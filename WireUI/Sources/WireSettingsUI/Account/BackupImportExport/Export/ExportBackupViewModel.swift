@@ -19,7 +19,7 @@
 import Foundation
 
 @MainActor
-final class InitiateBackupViewModel: ObservableObject {
+final class ExportBackupViewModel: ObservableObject {
 
     private var state: State? { // TODO: consider moving into separate file `ExportBackpuState`
         didSet { updatePublishedProperties() }
@@ -135,9 +135,9 @@ final class InitiateBackupViewModel: ObservableObject {
     }
 }
 
-// MARK: - InitiateBackupViewModel + State
+// MARK: - ExportBackupViewModel + State
 
-extension InitiateBackupViewModel {
+extension ExportBackupViewModel {
 
     enum State {
         case enterPassword(password: String)
@@ -147,9 +147,9 @@ extension InitiateBackupViewModel {
     }
 }
 
-// MARK: - InitiateBackupViewModel.State + Properties
+// MARK: - ExportBackupViewModel.State + Properties
 
-private extension InitiateBackupViewModel.State {
+private extension ExportBackupViewModel.State {
 
     var backupError: (any Error)? {
         if case .backupFailed(let error) = self {
@@ -162,7 +162,7 @@ private extension InitiateBackupViewModel.State {
 
 // TODO: ?
 
-extension InitiateBackupViewModel.State {
+extension ExportBackupViewModel.State {
     fileprivate var isEnterBackupPasswordStep: Bool {
         if case .enterPassword = self { true } else { false }
     }

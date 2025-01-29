@@ -21,8 +21,6 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
-typealias ExportBackupView = SetExportPasswordView
-
 /// A view that allows to export the backup.
 
 struct SetExportPasswordView: View {

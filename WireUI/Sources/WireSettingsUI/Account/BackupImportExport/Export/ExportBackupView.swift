@@ -18,9 +18,9 @@
 
 import SwiftUI
 
-struct InitiateBackupView: View {
+struct ExportBackupView: View {
 
-    @StateObject var viewModel: InitiateBackupViewModel
+    @StateObject var viewModel: ExportBackupViewModel
 
     var body: some View {
 
@@ -75,7 +75,7 @@ struct InitiateBackupView: View {
 
 #Preview {
     List {
-        InitiateBackupView(viewModel: .init())
+        ExportBackupView(viewModel: .init())
     }
     .listStyle(.grouped)
 }

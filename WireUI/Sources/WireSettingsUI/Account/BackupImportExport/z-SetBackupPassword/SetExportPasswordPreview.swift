@@ -28,7 +28,7 @@ struct SetExportPasswordPreview: View {
         }
         .sheet(isPresented: $isPresented) {
             NavigationStack {
-                ExportBackupView(
+                SetExportPasswordView(
                     viewModel: .init(
                         passwordValidator: MockBackupPasswordValidator(),
                         exportBackupAction: { _ in }
