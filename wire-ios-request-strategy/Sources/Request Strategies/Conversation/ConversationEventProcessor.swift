@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol, ZMEventAsyncConsumer {
 
@@ -63,16 +64,19 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     func processConversationRenamePayload(_ payload: ZMTransportData) {
         // here's no uuid is needed since we process it directly it's just convenience to get the payload
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
-            guard let payload = try? eventPayloadDecoder.decode(
-                Payload.ConversationEvent<Payload.UpdateConversationName>.self,
-                from: event.payload
-            ) else { return }
+            do {
+                let payload = try eventPayloadDecoder.decode(
+                    Payload.ConversationEvent<Payload.UpdateConversationName>.self,
+                    from: event.payload)
 
-            processor.processPayload(
-                payload,
-                originalEvent: event,
-                in: context
-            )
+                processor.processPayload(
+                    payload,
+                    originalEvent: event,
+                    in: context
+                )
+            } catch {
+                WireLogger.eventProcessing.error("error processing UpdateConversationName: \(error.localizedDescription)")
+            }
         }
     }
 
