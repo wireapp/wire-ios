@@ -86,7 +86,7 @@ package struct VerificationCodeView: View {
 
     private var verificationCodeView: some View {
         HStack(spacing: 10) {
-            ForEach(0..<6, id: \.self) { index in
+            ForEach(0 ..< 6, id: \.self) { index in
                 TextField("", text: $code[index])
                     .frame(width: 50, height: 50)
                     .background(
@@ -112,7 +112,7 @@ package struct VerificationCodeView: View {
     }
 
     private func handleInput(_ newValue: String, index: Int) {
-        if let intValue = Int(newValue.prefix(1)), (0...9).contains(intValue) {
+        if let intValue = Int(newValue.prefix(1)), (0 ... 9).contains(intValue) {
             code[index] = String(intValue)
         } else {
             code[index] = ""
