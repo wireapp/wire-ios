@@ -50,29 +50,48 @@ final class BackupRestoreRootViewModel: ObservableObject {
     }
 
     func createBackup(password: String) {
+        guard backupTask == nil else { return assertionFailure() }
+
         backupTask = Task {
-            state = .backup(.creatingBackup(progress: 0))
-            try? await Task.sleep(for: .seconds(1))
-            if Task.isCancelled { throw CancellationError() }
-            state = .backup(.creatingBackup(progress: 0.25))
-            try? await Task.sleep(for: .seconds(1))
-            if Task.isCancelled { throw CancellationError() }
-            state = .backup(.creatingBackup(progress: 0.5))
-            try? await Task.sleep(for: .seconds(1))
-            if Task.isCancelled { throw CancellationError() }
-            state = .backup(.creatingBackup(progress: 0.75))
-            try? await Task.sleep(for: .seconds(1))
-            if Task.isCancelled { throw CancellationError() }
-            state = .backup(.creatingBackup(progress: 1))
-            try? await Task.sleep(for: .seconds(0.2))
-            if Task.isCancelled { throw CancellationError() }
-            state = .backup(.backupReady)
+            do {
+                state = .backup(.creatingBackup(progress: 0))
+                try? await Task.sleep(for: .seconds(1))
+                if Task.isCancelled { throw CancellationError() }
+                state = .backup(.creatingBackup(progress: 0.25))
+                try? await Task.sleep(for: .seconds(1))
+                if Task.isCancelled { throw CancellationError() }
+                state = .backup(.creatingBackup(progress: 0.5))
+                try? await Task.sleep(for: .seconds(1))
+                if Task.isCancelled { throw CancellationError() }
+                state = .backup(.creatingBackup(progress: 0.75))
+                try? await Task.sleep(for: .seconds(1))
+                if Task.isCancelled { throw CancellationError() }
+                state = .backup(.creatingBackup(progress: 1))
+                try? await Task.sleep(for: .seconds(0.2))
+                if Task.isCancelled { throw CancellationError() }
+                state = .backup(.backupReady)
+            } catch is CancellationError {
+                state = nil
+            }
         }
     }
 
     func cancel() {
-        backupTask?.cancel()
-        state = nil
+        switch state {
+        case .backup(.enterPassword):
+            state = nil
+        case .backup(.creatingBackup):
+            backupTask?.cancel()
+        case .backup(.backupReady):
+            // TODO: clean up
+            state = nil
+        case .backup(.backupFailed(_)):
+            fatalError("not yet implemented")
+        case .restore:
+            fatalError("not yet implemented")
+        case .none:
+            assertionFailure()
+        }
     }
 
     private func updatePublishedProperties() {
