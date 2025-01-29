@@ -18,21 +18,28 @@
 
 import SwiftUI
 
-struct BackupRestoreRootView: View {
+struct BackupRootView<ExportSection: View, ImportSection: View>: View {
+
+    @ViewBuilder
+    var exportSectionContent: () -> ExportSection
+
+    @ViewBuilder
+    var importSectionContent: () -> ImportSection
 
     var body: some View {
 
         List {
-            InitiateBackupView(viewModel: .init(), onBackup: { /*viewModel.requestBackupPassword()*/ })
-            InitiateRestoreView(viewModel: .init(), onRestore: { _ in print("restore") })
+            exportSectionContent()
+            importSectionContent()
         }
         .listStyle(.grouped)
 
     }
 }
 
-typealias BackupState = BackupProgressView.CreateBackupState
-
 #Preview {
-    BackupRestoreRootView()
+    BackupRootView(
+        exportSectionContent: { InitiateBackupView(viewModel: .init()) {} },
+        importSectionContent: { InitiateRestoreView(viewModel: .init()) { _ in } }
+    )
 }

@@ -42,6 +42,15 @@ public struct BackupRestoreBuilder {
 
     @MainActor
     public static func tmp() -> some View {
-        BackupRestoreRootView()
+
+        BackupRootView(
+            exportSectionContent: {
+                InitiateBackupView(viewModel: .init()) { print("backup") }
+            },
+            importSectionContent: {
+                InitiateRestoreView(viewModel: .init()) { print("restore \($0.absoluteString)") }
+            }
+        )
+
     }
 }

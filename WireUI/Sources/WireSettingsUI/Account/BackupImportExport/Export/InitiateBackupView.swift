@@ -18,16 +18,18 @@
 
 import SwiftUI
 
+typealias BackupState = BackupProgressView.CreateBackupState
+
 struct InitiateBackupView: View {
 
     @StateObject var viewModel: InitiateBackupViewModel
 
-    var onBackup: () -> Void
-
     var body: some View {
 
         Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
-            Button(L10n.Localizable.Settings.ExportBackup.action, action: onBackup)
+            Button(L10n.Localizable.Settings.ExportBackup.action) {
+                viewModel.requestBackupPassword()
+            }
         }
 
         .sheet(isPresented: $viewModel.isBackupProgressPresented) {
