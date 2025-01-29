@@ -44,7 +44,7 @@ struct BackupProgressView: View {
         switch state {
         case .inProgress(let progress):
             BackupProgressViewControllerRepresentable(
-                progressDescription: "saving",
+                progressDescription: "saving \n A b c de fkalfj d lsdkfjsdklfsdjk fsdlkjf sdlkfsdkl fjsdlk flskj dlsdjfl k",
                 progressValue: progress,
                 backupURL: nil
             )
@@ -100,6 +100,7 @@ private struct BackupProgressViewControllerRepresentable: UIViewControllerRepres
     }
 
     func updateUIViewController(_ viewController: BackupProgressViewController, context: Context) {
+        print("updating progress \(progressValue)")
         viewController.progressDescription = progressDescription
         viewController.progressValue = progressValue
         viewController.backupURL = backupURL
@@ -128,9 +129,14 @@ private final class BackupProgressViewController: UIViewController {
         super.viewDidLoad()
 
         descriptionLabel = .init()
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(descriptionLabel)
         descriptionLabel.text = progressDescription
 
         progressView = .init(progressViewStyle: .bar)
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(progressView)
         progressView.progress = progressValue
 
         exportButton = .init(type: .system)
@@ -141,8 +147,19 @@ private final class BackupProgressViewController: UIViewController {
         view.addSubview(exportButton)
 
         NSLayoutConstraint.activate([
-            exportButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            exportButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+
+            descriptionLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: view.leadingAnchor, multiplier: 3),
+            descriptionLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.topAnchor, multiplier: 3),
+            view.trailingAnchor.constraint(equalToSystemSpacingAfter: descriptionLabel.trailingAnchor, multiplier: 3),
+
+            progressView.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor),
+            progressView.topAnchor.constraint(equalToSystemSpacingBelow: descriptionLabel.bottomAnchor, multiplier: 3),
+            descriptionLabel.trailingAnchor.constraint(equalTo: progressView.trailingAnchor),
+
+            exportButton.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor),
+            exportButton.topAnchor.constraint(equalToSystemSpacingBelow: progressView.bottomAnchor, multiplier: 3),
+            descriptionLabel.trailingAnchor.constraint(equalTo: exportButton.trailingAnchor),
+            view.bottomAnchor.constraint(equalToSystemSpacingBelow: exportButton.bottomAnchor, multiplier: 3)
         ])
     }
 
