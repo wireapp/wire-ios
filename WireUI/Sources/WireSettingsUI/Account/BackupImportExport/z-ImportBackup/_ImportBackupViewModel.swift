@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class ImportBackupViewModel: ObservableObject {
+final class _ImportBackupViewModel: ObservableObject {
 
     @Published var password = ""
     @Published var isPasswordVisible = false

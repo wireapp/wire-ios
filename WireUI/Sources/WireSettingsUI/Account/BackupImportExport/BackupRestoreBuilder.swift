@@ -48,7 +48,7 @@ public struct BackupRestoreBuilder {
                 ExportBackupView(viewModel: .init())
             },
             importSectionContent: {
-                InitiateRestoreView(viewModel: .init())
+                ImportBackupView(viewModel: .init())
             }
         )
 

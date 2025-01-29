@@ -58,7 +58,7 @@ public final class BackupRestoreViewController: UIViewController {
             },
             importBackupSheetContent: {
                 NavigationStack {
-                    ImportBackupView(viewModel: .init(importBackupAction: { fatalError() })) { password in
+                    _ImportBackupView(viewModel: .init(importBackupAction: { fatalError() })) { password in
                         if let fileURL = /*selectedFileURL*/ URL(string: "TODO: selectedFileURL") {
                             self.viewModel.restoreFromBackup(
                                 at: fileURL,

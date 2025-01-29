@@ -16,29 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-struct ImportBackupViewPreview: View {
-    @State private var isPresented = true
+final class ImportBackupViewModel: ObservableObject {
 
-    var body: some View {
-        Button(
-            action: {
-                isPresented.toggle()
-            },
-            label: {
-                Text(L10n.Localizable.RestoreFromBackup.button)
-            }
-        )
-        .sheet(isPresented: $isPresented) {
-            NavigationStack {
-                ImportBackupView(
-                    viewModel: .init(importBackupAction: {}),
-                    importBackup: { _ in }
-                )
-            }
-            .presentationDragIndicator(.visible)
-            .presentationDetents([.medium])
-        }
+    func importBackup(from url: URL) {
+
     }
 }

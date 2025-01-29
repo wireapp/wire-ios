@@ -18,9 +18,9 @@
 
 import SwiftUI
 
-struct InitiateRestoreView: View {
+struct ImportBackupView: View {
 
-    @StateObject var viewModel: InitiateRestoreViewModel
+    @StateObject var viewModel: ImportBackupViewModel
 
     @State private var isFileImporterPresented = false
 
@@ -49,7 +49,7 @@ struct InitiateRestoreView: View {
 
 #Preview {
     List {
-        InitiateRestoreView(viewModel: .init())
+        ImportBackupView(viewModel: .init())
     }
     .listStyle(.grouped)
 }

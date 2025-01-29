@@ -21,11 +21,11 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
-struct ImportBackupView: View {
+struct _ImportBackupView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    @ObservedObject private(set) var viewModel: ImportBackupViewModel
+    @ObservedObject private(set) var viewModel: _ImportBackupViewModel
 
     // TODO: move to view model?
     let importBackup: (String) -> Void
@@ -145,5 +145,5 @@ struct ImportBackupView: View {
 
 @available(iOS 17.0, *)
 #Preview("Import Backup sheet") {
-    ImportBackupViewPreview()
+    _ImportBackupViewPreview()
 }
