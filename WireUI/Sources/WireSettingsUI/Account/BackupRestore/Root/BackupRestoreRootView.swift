@@ -22,8 +22,6 @@ struct BackupRestoreRootView: View {
 
     @StateObject var viewModel: BackupRestoreRootViewModel
 
-    let details = Details(name: "name", error: "error")
-
     var body: some View {
 
         BackupRestoreMainView(
@@ -44,10 +42,10 @@ struct BackupRestoreRootView: View {
             .interactiveDismissDisabled()
             .presentationDetents([.medium])
             .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
-                SetBackupPasswordView { password in
-                    guard let password else { return viewModel.cancel() }
-                    viewModel.createBackup(password: password)
-                }
+                SetBackupPasswordView(
+                    onProceed: { password in viewModel.createBackup(password: password) },
+                    onCancel: { viewModel.cancel() }
+                )
                 .interactiveDismissDisabled()
                 .presentationDetents([.large])
             }
@@ -74,12 +72,6 @@ struct BackupRestoreRootView: View {
 }
 
 typealias BackupState = BackupProgressView.CreateBackupState
-
-struct Details: Identifiable {
-    let name: String
-    let error: String
-    let id = UUID()
-}
 
 #Preview {
     BackupRestoreRootView(viewModel: BackupRestoreRootViewModel())

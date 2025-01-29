@@ -20,23 +20,26 @@ import SwiftUI
 
 struct SetBackupPasswordView: View {
 
-    /// Password can be an empty string. If `nil` is returned, the user cancelled.
-    var result: (_ password: String?) -> Void
+    var onProceed: (_ password: String) -> Void
+    var onCancel: () -> Void
 
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack {
             Button("action") {
-                result("")
+                onProceed("")
             }
             Button("dismiss") {
-                result(nil)
+                onCancel()
             }
         }
     }
 }
 
 #Preview {
-    SetBackupPasswordView { _ in }
+    SetBackupPasswordView(
+        onProceed: { _ in },
+        onCancel: {}
+    )
 }

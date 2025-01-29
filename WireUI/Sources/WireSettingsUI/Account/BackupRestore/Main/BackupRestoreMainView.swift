@@ -23,6 +23,8 @@ struct BackupRestoreMainView: View {
     let backupAction: () -> Void
     let restoreAction: (_ url: URL) -> Void
 
+    @State private var isFileImporterPresented = false
+
     var body: some View {
         List {
             backupSection
@@ -42,7 +44,21 @@ struct BackupRestoreMainView: View {
     private var restoreSection: some View {
         Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
             Button(L10n.Localizable.Settings.RestoreFromBackup.action) {
-//                restoreAction()
+                isFileImporterPresented = true
+            }
+            .fileImporter(
+                isPresented: $isFileImporterPresented,
+                allowedContentTypes: [.json]
+            ) { result in
+                switch result {
+                case .success(let file):
+                    let gotAccess = file.startAccessingSecurityScopedResource()
+                    guard gotAccess else { return assertionFailure() } // TODO: also log before every assertionFailure
+                    restoreAction(file)
+                    file.stopAccessingSecurityScopedResource()
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
             }
         }
     }

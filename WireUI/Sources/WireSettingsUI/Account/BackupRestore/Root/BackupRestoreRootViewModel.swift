@@ -78,32 +78,6 @@ final class BackupRestoreRootViewModel: ObservableObject {
         }
     }
 
-//    func getItemForExport() -> URL {
-//        guard case .backup(.backupReadyAndExported) = state else { fatalError() }
-//
-//        let fileManager = FileManager.default
-//        let documentsURL = try! fileManager.url(
-//            for: .documentDirectory,
-//            in: .userDomainMask,
-//            appropriateFor: nil,
-//            create: false
-//        )
-//        let backupURL = documentsURL.appendingPathComponent("backup.json")
-//
-//        // Example backup data
-//        let backupData: [String: Any] = [
-//            "timestamp": "Date()",
-//            "data": "Your backup data here"
-//        ]
-//
-//        let data = try! JSONSerialization.data(withJSONObject: backupData, options: .prettyPrinted)
-//        try! data.write(to: backupURL)
-//
-//        state = .backup(.backupReadyAndExported)
-//
-//        return backupURL
-//    }
-
     func cancel() {
         switch state {
         case .backup(.enterPassword):
@@ -138,7 +112,7 @@ final class BackupRestoreRootViewModel: ObservableObject {
         }
 
         isErrorAlertPresented = switch state {
-        case .backup(.backupFailed(let error)):
+        case .backup(.backupFailed):
             true
         default:
             false

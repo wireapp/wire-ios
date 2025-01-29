@@ -132,39 +132,15 @@ private final class BackupProgressViewController: UIViewController {
 
         descriptionLabel = .init()
         descriptionLabel.numberOfLines = 0
-//        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-//        view.addSubview(descriptionLabel)
         descriptionLabel.text = progressDescription
 
         progressView = .init(progressViewStyle: .bar)
-//        progressView.translatesAutoresizingMaskIntoConstraints = false
-//        view.addSubview(progressView)
         progressView.progress = progressValue
 
         exportButton = .init(type: .system)
         exportButton.setTitle("save", for: .normal)
-//        exportButton.translatesAutoresizingMaskIntoConstraints = false
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
         exportButton.isEnabled = backupURL != nil
-//        view.addSubview(exportButton)
-
-        /*
-        NSLayoutConstraint.activate([
-
-            descriptionLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: view.leadingAnchor, multiplier: 3),
-            descriptionLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.topAnchor, multiplier: 3),
-            view.trailingAnchor.constraint(equalToSystemSpacingAfter: descriptionLabel.trailingAnchor, multiplier: 3),
-
-            progressView.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor),
-            progressView.topAnchor.constraint(equalToSystemSpacingBelow: descriptionLabel.bottomAnchor, multiplier: 3),
-            descriptionLabel.trailingAnchor.constraint(equalTo: progressView.trailingAnchor),
-
-            exportButton.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor),
-            exportButton.topAnchor.constraint(equalToSystemSpacingBelow: progressView.bottomAnchor, multiplier: 3),
-            descriptionLabel.trailingAnchor.constraint(equalTo: exportButton.trailingAnchor),
-            view.bottomAnchor.constraint(equalToSystemSpacingBelow: exportButton.bottomAnchor, multiplier: 3)
-        ])
-         */
 
         scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -195,10 +171,10 @@ private final class BackupProgressViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        // TODO: check calculation (e.g. regarding safe area bottom inset)
         let stackViewHeight = stackView.frame.maxY + (navigationController?.navigationBar.frame.height ?? 0)
         if let sheetPresentationController = navigationController?.sheetPresentationController {
             sheetPresentationController.detents = [.custom { _ in stackViewHeight }]
-            print("setting detend to \(stackViewHeight)")
         }
     }
 
