@@ -39,12 +39,13 @@ final class BackupRestoreRootViewModel: ObservableObject {
             case enterPassword(password: String = "")
             case creatingBackup(progress: Float)
             case backupReady
+            case backupReadyAndExported
             case backupFailed(any Error)
         }
     }
 
     func requestBackupPassword() {
-        guard state == nil else { return }
+        guard state == nil else { return assertionFailure() }
 
         state = .backup(.enterPassword())
     }
@@ -53,18 +54,19 @@ final class BackupRestoreRootViewModel: ObservableObject {
         guard backupTask == nil else { return assertionFailure() }
 
         backupTask = Task {
+            defer { backupTask = nil }
             do {
                 state = .backup(.creatingBackup(progress: 0))
-                try? await Task.sleep(for: .seconds(1))
+                try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
                 state = .backup(.creatingBackup(progress: 0.25))
-                try? await Task.sleep(for: .seconds(1))
+                try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
                 state = .backup(.creatingBackup(progress: 0.5))
-                try? await Task.sleep(for: .seconds(1))
+                try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
                 state = .backup(.creatingBackup(progress: 0.75))
-                try? await Task.sleep(for: .seconds(1))
+                try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
                 state = .backup(.creatingBackup(progress: 1))
                 try? await Task.sleep(for: .seconds(0.2))
@@ -74,6 +76,32 @@ final class BackupRestoreRootViewModel: ObservableObject {
                 state = nil
             }
         }
+    }
+
+    func getItemForExport() -> URL {
+        guard case .backup(.backupReadyAndExported) = state else { fatalError() }
+
+        let fileManager = FileManager.default
+        let documentsURL = try! fileManager.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        )
+        let backupURL = documentsURL.appendingPathComponent("backup.json")
+
+        // Example backup data
+        let backupData: [String: Any] = [
+            "timestamp": "Date()",
+            "data": "Your backup data here"
+        ]
+
+        let data = try! JSONSerialization.data(withJSONObject: backupData, options: .prettyPrinted)
+        try! data.write(to: backupURL)
+
+        state = .backup(.backupReadyAndExported)
+
+        return backupURL
     }
 
     func cancel() {
@@ -89,7 +117,7 @@ final class BackupRestoreRootViewModel: ObservableObject {
             fatalError("not yet implemented")
         case .restore:
             fatalError("not yet implemented")
-        case .none:
+        case .none, .backup(.backupReadyAndExported):
             assertionFailure()
         }
     }

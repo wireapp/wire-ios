@@ -22,6 +22,7 @@ struct BackupProgressView: View {
 
     /// The percentage value of the progess or `nil` when the backup is ready.
     var progress: Float?
+    var getItemAction: () -> URL
     var cancelAction: () -> Void
 
     var body: some View {
@@ -33,11 +34,22 @@ struct BackupProgressView: View {
                 }
             }
         } else {
-            Text("backup ready")
+            VStack {
+                Text("backup ready")
+                ShareLink(
+                    item: getItemAction(), // TODO: FileRepresentation?
+                    preview: SharePreview("Backup File", image: Image(systemName: "archivebox"))
+                ) {
+                    Label("Share Backup", systemImage: "square.and.arrow.up")
+                }
+            }
         }
     }
 }
 
 #Preview {
-    BackupProgressView {}
+    BackupProgressView(
+        getItemAction: { fatalError() },
+        cancelAction: {}
+    )
 }

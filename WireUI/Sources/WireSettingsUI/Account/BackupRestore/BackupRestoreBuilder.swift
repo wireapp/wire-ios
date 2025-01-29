@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
 public struct BackupRestoreBuilder {
 
@@ -38,5 +38,10 @@ public struct BackupRestoreBuilder {
             viewModel: viewModel,
             backupPasswordValidator: backupPasswordValidator
         )
+    }
+
+    @MainActor
+    public static func tmp() -> some View {
+        BackupRestoreRootView(viewModel: .init())
     }
 }
