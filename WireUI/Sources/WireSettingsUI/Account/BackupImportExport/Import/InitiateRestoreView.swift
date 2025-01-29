@@ -22,8 +22,6 @@ struct InitiateRestoreView: View {
 
     @StateObject var viewModel: InitiateRestoreViewModel
 
-    var onRestore: (_ url: URL) -> Void
-
     @State private var isFileImporterPresented = false
 
     var body: some View {
@@ -39,7 +37,7 @@ struct InitiateRestoreView: View {
                 case .success(let url):
                     let gotAccess = url.startAccessingSecurityScopedResource()
                     guard gotAccess else { return assertionFailure() } // TODO: also log before every assertionFailure
-                    onRestore(url)
+                    viewModel.importBackup(from: url)
                     url.stopAccessingSecurityScopedResource()
                 case .failure(let error):
                     print(error.localizedDescription)
@@ -51,7 +49,7 @@ struct InitiateRestoreView: View {
 
 #Preview {
     List {
-        InitiateRestoreView(viewModel: .init()) { _ in }
+        InitiateRestoreView(viewModel: .init())
     }
     .listStyle(.grouped)
 }

@@ -45,10 +45,10 @@ public struct BackupRestoreBuilder {
 
         BackupRootView(
             exportSectionContent: {
-                InitiateBackupView(viewModel: .init()) { print("backup") }
+                InitiateBackupView(viewModel: .init())
             },
             importSectionContent: {
-                InitiateRestoreView(viewModel: .init()) { print("restore \($0.absoluteString)") }
+                InitiateRestoreView(viewModel: .init())
             }
         )
 

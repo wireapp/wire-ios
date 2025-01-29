@@ -75,7 +75,7 @@ struct InitiateBackupView: View {
 
 #Preview {
     List {
-        InitiateBackupView(viewModel: .init()) {}
+        InitiateBackupView(viewModel: .init())
     }
     .listStyle(.grouped)
 }

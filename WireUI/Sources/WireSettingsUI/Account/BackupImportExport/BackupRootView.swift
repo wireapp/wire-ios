@@ -39,7 +39,7 @@ struct BackupRootView<ExportSection: View, ImportSection: View>: View {
 
 #Preview {
     BackupRootView(
-        exportSectionContent: { InitiateBackupView(viewModel: .init()) {} },
-        importSectionContent: { InitiateRestoreView(viewModel: .init()) { _ in } }
+        exportSectionContent: { InitiateBackupView(viewModel: .init()) },
+        importSectionContent: { InitiateRestoreView(viewModel: .init()) }
     )
 }

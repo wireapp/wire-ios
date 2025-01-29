@@ -18,4 +18,9 @@
 
 import Foundation
 
-final class InitiateRestoreViewModel: ObservableObject {}
+final class InitiateRestoreViewModel: ObservableObject {
+
+    func importBackup(from url: URL) {
+
+    }
+}
