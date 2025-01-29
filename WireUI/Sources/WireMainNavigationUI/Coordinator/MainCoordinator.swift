@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireLogging
 
 /// Manages the main navigation and the layout changes of the application after a successful login.
 ///
@@ -292,8 +291,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         await withCheckedContinuation { continuation in
             if splitViewController != nil {
                 splitViewController.dismiss(animated: true, completion: continuation.resume)
-            } else {
-                WireLogger.ui.warn("unexpected nil value for splitViewController, skip dismissPresentedViewController")
             }
         }
     }
