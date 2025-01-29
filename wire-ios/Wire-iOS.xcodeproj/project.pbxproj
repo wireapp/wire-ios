@@ -50,6 +50,7 @@
 		060F032B2D2C12930016431F /* BackupPasswordValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060F032A2D2C12910016431F /* BackupPasswordValidator.swift */; };
 		061275DE26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */; };
 		0617001523E48B66005C262D /* VerticalTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0617001423E48B66005C262D /* VerticalTransition.swift */; };
+		0619A95C2D3FE78700876BDE /* WireAuthenticationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0619A95B2D3FE78700876BDE /* WireAuthenticationUI */; };
 		0619FBBB258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0619FBBA258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift */; };
 		061EF88D27971EC000584C53 /* SettingsProfileLinkCellDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061EF88C27971EC000584C53 /* SettingsProfileLinkCellDescriptor.swift */; };
 		061EF88F2797F74900584C53 /* SettingsCopyButtonCellDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061EF88E2797F74800584C53 /* SettingsCopyButtonCellDescriptor.swift */; };
@@ -3843,6 +3844,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0619A95C2D3FE78700876BDE /* WireAuthenticationUI in Frameworks */,
 				EEE25B4129719C750008B894 /* WireRequestStrategy.framework in Frameworks */,
 				EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */,
 				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
@@ -8425,6 +8427,7 @@
 				76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */,
 				594906A42D0713C000238104 /* WireAnalytics */,
 				594341D62D08611700A6C0B5 /* WireCountly */,
+				0619A95B2D3FE78700876BDE /* WireAuthenticationUI */,
 				76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */,
 			);
 			productName = "ZClient iOS";
@@ -11369,6 +11372,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
+		};
+		0619A95B2D3FE78700876BDE /* WireAuthenticationUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAuthenticationUI;
 		};
 		061F34182B1E2ED50099CBAB /* AppAuth */ = {
 			isa = XCSwiftPackageProductDependency;
