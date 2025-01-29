@@ -22,6 +22,8 @@ struct BackupRestoreRootView: View {
 
     @StateObject var viewModel: BackupRestoreRootViewModel
 
+    let details = Details(name: "name", error: "error")
+
     var body: some View {
 
         BackupRestoreMainView(
@@ -29,7 +31,7 @@ struct BackupRestoreRootView: View {
             restoreAction: { _ in print("restore") }
         )
 
-        .sheet(isPresented: $viewModel.isBackupProgressVisible) {
+        .sheet(isPresented: $viewModel.isBackupProgressPresented) {
             let state: BackupState = if let backupURL = viewModel.backupURL {
                 .ready(backupURL)
             } else {
@@ -41,7 +43,7 @@ struct BackupRestoreRootView: View {
             )
             .interactiveDismissDisabled()
             .presentationDetents([.medium])
-            .sheet(isPresented: $viewModel.isSetBackupPasswordVisible) {
+            .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
                 SetBackupPasswordView { password in
                     guard let password else { return viewModel.cancel() }
                     viewModel.createBackup(password: password)
@@ -51,10 +53,33 @@ struct BackupRestoreRootView: View {
             }
         }
 
+        .alert(
+            "Save failed.",
+            isPresented: $viewModel.isErrorAlertPresented,
+            presenting: viewModel.backupError
+        ) { details in
+            Button(role: .destructive) {
+                // Handle the deletion.
+            } label: {
+                Text("Delete \(details)")
+            }
+            Button("Retry") {
+                // Handle the retry action.
+            }
+        } message: { details in
+            Text("details.error")
+        }
+
     }
 }
 
 typealias BackupState = BackupProgressView.CreateBackupState
+
+struct Details: Identifiable {
+    let name: String
+    let error: String
+    let id = UUID()
+}
 
 #Preview {
     BackupRestoreRootView(viewModel: BackupRestoreRootViewModel())

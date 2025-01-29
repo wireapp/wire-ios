@@ -26,24 +26,15 @@ final class BackupRestoreRootViewModel: ObservableObject {
     }
 
     // BackupProgress is the outer sheet, which contains/presents SetBackupPassword
-    @Published var isBackupProgressVisible = false
-    @Published var isSetBackupPasswordVisible = false
+    @Published var isBackupProgressPresented = false
+    @Published var isSetBackupPasswordPresented = false
+    @Published var isErrorAlertPresented = false
+
     @Published private(set) var backupProgress: Float?
     @Published private(set) var backupURL: URL?
+    var backupError: (any Error)? { state?.backupError }
 
     private var backupTask: Task<Void, any Error>?
-
-    enum State {
-        case backup(BackupStep)
-        case restore
-
-        enum BackupStep {
-            case enterPassword(password: String = "")
-            case creatingBackup(progress: Float)
-            case backupReady(url: URL)
-            case backupFailed(any Error)
-        }
-    }
 
     func requestBackupPassword() {
         guard state == nil else { return assertionFailure() }
@@ -67,6 +58,11 @@ final class BackupRestoreRootViewModel: ObservableObject {
                 try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
                 state = .backup(.creatingBackup(progress: 0.75))
+
+                if Bool.random() {
+                    throw NSError(domain: "some", code: 0, userInfo: nil)
+                }
+
                 try? await Task.sleep(for: .seconds(0.5))
                 if Task.isCancelled { throw CancellationError() }
                 state = .backup(.creatingBackup(progress: 1))
@@ -76,6 +72,8 @@ final class BackupRestoreRootViewModel: ObservableObject {
                 state = .backup(.backupReady(url: url))
             } catch is CancellationError {
                 state = nil
+            } catch {
+                state = .backup(.backupFailed(error))
             }
         }
     }
@@ -126,14 +124,21 @@ final class BackupRestoreRootViewModel: ObservableObject {
 
     private func updatePublishedProperties() {
 
-        isSetBackupPasswordVisible = if case .backup(.enterPassword) = state {
+        isSetBackupPasswordPresented = if case .backup(.enterPassword) = state {
             true
         } else {
             false
         }
 
-        isBackupProgressVisible = switch state {
+        isBackupProgressPresented = switch state {
         case .backup(.enterPassword), .backup(.creatingBackup), .backup(.backupReady):
+            true
+        default:
+            false
+        }
+
+        isErrorAlertPresented = switch state {
+        case .backup(.backupFailed(let error)):
             true
         default:
             false
@@ -152,5 +157,35 @@ final class BackupRestoreRootViewModel: ObservableObject {
             nil
         }
 
+    }
+}
+
+// MARK: - BackupRestoreRootViewModel + State
+
+extension BackupRestoreRootViewModel {
+
+    enum State {
+        case backup(BackupStep)
+        case restore
+
+        enum BackupStep {
+            case enterPassword(password: String = "")
+            case creatingBackup(progress: Float)
+            case backupReady(url: URL)
+            case backupFailed(any Error)
+        }
+    }
+}
+
+// MARK: - BackupRestoreRootViewModel.State + Properties
+
+private extension BackupRestoreRootViewModel.State {
+
+    var backupError: (any Error)? {
+        if case .backup(.backupFailed(let error)) = self {
+            error
+        } else {
+            .none
+        }
     }
 }
