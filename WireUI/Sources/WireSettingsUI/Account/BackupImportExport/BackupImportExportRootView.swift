@@ -18,28 +18,20 @@
 
 import SwiftUI
 
-struct BackupImportExportRootView<ExportSection: View, ImportSection: View>: View {
+struct BackupImportExportRootView<Content: View>: View {
 
     @ViewBuilder
-    var exportSectionContent: () -> ExportSection
-
-    @ViewBuilder
-    var importSectionContent: () -> ImportSection
+    var content: () -> Content
 
     var body: some View {
-
-        List {
-            exportSectionContent()
-            importSectionContent()
-        }
-        .listStyle(.grouped)
-
+        List(content: content)
+            .listStyle(.grouped)
     }
 }
 
 #Preview {
-    BackupImportExportRootView(
-        exportSectionContent: { ExportBackupView(viewModel: .init()) },
-        importSectionContent: { ImportBackupView(viewModel: .init()) }
-    )
+    BackupImportExportRootView{
+        ExportBackupView(viewModel: .init())
+        ImportBackupView(viewModel: .init())
+    }
 }

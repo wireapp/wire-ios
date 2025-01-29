@@ -42,15 +42,9 @@ public struct BackupImportExportBuilder {
 
     @MainActor
     public static func tmp() -> some View {
-
-        BackupImportExportRootView(
-            exportSectionContent: {
-                ExportBackupView(viewModel: .init())
-            },
-            importSectionContent: {
-                ImportBackupView(viewModel: .init())
-            }
-        )
-
+        BackupImportExportRootView {
+            ExportBackupView(viewModel: .init())
+            ImportBackupView(viewModel: .init())
+        }
     }
 }
