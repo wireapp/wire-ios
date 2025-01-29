@@ -20,8 +20,7 @@ import SwiftUI
 
 struct SetAccountUsernameView: View {
 
-    @ObservedObject
-    var viewModel: SetAccountUsernameViewModel
+    @ObservedObject var viewModel: SetAccountUsernameViewModel
 
     var body: some View {
         Color.red

@@ -22,18 +22,15 @@ internal import WireAuthenticationUI
 
 class RootComponent: BootstrapComponent {
 
-    @MainActor
-    public var router: Router {
+    @MainActor public var router: Router {
         rootViewModel
     }
 
-    @MainActor
-    private var rootViewModel: RootViewModel {
+    @MainActor private var rootViewModel: RootViewModel {
         RootViewModel()
     }
 
-    @MainActor
-    var rootView: some View {
+    @MainActor var rootView: some View {
         RootView(
             viewModel: rootViewModel,
             builder: determineAuthMethodComponent

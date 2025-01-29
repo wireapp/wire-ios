@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,11 +27,9 @@ public protocol LoginViaEmailBuilder {
 
 public struct LoginViaEmailView: View {
 
-    @ObservedObject
-    var viewModel: LoginViaEmailViewModel
+    @ObservedObject var viewModel: LoginViaEmailViewModel
 
-    @State
-    private var password = ""
+    @State private var password = ""
 
     public init(
         viewModel: LoginViaEmailViewModel

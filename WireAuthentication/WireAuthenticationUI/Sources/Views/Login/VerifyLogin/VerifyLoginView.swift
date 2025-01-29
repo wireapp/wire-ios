@@ -20,8 +20,7 @@ import SwiftUI
 
 struct VerifyLoginView: View {
 
-    @ObservedObject
-    var viewModel: VerifyLoginViewModel
+    @ObservedObject var viewModel: VerifyLoginViewModel
 
     var body: some View {
         Color.red

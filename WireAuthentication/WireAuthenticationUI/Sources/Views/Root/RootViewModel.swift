@@ -24,8 +24,7 @@ import WireAuthenticationAPI
 @MainActor
 public final class RootViewModel: ObservableObject, Router {
 
-    @Published
-    var path = NavigationPath()
+    @Published var path = NavigationPath()
 
     public init() {}
 
@@ -33,7 +32,7 @@ public final class RootViewModel: ObservableObject, Router {
         path.removeLast(path.count)
     }
 
-    public func navigate<Destination: Hashable>(to destination: Destination) {
+    public func navigate(to destination: some Hashable) {
         path.append(destination)
     }
 

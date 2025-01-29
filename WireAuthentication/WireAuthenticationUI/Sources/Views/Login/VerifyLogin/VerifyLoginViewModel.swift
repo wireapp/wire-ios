@@ -22,6 +22,4 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class VerifyLoginViewModel: ObservableObject {
-
-}
+public final class VerifyLoginViewModel: ObservableObject {}

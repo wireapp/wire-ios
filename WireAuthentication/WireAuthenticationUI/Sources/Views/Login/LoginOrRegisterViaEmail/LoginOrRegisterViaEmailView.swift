@@ -20,8 +20,7 @@ import SwiftUI
 
 struct LoginOrRegisterViaEmailView: View {
 
-    @ObservedObject
-    var viewModel: LoginOrRegisterViaEmailViewModel
+    @ObservedObject var viewModel: LoginOrRegisterViaEmailViewModel
 
     var body: some View {
         Color.red

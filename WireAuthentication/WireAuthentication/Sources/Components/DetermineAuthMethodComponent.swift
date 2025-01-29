@@ -24,8 +24,7 @@ internal import WireAuthenticationLogic
 
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
-    @MainActor
-    var router: Router { get }
+    @MainActor var router: Router { get }
 
 }
 
@@ -35,16 +34,14 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         DetermineAuthMethodUseCase()
     }
 
-    @MainActor
-    private var viewModel: DetermineAuthMethodViewModel {
+    @MainActor private var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: dependency.router,
             determineAuthMethod: determineAuthMethodUseCase
         )
     }
 
-    @MainActor
-    var determineAuthMethodView: DetermineAuthMethodView {
+    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: viewModel,
             builder: loginViaEmailComponent

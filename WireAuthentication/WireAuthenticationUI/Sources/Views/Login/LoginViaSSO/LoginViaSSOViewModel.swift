@@ -22,7 +22,4 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class LoginViaSSOViewModel: ObservableObject {
-
-
-}
+public final class LoginViaSSOViewModel: ObservableObject {}

@@ -22,6 +22,4 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class SetAccountPasswordViewModel: ObservableObject {
-
-}
+public final class SetAccountPasswordViewModel: ObservableObject {}

@@ -20,8 +20,7 @@ import SwiftUI
 
 struct NoHistoryView: View {
 
-    @ObservedObject
-    var viewModel: NoHistoryViewModel
+    @ObservedObject var viewModel: NoHistoryViewModel
 
     var body: some View {
         Color.red

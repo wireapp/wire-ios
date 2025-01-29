@@ -24,8 +24,7 @@ internal import WireAuthenticationLogic
 
 protocol LoginViaEmailComponentDependency: Dependency {
 
-    @MainActor
-    var router: Router { get }
+    @MainActor var router: Router { get }
 
 }
 

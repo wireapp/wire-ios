@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,20 +20,17 @@ import SwiftUI
 
 public protocol DetermineAuthMethodBuilder {
 
-    @MainActor
-    var determineAuthMethodView: DetermineAuthMethodView { get }
+    @MainActor var determineAuthMethodView: DetermineAuthMethodView { get }
 
 }
 
 public struct DetermineAuthMethodView: View {
 
-    @ObservedObject
-    var viewModel: DetermineAuthMethodViewModel
+    @ObservedObject var viewModel: DetermineAuthMethodViewModel
 
     let builder: LoginViaEmailBuilder
 
-    @State
-    private var emailOrSSOCode = ""
+    @State private var emailOrSSOCode = ""
 
     public init(
         viewModel: DetermineAuthMethodViewModel,
@@ -63,7 +60,7 @@ public struct DetermineAuthMethodView: View {
         .padding()
         .navigationDestination(for: Destination.self) {
             switch $0 {
-            case .login(let email):
+            case let .login(email):
                 builder.loginViaEmailView(email: email)
             case .loginOrRegister:
                 Color.red

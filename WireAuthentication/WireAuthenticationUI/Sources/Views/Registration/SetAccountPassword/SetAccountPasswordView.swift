@@ -20,8 +20,7 @@ import SwiftUI
 
 struct SetAccountPasswordView: View {
 
-    @ObservedObject
-    var viewModel: SetAccountPasswordViewModel
+    @ObservedObject var viewModel: SetAccountPasswordViewModel
 
     var body: some View {
         Color.red
