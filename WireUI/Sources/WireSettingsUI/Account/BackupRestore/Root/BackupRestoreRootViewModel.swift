@@ -18,6 +18,7 @@
 
 import Foundation
 
+@MainActor
 final class BackupRestoreRootViewModel: ObservableObject {
 
     private var state: State? {
@@ -27,6 +28,8 @@ final class BackupRestoreRootViewModel: ObservableObject {
     @Published var isSetBackupPasswordVisible = false
     @Published var isBackupProgressVisible = false
     @Published private(set) var backupProgress: Float?
+
+    private var backupTask: Task<Void, any Error>?
 
     enum State {
         case backup(BackupStep)
@@ -40,17 +43,35 @@ final class BackupRestoreRootViewModel: ObservableObject {
         }
     }
 
-    func startBackupProcess() {
+    func requestBackupPassword() {
         guard state == nil else { return }
 
         state = .backup(.enterPassword())
     }
 
     func createBackup(password: String) {
-        state = .backup(.creatingBackup(progress: 0.25))
+        backupTask = Task {
+            state = .backup(.creatingBackup(progress: 0))
+            try? await Task.sleep(for: .seconds(1))
+            if Task.isCancelled { throw CancellationError() }
+            state = .backup(.creatingBackup(progress: 0.25))
+            try? await Task.sleep(for: .seconds(1))
+            if Task.isCancelled { throw CancellationError() }
+            state = .backup(.creatingBackup(progress: 0.5))
+            try? await Task.sleep(for: .seconds(1))
+            if Task.isCancelled { throw CancellationError() }
+            state = .backup(.creatingBackup(progress: 0.75))
+            try? await Task.sleep(for: .seconds(1))
+            if Task.isCancelled { throw CancellationError() }
+            state = .backup(.creatingBackup(progress: 1))
+            try? await Task.sleep(for: .seconds(0.2))
+            if Task.isCancelled { throw CancellationError() }
+            state = .backup(.backupReady)
+        }
     }
 
     func cancel() {
+        backupTask?.cancel()
         state = nil
     }
 

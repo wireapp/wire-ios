@@ -22,10 +22,16 @@ struct BackupProgressView: View {
 
     /// The percentage value of the progess or `nil` when the backup is ready.
     var progress: Float?
+    var cancelAction: () -> Void
 
     var body: some View {
         if let progress {
-            Text("\(progress)")
+            VStack {
+                Text("\(progress)")
+                Button("cancel") {
+                    cancelAction()
+                }
+            }
         } else {
             Text("backup ready")
         }
@@ -33,5 +39,5 @@ struct BackupProgressView: View {
 }
 
 #Preview {
-    BackupProgressView()
+    BackupProgressView {}
 }

@@ -25,7 +25,7 @@ struct BackupRestoreRootView: View {
     var body: some View {
 
         BackupRestoreMainView(
-            backupAction: { viewModel.startBackupProcess() },
+            backupAction: { viewModel.requestBackupPassword() },
             restoreAction: { _ in print("restore") }
         )
 
@@ -39,9 +39,12 @@ struct BackupRestoreRootView: View {
         }
 
         .sheet(isPresented: $viewModel.isBackupProgressVisible) {
-            BackupProgressView(progress: viewModel.backupProgress)
-                .interactiveDismissDisabled()
-                .presentationDetents([.medium])
+            BackupProgressView(
+                progress: viewModel.backupProgress,
+                cancelAction: { viewModel.cancel() }
+            )
+            .interactiveDismissDisabled()
+            .presentationDetents([.medium])
         }
 
     }
