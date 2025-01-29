@@ -27,7 +27,7 @@ final class NotificationSessionTests: XCTestCase {
     private var authenticationServiceProvider: MockAuthenticationServiceProvider!
     private var authenticationService: MockAuthenticationServiceProtocol!
     private var authenticatedSession: MockAuthenticatedSessionProtocol!
-    
+
     override func setUp() async throws {
         authenticationServiceProvider = MockAuthenticationServiceProvider()
         authenticationService = MockAuthenticationServiceProtocol()
@@ -44,21 +44,21 @@ final class NotificationSessionTests: XCTestCase {
     func testNotificationSession_It_Generates_Correct_Notifications_Amount() async throws {
 
         // Given
-        
+
         let mockEvents = [
             Scaffolding.mlsMessageUpdateEvent,
             Scaffolding.proteusMessageUpdateEvent
         ]
-        
+
         authenticatedSession.setup_MockMethod = {}
         authenticatedSession.startSyncNewEventID_MockValue = AsyncStream {
             $0.yield(mockEvents) // First batch of 2 events
             $0.yield(mockEvents) // Second batch of 2 events
             $0.finish()
         }
-        authenticationService.authenticate_MockValue = .success(authenticatedSession)
+        authenticationService.authenticated_MockValue = authenticatedSession
         authenticationServiceProvider.authenticationService = authenticationService
-        
+
         var receivedNotifications = [UNMutableNotificationContent]()
 
         sut = NotificationSession(
@@ -72,12 +72,12 @@ final class NotificationSessionTests: XCTestCase {
         // When
 
         try await sut.start()
-        
+
         // Then
-        
+
         XCTAssertEqual(receivedNotifications.count, 4) // 4 notifications (2 batches of 2 events) are generated
     }
-    
+
     func testNotificationSession_It_Throws_Error_When_Unauthenticated() async throws {
 
         // Given
@@ -85,8 +85,8 @@ final class NotificationSessionTests: XCTestCase {
         enum MockError: Error {
             case unauthenticated
         }
-        
-        authenticationService.authenticate_MockValue = .failure(MockError.unauthenticated)
+
+        authenticationService.authenticated_MockError = MockError.unauthenticated
         authenticationServiceProvider.authenticationService = authenticationService
 
         sut = NotificationSession(
@@ -101,19 +101,19 @@ final class NotificationSessionTests: XCTestCase {
             try await self.sut.start()
         }
     }
-    
+
     func testNotificationSession_It_Throws_Error_When_Authenticated_Session_Setup_Fails() async throws {
 
         // Given
-        
+
         enum MockError: Error {
             case setupError
         }
-        
+
         authenticatedSession.setup_MockError = MockError.setupError
-        authenticationService.authenticate_MockValue = .success(authenticatedSession)
+        authenticationService.authenticated_MockValue = authenticatedSession
         authenticationServiceProvider.authenticationService = authenticationService
-        
+
         sut = NotificationSession(
             eventID: .mockID7,
             authenticationServiceProvider: authenticationServiceProvider,
@@ -126,20 +126,20 @@ final class NotificationSessionTests: XCTestCase {
             try await self.sut.start()
         }
     }
-    
+
     func testNotificationSession_It_Throws_Error_When_Pull_Sync_Fails() async throws {
 
         // Given
-        
+
         enum MockError: Error {
             case pullSyncFailed
         }
-        
+
         authenticatedSession.setup_MockMethod = {}
         authenticatedSession.startSyncNewEventID_MockError = MockError.pullSyncFailed
-        authenticationService.authenticate_MockValue = .success(authenticatedSession)
+        authenticationService.authenticated_MockValue = authenticatedSession
         authenticationServiceProvider.authenticationService = authenticationService
-        
+
         sut = NotificationSession(
             eventID: .mockID7,
             authenticationServiceProvider: authenticationServiceProvider,

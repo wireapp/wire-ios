@@ -31,7 +31,6 @@ final class NotificationSession {
     private let authenticationServiceProvider: AuthenticationServiceProvider
     private let notificationHandler: NotificationHandler
     private let eventID: UUID
-
     private var subscription: AnyCancellable?
 
     // MARK: - Object lifecycle
@@ -55,15 +54,8 @@ final class NotificationSession {
 
     func start() async throws {
         let authenticationService = authenticationServiceProvider.authenticationService
-
-        let authenticationResult = await authenticationService.authenticate()
-
-        switch authenticationResult {
-        case let .success(authenticatedSession):
-            try await process(with: authenticatedSession)
-        case let .failure(error):
-            throw error
-        }
+        let authenticatedSession = try await authenticationService.authenticated()
+        try await process(with: authenticatedSession)
     }
 
     private func process(
@@ -78,7 +70,6 @@ final class NotificationSession {
         for await decodedEvents in decodedEventsStream {
             generateNotificationContent(for: decodedEvents)
         }
-        
     }
 
     private func generateNotificationContent(
@@ -89,23 +80,21 @@ final class NotificationSession {
         }
         // TODO: [WPB-11175] - Generate UNNotificationContent from update events
         for event in events {
-            let notification: UNMutableNotificationContent
-            
-            switch event {
+            let notification = switch event {
             case let .conversation(conversationEvent):
-                notification = UNMutableNotificationContent()
+                UNMutableNotificationContent()
             case let .featureConfig(featureConfigEvent):
-                notification = UNMutableNotificationContent()
+                UNMutableNotificationContent()
             case let .federation(federationEvent):
-                notification = UNMutableNotificationContent()
+                UNMutableNotificationContent()
             case let .user(userEvent):
-                notification = UNMutableNotificationContent()
+                UNMutableNotificationContent()
             case let .team(teamEvent):
-                notification = UNMutableNotificationContent()
+                UNMutableNotificationContent()
             case let .unknown(eventType):
-                notification = UNMutableNotificationContent()
+                UNMutableNotificationContent()
             }
-            
+
             notificationHandler(notification)
         }
     }

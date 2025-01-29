@@ -23,6 +23,7 @@ import WireLogging
 // sourcery: AutoMockable
 protocol AuthenticatedSessionProtocol {
     func setup() throws
+
     func startSync(
         newEventID id: UUID
     ) async throws -> AsyncStream<[UpdateEvent]>
@@ -81,6 +82,9 @@ struct AuthenticatedSession: AuthenticatedSessionProtocol {
         }
     }
 
+    /// Starts syncing events with backend.
+    /// - parameter newEventID: The notification event id.
+    /// - returns: A stream of decrypted update events.
     func startSync(
         newEventID id: UUID
     ) async throws -> AsyncStream<[UpdateEvent]> {

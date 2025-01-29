@@ -18,7 +18,7 @@
 
 // sourcery: AutoMockable
 protocol AuthenticationServiceProtocol {
-    func authenticate() async -> Result<AuthenticatedSessionProtocol, Error>
+    func authenticated() async throws -> AuthenticatedSessionProtocol
 }
 
 struct AuthenticationService: AuthenticationServiceProtocol {
@@ -29,6 +29,10 @@ struct AuthenticationService: AuthenticationServiceProtocol {
         static let cookieName = "zuid"
     }
 
+    enum Failure: Error {
+        case unauthenticated
+    }
+
     init(
         cookieStorageProvider: CookieStorageProvider,
         authenticatedSessionProvider: AuthenticatedSessionProvider
@@ -37,32 +41,24 @@ struct AuthenticationService: AuthenticationServiceProtocol {
         self.authenticatedSessionProvider = authenticatedSessionProvider
     }
 
-    enum Failure: Error {
-        case unauthenticated
-    }
-
-    /// Ensures user is authenticated.
-    /// - returns: Either a success with the `AuthenticatedSession` or an error.
-    func authenticate() async -> Result<AuthenticatedSessionProtocol, Error> {
+    /// Checks whether user is authenticated.
+    /// - returns: An`AuthenticatedSession` when user is authenticated.
+    func authenticated() async throws -> AuthenticatedSessionProtocol {
         let cookieStorage = cookieStorageProvider.cookieStorage
+        let cookies = try await cookieStorage.fetchCookies()
+        var hasExpirationDate = false
 
-        do {
-            let cookies = try await cookieStorage.fetchCookies()
-
-            var hasExpirationDate = false
-
-            for cookie in cookies where cookie.name == Constants.cookieName {
-                hasExpirationDate = cookie.expiresDate != nil
-            }
-
-            let isAuthenticated = hasExpirationDate
-
-            return isAuthenticated ?
-                .success(authenticatedSessionProvider.authenticatedSession) :
-                .failure(Failure.unauthenticated)
-        } catch {
-            return .failure(error)
+        for cookie in cookies where cookie.name == Constants.cookieName {
+            hasExpirationDate = cookie.expiresDate != nil
         }
+
+        let isAuthenticated = hasExpirationDate
+
+        guard isAuthenticated else {
+            throw Failure.unauthenticated
+        }
+
+        return authenticatedSessionProvider.authenticatedSession
     }
 
 }
