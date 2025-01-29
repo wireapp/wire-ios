@@ -63,7 +63,7 @@ final class PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
 
         // We'll insert new events from this index.
         var currentIndex = try await store.indexOfLastEventEnvelope() + 1
-        
+
         var events: [UpdateEvent] = []
 
         // Events are fetched in batches.
@@ -103,7 +103,7 @@ final class PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
                     decryptedEnvelopeData,
                     index: currentIndex
                 )
-                
+
                 events.append(contentsOf: decryptedEvents)
 
                 currentIndex += 1
@@ -115,7 +115,7 @@ final class PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
                 }
             }
         }
-        
+
         return AsyncStream {
             $0.yield(events)
             $0.finish()

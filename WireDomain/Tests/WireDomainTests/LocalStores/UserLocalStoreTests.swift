@@ -44,7 +44,7 @@ final class UserLocalStoreTests: XCTestCase {
         mockUserDefaults = UserDefaults(
             suiteName: Scaffolding.defaultsTestSuiteName
         )
-        
+
         conversationLocalStore = MockConversationLocalStoreProtocol()
 
         sut = UserLocalStore(

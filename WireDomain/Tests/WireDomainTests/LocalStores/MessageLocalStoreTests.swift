@@ -62,7 +62,7 @@ final class MessageLocalStoreTests: XCTestCase {
             let conversation = modelHelper.createGroupConversation(
                 in: context
             )
-            
+
             conversation.isForcedReadOnly = false
 
             let selfUser = modelHelper.createSelfUser(
@@ -121,7 +121,7 @@ final class MessageLocalStoreTests: XCTestCase {
             modelHelper.createSelfUser(in: context)
             return modelHelper.createUser(id: Scaffolding.userID, in: context)
         }
-        
+
         let conversation = await makeConversation(creator: user)
 
         for messageType in Scaffolding.allSystemMessageTypes {
@@ -161,7 +161,7 @@ final class MessageLocalStoreTests: XCTestCase {
 
         XCTAssertEqual(lastMessagesTypes.count, expectedResults.messagesCount)
         XCTAssertEqual(lastMessagesTypes, expectedResults.zmMessages)
-        
+
     }
 
     private func makeConversation(creator: ZMUser) async -> ZMConversation {

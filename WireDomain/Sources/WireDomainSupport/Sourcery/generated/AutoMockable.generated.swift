@@ -107,21 +107,26 @@ class MockAuthenticationServiceProtocol: AuthenticationServiceProtocol {
 
 
 
-    // MARK: - authenticate
+    // MARK: - authenticated
 
-    var authenticate_Invocations: [Void] = []
-    var authenticate_MockMethod: (() async -> Result<AuthenticatedSessionProtocol, Error>)?
-    var authenticate_MockValue: Result<AuthenticatedSessionProtocol, Error>?
+    var authenticated_Invocations: [Void] = []
+    var authenticated_MockError: Error?
+    var authenticated_MockMethod: (() async throws -> AuthenticatedSessionProtocol)?
+    var authenticated_MockValue: AuthenticatedSessionProtocol?
 
-    func authenticate() async -> Result<AuthenticatedSessionProtocol, Error> {
-        authenticate_Invocations.append(())
+    func authenticated() async throws -> AuthenticatedSessionProtocol {
+        authenticated_Invocations.append(())
 
-        if let mock = authenticate_MockMethod {
-            return await mock()
-        } else if let mock = authenticate_MockValue {
+        if let error = authenticated_MockError {
+            throw error
+        }
+
+        if let mock = authenticated_MockMethod {
+            return try await mock()
+        } else if let mock = authenticated_MockValue {
             return mock
         } else {
-            fatalError("no mock for `authenticate`")
+            fatalError("no mock for `authenticated`")
         }
     }
 

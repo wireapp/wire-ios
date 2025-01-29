@@ -45,4 +45,3 @@ final class AuthenticationComponent: Component<EmptyDependency>, AuthenticationS
         AuthenticatedComponent(parent: self)
     }
 }
-

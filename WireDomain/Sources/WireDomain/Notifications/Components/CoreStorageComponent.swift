@@ -18,10 +18,10 @@
 
 import NeedleFoundation
 import WireAPI
-import WireDataModel
 import WireCrypto
-import WireLogging
+import WireDataModel
 import WireFoundation
+import WireLogging
 
 protocol CoreStorageDependency: Dependency {
     var selectedAccount: Account { get }
