@@ -247,7 +247,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
             // insert system message that we moved from proteus to MLS
             let sender = ZMUser.selfUser(in: context)
-            mlsConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+            mlsConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
 
             if !allProteusConversations.isEmpty {
                 mlsConversation.isForcedReadOnly = false

@@ -181,7 +181,27 @@ public extension ZMConversation {
     }
 
     // MARK: - MLS Migration
-
+    
+    
+    func appendMLSMigrationFinalizedSystemMessageIfNeeded(
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        guard let context = self.managedObjectContext else {
+            return
+        }
+        
+        let predicate = NSPredicate(format: "%K == %d", #keyPath(ZMSystemMessage.systemMessageType), ZMSystemMessageType.mlsMigrationFinalized.rawValue)
+        let request: NSFetchRequest<ZMSystemMessage> = NSFetchRequest(entityName: ZMSystemMessage.entityName())
+        let messagesCount = context.countOrAssert(request: request)
+        guard messagesCount == 0 else {
+            // already inserted, nothing to do
+            return
+        }
+        
+        appendMLSMigrationFinalizedSystemMessage(sender: sender, at: timestamp)
+    }
+    
     func appendMLSMigrationFinalizedSystemMessage(
         sender: ZMUser,
         at timestamp: Date

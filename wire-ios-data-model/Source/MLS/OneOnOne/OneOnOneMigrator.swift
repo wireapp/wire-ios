@@ -169,7 +169,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
             // insert system message that we moved from proteus to MLS
             let sender = ZMUser.selfUser(in: context)
-            mlsConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+            mlsConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
 
             if !proteusConversations.isEmpty {
                 // update just to be sure
