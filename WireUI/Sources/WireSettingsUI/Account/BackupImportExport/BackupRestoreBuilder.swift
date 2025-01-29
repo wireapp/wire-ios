@@ -42,6 +42,6 @@ public struct BackupRestoreBuilder {
 
     @MainActor
     public static func tmp() -> some View {
-        BackupRestoreRootView(viewModel: .init())
+        BackupRestoreRootView()
     }
 }

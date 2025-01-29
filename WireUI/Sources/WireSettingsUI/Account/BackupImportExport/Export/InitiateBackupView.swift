@@ -25,8 +25,48 @@ struct InitiateBackupView: View {
     var onBackup: () -> Void
 
     var body: some View {
+
         Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
             Button(L10n.Localizable.Settings.ExportBackup.action, action: onBackup)
+        }
+
+        .sheet(isPresented: $viewModel.isBackupProgressPresented) {
+            let state: BackupState = if let backupURL = viewModel.backupURL {
+                .ready(backupURL)
+            } else {
+                .inProgress(viewModel.backupProgress ?? 0)
+            }
+            BackupProgressView(
+                state: state,
+                cancelAction: { viewModel.cancel() }
+            )
+            .interactiveDismissDisabled()
+            .presentationDetents([.medium])
+            .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
+                SetBackupPasswordView(
+                    onProceed: { password in viewModel.createBackup(password: password) },
+                    onCancel: { viewModel.cancel() }
+                )
+                .interactiveDismissDisabled()
+                .presentationDetents([.large])
+            }
+        }
+
+        .alert(
+            "Save failed.",
+            isPresented: $viewModel.isErrorAlertPresented,
+            presenting: viewModel.backupError
+        ) { details in
+            Button(role: .destructive) {
+                // Handle the deletion.
+            } label: {
+                Text("Delete \(details)")
+            }
+            Button("Retry") {
+                // Handle the retry action.
+            }
+        } message: { details in
+            Text("details.error")
         }
     }
 }

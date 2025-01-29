@@ -20,54 +20,13 @@ import SwiftUI
 
 struct BackupRestoreRootView: View {
 
-    @StateObject var viewModel: BackupRestoreRootViewModel // TODO: split into two view models
-
     var body: some View {
 
         List {
-            InitiateBackupView(viewModel: .init(), onBackup: { viewModel.requestBackupPassword() })
+            InitiateBackupView(viewModel: .init(), onBackup: { /*viewModel.requestBackupPassword()*/ })
             InitiateRestoreView(viewModel: .init(), onRestore: { _ in print("restore") })
         }
         .listStyle(.grouped)
-
-        .sheet(isPresented: $viewModel.isBackupProgressPresented) {
-            let state: BackupState = if let backupURL = viewModel.backupURL {
-                .ready(backupURL)
-            } else {
-                .inProgress(viewModel.backupProgress ?? 0)
-            }
-            BackupProgressView(
-                state: state,
-                cancelAction: { viewModel.cancel() }
-            )
-            .interactiveDismissDisabled()
-            .presentationDetents([.medium])
-            .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
-                SetBackupPasswordView(
-                    onProceed: { password in viewModel.createBackup(password: password) },
-                    onCancel: { viewModel.cancel() }
-                )
-                .interactiveDismissDisabled()
-                .presentationDetents([.large])
-            }
-        }
-
-        .alert(
-            "Save failed.",
-            isPresented: $viewModel.isErrorAlertPresented,
-            presenting: viewModel.backupError
-        ) { details in
-            Button(role: .destructive) {
-                // Handle the deletion.
-            } label: {
-                Text("Delete \(details)")
-            }
-            Button("Retry") {
-                // Handle the retry action.
-            }
-        } message: { details in
-            Text("details.error")
-        }
 
     }
 }
@@ -75,11 +34,5 @@ struct BackupRestoreRootView: View {
 typealias BackupState = BackupProgressView.CreateBackupState
 
 #Preview {
-    BackupRestoreRootView(viewModel: BackupRestoreRootViewModel())
-}
-
-extension BackupRestoreRootViewModel.State {
-    fileprivate var isEnterBackupPasswordStep: Bool {
-        if case .backup(.enterPassword) = self { true } else { false }
-    }
+    BackupRestoreRootView()
 }
