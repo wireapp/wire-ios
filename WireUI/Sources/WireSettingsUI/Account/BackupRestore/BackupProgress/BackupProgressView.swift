@@ -17,33 +17,48 @@
 //
 
 import SwiftUI
+import WireReusableUIComponents
 
 struct BackupProgressView: View {
 
-    /// The percentage value of the progess or `nil` when the backup is ready.
     var state: CreateBackupState
     var cancelAction: () -> Void
 
     var body: some View {
-        switch state {
-        case .inProgress(let progress):
-            VStack {
-                Text("\(progress)")
-                Button("cancel") {
-                    cancelAction()
+
+        NavigationStack {
+            BackupProgressViewControllerRepresentable(state, cancelAction)
+                .navigationTitle("title")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        CloseButton(
+                            action: { /*dismiss()*/ },
+                            accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
+                        )
+                    }
                 }
-            }
-        case .ready(let url):
-            VStack {
-                Text("backup ready")
-                ShareLink(
-                    item: url,
-                    preview: SharePreview("Backup File", image: Image(systemName: "archivebox"))
-                ) {
-                    Label("Share Backup", systemImage: "square.and.arrow.up")
-                }
-            }
         }
+
+//        switch state {
+//        case .inProgress(let progress):
+//            VStack {
+//                Text("\(progress)")
+//                Button("cancel") {
+//                    cancelAction()
+//                }
+//            }
+//        case .ready(let url):
+//            VStack {
+//                Text("backup ready")
+//                ShareLink(
+//                    item: url,
+//                    preview: SharePreview("Backup File", image: Image(systemName: "archivebox"))
+//                ) {
+//                    Label("Share Backup", systemImage: "square.and.arrow.up")
+//                }
+//            }
+//        }
     }
 
     enum CreateBackupState {
@@ -76,6 +91,17 @@ struct BackupProgressView: View {
 
 private struct BackupProgressViewControllerRepresentable: UIViewControllerRepresentable {
 
+    var state: BackupProgressView.CreateBackupState
+    var cancelAction: () -> Void
+
+    init(
+        _ state: BackupProgressView.CreateBackupState,
+        _ cancelAction: @escaping () -> Void
+    ) {
+        self.state = state
+        self.cancelAction = cancelAction
+    }
+
     func makeUIViewController(context: Context) -> BackupProgressViewController {
         .init()
     }
@@ -85,4 +111,29 @@ private struct BackupProgressViewControllerRepresentable: UIViewControllerRepres
     }
 }
 
-private final class BackupProgressViewController: UIViewController {}
+private final class BackupProgressViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let button = UIButton(type: .system)
+        button.setTitle("save", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(showFileExporter(_:)), for: .primaryActionTriggered)
+        view.addSubview(button)
+        NSLayoutConstraint.activate([
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+
+    @objc
+    private func showFileExporter(_ sender: UIButton) {
+        let activityViewController = UIActivityViewController(activityItems: [URL(fileURLWithPath: "/")], applicationActivities: nil)
+        if let popoverPresentationController = activityViewController.popoverPresentationController {
+            popoverPresentationController.sourceView = sender.superview
+            popoverPresentationController.sourceRect = sender.frame
+        }
+        present(activityViewController, animated: true)
+    }
+}
