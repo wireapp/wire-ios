@@ -23,7 +23,7 @@ func ExportBackupPreview() -> some View {
     List {
         ExportBackupView(
             viewModel: .init(
-                exportBackupUseCase: PreviewExportBackupUseCase()
+                createBackupUseCase: PreviewCreateBackupUseCase()
             )
         )
     }

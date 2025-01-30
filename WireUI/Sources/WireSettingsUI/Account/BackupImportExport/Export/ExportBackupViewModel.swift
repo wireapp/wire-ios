@@ -21,7 +21,7 @@ import Foundation
 @MainActor
 final class ExportBackupViewModel: ObservableObject {
 
-    let exportBackupUseCase: any CreateBackupUseCaseProtocol
+    let createBackupUseCase: any CreateBackupUseCaseProtocol
     // let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
 
     private var state: ExportBackupState? {
@@ -39,8 +39,8 @@ final class ExportBackupViewModel: ObservableObject {
 
     private var backupTask: Task<Void, any Error>?
 
-    init(exportBackupUseCase: any CreateBackupUseCaseProtocol) {
-        self.exportBackupUseCase = exportBackupUseCase
+    init(createBackupUseCase: any CreateBackupUseCaseProtocol) {
+        self.createBackupUseCase = createBackupUseCase
     }
 
     func requestBackupPassword() {
@@ -56,7 +56,7 @@ final class ExportBackupViewModel: ObservableObject {
             defer { backupTask = nil }
 
             do {
-                for try await update in exportBackupUseCase.invoke(password: password) {
+                for try await update in createBackupUseCase.invoke(password: password) {
                     switch update {
                     case .progress(let fraction):
                         state = .creatingBackup(progress: fraction)

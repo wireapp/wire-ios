@@ -30,7 +30,7 @@ struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            Task { @MainActor in
+            Task<Void, Never> { @MainActor in
                 do {
 
                     let sessionManager = sessionManager()
@@ -43,7 +43,7 @@ struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
                         }
                     }
 
-                    continuation.yield(.success(url))
+                    continuation.yield(.done(url))
                     continuation.finish()
 
                 } catch {

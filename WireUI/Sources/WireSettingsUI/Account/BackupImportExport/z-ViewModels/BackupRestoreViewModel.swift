@@ -28,10 +28,10 @@ public final class BackupRestoreViewModel: ObservableObject {
     private let backupResultHandler: BackupResultHandler
     private let restoreBackupResultHandler: RestoreBackupResultHandler
 
-    private let exportBackupUseCase: any CreateBackupUseCaseProtocol
+    private let createBackupUseCase: any CreateBackupUseCaseProtocol
 
-    public init(exportBackupUseCase: any CreateBackupUseCaseProtocol) {
-        self.exportBackupUseCase = exportBackupUseCase
+    public init(createBackupUseCase: any CreateBackupUseCaseProtocol) {
+        self.createBackupUseCase = createBackupUseCase
 
         // TODO: fix
         restoreSource = DummyRestoreSource()
@@ -48,7 +48,7 @@ public final class BackupRestoreViewModel: ObservableObject {
         backupResultHandler: BackupResultHandler,
         restoreBackupResultHandler: RestoreBackupResultHandler
     ) {
-        exportBackupUseCase = PreviewExportBackupUseCase()
+        createBackupUseCase = PreviewCreateBackupUseCase()
 
         self.restoreSource = restoreSource
         self.backupResultHandler = backupResultHandler
@@ -62,7 +62,7 @@ public final class BackupRestoreViewModel: ObservableObject {
         // TODO: activity indicator with progress
         Task {
             do {
-                try await exportBackupUseCase.invoke(password: password) // , export: export)
+                try await createBackupUseCase.invoke(password: password) // , export: export)
             } catch {
                 fatalError("TODO")
                 /*backupResultHandler.onFailure()*/

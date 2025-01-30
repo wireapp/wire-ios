@@ -41,7 +41,7 @@ public struct BackupImportExportBuilder {
     public func build() -> UIViewController {
         UIHostingController(
             rootView: BackupImportExportRootView {
-                ExportBackupView(viewModel: .init(exportBackupUseCase: exportBackupUseCase))
+                ExportBackupView(viewModel: .init(createBackupUseCase: exportBackupUseCase))
                 ImportBackupView(viewModel: .init(importBackupUseCase: importBackupUseCase))
             }
         )

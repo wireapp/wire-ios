@@ -35,90 +35,110 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
     let sharedContainerURL: URL
     let logger: WireLogger
 
-    func invoke(url: URL, password: String) async throws {
+    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
 
         switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {
 
         case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
-            guard !password.isEmpty else {
-                // legacy backups always need a password
-                throw ImportBackupError.passwordRequired
-            }
-            try await importIOSBackup(url, password)
+            importIOSBackup(url, password)
 
         case nil:
-            throw ImportBackupError.invalidFileExtension
+            AsyncThrowingStream { continuation in
+                continuation.finish(throwing: ImportBackupError.invalidFileExtension)
+            }
+
         }
     }
 
-    private func importIOSBackup(_ url: URL, _ password: String) async throws {
+    private func importIOSBackup(
+        _ url: URL,
+        _ password: String
+    ) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
+        AsyncThrowingStream { continuation in
 
-        // to start with we need an active user session, later the session will be torn down
-        weak var userSession = userSession()
-        guard let account = userSession?.contextProvider.account else {
-            throw ImportBackupError.noActiveAccount
-        }
-
-        // before we start the first operation let the user know, the progress has started
-        appStateUpdater.reportImportProgress(progress: 0.25)
-
-        let unzippedURL = try decryptAndUnzipBackup(
-            url: url,
-            password: password,
-            accountID: account.userIdentifier
-        )
-
-        appStateUpdater.reportImportProgress(progress: 0.5)
-
-        // backup the self user and the self client
-        let selfUserQualifiedID: QualifiedID?
-        let selfClientBackup: [String: Any]
-        // we want to avoid keeping a strong reference to the user
-        // session, the managed object context and the user client
-        if let userSession, let (qualifiedID, backup) = await userSession.contextProvider.viewContext.perform({
-            userSession.selfUserClient.map { ($0.user?.qualifiedID, $0.backup()) } }) {
-            selfUserQualifiedID = qualifiedID
-            selfClientBackup = backup
-        } else {
-            throw ImportBackupError.unknown
-        }
-
-        // user session needs to be torn down
-        await appStateUpdater.reportMigrationNeeded()
-
-        // the imported file replaces the existing persistent store
-        try await entityStorage.replacePersistentStore(
-            accountIdentifier: account.userIdentifier,
-            from: unzippedURL,
-            applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
-        )
-
-        // import the self client from the backup and set the correct self user relation
-        // TODO: [WPB-15714] causes warning: we should try to initialize the model only once
-        let temporaryStack = try await entityStorage
-            .createContextProvider(
-                account: account,
-                applicationContainer: sharedContainerURL,
-                dispatchGroup: dispatchGroup
-            )
-        try await temporaryStack.viewContext.perform {
-            let context = temporaryStack.viewContext
-            let userID = selfUserQualifiedID?.uuid
-            let domain = selfUserQualifiedID?.domain
-
-            var selfUser: ZMUser?
-            if let userID {
-                selfUser = ZMUser.fetch(with: userID, domain: domain, in: context)
+            guard !password.isEmpty else {
+                // legacy backups always need a password
+                return continuation.finish(throwing: ImportBackupError.passwordRequired)
             }
 
-            let userClient = UserClient.restore(from: selfClientBackup, context: context)
-            userClient.user = selfUser
-            userClient.markAsSelfClient()
-            try context.save()
-        }
+            Task<Void, Never> { @MainActor in
+                do {
 
-        await appStateUpdater.selectAccountAndTriggerSlowSync(account)
+                    // to start with we need an active user session, later the session will be torn down
+                    weak var userSession = userSession()
+                    guard let account = userSession?.contextProvider.account else {
+                        throw ImportBackupError.noActiveAccount
+                    }
+
+                    // before we start the first operation let the user know, the progress has started
+                    appStateUpdater.reportImportProgress(progress: 0.25)
+
+                    let unzippedURL = try decryptAndUnzipBackup(
+                        url: url,
+                        password: password,
+                        accountID: account.userIdentifier
+                    )
+
+                    appStateUpdater.reportImportProgress(progress: 0.5)
+
+                    // backup the self user and the self client
+                    let selfUserQualifiedID: QualifiedID?
+                    let selfClientBackup: [String: Any]
+                    // we want to avoid keeping a strong reference to the user
+                    // session, the managed object context and the user client
+                    if let userSession, let (qualifiedID, backup) = await userSession.contextProvider.viewContext.perform({
+                        userSession.selfUserClient.map { ($0.user?.qualifiedID, $0.backup()) } }) {
+                        selfUserQualifiedID = qualifiedID
+                        selfClientBackup = backup
+                    } else {
+                        throw ImportBackupError.unknown
+                    }
+
+                    // user session needs to be torn down
+                    await appStateUpdater.reportMigrationNeeded()
+
+                    // the imported file replaces the existing persistent store
+                    try await entityStorage.replacePersistentStore(
+                        accountIdentifier: account.userIdentifier,
+                        from: unzippedURL,
+                        applicationContainer: sharedContainerURL,
+                        dispatchGroup: dispatchGroup
+                    )
+
+                    // import the self client from the backup and set the correct self user relation
+                    // TODO: [WPB-15714] causes warning: we should try to initialize the model only once
+                    let temporaryStack = try await entityStorage
+                        .createContextProvider(
+                            account: account,
+                            applicationContainer: sharedContainerURL,
+                            dispatchGroup: dispatchGroup
+                        )
+                    try await temporaryStack.viewContext.perform {
+                        let context = temporaryStack.viewContext
+                        let userID = selfUserQualifiedID?.uuid
+                        let domain = selfUserQualifiedID?.domain
+
+                        var selfUser: ZMUser?
+                        if let userID {
+                            selfUser = ZMUser.fetch(with: userID, domain: domain, in: context)
+                        }
+
+                        let userClient = UserClient.restore(from: selfClientBackup, context: context)
+                        userClient.user = selfUser
+                        userClient.markAsSelfClient()
+                        try context.save()
+                    }
+
+                    await appStateUpdater.selectAccountAndTriggerSlowSync(account)
+
+                    continuation.yield(.done)
+                    continuation.finish()
+
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
     }
 
     private func decryptAndUnzipBackup(url: URL, password: String, accountID: UUID) throws -> URL {

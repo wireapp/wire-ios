@@ -23,7 +23,7 @@ func BackupImportExportRootPreview() -> some View {
     BackupImportExportRootView{
         ExportBackupView(
             viewModel: .init(
-                exportBackupUseCase: PreviewExportBackupUseCase()
+                createBackupUseCase: PreviewCreateBackupUseCase()
             )
         )
         ImportBackupView(

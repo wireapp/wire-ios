@@ -18,11 +18,11 @@
 
 import Foundation
 
-struct PreviewExportBackupUseCase: CreateBackupUseCaseProtocol {
+struct PreviewCreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            Task.detached {
+            Task<Void, Never>.detached {
                 do {
 
                     var failAtIndex: Int?

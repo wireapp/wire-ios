@@ -20,6 +20,9 @@ import WireSettingsUI
 import WireDomainPkg
 import Foundation
 
+// Instead of linking WireDomainPkg into WireUI targets several symlinks have been created.
+// Therefore many types exist twice, once in their original target (WireDomainPkg) and once in WireUI.
+
 // TODO: [WPB-15347] delete this workaround
 struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCaseProtocol {
 
@@ -29,25 +32,42 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
         self.importBackupUseCaseProtocol = importBackupUseCaseProtocol
     }
 
-    func invoke(url: URL, password: String) async throws {
-        do {
-            try await importBackupUseCaseProtocol.invoke(url: url, password: password)
-        } catch let error as WireDomainPkg.ImportBackupError {
-            switch error {
-            case .noActiveAccount:
-                throw WireSettingsUI.ImportBackupError.noActiveAccount
-            case .passwordRequired:
-                throw WireSettingsUI.ImportBackupError.passwordRequired
-            case .compressionError:
-                throw WireSettingsUI.ImportBackupError.compressionError
-            case .invalidFileExtension:
-                throw WireSettingsUI.ImportBackupError.invalidFileExtension
-            case .keyCreationFailed:
-                throw WireSettingsUI.ImportBackupError.keyCreationFailed
-            case .decryptionError:
-                throw WireSettingsUI.ImportBackupError.decryptionError
-            case .unknown:
-                throw WireSettingsUI.ImportBackupError.unknown
+    func invoke(url: URL, password: String) -> AsyncThrowingStream<WireSettingsUI.ImportBackupProgress, any Error> {
+        AsyncThrowingStream { continuation in
+            Task<Void, Never> {
+                do {
+
+                    for try await update in importBackupUseCaseProtocol.invoke(url: url, password: password) {
+                        switch update {
+                        case .progress(let fraction):
+                            continuation.yield(.progress(fraction))
+                        case .done:
+                            continuation.yield(.done)
+                        }
+                    }
+                    continuation.finish()
+
+                } catch let error as WireDomainPkg.ImportBackupError {
+                    switch error {
+                    case .noActiveAccount:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.noActiveAccount)
+                    case .passwordRequired:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.passwordRequired)
+                    case .compressionError:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.compressionError)
+                    case .invalidFileExtension:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.invalidFileExtension)
+                    case .keyCreationFailed:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.keyCreationFailed)
+                    case .decryptionError:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.decryptionError)
+                    case .unknown:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.unknown)
+                    }
+
+                } catch {
+                    continuation.finish(throwing: error)
+                }
             }
         }
     }

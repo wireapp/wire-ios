@@ -22,7 +22,7 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            Task.detached {
+            Task<Void, Never>.detached {
                 do {
 
                     var failAtIndex: Int?
