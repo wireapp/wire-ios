@@ -21,6 +21,13 @@ import WireDesign
 
 package struct VerificationCodeView: View {
 
+    // MARK: - Constants
+
+    private enum Constants {
+        static let backgroundCornerRadius: CGFloat = 16
+        static let numberOfDigits = 6
+    }
+
     @State private var code: [String]
     @FocusState private var focusedIndex: Int?
 
@@ -33,7 +40,7 @@ package struct VerificationCodeView: View {
     }
 
     package init(
-        initialCode: [String] = Array(repeating: "", count: 6),
+        initialCode: [String] = Array(repeating: "", count: Constants.numberOfDigits),
         receiver: String,
         onConfirm: @escaping ([String]) -> Void,
         onResend: @escaping () -> Void
@@ -77,16 +84,16 @@ package struct VerificationCodeView: View {
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
-        .cornerRadius(16)
+        .cornerRadius(Constants.backgroundCornerRadius)
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: Constants.backgroundCornerRadius)
                 .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
         )
     }
 
     private var verificationCodeView: some View {
         HStack(spacing: 10) {
-            ForEach(0 ..< 6, id: \.self) { index in
+            ForEach(0 ..< Constants.numberOfDigits, id: \.self) { index in
                 TextField("", text: $code[index])
                     .frame(width: 50, height: 50)
                     .background(
@@ -119,7 +126,7 @@ package struct VerificationCodeView: View {
         }
 
         if !code[index].isEmpty {
-            if index < 5 {
+            if index < Constants.numberOfDigits - 1 {
                 focusedIndex = index + 1
             } else {
                 focusedIndex = nil
