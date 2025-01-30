@@ -21,6 +21,9 @@ import Foundation
 @MainActor
 final class ExportBackupViewModel: ObservableObject {
 
+    let exportBackupUseCase: any ExportBackupUseCaseProtocol
+    // let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
+
     private var state: State? { // TODO: consider moving into separate file `ExportBackpuState`
         didSet { updatePublishedProperties() }
     }
@@ -36,6 +39,10 @@ final class ExportBackupViewModel: ObservableObject {
 
     private var backupTask: Task<Void, any Error>?
 
+    init(exportBackupUseCase: any ExportBackupUseCaseProtocol) {
+        self.exportBackupUseCase = exportBackupUseCase
+    }
+
     func requestBackupPassword() {
         guard state == nil else { return assertionFailure() }
 
@@ -48,7 +55,7 @@ final class ExportBackupViewModel: ObservableObject {
         backupTask = Task {
             defer { backupTask = nil }
             do {
-
+                let url = try await exportBackupUseCase.invoke(password: password)
                 // TODO: backup use case
 
                 state = .creatingBackup(progress: 0)
@@ -62,7 +69,7 @@ final class ExportBackupViewModel: ObservableObject {
                 if Task.isCancelled { throw CancellationError() }
                 state = .creatingBackup(progress: 0.75)
 
-                if Bool.random() {
+                if .random() {
                     throw NSError(domain: "some", code: 0, userInfo: nil)
                 }
 
@@ -71,7 +78,6 @@ final class ExportBackupViewModel: ObservableObject {
                 state = .creatingBackup(progress: 1)
                 try? await Task.sleep(for: .seconds(0.2))
                 if Task.isCancelled { throw CancellationError() }
-                let url = URL(fileURLWithPath: "/")
                 state = .backupReady(url: url)
             } catch is CancellationError {
                 state = nil
@@ -99,38 +105,14 @@ final class ExportBackupViewModel: ObservableObject {
 
     private func updatePublishedProperties() {
 
-        isSetBackupPasswordPresented = if case .enterPassword = state {
-            true
-        } else {
-            false
-        }
-
+        isSetBackupPasswordPresented = if case .enterPassword = state { true } else { false }
         isCreatingBackupProgressPresented = switch state {
-        case .enterPassword, .creatingBackup, .backupReady:
-            true
-        default:
-            false
+        case .enterPassword, .creatingBackup, .backupReady: true
+        default: false
         }
-
-        isErrorAlertPresented = switch state {
-        case .backupFailed:
-            true
-        default:
-            false
-        }
-
-        backupProgress = switch state {
-        case .creatingBackup(let progress):
-            progress
-        default:
-            nil
-        }
-
-        backupURL = if case .backupReady(let url) = state {
-            url
-        } else {
-            nil
-        }
+        isErrorAlertPresented = switch state { case .backupFailed: true default: false }
+        backupProgress = switch state { case .creatingBackup(let progress): progress default: nil }
+        backupURL = if case .backupReady(let url) = state { url } else { nil }
 
     }
 }

@@ -52,20 +52,20 @@ struct ExportBackupView: View {
                 }
             }
 
-            .alert(
+            .alert( // TODO: fix
                 "Save failed.",
                 isPresented: $viewModel.isErrorAlertPresented,
                 presenting: viewModel.backupError
-            ) { details in
+            ) { backupError in
                 Button(role: .destructive) {
                     // Handle the deletion.
                 } label: {
-                    Text("Delete \(details)")
+                    Text("Delete \(backupError)")
                 }
                 Button("Retry") {
                     // Handle the retry action.
                 }
-            } message: { details in
+            } message: { backupError in
                 Text("details.error")
             }
 
@@ -74,8 +74,5 @@ struct ExportBackupView: View {
 }
 
 #Preview {
-    List {
-        ExportBackupView(viewModel: .init())
-    }
-    .listStyle(.grouped)
+    ExportBackupPreview()
 }

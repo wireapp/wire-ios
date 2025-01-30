@@ -16,19 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import SwiftUICore
 
-struct BackupImportExportRootView<Content: View>: View {
-
-    @ViewBuilder
-    var content: () -> Content
-
-    var body: some View {
-        List(content: content)
-            .listStyle(.grouped)
-    }
-}
-
-#Preview {
-    BackupImportExportRootPreview()
+struct ImportBackupAlertContent: Equatable {
+    var title = LocalizedStringKey("")
+    var message = LocalizedStringKey("")
 }

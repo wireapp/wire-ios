@@ -18,9 +18,76 @@
 
 import Foundation
 
+@MainActor
 final class ImportBackupViewModel: ObservableObject {
 
+    private var state: ImportBackupState? {
+        didSet { updatePublishedProperties() }
+    }
+
+    @Published var alertContent = ImportBackupAlertContent()
+    @Published var isAlertPresented = false
+
+    var restoreError: (any Error)? { nil } // TODO: fix
+
     func importBackup(from url: URL) {
+        Task {
+            do {
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                if .random() {
+                    throw SomeError()
+                }
+            } catch {
+                state = .restoreFailed(SomeError())
+            }
+        }
+    }
+
+    private func updatePublishedProperties() {
+
+        /*
+        isSetBackupPasswordPresented = if case .enterPassword = state {
+            true
+        } else {
+            false
+        }
+
+        isCreatingBackupProgressPresented = switch state {
+        case .enterPassword, .creatingBackup, .backupReady:
+            true
+        default:
+            false
+        }
+         */
+
+        isAlertPresented = switch state { case .restoreFailed: true default: false }
+
+        /*
+        backupProgress = switch state {
+        case .creatingBackup(let progress):
+            progress
+        default:
+            nil
+        }
+
+        backupURL = if case .backupReady(let url) = state {
+            url
+        } else {
+            nil
+        }
+         */
 
     }
+}
+
+private struct SomeError: LocalizedError {
+
+    var errorDescription: String? { "errorDescription" }
+
+    var failureReason: String? { "failureReason" }
+
+    var recoverySuggestion: String? { "recoverySuggestion" }
+
+    var helpAnchor: String? { "helpAnchor" }
+
 }

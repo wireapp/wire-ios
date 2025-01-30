@@ -26,9 +26,11 @@ struct ImportBackupView: View {
 
     var body: some View {
         Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
+
             Button(L10n.Localizable.Settings.RestoreFromBackup.action) {
                 isFileImporterPresented = true
             }
+
             .fileImporter(
                 isPresented: $isFileImporterPresented,
                 allowedContentTypes: WireBackupUTIs
@@ -42,6 +44,17 @@ struct ImportBackupView: View {
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
+            }
+
+            .alert(
+                viewModel.alertContent.title,
+                isPresented: $viewModel.isAlertPresented
+            ) {
+                Button("OK") { // TODO: fix and localize
+                    // Handle the acknowledgement.
+                }
+            } message: {
+                Text("Please check your credentials and try again.")
             }
         }
     }

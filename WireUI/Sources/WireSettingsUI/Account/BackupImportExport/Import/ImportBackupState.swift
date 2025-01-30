@@ -16,19 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-struct BackupImportExportRootView<Content: View>: View {
-
-    @ViewBuilder
-    var content: () -> Content
-
-    var body: some View {
-        List(content: content)
-            .listStyle(.grouped)
-    }
-}
-
-#Preview {
-    BackupImportExportRootPreview()
+enum ImportBackupState {
+    case restoreFailed(any LocalizedError)
 }

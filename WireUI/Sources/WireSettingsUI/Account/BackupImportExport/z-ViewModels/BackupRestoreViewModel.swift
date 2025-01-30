@@ -65,9 +65,7 @@ public final class BackupRestoreViewModel: ObservableObject {
         self.restoreBackupResultHandler = restoreBackupResultHandler
 
         struct DummyExportBackupUseCase: ExportBackupUseCaseProtocol {
-            func invoke(password: String, export: @escaping (URL) async -> Void) async throws {
-                fatalError()
-            }
+            func invoke(password: String) async throws -> URL { fatalError() }
         }
     }
 
@@ -78,7 +76,7 @@ public final class BackupRestoreViewModel: ObservableObject {
         // TODO: activity indicator with progress
         Task {
             do {
-                try await exportBackupUseCase.invoke(password: password, export: export)
+                try await exportBackupUseCase.invoke(password: password) // , export: export)
             } catch {
                 fatalError("TODO")
                 /*backupResultHandler.onFailure()*/

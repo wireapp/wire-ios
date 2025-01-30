@@ -16,19 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-struct BackupImportExportRootView<Content: View>: View {
-
-    @ViewBuilder
-    var content: () -> Content
-
-    var body: some View {
-        List(content: content)
-            .listStyle(.grouped)
-    }
+/// A use case to export the current app state using a provided `password`.
+public protocol ExportBackupUseCaseProtocol: Sendable {
+    func invoke(password: String) async throws -> URL
 }
 
-#Preview {
-    BackupImportExportRootPreview()
-}
+// TODO: use `.completeFileProtection` if possible
+//let data = "".data(using: .utf8)
+//let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("sensitive.txt")
+//try? data?.write(to: fileURL, options: [.atomic, .completeFileProtection])

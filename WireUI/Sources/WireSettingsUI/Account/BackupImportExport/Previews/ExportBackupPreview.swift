@@ -18,17 +18,18 @@
 
 import SwiftUI
 
-struct BackupImportExportRootView<Content: View>: View {
-
-    @ViewBuilder
-    var content: () -> Content
-
-    var body: some View {
-        List(content: content)
-            .listStyle(.grouped)
+@MainActor
+func ExportBackupPreview() -> some View {
+    List {
+        ExportBackupView(
+            viewModel: .init(
+                exportBackupUseCase: PreviewExportBackupUseCase()
+            )
+        )
     }
+    .listStyle(.grouped)
 }
 
-#Preview {
-    BackupImportExportRootPreview()
+private struct PreviewExportBackupUseCase: ExportBackupUseCaseProtocol {
+    func invoke(password: String) async throws -> URL { fatalError() }
 }
