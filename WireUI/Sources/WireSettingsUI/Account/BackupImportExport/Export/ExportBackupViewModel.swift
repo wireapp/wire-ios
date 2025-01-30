@@ -54,31 +54,16 @@ final class ExportBackupViewModel: ObservableObject {
 
         backupTask = Task {
             defer { backupTask = nil }
+
             do {
-                let url = try await exportBackupUseCase.invoke(password: password)
-                // TODO: backup use case
-
-                state = .creatingBackup(progress: 0)
-                try? await Task.sleep(for: .seconds(0.5))
-                if Task.isCancelled { throw CancellationError() }
-                state = .creatingBackup(progress: 0.25)
-                try? await Task.sleep(for: .seconds(0.5))
-                if Task.isCancelled { throw CancellationError() }
-                state = .creatingBackup(progress: 0.5)
-                try? await Task.sleep(for: .seconds(0.5))
-                if Task.isCancelled { throw CancellationError() }
-                state = .creatingBackup(progress: 0.75)
-
-                if .random() {
-                    throw NSError(domain: "some", code: 0, userInfo: nil)
+                for try await update in exportBackupUseCase.invoke(password: password) {
+                    switch update {
+                    case .progress(let fraction):
+                        state = .creatingBackup(progress: fraction)
+                    case .success(let url):
+                        state = .backupReady(url: url)
+                    }
                 }
-
-                try? await Task.sleep(for: .seconds(0.5))
-                if Task.isCancelled { throw CancellationError() }
-                state = .creatingBackup(progress: 1)
-                try? await Task.sleep(for: .seconds(0.2))
-                if Task.isCancelled { throw CancellationError() }
-                state = .backupReady(url: url)
             } catch is CancellationError {
                 state = nil
             } catch {

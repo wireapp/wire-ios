@@ -43,12 +43,8 @@ public struct BackupImportExportBuilder {
     @MainActor
     public static func tmp() -> some View {
         BackupImportExportRootView {
-            ExportBackupView(viewModel: .init(exportBackupUseCase: TMPExportBackupUseCase()))
+            ExportBackupView(viewModel: .init(exportBackupUseCase: PreviewExportBackupUseCase()))
             ImportBackupView(viewModel: .init())
         }
     }
-}
-
-private struct TMPExportBackupUseCase: ExportBackupUseCaseProtocol {
-    func invoke(password: String) async throws -> URL { fatalError() }
 }

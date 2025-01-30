@@ -57,16 +57,12 @@ public final class BackupRestoreViewModel: ObservableObject {
         backupResultHandler: BackupResultHandler,
         restoreBackupResultHandler: RestoreBackupResultHandler
     ) {
-        exportBackupUseCase = DummyExportBackupUseCase()
+        exportBackupUseCase = PreviewExportBackupUseCase()
 
         self.backupSource = backupSource
         self.restoreSource = restoreSource
         self.backupResultHandler = backupResultHandler
         self.restoreBackupResultHandler = restoreBackupResultHandler
-
-        struct DummyExportBackupUseCase: ExportBackupUseCaseProtocol {
-            func invoke(password: String) async throws -> URL { fatalError() }
-        }
     }
 
     func backupActiveAccount(

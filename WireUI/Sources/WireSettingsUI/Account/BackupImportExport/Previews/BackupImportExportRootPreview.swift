@@ -29,7 +29,3 @@ func BackupImportExportRootPreview() -> some View {
         ImportBackupView(viewModel: .init())
     }
 }
-
-private struct PreviewExportBackupUseCase: ExportBackupUseCaseProtocol {
-    func invoke(password: String) async throws -> URL { fatalError() }
-}

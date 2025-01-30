@@ -29,7 +29,3 @@ func ExportBackupPreview() -> some View {
     }
     .listStyle(.grouped)
 }
-
-private struct PreviewExportBackupUseCase: ExportBackupUseCaseProtocol {
-    func invoke(password: String) async throws -> URL { fatalError() }
-}
