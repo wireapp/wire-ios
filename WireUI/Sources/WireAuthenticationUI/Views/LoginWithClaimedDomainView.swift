@@ -23,50 +23,70 @@ import WireReusableUIComponents
 package struct LoginWithClaimedDomainView: View {
     private let email: String
     private let forgotPasswordURL: URL
+    private let passwordValidator: any PasswordValidator
 
     @State var password: String = ""
+    @State var isPasswordValid = true
 
-    package init(email: String, forgotPasswordURL: URL) {
+    package init(
+        email: String,
+        forgotPasswordURL: URL,
+        passwordValidator: any PasswordValidator) {
         self.email = email
         self.forgotPasswordURL = forgotPasswordURL
+        self.passwordValidator = passwordValidator
     }
 
     package var body: some View {
-        LabeledTextField(
-            placeholder: nil,
-            title: L10n.CloudUserLogin.emailHeader,
-            string: .constant(email)
-        )
-        .disabled(true)
-        LabeledTextField(
-            placeholder: "Password",
-            title: "Password",
-            string: $password
-        )
-        Button(action: {
-            // Login
-        }, label: {
-            Text(L10n.CloudUserLogin.submit)
-        })
-        .wireButtonStyle(.primary)
-        .disabled(password.count < 4)
+        VStack(alignment: .center, spacing: 16) {
+            LabeledTextField(
+                placeholder: nil,
+                title: L10n.CloudUserLogin.InputEmail.title,
+                string: .constant(email)
+            )
+            .disabled(true)
+            .fixedSize(horizontal: false, vertical: true)
 
-        Button(action: {
-            UIApplication.shared.open(forgotPasswordURL)
-        }, label: {
-            Text(L10n.CloudUserLogin.forgotPassword)
-        })
-        .wireButtonStyle(.link)
+            PasswordField(
+                isPasswordValid: $isPasswordValid,
+                password: $password,
+                passwordValidator: passwordValidator,
+                placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
+                title: L10n.CloudUserLogin.InputPassword.title)
 
-        .padding(.top, 8)
-        .padding(.bottom, 8)
 
+            Button(action: {
+            }, label: {
+                Text(L10n.CloudUserLogin.submit)
+                    .lineLimit(nil)
+            })
+            .wireButtonStyle(.primary)
+                        .disabled(!isPasswordValid)
+            Button(action: {
+                UIApplication.shared.open(forgotPasswordURL)
+            }, label: {
+                Text(L10n.CloudUserLogin.forgotPassword)
+            })
+            .wireButtonStyle(.link)
+        }
         .navigationTitle(L10n.CloudUserLogin.title)
+        .padding(32)
+        .background(ColorTheme.Backgrounds.surface.color)
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
+        )
     }
 }
 
 #Preview {
-    LoginWithClaimedDomainView(
-        email: "email@wire.com",
-        forgotPasswordURL: URL(string: "https://example.com")!)
+    BackgroundView()
+        .overlay {
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(maxHeight: .infinity)
+                LoginWithClaimedDomainPreview()
+            }
+        }
 }

@@ -182,7 +182,7 @@ package struct SwitchBackendConfirmationView: View {
     BackgroundView()
         .overlay(
             ZStack {
-                SwitchBackendConfirmationViewPreview()
+                SwitchBackendConfirmationPreview()
                     .padding()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -193,7 +193,7 @@ package struct SwitchBackendConfirmationView: View {
     BackgroundView()
         .overlay(
             ZStack {
-                SwitchBackendConfirmationViewPreview()
+                SwitchBackendConfirmationPreview()
                     .padding()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

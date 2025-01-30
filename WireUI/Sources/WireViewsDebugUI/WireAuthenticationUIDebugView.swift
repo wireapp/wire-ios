@@ -53,7 +53,7 @@ public struct WireAuthenticationUIDebugView: View {
                     BackgroundView()
                         .overlay(
                             ZStack {
-                                SwitchBackendConfirmationViewPreview()
+                                SwitchBackendConfirmationPreview()
                                     .padding()
                             }
                             .frame(maxWidth: .infinity, maxHeight: .infinity)

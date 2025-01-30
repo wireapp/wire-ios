@@ -54,10 +54,10 @@ public struct PasswordField: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.subheadline)
-                .foregroundColor(calculatedColor)
+                .wireTextStyle(.h4)
+                .foregroundColor(titleColor)
 
             HStack {
                 if isPasswordVisible {
@@ -75,15 +75,17 @@ public struct PasswordField: View {
                     isPasswordVisible.toggle()
                 }, label: {
                     Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
-                        .foregroundColor(.gray)
+                        .foregroundColor(iconColor)
+                        .frame(width: 16, height: 16)
+                        .padding(19)
                 })
             }
-            .padding(.horizontal, 12)
+            .padding(.leading, 16)
             .overlay(
-                RoundedRectangle(cornerRadius: 5)
+                RoundedRectangle(cornerRadius: 12)
                     .stroke(
-                        calculatedColor,
-                        lineWidth: password.isEmpty ? 0 : 1
+                        borderColor,
+                        lineWidth: 1
                     )
             )
 
@@ -91,10 +93,9 @@ public struct PasswordField: View {
                arePasswordRulesVisible {
                 Text(passwordRules)
                     .font(.caption)
-                    .foregroundColor(calculatedColor)
+                    .foregroundColor(titleColor)
             }
         }
-        .padding(.horizontal)
         .onChange(of: password, perform: { newPassword in
             isPasswordValid = passwordValidator.validate(newPassword)
         })
@@ -102,16 +103,32 @@ public struct PasswordField: View {
 
     // MARK: - Helper
 
-    private var calculatedColor: Color {
+    private var titleColor: Color {
         switch (password.isEmpty, isPasswordValid) {
         case (_, false):
             ColorTheme.Base.error.color
         case (true, _):
-            ColorTheme.Base.secondaryText.color
+            ColorTheme.Base.labelTitle.color
         case (false, true):
             ColorTheme.Base.primary.color
         }
     }
+
+    private var borderColor: Color {
+        switch (password.isEmpty, isPasswordValid) {
+        case (_, false):
+            ColorTheme.Base.error.color
+        case (true, _):
+            ColorTheme.Strokes.outline.color
+        case (false, true):
+            ColorTheme.Base.primary.color
+        }
+    }
+
+    private var iconColor: Color {
+        password.isEmpty ? ColorTheme.Strokes.disabledOutline.color : ColorTheme.Buttons.Tertiary.onEnabled.color
+    }
+
 }
 
 // MARK: - Previews
@@ -142,6 +159,7 @@ package struct MockPasswordValidator: PasswordValidator {
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title
     )
+    .padding()
 }
 
 @available(iOS 17, *)
@@ -154,6 +172,7 @@ package struct MockPasswordValidator: PasswordValidator {
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title
     )
+    .padding()
 }
 
 @available(iOS 17, *)
@@ -166,6 +185,7 @@ package struct MockPasswordValidator: PasswordValidator {
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title
     )
+    .padding()
 }
 
 @available(iOS 17, *)
@@ -178,4 +198,5 @@ package struct MockPasswordValidator: PasswordValidator {
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title
     )
+    .padding()
 }

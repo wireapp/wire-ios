@@ -22,7 +22,9 @@
 "authentication.identity.input.submit" = "Next";
 
 "cloud_user_login.title" = "Enter your password to log in";
-"cloud_user_login.email_header" = "Email";
+"cloud_user_login.input_email.title" = "Email";
+"cloud_user_login.input_password.title" = "Password";
+"cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Next";
 "cloud_user_login.forgot_password" = "Forgot password?";
 "create_personal_account.title" = "Don’t have a Wire account?";

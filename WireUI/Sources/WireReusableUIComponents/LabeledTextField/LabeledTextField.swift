@@ -66,7 +66,7 @@ public struct LabeledTextField: View {
                         string = ""
                     }, label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.black)
+                            .foregroundStyle(ColorTheme.Buttons.Tertiary.onEnabled.color)
                             .frame(width: 16, height: 16)
                             .padding(19)
                     })
