@@ -2025,19 +2025,20 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
     }
-    
+
     func test_RetryOnCommitFailure_Keep_Throwing_Commit_Error_Prevents_Infinite_Loop() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
 
-        // Since `retryOnCommitFailure` is a recursive function for specific error `CommitError.failedToSendCommit(recovery: .retryAfterQuickSync`, we'll try to create an infinite loop by keep throwing the same error over and over again.
-        
+        // Since `retryOnCommitFailure` is a recursive function for specific error
+        // `CommitError.failedToSendCommit(recovery: .retryAfterQuickSync`, we'll try to create an infinite loop by keep throwing the same error over and over again.
+
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
             throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
         }
 
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
         }
 
         // Mock quick sync.
@@ -2051,19 +2052,20 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual(error, .mlsStaleMessage)
         }
     }
-    
+
     func test_RetryOnCommitFailure_Keep_Throwing_External_Commit_Error_Prevents_Infinite_Loop() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
 
-        // Since `retryOnCommitFailure` is a recursive function for specific error `ExternalCommitError.failedToSendCommit(recovery: .retry)`, we'll try to create an infinite loop by keep throwing the same error over and over again.
-        
+        // Since `retryOnCommitFailure` is a recursive function for specific error
+        // `ExternalCommitError.failedToSendCommit(recovery: .retry)`, we'll try to create an infinite loop by keep throwing the same error over and over again.
+
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
             throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
         }
 
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
         }
 
         // Mock quick sync.

@@ -561,7 +561,7 @@ public final class MLSService: MLSServiceInterface {
     // The number of days to wait until refreshing the key material for a group.
 
     private static let epochChangeBufferSize: Int = 1000
-    
+
     private let maxRetryAttempts = 3
 
     weak var delegate: MLSServiceDelegate?
@@ -1890,14 +1890,14 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("failed to send commit, syncing then retrying operation...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, retying operation...")
-            
+
             guard retryCount <= maxRetryAttempts else {
                 throw error
             }
-            
+
             var currentRetryCount = retryCount
             currentRetryCount += 1
-            
+
             try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
 
         } catch CommitError.failedToSendCommit(recovery: .retryAfterRepairingGroup, _) {
@@ -1912,14 +1912,14 @@ public final class MLSService: MLSServiceInterface {
 
         } catch ExternalCommitError.failedToSendCommit(recovery: .retry, cause: let error) {
             logger.warn("failed to send external commit, retrying operation...")
-            
+
             guard retryCount <= maxRetryAttempts else {
                 throw error
             }
-            
+
             var currentRetryCount = retryCount
             currentRetryCount += 1
-            
+
             try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
 
         } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
