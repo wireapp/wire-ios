@@ -70,6 +70,7 @@
 		59DBDB312D395B620069C64C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				UseCases/Protocols/ImportBackupUseCaseProtocol.swift,
 				UseCases/Protocols/IndividualToTeamMigrationUseCaseProtocol.swift,
 			);
 			target = 01D0DCA52C1C8C870076CB1C /* WireDomain */;

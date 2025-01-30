@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDomainPkg
+
 public extension SessionManager {
 
     func importBackupUseCase(appStateUpdater: ImportBackupAppStateUpdaterProtocol) -> ImportBackupUseCaseProtocol? {
