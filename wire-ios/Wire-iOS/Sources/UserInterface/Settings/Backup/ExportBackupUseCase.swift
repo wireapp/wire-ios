@@ -54,23 +54,3 @@ struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
     }
 
 }
-
-// TODO: delete
-extension ExportBackupUseCase: BackupSourceProtocol {
-
-    enum BackupSourceError: Error {
-        case missingSessionManager
-    }
-
-    func backupActiveAccount(password: String) throws -> URL {
-        guard let sessionManager = SessionManager.shared else {
-            throw BackupSourceError.missingSessionManager
-        }
-//        return try sessionManager.backupActiveAccount(password: password)
-        fatalError()
-    }
-
-    func clearPreviousBackups() {
-        SessionManager.shared?.clearPreviousBackups()
-    }
-}

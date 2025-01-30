@@ -24,7 +24,6 @@ public final class BackupRestoreViewModel: ObservableObject {
     /// `nil` means no backup is in progress.
     @Published private(set) var backupProgress: Float?
 
-    private let backupSource: any BackupSourceProtocol
     private let restoreSource: any RestoreSourceProtocol
     private let backupResultHandler: BackupResultHandler
     private let restoreBackupResultHandler: RestoreBackupResultHandler
@@ -37,29 +36,22 @@ public final class BackupRestoreViewModel: ObservableObject {
         self.exportBackupUseCase = exportBackupUseCase
 
         // TODO: fix
-        backupSource = DummyBackupSource()
         restoreSource = DummyRestoreSource()
         backupResultHandler = .init(onSuccess: { _, _ in fatalError() }, onFailure: {})
         restoreBackupResultHandler = .init(onSuccess: {}, onConfirmation: { _ in }, onFailure: {})
 
-        struct DummyBackupSource: BackupSourceProtocol {
-            func backupActiveAccount(password: String) throws -> URL { fatalError() }
-            func clearPreviousBackups() { fatalError() }
-        }
         struct DummyRestoreSource: RestoreSourceProtocol {
             func restoreFromBackup(at: URL, password: String, completion: @escaping (Result<Void, any Error>) -> Void) { fatalError() }
         }
     }
 
     public init(
-        backupSource: any BackupSourceProtocol,
         restoreSource: any RestoreSourceProtocol,
         backupResultHandler: BackupResultHandler,
         restoreBackupResultHandler: RestoreBackupResultHandler
     ) {
         exportBackupUseCase = PreviewExportBackupUseCase()
 
-        self.backupSource = backupSource
         self.restoreSource = restoreSource
         self.backupResultHandler = backupResultHandler
         self.restoreBackupResultHandler = restoreBackupResultHandler

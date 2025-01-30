@@ -23,7 +23,6 @@ import WireFoundation
 func BackupRestoreViewPreview() -> some View {
     BackupRestoreView(
         viewModel: BackupRestoreViewModel(
-            backupSource: MockBackupSource(),
             restoreSource: MockRestoreSource(),
             backupResultHandler: BackupResultHandler(
                 onSuccess: { _, _  in },
@@ -41,14 +40,6 @@ func BackupRestoreViewPreview() -> some View {
         importBackupSheetContent: { EmptyView() },
         presentActivityViewController: { _, _ in }
     )
-}
-
-private class MockBackupSource: BackupSourceProtocol {
-    func backupActiveAccount(password: String) throws -> URL {
-        URL(fileURLWithPath: "path")
-    }
-
-    func clearPreviousBackups() {}
 }
 
 private class MockRestoreSource: RestoreSourceProtocol {
