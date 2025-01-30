@@ -29,7 +29,26 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
     }
 
     func invoke(url: URL, password: String) async throws {
-        try await importBackupUseCaseProtocol.invoke(url: url, password: password)
+        do {
+            try await importBackupUseCaseProtocol.invoke(url: url, password: password)
+        } catch let error as WireSyncEngine.ImportBackupError {
+            switch error {
+            case .noActiveAccount:
+                throw WireSettingsUI.ImportBackupError.noActiveAccount
+            case .passwordRequired:
+                throw WireSettingsUI.ImportBackupError.passwordRequired
+            case .compressionError:
+                throw WireSettingsUI.ImportBackupError.compressionError
+            case .invalidFileExtension:
+                throw WireSettingsUI.ImportBackupError.invalidFileExtension
+            case .keyCreationFailed:
+                throw WireSettingsUI.ImportBackupError.keyCreationFailed
+            case .decryptionError:
+                throw WireSettingsUI.ImportBackupError.decryptionError
+            case .unknown:
+                throw WireSettingsUI.ImportBackupError.unknown
+            }
+        }
     }
 }
 
