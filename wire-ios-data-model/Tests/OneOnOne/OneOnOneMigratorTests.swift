@@ -244,15 +244,12 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         // Then
-        try await syncContext.perform {
+        await syncContext.perform {
             let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
-            XCTAssertEqual(mlsMessages.count, 4)
+            XCTAssertEqual(mlsMessages.count, 3)
             XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
             XCTAssertTrue(mlsMessages[1].isKnock)
             XCTAssertTrue(mlsMessages[2].isImage)
-
-            let systemMessage = try XCTUnwrap(mlsMessages[3] as? ZMSystemMessage)
-            XCTAssertEqual(systemMessage.systemMessageType, .mlsMigrationFinalized)
 
             XCTAssertNil(proteusConversation.lastMessage)
         }
@@ -354,7 +351,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         // Then
         await syncContext.perform {
             let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
-            let expectedMessagesCount = 7
+            let expectedMessagesCount = 6
             if mlsMessages.count == expectedMessagesCount {
                 XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
                 XCTAssertTrue(mlsMessages[1].isKnock)
@@ -362,7 +359,6 @@ final class OneOnOneMigratorTests: XCTestCase {
                 XCTAssertEqual(mlsMessages[3].textMessageData?.messageText, "Hello World Dup!")
                 XCTAssertTrue(mlsMessages[4].isKnock)
                 XCTAssertTrue(mlsMessages[5].isImage)
-                XCTAssertTrue(mlsMessages[6].isSystem)
             } else {
                 XCTFail("messages count is \(mlsMessages.count) instead of \(expectedMessagesCount)")
             }
@@ -501,7 +497,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         // Then
         await syncContext.perform {
             let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
-            let expectedMessagesCount = 10
+            let expectedMessagesCount = 9
             if mlsMessages.count == expectedMessagesCount {
                 XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
                 XCTAssertTrue(mlsMessages[1].isKnock)
@@ -512,7 +508,6 @@ final class OneOnOneMigratorTests: XCTestCase {
                 XCTAssertEqual(mlsMessages[6].textMessageData?.messageText, "Hello World 1!")
                 XCTAssertEqual(mlsMessages[7].textMessageData?.messageText, "Hello World 2!")
                 XCTAssertEqual(mlsMessages[8].textMessageData?.messageText, "Hello World 3!")
-                XCTAssertTrue(mlsMessages[9].isSystem)
             } else {
                 XCTFail("messages count is \(mlsMessages.count) instead of \(expectedMessagesCount)")
             }
