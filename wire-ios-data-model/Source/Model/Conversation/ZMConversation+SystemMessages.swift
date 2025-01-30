@@ -181,32 +181,35 @@ public extension ZMConversation {
     }
 
     // MARK: - MLS Migration
-    
-    
+
     func appendMLSMigrationFinalizedSystemMessageIfNeeded(
         sender: ZMUser,
         at timestamp: Date
     ) {
-        guard let context = self.managedObjectContext else {
+        guard let context = managedObjectContext else {
             return
         }
-        
+
         if !migrationFinalizedSystemMessageExists(in: context) {
             appendMLSMigrationFinalizedSystemMessage(sender: sender, at: timestamp)
         }
     }
-    
+
     private func migrationFinalizedSystemMessageExists(in context: NSManagedObjectContext) -> Bool {
         let request: NSFetchRequest<ZMSystemMessage> = NSFetchRequest(entityName: ZMSystemMessage.entityName())
-        request.predicate = NSPredicate(format: "%K == %d AND %K == %@", #keyPath(ZMSystemMessage.systemMessageType), ZMSystemMessageType.mlsMigrationFinalized.rawValue,
-            #keyPath(ZMSystemMessage.visibleInConversation), self
-            )
+        request.predicate = NSPredicate(
+            format: "%K == %d AND %K == %@",
+            #keyPath(ZMSystemMessage.systemMessageType),
+            ZMSystemMessageType.mlsMigrationFinalized.rawValue,
+            #keyPath(ZMSystemMessage.visibleInConversation),
+            self
+        )
         request.fetchLimit = 1
         let messageCount = context.countOrAssert(request: request)
         return messageCount == 1
     }
-    
-    func appendMLSMigrationFinalizedSystemMessage(
+
+    private func appendMLSMigrationFinalizedSystemMessage(
         sender: ZMUser,
         at timestamp: Date
     ) {
