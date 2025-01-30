@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol ImportBackupFileArchiverProtocol {
+protocol ImportBackupFileArchiverProtocol: Sendable {
 
     func unzipFile(
         at sourceURL: URL,

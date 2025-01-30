@@ -18,7 +18,7 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol ImportBackupUseCaseProtocol: Sendable {
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+public enum CreateBackupProgress: Sendable {
+    case progress(Float)
+    case done(URL)
 }

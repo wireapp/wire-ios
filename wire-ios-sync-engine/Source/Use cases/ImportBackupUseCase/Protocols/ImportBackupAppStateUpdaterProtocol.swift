@@ -17,7 +17,7 @@
 //
 
 // sourcery: AutoMockable
-public protocol ImportBackupAppStateUpdaterProtocol {
+public protocol ImportBackupAppStateUpdaterProtocol: Sendable {
 
     /// Inform the user about the current progress (percentage).
     /// - Parameter progress: A value between 0.0 and 1.0.

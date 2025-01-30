@@ -17,6 +17,7 @@
 //
 
 import ZipArchive
+import WireDomainPkg
 
 struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
 

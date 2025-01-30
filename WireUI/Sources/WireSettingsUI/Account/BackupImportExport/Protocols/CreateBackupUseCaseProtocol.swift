@@ -16,16 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// A use case to export the current app state using a provided `password`.
 public protocol CreateBackupUseCaseProtocol: Sendable {
     func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error>
-}
-
-public enum CreateBackupProgress: Sendable {
-    case progress(Float)
-    case success(URL)
 }
 
 // TODO: use `.completeFileProtection` if possible

@@ -17,21 +17,22 @@
 //
 
 import WireSettingsUI
-import WireSyncEngine
+import WireDomainPkg
+import Foundation
 
 // TODO: [WPB-15347] delete this workaround
 struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCaseProtocol {
 
-    private let importBackupUseCaseProtocol: any WireSyncEngine.ImportBackupUseCaseProtocol
+    private let importBackupUseCaseProtocol: any WireDomainPkg.ImportBackupUseCaseProtocol
 
-    fileprivate init(importBackupUseCaseProtocol: any WireSyncEngine.ImportBackupUseCaseProtocol) {
+    fileprivate init(_ importBackupUseCaseProtocol: any WireDomainPkg.ImportBackupUseCaseProtocol) {
         self.importBackupUseCaseProtocol = importBackupUseCaseProtocol
     }
 
     func invoke(url: URL, password: String) async throws {
         do {
             try await importBackupUseCaseProtocol.invoke(url: url, password: password)
-        } catch let error as WireSyncEngine.ImportBackupError {
+        } catch let error as WireDomainPkg.ImportBackupError {
             switch error {
             case .noActiveAccount:
                 throw WireSettingsUI.ImportBackupError.noActiveAccount
@@ -53,7 +54,7 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
 }
 
 extension WireSettingsUI.ImportBackupUseCaseProtocol where Self == ImportBackupUseCaseProtocolAdapter {
-    static func adapter(_ importBackupUseCaseProtocol: (any WireSyncEngine.ImportBackupUseCaseProtocol)?) -> Self {
-        .init(importBackupUseCaseProtocol: importBackupUseCaseProtocol!)
+    static func adapter(_ importBackupUseCaseProtocol: (any WireDomainPkg.ImportBackupUseCaseProtocol)?) -> Self {
+        .init(importBackupUseCaseProtocol!)
     }
 }

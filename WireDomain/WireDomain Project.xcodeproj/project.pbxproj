@@ -71,6 +71,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				UseCases/Protocols/ImportBackupError.swift,
+				UseCases/Protocols/ImportBackupProgress.swift,
 				UseCases/Protocols/ImportBackupUseCaseProtocol.swift,
 				UseCases/Protocols/IndividualToTeamMigrationUseCaseProtocol.swift,
 			);

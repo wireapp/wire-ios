@@ -20,25 +20,49 @@ import Foundation
 
 struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    func invoke(url: URL, password: String) async throws {
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-        if .random() {
-            throw SomeError()
+    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
+        AsyncThrowingStream { continuation in
+            Task.detached {
+                do {
+
+                    var failAtIndex: Int?
+                    if .random() {
+                        failAtIndex = .random(in: 0 ... 10)
+                    }
+
+                    for i in 0 ... 10 {
+
+                        try Task.checkCancellation()
+
+                        if i == failAtIndex {
+                            throw PreviewImportBackupError()
+                        }
+
+                        continuation.yield(.progress(Float(i) / 10))
+
+                        try await Task.sleep(for: .milliseconds(.random(in: 50 ... 300)))
+                    }
+
+                    continuation.yield(.done)
+                    continuation.finish()
+
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
         }
     }
 
-    struct PreviewImportBackupError: Error {}
+    struct PreviewImportBackupError: LocalizedError {
 
-}
+        var errorDescription: String? { "errorDescription" }
 
-private struct SomeError: LocalizedError {
+        var failureReason: String? { "failureReason" }
 
-    var errorDescription: String? { "errorDescription" }
+        var recoverySuggestion: String? { "recoverySuggestion" }
 
-    var failureReason: String? { "failureReason" }
+        var helpAnchor: String? { "helpAnchor" }
 
-    var recoverySuggestion: String? { "recoverySuggestion" }
-
-    var helpAnchor: String? { "helpAnchor" }
+    }
 
 }

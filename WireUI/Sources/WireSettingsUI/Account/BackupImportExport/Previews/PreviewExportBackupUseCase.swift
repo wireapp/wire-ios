@@ -44,7 +44,7 @@ struct PreviewExportBackupUseCase: CreateBackupUseCaseProtocol {
                     }
 
                     let fileURL = URL(fileURLWithPath: "/path/to/final/backup.zip")
-                    continuation.yield(.success(fileURL))
+                    continuation.yield(.done(fileURL))
                     continuation.finish()
 
                 } catch {

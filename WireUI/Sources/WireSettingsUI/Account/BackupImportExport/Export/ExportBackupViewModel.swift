@@ -60,7 +60,7 @@ final class ExportBackupViewModel: ObservableObject {
                     switch update {
                     case .progress(let fraction):
                         state = .creatingBackup(progress: fraction)
-                    case .success(let url):
+                    case .done(let url):
                         state = .backupReady(url: url)
                     }
                 }

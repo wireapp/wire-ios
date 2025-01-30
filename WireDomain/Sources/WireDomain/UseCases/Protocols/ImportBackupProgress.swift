@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-// sourcery: AutoMockable
-public protocol ImportBackupUseCaseProtocol: Sendable {
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+public enum ImportBackupProgress: Sendable {
+    case progress(Float)
+    case done
 }

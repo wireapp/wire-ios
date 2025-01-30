@@ -39,15 +39,7 @@ struct ImportBackupView: View {
                 isPresented: $isFileImporterPresented,
                 allowedContentTypes: WireBackupUTIs
             ) { result in
-                switch result {
-                case .success(let url):
-                    let gotAccess = url.startAccessingSecurityScopedResource()
-                    guard gotAccess else { return assertionFailure() } // TODO: also log before every assertionFailure
-                    viewModel.importBackup(from: url)
-                    url.stopAccessingSecurityScopedResource()
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+                viewModel.pickedBackupFile(result: result)
             }
 
             .alert(

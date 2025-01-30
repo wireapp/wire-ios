@@ -21,6 +21,7 @@ import WireCrypto
 import WireDataModel
 import WireLogging
 import WireSystem
+import WireDomainPkg
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
