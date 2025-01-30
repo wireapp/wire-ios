@@ -20,9 +20,9 @@ import SwiftUI
 
 public struct BackupImportExportBuilder {
 
-    public var backupPasswordValidator: any BackupPasswordValidatorProtocol
-    public var exportBackupUseCase: any CreateBackupUseCaseProtocol
-    public var cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
+    let backupPasswordValidator: any BackupPasswordValidatorProtocol
+    let exportBackupUseCase: any CreateBackupUseCaseProtocol
+    let cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
@@ -36,17 +36,11 @@ public struct BackupImportExportBuilder {
 
     @MainActor
     public func build() -> UIViewController {
-
-        let rootView = BackupImportExportRootView {
-            ExportBackupView(viewModel: .init(exportBackupUseCase: exportBackupUseCase))
-            ImportBackupView(viewModel: .init())
-        }
-        return UIHostingController(rootView: rootView)
-
-        let viewModel = BackupRestoreViewModel(exportBackupUseCase: exportBackupUseCase)
-        return BackupRestoreViewController(
-            viewModel: viewModel,
-            backupPasswordValidator: backupPasswordValidator
+        UIHostingController(
+            rootView: BackupImportExportRootView {
+                ExportBackupView(viewModel: .init(exportBackupUseCase: exportBackupUseCase))
+                ImportBackupView(viewModel: .init())
+            }
         )
     }
 }
