@@ -24,7 +24,7 @@ final class ExportBackupViewModel: ObservableObject {
     let exportBackupUseCase: any ExportBackupUseCaseProtocol
     // let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
 
-    private var state: State? { // TODO: consider moving into separate file `ExportBackpuState`
+    private var state: ExportBackupState? {
         didSet { updatePublishedProperties() }
     }
 
@@ -46,7 +46,7 @@ final class ExportBackupViewModel: ObservableObject {
     func requestBackupPassword() {
         guard state == nil else { return assertionFailure() }
 
-        state = .enterPassword(password: "")
+        state = .requestingPassword(password: "")
     }
 
     func createBackup(password: String) {
@@ -74,7 +74,7 @@ final class ExportBackupViewModel: ObservableObject {
 
     func cancel() {
         switch state {
-        case .enterPassword:
+        case .requestingPassword:
             state = nil
         case .creatingBackup:
             backupTask?.cancel()
@@ -90,33 +90,26 @@ final class ExportBackupViewModel: ObservableObject {
 
     private func updatePublishedProperties() {
 
-        isSetBackupPasswordPresented = if case .enterPassword = state { true } else { false }
+        isSetBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
+
         isCreatingBackupProgressPresented = switch state {
-        case .enterPassword, .creatingBackup, .backupReady: true
+
+        case .requestingPassword, .creatingBackup, .backupReady: true
         default: false
         }
+
         isErrorAlertPresented = switch state { case .backupFailed: true default: false }
+
         backupProgress = switch state { case .creatingBackup(let progress): progress default: nil }
+
         backupURL = if case .backupReady(let url) = state { url } else { nil }
 
     }
 }
 
-// MARK: - ExportBackupViewModel + State
-
-extension ExportBackupViewModel {
-
-    enum State {
-        case enterPassword(password: String)
-        case creatingBackup(progress: Float)
-        case backupReady(url: URL)
-        case backupFailed(any Error)
-    }
-}
-
 // MARK: - ExportBackupViewModel.State + Properties
 
-private extension ExportBackupViewModel.State {
+private extension ExportBackupState {
 
     var backupError: (any Error)? {
         if case .backupFailed(let error) = self {
@@ -129,8 +122,8 @@ private extension ExportBackupViewModel.State {
 
 // TODO: ?
 
-extension ExportBackupViewModel.State {
+extension ExportBackupState {
     fileprivate var isEnterBackupPasswordStep: Bool {
-        if case .enterPassword = self { true } else { false }
+        if case .requestingPassword = self { true } else { false }
     }
 }

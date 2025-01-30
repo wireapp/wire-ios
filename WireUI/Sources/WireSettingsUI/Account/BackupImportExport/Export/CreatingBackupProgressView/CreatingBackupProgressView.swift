@@ -21,7 +21,7 @@ import WireReusableUIComponents
 
 struct CreatingBackupProgressView: View {
 
-    var progress: CreatingBackupProgress
+    var progress: CreatingBackupProgressModel
     var cancelAction: () -> Void
 
     var body: some View {

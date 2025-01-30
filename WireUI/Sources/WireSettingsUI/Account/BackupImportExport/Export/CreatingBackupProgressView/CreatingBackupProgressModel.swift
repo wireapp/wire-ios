@@ -18,7 +18,7 @@
 
 import Foundation
 
-enum CreatingBackupProgress {
+enum CreatingBackupProgressModel {
     case ongoing(_ percentage: Float)
     case finished(_ url: URL)
 }
