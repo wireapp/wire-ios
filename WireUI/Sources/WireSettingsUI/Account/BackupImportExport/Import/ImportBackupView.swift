@@ -31,7 +31,7 @@ struct ImportBackupView: View {
             }
             .fileImporter(
                 isPresented: $isFileImporterPresented,
-                allowedContentTypes: [.json]
+                allowedContentTypes: WireBackupUTIs
             ) { result in
                 switch result {
                 case .success(let url):

@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import UniformTypeIdentifiers
 import WireDataModel
 import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
+import WireSettingsUI
 
 protocol BackupRestoreControllerDelegate: AnyObject {
 
@@ -35,16 +35,6 @@ protocol BackupRestoreControllerDelegate: AnyObject {
 /// An object that coordinates restoring a backup.
 
 final class BackupRestoreController: NSObject {
-
-    // There are some external apps that users can use to transfer backup files, which can modify
-    // their attachments and change the underscore with a dash. This is the reason we accept 2 types
-    // of file extensions: 'ios_wbu' and 'ios-wbu'.
-
-    static let WireBackupUTIs = [
-        "com.wire.backup-universal",
-        "com.wire.backup-ios-underscore",
-        "com.wire.backup-ios-hyphen"
-    ]
 
     weak var delegate: BackupRestoreControllerDelegate?
 
@@ -86,7 +76,7 @@ final class BackupRestoreController: NSObject {
 
     private func showFilePicker() {
         let picker = UIDocumentPickerViewController(
-            forOpeningContentTypes: BackupRestoreController.WireBackupUTIs.compactMap { UTType($0) },
+            forOpeningContentTypes: WireBackupUTIs,
             asCopy: true
         )
 
