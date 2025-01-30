@@ -15,3 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import SwiftUI
+
+struct LoginViaSSOView: View {
+
+    @ObservedObject var viewModel: LoginViaSSOViewModel
+
+    var body: some View {
+        Color.red
+    }
+
+}
+
+#Preview {
+    LoginViaSSOView(viewModel: LoginViaSSOViewModel())
+}
