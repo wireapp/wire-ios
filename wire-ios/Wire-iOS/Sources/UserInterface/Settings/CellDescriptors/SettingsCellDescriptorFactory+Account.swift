@@ -369,10 +369,11 @@ extension SettingsCellDescriptorFactory {
         SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.encryptMessagesAtRest))
     }
 
-    private var backupRestoreBuilder: BackupRestoreBuilder {
+    private var backupImportExportBuilder: BackupImportExportBuilder {
         .init(
             backupPasswordValidator: BackupPasswordValidator(),
-            exportBackupUseCase: BackupSource(sessionManager: .shared!)
+            exportBackupUseCase: ExportBackupUseCase(sessionManager: .shared!),
+            cleanUpBackupsUseCaseProtocol: CleanUpBackupsUseCase(sessionManager: .shared!)
         )
     }
 
@@ -388,7 +389,7 @@ extension SettingsCellDescriptorFactory {
                     return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-                    let backupRestoreController = backupRestoreBuilder.build()
+                    let backupRestoreController = backupImportExportBuilder.build()
 //                    let viewModel = BackupRestoreViewModel( // TODO: delete, use `backupRestoreBuilder`
 //                        backupSource: BackupSource(),
 //                        restoreSource: RestoreSource(),

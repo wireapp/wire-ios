@@ -20,14 +20,48 @@ import Foundation
 import WireSettingsUI
 import WireSyncEngine
 
-struct BackupSource: BackupSourceProtocol, ExportBackupUseCaseProtocol {
+struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
 
-    // TODO: remove
+    var sessionManager: @Sendable @MainActor () -> SessionManager
+
+    init(sessionManager: @autoclosure @Sendable @MainActor @escaping () -> SessionManager) {
+        self.sessionManager = sessionManager
+    }
+
+    func invoke(password: String) -> AsyncThrowingStream<ExportBackupProgress, any Error> {
+        AsyncThrowingStream { continuation in
+            Task { @MainActor in
+                do {
+
+                    let sessionManager = sessionManager()
+
+                    continuation.yield(.progress(0.5))
+
+                    let url = try await withCheckedThrowingContinuation { continuation in
+                        sessionManager.backupActiveAccount(password: password) { result in
+                            continuation.resume(with: result)
+                        }
+                    }
+
+                    continuation.yield(.success(url))
+                    continuation.finish()
+
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+
+}
+
+// TODO: delete
+extension ExportBackupUseCase: BackupSourceProtocol {
+
     enum BackupSourceError: Error {
         case missingSessionManager
     }
 
-    // TODO: remove
     func backupActiveAccount(password: String) throws -> URL {
         guard let sessionManager = SessionManager.shared else {
             throw BackupSourceError.missingSessionManager
@@ -36,31 +70,7 @@ struct BackupSource: BackupSourceProtocol, ExportBackupUseCaseProtocol {
         fatalError()
     }
 
-    // TODO: remove
     func clearPreviousBackups() {
         SessionManager.shared?.clearPreviousBackups()
     }
-
-    var sessionManager: () -> SessionManager
-
-    init(sessionManager: @autoclosure @escaping () -> SessionManager) {
-        self.sessionManager = sessionManager
-    }
-
-    @MainActor
-    func invoke(
-        password: String,
-        export: @escaping (_ url: URL) async -> Void
-    ) async throws {
-        let sessionManager = sessionManager()
-
-        let url = try await withCheckedThrowingContinuation { continuation in
-            sessionManager.backupActiveAccount(password: password) { result in
-                continuation.resume(with: result)
-            }
-        }
-        await export(url)
-        sessionManager.clearPreviousBackups()
-    }
-
 }

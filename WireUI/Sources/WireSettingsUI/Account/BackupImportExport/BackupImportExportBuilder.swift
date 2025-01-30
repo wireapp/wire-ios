@@ -22,29 +22,31 @@ public struct BackupImportExportBuilder {
 
     public var backupPasswordValidator: any BackupPasswordValidatorProtocol
     public var exportBackupUseCase: any ExportBackupUseCaseProtocol
+    public var cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
-        exportBackupUseCase: any ExportBackupUseCaseProtocol
+        exportBackupUseCase: any ExportBackupUseCaseProtocol,
+        cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.exportBackupUseCase = exportBackupUseCase
+        self.cleanUpBackupsUseCaseProtocol = cleanUpBackupsUseCaseProtocol
     }
 
     @MainActor
     public func build() -> UIViewController {
+
+        let rootView = BackupImportExportRootView {
+            ExportBackupView(viewModel: .init(exportBackupUseCase: exportBackupUseCase))
+            ImportBackupView(viewModel: .init())
+        }
+        return UIHostingController(rootView: rootView)
+
         let viewModel = BackupRestoreViewModel(exportBackupUseCase: exportBackupUseCase)
         return BackupRestoreViewController(
             viewModel: viewModel,
             backupPasswordValidator: backupPasswordValidator
         )
-    }
-
-    @MainActor
-    public static func tmp() -> some View {
-        BackupImportExportRootView {
-            ExportBackupView(viewModel: .init(exportBackupUseCase: PreviewExportBackupUseCase()))
-            ImportBackupView(viewModel: .init())
-        }
     }
 }
