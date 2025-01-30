@@ -17,23 +17,13 @@
 //
 
 import SwiftUI
-import WireDesign
-import WireFoundation
 
-struct BackupImportExportRootView<Content: View>: View {
-
-    @ViewBuilder
-    var content: () -> Content
-
-    var body: some View {
-        List(content: content)
-            .listStyle(.grouped)
-            .background(Color(ColorTheme.Backgrounds.background))
-            .scrollContentBackground(.hidden)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+@MainActor
+func ImportBackupPreview() -> some View {
+    List {
+        ImportBackupView(
+            viewModel: .init()
+        )
     }
-}
-
-#Preview {
-    BackupImportExportRootPreview()
+    .listStyle(.grouped)
 }

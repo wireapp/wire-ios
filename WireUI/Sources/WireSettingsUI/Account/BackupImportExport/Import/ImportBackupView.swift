@@ -27,8 +27,12 @@ struct ImportBackupView: View {
     var body: some View {
         Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
 
-            Button(L10n.Localizable.Settings.RestoreFromBackup.action) {
+            Button {
                 isFileImporterPresented = true
+            } label: {
+                Text(L10n.Localizable.Settings.RestoreFromBackup.action)
+                    .font(.textStyle(.body2))
+                    .foregroundStyle(Color.primaryText)
             }
 
             .fileImporter(
@@ -61,8 +65,5 @@ struct ImportBackupView: View {
 }
 
 #Preview {
-    List {
-        ImportBackupView(viewModel: .init())
-    }
-    .listStyle(.grouped)
+    ImportBackupPreview()
 }

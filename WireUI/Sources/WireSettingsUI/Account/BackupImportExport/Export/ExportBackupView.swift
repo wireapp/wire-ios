@@ -26,8 +26,12 @@ struct ExportBackupView: View {
 
         Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
 
-            Button(L10n.Localizable.Settings.ExportBackup.action) {
+            Button {
                 viewModel.requestBackupPassword()
+            } label: {
+                Text(L10n.Localizable.Settings.ExportBackup.action)
+                    .wireTextStyle(.body2)
+                    .foregroundStyle(Color.primaryText)
             }
 
             .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
