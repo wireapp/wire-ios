@@ -2065,7 +2065,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+            throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
         }
 
         // Mock quick sync.
