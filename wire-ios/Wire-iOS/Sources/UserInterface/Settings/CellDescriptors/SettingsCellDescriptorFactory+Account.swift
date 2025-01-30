@@ -372,7 +372,7 @@ extension SettingsCellDescriptorFactory {
     private var backupImportExportBuilder: BackupImportExportBuilder {
         .init(
             backupPasswordValidator: BackupPasswordValidator(),
-            exportBackupUseCase: ExportBackupUseCase(sessionManager: .shared!),
+            exportBackupUseCase: CreateBackupUseCase(sessionManager: .shared!),
             cleanUpBackupsUseCaseProtocol: CleanUpBackupsUseCase(sessionManager: .shared!)
         )
     }

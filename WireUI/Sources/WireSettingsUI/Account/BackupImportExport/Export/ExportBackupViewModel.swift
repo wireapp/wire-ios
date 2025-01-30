@@ -21,7 +21,7 @@ import Foundation
 @MainActor
 final class ExportBackupViewModel: ObservableObject {
 
-    let exportBackupUseCase: any ExportBackupUseCaseProtocol
+    let exportBackupUseCase: any CreateBackupUseCaseProtocol
     // let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
 
     private var state: ExportBackupState? {
@@ -39,7 +39,7 @@ final class ExportBackupViewModel: ObservableObject {
 
     private var backupTask: Task<Void, any Error>?
 
-    init(exportBackupUseCase: any ExportBackupUseCaseProtocol) {
+    init(exportBackupUseCase: any CreateBackupUseCaseProtocol) {
         self.exportBackupUseCase = exportBackupUseCase
     }
 

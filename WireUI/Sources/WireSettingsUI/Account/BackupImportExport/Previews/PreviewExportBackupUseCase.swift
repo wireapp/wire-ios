@@ -18,9 +18,9 @@
 
 import Foundation
 
-struct PreviewExportBackupUseCase: ExportBackupUseCaseProtocol {
+struct PreviewExportBackupUseCase: CreateBackupUseCaseProtocol {
 
-    func invoke(password: String) -> AsyncThrowingStream<ExportBackupProgress, any Error> {
+    func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             Task.detached {
                 do {

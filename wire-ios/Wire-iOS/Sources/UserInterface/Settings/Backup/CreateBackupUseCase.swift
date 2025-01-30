@@ -20,7 +20,7 @@ import Foundation
 import WireSettingsUI
 import WireSyncEngine
 
-struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
+struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     var sessionManager: @Sendable @MainActor () -> SessionManager
 
@@ -28,7 +28,7 @@ struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
         self.sessionManager = sessionManager
     }
 
-    func invoke(password: String) -> AsyncThrowingStream<ExportBackupProgress, any Error> {
+    func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             Task { @MainActor in
                 do {

@@ -28,11 +28,9 @@ public final class BackupRestoreViewModel: ObservableObject {
     private let backupResultHandler: BackupResultHandler
     private let restoreBackupResultHandler: RestoreBackupResultHandler
 
-    private let exportBackupUseCase: any ExportBackupUseCaseProtocol
+    private let exportBackupUseCase: any CreateBackupUseCaseProtocol
 
-    public init(
-        exportBackupUseCase: any ExportBackupUseCaseProtocol
-    ) {
+    public init(exportBackupUseCase: any CreateBackupUseCaseProtocol) {
         self.exportBackupUseCase = exportBackupUseCase
 
         // TODO: fix

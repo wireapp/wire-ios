@@ -19,11 +19,11 @@
 import Foundation
 
 /// A use case to export the current app state using a provided `password`.
-public protocol ExportBackupUseCaseProtocol: Sendable {
-    func invoke(password: String) -> AsyncThrowingStream<ExportBackupProgress, any Error>
+public protocol CreateBackupUseCaseProtocol: Sendable {
+    func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error>
 }
 
-public enum ExportBackupProgress: Sendable {
+public enum CreateBackupProgress: Sendable {
     case progress(Float)
     case success(URL)
 }

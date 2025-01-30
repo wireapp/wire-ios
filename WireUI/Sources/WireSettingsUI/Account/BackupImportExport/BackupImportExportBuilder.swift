@@ -21,12 +21,12 @@ import SwiftUI
 public struct BackupImportExportBuilder {
 
     public var backupPasswordValidator: any BackupPasswordValidatorProtocol
-    public var exportBackupUseCase: any ExportBackupUseCaseProtocol
+    public var exportBackupUseCase: any CreateBackupUseCaseProtocol
     public var cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
-        exportBackupUseCase: any ExportBackupUseCaseProtocol,
+        exportBackupUseCase: any CreateBackupUseCaseProtocol,
         cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
     ) {
         self.backupPasswordValidator = backupPasswordValidator
