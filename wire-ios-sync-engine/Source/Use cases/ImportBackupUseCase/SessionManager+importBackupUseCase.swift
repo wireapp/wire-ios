@@ -20,7 +20,7 @@ import WireDomainPkg
 
 public extension SessionManager {
 
-    func importBackupUseCase(appStateUpdater: ImportBackupAppStateUpdaterProtocol) -> ImportBackupUseCaseProtocol? {
+    var importBackupUseCase: ImportBackupUseCaseProtocol? {
 
         // return `nil` immediately if there is no active user session
         activeUserSession.map { _ in
@@ -31,10 +31,34 @@ public extension SessionManager {
                 streamDecryptor: ImportBackupStreamDecryptor(),
                 fileArchiver: ImportBackupFileArchiver(),
                 entityStorage: ImportBackupEntityStorage(),
-                appStateUpdater: appStateUpdater,
+                appStateUpdater: ImportBackupAppStateUpdater(sessionManager: self),
                 sharedContainerURL: sharedContainerURL,
                 logger: .localStorage
             )
+        }
+    }
+}
+
+private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol {
+
+    let sessionManager: SessionManager
+
+    func reportImportProgress(progress: Float) { print("importProgress: \(Int(round(progress * 100)))%") }
+    @MainActor
+    func reportMigrationNeeded() async {
+        await withCheckedContinuation { continuation in
+            sessionManager.prepareForRestoreWithMigration(completion: continuation.resume)
+        }
+    }
+
+    @MainActor
+    func selectAccountAndTriggerSlowSync(_ account: Account) async {
+        let userSession = await withCheckedContinuation { continuation in
+            sessionManager.select(account, completion: { continuation.resume(returning: $0) })
+        }
+        guard let userSession else { return }
+        userSession.syncManagedObjectContext.performGroupedBlock {
+            userSession.syncStatus.forceSlowSync()
         }
     }
 }

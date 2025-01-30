@@ -21,6 +21,8 @@ import Foundation
 @MainActor
 final class ImportBackupViewModel: ObservableObject {
 
+    let importBackupUseCase: any ImportBackupUseCaseProtocol
+
     private var state: ImportBackupState? {
         didSet { updatePublishedProperties() }
     }
@@ -29,6 +31,10 @@ final class ImportBackupViewModel: ObservableObject {
     @Published var isAlertPresented = false
 
     var restoreError: (any Error)? { nil } // TODO: fix
+
+    init(importBackupUseCase: any ImportBackupUseCaseProtocol) {
+        self.importBackupUseCase = importBackupUseCase
+    }
 
     func importBackup(from url: URL) {
         Task {

@@ -22,15 +22,18 @@ public struct BackupImportExportBuilder {
 
     let backupPasswordValidator: any BackupPasswordValidatorProtocol
     let exportBackupUseCase: any CreateBackupUseCaseProtocol
+    let importBackupUseCase: any ImportBackupUseCaseProtocol
     let cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
         exportBackupUseCase: any CreateBackupUseCaseProtocol,
+        importBackupUseCase: any ImportBackupUseCaseProtocol,
         cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.exportBackupUseCase = exportBackupUseCase
+        self.importBackupUseCase = importBackupUseCase
         self.cleanUpBackupsUseCaseProtocol = cleanUpBackupsUseCaseProtocol
     }
 
@@ -39,7 +42,7 @@ public struct BackupImportExportBuilder {
         UIHostingController(
             rootView: BackupImportExportRootView {
                 ExportBackupView(viewModel: .init(exportBackupUseCase: exportBackupUseCase))
-                ImportBackupView(viewModel: .init())
+                ImportBackupView(viewModel: .init(importBackupUseCase: importBackupUseCase))
             }
         )
     }

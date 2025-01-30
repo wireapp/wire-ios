@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-@MainActor
-func ImportBackupPreview() -> some View {
-    List {
-        ImportBackupView(
-            viewModel: .init(importBackupUseCase: PreviewImportBackupUseCase())
-        )
+struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
+
+    func invoke(url: URL, password: String) async throws {
+        fatalError()
     }
-    .listStyle(.grouped)
+
+    struct PreviewImportBackupError: Error {}
+
 }

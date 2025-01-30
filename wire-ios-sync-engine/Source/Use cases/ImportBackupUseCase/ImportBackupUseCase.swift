@@ -21,9 +21,8 @@ import WireCrypto
 import WireDataModel
 import WireLogging
 import WireSystem
-import ZipArchive
-import WireDomainPkg
 
+public // TODO: [WPB-15347] make internal
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     let userSession: () -> UserSession?
@@ -36,6 +35,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
     let sharedContainerURL: URL
     let logger: WireLogger
 
+    public // TODO: [WPB-15347] make internal
     func invoke(url: URL, password: String) async throws {
 
         switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {

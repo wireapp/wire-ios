@@ -370,10 +370,16 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var backupImportExportBuilder: BackupImportExportBuilder {
-        .init(
+
+        // force-unwrapping should be fine, since we should have a session manager and an active user session here
+        let sessionManager = SessionManager.shared!
+        let importBackupUseCase = sessionManager.importBackupUseCase!
+
+        return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
-            exportBackupUseCase: CreateBackupUseCase(sessionManager: .shared!),
-            cleanUpBackupsUseCaseProtocol: CleanUpBackupsUseCase(sessionManager: .shared!)
+            exportBackupUseCase: CreateBackupUseCase(sessionManager: sessionManager),
+            importBackupUseCase: .adapter(importBackupUseCase),
+            cleanUpBackupsUseCaseProtocol: CleanUpBackupsUseCase(sessionManager: sessionManager)
         )
     }
 

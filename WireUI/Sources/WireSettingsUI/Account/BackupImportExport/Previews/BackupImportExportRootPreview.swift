@@ -26,6 +26,10 @@ func BackupImportExportRootPreview() -> some View {
                 exportBackupUseCase: PreviewExportBackupUseCase()
             )
         )
-        ImportBackupView(viewModel: .init())
+        ImportBackupView(
+            viewModel: .init(
+                importBackupUseCase: PreviewImportBackupUseCase()
+            )
+        )
     }
 }
