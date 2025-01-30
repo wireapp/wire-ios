@@ -30,8 +30,6 @@ final class ImportBackupViewModel: ObservableObject {
     @Published var alertContent = ImportBackupAlertContent()
     @Published var isAlertPresented = false
 
-    var restoreError: (any Error)? { nil } // TODO: fix
-
     init(importBackupUseCase: any ImportBackupUseCaseProtocol) {
         self.importBackupUseCase = importBackupUseCase
     }
@@ -39,12 +37,10 @@ final class ImportBackupViewModel: ObservableObject {
     func importBackup(from url: URL) {
         Task {
             do {
-                try await Task.sleep(nanoseconds: 1_000_000_000)
-                if .random() {
-                    throw SomeError()
-                }
+                // TODO: pw
+                try await importBackupUseCase.invoke(url: url, password: "")
             } catch {
-                state = .restoreFailed(SomeError())
+                state = .restoreFailed(error)
             }
         }
     }
@@ -84,16 +80,4 @@ final class ImportBackupViewModel: ObservableObject {
          */
 
     }
-}
-
-private struct SomeError: LocalizedError {
-
-    var errorDescription: String? { "errorDescription" }
-
-    var failureReason: String? { "failureReason" }
-
-    var recoverySuggestion: String? { "recoverySuggestion" }
-
-    var helpAnchor: String? { "helpAnchor" }
-
 }

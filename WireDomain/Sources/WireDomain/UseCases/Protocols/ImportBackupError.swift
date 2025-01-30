@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum BackupRestoreError: Error {
+public enum ImportBackupError: Error {
     case noActiveAccount
+    /// The backup file is encrypted and a password is needed for decryption.
+    case passwordRequired
     case compressionError
     case invalidFileExtension
     case keyCreationFailed

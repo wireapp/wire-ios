@@ -42,10 +42,10 @@ struct ImportBackupStreamDecryptor: ImportBackupStreamDecryptorProtocol {
             )
 
         } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
-            throw BackupRestoreError.decryptionError
+            throw ImportBackupError.decryptionError
 
         } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
-            throw BackupRestoreError.keyCreationFailed
+            throw ImportBackupError.keyCreationFailed
         }
 
     }

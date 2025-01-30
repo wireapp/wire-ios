@@ -19,5 +19,6 @@
 import Foundation
 
 enum ImportBackupState {
-    case restoreFailed(any LocalizedError)
+    case requestingPassword
+    case restoreFailed(any Error)
 }

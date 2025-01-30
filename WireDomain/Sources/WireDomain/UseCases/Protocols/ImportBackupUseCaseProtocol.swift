@@ -19,6 +19,6 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol ImportBackupUseCaseProtocol {
+public protocol ImportBackupUseCaseProtocol: Sendable {
     func invoke(url: URL, password: String) async throws
 }

@@ -28,7 +28,7 @@ struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
         )
 
         guard success else {
-            throw BackupRestoreError.compressionError
+            throw ImportBackupError.compressionError
         }
 
     }

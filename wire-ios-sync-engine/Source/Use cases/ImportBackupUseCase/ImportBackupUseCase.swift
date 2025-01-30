@@ -22,10 +22,9 @@ import WireDataModel
 import WireLogging
 import WireSystem
 
-public // TODO: [WPB-15347] make internal
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    let userSession: () -> UserSession?
+    let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
     let streamDecryptor: ImportBackupStreamDecryptorProtocol
     let fileArchiver: ImportBackupFileArchiverProtocol
@@ -35,16 +34,19 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
     let sharedContainerURL: URL
     let logger: WireLogger
 
-    public // TODO: [WPB-15347] make internal
     func invoke(url: URL, password: String) async throws {
 
         switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {
 
         case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
+            guard !password.isEmpty else {
+                // legacy backups always need a password
+                throw ImportBackupError.passwordRequired
+            }
             try await importIOSBackup(url, password)
 
         case nil:
-            throw BackupRestoreError.invalidFileExtension
+            throw ImportBackupError.invalidFileExtension
         }
     }
 
@@ -53,7 +55,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         // to start with we need an active user session, later the session will be torn down
         weak var userSession = userSession()
         guard let account = userSession?.contextProvider.account else {
-            throw BackupRestoreError.noActiveAccount
+            throw ImportBackupError.noActiveAccount
         }
 
         // before we start the first operation let the user know, the progress has started
@@ -77,7 +79,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             selfUserQualifiedID = qualifiedID
             selfClientBackup = backup
         } else {
-            throw BackupRestoreError.unknown
+            throw ImportBackupError.unknown
         }
 
         // user session needs to be torn down
@@ -127,7 +129,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         guard
             let inputStream = InputStream(url: url),
             let outputStream = OutputStream(url: decryptedURL, append: false)
-        else { throw BackupRestoreError.unknown }
+        else { throw ImportBackupError.unknown }
 
         try streamDecryptor.decrypt(
             input: inputStream,

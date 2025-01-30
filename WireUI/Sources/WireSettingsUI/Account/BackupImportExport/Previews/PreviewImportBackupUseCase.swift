@@ -21,9 +21,24 @@ import Foundation
 struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     func invoke(url: URL, password: String) async throws {
-        fatalError()
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        if .random() {
+            throw SomeError()
+        }
     }
 
     struct PreviewImportBackupError: Error {}
+
+}
+
+private struct SomeError: LocalizedError {
+
+    var errorDescription: String? { "errorDescription" }
+
+    var failureReason: String? { "failureReason" }
+
+    var recoverySuggestion: String? { "recoverySuggestion" }
+
+    var helpAnchor: String? { "helpAnchor" }
 
 }
