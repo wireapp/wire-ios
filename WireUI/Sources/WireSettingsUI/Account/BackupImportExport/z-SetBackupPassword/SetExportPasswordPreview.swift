@@ -44,6 +44,16 @@ struct SetExportPasswordPreview: View {
     }
 }
 
+struct MockBackupPasswordValidator: BackupPasswordValidatorProtocol {
+
+    func isPasswordValid(_ password: String) -> Bool { true }
+
+    var localizedRulesDescription: String {
+        "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."
+    }
+
+}
+
 //private struct PreviewAlertPresenter: BackupRestoreAlertPresenterProtocol {
 //    func todo() async -> Bool {
 //        fatalError("not implemented")
