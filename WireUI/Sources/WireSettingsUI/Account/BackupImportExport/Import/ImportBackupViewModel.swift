@@ -27,8 +27,11 @@ final class ImportBackupViewModel: ObservableObject {
         didSet { updatePublishedProperties() }
     }
 
+    @Published var isImportingBackupProgressPresented = false
     @Published var alertContent = ImportBackupAlertContent()
     @Published var isAlertPresented = false
+
+    @Published private(set) var importProgress = Float()
 
     private var importTask: Task<Void, any Error>?
 
@@ -97,6 +100,11 @@ final class ImportBackupViewModel: ObservableObject {
     }
 
     private func updatePublishedProperties() {
+
+        isImportingBackupProgressPresented = switch state {
+        case .importingBackup, .requestingPassword: true
+        default: false
+        }
 
         /*
         isSetBackupPasswordPresented = if case .enterPassword = state {

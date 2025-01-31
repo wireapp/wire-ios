@@ -33,9 +33,8 @@ final class ExportBackupViewModel: ObservableObject {
     @Published var isSetBackupPasswordPresented = false
     @Published var isErrorAlertPresented = false
 
-    @Published private(set) var backupProgress: Float?
+    @Published private(set) var backupProgress = Float()
     @Published private(set) var backupURL: URL?
-    var backupError: (any Error)? { state?.backupError }
 
     private var backupTask: Task<Void, any Error>?
 
@@ -100,7 +99,7 @@ final class ExportBackupViewModel: ObservableObject {
 
         isErrorAlertPresented = switch state { case .backupFailed: true default: false }
 
-        backupProgress = switch state { case .creatingBackup(let progress): progress default: nil }
+        backupProgress = switch state { case .creatingBackup(let progress): progress default: 0 }
 
         backupURL = if case .backupReady(let url) = state { url } else { nil }
 
@@ -109,10 +108,10 @@ final class ExportBackupViewModel: ObservableObject {
 
 // MARK: - ExportBackupViewModel.State + Properties
 
-private extension ExportBackupState {
+extension ExportBackupViewModel {
 
     var backupError: (any Error)? {
-        if case .backupFailed(let error) = self {
+        if case .backupFailed(let error) = state {
             error
         } else {
             .none

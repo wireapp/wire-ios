@@ -42,6 +42,30 @@ struct ImportBackupView: View {
                 viewModel.pickedBackupFile(result: result)
             }
 
+            .sheet(isPresented: $viewModel.isImportingBackupProgressPresented) {
+                Text("progress \(viewModel.importProgress)")
+//                let progress: CreatingBackupProgressModel = if let backupURL = viewModel.backupURL {
+//                    .finished(backupURL)
+//                } else {
+//                    .ongoing(viewModel.backupProgress ?? 0)
+//                }
+//                CreatingBackupProgressView(
+//                    progress: progress,
+//                    cancelAction: { viewModel.cancel() }
+//                )
+//                .interactiveDismissDisabled()
+//                .presentationDetents([.medium])
+//                .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
+//                    SetBackupPasswordView(
+//                        onProceed: { password in viewModel.createBackup(password: password) },
+//                        onCancel: { viewModel.cancel() }
+//                    )
+//                    .interactiveDismissDisabled()
+//                    .presentationDetents([.large])
+//                }
+            }
+
+            // TODO: conflict with presentation
             .alert(
                 viewModel.alertContent.title,
                 isPresented: $viewModel.isAlertPresented
