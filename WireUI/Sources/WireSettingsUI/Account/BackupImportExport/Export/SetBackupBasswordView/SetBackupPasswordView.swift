@@ -17,31 +17,80 @@
 //
 
 import SwiftUI
+import WireReusableUIComponents
 
 struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
 
     var body: some View {
-        VStack {
-//            SetExportPasswordView(
-//                viewModel: .init(
-//                    passwordValidator: <#T##any BackupPasswordValidatorProtocol#>,
-//                    exportBackupAction: onProceed
-//                )
-//            )
-            Button("dismiss") {
-                viewModel.cancel()
-            }
+        NavigationStack {
+            setBackupPasswordView
+                .background(Color.viewBackground)
+                .scrollContentBackground(.hidden)
+                .navigationTitle(Text(L10n.Localizable.ExportBackup.title))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        CloseButton(
+                            action: { viewModel.cancel() },
+                            accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
+                        )
+                    }
+                }
         }
     }
+
+    @ViewBuilder
+    private var setBackupPasswordView: some View {
+        VStack {
+            let scrollView = ScrollView {
+                VStack(spacing: 20) {
+                    Text(L10n.Localizable.ExportBackup.description)
+                        .wireTextStyle(.body1)
+                        .foregroundStyle(Color.primaryText)
+                        .multilineTextAlignment(.leading)
+                        .padding(.horizontal)
+
+                    PasswordFieldView(
+                        password: $viewModel.password,
+                        isPasswordVisible: $viewModel.isPasswordVisible,
+                        isPasswordValid: viewModel.isPasswordValid,
+                        passwordRules: Text(viewModel.localizedPasswordRules)
+                    )
+                }
+            }
+            if #available(iOS 16.4, *) {
+                scrollView
+                    .scrollBounceBehavior(.basedOnSize)
+            } else {
+                scrollView
+            }
+
+            Spacer()
+
+            Button {
+                viewModel.triggerExport()
+            } label: {
+                Text(L10n.Localizable.ExportBackup.button)
+                    .bold()
+            }
+            .disabled(!viewModel.isPasswordValid)
+            .wireButtonStyle(.primary)
+            .padding()
+        }
+    }
+
 }
 
-//#Preview {
-//    Color.white.sheet(isPresented: .constant(true)) {
-//        SetBackupPasswordView(
-//            onProceed: { _ in },
-//            onCancel: {}
-//        )
-//    }
-//}
+#Preview {
+    Color.white
+        .sheet(isPresented: .constant(true)) {
+            BackupImportExportBuilder.previewBuilder
+                .buildSetBackupPasswordView(
+                    cancelAction: {},
+                    setPasswordAction: { _ in }
+                )
+                .presentationDetents([.medium])
+        }
+}

@@ -53,30 +53,39 @@ public struct BackupImportExportBuilder {
     @MainActor @ViewBuilder
     func buildExportBackupView() -> some View {
 
-        let exportBackupViewModel = ExportBackupViewModel(createBackupUseCase: createBackupUseCase)
-
-        let setBackupPasswordViewModel = SetBackupPasswordViewModel(
-            passwordValidator: backupPasswordValidator,
-            cancelAction: { [weak exportBackupViewModel] in
-                exportBackupViewModel?.cancel()
-            },
-            setPasswordAction: { [weak exportBackupViewModel] password in
-                exportBackupViewModel?.createBackup(password: password)
-            }
-        )
+        let viewModel = ExportBackupViewModel(createBackupUseCase: createBackupUseCase)
 
         ExportBackupView(
-            viewModel: exportBackupViewModel,
+            viewModel: viewModel,
             setBackupPasswordView: {
-                SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
+                buildSetBackupPasswordView(
+                    cancelAction: { [weak viewModel] in viewModel?.cancel() },
+                    setPasswordAction: { [weak viewModel] password in viewModel?.createBackup(password: password) }
+                )
             },
             creatingBackupProgressView: {
                 CreatingBackupProgressView(
-                    progress: exportBackupViewModel.backupProgress,
-                    cancelAction: { exportBackupViewModel.cancel() }
+                    progress: viewModel.backupProgress,
+                    cancelAction: { viewModel.cancel() }
                 )
             }
         )
+
+    }
+
+    @MainActor @ViewBuilder
+    func buildSetBackupPasswordView(
+        cancelAction: @escaping () -> Void,
+        setPasswordAction: @escaping (_ password: String) -> Void
+    ) -> some View {
+
+        let setBackupPasswordViewModel = SetBackupPasswordViewModel(
+            passwordValidator: backupPasswordValidator,
+            cancelAction: cancelAction,
+            setPasswordAction: setPasswordAction
+        )
+
+        SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
 
     }
 
