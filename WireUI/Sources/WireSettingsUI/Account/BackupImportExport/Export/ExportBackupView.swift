@@ -35,6 +35,7 @@ struct ExportBackupView: View {
             }
 
             .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
+                // TODO: move logic into view model
                 let progress: CreatingBackupProgressModel = if let backupURL = viewModel.backupURL {
                     .finished(backupURL)
                 } else {

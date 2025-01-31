@@ -20,32 +20,57 @@ import UIKit
 
 final class CreatingBackupProgressViewController: UIViewController {
 
+    // MARK: State Properties
+
     var progressDescription = "" {
-        didSet { descriptionLabel?.text = progressDescription }
+        didSet {
+            guard isViewLoaded else { return }
+            descriptionLabel.text = progressDescription
+        }
     }
 
     var progressValue = Float() {
-        didSet { progressView?.progress = progressValue }
+        didSet {
+            guard isViewLoaded else { return }
+            progressView.progress = progressValue
+        }
     }
 
     var backupURL: URL? {
-        didSet { exportButton?.isEnabled = backupURL != nil }
+        didSet {
+            guard isViewLoaded else { return }
+            exportButton.isEnabled = backupURL != nil
+        }
     }
 
-    private var scrollView: UIScrollView! // TODO: lazy?
-    private var stackView: UIStackView!
-    private var descriptionLabel: UILabel!
-    private var progressView: UIProgressView!
+    // MARK: - Subviews
+
+    private lazy var scrollView = UIScrollView()
+
+    private lazy var stackView = {
+        let stackView = UIStackView(arrangedSubviews: [descriptionLabel, progressView, exportButton])
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        return stackView
+    }()
+
+    private var descriptionLabel = {
+        let descriptionLabel = UILabel()
+        descriptionLabel.numberOfLines = 0
+        return descriptionLabel
+    }()
+
+    private lazy var progressView = UIProgressView(progressViewStyle: .bar)
+
     private var exportButton: UIButton!
+
+    // MARK: - Methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        descriptionLabel = .init()
-        descriptionLabel.numberOfLines = 0
         descriptionLabel.text = progressDescription
 
-        progressView = .init(progressViewStyle: .bar)
         progressView.progress = progressValue
 
         exportButton = .init(type: .system)
@@ -53,29 +78,26 @@ final class CreatingBackupProgressViewController: UIViewController {
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
         exportButton.isEnabled = backupURL != nil
 
-        scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
+
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(stackView)
+        let svLayoutGuide = scrollView.contentLayoutGuide
         NSLayoutConstraint.activate([
+
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             view.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-        ])
-
-        stackView = UIStackView(arrangedSubviews: [descriptionLabel, progressView, exportButton])
-        stackView.axis = .vertical
-        stackView.spacing = 16
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(stackView)
-        NSLayoutConstraint.activate([
 
             scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            stackView.leadingAnchor.constraint(equalToSystemSpacingAfter: scrollView.contentLayoutGuide.leadingAnchor, multiplier: 3),
-            stackView.topAnchor.constraint(equalToSystemSpacingBelow: scrollView.contentLayoutGuide.topAnchor, multiplier: 3),
-            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 3),
-            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 3)
+            stackView.leadingAnchor.constraint(equalToSystemSpacingAfter: svLayoutGuide.leadingAnchor, multiplier: 3),
+            stackView.topAnchor.constraint(equalToSystemSpacingBelow: svLayoutGuide.topAnchor, multiplier: 3),
+            svLayoutGuide.trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 3),
+            svLayoutGuide.bottomAnchor.constraint(equalToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 3)
+
         ])
     }
 
