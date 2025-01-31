@@ -34,25 +34,6 @@ struct ExportBackupView: View {
                     .foregroundStyle(Color.primaryText)
             }
 
-            .background( // Move alert to a background layer
-                Color.clear.alert( // TODO: fix
-                        "Save failed.",
-                        isPresented: $viewModel.isErrorAlertPresented,
-                        presenting: viewModel.backupError
-                    ) { backupError in
-                        Button(role: .destructive) {
-                            // Handle the deletion.
-                        } label: {
-                            Text("Delete \(backupError)")
-                        }
-                        Button("Retry") {
-                            // Handle the retry action.
-                        }
-                    } message: { backupError in
-                        Text("details.error")
-                    }
-            )
-
             .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
                 let progress: CreatingBackupProgressModel = if let backupURL = viewModel.backupURL {
                     .finished(backupURL)
@@ -73,6 +54,24 @@ struct ExportBackupView: View {
                     .interactiveDismissDisabled()
                     .presentationDetents([.large])
                 }
+            }
+
+            // TODO: conflict with presentation?
+            .alert( // TODO: fix
+                "Save failed.",
+                isPresented: $viewModel.isErrorAlertPresented,
+                presenting: viewModel.backupError
+            ) { backupError in
+                Button(role: .destructive) {
+                    // Handle the deletion.
+                } label: {
+                    Text("Delete \(backupError)")
+                }
+                Button("Retry") {
+                    // Handle the retry action.
+                }
+            } message: { backupError in
+                Text("details.error")
             }
 
         }

@@ -35,19 +35,6 @@ struct ImportBackupView: View {
                     .foregroundStyle(Color.primaryText)
             }
 
-            .background( // Move alert to a background layer in order to prevent conflicts with the sheet presentation
-                Color.clear.alert(
-                        viewModel.alertContent.title,
-                        isPresented: $viewModel.isAlertPresented
-                    ) {
-                        Button("OK") { // TODO: fix and localize
-                            // Handle the acknowledgement.
-                        }
-                    } message: {
-                        Text("Please check your credentials and try again.")
-                    }
-            )
-
             .fileImporter(
                 isPresented: $isFileImporterPresented,
                 allowedContentTypes: WireBackupUTIs
@@ -55,7 +42,7 @@ struct ImportBackupView: View {
                 viewModel.pickedBackupFile(result: result)
             }
 
-            .sheet(isPresented: $viewModel.isImportingBackupProgressPresented) {
+            .sheet(isPresented: $viewModel.isImportProgressPresented) {
                 Text("progress \(viewModel.importProgress)")
 //                let progress: CreatingBackupProgressModel = if let backupURL = viewModel.backupURL {
 //                    .finished(backupURL)
@@ -67,17 +54,34 @@ struct ImportBackupView: View {
 //                    cancelAction: { viewModel.cancel() }
 //                )
                 .interactiveDismissDisabled()
-//                .presentationDetents([.medium])
-//                .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
+                .presentationDetents([.medium])
+                .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
+
+                    VStack {
+                        Text("password?")
+                        Button("Aqa") {
+                            viewModel.enterPassword("Aqa")
+                        }
+                    }
 //                    SetBackupPasswordView(
 //                        onProceed: { password in viewModel.createBackup(password: password) },
 //                        onCancel: { viewModel.cancel() }
 //                    )
-//                    .interactiveDismissDisabled()
-//                    .presentationDetents([.large])
-//                }
+                    .interactiveDismissDisabled()
+                    .presentationDetents([.large])
+                }
             }
 
+            .alert(
+                viewModel.alertContent.title,
+                isPresented: $viewModel.isAlertPresented
+            ) {
+                Button("OK") { // TODO: fix and localize
+                    // Handle the acknowledgement.
+                }
+            } message: {
+                Text("Please check your credentials and try again.")
+            }
         }
     }
 }

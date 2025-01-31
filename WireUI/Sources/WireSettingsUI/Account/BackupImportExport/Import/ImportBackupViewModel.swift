@@ -27,7 +27,8 @@ final class ImportBackupViewModel: ObservableObject {
         didSet { updatePublishedProperties() }
     }
 
-    @Published var isImportingBackupProgressPresented = false
+    @Published var isImportProgressPresented = false
+    @Published var isEnterBackupPasswordPresented = false
     @Published var alertContent = ImportBackupAlertContent()
     @Published var isAlertPresented = false
 
@@ -70,12 +71,21 @@ final class ImportBackupViewModel: ObservableObject {
                 importBackup(from: copy, password: "")
             }
         } catch {
-            fatalError("TODO") // TODO: also log before every assertionFailure
+            assertionFailure("TODO") // TODO: also log before every assertionFailure
             state = .restoreFailed(error)
         }
     }
 
-    func importBackup(from url: URL, password: String) {
+    func importBackup(from url: URL) {
+        importBackup(from: url, password: "")
+    }
+
+    func enterPassword(_ password: String) {
+        guard case .requestingPassword(let url) = state else { return assertionFailure() }
+        importBackup(from: url, password: password)
+    }
+
+    private func importBackup(from url: URL, password: String) {
         guard importTask == nil else { return assertionFailure() }
 
         importTask = Task {
@@ -103,37 +113,19 @@ final class ImportBackupViewModel: ObservableObject {
 
     private func updatePublishedProperties() {
 
-        isImportingBackupProgressPresented = switch state {
-        case .importingBackup, .requestingPassword: true
-        default: false
-        }
+        isImportProgressPresented = switch state { case .importingBackup, .requestingPassword: true default: false }
 
-        /*
-        isSetBackupPasswordPresented = if case .enterPassword = state {
-            true
+        isEnterBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
+
+        // TODO: find better workaround for presentation issue
+        let isAlertPresented = switch state { case .restoreFailed, .confirmation: true default: false }
+        if isAlertPresented {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.isAlertPresented = true }
         } else {
-            false
+            self.isAlertPresented = false
         }
-
-        isCreatingBackupProgressPresented = switch state {
-        case .enterPassword, .creatingBackup, .backupReady:
-            true
-        default:
-            false
-        }
-         */
-
-        isAlertPresented = switch state { case .restoreFailed: true default: false }
 
         importProgress = switch state { case .importingBackup(let progress): progress default: 0 }
-
-        /*
-        backupURL = if case .backupReady(let url) = state {
-            url
-        } else {
-            nil
-        }
-         */
 
     }
 }
