@@ -20,14 +20,28 @@ import SwiftUI
 import WireFoundation
 import WireReusableUIComponents
 
-package struct LoginWithClaimedDomainPreview: View {
-    package init() {}
+package struct LoginViaEmailPreview: View {
+    private let viewModel: LoginViaEmailViewModel
+
+    package init(
+        email: String = "email@wire.com",
+        forgotPasswordURL: URL = URL(string: "https://example.com")!,
+        passwordValidator: any PasswordValidator = MockPasswordValidator(validationCallback: { _ in false }),
+        showCreateAccount: Bool = false,
+        onCreateAccount: @escaping (@Sendable () -> Void) = {}
+    ) {
+        self.viewModel = LoginViaEmailViewModel(
+            email: email,
+            forgotPasswordURL: forgotPasswordURL,
+            passwordValidator: passwordValidator,
+            showCreateAccount: showCreateAccount,
+            onCreateAccount: onCreateAccount
+        )
+    }
 
     package var body: some View {
-        LoginWithClaimedDomainView(
-            email: "email@wire.com",
-            forgotPasswordURL: URL(string: "https://example.com")!,
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in false })
+        LoginViaEmailView(
+            viewModel: viewModel
         )
     }
 }
