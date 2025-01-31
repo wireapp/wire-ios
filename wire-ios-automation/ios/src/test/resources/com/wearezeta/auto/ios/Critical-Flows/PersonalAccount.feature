@@ -16,13 +16,6 @@ Feature: Personal Account Lifecycle
     Then User <Email> sent connection request to <PersonalAccount>
     Then User <PersonalAccount> accepts connection request from <Email>
 
-
-
-
-
-
-
-
     Examples:
-      | Name      | Password      | Email      | UniqueUsername      | PersonalAccount
-      | user1Name | user1Password | user1Email | user1UniqueUsername | User2Name
+      | Name      | Password      | Email      | UniqueUsername      | PersonalAccount |
+      | user1Name | user1Password | user1Email | user1UniqueUsername | User2Name       |
