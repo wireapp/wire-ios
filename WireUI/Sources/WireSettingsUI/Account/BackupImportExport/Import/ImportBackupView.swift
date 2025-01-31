@@ -34,6 +34,7 @@ struct ImportBackupView: View {
                     .font(.textStyle(.body2))
                     .foregroundStyle(Color.primaryText)
             }
+            
 
             .fileImporter(
                 isPresented: $isFileImporterPresented,

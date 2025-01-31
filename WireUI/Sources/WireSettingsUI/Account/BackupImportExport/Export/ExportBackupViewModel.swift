@@ -99,6 +99,14 @@ final class ExportBackupViewModel: ObservableObject {
 
         isErrorAlertPresented = switch state { case .backupFailed: true default: false }
 
+        // TODO: find better workaround for presentation issue
+        let isErrorAlertPresented = switch state { case .backupFailed: true default: false }
+        if isErrorAlertPresented {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.isErrorAlertPresented = true }
+        } else {
+            self.isErrorAlertPresented = false
+        }
+
         backupProgress = switch state { case .creatingBackup(let progress): progress default: 0 }
 
         backupURL = if case .backupReady(let url) = state { url } else { nil }

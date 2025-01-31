@@ -39,6 +39,8 @@ final class ImportBackupViewModel: ObservableObject {
         self.importBackupUseCase = importBackupUseCase
     }
 
+    // MARK: - Methods
+
     func pickedBackupFile(result: Result<URL, any Error>) {
         do {
             switch result {
@@ -121,16 +123,17 @@ final class ImportBackupViewModel: ObservableObject {
         }
          */
 
-        isAlertPresented = switch state { case .restoreFailed: true default: false }
-
-        /*
-        backupProgress = switch state {
-        case .creatingBackup(let progress):
-            progress
-        default:
-            nil
+        // TODO: find better workaround for presentation issue
+        let isAlertPresented = switch state { case .restoreFailed: true default: false }
+        if isAlertPresented {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.isAlertPresented = true }
+        } else {
+            self.isAlertPresented = false
         }
 
+        importProgress = switch state { case .importingBackup(let progress): progress default: 0 }
+
+        /*
         backupURL = if case .backupReady(let url) = state {
             url
         } else {
