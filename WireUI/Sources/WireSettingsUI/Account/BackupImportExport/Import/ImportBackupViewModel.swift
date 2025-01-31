@@ -34,7 +34,7 @@ final class ImportBackupViewModel: ObservableObject {
 
     @Published private(set) var importProgress = Float()
 
-    private var importTask: Task<Void, any Error>?
+    private var importTask: Task<Void, Never>?
 
     init(importBackupUseCase: any ImportBackupUseCaseProtocol) {
         self.importBackupUseCase = importBackupUseCase

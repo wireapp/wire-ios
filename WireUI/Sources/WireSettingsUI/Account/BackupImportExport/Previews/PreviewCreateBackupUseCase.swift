@@ -22,7 +22,7 @@ struct PreviewCreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            Task<Void, Never>.detached {
+            let task = Task<Void, Never>.detached {
                 do {
 
                     var failAtIndex: Int?
@@ -50,6 +50,9 @@ struct PreviewCreateBackupUseCase: CreateBackupUseCaseProtocol {
                 } catch {
                     continuation.finish(throwing: error)
                 }
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
             }
         }
     }

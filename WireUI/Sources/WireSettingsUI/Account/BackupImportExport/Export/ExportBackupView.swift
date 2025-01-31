@@ -52,7 +52,9 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                 Text("exportBackup.errorAlert.title", bundle: .module),
                 isPresented: $viewModel.isErrorAlertPresented
             ) {
-                Button(action: {}) {
+                Button {
+                    viewModel.reset()
+                } label: {
                     Text("exportBackup.errorAlert.ok", bundle: .module)
                 }
             } message: {

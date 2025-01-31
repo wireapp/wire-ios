@@ -36,25 +36,26 @@ final class ExportBackupViewModel: ObservableObject {
     @Published private(set) var backupProgress: CreatingBackupProgressModel = .ongoing(0)
     @Published private(set) var backupURL: URL?
 
-    private var backupTask: Task<Void, any Error>?
+    private var backupTask: Task<Void, Never>?
 
     init(createBackupUseCase: any CreateBackupUseCaseProtocol) {
         self.createBackupUseCase = createBackupUseCase
     }
 
+    func reset() {
+        state = nil
+    }
+
     func requestBackupPassword() {
-        // TODO: the alert must reset the state
         guard state == nil else { return assertionFailure() }
 
         state = .requestingPassword(password: "")
     }
 
     func createBackup(password: String) {
-        guard backupTask == nil else { return assertionFailure() }
+        backupTask?.cancel()
 
         backupTask = Task {
-            defer { backupTask = nil }
-
             do {
                 for try await update in createBackupUseCase.invoke(password: password) {
                     switch update {
@@ -78,6 +79,7 @@ final class ExportBackupViewModel: ObservableObject {
             state = nil
         case .creatingBackup:
             backupTask?.cancel()
+            state = nil
         case .backupReady:
             // TODO: clean up
             state = nil
