@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-enum ImportBackupState {
-    case importingBackup(progress: Float)
-    case requestingPassword(url: URL)
-    case confirmation
-    case restoreFailed
+struct EnterPasswordView: View {
+    var body: some View {
+        Text("Hello, World!")
+    }
+}
+
+#Preview {
+    EnterPasswordView()
 }

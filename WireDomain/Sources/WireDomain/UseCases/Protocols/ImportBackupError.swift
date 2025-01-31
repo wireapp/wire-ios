@@ -20,6 +20,9 @@ public enum ImportBackupError: Error {
     case noActiveAccount
     /// The backup file is encrypted and a password is needed for decryption.
     case passwordRequired
+    /// E.g. if the file to import was created with a different (incompatible) version of the app.
+    case incompatibleFileFormat
+    case invalidAccountID
     case compressionError
     case invalidFileExtension
     case keyCreationFailed

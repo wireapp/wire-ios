@@ -22,7 +22,7 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            Task<Void, Never>.detached {
+            let task = Task<Void, Never>.detached {
                 do {
 
                     var failAtIndex: Int?
@@ -49,6 +49,9 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
                 } catch {
                     continuation.finish(throwing: error)
                 }
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
             }
         }
     }

@@ -42,6 +42,10 @@ final class ImportBackupViewModel: ObservableObject {
 
     // MARK: - Methods
 
+    func reset() {
+        state = nil
+    }
+
     func pickedBackupFile(result: Result<URL, any Error>) {
         do {
             switch result {
@@ -72,7 +76,7 @@ final class ImportBackupViewModel: ObservableObject {
             }
         } catch {
             assertionFailure("TODO") // TODO: also log before every assertionFailure
-            state = .restoreFailed(error)
+            state = .restoreFailed
         }
     }
 
@@ -86,11 +90,8 @@ final class ImportBackupViewModel: ObservableObject {
     }
 
     private func importBackup(from url: URL, password: String) {
-        guard importTask == nil else { return assertionFailure() }
-
+        importTask?.cancel()
         importTask = Task {
-            defer { importTask = nil }
-
             do {
                 state = .importingBackup(progress: 0)
                 for try await update in importBackupUseCase.invoke(url: url, password: password) {
@@ -101,12 +102,24 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .confirmation
                     }
                 }
+                // TODO: add logging
             } catch ImportBackupError.passwordRequired {
                 state = .requestingPassword(url: url)
+            } catch ImportBackupError.incompatibleFileFormat {
+                alertContent.titleKey = "importBackup.alert.incompatibleBackupError.title"
+                alertContent.messageKey = "importBackup.alert.incompatibleBackupError.message"
+                state = .restoreFailed
+            } catch ImportBackupError.invalidAccountID {
+                alertContent.titleKey = "importBackup.alert.wrongFileError.title"
+                alertContent.messageKey = "importBackup.alert.wrongFileError.message"
+                state = .restoreFailed
             } catch is CancellationError {
+                importTask?.cancel()
                 state = nil
             } catch {
-                state = .restoreFailed(error)
+                alertContent.titleKey = "importBackup.alert.genericError.title"
+                alertContent.messageKey = "importBackup.alert.genericError.message"
+                state = .restoreFailed
             }
         }
     }

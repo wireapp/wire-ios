@@ -81,7 +81,7 @@ final class ExportBackupViewModel: ObservableObject {
             backupTask?.cancel()
             state = nil
         case .backupReady:
-            // TODO: clean up
+            // TODO: clean up use case?
             state = nil
         case .backupFailed:
             fatalError("not yet implemented")

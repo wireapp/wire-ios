@@ -39,6 +39,14 @@
 "exportBackup.creatingBackup.success" = "Backup successfully created.";
 "exportBackup.creatingBackup.saveButton.title" = "Save File";
 
+"importBackup.alert.ok" = "OK";
+"importBackup.alert.genericError.title" = "Something went wrong";
+"importBackup.alert.genericError.message" = "Your history could not be restored. Please try again or contact the Wire customer support.";
+"importBackup.alert.incompatibleBackupError.title" = "Incompatible backup";
+"importBackup.alert.incompatibleBackupError.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
+"importBackup.alert.wrongFileError.title" = "Wrong backup file";
+"importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
+
 "restoreFromBackup.title" = "Enter password";
 "restoreFromBackup.description" = "This backup is password protected.";
 "restoreFromBackup.button" = "Continue";

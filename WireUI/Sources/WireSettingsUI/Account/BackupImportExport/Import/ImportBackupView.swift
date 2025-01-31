@@ -73,14 +73,17 @@ struct ImportBackupView: View {
             }
 
             .alert(
-                viewModel.alertContent.title,
-                isPresented: $viewModel.isAlertPresented
-            ) {
-                Button("OK") { // TODO: fix and localize
-                    // Handle the acknowledgement.
+                Text(viewModel.alertContent.titleKey, bundle: .module),
+                isPresented: $viewModel.isAlertPresented,
+                presenting: viewModel.alertContent
+            ) { _ in
+                Button {
+                    viewModel.reset()
+                } label: {
+                    Text("importBackup.alert.ok", bundle: .module)
                 }
-            } message: {
-                Text("Please check your credentials and try again.")
+            } message: { alertContent in
+                Text(alertContent.messageKey, bundle: .module)
             }
         }
     }
