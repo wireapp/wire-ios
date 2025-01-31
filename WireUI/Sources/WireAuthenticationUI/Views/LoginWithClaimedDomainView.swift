@@ -66,6 +66,9 @@ package struct LoginWithClaimedDomainView: View {
                 UIApplication.shared.open(forgotPasswordURL)
             }, label: {
                 Text(L10n.CloudUserLogin.forgotPassword)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
             })
             .wireButtonStyle(.link)
         }

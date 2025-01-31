@@ -79,8 +79,10 @@ public struct PasswordField: View {
                         .frame(width: 16, height: 16)
                         .padding(19)
                 })
+                .accessibilityLabel(isPasswordVisible ? L10n.Passwordtextfield.hidePassword : L10n.Passwordtextfield.showPassword)
             }
             .padding(.leading, 16)
+            .frame(height: fieldHeight)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(
