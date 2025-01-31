@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireReusableUIComponents
+import WireDesign
 
 struct CreatingBackupProgressView: View {
 
@@ -27,6 +28,7 @@ struct CreatingBackupProgressView: View {
     var body: some View {
         NavigationStack {
             backupProgressViewControllerRepresentable
+                .background(Color(uiColor: ColorTheme.Backgrounds.background))
                 .navigationTitle("title")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {

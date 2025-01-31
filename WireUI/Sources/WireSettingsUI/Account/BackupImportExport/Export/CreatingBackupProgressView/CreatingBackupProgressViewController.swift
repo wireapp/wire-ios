@@ -61,7 +61,11 @@ final class CreatingBackupProgressViewController: UIViewController {
         return descriptionLabel
     }()
 
-    private lazy var progressView = UIProgressView(progressViewStyle: .bar)
+    private lazy var progressView = {
+        let progressView = UIProgressView()
+        progressView.progressTintColor = ColorTheme.Base.primary
+        return progressView
+    }()
 
     private lazy var exportButton = {
         let exportButton = UIButton()
@@ -70,7 +74,6 @@ final class CreatingBackupProgressViewController: UIViewController {
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
         return exportButton
     }()
-    private var exportButton_: UIView!
 
     // MARK: - Methods
 

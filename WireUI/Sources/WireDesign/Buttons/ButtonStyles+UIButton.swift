@@ -36,6 +36,11 @@ public extension UIButton {
 
         var configuration = UIButton.Configuration.filled()
         configuration.buttonSize = .large
+        configuration.titleTextAttributesTransformer = .init { attributeContainer in
+            var attributeContainer = attributeContainer
+            attributeContainer.font = .preferredFont(forTextStyle: .headline)
+            return attributeContainer
+        }
         switch wireButtonStyle {
         case .primary:
             configuration.baseBackgroundColor = ColorTheme.Buttons.Primary.enabled
