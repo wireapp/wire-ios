@@ -30,11 +30,14 @@
 "exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
 
 "exportBackup.cancel.title" = "Cancel";
+"exportBackup.errorAlert.title" = "Something went wrong";
+"exportBackup.errorAlert.message" = "The backup could not be created. Please try again or contact Wire support.";
+"exportBackup.errorAlert.ok" = "OK";
 
 "exportBackup.creatingBackup.title" = "Creating Backup";
 "exportBackup.creatingBackup.saving" = "Saving conversation history…";
 "exportBackup.creatingBackup.success" = "Backup successfully created.";
-"creatingBackup.saveButton.title" = "Save File";
+"exportBackup.creatingBackup.saveButton.title" = "Save File";
 
 "restoreFromBackup.title" = "Enter password";
 "restoreFromBackup.description" = "This backup is password protected.";

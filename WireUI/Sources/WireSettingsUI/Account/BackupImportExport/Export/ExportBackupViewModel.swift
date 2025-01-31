@@ -98,8 +98,6 @@ final class ExportBackupViewModel: ObservableObject {
         default: false
         }
 
-        isErrorAlertPresented = switch state { case .backupFailed: true default: false }
-
         // TODO: find better workaround for presentation issue
         let isErrorAlertPresented = switch state { case .backupFailed: true default: false }
         if isErrorAlertPresented {
@@ -122,16 +120,16 @@ final class ExportBackupViewModel: ObservableObject {
 
 // MARK: - ExportBackupViewModel.State + Properties
 
-extension ExportBackupViewModel {
-
-    var backupError: (any Error)? {
-        if case .backupFailed(let error) = state {
-            error
-        } else {
-            .none
-        }
-    }
-}
+//extension ExportBackupViewModel {
+//
+//    var backupError: (any Error)? {
+//        if case .backupFailed(let error) = state {
+//            error
+//        } else {
+//            .none
+//        }
+//    }
+//}
 
 // TODO: ?
 

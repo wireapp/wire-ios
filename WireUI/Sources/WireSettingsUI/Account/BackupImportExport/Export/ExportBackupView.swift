@@ -48,22 +48,15 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                     }
             }
 
-            // TODO: conflict with presentation?
-            .alert( // TODO: fix
-                "Save failed.",
-                isPresented: $viewModel.isErrorAlertPresented,
-                presenting: viewModel.backupError
-            ) { backupError in
-                Button(role: .destructive) {
-                    // Handle the deletion.
-                } label: {
-                    Text("Delete \(backupError)")
+            .alert(
+                Text("exportBackup.errorAlert.title", bundle: .module),
+                isPresented: $viewModel.isErrorAlertPresented
+            ) {
+                Button(action: {}) {
+                    Text("exportBackup.errorAlert.ok", bundle: .module)
                 }
-                Button("Retry") {
-                    // Handle the retry action.
-                }
-            } message: { backupError in
-                Text("details.error")
+            } message: {
+                Text("exportBackup.errorAlert.message", bundle: .module)
             }
 
         }

@@ -91,7 +91,7 @@ final class CreatingBackupProgressViewController: UIViewController {
     }()
 
     private lazy var exportButton = {
-        let title = String(localized: "creatingBackup.saveButton.title", bundle: .module)
+        let title = String(localized: "exportBackup.creatingBackup.saveButton.title", bundle: .module)
         let exportButton = UIButton()
         exportButton.wireButtonStyle = .primary
         exportButton.setTitle(title, for: .normal)
