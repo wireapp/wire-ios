@@ -139,7 +139,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         guard let assetMessage = managedObject as? ZMAssetClientMessage else {
             return nil
         }
-        
+
         return requestForUploadingAsset(asset, for: assetMessage, apiVersion: apiVersion)
     }
 
