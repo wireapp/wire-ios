@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
 final class CreatingBackupProgressViewController: UIViewController {
 
@@ -63,11 +63,16 @@ final class CreatingBackupProgressViewController: UIViewController {
     private lazy var progressView = UIProgressView(progressViewStyle: .bar)
 
     private var exportButton: UIButton!
+    private var exportButton_: UIView!
 
     // MARK: - Methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupSubviews()
+    }
+
+    private func setupSubviews() {
 
         descriptionLabel.text = progressDescription
 
@@ -78,11 +83,17 @@ final class CreatingBackupProgressViewController: UIViewController {
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
         exportButton.isEnabled = backupURL != nil
 
+        exportButton_ = WireButtonStyleButton(addedTo: view, of: self)
+        exportButton_.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(exportButton_)
+
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
 
         stackView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(stackView)
+
+        // constraints
         let svLayoutGuide = scrollView.contentLayoutGuide
         NSLayoutConstraint.activate([
 
@@ -99,6 +110,7 @@ final class CreatingBackupProgressViewController: UIViewController {
             svLayoutGuide.bottomAnchor.constraint(equalToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 3)
 
         ])
+
     }
 
     override func viewDidLayoutSubviews() {
@@ -122,4 +134,23 @@ final class CreatingBackupProgressViewController: UIViewController {
         }
         present(activityViewController, animated: true)
     }
+}
+
+/// Embeds a SwiftUI Button with a `.wireButtonStyle` modifier using a `UIHostingController`.
+/// The button view will be added as subview, the hosting controller will be added as child view controller.
+/// - Parameters:
+///   - view: Any view within the `viewController`'s view hierarchy.
+///   - viewController: A view controller which contains the `view`.
+/// - Returns: The hosting controller's view.
+@MainActor
+private func WireButtonStyleButton(addedTo view: UIView, of viewController: UIViewController) -> UIView {
+    let hostingController = UIHostingController(
+        rootView: Button("Tap me") {
+            print("tap")
+        }.wireButtonStyle(.primary)
+    )
+    viewController.addChild(hostingController)
+    view.addSubview(hostingController.view)
+    hostingController.didMove(toParent: viewController)
+    return hostingController.view
 }
