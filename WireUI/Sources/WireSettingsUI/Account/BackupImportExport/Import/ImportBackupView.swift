@@ -34,7 +34,19 @@ struct ImportBackupView: View {
                     .font(.textStyle(.body2))
                     .foregroundStyle(Color.primaryText)
             }
-            
+
+            .background( // Move alert to a background layer in order to prevent conflicts with the sheet presentation
+                Color.clear.alert(
+                        viewModel.alertContent.title,
+                        isPresented: $viewModel.isAlertPresented
+                    ) {
+                        Button("OK") { // TODO: fix and localize
+                            // Handle the acknowledgement.
+                        }
+                    } message: {
+                        Text("Please check your credentials and try again.")
+                    }
+            )
 
             .fileImporter(
                 isPresented: $isFileImporterPresented,
@@ -54,7 +66,7 @@ struct ImportBackupView: View {
 //                    progress: progress,
 //                    cancelAction: { viewModel.cancel() }
 //                )
-//                .interactiveDismissDisabled()
+                .interactiveDismissDisabled()
 //                .presentationDetents([.medium])
 //                .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
 //                    SetBackupPasswordView(
@@ -66,17 +78,6 @@ struct ImportBackupView: View {
 //                }
             }
 
-            // TODO: conflict with presentation
-            .alert(
-                viewModel.alertContent.title,
-                isPresented: $viewModel.isAlertPresented
-            ) {
-                Button("OK") { // TODO: fix and localize
-                    // Handle the acknowledgement.
-                }
-            } message: {
-                Text("Please check your credentials and try again.")
-            }
         }
     }
 }

@@ -123,13 +123,7 @@ final class ImportBackupViewModel: ObservableObject {
         }
          */
 
-        // TODO: find better workaround for presentation issue
-        let isAlertPresented = switch state { case .restoreFailed: true default: false }
-        if isAlertPresented {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.isAlertPresented = true }
-        } else {
-            self.isAlertPresented = false
-        }
+        isAlertPresented = switch state { case .restoreFailed: true default: false }
 
         importProgress = switch state { case .importingBackup(let progress): progress default: 0 }
 
