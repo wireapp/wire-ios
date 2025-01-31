@@ -43,6 +43,7 @@ final class ExportBackupViewModel: ObservableObject {
     }
 
     func requestBackupPassword() {
+        // TODO: the alert must reset the state
         guard state == nil else { return assertionFailure() }
 
         state = .requestingPassword(password: "")
