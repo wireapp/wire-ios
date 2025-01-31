@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ImportBackupError: Error {
+public enum ImportBackupError: Error, CaseIterable {
     case noActiveAccount
     /// The backup file is encrypted and a password is needed for decryption.
     case passwordRequired

@@ -26,17 +26,17 @@ struct ImportProgressView: View {
 
     var body: some View {
         NavigationStack {
-            todo
+            progressView
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
-                .navigationTitle(Text("exportBackup.creatingBackup.title", bundle: .module))
+                .navigationTitle(Text("importBackup.restoringHistory.title", bundle: .module))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(action: cancelAction) {
-                            Text("exportBackup.cancel.title", bundle: .module)
+                            Text("importBackup.cancel.title", bundle: .module)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(Text("exportBackup.cancel.label"))
+                        .accessibilityLabel(Text("importBackup.cancel.label"))
                         .accessibilityIdentifier("cancel")
                     }
                 }
@@ -44,8 +44,24 @@ struct ImportProgressView: View {
     }
 
     @ViewBuilder
-    private var todo: some View {
-        Text("TODO")
+    private var progressView: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Text("importBackup.restoringHistory.message", bundle: .module)
+                Spacer()
+            }
+            .padding(.bottom)
+            HStack {
+                Spacer()
+                Text("\(Int(progressValue * 100))%")
+                    .font(.caption2)
+                Spacer()
+            }
+            ProgressView(value: progressValue)
+            Spacer()
+        }
+        .padding()
     }
 }
 

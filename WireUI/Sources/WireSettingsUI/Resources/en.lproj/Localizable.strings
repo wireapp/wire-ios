@@ -39,6 +39,8 @@
 "exportBackup.creatingBackup.success" = "Backup successfully created.";
 "exportBackup.creatingBackup.saveButton.title" = "Save File";
 
+"importBackup.cancel.title" = "Cancel";
+
 "importBackup.alert.ok" = "OK";
 "importBackup.alert.success.title" = "Success";
 "importBackup.alert.success.message" = "Your history is restored.";
@@ -48,6 +50,9 @@
 "importBackup.alert.incompatibleBackupError.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
 "importBackup.alert.wrongFileError.title" = "Wrong backup file";
 "importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
+
+"importBackup.restoringHistory.title" = "Restoring history…";
+"importBackup.restoringHistory.message" = "Loading conversations…";
 
 "restoreFromBackup.title" = "Enter password";
 "restoreFromBackup.description" = "This backup is password protected.";

@@ -115,8 +115,7 @@ final class ImportBackupViewModel: ObservableObject {
                 alertContent.messageKey = "importBackup.alert.wrongFileError.message"
                 state = .restoreFailed
             } catch is CancellationError {
-                importTask?.cancel()
-                state = nil
+                reset()
             } catch {
                 alertContent.titleKey = "importBackup.alert.genericError.title"
                 alertContent.messageKey = "importBackup.alert.genericError.message"

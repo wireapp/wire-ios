@@ -35,7 +35,7 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
                         try Task.checkCancellation()
 
                         if i == failAtIndex {
-                            throw PreviewImportBackupError()
+                            throw ImportBackupError.allCases.randomElement()!
                         }
 
                         continuation.yield(.progress(Float(i) / 10))
@@ -54,18 +54,6 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
                 task.cancel()
             }
         }
-    }
-
-    struct PreviewImportBackupError: LocalizedError {
-
-        var errorDescription: String? { "errorDescription" }
-
-        var failureReason: String? { "failureReason" }
-
-        var recoverySuggestion: String? { "recoverySuggestion" }
-
-        var helpAnchor: String? { "helpAnchor" }
-
     }
 
 }

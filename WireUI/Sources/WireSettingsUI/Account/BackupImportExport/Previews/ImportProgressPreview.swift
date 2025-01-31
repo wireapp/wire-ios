@@ -23,7 +23,7 @@ func ImportProgressPreview() -> some View {
     Color.white
         .sheet(isPresented: .constant(true)) {
             ImportProgressView(progressValue: 0.25) {}
-                .presentationDetents([.medium])
                 .interactiveDismissDisabled()
+                .presentationDetents([.medium])
         }
 }
