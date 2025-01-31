@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"setBackupPassword.close.label" = "Close setup backup password";
-
-"exportBackup.cancel.label" = "Cancel creating backup";
-
-"restoreBackup.close.label" = "Close restore backup";
+struct PreviewCleanUpBackupsUseCase: CleanUpBackupsUseCaseProtocol {
+    func invoke() async throws {}
+}

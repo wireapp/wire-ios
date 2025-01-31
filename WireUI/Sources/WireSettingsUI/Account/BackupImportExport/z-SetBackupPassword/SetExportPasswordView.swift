@@ -23,11 +23,11 @@ import WireReusableUIComponents
 
 /// A view that allows to export the backup.
 
-struct SetExportPasswordView: View {
+struct SetExportPasswordView: View { // TODO: this view needs some refactoring
 
     @Environment(\.dismiss) private var dismiss
 
-    @ObservedObject private(set) var viewModel: SetExportPasswordViewModel
+    @StateObject var viewModel: SetBackupPasswordViewModel
 
     var body: some View {
         setBackupPasswordView
@@ -48,8 +48,8 @@ struct SetExportPasswordView: View {
     @ViewBuilder
     private var setBackupPasswordView: some View {
         VStack {
-//            let scrollView = ScrollView {
-//                VStack(spacing: 20) {
+            let scrollView = ScrollView {
+                VStack(spacing: 20) {
                     Text(L10n.Localizable.ExportBackup.description)
                         .wireTextStyle(.body1)
                         .foregroundStyle(Color.primaryText)
@@ -62,16 +62,14 @@ struct SetExportPasswordView: View {
                         isPasswordValid: viewModel.isPasswordValid,
                         passwordRules: Text(viewModel.localizedPasswordRules)
                     )
-                    .background(Color.red)
-//                }
-//                //                    .frame(maxWidth: .infinity)
-//            }
-//            if #available(iOS 16.4, *) {
-//                scrollView
-//                    .scrollBounceBehavior(.basedOnSize)
-//            } else {
-//                scrollView
-//            }
+                }
+            }
+            if #available(iOS 16.4, *) {
+                scrollView
+                    .scrollBounceBehavior(.basedOnSize)
+            } else {
+                scrollView
+            }
 
             Spacer()
 
@@ -80,27 +78,20 @@ struct SetExportPasswordView: View {
                 viewModel.triggerExport()
             } label: {
                 Text(L10n.Localizable.ExportBackup.button)
+                    .bold()
             }
             .disabled(!viewModel.isPasswordValid)
             .wireButtonStyle(.primary)
             .padding()
         }
-        .background(Color.green)
     }
 }
 
 // MARK: - Previews
 
-@available(iOS 17.0, *)
-#Preview("uikit") {
-    {
-        MainViewController()
-    }()
-}
-
-#Preview("Set Export Backup Password") {
-    SetExportPasswordPreview()
-}
+//#Preview {
+//    SetExportPasswordPreview()
+//}
 
 class SecondViewController: UIViewController {
     override func viewDidLoad() {

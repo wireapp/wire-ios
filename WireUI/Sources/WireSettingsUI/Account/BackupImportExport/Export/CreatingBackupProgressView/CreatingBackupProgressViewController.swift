@@ -62,8 +62,8 @@ final class CreatingBackupProgressViewController: UIViewController {
         descriptionLabel.font = .preferredFont(forTextStyle: .caption1)
         descriptionLabel.textColor = BaseColorPalette.Grays.gray70
         descriptionLabel.adjustsFontForContentSizeCategory = true
-        descriptionLabel.accessibilityIdentifier = "" // TODO: fix
-        descriptionLabel.accessibilityLabel = "" // TODO: fix
+        descriptionLabel.accessibilityIdentifier = "" // TODO: [WPB-15466] fix accessibility
+        descriptionLabel.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return descriptionLabel
     }()
 
@@ -75,16 +75,16 @@ final class CreatingBackupProgressViewController: UIViewController {
         progressLabel.adjustsFontForContentSizeCategory = true
         progressLabel.textColor = BaseColorPalette.Grays.gray70
         progressLabel.textAlignment = .center
-        progressLabel.accessibilityIdentifier = "" // TODO: fix
-        progressLabel.accessibilityLabel = "" // TODO: fix
+        progressLabel.accessibilityIdentifier = "" // TODO: [WPB-15466] fix accessibility
+        progressLabel.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return progressLabel
     }()
 
     private lazy var progressView = {
         let progressView = UIProgressView()
         progressView.progressTintColor = ColorTheme.Base.primary
-        progressView.accessibilityIdentifier = "" // TODO: fix
-        progressView.accessibilityLabel = "" // TODO: fix
+        progressView.accessibilityIdentifier = "" // TODO: [WPB-15466] fix accessibility
+        progressView.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return progressView
     }()
 
@@ -94,8 +94,8 @@ final class CreatingBackupProgressViewController: UIViewController {
         exportButton.wireButtonStyle = .primary
         exportButton.setTitle(title, for: .normal)
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
-        exportButton.accessibilityIdentifier = "" // TODO: fix
-        exportButton.accessibilityLabel = "" // TODO: fix
+        exportButton.accessibilityIdentifier = "" // TODO: [WPB-15466] fix accessibility
+        exportButton.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return exportButton
     }()
 

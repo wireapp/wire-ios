@@ -18,9 +18,11 @@
 
 import SwiftUI
 
-struct ExportBackupView: View {
+struct ExportBackupView<ProgressView: View>: View {
 
     @StateObject var viewModel: ExportBackupViewModel
+
+    private(set) var creatingBackupProgressView: () -> ProgressView
 
     var body: some View {
 
@@ -35,20 +37,23 @@ struct ExportBackupView: View {
             }
 
             .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
-                CreatingBackupProgressView(
-                    progress: viewModel.backupProgress,
-                    cancelAction: { viewModel.cancel() }
-                )
-                .interactiveDismissDisabled()
-                .presentationDetents([.medium])
-                .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
-                    SetBackupPasswordView(
-                        onProceed: { password in viewModel.createBackup(password: password) },
-                        onCancel: { viewModel.cancel() }
-                    )
+                creatingBackupProgressView()
                     .interactiveDismissDisabled()
-                    .presentationDetents([.large])
-                }
+                    .presentationDetents([.medium])
+                    .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
+                        Color.red
+//                    SetBackupPasswordView(
+//                        viewModel: .init(
+//                            passwordValidator: <#T##any BackupPasswordValidatorProtocol#>,
+//                            cancelAction: <#T##() -> Void#>,
+//                            setPasswordAction: <#T##(String) -> Void##(String) -> Void##(_ password: String) -> Void#>
+//                        )
+//                        onProceed: { password in viewModel.createBackup(password: password) },
+//                        onCancel: { viewModel.cancel() }
+//                    )
+                            .interactiveDismissDisabled()
+                            .presentationDetents([.large])
+                    }
             }
 
             // TODO: conflict with presentation?

@@ -29,15 +29,15 @@ struct CreatingBackupProgressView: View {
         NavigationStack {
             backupProgressViewControllerRepresentable
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
-                .navigationTitle(Text("creatingBackup.title", bundle: .module))
+                .navigationTitle(Text("exportBackup.creatingBackup.title", bundle: .module))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(action: cancelAction) {
-                            Text("creatingBackup.cancel", bundle: .module)
+                            Text("exportBackup.cancel.title", bundle: .module)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(Text("creatingBackup.cancel.label"))
+                        .accessibilityLabel(Text("exportBackup.cancel.label"))
                         .accessibilityIdentifier("cancel")
                     }
                 }
@@ -48,13 +48,13 @@ struct CreatingBackupProgressView: View {
         switch progress {
         case .ongoing(let progress):
             BackupProgressViewControllerRepresentable(
-                progressDescription: .init(localized: "creatingBackup.savingConversationHistory", bundle: .module),
+                progressDescription: .init(localized: "exportBackup.creatingBackup.saving", bundle: .module),
                 progressValue: progress,
                 backupURL: nil
             )
         case .finished(let url):
             BackupProgressViewControllerRepresentable(
-                progressDescription: .init(localized: "creatingBackup.backupSuccessfullyCreated", bundle: .module),
+                progressDescription: .init(localized: "exportBackup.creatingBackup.success", bundle: .module),
                 progressValue: 1,
                 backupURL: url
             )

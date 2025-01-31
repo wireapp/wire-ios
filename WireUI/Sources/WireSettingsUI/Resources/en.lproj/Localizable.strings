@@ -29,11 +29,12 @@
 "exportBackup.setBackupPassword.placeholder" = "Enter password";
 "exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
 
-"creatingBackup.cancel" = "Cancel";
-"creatingBackup.title" = "Creating Backup";
-"creatingBackup.savingConversationHistory" = "Saving conversation history…";
-"creatingBackup.backupSuccessfullyCreated" = "Backup successfully created.";
-"creatingBackup.saveFileButton.title" = "Save File";
+"exportBackup.cancel.title" = "Cancel";
+
+"exportBackup.creatingBackup.title" = "Creating Backup";
+"exportBackup.creatingBackup.saving" = "Saving conversation history…";
+"exportBackup.creatingBackup.success" = "Backup successfully created.";
+"exportBackup.creatingBackup.saveFileButton.title" = "Save File";
 
 "restoreFromBackup.title" = "Enter password";
 "restoreFromBackup.description" = "This backup is password protected.";

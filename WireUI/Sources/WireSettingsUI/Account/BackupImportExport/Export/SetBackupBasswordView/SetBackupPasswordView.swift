@@ -20,26 +20,28 @@ import SwiftUI
 
 struct SetBackupPasswordView: View {
 
-    var onProceed: (_ password: String) -> Void
-    var onCancel: () -> Void
-
-    @Environment(\.dismiss) private var dismiss
+    @StateObject var viewModel: SetBackupPasswordViewModel
 
     var body: some View {
         VStack {
-            Button("action") {
-                onProceed("")
-            }
+//            SetExportPasswordView(
+//                viewModel: .init(
+//                    passwordValidator: <#T##any BackupPasswordValidatorProtocol#>,
+//                    exportBackupAction: onProceed
+//                )
+//            )
             Button("dismiss") {
-                onCancel()
+//                onCancel()
             }
         }
     }
 }
 
-#Preview {
-    SetBackupPasswordView(
-        onProceed: { _ in },
-        onCancel: {}
-    )
-}
+//#Preview {
+//    Color.white.sheet(isPresented: .constant(true)) {
+//        SetBackupPasswordView(
+//            onProceed: { _ in },
+//            onCancel: {}
+//        )
+//    }
+//}

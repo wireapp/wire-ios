@@ -39,11 +39,49 @@ public struct BackupImportExportBuilder {
 
     @MainActor
     public func build() -> UIViewController {
-        UIHostingController(
-            rootView: BackupImportExportRootView {
-                ExportBackupView(viewModel: .init(createBackupUseCase: createBackupUseCase))
-                ImportBackupView(viewModel: .init(importBackupUseCase: importBackupUseCase))
-            }
+        UIHostingController(rootView: buildRootView())
+    }
+
+    @MainActor @ViewBuilder
+    func buildRootView() -> some View {
+        BackupImportExportRootView {
+            buildExportBackupView()
+            buildImportBackupView()
+        }
+    }
+
+    @MainActor @ViewBuilder
+    func buildExportBackupView() -> some View {
+
+        let exportBackupViewModel = ExportBackupViewModel(createBackupUseCase: createBackupUseCase)
+        ExportBackupView(viewModel: exportBackupViewModel) {
+            CreatingBackupProgressView(
+                progress: exportBackupViewModel.backupProgress,
+                cancelAction: { exportBackupViewModel.cancel() }
+            )
+        }
+
+    }
+
+    @MainActor @ViewBuilder
+    func buildImportBackupView() -> some View {
+
+        let importBackupViewModel = ImportBackupViewModel(importBackupUseCase: importBackupUseCase)
+        ImportBackupView(viewModel: importBackupViewModel)
+
+    }
+}
+
+// MARK: - BackupImportExportBuilder + preview
+
+extension BackupImportExportBuilder {
+
+    static var previewBuilder: BackupImportExportBuilder {
+        BackupImportExportBuilder(
+            backupPasswordValidator: MockBackupPasswordValidator(),
+            createBackupUseCase: PreviewCreateBackupUseCase(),
+            importBackupUseCase: PreviewImportBackupUseCase(),
+            cleanUpBackupsUseCaseProtocol: PreviewCleanUpBackupsUseCase()
         )
     }
 }
