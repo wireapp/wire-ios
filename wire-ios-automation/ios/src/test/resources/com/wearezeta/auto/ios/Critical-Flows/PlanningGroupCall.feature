@@ -3,6 +3,7 @@ Feature: Planning Group Calls
   @flows @TC-8580
   Scenario Outline: Team owner planning a group call
     Given I allow camera access
+    And I allow access to all photos
     And I allow microphone access
     Given There is a team owner "<TeamOwner>" with team "<TeamName>"
     And TeamOwner "<TeamOwner>" waits and enables conference calling feature for team <TeamName> via backdoor
@@ -32,7 +33,6 @@ Feature: Planning Group Calls
     And I tap Share Location button from input tools
     And I tap Send location button from map view
     And I tap Add Picture button from input tools
-    And I allow access to all photos
     And I select the first item from Keyboard Gallery
     And I tap on OK button for the image
     Then I see 1 photo in the conversation view
