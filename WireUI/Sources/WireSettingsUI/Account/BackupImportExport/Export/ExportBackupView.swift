@@ -18,10 +18,11 @@
 
 import SwiftUI
 
-struct ExportBackupView<ProgressView: View>: View {
+struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
 
     @StateObject var viewModel: ExportBackupViewModel
 
+    private(set) var setBackupPasswordView: () -> PasswordView
     private(set) var creatingBackupProgressView: () -> ProgressView
 
     var body: some View {
@@ -41,16 +42,7 @@ struct ExportBackupView<ProgressView: View>: View {
                     .interactiveDismissDisabled()
                     .presentationDetents([.medium])
                     .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
-                        Color.red
-//                    SetBackupPasswordView(
-//                        viewModel: .init(
-//                            passwordValidator: <#T##any BackupPasswordValidatorProtocol#>,
-//                            cancelAction: <#T##() -> Void#>,
-//                            setPasswordAction: <#T##(String) -> Void##(String) -> Void##(_ password: String) -> Void#>
-//                        )
-//                        onProceed: { password in viewModel.createBackup(password: password) },
-//                        onCancel: { viewModel.cancel() }
-//                    )
+                        setBackupPasswordView()
                             .interactiveDismissDisabled()
                             .presentationDetents([.large])
                     }

@@ -54,12 +54,29 @@ public struct BackupImportExportBuilder {
     func buildExportBackupView() -> some View {
 
         let exportBackupViewModel = ExportBackupViewModel(createBackupUseCase: createBackupUseCase)
-        ExportBackupView(viewModel: exportBackupViewModel) {
-            CreatingBackupProgressView(
-                progress: exportBackupViewModel.backupProgress,
-                cancelAction: { exportBackupViewModel.cancel() }
-            )
-        }
+
+        let setBackupPasswordViewModel = SetBackupPasswordViewModel(
+            passwordValidator: backupPasswordValidator,
+            cancelAction: { [weak exportBackupViewModel] in
+                exportBackupViewModel?.cancel()
+            },
+            setPasswordAction: { [weak exportBackupViewModel] password in
+                exportBackupViewModel?.createBackup(password: password)
+            }
+        )
+
+        ExportBackupView(
+            viewModel: exportBackupViewModel,
+            setBackupPasswordView: {
+                SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
+            },
+            creatingBackupProgressView: {
+                CreatingBackupProgressView(
+                    progress: exportBackupViewModel.backupProgress,
+                    cancelAction: { exportBackupViewModel.cancel() }
+                )
+            }
+        )
 
     }
 

@@ -50,6 +50,10 @@ final class SetBackupPasswordViewModel: ObservableObject {
         isPasswordValid = passwordValidator.isPasswordValid(password)
     }
 
+    func cancel() {
+        cancelAction()
+    }
+
     func triggerExport() {
         if isPasswordValid {
             setPasswordAction(password)

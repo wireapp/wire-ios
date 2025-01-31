@@ -31,7 +31,7 @@ struct SetBackupPasswordView: View {
 //                )
 //            )
             Button("dismiss") {
-//                onCancel()
+                viewModel.cancel()
             }
         }
     }
