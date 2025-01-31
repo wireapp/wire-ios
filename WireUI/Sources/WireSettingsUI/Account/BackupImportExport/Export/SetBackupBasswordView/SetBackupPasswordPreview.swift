@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct SetExportPasswordPreview: View {
+struct SetBackupPasswordPreview: View {
 
     @State private var isPresented = true
 
@@ -27,6 +27,8 @@ struct SetExportPasswordPreview: View {
             isPresented.toggle()
         }
         .sheet(isPresented: $isPresented) {
+            // TODO: enable
+            /*
             NavigationStack {
                 SetExportPasswordView(
                     viewModel: .init(
@@ -40,6 +42,8 @@ struct SetExportPasswordPreview: View {
             .presentationDragIndicator(.visible)
             .presentationDetents([.height(300)])
 //            .presentationDetents([.height(100), .fraction(20), .medium, .large])
+             */
+            Text("TODO")
         }
     }
 }
@@ -53,19 +57,3 @@ struct MockBackupPasswordValidator: BackupPasswordValidatorProtocol {
     }
 
 }
-
-//private struct PreviewAlertPresenter: BackupRestoreAlertPresenterProtocol {
-//    func todo() async -> Bool {
-//        fatalError("not implemented")
-//    }
-//}
-//
-//private struct PreviewUseCase: ExportBackupUseCaseProtocol {
-//    func invoke(password: String) async throws {
-//        fatalError("not implemented")
-//    }
-//}
-
-//private struct PreviewActivityPresenter: ExportBackupActivityPresenterProtocol {
-//    func present(backup: URL) async {}
-//}

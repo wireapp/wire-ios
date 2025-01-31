@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol BackupRestoreAlertPresenterProtocol {
+import SwiftUI
 
-    /// <#Description#>
-    /// - Returns: <#description#>
-    @MainActor
-    func todo() async -> Bool
+@MainActor @ViewBuilder
+func EnterPasswordPreview() -> some View {
+    Color.white
+        .sheet(isPresented: .constant(true)) {
+            EnterPasswordView()
+                .presentationDetents([.medium])
+                .interactiveDismissDisabled()
+        }
 }

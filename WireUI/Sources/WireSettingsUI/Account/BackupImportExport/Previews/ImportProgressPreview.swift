@@ -16,18 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct RestoreBackupResultHandler {
-    let onSuccess: () -> Void
-    let onConfirmation: (@escaping () -> Void) -> Void
-    let onFailure: () -> Void
+import SwiftUI
 
-    public init(
-        onSuccess: @escaping () -> Void,
-        onConfirmation: @escaping (@escaping () -> Void) -> Void,
-        onFailure: @escaping () -> Void
-    ) {
-        self.onSuccess = onSuccess
-        self.onConfirmation = onConfirmation
-        self.onFailure = onFailure
-    }
+@MainActor @ViewBuilder
+func ImportProgressPreview() -> some View {
+    Color.white
+        .sheet(isPresented: .constant(true)) {
+            ImportProgressView(progressValue: 0.25) {}
+                .interactiveDismissDisabled()
+                .presentationDetents([.medium])
+        }
 }

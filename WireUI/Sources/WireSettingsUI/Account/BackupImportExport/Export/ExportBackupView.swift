@@ -18,9 +18,12 @@
 
 import SwiftUI
 
-struct ExportBackupView: View {
+struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
 
     @StateObject var viewModel: ExportBackupViewModel
+
+    private(set) var setBackupPasswordView: () -> PasswordView
+    private(set) var creatingBackupProgressView: () -> ProgressView
 
     var body: some View {
 
@@ -35,42 +38,27 @@ struct ExportBackupView: View {
             }
 
             .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
-                let progress: CreatingBackupProgressModel = if let backupURL = viewModel.backupURL {
-                    .finished(backupURL)
-                } else {
-                    .ongoing(viewModel.backupProgress ?? 0)
-                }
-                CreatingBackupProgressView(
-                    progress: progress,
-                    cancelAction: { viewModel.cancel() }
-                )
-                .interactiveDismissDisabled()
-                .presentationDetents([.medium])
-                .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
-                    SetBackupPasswordView(
-                        onProceed: { password in viewModel.createBackup(password: password) },
-                        onCancel: { viewModel.cancel() }
-                    )
+                creatingBackupProgressView()
                     .interactiveDismissDisabled()
-                    .presentationDetents([.large])
-                }
+                    .presentationDetents([.medium])
+                    .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
+                        setBackupPasswordView()
+                            .interactiveDismissDisabled()
+                            .presentationDetents([.medium])
+                    }
             }
 
-            .alert( // TODO: fix
-                "Save failed.",
-                isPresented: $viewModel.isErrorAlertPresented,
-                presenting: viewModel.backupError
-            ) { backupError in
-                Button(role: .destructive) {
-                    // Handle the deletion.
+            .alert(
+                Text("exportBackup.errorAlert.title", bundle: .module),
+                isPresented: $viewModel.isErrorAlertPresented
+            ) {
+                Button {
+                    viewModel.reset()
                 } label: {
-                    Text("Delete \(backupError)")
+                    Text("exportBackup.errorAlert.ok", bundle: .module)
                 }
-                Button("Retry") {
-                    // Handle the retry action.
-                }
-            } message: { backupError in
-                Text("details.error")
+            } message: {
+                Text("exportBackup.errorAlert.message", bundle: .module)
             }
 
         }

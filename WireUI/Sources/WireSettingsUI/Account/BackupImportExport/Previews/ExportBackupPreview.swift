@@ -21,11 +21,8 @@ import SwiftUI
 @MainActor
 func ExportBackupPreview() -> some View {
     List {
-        ExportBackupView(
-            viewModel: .init(
-                createBackupUseCase: PreviewCreateBackupUseCase()
-            )
-        )
+        BackupImportExportBuilder.previewBuilder
+            .buildExportBackupView()
     }
     .listStyle(.grouped)
 }

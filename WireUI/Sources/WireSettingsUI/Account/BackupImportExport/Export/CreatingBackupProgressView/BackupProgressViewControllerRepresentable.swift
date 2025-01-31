@@ -23,12 +23,14 @@ struct BackupProgressViewControllerRepresentable: UIViewControllerRepresentable 
     var progressDescription = ""
     var progressValue = Float()
     var backupURL: URL?
+    var completedAction: (_ completed: Bool) -> Void = { _ in }
 
     func makeUIViewController(context: Context) -> CreatingBackupProgressViewController {
         let viewController = CreatingBackupProgressViewController()
         viewController.progressDescription = progressDescription
         viewController.progressValue = progressValue
         viewController.backupURL = backupURL
+        viewController.completedAction = completedAction
         return viewController
     }
 
@@ -36,5 +38,6 @@ struct BackupProgressViewControllerRepresentable: UIViewControllerRepresentable 
         viewController.progressDescription = progressDescription
         viewController.progressValue = progressValue
         viewController.backupURL = backupURL
+        viewController.completedAction = completedAction
     }
 }

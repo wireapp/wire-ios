@@ -24,5 +24,6 @@ func CreatingBackupProgressPreview(_ progress: CreatingBackupProgressModel) -> s
         .sheet(isPresented: .constant(true)) {
             CreatingBackupProgressView(progress: progress) {}
                 .presentationDetents([.medium])
+                .interactiveDismissDisabled()
         }
 }

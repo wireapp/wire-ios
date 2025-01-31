@@ -18,18 +18,8 @@
 
 import SwiftUI
 
-@MainActor
+@MainActor @ViewBuilder
 func BackupImportExportRootPreview() -> some View {
-    BackupImportExportRootView{
-        ExportBackupView(
-            viewModel: .init(
-                createBackupUseCase: PreviewCreateBackupUseCase()
-            )
-        )
-        ImportBackupView(
-            viewModel: .init(
-                importBackupUseCase: PreviewImportBackupUseCase()
-            )
-        )
-    }
+    BackupImportExportBuilder.previewBuilder
+        .buildRootView()
 }

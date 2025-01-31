@@ -16,21 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-public enum RestoreBackupError: Error {
-
-    case decryptionError
-    case generic(any Error)
-
-}
-
-public protocol RestoreSourceProtocol {
-
-    func restoreFromBackup(
-        at location: URL,
-        password: String,
-        completion: @escaping (Result<Void, any Error>) -> Void
-    )
-
+struct PreviewCleanUpBackupsUseCase: CleanUpBackupsUseCaseProtocol {
+    func invoke() async throws {}
 }

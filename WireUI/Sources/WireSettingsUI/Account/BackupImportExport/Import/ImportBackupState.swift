@@ -22,5 +22,5 @@ enum ImportBackupState {
     case importingBackup(progress: Float)
     case requestingPassword(url: URL)
     case confirmation
-    case restoreFailed(any Error)
+    case restoreFailed
 }

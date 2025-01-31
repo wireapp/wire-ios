@@ -21,29 +21,93 @@ import SwiftUI
 public struct BackupImportExportBuilder {
 
     let backupPasswordValidator: any BackupPasswordValidatorProtocol
-    let exportBackupUseCase: any CreateBackupUseCaseProtocol
+    let createBackupUseCase: any CreateBackupUseCaseProtocol
     let importBackupUseCase: any ImportBackupUseCaseProtocol
     let cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
-        exportBackupUseCase: any CreateBackupUseCaseProtocol,
+        createBackupUseCase: any CreateBackupUseCaseProtocol,
         importBackupUseCase: any ImportBackupUseCaseProtocol,
         cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
     ) {
         self.backupPasswordValidator = backupPasswordValidator
-        self.exportBackupUseCase = exportBackupUseCase
+        self.createBackupUseCase = createBackupUseCase
         self.importBackupUseCase = importBackupUseCase
         self.cleanUpBackupsUseCaseProtocol = cleanUpBackupsUseCaseProtocol
     }
 
     @MainActor
     public func build() -> UIViewController {
-        UIHostingController(
-            rootView: BackupImportExportRootView {
-                ExportBackupView(viewModel: .init(createBackupUseCase: exportBackupUseCase))
-                ImportBackupView(viewModel: .init(importBackupUseCase: importBackupUseCase))
+        UIHostingController(rootView: buildRootView())
+    }
+
+    @MainActor @ViewBuilder
+    func buildRootView() -> some View {
+        BackupImportExportRootView {
+            buildExportBackupView()
+            buildImportBackupView()
+        }
+    }
+
+    @MainActor @ViewBuilder
+    func buildExportBackupView() -> some View {
+
+        let viewModel = ExportBackupViewModel(createBackupUseCase: createBackupUseCase)
+
+        ExportBackupView(
+            viewModel: viewModel,
+            setBackupPasswordView: {
+                buildSetBackupPasswordView(
+                    cancelAction: { [weak viewModel] in viewModel?.cancel() },
+                    setPasswordAction: { [weak viewModel] password in viewModel?.createBackup(password: password) }
+                )
+            },
+            creatingBackupProgressView: {
+                CreatingBackupProgressView(
+                    progress: viewModel.backupProgress,
+                    cancelAction: { viewModel.cancel() }
+                )
             }
+        )
+
+    }
+
+    @MainActor @ViewBuilder
+    func buildSetBackupPasswordView(
+        cancelAction: @escaping () -> Void,
+        setPasswordAction: @escaping (_ password: String) -> Void
+    ) -> some View {
+
+        let setBackupPasswordViewModel = SetBackupPasswordViewModel(
+            passwordValidator: backupPasswordValidator,
+            cancelAction: cancelAction,
+            setPasswordAction: setPasswordAction
+        )
+
+        SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
+
+    }
+
+    @MainActor @ViewBuilder
+    func buildImportBackupView() -> some View {
+
+        let importBackupViewModel = ImportBackupViewModel(importBackupUseCase: importBackupUseCase)
+        ImportBackupView(viewModel: importBackupViewModel)
+
+    }
+}
+
+// MARK: - BackupImportExportBuilder + preview
+
+extension BackupImportExportBuilder {
+
+    static var previewBuilder: BackupImportExportBuilder {
+        BackupImportExportBuilder(
+            backupPasswordValidator: MockBackupPasswordValidator(),
+            createBackupUseCase: PreviewCreateBackupUseCase(),
+            importBackupUseCase: PreviewImportBackupUseCase(),
+            cleanUpBackupsUseCaseProtocol: PreviewCleanUpBackupsUseCase()
         )
     }
 }

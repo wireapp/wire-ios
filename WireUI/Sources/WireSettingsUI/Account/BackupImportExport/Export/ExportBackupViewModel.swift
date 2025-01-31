@@ -33,14 +33,17 @@ final class ExportBackupViewModel: ObservableObject {
     @Published var isSetBackupPasswordPresented = false
     @Published var isErrorAlertPresented = false
 
-    @Published private(set) var backupProgress: Float?
+    @Published private(set) var backupProgress: CreatingBackupProgressModel = .ongoing(0)
     @Published private(set) var backupURL: URL?
-    var backupError: (any Error)? { state?.backupError }
 
-    private var backupTask: Task<Void, any Error>?
+    private var backupTask: Task<Void, Never>?
 
     init(createBackupUseCase: any CreateBackupUseCaseProtocol) {
         self.createBackupUseCase = createBackupUseCase
+    }
+
+    func reset() {
+        state = nil
     }
 
     func requestBackupPassword() {
@@ -50,11 +53,9 @@ final class ExportBackupViewModel: ObservableObject {
     }
 
     func createBackup(password: String) {
-        guard backupTask == nil else { return assertionFailure() }
+        backupTask?.cancel()
 
         backupTask = Task {
-            defer { backupTask = nil }
-
             do {
                 for try await update in createBackupUseCase.invoke(password: password) {
                     switch update {
@@ -78,8 +79,9 @@ final class ExportBackupViewModel: ObservableObject {
             state = nil
         case .creatingBackup:
             backupTask?.cancel()
+            state = nil
         case .backupReady:
-            // TODO: clean up
+            // TODO: clean up use case?
             state = nil
         case .backupFailed:
             fatalError("not yet implemented")
@@ -98,27 +100,38 @@ final class ExportBackupViewModel: ObservableObject {
         default: false
         }
 
-        isErrorAlertPresented = switch state { case .backupFailed: true default: false }
+        // TODO: find better workaround for presentation issue
+        let isErrorAlertPresented = switch state { case .backupFailed: true default: false }
+        if isErrorAlertPresented {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.isErrorAlertPresented = true }
+        } else {
+            self.isErrorAlertPresented = false
+        }
 
-        backupProgress = switch state { case .creatingBackup(let progress): progress default: nil }
-
-        backupURL = if case .backupReady(let url) = state { url } else { nil }
+        backupProgress = switch state {
+        case .creatingBackup(let progress):
+            .ongoing(progress)
+        case .backupReady(let url):
+            .finished(url)
+        default:
+            .ongoing(0)
+        }
 
     }
 }
 
 // MARK: - ExportBackupViewModel.State + Properties
 
-private extension ExportBackupState {
-
-    var backupError: (any Error)? {
-        if case .backupFailed(let error) = self {
-            error
-        } else {
-            .none
-        }
-    }
-}
+//extension ExportBackupViewModel {
+//
+//    var backupError: (any Error)? {
+//        if case .backupFailed(let error) = state {
+//            error
+//        } else {
+//            .none
+//        }
+//    }
+//}
 
 // TODO: ?
 

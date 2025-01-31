@@ -18,14 +18,42 @@
 
 "settings.exportBackup.action" = "Back Up Now";
 "settings.exportBackup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.";
+
 "settings.restoreFromBackup.action" = "Restore from Backup";
 "settings.restoreFromBackup.description" = "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.";
+
 "exportBackup.title" = "Set password";
 "exportBackup.description" = "The backup will be compressed and encrypted with a password. Make sure to store it in a secure place.";
 "exportBackup.button" = "Back Up Now";
 "exportBackup.setBackupPassword.title" = "Password (OPTIONAL)";
 "exportBackup.setBackupPassword.placeholder" = "Enter password";
 "exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+
+"exportBackup.cancel.title" = "Cancel";
+"exportBackup.errorAlert.title" = "Something went wrong";
+"exportBackup.errorAlert.message" = "The backup could not be created. Please try again or contact Wire support.";
+"exportBackup.errorAlert.ok" = "OK";
+
+"exportBackup.creatingBackup.title" = "Creating Backup";
+"exportBackup.creatingBackup.saving" = "Saving conversation history…";
+"exportBackup.creatingBackup.success" = "Backup successfully created.";
+"exportBackup.creatingBackup.saveButton.title" = "Save File";
+
+"importBackup.cancel.title" = "Cancel";
+
+"importBackup.alert.ok" = "OK";
+"importBackup.alert.success.title" = "Success";
+"importBackup.alert.success.message" = "Your history is restored.";
+"importBackup.alert.genericError.title" = "Something went wrong";
+"importBackup.alert.genericError.message" = "Your history could not be restored. Please try again or contact the Wire customer support.";
+"importBackup.alert.incompatibleBackupError.title" = "Incompatible backup";
+"importBackup.alert.incompatibleBackupError.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
+"importBackup.alert.wrongFileError.title" = "Wrong backup file";
+"importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
+
+"importBackup.restoringHistory.title" = "Restoring history…";
+"importBackup.restoringHistory.message" = "Loading conversations…";
+
 "restoreFromBackup.title" = "Enter password";
 "restoreFromBackup.description" = "This backup is password protected.";
 "restoreFromBackup.button" = "Continue";

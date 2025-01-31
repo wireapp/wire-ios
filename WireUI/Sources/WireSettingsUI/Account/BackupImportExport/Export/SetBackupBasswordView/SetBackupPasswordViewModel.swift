@@ -19,7 +19,7 @@
 import Foundation
 
 @MainActor
-final class SetExportPasswordViewModel: ObservableObject {
+final class SetBackupPasswordViewModel: ObservableObject {
 
     @Published var password = "" {
         didSet { validatePassword() }
@@ -28,26 +28,35 @@ final class SetExportPasswordViewModel: ObservableObject {
     @Published var isPasswordVisible = false
     @Published private(set) var isPasswordValid = true
 
-    var localizedPasswordRules: String { passwordValidator.localizedRulesDescription }
+    var localizedPasswordRules: String {
+        passwordValidator.localizedRulesDescription
+    }
 
     private let passwordValidator: any BackupPasswordValidatorProtocol
-    private let exportBackupAction: (_ password: String) -> Void
+    private let setPasswordAction: (_ password: String) -> Void
+    private let cancelAction: () -> Void
 
     init(
         passwordValidator: any BackupPasswordValidatorProtocol,
-        exportBackupAction: @escaping (_ password: String) -> Void
+        cancelAction: @escaping () -> Void,
+        setPasswordAction: @escaping (_ password: String) -> Void
     ) {
         self.passwordValidator = passwordValidator
-        self.exportBackupAction = exportBackupAction
+        self.cancelAction = cancelAction
+        self.setPasswordAction = setPasswordAction
     }
 
     private func validatePassword() {
         isPasswordValid = passwordValidator.isPasswordValid(password)
     }
 
+    func cancel() {
+        cancelAction()
+    }
+
     func triggerExport() {
         if isPasswordValid {
-            exportBackupAction(password)
+            setPasswordAction(password)
         }
     }
 }

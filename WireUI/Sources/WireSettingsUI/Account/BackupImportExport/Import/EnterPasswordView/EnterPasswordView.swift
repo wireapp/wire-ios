@@ -18,28 +18,12 @@
 
 import SwiftUI
 
-struct SetBackupPasswordView: View {
-
-    var onProceed: (_ password: String) -> Void
-    var onCancel: () -> Void
-
-    @Environment(\.dismiss) private var dismiss
-
+struct EnterPasswordView: View {
     var body: some View {
-        VStack {
-            Button("action") {
-                onProceed("")
-            }
-            Button("dismiss") {
-                onCancel()
-            }
-        }
+        Text("Hello, World!")
     }
 }
 
 #Preview {
-    SetBackupPasswordView(
-        onProceed: { _ in },
-        onCancel: {}
-    )
+    EnterPasswordPreview()
 }

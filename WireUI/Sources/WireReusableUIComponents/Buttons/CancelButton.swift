@@ -16,17 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+import WireDesign
 
-public struct BackupResultHandler {
-    let onSuccess: (URL, @escaping () -> Void) -> Void
-    let onFailure: () -> Void
+public struct CancelButton: View { // TODO: delete?
 
-    public init(
-        onSuccess: @escaping (URL, @escaping () -> Void) -> Void,
-        onFailure: @escaping () -> Void
-    ) {
-        self.onSuccess = onSuccess
-        self.onFailure = onFailure
+    private let action: () -> Void
+
+    public var body: some View {
+        Button(action: action) {
+            Text(L10n.Passwordtextfield.Preview.passwordrules.description)
+        }
+        .accessibilityIdentifier("cancel")
+    }
+
+    public init(action: @escaping @MainActor () -> Void) {
+        self.action = action
+    }
+
+}
+
+#Preview {
+    NavigationStack {
+        Text("Hello, World!")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    CancelButton(action: { print("Cancel") })
+                }
+            }
     }
 }

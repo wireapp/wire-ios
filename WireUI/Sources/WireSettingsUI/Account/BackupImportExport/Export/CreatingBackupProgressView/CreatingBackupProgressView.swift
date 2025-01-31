@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireReusableUIComponents
+import WireDesign
 
 struct CreatingBackupProgressView: View {
 
@@ -27,32 +28,43 @@ struct CreatingBackupProgressView: View {
     var body: some View {
         NavigationStack {
             backupProgressViewControllerRepresentable
-                .navigationTitle("title")
+                .background(Color(uiColor: ColorTheme.Backgrounds.background))
+                .navigationTitle(Text("exportBackup.creatingBackup.title", bundle: .module))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        CloseButton(
-                            action: cancelAction,
-                            accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
-                        )
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: cancelAction) {
+                            Text("exportBackup.cancel.title", bundle: .module)
+                        }
+                        .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                        .accessibilityLabel(Text("exportBackup.cancel.label"))
+                        .accessibilityIdentifier("cancel")
                     }
                 }
         }
     }
 
+    @ViewBuilder
     private var backupProgressViewControllerRepresentable: some View {
+
+        let completedAction = { (completed: Bool) in
+            completed ? cancelAction() : ()
+        }
+
         switch progress {
         case .ongoing(let progress):
             BackupProgressViewControllerRepresentable(
-                progressDescription: "saving \n A b c de fkalfj d lsdkfjsdklfsdjk fsdlkjf sdlkfsdkl fjsdlk flskj dlsdjfl k",
+                progressDescription: .init(localized: "exportBackup.creatingBackup.saving", bundle: .module),
                 progressValue: progress,
-                backupURL: nil
+                backupURL: nil,
+                completedAction: completedAction
             )
         case .finished(let url):
             BackupProgressViewControllerRepresentable(
-                progressDescription: "success",
+                progressDescription: .init(localized: "exportBackup.creatingBackup.success", bundle: .module),
                 progressValue: 1,
-                backupURL: url
+                backupURL: url,
+                completedAction: completedAction
             )
         }
     }

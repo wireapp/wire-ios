@@ -19,6 +19,6 @@
 import SwiftUICore
 
 struct ImportBackupAlertContent: Equatable {
-    var title = LocalizedStringKey("")
-    var message = LocalizedStringKey("")
+    var titleKey = LocalizedStringKey("")
+    var messageKey = LocalizedStringKey("")
 }

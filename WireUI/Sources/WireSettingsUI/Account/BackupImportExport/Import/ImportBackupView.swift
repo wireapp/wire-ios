@@ -42,15 +42,42 @@ struct ImportBackupView: View {
                 viewModel.pickedBackupFile(result: result)
             }
 
-            .alert(
-                viewModel.alertContent.title,
-                isPresented: $viewModel.isAlertPresented
-            ) {
-                Button("OK") { // TODO: fix and localize
-                    // Handle the acknowledgement.
+            .sheet(isPresented: $viewModel.isImportProgressPresented) {
+                ImportProgressView(
+                    progressValue: viewModel.importProgress,
+                    cancelAction: { viewModel.reset() }
+                )
+                .interactiveDismissDisabled()
+                .presentationDetents([.medium])
+                .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
+
+                    VStack {
+                        Text("password?")
+                        Button("Aqa") {
+                            viewModel.enterPassword("Aqa")
+                        }
+                    }
+//                    SetBackupPasswordView(
+//                        onProceed: { password in viewModel.createBackup(password: password) },
+//                        onCancel: { viewModel.cancel() }
+//                    )
+                    .interactiveDismissDisabled()
+                    .presentationDetents([.large])
                 }
-            } message: {
-                Text("Please check your credentials and try again.")
+            }
+
+            .alert(
+                Text(viewModel.alertContent.titleKey, bundle: .module),
+                isPresented: $viewModel.isAlertPresented,
+                presenting: viewModel.alertContent
+            ) { _ in
+                Button {
+                    viewModel.reset()
+                } label: {
+                    Text("importBackup.alert.ok", bundle: .module)
+                }
+            } message: { alertContent in
+                Text(alertContent.messageKey, bundle: .module)
             }
         }
     }
