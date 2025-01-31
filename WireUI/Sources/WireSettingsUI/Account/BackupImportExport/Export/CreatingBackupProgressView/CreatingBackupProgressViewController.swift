@@ -34,6 +34,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         didSet {
             guard isViewLoaded else { return }
             progressView.progress = progressValue
+            progressLabel.text = "\(Int(progressValue * 100))%"
         }
     }
 
@@ -49,7 +50,7 @@ final class CreatingBackupProgressViewController: UIViewController {
     private lazy var scrollView = UIScrollView()
 
     private lazy var stackView = {
-        let stackView = UIStackView(arrangedSubviews: [descriptionLabel, progressView, exportButton])
+        let stackView = UIStackView(arrangedSubviews: [descriptionLabel, progressLabel, progressView, exportButton])
         stackView.axis = .vertical
         stackView.spacing = 16
         return stackView
@@ -58,20 +59,43 @@ final class CreatingBackupProgressViewController: UIViewController {
     private var descriptionLabel = {
         let descriptionLabel = UILabel()
         descriptionLabel.numberOfLines = 0
+        descriptionLabel.font = .preferredFont(forTextStyle: .caption1)
+        descriptionLabel.textColor = BaseColorPalette.Grays.gray70
+        descriptionLabel.adjustsFontForContentSizeCategory = true
+        descriptionLabel.accessibilityIdentifier = "" // TODO: fix
+        descriptionLabel.accessibilityLabel = "" // TODO: fix
         return descriptionLabel
+    }()
+
+    private lazy var progressLabel = {
+        let progressLabel = UILabel()
+        let font = UIFont.preferredFont(forTextStyle: .caption2)
+        let fontDescriptor = font.fontDescriptor.withSymbolicTraits(.traitBold)
+        progressLabel.font = .init(descriptor: fontDescriptor ?? font.fontDescriptor, size: 0)
+        progressLabel.adjustsFontForContentSizeCategory = true
+        progressLabel.textColor = BaseColorPalette.Grays.gray70
+        progressLabel.textAlignment = .center
+        progressLabel.accessibilityIdentifier = "" // TODO: fix
+        progressLabel.accessibilityLabel = "" // TODO: fix
+        return progressLabel
     }()
 
     private lazy var progressView = {
         let progressView = UIProgressView()
         progressView.progressTintColor = ColorTheme.Base.primary
+        progressView.accessibilityIdentifier = "" // TODO: fix
+        progressView.accessibilityLabel = "" // TODO: fix
         return progressView
     }()
 
     private lazy var exportButton = {
+        let title = String(localized: "creatingBackup.saveFileButton.title", bundle: .module)
         let exportButton = UIButton()
         exportButton.wireButtonStyle = .primary
-        exportButton.setTitle("save", for: .normal)
+        exportButton.setTitle(title, for: .normal)
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
+        exportButton.accessibilityIdentifier = "" // TODO: fix
+        exportButton.accessibilityLabel = "" // TODO: fix
         return exportButton
     }()
 
@@ -84,7 +108,12 @@ final class CreatingBackupProgressViewController: UIViewController {
 
     private func setupSubviews() {
 
+        stackView.setCustomSpacing(4, after: progressLabel)
+        stackView.setCustomSpacing(32, after: progressView)
+
         descriptionLabel.text = progressDescription
+
+        progressLabel.text = "\(Int(progressValue * 100))%"
 
         progressView.progress = progressValue
 
@@ -108,9 +137,9 @@ final class CreatingBackupProgressViewController: UIViewController {
             scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
             stackView.leadingAnchor.constraint(equalToSystemSpacingAfter: svLayoutGuide.leadingAnchor, multiplier: 3),
-            stackView.topAnchor.constraint(equalToSystemSpacingBelow: svLayoutGuide.topAnchor, multiplier: 3),
+            stackView.topAnchor.constraint(equalToSystemSpacingBelow: svLayoutGuide.topAnchor, multiplier: 1),
             svLayoutGuide.trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 3),
-            svLayoutGuide.bottomAnchor.constraint(equalToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 3)
+            svLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
 
         ])
 

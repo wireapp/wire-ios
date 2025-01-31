@@ -16,8 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"setBackupPassword.close.label" = "Close setup backup password";
+import SwiftUI
+import WireDesign
 
-"creatingBackup.cancel.label" = "Cancel creating backup";
+public struct CancelButton: View { // TODO: delete?
 
-"restoreBackup.close.label" = "Close restore backup";
+    private let action: () -> Void
+
+    public var body: some View {
+        Button(action: action) {
+            Text(L10n.Passwordtextfield.Preview.passwordrules.description)
+        }
+        .accessibilityIdentifier("cancel")
+    }
+
+    public init(action: @escaping @MainActor () -> Void) {
+        self.action = action
+    }
+
+}
+
+#Preview {
+    NavigationStack {
+        Text("Hello, World!")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    CancelButton(action: { print("Cancel") })
+                }
+            }
+    }
+}

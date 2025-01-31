@@ -29,14 +29,16 @@ struct CreatingBackupProgressView: View {
         NavigationStack {
             backupProgressViewControllerRepresentable
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
-                .navigationTitle("title")
+                .navigationTitle(Text("creatingBackup.title", bundle: .module))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        CloseButton(
-                            action: cancelAction,
-                            accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
-                        )
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: cancelAction) {
+                            Text("creatingBackup.cancel", bundle: .module)
+                        }
+                        .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                        .accessibilityLabel(Text("creatingBackup.cancel.label"))
+                        .accessibilityIdentifier("cancel")
                     }
                 }
         }
@@ -46,13 +48,13 @@ struct CreatingBackupProgressView: View {
         switch progress {
         case .ongoing(let progress):
             BackupProgressViewControllerRepresentable(
-                progressDescription: "saving \n A b c de fkalfj d lsdkfjsdklfsdjk fsdlkjf sdlkfsdkl fjsdlk flskj dlsdjfl k",
+                progressDescription: .init(localized: "creatingBackup.savingConversationHistory", bundle: .module),
                 progressValue: progress,
                 backupURL: nil
             )
         case .finished(let url):
             BackupProgressViewControllerRepresentable(
-                progressDescription: "success",
+                progressDescription: .init(localized: "creatingBackup.backupSuccessfullyCreated", bundle: .module),
                 progressValue: 1,
                 backupURL: url
             )
