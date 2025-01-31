@@ -8,16 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		EE7442732D3132570025271D /* NeedleFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EE7442722D3132570025271D /* NeedleFoundation */; };
-		EEC738EA2D022EDB003C0FC9 /* WireAuthenticationUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738E02D022EDB003C0FC9 /* WireAuthenticationUI.framework */; };
-		EEC739072D022EF6003C0FC9 /* WireAuthenticationLogic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationLogic.framework */; };
-		EEC739292D022FE0003C0FC9 /* WireAuthenticationLogic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationLogic.framework */; };
-		EEC7392A2D022FE0003C0FC9 /* WireAuthenticationLogic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationLogic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EEC7392D2D022FE0003C0FC9 /* WireAuthenticationUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738E02D022EDB003C0FC9 /* WireAuthenticationUI.framework */; };
-		EEC7392E2D022FE0003C0FC9 /* WireAuthenticationUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738E02D022EDB003C0FC9 /* WireAuthenticationUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EEC739322D022FE8003C0FC9 /* WireAuthenticationAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */; };
-		EEC739332D022FE8003C0FC9 /* WireAuthenticationAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EEC739372D023029003C0FC9 /* WireAuthenticationAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */; };
-		EEC739382D02302A003C0FC9 /* WireAuthenticationAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEC738EA2D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */; };
+		EEC739072D022EF6003C0FC9 /* WireAuthenticationSpikeLogic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic.framework */; };
+		EEC739292D022FE0003C0FC9 /* WireAuthenticationSpikeLogic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic.framework */; };
+		EEC7392A2D022FE0003C0FC9 /* WireAuthenticationSpikeLogic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEC7392D2D022FE0003C0FC9 /* WireAuthenticationSpikeUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */; };
+		EEC7392E2D022FE0003C0FC9 /* WireAuthenticationSpikeUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEC739322D022FE8003C0FC9 /* WireAuthenticationSpikeAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationSpikeAPI.framework */; };
+		EEC739332D022FE8003C0FC9 /* WireAuthenticationSpikeAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationSpikeAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEC739372D023029003C0FC9 /* WireAuthenticationSpikeAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationSpikeAPI.framework */; };
+		EEC739382D02302A003C0FC9 /* WireAuthenticationSpikeAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationSpikeAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEC73BAC2D035B02003C0FC9 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EEC73BAB2D035B02003C0FC9 /* WireAPI */; };
 /* End PBXBuildFile section */
 
@@ -73,8 +73,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EEC7392A2D022FE0003C0FC9 /* WireAuthenticationLogic.framework in Embed Frameworks */,
-				EEC7392E2D022FE0003C0FC9 /* WireAuthenticationUI.framework in Embed Frameworks */,
+				EEC7392A2D022FE0003C0FC9 /* WireAuthenticationSpikeLogic.framework in Embed Frameworks */,
+				EEC7392E2D022FE0003C0FC9 /* WireAuthenticationSpikeUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -85,7 +85,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EEC739332D022FE8003C0FC9 /* WireAuthenticationAPI.framework in Embed Frameworks */,
+				EEC739332D022FE8003C0FC9 /* WireAuthenticationSpikeAPI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -96,7 +96,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EEC739382D02302A003C0FC9 /* WireAuthenticationAPI.framework in Embed Frameworks */,
+				EEC739382D02302A003C0FC9 /* WireAuthenticationSpikeAPI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,42 +104,42 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		EEC738C02D022D30003C0FC9 /* WireAuthentication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthentication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EEC738E02D022EDB003C0FC9 /* WireAuthenticationUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EEC738E92D022EDB003C0FC9 /* WireAuthenticationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireAuthenticationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EEC738FD2D022EF5003C0FC9 /* WireAuthenticationLogic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationLogic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EEC739062D022EF6003C0FC9 /* WireAuthenticationLogicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireAuthenticationLogicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEC738C02D022D30003C0FC9 /* WireAuthenticationSpike.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationSpike.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationSpikeUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEC738E92D022EDB003C0FC9 /* WireAuthenticationSpikeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireAuthenticationSpikeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEC738FD2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationSpikeLogic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEC739062D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireAuthenticationSpikeLogicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEC7391A2D022F35003C0FC9 /* WireAuthenticationSpikeAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationSpikeAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		EEC738D22D022D30003C0FC9 /* Exceptions for "WireAuthentication" folder in "WireAuthentication" target */ = {
+		EEC738D22D022D30003C0FC9 /* Exceptions for "WireAuthentication" folder in "WireAuthenticationSpike" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
 				WireAuthentication.h,
 			);
-			target = EEC738BF2D022D30003C0FC9 /* WireAuthentication */;
+			target = EEC738BF2D022D30003C0FC9 /* WireAuthenticationSpike */;
 		};
-		EEC738F12D022EDC003C0FC9 /* Exceptions for "WireAuthenticationUI" folder in "WireAuthenticationUI" target */ = {
+		EEC738F12D022EDC003C0FC9 /* Exceptions for "WireAuthenticationUI" folder in "WireAuthenticationSpikeUI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
 				WireAuthenticationUI.h,
 			);
-			target = EEC738DF2D022EDB003C0FC9 /* WireAuthenticationUI */;
+			target = EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */;
 		};
-		EEC7390E2D022EF6003C0FC9 /* Exceptions for "WireAuthenticationLogic" folder in "WireAuthenticationLogic" target */ = {
+		EEC7390E2D022EF6003C0FC9 /* Exceptions for "WireAuthenticationLogic" folder in "WireAuthenticationSpikeLogic" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
 				WireAuthenticationLogic.h,
 			);
-			target = EEC738FC2D022EF5003C0FC9 /* WireAuthenticationLogic */;
+			target = EEC738FC2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic */;
 		};
-		EEC739202D022F35003C0FC9 /* Exceptions for "WireAuthenticationAPI" folder in "WireAuthenticationAPI" target */ = {
+		EEC739202D022F35003C0FC9 /* Exceptions for "WireAuthenticationAPI" folder in "WireAuthenticationSpikeAPI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
 				WireAuthenticationAPI.h,
 			);
-			target = EEC739192D022F35003C0FC9 /* WireAuthenticationAPI */;
+			target = EEC739192D022F35003C0FC9 /* WireAuthenticationSpikeAPI */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -147,7 +147,7 @@
 		EEC738C22D022D30003C0FC9 /* WireAuthentication */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				EEC738D22D022D30003C0FC9 /* Exceptions for "WireAuthentication" folder in "WireAuthentication" target */,
+				EEC738D22D022D30003C0FC9 /* Exceptions for "WireAuthentication" folder in "WireAuthenticationSpike" target */,
 			);
 			path = WireAuthentication;
 			sourceTree = "<group>";
@@ -155,7 +155,7 @@
 		EEC738E12D022EDB003C0FC9 /* WireAuthenticationUI */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				EEC738F12D022EDC003C0FC9 /* Exceptions for "WireAuthenticationUI" folder in "WireAuthenticationUI" target */,
+				EEC738F12D022EDC003C0FC9 /* Exceptions for "WireAuthenticationUI" folder in "WireAuthenticationSpikeUI" target */,
 			);
 			path = WireAuthenticationUI;
 			sourceTree = "<group>";
@@ -168,7 +168,7 @@
 		EEC738FE2D022EF5003C0FC9 /* WireAuthenticationLogic */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				EEC7390E2D022EF6003C0FC9 /* Exceptions for "WireAuthenticationLogic" folder in "WireAuthenticationLogic" target */,
+				EEC7390E2D022EF6003C0FC9 /* Exceptions for "WireAuthenticationLogic" folder in "WireAuthenticationSpikeLogic" target */,
 			);
 			path = WireAuthenticationLogic;
 			sourceTree = "<group>";
@@ -181,7 +181,7 @@
 		EEC7391B2D022F35003C0FC9 /* WireAuthenticationAPI */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				EEC739202D022F35003C0FC9 /* Exceptions for "WireAuthenticationAPI" folder in "WireAuthenticationAPI" target */,
+				EEC739202D022F35003C0FC9 /* Exceptions for "WireAuthenticationAPI" folder in "WireAuthenticationSpikeAPI" target */,
 			);
 			path = WireAuthenticationAPI;
 			sourceTree = "<group>";
@@ -194,8 +194,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE7442732D3132570025271D /* NeedleFoundation in Frameworks */,
-				EEC739292D022FE0003C0FC9 /* WireAuthenticationLogic.framework in Frameworks */,
-				EEC7392D2D022FE0003C0FC9 /* WireAuthenticationUI.framework in Frameworks */,
+				EEC739292D022FE0003C0FC9 /* WireAuthenticationSpikeLogic.framework in Frameworks */,
+				EEC7392D2D022FE0003C0FC9 /* WireAuthenticationSpikeUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,7 +203,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEC739322D022FE8003C0FC9 /* WireAuthenticationAPI.framework in Frameworks */,
+				EEC739322D022FE8003C0FC9 /* WireAuthenticationSpikeAPI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,7 +211,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEC738EA2D022EDB003C0FC9 /* WireAuthenticationUI.framework in Frameworks */,
+				EEC738EA2D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,7 +220,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EEC73BAC2D035B02003C0FC9 /* WireAPI in Frameworks */,
-				EEC739372D023029003C0FC9 /* WireAuthenticationAPI.framework in Frameworks */,
+				EEC739372D023029003C0FC9 /* WireAuthenticationSpikeAPI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,7 +228,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEC739072D022EF6003C0FC9 /* WireAuthenticationLogic.framework in Frameworks */,
+				EEC739072D022EF6003C0FC9 /* WireAuthenticationSpikeLogic.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,12 +259,12 @@
 		EEC738C12D022D30003C0FC9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EEC738C02D022D30003C0FC9 /* WireAuthentication.framework */,
-				EEC738E02D022EDB003C0FC9 /* WireAuthenticationUI.framework */,
-				EEC738E92D022EDB003C0FC9 /* WireAuthenticationUITests.xctest */,
-				EEC738FD2D022EF5003C0FC9 /* WireAuthenticationLogic.framework */,
-				EEC739062D022EF6003C0FC9 /* WireAuthenticationLogicTests.xctest */,
-				EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */,
+				EEC738C02D022D30003C0FC9 /* WireAuthenticationSpike.framework */,
+				EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */,
+				EEC738E92D022EDB003C0FC9 /* WireAuthenticationSpikeUITests.xctest */,
+				EEC738FD2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic.framework */,
+				EEC739062D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests.xctest */,
+				EEC7391A2D022F35003C0FC9 /* WireAuthenticationSpikeAPI.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -310,9 +310,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		EEC738BF2D022D30003C0FC9 /* WireAuthentication */ = {
+		EEC738BF2D022D30003C0FC9 /* WireAuthenticationSpike */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EEC738D32D022D30003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthentication" */;
+			buildConfigurationList = EEC738D32D022D30003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpike" */;
 			buildPhases = (
 				EEC738BB2D022D30003C0FC9 /* Headers */,
 				EEC738BC2D022D30003C0FC9 /* Sources */,
@@ -329,17 +329,17 @@
 			fileSystemSynchronizedGroups = (
 				EEC738C22D022D30003C0FC9 /* WireAuthentication */,
 			);
-			name = WireAuthentication;
+			name = WireAuthenticationSpike;
 			packageProductDependencies = (
 				EE7442722D3132570025271D /* NeedleFoundation */,
 			);
 			productName = WireAuthentication;
-			productReference = EEC738C02D022D30003C0FC9 /* WireAuthentication.framework */;
+			productReference = EEC738C02D022D30003C0FC9 /* WireAuthenticationSpike.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		EEC738DF2D022EDB003C0FC9 /* WireAuthenticationUI */ = {
+		EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EEC738F22D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationUI" */;
+			buildConfigurationList = EEC738F22D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeUI" */;
 			buildPhases = (
 				EEC738DB2D022EDB003C0FC9 /* Headers */,
 				EEC738DC2D022EDB003C0FC9 /* Sources */,
@@ -355,16 +355,16 @@
 			fileSystemSynchronizedGroups = (
 				EEC738E12D022EDB003C0FC9 /* WireAuthenticationUI */,
 			);
-			name = WireAuthenticationUI;
+			name = WireAuthenticationSpikeUI;
 			packageProductDependencies = (
 			);
 			productName = WireAuthenticationUI;
-			productReference = EEC738E02D022EDB003C0FC9 /* WireAuthenticationUI.framework */;
+			productReference = EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		EEC738E82D022EDB003C0FC9 /* WireAuthenticationUITests */ = {
+		EEC738E82D022EDB003C0FC9 /* WireAuthenticationSpikeUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EEC738F52D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationUITests" */;
+			buildConfigurationList = EEC738F52D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeUITests" */;
 			buildPhases = (
 				EEC738E52D022EDB003C0FC9 /* Sources */,
 				EEC738E62D022EDB003C0FC9 /* Frameworks */,
@@ -378,16 +378,16 @@
 			fileSystemSynchronizedGroups = (
 				EEC738ED2D022EDB003C0FC9 /* WireAuthenticationUITests */,
 			);
-			name = WireAuthenticationUITests;
+			name = WireAuthenticationSpikeUITests;
 			packageProductDependencies = (
 			);
 			productName = WireAuthenticationUITests;
-			productReference = EEC738E92D022EDB003C0FC9 /* WireAuthenticationUITests.xctest */;
+			productReference = EEC738E92D022EDB003C0FC9 /* WireAuthenticationSpikeUITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		EEC738FC2D022EF5003C0FC9 /* WireAuthenticationLogic */ = {
+		EEC738FC2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EEC7390F2D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationLogic" */;
+			buildConfigurationList = EEC7390F2D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeLogic" */;
 			buildPhases = (
 				EEC738F82D022EF5003C0FC9 /* Headers */,
 				EEC738F92D022EF5003C0FC9 /* Sources */,
@@ -403,17 +403,17 @@
 			fileSystemSynchronizedGroups = (
 				EEC738FE2D022EF5003C0FC9 /* WireAuthenticationLogic */,
 			);
-			name = WireAuthenticationLogic;
+			name = WireAuthenticationSpikeLogic;
 			packageProductDependencies = (
 				EEC73BAB2D035B02003C0FC9 /* WireAPI */,
 			);
 			productName = WireAuthenticationCore;
-			productReference = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationLogic.framework */;
+			productReference = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		EEC739052D022EF6003C0FC9 /* WireAuthenticationLogicTests */ = {
+		EEC739052D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EEC739122D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationLogicTests" */;
+			buildConfigurationList = EEC739122D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeLogicTests" */;
 			buildPhases = (
 				EEC739022D022EF6003C0FC9 /* Sources */,
 				EEC739032D022EF6003C0FC9 /* Frameworks */,
@@ -427,16 +427,16 @@
 			fileSystemSynchronizedGroups = (
 				EEC7390A2D022EF6003C0FC9 /* WireAuthenticationLogicTests */,
 			);
-			name = WireAuthenticationLogicTests;
+			name = WireAuthenticationSpikeLogicTests;
 			packageProductDependencies = (
 			);
 			productName = WireAuthenticationCoreTests;
-			productReference = EEC739062D022EF6003C0FC9 /* WireAuthenticationLogicTests.xctest */;
+			productReference = EEC739062D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		EEC739192D022F35003C0FC9 /* WireAuthenticationAPI */ = {
+		EEC739192D022F35003C0FC9 /* WireAuthenticationSpikeAPI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EEC739212D022F35003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationAPI" */;
+			buildConfigurationList = EEC739212D022F35003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeAPI" */;
 			buildPhases = (
 				EEC739152D022F35003C0FC9 /* Headers */,
 				EEC739162D022F35003C0FC9 /* Sources */,
@@ -450,11 +450,11 @@
 			fileSystemSynchronizedGroups = (
 				EEC7391B2D022F35003C0FC9 /* WireAuthenticationAPI */,
 			);
-			name = WireAuthenticationAPI;
+			name = WireAuthenticationSpikeAPI;
 			packageProductDependencies = (
 			);
 			productName = WireAuthenticationAPI;
-			productReference = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */;
+			productReference = EEC7391A2D022F35003C0FC9 /* WireAuthenticationSpikeAPI.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -487,7 +487,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EEC738BA2D022D30003C0FC9 /* Build configuration list for PBXProject "WireAuthentication" */;
+			buildConfigurationList = EEC738BA2D022D30003C0FC9 /* Build configuration list for PBXProject "WireAuthenticationSpike" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -523,12 +523,12 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EEC738BF2D022D30003C0FC9 /* WireAuthentication */,
-				EEC739192D022F35003C0FC9 /* WireAuthenticationAPI */,
-				EEC738DF2D022EDB003C0FC9 /* WireAuthenticationUI */,
-				EEC738E82D022EDB003C0FC9 /* WireAuthenticationUITests */,
-				EEC738FC2D022EF5003C0FC9 /* WireAuthenticationLogic */,
-				EEC739052D022EF6003C0FC9 /* WireAuthenticationLogicTests */,
+				EEC738BF2D022D30003C0FC9 /* WireAuthenticationSpike */,
+				EEC739192D022F35003C0FC9 /* WireAuthenticationSpikeAPI */,
+				EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */,
+				EEC738E82D022EDB003C0FC9 /* WireAuthenticationSpikeUITests */,
+				EEC738FC2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic */,
+				EEC739052D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests */,
 			);
 		};
 /* End PBXProject section */
@@ -626,32 +626,32 @@
 /* Begin PBXTargetDependency section */
 		EEC738EC2D022EDB003C0FC9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EEC738DF2D022EDB003C0FC9 /* WireAuthenticationUI */;
+			target = EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */;
 			targetProxy = EEC738EB2D022EDB003C0FC9 /* PBXContainerItemProxy */;
 		};
 		EEC739092D022EF6003C0FC9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EEC738FC2D022EF5003C0FC9 /* WireAuthenticationLogic */;
+			target = EEC738FC2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic */;
 			targetProxy = EEC739082D022EF6003C0FC9 /* PBXContainerItemProxy */;
 		};
 		EEC7392C2D022FE0003C0FC9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EEC738FC2D022EF5003C0FC9 /* WireAuthenticationLogic */;
+			target = EEC738FC2D022EF5003C0FC9 /* WireAuthenticationSpikeLogic */;
 			targetProxy = EEC7392B2D022FE0003C0FC9 /* PBXContainerItemProxy */;
 		};
 		EEC739302D022FE0003C0FC9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EEC738DF2D022EDB003C0FC9 /* WireAuthenticationUI */;
+			target = EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */;
 			targetProxy = EEC7392F2D022FE0003C0FC9 /* PBXContainerItemProxy */;
 		};
 		EEC739352D022FE8003C0FC9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EEC739192D022F35003C0FC9 /* WireAuthenticationAPI */;
+			target = EEC739192D022F35003C0FC9 /* WireAuthenticationSpikeAPI */;
 			targetProxy = EEC739342D022FE8003C0FC9 /* PBXContainerItemProxy */;
 		};
 		EEC7393A2D02302A003C0FC9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EEC739192D022F35003C0FC9 /* WireAuthenticationAPI */;
+			target = EEC739192D022F35003C0FC9 /* WireAuthenticationSpikeAPI */;
 			targetProxy = EEC739392D02302A003C0FC9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1181,7 +1181,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EEC738BA2D022D30003C0FC9 /* Build configuration list for PBXProject "WireAuthentication" */ = {
+		EEC738BA2D022D30003C0FC9 /* Build configuration list for PBXProject "WireAuthenticationSpike" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EEC738D62D022D30003C0FC9 /* Debug */,
@@ -1190,7 +1190,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EEC738D32D022D30003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthentication" */ = {
+		EEC738D32D022D30003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpike" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EEC738D42D022D30003C0FC9 /* Debug */,
@@ -1199,7 +1199,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EEC738F22D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationUI" */ = {
+		EEC738F22D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EEC738F32D022EDC003C0FC9 /* Debug */,
@@ -1208,7 +1208,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EEC738F52D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationUITests" */ = {
+		EEC738F52D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EEC738F62D022EDC003C0FC9 /* Debug */,
@@ -1217,7 +1217,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EEC7390F2D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationLogic" */ = {
+		EEC7390F2D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeLogic" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EEC739102D022EF6003C0FC9 /* Debug */,
@@ -1226,7 +1226,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EEC739122D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationLogicTests" */ = {
+		EEC739122D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeLogicTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EEC739132D022EF6003C0FC9 /* Debug */,
@@ -1235,7 +1235,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EEC739212D022F35003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationAPI" */ = {
+		EEC739212D022F35003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeAPI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EEC739222D022F35003C0FC9 /* Debug */,
