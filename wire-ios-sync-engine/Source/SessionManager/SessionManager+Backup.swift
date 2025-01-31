@@ -30,7 +30,7 @@ extension SessionManager {
 
     // MARK: - Export
 
-    public enum BackupError: Error {
+    public enum BackupError: Error { // TODO: create `CreateBackupError` in WireDomainPkg
         case notAuthenticated
         case noActiveAccount
         case compressionError
