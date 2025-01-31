@@ -34,7 +34,7 @@
 "exportBackup.creatingBackup.title" = "Creating Backup";
 "exportBackup.creatingBackup.saving" = "Saving conversation history…";
 "exportBackup.creatingBackup.success" = "Backup successfully created.";
-"exportBackup.creatingBackup.saveFileButton.title" = "Save File";
+"creatingBackup.saveButton.title" = "Save File";
 
 "restoreFromBackup.title" = "Enter password";
 "restoreFromBackup.description" = "This backup is password protected.";

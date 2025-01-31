@@ -44,7 +44,7 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                     .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
                         setBackupPasswordView()
                             .interactiveDismissDisabled()
-                            .presentationDetents([.large])
+                            .presentationDetents([.medium])
                     }
             }
 

@@ -45,6 +45,8 @@ final class CreatingBackupProgressViewController: UIViewController {
         }
     }
 
+    var completedAction: (_ completed: Bool) -> () = { _ in }
+
     // MARK: - Subviews
 
     private lazy var scrollView = UIScrollView()
@@ -89,7 +91,7 @@ final class CreatingBackupProgressViewController: UIViewController {
     }()
 
     private lazy var exportButton = {
-        let title = String(localized: "creatingBackup.saveFileButton.title", bundle: .module)
+        let title = String(localized: "creatingBackup.saveButton.title", bundle: .module)
         let exportButton = UIButton()
         exportButton.wireButtonStyle = .primary
         exportButton.setTitle(title, for: .normal)
@@ -163,6 +165,9 @@ final class CreatingBackupProgressViewController: UIViewController {
         if let popoverPresentationController = activityViewController.popoverPresentationController {
             popoverPresentationController.sourceView = sender.superview
             popoverPresentationController.sourceRect = sender.frame
+        }
+        activityViewController.completionWithItemsHandler = { [weak self] _, completed, _, _ in
+            self?.completedAction(completed)
         }
         present(activityViewController, animated: true)
     }

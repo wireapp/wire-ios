@@ -44,19 +44,27 @@ struct CreatingBackupProgressView: View {
         }
     }
 
+    @ViewBuilder
     private var backupProgressViewControllerRepresentable: some View {
+
+        let completedAction = { (completed: Bool) in
+            completed ? cancelAction() : ()
+        }
+
         switch progress {
         case .ongoing(let progress):
             BackupProgressViewControllerRepresentable(
                 progressDescription: .init(localized: "exportBackup.creatingBackup.saving", bundle: .module),
                 progressValue: progress,
-                backupURL: nil
+                backupURL: nil,
+                completedAction: completedAction
             )
         case .finished(let url):
             BackupProgressViewControllerRepresentable(
                 progressDescription: .init(localized: "exportBackup.creatingBackup.success", bundle: .module),
                 progressValue: 1,
-                backupURL: url
+                backupURL: url,
+                completedAction: completedAction
             )
         }
     }
