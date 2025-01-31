@@ -43,16 +43,10 @@ struct ImportBackupView: View {
             }
 
             .sheet(isPresented: $viewModel.isImportProgressPresented) {
-                Text("progress \(viewModel.importProgress)")
-//                let progress: CreatingBackupProgressModel = if let backupURL = viewModel.backupURL {
-//                    .finished(backupURL)
-//                } else {
-//                    .ongoing(viewModel.backupProgress ?? 0)
-//                }
-//                CreatingBackupProgressView(
-//                    progress: progress,
-//                    cancelAction: { viewModel.cancel() }
-//                )
+                ImportProgressView(
+                    progressValue: viewModel.importProgress,
+                    cancelAction: { viewModel.reset() }
+                )
                 .interactiveDismissDisabled()
                 .presentationDetents([.medium])
                 .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {

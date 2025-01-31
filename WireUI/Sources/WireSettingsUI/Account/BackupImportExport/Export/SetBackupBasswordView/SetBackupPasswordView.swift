@@ -91,6 +91,7 @@ struct SetBackupPasswordView: View {
                     cancelAction: {},
                     setPasswordAction: { _ in }
                 )
+                .interactiveDismissDisabled()
                 .presentationDetents([.medium])
         }
 }

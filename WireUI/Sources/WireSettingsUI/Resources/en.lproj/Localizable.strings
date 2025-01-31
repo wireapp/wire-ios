@@ -40,6 +40,8 @@
 "exportBackup.creatingBackup.saveButton.title" = "Save File";
 
 "importBackup.alert.ok" = "OK";
+"importBackup.alert.success.title" = "Success";
+"importBackup.alert.success.message" = "Your history is restored.";
 "importBackup.alert.genericError.title" = "Something went wrong";
 "importBackup.alert.genericError.message" = "Your history could not be restored. Please try again or contact the Wire customer support.";
 "importBackup.alert.incompatibleBackupError.title" = "Incompatible backup";

@@ -18,12 +18,12 @@
 
 import SwiftUI
 
-struct EnterPasswordView: View {
-    var body: some View {
-        Text("Hello, World!")
-    }
-}
-
-#Preview {
-    EnterPasswordPreview()
+@MainActor @ViewBuilder
+func EnterPasswordPreview() -> some View {
+    Color.white
+        .sheet(isPresented: .constant(true)) {
+            EnterPasswordView()
+                .presentationDetents([.medium])
+                .interactiveDismissDisabled()
+        }
 }

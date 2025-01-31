@@ -43,6 +43,7 @@ final class ImportBackupViewModel: ObservableObject {
     // MARK: - Methods
 
     func reset() {
+        importTask?.cancel()
         state = nil
     }
 
