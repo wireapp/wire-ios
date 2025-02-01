@@ -55,13 +55,17 @@ class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
                 .filter {
                     $0.client == action.clientID && ($0.isStandardAPNSToken || $0.isVoIPToken)
                 }
-                .map { token in
-                    PushToken(
-                        deviceToken: token.token.zmHexDecodedData()!,
-                        appIdentifier: token.app,
-                        transportType: token.transport,
-                        tokenType: token.isStandardAPNSToken ? .standard : .voip
-                    )
+                .compactMap { token in
+                    if token.isStandardAPNSToken {
+                        PushToken(
+                            deviceToken: token.token.zmHexDecodedData()!,
+                            appIdentifier: token.app,
+                            transportType: token.transport
+                        )
+                    } else {
+                        // filter out voip token if any
+                        nil
+                    }
                 }
 
             action.notifyResult(.success(tokens))

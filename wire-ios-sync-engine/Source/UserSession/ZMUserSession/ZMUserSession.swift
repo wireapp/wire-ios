@@ -469,9 +469,7 @@ public final class ZMUserSession: NSObject {
                 keyStore: syncManagedObjectContext.zm_cryptKeyStore
             )
 
-            self
-                .strategyDirectory = strategyDirectory ??
-                createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
+            self.strategyDirectory = strategyDirectory ?? createStrategyDirectory()
             updateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? createSyncStrategy()
             self.operationLoop = operationLoop ?? createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
@@ -572,7 +570,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
+    private func createStrategyDirectory() -> StrategyDirectoryProtocol {
         StrategyDirectory(
             contextProvider: coreDataStack,
             applicationStatusDirectory: applicationStatusDirectory,
@@ -581,7 +579,6 @@ public final class ZMUserSession: NSObject {
             flowManager: flowManager,
             updateEventProcessor: self,
             localNotificationDispatcher: localNotificationDispatcher!,
-            useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: proteusProvider,
@@ -1115,21 +1112,16 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    func processPendingCallEvents(completionHandler: @escaping () -> Void) {
+    func processPendingCallEvents() async {
         WireLogger.updateEvent.info("process pending call events")
-        Task {
-            do {
-                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
-                try await updateEventProcessor!.processBufferedEvents()
-                await managedObjectContext.perform {
-                    completionHandler()
-                }
-            } catch {
-                WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
-            }
+        do {
+            // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
+            try await updateEventProcessor!.processBufferedEvents()
+        } catch {
+            WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
         }
     }
-
+    
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration

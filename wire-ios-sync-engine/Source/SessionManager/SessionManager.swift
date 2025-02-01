@@ -268,7 +268,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     var deleteAccountToken: Any?
     var callCenterObserverToken: Any?
     var blacklistVerificator: ZMBlacklistVerificator?
-    var pushRegistry: PushRegistry
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
@@ -326,8 +325,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private(set) var isUnauthenticatedTransportSessionReady: Bool
 
-    public var requiredPushTokenType: PushToken.TokenType
-
     let isDeveloperModeEnabled: Bool
 
     let pushTokenService: PushTokenServiceInterface
@@ -357,7 +354,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        requiredPushTokenType: PushToken.TokenType,
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
@@ -407,12 +403,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             reachability: reachability,
             delegate: delegate,
             application: application,
-            pushRegistry: PKPushRegistry(queue: nil),
             dispatchGroup: dispatchGroup,
             environment: environment,
             configuration: configuration,
             detector: detector,
-            requiredPushTokenType: requiredPushTokenType,
             pushTokenService: pushTokenService,
             callKitManager: callKitManager,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
@@ -471,12 +465,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         reachability: ReachabilityWrapper,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
-        pushRegistry: PushRegistry,
         dispatchGroup: ZMSDispatchGroup,
         environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        requiredPushTokenType: PushToken.TokenType,
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
@@ -496,7 +488,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.dispatchGroup = dispatchGroup
         self.configuration = configuration.copy() as! SessionManagerConfiguration
         self.jailbreakDetector = detector
-        self.requiredPushTokenType = requiredPushTokenType
         self.pushTokenService = pushTokenService
         self.callKitManager = callKitManager
         self.proxyCredentials = proxyCredentials
@@ -531,7 +522,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.authenticatedSessionFactory = authenticatedSessionFactory
         self.unauthenticatedSessionFactory = unauthenticatedSessionFactory
         self.reachability = reachability
-        self.pushRegistry = pushRegistry
         self.maxNumberAccounts = maxNumberAccounts
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
         self.apiMigrationManager = APIMigrationManager(
@@ -1003,6 +993,30 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    @MainActor
+    func withSession(
+        for account: Account,
+        notifyAboutMigration: Bool = false) async -> ZMUserSession? {
+            
+            WireLogger.sessionManager.debug("Request to load session for \(account)")
+            if let session = self.backgroundUserSessions[account.userIdentifier] {
+                WireLogger.sessionManager.debug("Session for \(account) is already loaded")
+                return session
+            } else {
+                return await withCheckedContinuation { continuation in
+                    self.setupUserSession(account: account) { userSession in
+                        if let userSession {
+                            continuation.resume(returning: userSession)
+                        } else {
+                            continuation.resume(returning: nil)
+                        }
+                    }
+                }
+            }
+        }
+    
+    
+
     public func retryStart() {
         delegate?.sessionManagerAsksToRetryStart()
     }
@@ -1203,8 +1217,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         with coreDataStack: CoreDataStack
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
-            appLockConfig: configuration.legacyAppLockConfig,
-            useLegacyPushNotifications: shouldProcessLegacyPushes
+            appLockConfig: configuration.legacyAppLockConfig
         )
 
         guard let newSession = authenticatedSessionFactory.session(

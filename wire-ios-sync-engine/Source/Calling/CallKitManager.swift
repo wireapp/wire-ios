@@ -70,7 +70,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     private let application: ZMApplication
     private let requirePushTokenType: PushToken.TokenType
-
+    private let delegateQueue = DispatchQueue(label: "CallkitProviderDelegateQueue")
     private let provider: CXProvider
     private let callController: CXCallController
     private weak var mediaManager: MediaManagerType?
@@ -80,7 +80,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     private var callStateObserverToken: Any?
     private var missedCallObserverToken: Any?
 
-    let callRegister = CallKitCallRegister()
+    private let callRegister = CallKitCallRegister()
     private var connectedCallConversation: ZMConversation?
 
     private let logger = WireLogger(tag: "call-kit")
@@ -135,7 +135,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
         super.init()
 
-        provider.setDelegate(self, queue: nil)
+        provider.setDelegate(self, queue: delegateQueue)
 
         self.callStateObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
         self.missedCallObserverToken = WireCallCenterV3.addGlobalMissedCallObserver(observer: self)
@@ -395,7 +395,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         handle: CallHandle,
         callerName: String,
         hasVideo: Bool
-    ) {
+    ) async {
         logger.info("report incoming call preemptively")
 
         guard !callRegister.callExists(for: handle) else {
@@ -414,15 +414,12 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         update.supportsGrouping = false
         update.supportsUngrouping = false
 
-        provider.reportNewIncomingCall(
-            with: call.id,
-            update: update
-        ) { [weak self] error in
-            if let error {
-                self?.logger.error("fail: report incoming call preemptively: \(error)")
-                self?.log("Cannot preemptively report incoming call: \(error)")
-                self?.callRegister.unregisterCall(call)
-            }
+        do {
+            try await provider.reportNewIncomingCall(with: call.id, update: update)
+        } catch {
+            logger.error("fail: report incoming call preemptively: \(error)")
+            log("Cannot preemptively report incoming call: \(error)")
+            callRegister.unregisterCall(call)
         }
     }
 

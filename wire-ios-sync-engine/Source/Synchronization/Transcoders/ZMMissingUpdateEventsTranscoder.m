@@ -40,7 +40,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 @property (nonatomic, weak) OperationStatus* operationStatus;
 @property (nonatomic, weak) id<ClientRegistrationDelegate> clientRegistrationDelegate;
 @property (nonatomic) NotificationsTracker *notificationsTracker;
-@property (nonatomic) BOOL useLegacyPushNotifications;
 @property (nonatomic) id<LastEventIDRepositoryInterface> lastEventIDRepository;
 @property (nonatomic) BOOL isProcessingEvents;
 
@@ -62,7 +61,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
                       pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
                                   syncStatus:(SyncStatus *)syncStatus
                              operationStatus:(OperationStatus *)operationStatus
-                  useLegacyPushNotifications:(BOOL)useLegacyPushNotifications
                        lastEventIDRepository:(id<LastEventIDRepositoryInterface> _Nonnull)lastEventIDRepository
 
 {
@@ -72,7 +70,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
         self.pushNotificationStatus = pushNotificationStatus;
         self.syncStatus = syncStatus;
         self.operationStatus = operationStatus;
-        self.useLegacyPushNotifications = useLegacyPushNotifications;
         self.lastEventIDRepository = lastEventIDRepository;
 
         self.listPaginator = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:NotificationsPath
@@ -263,15 +260,13 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 {
     /// There are multiple scenarios in which this class will create a new request:
     ///
-    /// 1.) We received a push notification and want to fetch the notification stream (if we use the old implementation without the Notification service extension).
-    /// 2.) The OS awoke the application to perform a background fetch (the operation state will indicate this).
-    /// 3.) The application came to the foreground and is performing a quick-sync (c.f. `isSyncing`).
+    /// 1.) The OS awoke the application to perform a background fetch (the operation state will indicate this).
+    /// 2.) The application came to the foreground and is performing a quick-sync (c.f. `isSyncing`).
 
     // We want to create a new request if we are either currently fetching the paginated stream
     // or if we have a new notification ID that requires a pingback.
    
-    if ((self.isFetchingStreamForAPNS && self.useLegacyPushNotifications) || self.isFetchingStreamInBackground || 
-        self.isSyncing) {
+    if (self.isFetchingStreamInBackground || self.isSyncing) {
 
         // We only reset the paginator if it is neither in progress nor has more pages to fetch.
         if (self.listPaginator.status != ZMSingleRequestInProgress &&

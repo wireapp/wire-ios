@@ -43,10 +43,10 @@ extension SessionManager {
             return
         }
 
-        guard localToken.tokenType == requiredPushTokenType else {
+        guard localToken.tokenType == .standard else {
             Logging.push
                 .safePublic(
-                    "local token is of type \(localToken.tokenType) but should be \(requiredPushTokenType), will generate a new token"
+                    "local token is of type \(localToken.tokenType) but should be standard, will generate a new token"
                 )
             generateLocalToken(session: session)
             return
@@ -58,17 +58,8 @@ extension SessionManager {
     private func generateLocalToken(session: ZMUserSession) {
         Logging.push.safePublic("generateLocalToken")
         session.managedObjectContext.performGroupedBlock {
-            switch self.requiredPushTokenType {
-            case .voip:
-                Logging.push.safePublic("generateLocalToken: voip")
-                if let token = self.pushRegistry.pushToken(for: .voIP) {
-                    Logging.push.safePublic("generateLocalToken: voip: token already generated, storing...")
-                    self.pushTokenService.storeLocalToken(.createVOIPToken(from: token))
-                }
-            case .standard:
-                Logging.push.safePublic("generateLocalToken: standard")
-                self.application.registerForRemoteNotifications()
-            }
+            Logging.push.safePublic("generateLocalToken: standard")
+            self.application.registerForRemoteNotifications()
         }
     }
 

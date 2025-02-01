@@ -156,9 +156,6 @@ extension PushToken.TokenType: SafeForLoggingStringConvertible {
         switch self {
         case .standard:
             "standard"
-
-        case .voip:
-            "voip"
         }
     }
 

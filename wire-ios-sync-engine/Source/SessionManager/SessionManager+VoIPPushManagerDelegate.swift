@@ -22,7 +22,7 @@ import WireLogging
 
 extension SessionManager: VoIPPushManagerDelegate {
 
-    public func processPendingCallEvents(accountID: UUID) {
+    public func processPendingCallEvents(accountID: UUID) async {
         WireLogger.calling.info("process pending call events preemptively")
 
         guard
@@ -40,11 +40,10 @@ extension SessionManager: VoIPPushManagerDelegate {
             return
         }
 
-        withSession(for: account) { session in
-            session.processPendingCallEvents {
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-            }
+        if let session = await withSession(for: account) {
+            await session.processPendingCallEvents()
         }
+        BackgroundActivityFactory.shared.endBackgroundActivity(activity)
     }
 
     // MARK: Helpers

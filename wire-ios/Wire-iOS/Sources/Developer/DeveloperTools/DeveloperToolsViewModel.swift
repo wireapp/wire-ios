@@ -438,9 +438,6 @@ extension PushToken.TokenType: CustomStringConvertible {
         switch self {
         case .standard:
             "Standard"
-
-        case .voip:
-            "VoIP"
         }
     }
 

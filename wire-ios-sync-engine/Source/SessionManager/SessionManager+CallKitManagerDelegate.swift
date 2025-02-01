@@ -68,9 +68,12 @@ extension SessionManager: CallKitManagerDelegate {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
-            userSession.processPendingCallEvents {
+            Task {
+                await userSession.processPendingCallEvents()
                 WireLogger.calling.info("did process call events, returning conversation...")
-                completionHandler(.success(conversation))
+                await MainActor.run {
+                    completionHandler(.success(conversation))
+                }
             }
         }
     }
