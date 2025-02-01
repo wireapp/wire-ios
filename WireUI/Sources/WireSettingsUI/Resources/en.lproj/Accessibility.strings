@@ -20,4 +20,4 @@
 
 "exportBackup.cancel.label" = "Cancel creating backup";
 
-"restoreBackup.close.label" = "Close restore backup";
+"importBackup.cancel.label" = "Close restore backup";

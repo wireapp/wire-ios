@@ -29,7 +29,7 @@ struct CreatingBackupProgressView: View {
         NavigationStack {
             backupProgressViewControllerRepresentable
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
-                .navigationTitle(Text("exportBackup.creatingBackup.title", bundle: .module))
+                .navigationTitle(Text(L10n.Localizable.ExportBackup.CreatingBackup.title))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -47,7 +47,7 @@ struct CreatingBackupProgressView: View {
     @ViewBuilder
     private var backupProgressViewControllerRepresentable: some View {
 
-        let completedAction = { (completed: Bool) in
+        let completedAction: (Bool) -> Void = { completed in
             completed ? cancelAction() : ()
         }
 

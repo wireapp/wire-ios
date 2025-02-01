@@ -51,10 +51,12 @@
 "importBackup.alert.wrongFileError.title" = "Wrong backup file";
 "importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
 
+"importBackup.enterPassword.cancel" = "OK";
+"importBackup.enterPassword.title" = "Enter password";
+
 "importBackup.restoringHistory.title" = "Restoring history…";
 "importBackup.restoringHistory.message" = "Loading conversations…";
 
-"restoreFromBackup.title" = "Enter password";
 "restoreFromBackup.description" = "This backup is password protected.";
 "restoreFromBackup.button" = "Continue";
 "restoreFromBackup.enterPassword.title" = "Password";

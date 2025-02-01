@@ -36,7 +36,7 @@ struct ImportProgressView: View {
                             Text("importBackup.cancel.title", bundle: .module)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(Text("importBackup.cancel.label"))
+                        .accessibilityLabel(Text("importBackup.cancel.label")) // TODO: use SwiftGen
                         .accessibilityIdentifier("cancel")
                     }
                 }

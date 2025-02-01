@@ -36,13 +36,13 @@ struct _ImportBackupView: View {
         passwordBackupView
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
-            .navigationTitle(Text(L10n.Localizable.RestoreFromBackup.title))
+            .navigationTitle(Text("L10n.Localizable.RestoreFromBackup.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     CloseButton(
                         action: didTapClose,
-                        accessibilityLabel: L10n.Accessibility.RestoreBackup.Close.label
+                        accessibilityLabel: "L10n.Accessibility.RestoreBackup.Close.label"
                     )
                 }
             }

@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct SetBackupPasswordPreview: View {
+struct SetBackupPasswordPreview: View { // TODO: fix
 
     @State private var isPresented = true
 

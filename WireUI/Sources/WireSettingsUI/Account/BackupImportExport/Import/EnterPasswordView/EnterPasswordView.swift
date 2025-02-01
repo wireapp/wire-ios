@@ -16,11 +16,47 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDesign
 import SwiftUI
 
 struct EnterPasswordView: View {
+
+    @StateObject var viewModel: EnterPasswordViewModel
+
     var body: some View {
-        Text("Hello, World!")
+        NavigationStack {
+            enterPasswordView
+                .background(Color(uiColor: ColorTheme.Backgrounds.background))
+                .navigationTitle(Text(L10n.Localizable.ImportBackup.EnterPassword.title))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            viewModel.cancel()
+                        } label: {
+                            Text(L10n.Localizable.ImportBackup.Cancel.title)
+                        }
+                        .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                        .accessibilityLabel(Text(L10n.Accessibility.ImportBackup.Cancel.label))
+                        .accessibilityIdentifier("cancel")
+                    }
+                }
+        }
+    }
+
+    @ViewBuilder
+    private var enterPasswordView: some View {
+//        VStack {
+//            Spacer()
+//            HStack {
+//                Spacer()
+//                Text("TODO")
+//                Spacer()
+//            }
+//            Spacer()
+//        }
+        Text("TODO")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
