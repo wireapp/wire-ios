@@ -26,6 +26,8 @@ struct EnterPasswordView: View {
     let continueAction: (_ password: String) -> Void
     let cancelAction: () -> Void
 
+    @FocusState private var isTextFieldFocused: Bool
+
     init(
         previousWrongPassword: String,
         continueAction: @escaping (String) -> Void,
@@ -52,6 +54,9 @@ struct EnterPasswordView: View {
                         .accessibilityLabel(Text(L10n.Accessibility.ImportBackup.Cancel.label))
                         .accessibilityIdentifier("cancel")
                     }
+                }
+                .onAppear {
+                    isTextFieldFocused = true
                 }
                 .onChange(of: password) { _ in
                     passwordIsWrong = false
@@ -82,6 +87,7 @@ struct EnterPasswordView: View {
                         titleColor: passwordFieldTitleColor,
                         borderColor: passwordFieldBorderColor
                     )
+                    .focused($isTextFieldFocused)
                     .padding(.bottom, 8)
 
                     if passwordIsWrong {
