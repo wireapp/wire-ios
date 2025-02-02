@@ -70,6 +70,7 @@
 		59DBDB312D395B620069C64C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				UseCases/Protocols/CreateLegacyBackupError.swift,
 				UseCases/Protocols/ImportBackupError.swift,
 				UseCases/Protocols/ImportBackupProgress.swift,
 				UseCases/Protocols/ImportBackupUseCaseProtocol.swift,

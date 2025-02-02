@@ -19,8 +19,10 @@
 import Foundation
 import WireSettingsUI
 import WireSyncEngine
+import WireDomainPkg
 
-struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
+/// Use case for creating a backup file which can only used by iOS apps.
+struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {
 
     var sessionManager: @Sendable @MainActor () -> SessionManager
 
@@ -32,10 +34,9 @@ struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
         AsyncThrowingStream { continuation in
             Task<Void, Never> { @MainActor in
                 do {
-                    // TODO: legacy backup requires a password
-//                    if password.isEmpty {
-//                        continuation.finish(throwing: CreateBackupError)
-//                    }
+                    if password.isEmpty {
+                        return continuation.finish(throwing: CreateLegacyBackupError.passwordRequired)
+                    }
 
                     let sessionManager = sessionManager()
 

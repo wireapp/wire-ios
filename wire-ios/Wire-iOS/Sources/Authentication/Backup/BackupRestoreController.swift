@@ -22,6 +22,7 @@ import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
 import WireSettingsUI
+import WireDomainPkg
 
 protocol BackupRestoreControllerDelegate: AnyObject {
 
@@ -114,8 +115,8 @@ final class BackupRestoreController: NSObject {
             }
 
             switch result {
-            case .failure(SessionManager.BackupError.decryptionError):
-                WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
+            case .failure(CreateLegacyBackupError.decryptionError):
+                WireLogger.localStorage.error("Failed restoring backup: \(CreateLegacyBackupError.decryptionError)")
                 Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 showWrongPasswordAlert { _ in
