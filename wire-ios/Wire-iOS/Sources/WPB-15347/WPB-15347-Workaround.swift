@@ -53,6 +53,10 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
                         continuation.finish(throwing: WireSettingsUI.ImportBackupError.noActiveAccount)
                     case .passwordRequired:
                         continuation.finish(throwing: WireSettingsUI.ImportBackupError.passwordRequired)
+                    case .incompatibleFileFormat:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.incompatibleFileFormat)
+                    case .invalidAccountID:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.invalidAccountID)
                     case .compressionError:
                         continuation.finish(throwing: WireSettingsUI.ImportBackupError.compressionError)
                     case .invalidFileExtension:
