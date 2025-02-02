@@ -21,10 +21,14 @@ import WireDesign
 import WireFoundation
 
 struct PasswordFieldView: View {
-    @Binding var password: String
-    @Binding var isPasswordVisible: Bool
-    var isPasswordValid = true
+
     let passwordRules: Text
+    @Binding var password: String
+    @State fileprivate(set) var isPasswordVisible = false
+    var isPasswordValid = true
+    var focusOnAppear = true
+
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -37,9 +41,11 @@ struct PasswordFieldView: View {
                     TextField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .wireTextStyle(.body1)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .focused($isFocused)
                 } else {
                     SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .focused($isFocused)
                 }
                 HStack {
                     Spacer()
@@ -64,6 +70,11 @@ struct PasswordFieldView: View {
                 .font(.caption)
                 .foregroundColor(calculatedColor)
         }
+        .onAppear {
+            if focusOnAppear {
+                isFocused = true
+            }
+        }
     }
 
     // MARK: - Helper
@@ -84,32 +95,32 @@ struct PasswordFieldView: View {
 
 #Preview("Invalid Password - Hidden") {
     PasswordFieldView(
+        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules),
         password: .constant(""),
-        isPasswordVisible: .constant(false),
-        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
+        isPasswordVisible: false
     ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
 
 #Preview("Invalid Password - Visible") {
     PasswordFieldView(
+        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules),
         password: .constant("ValidPassword1!"),
-        isPasswordVisible: .constant(true),
-        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
+        isPasswordVisible: true
     ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
 
 #Preview("Valid Password - Hidden") {
     PasswordFieldView(
+        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules),
         password: .constant("ValidPassword1!"),
-        isPasswordVisible: .constant(false),
-        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
+        isPasswordVisible: false
     ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
 
 #Preview("Valid Password - Visible") {
     PasswordFieldView(
+        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules),
         password: .constant("ValidPassword1!"),
-        isPasswordVisible: .constant(true),
-        passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
+        isPasswordVisible: true
     ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

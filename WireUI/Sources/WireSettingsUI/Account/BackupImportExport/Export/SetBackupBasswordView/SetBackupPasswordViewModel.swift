@@ -25,7 +25,6 @@ final class SetBackupPasswordViewModel: ObservableObject {
         didSet { validatePassword() }
     }
 
-    @Published var isPasswordVisible = false
     @Published private(set) var isPasswordValid = true
 
     var localizedPasswordRules: String {
