@@ -23,10 +23,8 @@ import WireFoundation
 struct PasswordFieldView: View {
     @Binding var password: String
     @Binding var isPasswordVisible: Bool
-    var isPasswordValid: Bool = true
+    var isPasswordValid = true
     let passwordRules: Text?
-
-    @FocusState private var isPasswordFieldFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -36,17 +34,14 @@ struct PasswordFieldView: View {
 
             ZStack {
                 if isPasswordVisible {
-                    TextField(
-                        L10n.Localizable.ExportBackup.SetBackupPassword.placeholder,
-                        text: $password
-                    )
-                    .wireTextStyle(.body1)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .focused($isPasswordFieldFocused)
+                    TextField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
+                        .wireTextStyle(.body1)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+//                        .focused($isPasswordFieldFocused)
                 } else {
                     SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .focused($isPasswordFieldFocused)
+//                        .focused($isPasswordFieldFocused)
                 }
                 HStack {
                     Spacer()
@@ -71,10 +66,6 @@ struct PasswordFieldView: View {
                 .font(.caption)
                 .foregroundColor(calculatedColor)
         }
-        .padding(.horizontal)
-        .onAppear {
-            isPasswordFieldFocused = true
-        }
     }
 
     // MARK: - Helper
@@ -93,51 +84,34 @@ struct PasswordFieldView: View {
 
 // MARK: - Previews
 
-@available(iOS 17, *)
 #Preview("Invalid Password - Hidden") {
     PasswordFieldView(
         password: .constant(""),
         isPasswordVisible: .constant(false),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
-    ).environment(\.wireTextStyleMapping, PreviewTextStyleMapping())
+    ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
 
-@available(iOS 17, *)
 #Preview("Invalid Password - Visible") {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
         isPasswordVisible: .constant(true),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
-    )
+    ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
 
-@available(iOS 17, *)
 #Preview("Valid Password - Hidden") {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
         isPasswordVisible: .constant(false),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
-    )
+    ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
 
-@available(iOS 17, *)
 #Preview("Valid Password - Visible") {
     PasswordFieldView(
         password: .constant("ValidPassword1!"),
         isPasswordVisible: .constant(true),
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules)
-    )
-}
-
-private func PreviewTextStyleMapping() -> WireTextStyleMapping {
-    .init { _ in
-        fatalError("not implemented for preview yet")
-    } fontMapping: { textStyle in
-        switch textStyle {
-        case .body1:
-            .body
-        default:
-            fatalError("not implemented for preview yet")
-        }
-    }
+    ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

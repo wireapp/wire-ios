@@ -21,7 +21,11 @@ import SwiftUI
 
 struct EnterPasswordView: View {
 
-    @StateObject var viewModel: EnterPasswordViewModel
+    let wasPasswordWrong: Bool
+    let continueAction: (_ password: String) -> Void
+    let cancelAction: () -> Void
+
+    @State private var password = ""
 
     var body: some View {
         NavigationStack {
@@ -31,9 +35,7 @@ struct EnterPasswordView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            viewModel.cancel()
-                        } label: {
+                        Button(action: cancelAction) {
                             Text(L10n.Localizable.ImportBackup.Cancel.title)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
@@ -46,17 +48,70 @@ struct EnterPasswordView: View {
 
     @ViewBuilder
     private var enterPasswordView: some View {
-//        VStack {
-//            Spacer()
-//            HStack {
-//                Spacer()
-//                Text("TODO")
-//                Spacer()
-//            }
-//            Spacer()
-//        }
-        Text("TODO")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack {
+
+            let scrollView = ScrollView {
+                VStack(alignment: .leading) {
+                    Spacer()
+
+                    Text(L10n.Localizable.ImportBackup.EnterPassword.description)
+                        .font(.body)
+                        .padding(.bottom)
+
+                    Text(L10n.Localizable.ImportBackup.EnterPassword.TextField.title)
+                        .font(.subheadline)
+                        .foregroundStyle(Color(uiColor: BaseColorPalette.Grays.gray80))
+
+                    ToggleablePasswordField(
+                        password: $password,
+                        titleColor: passwordFieldTitleColor,
+                        borderColor: passwordFieldBorderColor
+                    )
+
+                    Spacer()
+                }
+                .padding()
+            }
+
+            if #available(iOS 16.4, *) {
+                scrollView
+                    .scrollBounceBehavior(.basedOnSize)
+            } else {
+                scrollView
+            }
+
+            Spacer()
+
+            Button {
+                continueAction(password)
+            } label: {
+                Text(L10n.Localizable.ImportBackup.EnterPassword.Button.title)
+                    .bold()
+            }
+            .disabled(password.isEmpty)
+            .wireButtonStyle(.primary)
+            .padding()
+        }
+    }
+
+    private var passwordFieldTitleColor: Color {
+        if wasPasswordWrong {
+            Color.red
+        } else if password.isEmpty {
+            Color(uiColor: BaseColorPalette.Grays.gray70)
+        } else {
+            Color.blue
+        }
+    }
+
+    private var passwordFieldBorderColor: Color {
+        if wasPasswordWrong {
+            Color.red
+        } else if password.isEmpty {
+            Color(uiColor: BaseColorPalette.Grays.gray40)
+        } else {
+            Color.blue
+        }
     }
 }
 

@@ -22,8 +22,12 @@ import SwiftUI
 func EnterPasswordPreview() -> some View {
     Color.white
         .sheet(isPresented: .constant(true)) {
-            EnterPasswordView(viewModel: .init())
-                .presentationDetents([.medium])
-                .interactiveDismissDisabled()
+            EnterPasswordView(
+                wasPasswordWrong: false,
+                continueAction: { _ in },
+                cancelAction: {}
+            )
+            .presentationDetents([.medium])
+            .interactiveDismissDisabled()
         }
 }

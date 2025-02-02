@@ -53,11 +53,13 @@
 
 "importBackup.enterPassword.cancel" = "OK";
 "importBackup.enterPassword.title" = "Enter password";
+"importBackup.enterPassword.description" = "This backup is password protected.";
+"importBackup.enterPassword.textField.title" = "Password";
+"importBackup.enterPassword.textField.placeholder" = "Enter password";
+"importBackup.enterPassword.button.title" = "Continue";
 
 "importBackup.restoringHistory.title" = "Restoring history…";
 "importBackup.restoringHistory.message" = "Loading conversations…";
 
-"restoreFromBackup.description" = "This backup is password protected.";
-"restoreFromBackup.button" = "Continue";
 "restoreFromBackup.enterPassword.title" = "Password";
 "restoreFromBackup.enterPassword.error" = "Wrong password. Please verify your input and try again";

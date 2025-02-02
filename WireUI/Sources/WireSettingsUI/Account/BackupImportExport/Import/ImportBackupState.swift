@@ -20,7 +20,7 @@ import Foundation
 
 enum ImportBackupState {
     case importingBackup(progress: Float)
-    case requestingPassword(url: URL)
+    case requestingPassword(url: URL, repeatedly: Bool)
     case confirmation
     case restoreFailed
 }

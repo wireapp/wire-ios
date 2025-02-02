@@ -27,7 +27,7 @@ struct _ImportBackupViewPreview: View {
                 isPresented.toggle()
             },
             label: {
-                Text(L10n.Localizable.RestoreFromBackup.button)
+                Text(L10n.Localizable.ImportBackup.EnterPassword.Button.title)
             }
         )
         .sheet(isPresented: $isPresented) {

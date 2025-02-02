@@ -29,6 +29,7 @@ final class ImportBackupViewModel: ObservableObject {
 
     @Published var isImportProgressPresented = false
     @Published var isEnterBackupPasswordPresented = false
+    @Published var passwordWasIncorrect = false
     @Published var alertContent = ImportBackupAlertContent()
     @Published var isAlertPresented = false
 
@@ -86,7 +87,7 @@ final class ImportBackupViewModel: ObservableObject {
     }
 
     func enterPassword(_ password: String) {
-        guard case .requestingPassword(let url) = state else { return assertionFailure() }
+        guard case .requestingPassword(let url, _) = state else { return assertionFailure() }
         importBackup(from: url, password: password)
     }
 
@@ -105,7 +106,7 @@ final class ImportBackupViewModel: ObservableObject {
                 }
                 // TODO: add logging
             } catch ImportBackupError.passwordRequired {
-                state = .requestingPassword(url: url)
+                state = .requestingPassword(url: url, repeatedly: false)
             } catch ImportBackupError.incompatibleFileFormat {
                 alertContent.titleKey = "importBackup.alert.incompatibleBackupError.title"
                 alertContent.messageKey = "importBackup.alert.incompatibleBackupError.message"
@@ -129,6 +130,8 @@ final class ImportBackupViewModel: ObservableObject {
         isImportProgressPresented = switch state { case .importingBackup, .requestingPassword: true default: false }
 
         isEnterBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
+
+        passwordWasIncorrect = if case .requestingPassword(_, let repeatedly) = state { repeatedly } else { false }
 
         // TODO: find better workaround for presentation issue
         let isAlertPresented = switch state { case .restoreFailed, .confirmation: true default: false }

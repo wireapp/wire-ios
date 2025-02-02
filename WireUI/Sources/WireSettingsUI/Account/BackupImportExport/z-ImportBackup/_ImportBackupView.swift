@@ -36,7 +36,7 @@ struct _ImportBackupView: View {
         passwordBackupView
             .background(Color.viewBackground)
             .scrollContentBackground(.hidden)
-            .navigationTitle(Text("L10n.Localizable.RestoreFromBackup.title"))
+            .navigationTitle(Text(L10n.Localizable.ImportBackup.EnterPassword.title))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -58,7 +58,7 @@ struct _ImportBackupView: View {
             VStack {
                 ScrollView {
                     VStack(spacing: 20) {
-                        Text(L10n.Localizable.RestoreFromBackup.description)
+                        Text(L10n.Localizable.ImportBackup.EnterPassword.description)
                             .wireTextStyle(.body1)
                             .foregroundStyle(Color.primaryText)
                             .multilineTextAlignment(.leading)
@@ -86,7 +86,7 @@ struct _ImportBackupView: View {
                         dismiss()
                     },
                     label: {
-                        Text(L10n.Localizable.RestoreFromBackup.button)
+                        Text(L10n.Localizable.ImportBackup.EnterPassword.Button.title)
                     }
                 )
                 .wireButtonStyle(.primary)

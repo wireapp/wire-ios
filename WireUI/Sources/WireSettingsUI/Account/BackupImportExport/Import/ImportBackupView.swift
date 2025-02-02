@@ -50,17 +50,11 @@ struct ImportBackupView: View {
                 .interactiveDismissDisabled()
                 .presentationDetents([.medium])
                 .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
-
-                    VStack {
-                        Text("password?")
-                        Button("Aqa") {
-                            viewModel.enterPassword("Aqa")
-                        }
-                    }
-//                    SetBackupPasswordView(
-//                        onProceed: { password in viewModel.createBackup(password: password) },
-//                        onCancel: { viewModel.cancel() }
-//                    )
+                    EnterPasswordView(
+                        wasPasswordWrong: viewModel.passwordWasIncorrect,
+                        continueAction: { viewModel.enterPassword($0) },
+                        cancelAction: { viewModel.reset() }
+                    )
                     .interactiveDismissDisabled()
                     .presentationDetents([.large])
                 }

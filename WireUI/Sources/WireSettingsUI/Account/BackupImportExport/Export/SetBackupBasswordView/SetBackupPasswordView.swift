@@ -23,6 +23,8 @@ struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
 
+    @FocusState private var isPasswordFieldFocused: Bool
+
     var body: some View {
         NavigationStack {
             setBackupPasswordView
@@ -58,6 +60,11 @@ struct SetBackupPasswordView: View {
                         isPasswordValid: viewModel.isPasswordValid,
                         passwordRules: Text(viewModel.localizedPasswordRules)
                     )
+                    .padding(.horizontal)
+                    .focused($isPasswordFieldFocused)
+                    .onAppear {
+                        isPasswordFieldFocused = true
+                    }
                 }
             }
             if #available(iOS 16.4, *) {
