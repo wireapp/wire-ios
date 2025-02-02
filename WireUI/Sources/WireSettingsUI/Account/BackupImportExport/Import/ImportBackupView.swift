@@ -52,7 +52,7 @@ struct ImportBackupView: View {
                 .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
                     EnterPasswordView(
 //                        password: "todo: pass previous wrong password",
-                        isPasswordWrong: viewModel.passwordWasIncorrect,
+                        previousWrongPassword: "viewModel.passwordWasIncorrect",
                         continueAction: { viewModel.enterPassword($0) },
                         cancelAction: { viewModel.reset() }
                     )

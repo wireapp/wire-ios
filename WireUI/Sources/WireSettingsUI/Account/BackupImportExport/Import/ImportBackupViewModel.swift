@@ -29,7 +29,7 @@ final class ImportBackupViewModel: ObservableObject {
 
     @Published var isImportProgressPresented = false
     @Published var isEnterBackupPasswordPresented = false
-    @Published var passwordWasIncorrect = false
+    @Published var previousWrongPassword = ""
     @Published var alertContent = ImportBackupAlertContent()
     @Published var isAlertPresented = false
 
@@ -106,7 +106,8 @@ final class ImportBackupViewModel: ObservableObject {
                 }
                 // TODO: add logging
             } catch ImportBackupError.passwordRequired {
-                state = .requestingPassword(url: url, repeatedly: false)
+                state = .requestingPassword(url: url, previousWrongPassword: "")
+                // TODO: catch wrong password error?
             } catch ImportBackupError.incompatibleFileFormat {
                 alertContent.titleKey = "importBackup.alert.incompatibleBackupError.title"
                 alertContent.messageKey = "importBackup.alert.incompatibleBackupError.message"
@@ -131,7 +132,7 @@ final class ImportBackupViewModel: ObservableObject {
 
         isEnterBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
 
-        passwordWasIncorrect = if case .requestingPassword(_, let repeatedly) = state { repeatedly } else { false }
+        previousWrongPassword = if case .requestingPassword(_, let wrongPassword) = state { wrongPassword } else { "" }
 
         // TODO: find better workaround for presentation issue
         let isAlertPresented = switch state { case .restoreFailed, .confirmation: true default: false }

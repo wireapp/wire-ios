@@ -20,16 +20,13 @@ import SwiftUI
 
 struct EnterPasswordPreview: View {
 
-    var password: String
-
-    var wasPasswordWrong = false
+    var previousWrongPassword: String
 
     var body: some View {
         Color.white
             .sheet(isPresented: .constant(true)) {
                 EnterPasswordView(
-                    password: password,
-                    isPasswordWrong: wasPasswordWrong,
+                    previousWrongPassword: previousWrongPassword,
                     continueAction: { _ in },
                     cancelAction: {}
                 )
