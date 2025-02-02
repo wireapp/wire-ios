@@ -24,7 +24,7 @@ struct PasswordFieldView: View {
     @Binding var password: String
     @Binding var isPasswordVisible: Bool
     var isPasswordValid = true
-    let passwordRules: Text?
+    let passwordRules: Text
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -37,11 +37,9 @@ struct PasswordFieldView: View {
                     TextField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .wireTextStyle(.body1)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-//                        .focused($isPasswordFieldFocused)
                 } else {
                     SecureField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-//                        .focused($isPasswordFieldFocused)
                 }
                 HStack {
                     Spacer()

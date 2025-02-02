@@ -16,6 +16,7 @@ struct ToggleablePasswordField: View {
             if isPasswordVisible {
                 TextField(text: $password) {
                     Text(L10n.Localizable.ImportBackup.EnterPassword.TextField.placeholder)
+                        .font(.body)
                         .foregroundStyle(titleColor)
                 }
                 .textContentType(.password)
@@ -23,6 +24,7 @@ struct ToggleablePasswordField: View {
             } else {
                 SecureField(text: $password) {
                     Text(L10n.Localizable.ImportBackup.EnterPassword.TextField.placeholder)
+                        .font(.body)
                         .foregroundStyle(titleColor)
                 }
                 .textContentType(.password)
