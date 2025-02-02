@@ -51,9 +51,12 @@ struct ImportBackupView: View {
                 .presentationDetents([.medium])
                 .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
                     EnterPasswordView(
-                        previousWrongPassword: viewModel.previousWrongPassword,
-                        continueAction: { viewModel.enterPassword($0) },
-                        cancelAction: { viewModel.reset() }
+                        //TODO: previousWrongPassword is not updated
+                        viewModel: EnterPasswordViewModel(
+                            previousWrongPassword: viewModel.previousWrongPassword,
+                            continueAction: { viewModel.enterPassword($0) },
+                            cancelAction: { viewModel.reset() }
+                        )
                     )
                     .interactiveDismissDisabled()
                     .presentationDetents([.large])

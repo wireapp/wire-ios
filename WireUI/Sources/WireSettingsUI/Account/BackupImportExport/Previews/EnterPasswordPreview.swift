@@ -26,9 +26,11 @@ struct EnterPasswordPreview: View {
         Color.white
             .sheet(isPresented: .constant(true)) {
                 EnterPasswordView(
-                    previousWrongPassword: previousWrongPassword,
-                    continueAction: { _ in },
-                    cancelAction: {}
+                    viewModel: EnterPasswordViewModel(
+                        previousWrongPassword: previousWrongPassword,
+                        continueAction: { _ in },
+                        cancelAction: {}
+                    )
                 )
                 .presentationDetents([.medium])
                 .interactiveDismissDisabled()

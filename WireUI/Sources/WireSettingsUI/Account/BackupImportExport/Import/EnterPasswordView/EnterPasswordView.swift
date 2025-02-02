@@ -21,23 +21,25 @@ import SwiftUI
 
 struct EnterPasswordView: View {
 
-    @State private var passwordIsWrong = false
-    @State private var password = ""
-    let continueAction: (_ password: String) -> Void
-    let cancelAction: () -> Void
+    @StateObject var viewModel: EnterPasswordViewModel
+
+//    @State private var passwordIsWrong: Bool
+//    @State private var password = ""
+//    let continueAction: (_ password: String) -> Void
+//    let cancelAction: () -> Void
 
     @FocusState private var isTextFieldFocused: Bool
 
-    init(
-        previousWrongPassword: String,
-        continueAction: @escaping (String) -> Void,
-        cancelAction: @escaping () -> Void
-    ) {
-        password = previousWrongPassword
-        passwordIsWrong = !previousWrongPassword.isEmpty
-        self.continueAction = continueAction
-        self.cancelAction = cancelAction
-    }
+//    init(
+//        previousWrongPassword: String,
+//        continueAction: @escaping (String) -> Void,
+//        cancelAction: @escaping () -> Void
+//    ) {
+//        password = previousWrongPassword
+//        passwordIsWrong = !previousWrongPassword.isEmpty
+//        self.continueAction = continueAction
+//        self.cancelAction = cancelAction
+//    }
 
     var body: some View {
         NavigationStack {
@@ -45,9 +47,17 @@ struct EnterPasswordView: View {
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
                 .navigationTitle(Text(L10n.Localizable.ImportBackup.EnterPassword.title))
                 .navigationBarTitleDisplayMode(.inline)
+            // TODO: could be tested if moved to view model
+                .onAppear {
+                    isTextFieldFocused = true
+                }
+//                .onChange(of: password, initial: false) { oldValue, newValue in
+//                    print("password old: '\(oldValue)' new: '\(newValue)'")
+//                    passwordIsWrong = false
+//                }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button(action: cancelAction) {
+                        Button { viewModel.cancel() } label: {
                             Text(L10n.Localizable.ImportBackup.Cancel.title)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
@@ -55,13 +65,7 @@ struct EnterPasswordView: View {
                         .accessibilityIdentifier("cancel")
                     }
                 }
-            // TODO: could be tested if moved to view model
-                .onAppear {
-                    isTextFieldFocused = true
-                }
-                .onChange(of: password) { _ in
-                    passwordIsWrong = false
-                }
+//                .onChange(of: password, initial: false, {})
         }
     }
 
@@ -84,14 +88,14 @@ struct EnterPasswordView: View {
                         .padding(.bottom, 2)
 
                     ToggleablePasswordField(
-                        password: $password,
+                        password: $viewModel.password,
                         titleColor: passwordFieldTitleColor,
                         borderColor: passwordFieldBorderColor
                     )
                     .focused($isTextFieldFocused)
                     .padding(.bottom, 8)
 
-                    if passwordIsWrong {
+                    if viewModel.passwordIsWrong {
                         Text(L10n.Localizable.ImportBackup.EnterPassword.wrongPassword)
                             .foregroundStyle(passwordFieldTitleColor)
                             .font(.caption)
@@ -113,21 +117,21 @@ struct EnterPasswordView: View {
             Spacer()
 
             Button {
-                continueAction(password)
+                viewModel.continue()
             } label: {
                 Text(L10n.Localizable.ImportBackup.EnterPassword.Button.title)
                     .bold()
             }
-            .disabled(password.isEmpty || passwordIsWrong)
+            .disabled(!viewModel.isContinueEnabled)
             .wireButtonStyle(.primary)
             .padding()
         }
     }
 
     private var passwordFieldTitleColor: Color {
-        if passwordIsWrong {
+        if viewModel.passwordIsWrong {
             Color(uiColor: ColorTheme.Base.error)
-        } else if password.isEmpty {
+        } else if viewModel.password.isEmpty {
             Color(uiColor: BaseColorPalette.Grays.gray70)
         } else {
             Color(uiColor: ColorTheme.Base.primary)
@@ -135,9 +139,9 @@ struct EnterPasswordView: View {
     }
 
     private var passwordFieldBorderColor: Color {
-        if passwordIsWrong {
+        if viewModel.passwordIsWrong {
             Color(uiColor: ColorTheme.Base.error)
-        } else if password.isEmpty {
+        } else if viewModel.password.isEmpty {
             Color(uiColor: BaseColorPalette.Grays.gray40)
         } else {
             Color(uiColor: ColorTheme.Base.primary)
