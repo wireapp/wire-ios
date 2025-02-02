@@ -47,7 +47,7 @@ final class SetBackupPasswordViewModel: ObservableObject {
     }
 
     private func validatePassword() {
-        isPasswordValid = passwordValidator.isPasswordValid(password)
+        isPasswordValid = password.isEmpty || passwordValidator.isPasswordValid(password)
     }
 
     func cancel() {

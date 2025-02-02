@@ -91,14 +91,5 @@ struct SetBackupPasswordView: View {
 }
 
 #Preview {
-    Color.white
-        .sheet(isPresented: .constant(true)) {
-            BackupImportExportBuilder.previewBuilder
-                .buildSetBackupPasswordView(
-                    cancelAction: {},
-                    setPasswordAction: { _ in }
-                )
-                .interactiveDismissDisabled()
-                .presentationDetents([.medium])
-        }
+    SetBackupPasswordPreview()
 }

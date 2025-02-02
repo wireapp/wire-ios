@@ -23,34 +23,24 @@ struct SetBackupPasswordPreview: View { // TODO: fix
     @State private var isPresented = true
 
     var body: some View {
-        Button(L10n.Localizable.ExportBackup.button) {
-            isPresented.toggle()
-        }
-        .sheet(isPresented: $isPresented) {
-            // TODO: enable
-            /*
-            NavigationStack {
-                SetExportPasswordView(
-                    viewModel: .init(
-                        passwordValidator: MockBackupPasswordValidator(),
-                        exportBackupAction: { _ in }
+        Color.white
+            .sheet(isPresented: .constant(true)) {
+                BackupImportExportBuilder.previewBuilder
+                    .buildSetBackupPasswordView(
+                        cancelAction: {},
+                        setPasswordAction: { _ in }
                     )
-                )
+                    .interactiveDismissDisabled()
+                    .presentationDetents([.medium])
             }
-            .background(Color.blue)
-            .interactiveDismissDisabled()
-            .presentationDragIndicator(.visible)
-            .presentationDetents([.height(300)])
-//            .presentationDetents([.height(100), .fraction(20), .medium, .large])
-             */
-            Text("TODO")
-        }
     }
 }
 
 struct MockBackupPasswordValidator: BackupPasswordValidatorProtocol {
 
-    func isPasswordValid(_ password: String) -> Bool { true }
+    func isPasswordValid(_ password: String) -> Bool {
+        password.count > 8
+    }
 
     var localizedRulesDescription: String {
         "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."

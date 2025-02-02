@@ -16,19 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireUI/Sources/WireSettingsUI/Account/BackupRestore/Protocols/BackupPasswordValidatorProtocol.swift
-/// Determines if a given password is valid for encrypting a backup.
-public protocol BackupPasswordValidatorProtocol {
-
-    func isPasswordValid(_ password: String) -> Bool
-
-    var localizedRulesDescription: String { get }
-
-}
-========
 import Foundation
 
 public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
     .deletingLastPathComponent()
     .path
->>>>>>>> 019c5676100d5d66e2dc87043a3542a57f403c5e:WireUI/Tests/WireAuthenticationUITests/Resources/ReferenceImages/SnapshotTestReferenceImageDirectory.swift
