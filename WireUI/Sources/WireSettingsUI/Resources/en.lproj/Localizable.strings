@@ -56,10 +56,9 @@
 "importBackup.enterPassword.description" = "This backup is password protected.";
 "importBackup.enterPassword.textField.title" = "Password";
 "importBackup.enterPassword.textField.placeholder" = "Enter password";
+"importBackup.enterPassword.wrongPassword" = "Wrong password. Please verify your input and try again";
 "importBackup.enterPassword.button.title" = "Continue";
 
 "importBackup.restoringHistory.title" = "Restoring history…";
 "importBackup.restoringHistory.message" = "Loading conversations…";
 
-"restoreFromBackup.enterPassword.title" = "Password";
-"restoreFromBackup.enterPassword.error" = "Wrong password. Please verify your input and try again";

@@ -21,15 +21,17 @@ import SwiftUI
 
 struct EnterPasswordView: View {
 
-    let wasPasswordWrong: Bool
+    @State var password: String = ""
+    @State var isPasswordWrong: Bool
     let continueAction: (_ password: String) -> Void
     let cancelAction: () -> Void
-
-    @State private var password = ""
 
     var body: some View {
         NavigationStack {
             enterPasswordView
+                .onChange(of: password) { _ in
+                    isPasswordWrong = false
+                }
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
                 .navigationTitle(Text(L10n.Localizable.ImportBackup.EnterPassword.title))
                 .navigationBarTitleDisplayMode(.inline)
@@ -51,22 +53,32 @@ struct EnterPasswordView: View {
         VStack {
 
             let scrollView = ScrollView {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     Spacer()
 
                     Text(L10n.Localizable.ImportBackup.EnterPassword.description)
                         .font(.body)
-                        .padding(.bottom)
+                        .padding(.bottom, 28)
 
                     Text(L10n.Localizable.ImportBackup.EnterPassword.TextField.title)
+                        .foregroundStyle(passwordFieldTitleColor)
                         .font(.subheadline)
                         .foregroundStyle(Color(uiColor: BaseColorPalette.Grays.gray80))
+                        .padding(.bottom, 2)
 
                     ToggleablePasswordField(
                         password: $password,
                         titleColor: passwordFieldTitleColor,
                         borderColor: passwordFieldBorderColor
                     )
+                    .padding(.bottom, 8)
+
+                    if isPasswordWrong {
+                        Text(L10n.Localizable.ImportBackup.EnterPassword.wrongPassword)
+                            .foregroundStyle(passwordFieldTitleColor)
+                            .font(.caption)
+                            .foregroundStyle(Color(uiColor: BaseColorPalette.Grays.gray80))
+                    }
 
                     Spacer()
                 }
@@ -88,33 +100,50 @@ struct EnterPasswordView: View {
                 Text(L10n.Localizable.ImportBackup.EnterPassword.Button.title)
                     .bold()
             }
-            .disabled(password.isEmpty)
+            .disabled(password.isEmpty || isPasswordWrong)
             .wireButtonStyle(.primary)
             .padding()
         }
     }
 
     private var passwordFieldTitleColor: Color {
-        if wasPasswordWrong {
-            Color.red
+        if isPasswordWrong {
+            Color(uiColor: ColorTheme.Base.error)
         } else if password.isEmpty {
             Color(uiColor: BaseColorPalette.Grays.gray70)
         } else {
-            Color.blue
+            Color(uiColor: ColorTheme.Base.primary)
         }
     }
 
     private var passwordFieldBorderColor: Color {
-        if wasPasswordWrong {
-            Color.red
+        if isPasswordWrong {
+            Color(uiColor: ColorTheme.Base.error)
         } else if password.isEmpty {
             Color(uiColor: BaseColorPalette.Grays.gray40)
         } else {
-            Color.blue
+            Color(uiColor: ColorTheme.Base.primary)
         }
     }
 }
 
-#Preview {
-    EnterPasswordPreview()
+#Preview("empty") {
+    EnterPasswordPreview(
+        password: "",
+        wasPasswordWrong: false
+    )
+}
+
+#Preview("wrong") {
+    EnterPasswordPreview(
+        password: "some",
+        wasPasswordWrong: true
+    )
+}
+
+#Preview("default") {
+    EnterPasswordPreview(
+        password: "some",
+        wasPasswordWrong: false
+    )
 }

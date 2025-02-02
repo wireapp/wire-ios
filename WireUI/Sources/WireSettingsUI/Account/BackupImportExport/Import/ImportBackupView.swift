@@ -51,7 +51,8 @@ struct ImportBackupView: View {
                 .presentationDetents([.medium])
                 .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
                     EnterPasswordView(
-                        wasPasswordWrong: viewModel.passwordWasIncorrect,
+//                        password: "todo: pass previous wrong password",
+                        isPasswordWrong: viewModel.passwordWasIncorrect,
                         continueAction: { viewModel.enterPassword($0) },
                         cancelAction: { viewModel.reset() }
                     )

@@ -98,7 +98,7 @@ struct _ImportBackupView: View {
     @ViewBuilder
     private var enterPasswordFieldView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(L10n.Localizable.RestoreFromBackup.EnterPassword.title)
+            Text(L10n.Localizable.ImportBackup.EnterPassword.title)
                 .font(.subheadline)
                 .foregroundColor(viewModel.password.isEmpty ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.primary.color)
 

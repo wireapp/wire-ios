@@ -18,16 +18,23 @@
 
 import SwiftUI
 
-@MainActor @ViewBuilder
-func EnterPasswordPreview() -> some View {
-    Color.white
-        .sheet(isPresented: .constant(true)) {
-            EnterPasswordView(
-                wasPasswordWrong: false,
-                continueAction: { _ in },
-                cancelAction: {}
-            )
-            .presentationDetents([.medium])
-            .interactiveDismissDisabled()
-        }
+struct EnterPasswordPreview: View {
+
+    var password: String
+
+    var wasPasswordWrong = false
+
+    var body: some View {
+        Color.white
+            .sheet(isPresented: .constant(true)) {
+                EnterPasswordView(
+                    password: password,
+                    isPasswordWrong: wasPasswordWrong,
+                    continueAction: { _ in },
+                    cancelAction: {}
+                )
+                .presentationDetents([.medium])
+                .interactiveDismissDisabled()
+            }
+    }
 }
