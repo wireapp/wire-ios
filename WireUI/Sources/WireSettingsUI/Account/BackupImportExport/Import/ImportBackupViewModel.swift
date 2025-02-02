@@ -101,26 +101,29 @@ final class ImportBackupViewModel: ObservableObject {
                     case .progress(let fraction):
                         state = .importingBackup(progress: fraction)
                     case .done:
+                        alertContent.title = L10n.Localizable.ImportBackup.Alert.Success.title
+                        alertContent.message = L10n.Localizable.ImportBackup.Alert.Success.message
                         state = .confirmation
                     }
                 }
                 // TODO: add logging
             } catch ImportBackupError.passwordRequired {
                 state = .requestingPassword(url: url, previousWrongPassword: "")
-                // TODO: catch wrong password error?
+            } catch ImportBackupError.decryptionError {
+                state = .requestingPassword(url: url, previousWrongPassword: password)
             } catch ImportBackupError.incompatibleFileFormat {
-                alertContent.titleKey = "importBackup.alert.incompatibleBackupError.title"
-                alertContent.messageKey = "importBackup.alert.incompatibleBackupError.message"
+                alertContent.title = L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.title
+                alertContent.message = L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.message
                 state = .restoreFailed
             } catch ImportBackupError.invalidAccountID {
-                alertContent.titleKey = "importBackup.alert.wrongFileError.title"
-                alertContent.messageKey = "importBackup.alert.wrongFileError.message"
+                alertContent.title = L10n.Localizable.ImportBackup.Alert.WrongFileError.title
+                alertContent.message = L10n.Localizable.ImportBackup.Alert.WrongFileError.message
                 state = .restoreFailed
             } catch is CancellationError {
                 reset()
             } catch {
-                alertContent.titleKey = "importBackup.alert.genericError.title"
-                alertContent.messageKey = "importBackup.alert.genericError.message"
+                alertContent.title = L10n.Localizable.ImportBackup.Alert.GenericError.title
+                alertContent.message = L10n.Localizable.ImportBackup.Alert.GenericError.message
                 state = .restoreFailed
             }
         }

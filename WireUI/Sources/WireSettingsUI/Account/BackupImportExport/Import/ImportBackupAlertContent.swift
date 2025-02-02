@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUICore
-
 struct ImportBackupAlertContent: Equatable {
-    var titleKey = LocalizedStringKey("")
-    var messageKey = LocalizedStringKey("")
+    var title = ""
+    var message = ""
 }

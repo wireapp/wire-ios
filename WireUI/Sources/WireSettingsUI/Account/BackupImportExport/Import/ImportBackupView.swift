@@ -51,8 +51,7 @@ struct ImportBackupView: View {
                 .presentationDetents([.medium])
                 .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
                     EnterPasswordView(
-//                        password: "todo: pass previous wrong password",
-                        previousWrongPassword: "viewModel.passwordWasIncorrect",
+                        previousWrongPassword: viewModel.previousWrongPassword,
                         continueAction: { viewModel.enterPassword($0) },
                         cancelAction: { viewModel.reset() }
                     )
@@ -62,17 +61,17 @@ struct ImportBackupView: View {
             }
 
             .alert(
-                Text(viewModel.alertContent.titleKey, bundle: .module),
+                Text(viewModel.alertContent.title),
                 isPresented: $viewModel.isAlertPresented,
                 presenting: viewModel.alertContent
             ) { _ in
                 Button {
                     viewModel.reset()
                 } label: {
-                    Text("importBackup.alert.ok", bundle: .module)
+                    Text(L10n.Localizable.ImportBackup.Alert.ok)
                 }
             } message: { alertContent in
-                Text(alertContent.messageKey, bundle: .module)
+                Text(alertContent.message)
             }
         }
     }
