@@ -22,7 +22,7 @@ import Foundation
 final class ExportBackupViewModel: ObservableObject {
 
     let createBackupUseCase: any CreateBackupUseCaseProtocol
-    // let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
+    let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
 
     private var state: ExportBackupState? {
         didSet { updatePublishedProperties() }
@@ -38,8 +38,12 @@ final class ExportBackupViewModel: ObservableObject {
 
     private var backupTask: Task<Void, Never>?
 
-    init(createBackupUseCase: any CreateBackupUseCaseProtocol) {
+    init(
+        createBackupUseCase: any CreateBackupUseCaseProtocol,
+        cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
+    ) {
         self.createBackupUseCase = createBackupUseCase
+        self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
     }
 
     func reset() {
@@ -81,32 +85,14 @@ final class ExportBackupViewModel: ObservableObject {
             backupTask?.cancel()
             state = nil
         case .backupReady:
-            // TODO: clean up use case?
+            Task { try? await cleanUpBackupsUseCase.invoke() }
             state = nil
-        case .backupFailed:
-            fatalError("not yet implemented")
-        case .none:
-            assertionFailure()
+        case .backupFailed, .none:
+            assertionFailure("unexpected state")
         }
     }
 
     private func updatePublishedProperties() {
-
-        isSetBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
-
-        isCreatingBackupProgressPresented = switch state {
-
-        case .requestingPassword, .creatingBackup, .backupReady: true
-        default: false
-        }
-
-        // TODO: find better workaround for presentation issue
-        let isErrorAlertPresented = switch state { case .backupFailed: true default: false }
-        if isErrorAlertPresented {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.isErrorAlertPresented = true }
-        } else {
-            self.isErrorAlertPresented = false
-        }
 
         backupProgress = switch state {
         case .creatingBackup(let progress):
@@ -117,26 +103,44 @@ final class ExportBackupViewModel: ObservableObject {
             .ongoing(0)
         }
 
-    }
-}
+        // outer sheet
+        let isCreatingBackupProgressPresented = switch state {
+        case .requestingPassword, .creatingBackup, .backupReady: true
+        default: false
+        }
 
-// MARK: - ExportBackupViewModel.State + Properties
+        // inner sheet
+        let isSetBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
 
-//extension ExportBackupViewModel {
-//
-//    var backupError: (any Error)? {
-//        if case .backupFailed(let error) = state {
-//            error
-//        } else {
-//            .none
-//        }
-//    }
-//}
+        let isErrorAlertPresented = switch state { case .backupFailed: true default: false }
 
-// TODO: ?
+        // Workarounds for presentation issues with several sheet or alert presentation flags toggled at once.
+        // This code assumes the presentation or dismissal of a modal view controller lasts less than 400ms.
+        if !isCreatingBackupProgressPresented, self.isSetBackupPasswordPresented {
+            // The outer sheet is dismissed while the inner sheet is still presented, so delay the outer dismissal.
+            self.isSetBackupPasswordPresented = false
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+                self?.updatePublishedProperties()
+            }
+        }
+        if isSetBackupPasswordPresented, !self.isCreatingBackupProgressPresented {
+            // The inner sheet is being presented while the outer sheet is not yet presented, so delay the inner.
+            self.isCreatingBackupProgressPresented = true
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+                self?.updatePublishedProperties()
+            }
+        }
+        if isErrorAlertPresented, self.isCreatingBackupProgressPresented {
+            // The alert is being presented while there is still a sheet presented, so delay the alert.
+            self.isCreatingBackupProgressPresented = false
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+                self?.updatePublishedProperties()
+            }
+        }
 
-extension ExportBackupState {
-    fileprivate var isEnterBackupPasswordStep: Bool {
-        if case .requestingPassword = self { true } else { false }
+        self.isCreatingBackupProgressPresented = isCreatingBackupProgressPresented
+        self.isSetBackupPasswordPresented = isSetBackupPasswordPresented
+        self.isErrorAlertPresented = isErrorAlertPresented
+
     }
 }

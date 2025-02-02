@@ -17,6 +17,6 @@
 //
 
 /// A use case which cleans up old generated backup files from the temporary directory.
-public protocol CleanUpBackupsUseCaseProtocol {
+public protocol CleanUpBackupsUseCaseProtocol: Sendable {
     func invoke() async throws
 }

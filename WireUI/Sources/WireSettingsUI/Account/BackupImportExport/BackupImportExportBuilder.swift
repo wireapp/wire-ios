@@ -23,18 +23,18 @@ public struct BackupImportExportBuilder {
     let backupPasswordValidator: any BackupPasswordValidatorProtocol
     let createBackupUseCase: any CreateBackupUseCaseProtocol
     let importBackupUseCase: any ImportBackupUseCaseProtocol
-    let cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
+    let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
         createBackupUseCase: any CreateBackupUseCaseProtocol,
         importBackupUseCase: any ImportBackupUseCaseProtocol,
-        cleanUpBackupsUseCaseProtocol: any CleanUpBackupsUseCaseProtocol
+        cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase
         self.importBackupUseCase = importBackupUseCase
-        self.cleanUpBackupsUseCaseProtocol = cleanUpBackupsUseCaseProtocol
+        self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
     }
 
     @MainActor
@@ -53,7 +53,10 @@ public struct BackupImportExportBuilder {
     @MainActor @ViewBuilder
     func buildExportBackupView() -> some View {
 
-        let viewModel = ExportBackupViewModel(createBackupUseCase: createBackupUseCase)
+        let viewModel = ExportBackupViewModel(
+            createBackupUseCase: createBackupUseCase,
+            cleanUpBackupsUseCase: cleanUpBackupsUseCase
+        )
 
         ExportBackupView(
             viewModel: viewModel,
@@ -107,7 +110,7 @@ extension BackupImportExportBuilder {
             backupPasswordValidator: MockBackupPasswordValidator(),
             createBackupUseCase: PreviewCreateBackupUseCase(),
             importBackupUseCase: PreviewImportBackupUseCase(),
-            cleanUpBackupsUseCaseProtocol: PreviewCleanUpBackupsUseCase()
+            cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase()
         )
     }
 }

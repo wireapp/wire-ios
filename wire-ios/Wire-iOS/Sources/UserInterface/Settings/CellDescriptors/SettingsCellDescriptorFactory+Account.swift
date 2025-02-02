@@ -379,7 +379,7 @@ extension SettingsCellDescriptorFactory {
             backupPasswordValidator: BackupPasswordValidator(),
             createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
             importBackupUseCase: .adapter(importBackupUseCase),
-            cleanUpBackupsUseCaseProtocol: CleanUpBackupsUseCase(sessionManager: sessionManager)
+            cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager)
         )
     }
 
