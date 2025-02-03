@@ -5,6 +5,7 @@ class Framework
         all_folders = [
             "WireAPI",
             "WireAnalytics",
+            "WireAuthenticationAll"
             "WireDomain",
             "WireFoundation",
             "WireLogging",
@@ -38,6 +39,7 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-sync-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["WireFoundation"])
         frameworks["wire-ios"].add_dependency(frameworks["WireLogging"])
+        frameworks["wire-ios"].add_dependency(frameworks["WireAuthenticationAll"])
 
         frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
         frameworks["wire-ios-notification-engine"].add_dependency(frameworks["WireLogging"])
@@ -94,6 +96,10 @@ class Framework
 
         frameworks["WireAnalytics"].add_dependency(frameworks["WireLogging"])
 
+        frameworks["WireAuthenticationAll"].add_dependency(frameworks["WireDomain"])
+        frameworks["WireAuthenticationAll"].add_dependency(frameworks["WireFoundation"])
+        frameworks["WireAuthenticationAll"].add_dependency(frameworks["WireUI"])
+
         frameworks
     end
 
@@ -130,6 +136,8 @@ class Framework
             "WireUIAll" # use a custom scheme that includes all targets of WireUI, fastlane does not found WireUI-Package
         when "WireAPI"
             "WireAPIAll" # if a package has multiple targets, fastlane does not found <Package>-Package
+        when "WireAuthentication"
+            "WireAuthenticationAll"
         when "wire-ios-ziphy"
             "Ziphy"
         when "WireDomain"
