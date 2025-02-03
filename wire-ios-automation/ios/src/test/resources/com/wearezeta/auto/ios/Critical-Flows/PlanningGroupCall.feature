@@ -12,7 +12,7 @@ Feature: Planning Group Calls
     And User adds the following device: {"<Member1>": [{"name": "<device1>"}], "<Member2>": [{"name": "<device2>"}]}
     And I login to Wire as <TeamOwner>
     And I open search screen
-    And I open create group screen
+    And I open search screen
     And I create new group "<ConversationTitle>"
     And I add members <Member1>, <Member2> to new group via search
     And User <TeamOwner> sends 1 default messages to conversation <ConversationTitle>

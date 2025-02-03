@@ -9,8 +9,7 @@ Feature: Video Calls
     And User <TeamOwner> adds user <Member1>,<Member2> to team <TeamName> with role Member
     And User <TeamOwner> is me
     And User adds the following device: {"<Member1>": [{"name": "<device1>"}], "<Member2>": [{"name": "<device2>"}]}
-    And I sign in user <TeamOwner> with fast login
-    And I accept alert if visible
+    And I login to Wire as <TeamOwner>
     And  I open search screen
     And I open create group screen
     And I enter group name "<ConversationTitle>" on New Group page
