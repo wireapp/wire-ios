@@ -25,7 +25,9 @@ public struct WireAuthenticationUIDebugView: View {
         var id: String { rawValue }
 
         case background
+        case identificationView
         case switchBackend
+        case verificationCode
 
     }
 
@@ -40,14 +42,33 @@ public struct WireAuthenticationUIDebugView: View {
                 label: { Text("Background") }
             )
             Button(
+                action: { presentedItem = .identificationView },
+                label: { Text("Identification View") }
+            )
+            Button(
                 action: { presentedItem = .switchBackend },
                 label: { Text("Switch backend confirmation") }
+            )
+            Button(
+                action: { presentedItem = .verificationCode },
+                label: { Text("Verification code") }
             )
         }
         .fullScreenCover(item: $presentedItem, content: { item in
             switch item {
             case .background:
                 fullscreenCover(content: { BackgroundView() })
+            case .identificationView:
+                fullscreenCover(content: { BackgroundView()
+                        .overlay {
+                            VStack(spacing: 0) {
+                                Spacer()
+                                    .frame(maxHeight: .infinity)
+                                AuthenticationIdentityInputPreview()
+                                    .background()
+                            }
+                        }
+                })
             case .switchBackend:
                 fullscreenCover(content: {
                     BackgroundView()
@@ -58,6 +79,21 @@ public struct WireAuthenticationUIDebugView: View {
                             }
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         )
+                })
+            case .verificationCode:
+                fullscreenCover(content: {
+                    BackgroundView()
+                        .overlay {
+                            VStack(spacing: 0) {
+                                Spacer()
+                                    .frame(maxHeight: .infinity)
+                                VerificationCodeView(
+                                    receiver: "name.name@mail.com",
+                                    onConfirm: { _ in },
+                                    onResend: {}
+                                )
+                            }
+                        }
                 })
             }
         })
