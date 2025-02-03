@@ -27,9 +27,11 @@ final class ImportBackupViewModel: ObservableObject {
         didSet { updatePublishedProperties() }
     }
 
+    @Published var backupPassword = ""
+    @Published var isBackupPasswordWrong = false
+
     @Published var isImportProgressPresented = false
     @Published var isEnterBackupPasswordPresented = false
-    @Published var previousWrongPassword = ""
     @Published var alertContent = ImportBackupAlertContent()
     @Published var isAlertPresented = false
 
@@ -108,9 +110,9 @@ final class ImportBackupViewModel: ObservableObject {
                 }
                 // TODO: add logging
             } catch ImportBackupError.passwordRequired {
-                state = .requestingPassword(url: url, previousWrongPassword: "")
+                state = .requestingPassword(url: url, isPasswordIncorrect: false)
             } catch ImportBackupError.decryptionError {
-                state = .requestingPassword(url: url, previousWrongPassword: password)
+                state = .requestingPassword(url: url, isPasswordIncorrect: true)
             } catch ImportBackupError.incompatibleFileFormat {
                 alertContent.title = L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.title
                 alertContent.message = L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.message
@@ -135,7 +137,7 @@ final class ImportBackupViewModel: ObservableObject {
 
         isEnterBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
 
-        previousWrongPassword = if case .requestingPassword(_, let wrongPassword) = state { wrongPassword } else { "" }
+        isBackupPasswordWrong = if case .requestingPassword(_, let isWrong) = state { isWrong } else { false }
 
         // TODO: find better workaround for presentation issue
         let isAlertPresented = switch state { case .restoreFailed, .confirmation: true default: false }

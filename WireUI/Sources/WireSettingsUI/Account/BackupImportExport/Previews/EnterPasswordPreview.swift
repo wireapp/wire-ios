@@ -20,20 +20,25 @@ import SwiftUI
 
 struct EnterPasswordPreview: View {
 
-    var previousWrongPassword: String
+    @State private(set) var password = ""
+    @State private(set) var isPasswordWrong = false
 
     var body: some View {
         Color.white
             .sheet(isPresented: .constant(true)) {
                 EnterPasswordView(
-                    viewModel: EnterPasswordViewModel(
-                        previousWrongPassword: previousWrongPassword,
-                        continueAction: { _ in },
-                        cancelAction: {}
-                    )
+                    password: $password,
+                    passwordIsWrong: $isPasswordWrong,
+                    continueAction: { _ in },
+                    cancelAction: {}
                 )
                 .presentationDetents([.medium])
                 .interactiveDismissDisabled()
+                .onChange(of: password) { _ in
+                    if isPasswordWrong {
+                        isPasswordWrong = false
+                    }
+                }
             }
     }
 }
