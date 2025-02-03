@@ -8,12 +8,7 @@ Feature: Account Management
     And User adds the following device: {"<TeamOwner>": [{"name": "<Device>"}]}
     And User <Member1> is me
     And User <TeamOwner> has conversation <ConversationTitle> with <Member1> in team <TeamName>
-    And I see Welcome page
-    And I tap Login button on Welcome page
-    And I enter login <Member2Email> on Login page
-    And I enter password <Password> on Login page
-    And I tap Login button on Login page
-    And I accept First Time overlay
+    And I login to Wire as <Member2>
     And I set the username to <Member2UniqueUsername>
     And I accept alert if visible
     And I open settings screen
@@ -32,5 +27,5 @@ Feature: Account Management
     And I select settings item Reset Password
 
     Examples:
-      | Member1   | TeamOwner | TeamName  | Member2   | ConversationTitle | Member2Email  | Password      | Member2UniqueUsername | Device  | LockPasscode | NewUsername |
-      | user1Name | user3Name | SuperTeam | user2Name | The Official Chat | user2Email    | user2Password | user2UniqueUsername   | device1 | Aqa123456!   |   NewName   |
+      | Member1   | TeamOwner | TeamName  | Member2   | ConversationTitle | Member2UniqueUsername | Device  | LockPasscode | NewUsername |
+      | user1Name | user3Name | SuperTeam | user2Name | The Official Chat | user2UniqueUsername   | device1 | Aqa123456!   |   NewName   |
