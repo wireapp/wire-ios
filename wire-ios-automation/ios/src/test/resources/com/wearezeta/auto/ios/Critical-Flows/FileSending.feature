@@ -9,7 +9,6 @@ Feature: File Sending
     And I create temporary file <FileSize> in size with name "<FileName>" and extension "<FileExt>"
     And User adds the following device: {"<TeamOwnerA>": [{"name": "Device1"}]}
     And <TeamOwnerA> starts instance using <CallBackend>
-    And User <TeamOwnerB> is me
     When I login to Wire as <TeamOwnerB>
     Given User <TeamOwnerA> sent connection request to <TeamOwnerB>
     When I accept connection request from <TeamOwnerA>
@@ -31,15 +30,6 @@ Feature: File Sending
     Then I see "Delivered" on the message toolbox in conversation view
     When I tap Play audio message button
     And I wait for 3 seconds
-#    When I tap ellipsis button from input tools
-#    When I tap Video Message button from input tools
-#    And I tap Take Video button on Camera page
-#    And I wait for 5 seconds
-#    And I tap Take Video button on Camera page
-#    And I tap Use Video button on Camera page
-#    And I wait for 5 seconds
-#    And I accept alert if visible
-#    Then I see video message container in the conversation view
 
     Examples:
       | TeamOwnerA | TeamNameA | CallBackend | TeamOwnerB | FileSize | FileName | FileExt | FileMIME        |
