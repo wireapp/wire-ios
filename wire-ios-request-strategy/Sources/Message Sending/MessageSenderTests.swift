@@ -323,7 +323,7 @@ final class MessageSenderTests: MessagingTestBase {
             try await messageSender.sendMessage(message: message)
         }
     }
-    
+
     func testThatWhenSendingProteusMessageFailsIndefinitely_thenThrowError() async throws {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: 0)
@@ -730,7 +730,7 @@ final class MessageSenderTests: MessagingTestBase {
                     }
                 }
             }
-            
+
             return self
         }
 

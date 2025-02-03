@@ -176,7 +176,7 @@ public final class MessageSender: MessageSenderInterface {
             let retryOperation: () async throws -> Void = { [weak self] in
                 try await self?.broadcastMessage(message: message)
             }
-            
+
             try await handleNetworkError(
                 networkError,
                 message: message,
@@ -242,7 +242,7 @@ public final class MessageSender: MessageSenderInterface {
             let retryOperation: () async throws -> Void = { [weak self] in
                 try await self?.sendMessage(message: message)
             }
-            
+
             try await handleNetworkError(
                 networkError,
                 message: message,
@@ -251,7 +251,7 @@ public final class MessageSender: MessageSenderInterface {
             )
         }
     }
-    
+
     private func handleNetworkError(
         _ networkError: NetworkError,
         message: any ProteusMessage,
@@ -266,9 +266,9 @@ public final class MessageSender: MessageSenderInterface {
                 retryCount = 0
                 throw error
             }
-            
+
             retryCount += 1
-            
+
             try await retryOperation()
         } catch {
             throw error
@@ -335,7 +335,7 @@ public final class MessageSender: MessageSenderInterface {
                         "attempt to send with proteus failed - try again later",
                         attributes: logAttributes
                     )
-                    
+
                     throw MessageSendError.failed
                 }
             } else {
