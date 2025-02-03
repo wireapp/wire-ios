@@ -24,11 +24,9 @@ Feature: New Device with Backup
     And I tap Save to Files button on File Saving Popup
     When I tap Save button on File Saving Popup
     And I tap on the account back button
-    And I reset Wire
-    And I wait for 2 seconds
-    And I open default backend via deep link in safari
-    And I accept Open in Wire alert
-    And I tap Proceed button on backend redirection page
+    And I select settings item Log Out
+    And I type "<Password>" text into the alert input field
+    And I accept alert
     And I tap Login button on Welcome page
     And I sign in user <Member1> with email
     When I tap Restore from backup button on First Time overlay
