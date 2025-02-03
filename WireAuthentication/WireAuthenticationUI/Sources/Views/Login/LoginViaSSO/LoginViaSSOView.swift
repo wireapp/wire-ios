@@ -16,11 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireAuthenticationUI
+import SwiftUI
 
-class WireAuthenticationUITests: XCTestCase {
-    func testExample() throws {
-        throw XCTSkip("[WPB-15229] Not yet implemented")
+struct LoginViaSSOView: View {
+
+    @ObservedObject var viewModel: LoginViaSSOViewModel
+
+    var body: some View {
+        Color.red
     }
+
+}
+
+#Preview {
+    LoginViaSSOView(viewModel: LoginViaSSOViewModel())
 }

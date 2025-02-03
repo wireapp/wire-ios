@@ -47,6 +47,9 @@ static NSString * const FirstEnqueuedSaveKey = @"ZMTimeOfLastSave";
 static NSString * const FailedToEstablishSessionStoreKey = @"FailedToEstablishSessionStoreKey";
 static NSString * const DisplayNameGeneratorKey = @"DisplayNameGeneratorKey";
 static NSString * const DelayedSaveActivityKey = @"DelayedSaveActivityKey";
+static NSString * const WireCoreDataErrorDomain = @"ZMCoreDataDomain";
+
+static NSUInteger const CoreDataNoStoreError = 1;
 
 static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 //
@@ -256,8 +259,14 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     }
     
     ZMLogDebug(@"%@ <%@: %p>.", NSStringFromSelector(_cmd), self.class, self);
+    NSPersistentStore* store = [self firstPersistentStore];
+    if(store == nil) {
+        NSError* error = [NSError errorWithDomain:WireCoreDataErrorDomain code:CoreDataNoStoreError userInfo:nil];
+        [WireLoggerObjC logSaveCoreDataError:error];
+        return YES;
+    }
     
-    NSDictionary *oldMetadata = [self.persistentStoreCoordinator metadataForPersistentStore:[self firstPersistentStore]];
+    NSDictionary *oldMetadata = [self.persistentStoreCoordinator metadataForPersistentStore:store];
     BOOL hasMetadataChanges = [self makeMetadataPersistent];
     
     if (self.userInfo[IsFailingToSave]) {
@@ -293,7 +302,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 - (void)rollbackWithOldMetadata:(NSDictionary *)oldMetadata;
 {
     [self rollback];
-    [self.persistentStoreCoordinator setMetadata:oldMetadata forPersistentStore:[self firstPersistentStore]];
+    NSPersistentStore* store = [self firstPersistentStore];
+    if(store == nil) {
+        return;
+    }
+    [self.persistentStoreCoordinator setMetadata:oldMetadata forPersistentStore:store];
 }
 
 - (NSDate *)timeOfLastSave;
@@ -486,11 +499,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     }];
 }
 
-- (NSPersistentStore *)firstPersistentStore
+- (nullable NSPersistentStore *)firstPersistentStore
 {
     NSArray *stores = [self.persistentStoreCoordinator persistentStores];
-    NSAssert(stores.count == 1, @"Invalid number of stores");
-    NSPersistentStore *store = stores[0];
+    NSAssert(stores.count <= 1, @"Invalid number of stores");
+    NSPersistentStore *store = stores.firstObject;
     return store;
 }
 
