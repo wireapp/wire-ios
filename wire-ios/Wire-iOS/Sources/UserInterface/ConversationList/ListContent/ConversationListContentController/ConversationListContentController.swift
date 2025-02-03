@@ -309,7 +309,7 @@ final class ConversationListContentController: UICollectionViewController {
            ) as? ConnectRequestsCell {
             cell = labelCell
         } else if item is ZMConversation,
-                  let listCell = collectionView.dequeueReusableCell(
+                  let listCell = collectionView.dequeueReusableCell( // TODO: why is this not formatted properly?
                       withReuseIdentifier: CellReuseIdConversation,
                       for: indexPath
                   ) as? ConversationListCell {
