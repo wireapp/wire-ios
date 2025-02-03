@@ -25,15 +25,20 @@ extension NSManagedObjectContext: GroupQueue {
         dispatchGroupContext?.groups.first
     }
 
-    public func performGroupedBlock(_ block: @escaping () -> Void) {
+    public func performGroupedBlock(_ file: String, _ line: Int, _ block: @escaping () -> Void) {
         let groups = dispatchGroupContext?.enterAll() ?? []
         let timePoint = TimePoint(interval: PerformWarningTimeout)
         perform {
+            NSLog("performGroupedBlock(file: \(file) line: \(line)")
             timePoint.resetTime()
             block()
             self.dispatchGroupContext?.leave(groups)
             timePoint.warnIfLongerThanInterval()
         }
+    }
+
+    public func performGroupedBlock(file: String = #filePath, line: Int = #line, _ block: @escaping () -> Void) {
+        performGroupedBlock(file, line, block)
     }
 }
 

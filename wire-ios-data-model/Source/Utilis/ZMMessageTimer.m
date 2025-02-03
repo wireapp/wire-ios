@@ -85,8 +85,8 @@ ZM_EMPTY_ASSERTING_INIT()
     
     NSManagedObjectContext *strongMoc = self.moc;
     RequireString(strongMoc != nil, "MOC is nil");
-    
-    [strongMoc performGroupedBlock:^{
+
+    [strongMoc performGroupedBlockWithFile:@"5" line:0 :^{
         
         if (message == nil || message.isZombieObject) {
             return;

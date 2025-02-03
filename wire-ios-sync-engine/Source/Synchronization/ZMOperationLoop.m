@@ -85,7 +85,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         
         NSManagedObjectContext *moc = self.syncMOC;
         // this is needed to avoid loading from syncMOC on the main queue
-        [moc performGroupedBlock:^{
+        [moc performGroupedBlockWithFile:@"23" line:0 :^{
             [self.transportSession configurePushChannelWithConsumer:self groupQueue:moc];
             [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
         }];
@@ -183,7 +183,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     }
 
     ZM_WEAK(self);
-    [self.syncMOC performGroupedBlock:^{
+    [self.syncMOC performGroupedBlockWithFile:@"24" line:0 :^{
         ZM_STRONG(self);
         BOOL enqueueMore = YES;
         while (self && enqueueMore && !self.shouldStopEnqueueing) {

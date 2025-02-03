@@ -123,7 +123,7 @@
 
 - (void)timerDidExpire
 {
-    [self.groupQueue performGroupedBlock:^{
+    [self.groupQueue performGroupedBlockWithFile:@"15" line:0 :^{
         self.currentHolder = nil;
         self.shouldReturnRequest = YES;
         [self readyForNextRequest];

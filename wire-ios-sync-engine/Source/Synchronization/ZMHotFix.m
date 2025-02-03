@@ -76,7 +76,7 @@ NSString * const ZMSkipHotfix = @"ZMSkipHotfix";
     
     if (lastSavedVersion == nil) {
         ZMLogDebug(@"No saved last version. We assume it's a new database and don't apply any HotFix.");
-        [self.syncMOC performGroupedBlock:^{
+        [self.syncMOC performGroupedBlockWithFile:@"26" line:0 :^{
             [self saveNewVersion:currentVersionString];
             [self.syncMOC saveOrRollback];
         }];
@@ -89,7 +89,7 @@ NSString * const ZMSkipHotfix = @"ZMSkipHotfix";
     }
     
     ZMLogDebug(@"Applying HotFix with last saved version %@, current version %@.", lastSavedVersion.versionString, currentVersion.versionString);
-    [self.syncMOC performGroupedBlock:^{
+    [self.syncMOC performGroupedBlockWithFile:@"25" line:0 :^{
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: exception here
         [self applyFixesSinceVersion:lastSavedVersion];

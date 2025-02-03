@@ -29,5 +29,14 @@ public protocol GroupQueue: NSObjectProtocol {
     /// Submits a block to the receiver's private queue and associates it with the receiver's group.
     /// This will use `NSManagedObjectContext.performBlock(_:)` internally and hence encapsulates
     /// an autorelease pool and a call to `NSManagedObjectContext.processPendingChanges()`.
-    func performGroupedBlock(_ block: @escaping () -> Void)
+    func performGroupedBlock(file: String, line: Int, _ block: @escaping () -> Void)
+
+    func performGroupedBlock(_ file: String, _ line: Int, _ block: @escaping () -> Void)
+}
+
+public extension GroupQueue {
+
+    func performGroupedBlock(file: String = #filePath, line: Int = #line, _ block: @escaping () -> Void) {
+        performGroupedBlock(file, line, block)
+    }
 }

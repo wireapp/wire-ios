@@ -478,7 +478,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     
     // Once the save group is empty (no pending saves), we'll do the actual save:
     [secondaryGroup notifyOnQueue:dispatch_get_global_queue(0, 0) block:^{
-        [self performGroupedBlock:^{
+        [self performGroupedBlockWithFile:@"13" line:0 :^{
             NSInteger const c2 = --self.pendingSaveCounter;
             BOOL didSave = NO;
             if (c2 == 0) {

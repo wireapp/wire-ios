@@ -37,11 +37,15 @@ public final class DispatchGroupQueue: NSObject, GroupQueue {
         dispatchGroupContext.add(group)
     }
 
-    public func performGroupedBlock(_ block: @escaping () -> Void) {
+    public func performGroupedBlock(_ file: String, _ line: Int, _ block: @escaping () -> Void) {
         let groups = dispatchGroupContext.enterAll()
         queue.async {
             block()
             self.dispatchGroupContext.leave(groups)
         }
+    }
+
+    public func performGroupedBlock(file: String = #filePath, line: Int = #line, _ block: @escaping () -> Void) {
+        performGroupedBlock(file, line, block)
     }
 }

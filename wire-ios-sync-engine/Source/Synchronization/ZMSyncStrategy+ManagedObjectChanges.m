@@ -79,7 +79,7 @@
         NSSet *updatedObjectsIDs = [self objectIDsetFromObject:note.userInfo[NSUpdatedObjectsKey]];
         
         ZM_WEAK(self);
-        [self.syncMOC performGroupedBlock:^{
+        [self.syncMOC performGroupedBlockWithFile:@"20" line:0 :^{
             ZM_STRONG(self);
             if(self == nil || self.tornDown) {
                 return;
@@ -105,7 +105,7 @@
         [self processSaveWithInsertedObjects:insertedObjects updateObjects:updatedObjects];
         
         ZM_WEAK(self);
-        [strongUiMoc performGroupedBlock:^{
+        [strongUiMoc performGroupedBlockWithFile:@"19" line:0 :^{
             ZM_STRONG(self);
             if(self == nil || self.tornDown) {
                 return;

@@ -92,7 +92,7 @@ ZM_EMPTY_ASSERTING_INIT()
     NOT_USED(note);
     BackgroundActivity *activity = [BackgroundActivityFactory.sharedFactory startBackgroundActivityWithName:@"enter background"];
     [self.notificationDispatcher applicationDidEnterBackground];
-    [self.syncMOC performGroupedBlock:^{
+    [self.syncMOC performGroupedBlockWithFile:@"22" line:0 :^{
         self.operationStatus.isInBackground = YES;
         [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
 
@@ -107,7 +107,7 @@ ZM_EMPTY_ASSERTING_INIT()
     NOT_USED(note);
     BackgroundActivity *activity = [BackgroundActivityFactory.sharedFactory startBackgroundActivityWithName:@"enter foreground"];
     [self.notificationDispatcher applicationWillEnterForeground];
-    [self.syncMOC performGroupedBlock:^{
+    [self.syncMOC performGroupedBlockWithFile:@"21" line:0 :^{
         self.operationStatus.isInBackground = NO;
         [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
 
