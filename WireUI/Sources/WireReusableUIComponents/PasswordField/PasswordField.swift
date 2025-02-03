@@ -19,8 +19,10 @@
 import SwiftUI
 import WireDesign
 
-// TODO: [WPB-15571] Add accessibility strings to the mask / unmask buttons
 public struct PasswordField: View {
+
+    private typealias Strings = L10n.Passwordtextfield
+
     @FocusState private var isFocused: Bool
     // TextField and SecureField have different heights. Switching between them causes the view to jump.
     // But we also want their height to change with dynamic font sizes. Hence @ScaledMetric.
@@ -79,7 +81,7 @@ public struct PasswordField: View {
                         .frame(width: 16, height: 16)
                         .padding(19)
                 })
-                .accessibilityLabel(isPasswordVisible ? L10n.Passwordtextfield.hidePassword : L10n.Passwordtextfield.showPassword)
+                .accessibilityLabel(isPasswordVisible ? Strings.hidePassword : Strings.showPassword)
             }
             .padding(.leading, 16)
             .frame(height: fieldHeight)

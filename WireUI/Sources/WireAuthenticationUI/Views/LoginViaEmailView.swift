@@ -46,7 +46,8 @@ package struct LoginViaEmailView: View {
                 password: $password,
                 passwordValidator: viewModel.passwordValidator,
                 placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
-                title: L10n.CloudUserLogin.InputPassword.title)
+                title: L10n.CloudUserLogin.InputPassword.title
+            )
 
             Button(action: {
             }, label: {
@@ -73,7 +74,7 @@ package struct LoginViaEmailView: View {
                         .wireTextStyle(.body1)
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
-                    
+
                     Button(action: {
                         viewModel.onCreateAccount()
                     }, label: {

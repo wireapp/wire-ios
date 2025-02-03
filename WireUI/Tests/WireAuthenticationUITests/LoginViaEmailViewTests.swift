@@ -67,4 +67,3 @@ class LoginViaEmailViewTests: XCTestCase {
     }
 
 }
-
