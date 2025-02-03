@@ -159,7 +159,6 @@ struct SyncStatus: SyncStatusProtocol {
     func forceSlowSync() {}
 }
 
-
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of
 /// the framework should create an instance as soon as possible in
