@@ -50,6 +50,7 @@ package struct LoginViaEmailView: View {
             )
 
             Button(action: {
+                viewModel.onCreateAccount()
             }, label: {
                 Text(L10n.CloudUserLogin.submit)
                     .lineLimit(nil)
