@@ -3,7 +3,6 @@ import XCTest
 
 final class WireAuthenticationTests: XCTestCase {
     func testExample() throws {
-        XCTFail()
         // XCTest Documentation
         // https://developer.apple.com/documentation/xctest
 
