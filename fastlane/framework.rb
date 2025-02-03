@@ -5,7 +5,7 @@ class Framework
         all_folders = [
             "WireAPI",
             "WireAnalytics",
-            "WireAuthenticationAll"
+            "WireAuthentication",
             "WireDomain",
             "WireFoundation",
             "WireLogging",
@@ -39,7 +39,7 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-sync-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["WireFoundation"])
         frameworks["wire-ios"].add_dependency(frameworks["WireLogging"])
-        frameworks["wire-ios"].add_dependency(frameworks["WireAuthenticationAll"])
+        frameworks["wire-ios"].add_dependency(frameworks["WireAuthentication"])
 
         frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
         frameworks["wire-ios-notification-engine"].add_dependency(frameworks["WireLogging"])
@@ -96,9 +96,9 @@ class Framework
 
         frameworks["WireAnalytics"].add_dependency(frameworks["WireLogging"])
 
-        frameworks["WireAuthenticationAll"].add_dependency(frameworks["WireDomain"])
-        frameworks["WireAuthenticationAll"].add_dependency(frameworks["WireFoundation"])
-        frameworks["WireAuthenticationAll"].add_dependency(frameworks["WireUI"])
+        frameworks["WireAuthentication"].add_dependency(frameworks["WireDomain"])
+        frameworks["WireAuthentication"].add_dependency(frameworks["WireFoundation"])
+        frameworks["WireAuthentication"].add_dependency(frameworks["WireUI"])
 
         frameworks
     end
