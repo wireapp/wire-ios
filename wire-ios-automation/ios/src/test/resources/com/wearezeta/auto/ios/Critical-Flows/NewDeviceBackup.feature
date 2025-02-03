@@ -25,7 +25,7 @@ Feature: New Device with Backup
     When I tap Save button on File Saving Popup
     And I tap on the account back button
     And I select settings item Log Out
-    And I type "<Password>" text into the alert input field
+    And I type my password into the alert input field
     And I accept alert
     And I tap Login button on Welcome page
     And I sign in user <Member1> with email
@@ -37,7 +37,6 @@ Feature: New Device with Backup
     And I type "<BackupPassword>" text into the alert input field
     And I accept alert
     And I wait for 5 seconds
-    And I accept alert
     And I accept alert if visible
     And I open conversation "<Member2>" in conversation list
     And I see last message in the conversation view is expected message <Text>
