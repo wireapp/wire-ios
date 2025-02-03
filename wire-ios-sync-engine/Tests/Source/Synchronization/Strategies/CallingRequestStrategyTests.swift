@@ -54,7 +54,6 @@ class CallingRequestStrategyTests: MessagingTest {
                 applicationStatus: mockApplicationStatus,
                 clientRegistrationDelegate: mockRegistrationDelegate,
                 flowManager: FlowManagerMock(),
-                callEventStatus: CallEventStatus(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
                 messageSender: mockMessageSender
             )
@@ -502,7 +501,6 @@ class CallingRequestStrategyTests: MessagingTest {
                 applicationStatus: mockApplicationStatus,
                 clientRegistrationDelegate: mockRegistrationDelegate,
                 flowManager: FlowManagerMock(),
-                callEventStatus: CallEventStatus(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
                 messageSender: mockMessageSender
             )

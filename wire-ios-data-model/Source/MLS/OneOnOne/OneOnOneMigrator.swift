@@ -76,6 +76,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         )
 
         await context.perform {
+
             _ = context.saveOrRollback()
         }
 
@@ -151,25 +152,24 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
-            // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both
-            // conversations here.
-            let proteusConversations: [ZMConversation] = fetchAllTeamOneOnOneProteusConversations(
-                otherUserID: userID,
-                in: context
+            // Note on proteus, it's possible to have duplicate 1-1 conversations, so we need to fetch all relevant
+            // 1-1 conversations here.
+            let source = OneOnOneSource(context: context)
+            let proteusConversations = try source.fetchOneOnOnes(
+                user: otherUser,
+                types: [.fake, .proteus, .proteusPending]
             )
 
-            var allProteusConversations = Set(proteusConversations)
-            if let existingConversation = otherUser.oneOnOneConversation,
-               existingConversation.messageProtocol == .proteus {
-                allProteusConversations.insert(existingConversation)
-            }
-
-            // move local messages from proteus conversations if they exist
-            for proteusConversation in allProteusConversations {
+            // Move local messages from all proteus conversations
+            for proteusConversation in proteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
             }
+
+            // insert system message that we moved from proteus to MLS
+            let sender = ZMUser.selfUser(in: context)
+            mlsConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
 
             if !proteusConversations.isEmpty {
                 // update just to be sure
@@ -179,37 +179,6 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             // switch active conversation
             otherUser.oneOnOneConversation = mlsConversation
         }
-    }
-
-    func fetchAllTeamOneOnOneProteusConversations(
-        otherUserID: QualifiedID,
-        in context: NSManagedObjectContext
-    ) -> [ZMConversation] {
-        guard let otherUser = ZMUser.fetch(with: otherUserID, in: context) else {
-            return []
-        }
-        let selfUser = ZMUser.selfUser(in: context)
-        guard selfUser.team != nil else {
-            return []
-        }
-
-        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-        let teamOneOnOnePredicate = ZMConversation.predicateForTeamOneToOneConversation()
-
-        let sameParticipant = NSPredicate(
-            format: "ANY %K.user == %@ AND ANY %K.user == %@",
-            ZMConversationParticipantRolesKey,
-            otherUser,
-            ZMConversationParticipantRolesKey,
-            selfUser
-        )
-
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            teamOneOnOnePredicate,
-            sameParticipant
-        ])
-
-        return context.fetchOrAssert(request: request)
     }
 
     private func createOrJoinMLSConversationIfNeeded(

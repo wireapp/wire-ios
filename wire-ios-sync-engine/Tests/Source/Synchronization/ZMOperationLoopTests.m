@@ -43,7 +43,6 @@
 
     self.operationStatus = [[OperationStatus alloc] init];
     self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
-    self.callEventStatus = [[CallEventStatus alloc] init];
     self.pushNotificationStatus = [[PushNotificationStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                  requestStrategy:self.mockRequestStrategy
@@ -51,7 +50,6 @@
                                                  operationStatus:self.operationStatus
                                                       syncStatus:self.syncStatus
                                           pushNotificationStatus:self.pushNotificationStatus
-                                                 callEventStatus:self.callEventStatus
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC
                                           isDeveloperModeEnabled:NO];
@@ -69,7 +67,6 @@
 {
     WaitForAllGroupsToBeEmpty(0.5);
     self.pushChannelObserverToken = nil;
-    self.callEventStatus = nil;
     self.pushNotificationStatus = nil;
     self.applicationStatusDirectory = nil;
     self.mockPushChannel = nil;
@@ -117,7 +114,6 @@
                                                             operationStatus:self.operationStatus
                                                                  syncStatus:self.syncStatus
                                                      pushNotificationStatus:self.pushNotificationStatus
-                                                            callEventStatus:self.callEventStatus
                                                                       uiMOC:self.uiMOC
                                                                     syncMOC:self.syncMOC
                                                      isDeveloperModeEnabled:NO];
@@ -397,183 +393,3 @@
 }
 
 @end
-
-
-
-#if TARGET_OS_IPHONE
-
-@implementation ZMOperationLoopTests (Background)
-
-- (NSDictionary *)pushPayloadForEventPayload:(NSArray *)eventPayloads identifier:(NSUUID *)identifier
-{
-    return @{
-             @"aps": @{ @"content-available": @1 },
-             @"data": @{
-                     @"type": @"plain",
-                     @"data": @{
-                             @"id": identifier.transportString,
-                             @"payload": eventPayloads
-                             }
-                     }
-             };
-}
-
-- (NSDictionary *)pushPayloadForEventPayload:(NSArray *)eventPayloads
-{
-    return [self pushPayloadForEventPayload:eventPayloads identifier:NSUUID.createUUID];
-}
-
-- (NSDictionary *)alertPushPayloadForEventPayload:(NSArray *)eventPayloads
-{
-    return @{
-             @"aps": @{@"content-available": @1,
-                       @"alert": @{@"foo": @"bar"}
-                       },
-             @"data": @{
-                     @"type": @"plain",
-                     @"data": @{
-                             @"id": [[NSUUID createUUID] transportString],
-                             @"payload": eventPayloads
-                             }
-                     }
-             };
-}
-
-- (NSDictionary *)fallbackAPNSPayloadWithIdentifier:(NSUUID *)uuid
-{
-    return @{
-             @"aps": @{
-                     @"content-available": @1,
-                     @"alert": @{ @"foo": @"bar" }
-                     },
-             @"data": @{
-                     @"type": @"notice",
-                     @"data": @{ @"id": uuid.transportString }
-                     }
-             };
-}
-
-- (NSDictionary *)payloadForMessageAddEvent
-{
-    return [self payloadForMessageAddEventWithNonce:NSUUID.createUUID];
-}
-
-- (NSDictionary *)payloadForMessageAddEventWithNonce:(NSUUID *)uuid
-{
-    return @{
-            @"conversation": [[NSUUID createUUID] transportString],
-            @"time": [NSDate date],
-            @"data": @{
-                    @"content": @"saf",
-                    @"nonce": [uuid transportString],
-                    },
-            @"from": [[NSUUID createUUID] transportString],
-            @"type": @"conversation.message-add"
-            };
-}
-
-- (NSDictionary *)noticePushPayloadWithUUID:(NSUUID *)uuid
-{
-    return  @{@"aps" : @{},
-              @"data" : @{
-                      @"data" : @{ @"id" : uuid.transportString },
-                      @"type" : @"notice"
-                      }
-              };
-}
-
-- (void)testThatItForwardsEventsFromSilentPushesToThePushNotificationStatus
-{
-    // given
-    NSUUID *identifier = NSUUID.timeBasedUUID;
-    NSDictionary *eventPayload = [self payloadForMessageAddEvent];
-    NSDictionary *pushPayload = [self pushPayloadForEventPayload:@[eventPayload] identifier:identifier];
-    NSArray *events = [ZMUpdateEvent eventsArrayFromPushChannelData:pushPayload[@"data"][@"data"]];
-    XCTAssertNotNil(events);
-    
-    // when
-    [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{}];
-    WaitForAllGroupsToBeEmpty(1.0);
-    
-    // then
-    XCTAssertTrue(self.pushNotificationStatus.hasEventsToFetch);
-}
-
-
-- (void)testThatItForwardsNoticeNotificationsToThePushNotificationStatus
-{
-    // given
-    [self.syncMOC performBlockAndWait:^{
-        XCTAssertTrue([self.syncMOC saveOrRollback]);
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    NSUUID *notificationID = NSUUID.timeBasedUUID;
-    NSDictionary *pushPayload = [self noticePushPayloadWithUUID:notificationID];
-
-    // when
-    [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{}];
-    WaitForAllGroupsToBeEmpty(1.0);
-
-    // then
-    XCTAssertTrue(self.pushNotificationStatus.hasEventsToFetch);
-}
-
-- (void)testThatItCallsCompletionHandlerWhenEventsAreDownloaded
-{
-    // given
-    [self.syncMOC performBlockAndWait:^{
-        XCTAssertTrue([self.syncMOC saveOrRollback]);
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSUUID *notificationID = NSUUID.timeBasedUUID;
-    NSDictionary *pushPayload = [self noticePushPayloadWithUUID:notificationID];
-    
-    // expect
-    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Called completion handler"];
-    [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{
-        [expectation fulfill];
-    }];
-    WaitForAllGroupsToBeEmpty(1.0);
-    
-    // when
-    [self.pushNotificationStatus didFetchEventIds:@[notificationID] lastEventId:notificationID finished:YES];
-    
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
-}
-
-- (void)testThatItCallsCompletionHandlerAfterCallEventsHaveBeenProcessed
-{
-    // given
-    [self.syncMOC performBlockAndWait:^{
-        XCTAssertTrue([self.syncMOC saveOrRollback]);
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSUUID *notificationID = NSUUID.timeBasedUUID;
-    NSDictionary *pushPayload = [self noticePushPayloadWithUUID:notificationID];
-    
-    // expect
-    __block BOOL completionHandlerHasBeenCalled = NO;
-    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Called completion handler"];
-    [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{
-        [expectation fulfill];
-        completionHandlerHasBeenCalled = YES;
-    }];
-    WaitForAllGroupsToBeEmpty(1.0);
-    
-    // when
-    [self.callEventStatus scheduledCallEventForProcessing];
-    [self.pushNotificationStatus didFetchEventIds:@[notificationID] lastEventId:notificationID finished:YES];
-    WaitForAllGroupsToBeEmpty(1.0);
-    
-    XCTAssertFalse(completionHandlerHasBeenCalled);
-    
-    [self.callEventStatus finishedProcessingCallEvent];
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
-}
-
-@end
-
-#endif

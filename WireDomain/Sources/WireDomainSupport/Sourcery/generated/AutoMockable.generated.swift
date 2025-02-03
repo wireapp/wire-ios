@@ -27,6 +27,7 @@
 
 import WireAPI
 import WireDataModel
+import WireDomainPkg
 
 @testable import WireDomain
 
@@ -1179,6 +1180,38 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
 }
 
+public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigrationUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeTeamName_Invocations: [String] = []
+    public var invokeTeamName_MockError: Error?
+    public var invokeTeamName_MockMethod: ((String) async throws -> IndividualToTeamMigrationResult)?
+    public var invokeTeamName_MockValue: IndividualToTeamMigrationResult?
+
+    public func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
+        invokeTeamName_Invocations.append(teamName)
+
+        if let error = invokeTeamName_MockError {
+            throw error
+        }
+
+        if let mock = invokeTeamName_MockMethod {
+            return try await mock(teamName)
+        } else if let mock = invokeTeamName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeTeamName`")
+        }
+    }
+
+}
+
 class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
     // MARK: - Life cycle
@@ -1503,6 +1536,35 @@ class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
         } else {
             fatalError("no mock for `decryptedEventDataFrom`")
         }
+    }
+
+}
+
+public class MockPullSelfUserClientsProtocol: PullSelfUserClientsProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullSelfClients
+
+    public var pullSelfClients_Invocations: [Void] = []
+    public var pullSelfClients_MockError: Error?
+    public var pullSelfClients_MockMethod: (() async throws -> Void)?
+
+    public func pullSelfClients() async throws {
+        pullSelfClients_Invocations.append(())
+
+        if let error = pullSelfClients_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfClients_MockMethod else {
+            fatalError("no mock for `pullSelfClients`")
+        }
+
+        try await mock()
     }
 
 }

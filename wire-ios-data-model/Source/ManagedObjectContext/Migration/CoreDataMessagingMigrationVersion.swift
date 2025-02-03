@@ -79,7 +79,7 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
         case .v120:
             .v121
         case .v119:
-            .v120
+            .v120 // destination version runs custom migration actions
         case .v116, .v117, .v118:
             .v119
         case .v115,

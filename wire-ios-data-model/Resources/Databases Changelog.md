@@ -4,10 +4,14 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
-### 2.121.0
+### 2.122.0
 
 * Remove `ToDeleted` entity from 2.120.0
 * Cleanup `needsToUploadSignalingKeys`, `apsVerificationKey`, `apsDecryptionKey` from `UserClient`
+
+### 2.121.0
+
+Removed `pushToken` attribute from `UserClient`.
 
 ### 2.120.0
 
