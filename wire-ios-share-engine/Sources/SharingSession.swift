@@ -96,7 +96,7 @@ final class ApplicationStatusDirectory: ApplicationStatus {
     public let clientRegistrationStatus: ClientRegistrationDelegate
 
     public let linkPreviewDetector: LinkPreviewDetectorType
-    
+
     public let syncStatus: SyncStatusProtocol
 
     public init(
@@ -375,7 +375,7 @@ public final class SharingSession {
                 if coreDataStack.syncContext.mlsDecryptionService == nil {
                     coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
                 }
-                
+
                 if coreDataStack.syncContext.mlsService == nil {
                     coreDataStack.syncContext.mlsService = mlsService
                 }
@@ -459,7 +459,7 @@ public final class SharingSession {
             context: coreDataStack.syncContext,
             mlsActionExecutor: mlsActionExecutor
         )
-        
+
         let mlsService = MLSService(
             context: coreDataStack.syncContext,
             notificationContext: coreDataStack.syncContext.notificationContext,
