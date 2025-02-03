@@ -14,14 +14,14 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireAuthentication",
         "identifier" : "WireAuthenticationUITests",
         "name" : "WireAuthenticationUITests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireAuthentication",
         "identifier" : "WireAuthenticationTests",
         "name" : "WireAuthenticationTests"
       }

@@ -18,7 +18,7 @@
                BlueprintIdentifier = "WireAuthentication"
                BuildableName = "WireAuthentication"
                BlueprintName = "WireAuthentication"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireAuthentication">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -32,7 +32,7 @@
                BlueprintIdentifier = "WireAuthenticationTests"
                BuildableName = "WireAuthenticationTests"
                BlueprintName = "WireAuthenticationTests"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireAuthentication">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -46,7 +46,7 @@
                BlueprintIdentifier = "WireViewsDebugUI"
                BuildableName = "WireViewsDebugUI"
                BlueprintName = "WireViewsDebugUI"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireAuthentication">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -60,7 +60,7 @@
                BlueprintIdentifier = "WireAuthenticationUI"
                BuildableName = "WireAuthenticationUI"
                BlueprintName = "WireAuthenticationUI"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireAuthentication">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -74,7 +74,7 @@
                BlueprintIdentifier = "WireAuthenticationUITests"
                BuildableName = "WireAuthenticationUITests"
                BlueprintName = "WireAuthenticationUITests"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireAuthentication">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -114,7 +114,7 @@
             BlueprintIdentifier = "WireAuthentication"
             BuildableName = "WireAuthentication"
             BlueprintName = "WireAuthentication"
-            ReferencedContainer = "container:">
+            ReferencedContainer = "container:WireAuthentication">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
