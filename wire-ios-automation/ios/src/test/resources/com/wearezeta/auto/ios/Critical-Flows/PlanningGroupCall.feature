@@ -1,7 +1,7 @@
 Feature: Planning Group Calls
 
   @flows @TC-8580
-  Scenario Outline: Team owner planning a group call
+  Scenario Outline: Team owner planning a group call (Audio call)
     Given I allow camera access
     And I allow access to all photos
     And I allow microphone access
@@ -10,17 +10,11 @@ Feature: Planning Group Calls
     And User <TeamOwner> adds user <Member1>,<Member2> to team <TeamName> with role Member
     And User <TeamOwner> is me
     And User adds the following device: {"<Member1>": [{"name": "<device1>"}], "<Member2>": [{"name": "<device2>"}]}
-    And I sign in user <TeamOwner> with fast login
-    And I accept alert if visible
-    And  I open search screen
+    And I login to Wire as <TeamOwner>
+    And I open search screen
     And I open create group screen
-    And I enter group name "<ConversationTitle>" on New Group page
-    And I tap Next button on New Group page
-    And I type first 3 letters of name "<Member1>" in search input field on Add People page
-    And I select search result item <Member1> on Add People page
-    And I type first 3 letters of name "<Member2>" in search input field on Add People page
-    And I select search result item <Member2> on Add People page
-    And I tap Create button on Add People page
+    And I create new group "<ConversationTitle>"
+    And I add members <Member1>, <Member2> to new group via search
     And User <TeamOwner> sends 1 default messages to conversation <ConversationTitle>
     And I navigate back to conversations list
     And I open conversation "<ConversationTitle>" in conversation list
