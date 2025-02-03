@@ -22,7 +22,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireAuthentication"),
+            name: "WireAuthentication"
+        ),
         .testTarget(
             name: "WireAuthenticationTests",
             dependencies: ["WireAuthentication"]
