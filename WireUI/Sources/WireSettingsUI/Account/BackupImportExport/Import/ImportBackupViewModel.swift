@@ -133,14 +133,21 @@ final class ImportBackupViewModel: ObservableObject {
 
     private func updatePublishedProperties() {
 
-        isImportProgressPresented = switch state {
+        importProgress = switch state {
+        case let .importingBackup(progress):
+            progress
+        default:
+            0
+        }
+
+        let isImportProgressPresented = switch state {
         case .importingBackup, .requestingPassword:
             true
         default:
             false
         }
 
-        isEnterBackupPasswordPresented = if case .requestingPassword = state {
+        let isEnterBackupPasswordPresented = if case .requestingPassword = state {
             true
         } else {
             false
@@ -152,25 +159,33 @@ final class ImportBackupViewModel: ObservableObject {
             false
         }
 
-        // TODO: find better workaround for presentation issue
-        let isAlertPresented = switch state {
-        case .restoreFailed, .confirmation:
-            true
-        default:
-            false
+        // Workarounds for presentation issues with several sheet or alert presentation flags toggled at once.
+        // This code assumes the presentation or dismissal of a modal view controller lasts less than 400ms.
+        if !isImportProgressPresented, self.isEnterBackupPasswordPresented {
+            // The outer sheet is dismissed while the inner sheet is still presented, so delay the outer dismissal.
+            self.isEnterBackupPasswordPresented = false
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+                self?.updatePublishedProperties()
+            }
         }
-        if isAlertPresented {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.isAlertPresented = true }
-        } else {
-            self.isAlertPresented = false
+        if isEnterBackupPasswordPresented, !self.isImportProgressPresented {
+            // The inner sheet is being presented while the outer sheet is not yet presented, so delay the inner.
+            self.isImportProgressPresented = true
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+                self?.updatePublishedProperties()
+            }
+        }
+        if isAlertPresented, self.isImportProgressPresented {
+            // The alert is being presented while there is still a sheet presented, so delay the alert.
+            self.isImportProgressPresented = false
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+                self?.updatePublishedProperties()
+            }
         }
 
-        importProgress = switch state {
-        case let .importingBackup(progress):
-            progress
-        default:
-            0
-        }
+        self.isImportProgressPresented = isImportProgressPresented
+        self.isEnterBackupPasswordPresented = isEnterBackupPasswordPresented
+        isAlertPresented = isAlertPresented
 
     }
 }
