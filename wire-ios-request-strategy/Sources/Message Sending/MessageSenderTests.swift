@@ -345,7 +345,7 @@ final class MessageSenderTests: MessagingTestBase {
             .arrange()
 
         // then
-        await assertItThrows(error: MessageSendError.failed) {
+        await assertItThrows(error: MessageSendError.failed(NetworkError.errorDecodingResponse(.init()))) {
             // Ensures it breaks the loop and throws error
             try await messageSender.sendMessage(message: message)
         }
@@ -819,4 +819,29 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
+}
+
+extension MessageSendError: @retroactive Equatable {
+    public static func == (lhs: MessageSendError, rhs: MessageSendError) -> Bool {
+        switch (lhs, rhs) {
+        case let (.failed(lhsError), .failed(rhsError)):
+            lhsError as NSError == rhsError as NSError
+        case (.missingMessageProtocol, .missingMessageProtocol):
+            true
+        case (.missingGroupID, .missingGroupID):
+            true
+        case (.missingQualifiedID, .missingQualifiedID):
+            true
+        case (.missingMlsService, .missingMlsService):
+            true
+        case (.unresolvedApiVersion, .unresolvedApiVersion):
+            true
+        case (.messageExpired, .messageExpired):
+            true
+        case (.missingProteusService, .missingProteusService):
+            true
+        default:
+            false
+        }
+    }
 }

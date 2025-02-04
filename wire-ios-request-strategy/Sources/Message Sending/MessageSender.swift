@@ -19,7 +19,7 @@
 import WireDataModel
 import WireLogging
 
-public enum MessageSendError: Error, Equatable {
+public enum MessageSendError: Error {
     case missingMessageProtocol
     case missingGroupID
     case missingQualifiedID
@@ -27,7 +27,7 @@ public enum MessageSendError: Error, Equatable {
     case unresolvedApiVersion
     case messageExpired
     case missingProteusService
-    case failed
+    case failed(Error)
 }
 
 public typealias SendableMessage = MLSMessage & ProteusMessage
@@ -336,7 +336,7 @@ public final class MessageSender: MessageSenderInterface {
                         attributes: logAttributes
                     )
 
-                    throw MessageSendError.failed
+                    throw MessageSendError.failed(failure)
                 }
             } else {
                 throw failure
