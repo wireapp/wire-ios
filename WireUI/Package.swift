@@ -90,7 +90,11 @@ let package = Package(
         ),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
 
-        .target(name: "WireSettingsUI"),
+        .target(
+            name: "WireSettingsUI",
+            dependencies: ["WireDesign", "WireFoundation", "WireReusableUIComponents"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
         .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI"]),
 
         .target(

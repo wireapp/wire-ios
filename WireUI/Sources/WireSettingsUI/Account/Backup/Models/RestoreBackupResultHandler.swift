@@ -16,25 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSettingsUI
-import class WireSyncEngine.SessionManager
+public struct RestoreBackupResultHandler {
+    let onSuccess: () -> Void
+    let onConfirmation: (@escaping () -> Void) -> Void
+    let onFailure: () -> Void
 
-struct BackupSource: BackupSourceProtocol {
-
-    enum BackupSourceError: Error {
-        case missingSessionManager
+    public init(
+        onSuccess: @escaping () -> Void,
+        onConfirmation: @escaping (@escaping () -> Void) -> Void,
+        onFailure: @escaping () -> Void
+    ) {
+        self.onSuccess = onSuccess
+        self.onConfirmation = onConfirmation
+        self.onFailure = onFailure
     }
-
-    func backupActiveAccount(password: String) throws -> URL {
-        guard let sessionManager = SessionManager.shared else {
-            throw BackupSourceError.missingSessionManager
-        }
-        return try sessionManager.backupActiveAccount(password: password)
-    }
-
-    func clearPreviousBackups() {
-        SessionManager.shared?.clearPreviousBackups()
-    }
-
 }

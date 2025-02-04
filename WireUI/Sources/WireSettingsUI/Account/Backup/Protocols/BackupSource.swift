@@ -17,24 +17,11 @@
 //
 
 import Foundation
-import WireSettingsUI
-import class WireSyncEngine.SessionManager
 
-struct BackupSource: BackupSourceProtocol {
+public protocol BackupSourceProtocol {
 
-    enum BackupSourceError: Error {
-        case missingSessionManager
-    }
+    func backupActiveAccount(password: String) throws -> URL
 
-    func backupActiveAccount(password: String) throws -> URL {
-        guard let sessionManager = SessionManager.shared else {
-            throw BackupSourceError.missingSessionManager
-        }
-        return try sessionManager.backupActiveAccount(password: password)
-    }
-
-    func clearPreviousBackups() {
-        SessionManager.shared?.clearPreviousBackups()
-    }
+    func clearPreviousBackups()
 
 }

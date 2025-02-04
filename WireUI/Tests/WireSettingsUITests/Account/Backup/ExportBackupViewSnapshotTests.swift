@@ -16,40 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDesign
+import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import Wire
+@testable import WireSettingsUI
 
-final class BackupViewControllerTests: XCTestCase {
+final class ExportBackupViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = .init()
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
         snapshotHelper = nil
-        super.tearDown()
     }
 
-    func testInitialState() {
-        // GIVEN
-        let sut = makeViewController()
+    @MainActor
+    func testBackupActions() {
+        let screenBounds = UIScreen.main.bounds
+        let sut = ExportBackupView(
+            passwordValidator: MockBackupPasswordValidator(),
+            exportBackup: { _ in }
+        ).frame(width: screenBounds.width, height: screenBounds.height)
 
-        // WHEN && THEN
-        snapshotHelper.verify(matching: sut.view)
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: sut, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark")
     }
 
-    // MARK: Helpers
-
-    private func makeViewController() -> BackupViewController {
-        let backupSource = MockBackupSource()
-        let vc = BackupViewController(backupSource: backupSource)
-        vc.view.backgroundColor = SemanticColors.View.backgroundDefault
-        return vc
-    }
 }
