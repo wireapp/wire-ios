@@ -16,4 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.118.0
+import SwiftUI
+
+struct VerificationCodeView_Previews: View {
+
+    var code: [String]
+
+    var body: some View {
+        VerificationCodeView(
+            initialCode: code,
+            receiver: "name@name.com",
+            onConfirm: { _ in },
+            onResend: {}
+        )
+    }
+
+}

@@ -70,8 +70,10 @@ package struct AuthenticationIdentityInputView: View {
     }
 }
 
-struct AuthenticationIdentityInputPreview: View {
-    var body: some View {
+package struct AuthenticationIdentityInputPreview: View {
+    package init() {}
+
+    package var body: some View {
         AuthenticationIdentityInputView(
             actionCallback: { _ in }
         )
