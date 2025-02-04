@@ -20,10 +20,10 @@ import Foundation
 import WireDomainPkg
 import WireSettingsUI
 
+// TODO: [WPB-15347] delete this workaround
+
 // Instead of linking WireDomainPkg into WireUI targets several symlinks have been created.
 // Therefore many types exist twice, once in their original target (WireDomainPkg) and once in WireUI.
-
-// TODO: [WPB-15347] delete this workaround
 struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCaseProtocol {
 
     private let importBackupUseCase: any WireDomainPkg.ImportBackupUseCaseProtocol
@@ -77,8 +77,20 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
     }
 }
 
-extension WireSettingsUI.ImportBackupUseCaseProtocol where Self == ImportBackupUseCaseProtocolAdapter {
-    static func adapter(_ importBackupUseCase: (any WireDomainPkg.ImportBackupUseCaseProtocol)?) -> Self {
-        .init(importBackupUseCase!)
-    }
+func BackupImportExportBuilder(
+    backupPasswordValidator: any BackupPasswordValidatorProtocol,
+    createBackupUseCase: any CreateBackupUseCaseProtocol,
+    importBackupUseCase: any WireDomainPkg.ImportBackupUseCaseProtocol,
+    cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
+) -> WireSettingsUI.BackupImportExportBuilder {
+
+    let importBackupUseCase = ImportBackupUseCaseProtocolAdapter(importBackupUseCase)
+
+    return .init(
+        backupPasswordValidator: backupPasswordValidator,
+        createBackupUseCase: createBackupUseCase,
+        importBackupUseCase: importBackupUseCase,
+        cleanUpBackupsUseCase: cleanUpBackupsUseCase
+    )
+
 }
