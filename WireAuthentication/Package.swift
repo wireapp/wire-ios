@@ -10,6 +10,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
+        .library(name: "WireAuthenticationAPI", targets: ["WireAuthenticationAPI"]),
         .library(name: "WireAuthentication", targets: ["WireAuthentication"]),
         .library(name: "WireAuthenticationUI", targets: ["WireAuthenticationUI"]),
         .library(name: "WireViewsDebugUI", targets: ["WireViewsDebugUI"])
@@ -27,6 +28,10 @@ let package = Package(
         .testTarget(
             name: "WireAuthenticationTests",
             dependencies: ["WireAuthentication"]
+        ),
+
+        .target(
+            name: "WireAuthenticationAPI"
         ),
 
         .target(
