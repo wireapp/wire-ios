@@ -41,6 +41,11 @@
 
 "importBackup.cancel.title" = "Cancel";
 
+"importBackup.overwriteConfirmation.title" = "File overwrites your history";
+"importBackup.overwriteConfirmation.message" = "The backup contents will replace the current conversation history on this device.";
+"importBackup.overwriteConfirmation.cancel" = "Cancel";
+"importBackup.overwriteConfirmation.proceed" = "Proceed";
+
 "importBackup.alert.ok" = "OK";
 "importBackup.alert.success.title" = "Success";
 "importBackup.alert.success.message" = "Your history is restored.";
@@ -51,7 +56,6 @@
 "importBackup.alert.wrongFileError.title" = "Wrong backup file";
 "importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
 
-"importBackup.enterPassword.cancel" = "OK";
 "importBackup.enterPassword.title" = "Enter password";
 "importBackup.enterPassword.description" = "This backup is password protected.";
 "importBackup.enterPassword.textField.title" = "Password";
@@ -61,4 +65,3 @@
 
 "importBackup.restoringHistory.title" = "Restoring history…";
 "importBackup.restoringHistory.message" = "Loading conversations…";
-

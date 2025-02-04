@@ -43,12 +43,14 @@ struct ImportBackupView: View {
             }
 
             .sheet(isPresented: $viewModel.isImportProgressPresented) {
+
                 ImportProgressView(
                     progressValue: viewModel.importProgress,
                     cancelAction: { viewModel.reset() }
                 )
                 .interactiveDismissDisabled()
                 .presentationDetents([.medium])
+
                 .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
                     EnterPasswordView(
                         password: $viewModel.backupPassword,
@@ -63,6 +65,25 @@ struct ImportBackupView: View {
                             viewModel.isBackupPasswordWrong = false
                         }
                     }
+                }
+
+                .alert(
+                    Text(viewModel.alertContent.title),
+                    isPresented: $viewModel.isImportConfirmationPresented,
+                    presenting: viewModel.alertContent
+                ) { _ in
+                    Button {
+                        viewModel.reset()
+                    } label: {
+                        Text(L10n.Localizable.ImportBackup.OverwriteConfirmation.cancel)
+                    }
+                    Button {
+                        viewModel.confirmOverwrite()
+                    } label: {
+                        Text(L10n.Localizable.ImportBackup.OverwriteConfirmation.proceed)
+                    }
+                } message: { alertContent in
+                    Text(alertContent.message)
                 }
             }
 

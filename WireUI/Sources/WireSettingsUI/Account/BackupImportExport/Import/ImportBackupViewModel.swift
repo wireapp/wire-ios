@@ -32,8 +32,9 @@ final class ImportBackupViewModel: ObservableObject {
 
     @Published var isImportProgressPresented = false
     @Published var isEnterBackupPasswordPresented = false
-    @Published var alertContent = AlertContent()
-    @Published var isAlertPresented = false
+    @Published var alertContent = AlertContent(title: "", message: "", cancel: "", action: "")
+    @Published var isImportConfirmationPresented = false
+    @Published var isAlertPresented = false // TODO: rename just alert
 
     @Published private(set) var importProgress = Float()
 
@@ -76,7 +77,13 @@ final class ImportBackupViewModel: ObservableObject {
                 try fileManager.copyItem(at: url, to: copy)
                 url.stopAccessingSecurityScopedResource()
 
-                importBackup(from: copy, password: "")
+                alertContent = .init(
+                    title: L10n.Localizable.ImportBackup.OverwriteConfirmation.title,
+                    message: L10n.Localizable.ImportBackup.OverwriteConfirmation.message,
+                    cancel: L10n.Localizable.ImportBackup.OverwriteConfirmation.cancel,
+                    action: L10n.Localizable.ImportBackup.OverwriteConfirmation.proceed
+                )
+                state = .requestConfirmation(url: copy)
             }
         } catch {
             assertionFailure("TODO") // TODO: also log before every assertionFailure
@@ -84,7 +91,8 @@ final class ImportBackupViewModel: ObservableObject {
         }
     }
 
-    func importBackup(from url: URL) {
+    func confirmOverwrite() {
+        guard case let .requestConfirmation(url) = state else { return assertionFailure() }
         importBackup(from: url, password: "")
     }
 
@@ -103,9 +111,13 @@ final class ImportBackupViewModel: ObservableObject {
                     case let .progress(fraction):
                         state = .importingBackup(progress: fraction)
                     case .done:
-                        alertContent.title = L10n.Localizable.ImportBackup.Alert.Success.title
-                        alertContent.message = L10n.Localizable.ImportBackup.Alert.Success.message
-                        state = .confirmation
+                        alertContent = .init(
+                            title: L10n.Localizable.ImportBackup.Alert.Success.title,
+                            message: L10n.Localizable.ImportBackup.Alert.Success.message,
+                            cancel: "",
+                            action: L10n.Localizable.ImportBackup.Alert.ok
+                        )
+                        state = .success
                     }
                 }
                 // TODO: add logging
@@ -114,18 +126,30 @@ final class ImportBackupViewModel: ObservableObject {
             } catch ImportBackupError.decryptionError {
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
             } catch ImportBackupError.incompatibleFileFormat {
-                alertContent.title = L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.title
-                alertContent.message = L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.message
+                alertContent = .init(
+                    title: L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.title,
+                    message: L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.message,
+                    cancel: "",
+                    action: L10n.Localizable.ImportBackup.Alert.ok
+                )
                 state = .restoreFailed
             } catch ImportBackupError.invalidAccountID {
-                alertContent.title = L10n.Localizable.ImportBackup.Alert.WrongFileError.title
-                alertContent.message = L10n.Localizable.ImportBackup.Alert.WrongFileError.message
+                alertContent = .init(
+                    title: L10n.Localizable.ImportBackup.Alert.WrongFileError.title,
+                    message: L10n.Localizable.ImportBackup.Alert.WrongFileError.message,
+                    cancel: "",
+                    action: L10n.Localizable.ImportBackup.Alert.ok
+                )
                 state = .restoreFailed
             } catch is CancellationError {
                 reset()
             } catch {
-                alertContent.title = L10n.Localizable.ImportBackup.Alert.GenericError.title
-                alertContent.message = L10n.Localizable.ImportBackup.Alert.GenericError.message
+                alertContent = .init(
+                    title: L10n.Localizable.ImportBackup.Alert.GenericError.title,
+                    message: L10n.Localizable.ImportBackup.Alert.GenericError.message,
+                    cancel: "",
+                    action: L10n.Localizable.ImportBackup.Alert.ok
+                )
                 state = .restoreFailed
             }
         }
@@ -141,13 +165,25 @@ final class ImportBackupViewModel: ObservableObject {
         }
 
         let isImportProgressPresented = switch state {
-        case .importingBackup, .requestingPassword:
+        case .requestConfirmation, .importingBackup, .requestingPassword:
             true
         default:
             false
         }
 
+        let isImportConfirmationPresented = switch state {
+        case .requestConfirmation:
+            true
+        default: false
+        }
+
         let isEnterBackupPasswordPresented = if case .requestingPassword = state {
+            true
+        } else {
+            false
+        }
+
+        let isAlertPresented = if case .success = state {
             true
         } else {
             false
@@ -161,6 +197,13 @@ final class ImportBackupViewModel: ObservableObject {
 
         // Workarounds for presentation issues with several sheet or alert presentation flags toggled at once.
         // This code assumes the presentation or dismissal of a modal view controller lasts less than 400ms.
+        if !isImportProgressPresented, self.isImportConfirmationPresented {
+            // The outer sheet is dismissed while the inner sheet/alert is presented, so delay the outer dismissal.
+            self.isImportConfirmationPresented = false
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+                self?.updatePublishedProperties()
+            }
+        }
         if !isImportProgressPresented, self.isEnterBackupPasswordPresented {
             // The outer sheet is dismissed while the inner sheet is still presented, so delay the outer dismissal.
             self.isEnterBackupPasswordPresented = false
@@ -184,14 +227,26 @@ final class ImportBackupViewModel: ObservableObject {
         }
 
         self.isImportProgressPresented = isImportProgressPresented
+        self.isImportConfirmationPresented = isImportConfirmationPresented
         self.isEnterBackupPasswordPresented = isEnterBackupPasswordPresented
-        isAlertPresented = isAlertPresented
+        self.isAlertPresented = isAlertPresented
 
     }
 
     struct AlertContent: Equatable {
-        var title = ""
-        var message = ""
+
+        let title: String
+        let message: String
+        let cancel: String
+        let action: String
+
+        init(title: String, message: String, cancel: String, action: String) {
+            self.title = title
+            self.message = message
+            self.cancel = cancel
+            self.action = action
+        }
+
     }
 
 }
