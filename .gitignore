@@ -105,6 +105,7 @@ artifacts/
 
 # Automation Config
 wire-ios-automation/ios/backendConnections.json
+**/backendConnections.json
 **/.project
 
 # Automation Output
