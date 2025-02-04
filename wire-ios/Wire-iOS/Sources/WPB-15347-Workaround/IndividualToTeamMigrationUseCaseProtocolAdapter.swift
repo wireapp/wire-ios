@@ -17,16 +17,17 @@
 //
 
 import Foundation
+import WireAnalytics
 import WireDomainPkg
 import WireIndividualToTeamMigrationUI
-import WireAnalytics
 
 // TODO: [WPB-15347] delete this workaround
 
 // Instead of linking WireDomainPkg into WireUI targets several symlinks have been created.
 // Therefore many types exist twice, once in their original target (WireDomainPkg) and once in WireUI.
 typealias IndividualToTeamMigrationUseCaseProtocol = WireDomainPkg.IndividualToTeamMigrationUseCaseProtocol
-struct IndividualToTeamMigrationUseCaseProtocolAdapter: WireIndividualToTeamMigrationUI.IndividualToTeamMigrationUseCaseProtocol {
+struct IndividualToTeamMigrationUseCaseProtocolAdapter: WireIndividualToTeamMigrationUI
+    .IndividualToTeamMigrationUseCaseProtocol {
 
     private let individualToTeamMigrationUseCase: any IndividualToTeamMigrationUseCaseProtocol
 

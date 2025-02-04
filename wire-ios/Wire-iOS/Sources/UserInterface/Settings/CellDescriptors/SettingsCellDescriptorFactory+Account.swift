@@ -396,23 +396,6 @@ extension SettingsCellDescriptorFactory {
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     let backupRestoreController = backupImportExportBuilder.build()
-//                    let viewModel = BackupRestoreViewModel( // TODO: delete, use `backupRestoreBuilder`
-//                        backupSource: BackupSource(),
-//                        restoreSource: RestoreSource(),
-//                        backupResultHandler: BackupResultHandler(
-//                            onSuccess: presentShareSheet,
-//                            onFailure: presentExportBackupErrorAlert
-//                        ),
-//                        restoreBackupResultHandler: RestoreBackupResultHandler(
-//                            onSuccess: presentOnSuccessAlert,
-//                            onConfirmation: presentConfirmationAlert,
-//                            onFailure: presentRestoreBackupErrorAlert
-//                        )
-//                    )
-//                    let backupRestoreController = BackupRestoreViewController(
-//                        viewModel: viewModel,
-//                        backupPasswordValidator: BackupPasswordValidator()
-//                    )
                     backupRestoreController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
                     return backupRestoreController
                 } else {
