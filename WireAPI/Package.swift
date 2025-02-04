@@ -41,6 +41,7 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [
+                .process("APIs/AuthenticationAPI/Resources"),
                 .process("APIs/AccountsAPI/Resources"),
                 .process("APIs/BackendInfoAPI/Resources"),
                 .process("APIs/ConnectionsAPI/Resources"),
