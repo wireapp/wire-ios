@@ -54,11 +54,11 @@ final class ImportBackupViewModel: ObservableObject {
         do {
             switch result {
 
-            case .failure(let error):
+            case let .failure(error):
                 print(error.localizedDescription)
                 throw error
 
-            case .success(let url):
+            case let .success(url):
                 let gotAccess = url.startAccessingSecurityScopedResource()
                 guard gotAccess else {
                     // TODO: throw error
@@ -89,7 +89,7 @@ final class ImportBackupViewModel: ObservableObject {
     }
 
     func enterPassword(_ password: String) {
-        guard case .requestingPassword(let url, _) = state else { return assertionFailure() }
+        guard case let .requestingPassword(url, _) = state else { return assertionFailure() }
         importBackup(from: url, password: password)
     }
 
@@ -100,7 +100,7 @@ final class ImportBackupViewModel: ObservableObject {
                 state = .importingBackup(progress: 0)
                 for try await update in importBackupUseCase.invoke(url: url, password: password) {
                     switch update {
-                    case .progress(let fraction):
+                    case let .progress(fraction):
                         state = .importingBackup(progress: fraction)
                     case .done:
                         alertContent.title = L10n.Localizable.ImportBackup.Alert.Success.title
@@ -137,7 +137,7 @@ final class ImportBackupViewModel: ObservableObject {
 
         isEnterBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
 
-        isBackupPasswordWrong = if case .requestingPassword(_, let isWrong) = state { isWrong } else { false }
+        isBackupPasswordWrong = if case let .requestingPassword(_, isWrong) = state { isWrong } else { false }
 
         // TODO: find better workaround for presentation issue
         let isAlertPresented = switch state { case .restoreFailed, .confirmation: true default: false }
@@ -147,7 +147,7 @@ final class ImportBackupViewModel: ObservableObject {
             self.isAlertPresented = false
         }
 
-        importProgress = switch state { case .importingBackup(let progress): progress default: 0 }
+        importProgress = switch state { case let .importingBackup(progress): progress default: 0 }
 
     }
 }

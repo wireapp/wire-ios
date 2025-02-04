@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireReusableUIComponents
 import WireDesign
+import WireReusableUIComponents
 
 struct CreatingBackupProgressView: View {
 
@@ -44,22 +44,21 @@ struct CreatingBackupProgressView: View {
         }
     }
 
-    @ViewBuilder
-    private var backupProgressViewControllerRepresentable: some View {
+    @ViewBuilder private var backupProgressViewControllerRepresentable: some View {
 
         let completedAction: (Bool) -> Void = { completed in
             completed ? cancelAction() : ()
         }
 
         switch progress {
-        case .ongoing(let progress):
+        case let .ongoing(progress):
             BackupProgressViewControllerRepresentable(
                 progressDescription: .init(localized: "exportBackup.creatingBackup.saving", bundle: .module),
                 progressValue: progress,
                 backupURL: nil,
                 completedAction: completedAction
             )
-        case .finished(let url):
+        case let .finished(url):
             BackupProgressViewControllerRepresentable(
                 progressDescription: .init(localized: "exportBackup.creatingBackup.success", bundle: .module),
                 progressValue: 1,

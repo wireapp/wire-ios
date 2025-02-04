@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSettingsUI
-import WireDomainPkg
 import Foundation
+import WireDomainPkg
+import WireSettingsUI
 
 // Instead of linking WireDomainPkg into WireUI targets several symlinks have been created.
 // Therefore many types exist twice, once in their original target (WireDomainPkg) and once in WireUI.
@@ -39,7 +39,7 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
 
                     for try await update in importBackupUseCaseProtocol.invoke(url: url, password: password) {
                         switch update {
-                        case .progress(let fraction):
+                        case let .progress(fraction):
                             continuation.yield(.progress(fraction))
                         case .done:
                             continuation.yield(.done)

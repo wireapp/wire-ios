@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireDomainPkg
 import WireSettingsUI
 import WireSyncEngine
-import WireDomainPkg
 
 /// Use case for creating a backup file which can only used by iOS apps.
 struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {

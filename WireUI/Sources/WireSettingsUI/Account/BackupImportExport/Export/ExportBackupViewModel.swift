@@ -63,9 +63,9 @@ final class ExportBackupViewModel: ObservableObject {
             do {
                 for try await update in createBackupUseCase.invoke(password: password) {
                     switch update {
-                    case .progress(let fraction):
+                    case let .progress(fraction):
                         state = .creatingBackup(progress: fraction)
-                    case .done(let url):
+                    case let .done(url):
                         state = .backupReady(url: url)
                     }
                 }
@@ -95,9 +95,9 @@ final class ExportBackupViewModel: ObservableObject {
     private func updatePublishedProperties() {
 
         backupProgress = switch state {
-        case .creatingBackup(let progress):
+        case let .creatingBackup(progress):
             .ongoing(progress)
-        case .backupReady(let url):
+        case let .backupReady(url):
             .finished(url)
         default:
             .ongoing(0)

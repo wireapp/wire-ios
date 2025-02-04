@@ -22,8 +22,7 @@ import WireFoundation
 
 struct BackupImportExportRootView<Content: View>: View {
 
-    @ViewBuilder
-    var content: () -> Content
+    @ViewBuilder var content: () -> Content
 
     var body: some View {
         List(content: content)

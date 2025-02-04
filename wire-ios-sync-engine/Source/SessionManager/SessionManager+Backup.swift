@@ -20,8 +20,8 @@ import Foundation
 import WireAnalytics
 import WireCrypto
 import WireDataModel
-import WireLogging
 import WireDomainPkg
+import WireLogging
 import WireUtilities
 import ZipArchive
 

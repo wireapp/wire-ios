@@ -43,8 +43,7 @@ struct ImportProgressView: View {
         }
     }
 
-    @ViewBuilder
-    private var progressView: some View {
+    @ViewBuilder private var progressView: some View {
         VStack {
             Spacer()
             HStack {

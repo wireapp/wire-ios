@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDesign
 import SwiftUI
+import WireDesign
 
 struct EnterPasswordView: View {
 
@@ -56,8 +56,7 @@ struct EnterPasswordView: View {
         }
     }
 
-    @ViewBuilder
-    private var enterPasswordView: some View {
+    @ViewBuilder private var enterPasswordView: some View {
         VStack {
 
             let scrollView = ScrollView {

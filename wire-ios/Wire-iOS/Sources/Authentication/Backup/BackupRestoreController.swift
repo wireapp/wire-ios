@@ -18,11 +18,11 @@
 
 import Foundation
 import WireDataModel
+import WireDomainPkg
 import WireLogging
 import WireReusableUIComponents
-import WireSyncEngine
 import WireSettingsUI
-import WireDomainPkg
+import WireSyncEngine
 
 protocol BackupRestoreControllerDelegate: AnyObject {
 

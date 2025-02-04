@@ -41,8 +41,7 @@ struct SetBackupPasswordView: View {
         }
     }
 
-    @ViewBuilder
-    private var setBackupPasswordView: some View {
+    @ViewBuilder private var setBackupPasswordView: some View {
         VStack {
             let scrollView = ScrollView {
                 VStack(spacing: 20) {

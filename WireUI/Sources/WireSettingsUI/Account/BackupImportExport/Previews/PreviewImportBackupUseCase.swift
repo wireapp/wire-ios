@@ -35,8 +35,7 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
                         try Task.checkCancellation()
 
                         if i == failAtIndex {
-                            //throw ImportBackupError.allCases.randomElement()!
-                            throw ImportBackupError.decryptionError
+                            throw ImportBackupError.allCases.randomElement()!
                         }
 
                         continuation.yield(.progress(Float(i) / 10))

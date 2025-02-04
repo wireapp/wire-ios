@@ -19,9 +19,9 @@
 import Foundation
 import WireCrypto
 import WireDataModel
+import WireDomainPkg
 import WireLogging
 import WireSystem
-import WireDomainPkg
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
@@ -46,7 +46,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             AsyncThrowingStream { continuation in
                 continuation.finish(throwing: ImportBackupError.invalidFileExtension)
             }
-
         }
     }
 
@@ -86,8 +85,9 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     let selfClientBackup: [String: Any]
                     // we want to avoid keeping a strong reference to the user
                     // session, the managed object context and the user client
-                    if let userSession, let (qualifiedID, backup) = await userSession.contextProvider.viewContext.perform({
-                        userSession.selfUserClient.map { ($0.user?.qualifiedID, $0.backup()) } }) {
+                    if let userSession,
+                       let (qualifiedID, backup) = await userSession.contextProvider.viewContext.perform({
+                           userSession.selfUserClient.map { ($0.user?.qualifiedID, $0.backup()) } }) {
                         selfUserQualifiedID = qualifiedID
                         selfClientBackup = backup
                     } else {

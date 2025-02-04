@@ -45,7 +45,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         }
     }
 
-    var completedAction: (_ completed: Bool) -> () = { _ in }
+    var completedAction: (_ completed: Bool) -> Void = { _ in }
 
     // MARK: - Subviews
 

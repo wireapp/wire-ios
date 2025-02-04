@@ -22,6 +22,6 @@ public protocol CreateBackupUseCaseProtocol: Sendable {
 }
 
 // TODO: use `.completeFileProtection` if possible
-//let data = "".data(using: .utf8)
-//let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("sensitive.txt")
-//try? data?.write(to: fileURL, options: [.atomic, .completeFileProtection])
+// let data = "".data(using: .utf8)
+// let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("sensitive.txt")
+// try? data?.write(to: fileURL, options: [.atomic, .completeFileProtection])
