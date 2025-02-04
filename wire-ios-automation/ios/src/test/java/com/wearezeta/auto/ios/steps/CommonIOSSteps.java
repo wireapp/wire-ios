@@ -310,6 +310,12 @@ public class CommonIOSSteps {
         getCommonPage().typeAlertText(text);
     }
 
+    @When("I type my password into the alert input field")
+    public void iTypeMyPassword() {
+        String text = context.getUsersManager().getSelfUser().get().getPassword();
+        getCommonPage().typeAlertText(text);
+    }
+
     @And("^I tap (.*) button on the alert$")
     public void iTapAlertButton(String caption) {
         getCommonPage().tapAlertButton(caption);
