@@ -365,7 +365,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         uiMOC = uiMOC.zm_userInterfaceContext;
     }
     NSManagedObjectID *messageID = message.objectID;
-    [uiMOC performGroupedBlockWithFile:@"10" line:0 :^{
+    [uiMOC performGroupedBlock:^{
         NSError *error;
         ZMMessage *uiMessage = [uiMOC existingObjectWithID:messageID error:&error];
         if (error != nil || uiMessage == nil) {
@@ -956,7 +956,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     if (!uiContext.zm_isUserInterfaceContext) {
         uiContext = self.managedObjectContext.zm_userInterfaceContext;
     }
-    [uiContext performGroupedBlockWithFile:@"9" line:0 :^{
+    [uiContext performGroupedBlock:^{
         NSError *error;
         ZMMessage *message = [uiContext existingObjectWithID:self.objectID error:&error];
         if (error == nil && message != nil) {
@@ -972,7 +972,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     if (!syncContext.zm_isSyncContext) {
         syncContext = self.managedObjectContext.zm_syncContext;
     }
-    [syncContext performGroupedBlockWithFile:@"8" line:0 :^{
+    [syncContext performGroupedBlock:^{
         NSError *error;
         ZMMessage *message = [syncContext existingObjectWithID:self.objectID error:&error];
         if (error == nil && message != nil) {

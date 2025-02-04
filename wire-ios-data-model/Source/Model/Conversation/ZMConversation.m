@@ -238,7 +238,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         // From the documentation: The managed object context’s change processing is explicitly disabled around this method so that you can use public setters to establish transient values and other caches without dirtying the object or its context.
         // Therefore we need to do a dispatch async  here in a performGroupedBlock to update the unread properties outside of awakeFromFetch
         ZM_WEAK(self);
-        [self.managedObjectContext performGroupedBlockWithFile:@"12" line:0 :^{
+        [self.managedObjectContext performGroupedBlock:^{
             ZM_STRONG(self);
             [self calculateLastUnreadMessages];
         }];
@@ -252,7 +252,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     
     if (self.managedObjectContext.zm_isSyncContext && self.needsToCalculateUnreadMessages) {
         // From the documentation: You are typically discouraged from performing fetches within an implementation of awakeFromInsert. Although it is allowed, execution of the fetch request can trigger the sending of internal Core Data notifications which may have unwanted side-effects. Since we fetch the unread messages here, we should do a dispatch async
-        [self.managedObjectContext performGroupedBlockWithFile:@"11" line:0 :^{
+        [self.managedObjectContext performGroupedBlock:^{
             [self calculateLastUnreadMessages];
         }];
     }

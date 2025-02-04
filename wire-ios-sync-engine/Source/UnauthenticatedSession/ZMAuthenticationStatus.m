@@ -162,7 +162,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 - (void)timerDidFire:(ZMTimer *)timer
 {
-    [self.groupQueue performGroupedBlockWithFile:@"18" line:0 :^{
+    [self.groupQueue performGroupedBlock:^{
         [self didTimeoutLoginForCredentials:timer.userInfo[TimerInfoOriginalCredentialsKey]];
     }];
 }

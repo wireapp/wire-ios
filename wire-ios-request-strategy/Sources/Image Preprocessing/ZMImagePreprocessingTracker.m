@@ -172,7 +172,7 @@
     
     [group enter];
     [completionGroup notifyOnQueue:dispatch_get_global_queue(0, 0) block:^{
-        [self.managedObjectContext performGroupedBlockWithFile:@"17" line:0 :^{
+        [self.managedObjectContext performGroupedBlock:^{
             [self.imageOwnersBeingPreprocessed removeObject:owner];
             [group leave];
         }];
@@ -208,8 +208,8 @@
 }
 
 - (void)completedDownsampleOperation:(ZMImageDownsampleOperation * __nonnull)operation imageOwner:(id<ZMImageOwner> __nonnull)imageOwner
-{
-    [self.managedObjectContext performGroupedBlockWithFile:@"16" line:0 :^{
+{    
+    [self.managedObjectContext performGroupedBlock:^{
         if ([imageOwner respondsToSelector:@selector(setImageData:for:properties:)])  {
             [(id)imageOwner setImageData:operation.downsampleImageData for:operation.format properties:operation.properties];
         }

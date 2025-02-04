@@ -150,8 +150,8 @@
 
 - (void)fetchImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler {
     NSManagedObjectContext *syncContext =  self.managedObjectContext.zm_syncContext;
-
-    [syncContext performGroupedBlockWithFile:@"7" line:0 :^{
+    
+    [syncContext performGroupedBlock:^{
         ZMImageMessage *imageMessage = [syncContext objectWithID:self.objectID];
         NSData *imageData = imageMessage.imageData;
         
@@ -167,8 +167,8 @@
 
 - (void)fetchPreviewDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler {
     NSManagedObjectContext *syncContext =  self.managedObjectContext.zm_syncContext;
-
-    [syncContext performGroupedBlockWithFile:@"6" line:0 :^{
+    
+    [syncContext performGroupedBlock:^{
         ZMImageMessage *imageMessage = [syncContext objectWithID:self.objectID];
         NSData *imageData = imageMessage.previewData;
         

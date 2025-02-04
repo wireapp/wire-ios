@@ -499,7 +499,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         id<ZMSGroupQueue> queue = handler.groupQueue;
         [handlerGroup enter];
         if (nil != queue) {
-            [queue performGroupedBlockWithFile:@"0" line:0 :^{
+            [queue performGroupedBlock:^{
                 ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:6 label:label];
                 handler.block(taskIdentifier);
                 [tp warnIfLongerThanInterval];
@@ -544,7 +544,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
                 [group enter];
             }
             [group2 enter];
-            [queue performGroupedBlockWithFile:@"1" line:0 :^{
+            [queue performGroupedBlock:^{
                 NSString *label = [NSString stringWithFormat:@"Completion handler of REQ %@ %@ -> %@ ",
                                    self.methodAsString,
                                    self.path,
@@ -583,7 +583,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     for (ZMTaskProgressHandler *progresHandler in self.progressHandlers) {
         id<ZMSGroupQueue> queue = progresHandler.groupQueue;
         if (queue != nil) {
-            [queue performGroupedBlockWithFile:@"2" line:0 :^{
+            [queue performGroupedBlock:^{
                 progresHandler.block(limitedProgress);
             }];
         }

@@ -161,7 +161,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
         ZMPushChannelConnection *channel = self;
 
         [self stopPingTimer];
-        [queue performGroupedBlockWithFile:@"3" line:0 :^{
+        [queue performGroupedBlock:^{
             [consumer pushChannel:channel didCloseWithResponse:response error:error];
         }];
     }
@@ -237,7 +237,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 {
     ZMLogDebug(@"-[%@ %@]", self.class, NSStringFromSelector(_cmd));
     ZM_WEAK(self);
-    [self.consumerQueue performGroupedBlockWithFile:@"2" line:0 :^{
+    [self.consumerQueue performGroupedBlock:^{
         ZM_STRONG(self);
         [self.consumer pushChannel:self didOpenWithResponse:response];
     }];
@@ -259,7 +259,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
         ZMLogError(@"Failed to parse data into JSON from push channel: %@", error);
     } else {
         ZM_WEAK(self);
-        [self.consumerQueue performGroupedBlockWithFile:@"4" line:0 :^{
+        [self.consumerQueue performGroupedBlock:^{
             ZM_STRONG(self);
             [self.consumer pushChannel:self didReceiveTransportData:transportData];
         }];
