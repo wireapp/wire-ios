@@ -70,11 +70,7 @@
 		59DBDB312D395B620069C64C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				UseCases/Protocols/CreateLegacyBackupError.swift,
-				UseCases/Protocols/ImportBackupError.swift,
-				UseCases/Protocols/ImportBackupProgress.swift,
-				UseCases/Protocols/ImportBackupUseCaseProtocol.swift,
-				UseCases/Protocols/IndividualToTeamMigrationUseCaseProtocol.swift,
+				UseCases/Protocols,
 			);
 			target = 01D0DCA52C1C8C870076CB1C /* WireDomain */;
 		};
@@ -84,7 +80,7 @@
 		5904B7822D315AAC00E866D1 /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
 		59EA78992D00CF1C002CA0B8 /* WireDomainTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireDomainTests; sourceTree = "<group>"; };
 		59EA78D42D00CF22002CA0B8 /* WireDomainSupport */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5904B1B92D31586500E866D1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireDomainSupport; sourceTree = "<group>"; };
-		59EA7A282D00CFB2002CA0B8 /* WireDomain */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59DBDB312D395B620069C64C /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireDomain; sourceTree = "<group>"; };
+		59EA7A282D00CFB2002CA0B8 /* WireDomain */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59DBDB312D395B620069C64C /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (UseCases/Protocols, ); path = WireDomain; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */

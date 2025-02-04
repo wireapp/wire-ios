@@ -97,11 +97,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     // user session needs to be torn down
                     await appStateUpdater.reportMigrationNeeded()
 
-                    while self.userSession() != nil {
-                        print("userSession != nil, waiting 3s")
-                        try await Task.sleep(for: .milliseconds(3000))
-                    }
-
                     // the imported file replaces the existing persistent store
                     try await entityStorage.replacePersistentStore(
                         accountIdentifier: account.userIdentifier,
