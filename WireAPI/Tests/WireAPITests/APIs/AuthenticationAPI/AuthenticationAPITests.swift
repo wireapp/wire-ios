@@ -81,11 +81,14 @@ final class AuthenticationAPITests: XCTestCase {
         let response = try await sut.getDomainRegistration(forEmail: "email@example.com")
 
         // Then
-        XCTAssertEqual(response, DomainRegistrationConfiguration(
-            backendUrl: "https://example.com",
-            domainRedirect: .none,
-            dueToExistingAccount: false,
-            ssoCode: "99db9768-04e3-4b5d-9268-831b6a25c4ab")
+        XCTAssertEqual(
+            response,
+            DomainRegistrationConfiguration(
+                backendUrl: "https://example.com",
+                domainRedirect: .none,
+                dueToExistingAccount: false,
+                ssoCode: "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+            )
         )
     }
 
