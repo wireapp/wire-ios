@@ -16,11 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import WireSettingsUI
 
-@testable import WireSettingsUI
+struct BackupPasswordValidator: BackupPasswordValidatorProtocol {
 
-final class PlaceholderTests: XCTestCase {
+    func isPasswordValid(_ password: String) -> Bool {
+        guard !password.isEmpty else {
+            return true
+        }
 
-    func testNothing() {}
+        switch PasswordRuleSet.shared.validatePassword(password) {
+        case .valid:
+            return true
+        case .invalid:
+            return false
+        }
+    }
+
+    var localizedRulesDescription: String {
+        PasswordRuleSet.localizedErrorMessage
+    }
+
 }
