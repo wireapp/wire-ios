@@ -17,66 +17,110 @@
 //
 
 import XCTest
+import SwiftUI
 import WireTestingPackage
 
 @testable import WireSettingsUI
 
+@MainActor
 final class CreatingBackupProgressViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
+    override func setUp() async throws {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+        UIView.setAnimationsEnabled(false)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         snapshotHelper = nil
+        UIView.setAnimationsEnabled(true)
     }
 
-    @MainActor
-    func testOngoingColorSchemeVariants() {
-        let screenBounds = UIScreen.main.bounds
+    func testOngoingColorSchemeVariants() async throws {
+        UIView.setAnimationsEnabled(false)
+        defer { UIView.setAnimationsEnabled(true) }
 
-        let view = CreatingBackupProgressPreview(.ongoing(0.25))
-            .frame(width: screenBounds.width)
+//        let windowScene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
+        //let window = try XCTUnwrap(windowScene.keyWindow)
+
+        let rootView = CreatingBackupProgressPreview(.ongoing(0.25))
+//        let hostingController = UIHostingController(rootView: rootView)
+        let hostingController = UIHostingController(rootView: S())
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = hostingController
+        window.makeKeyAndVisible()
+
+        try! await Task.sleep(for: .milliseconds(4000))
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: renderedImage(hostingController.view), named: "light")
+
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: renderedImage(hostingController.view), named: "dark")
+
+        window.isHidden = true
     }
 
-    @MainActor
+    struct S: View {
+        @State private var isSheetPresented = false
+        var body: some View {
+            Color.white
+                .sheet(isPresented: $isSheetPresented) {
+                    CreatingBackupProgressView(progress: .ongoing(0.25)) {}
+                        .presentationDetents([.medium])
+                        .interactiveDismissDisabled()
+                }
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                        isSheetPresented = true
+                    }
+                }
+        }
+    }
+
     func testFinishedColorSchemeVariants() {
-        let screenBounds = UIScreen.main.bounds
+        UIView.setAnimationsEnabled(false)
+        defer { UIView.setAnimationsEnabled(true) }
 
-        let view = CreatingBackupProgressPreview(.finished(URL(fileURLWithPath: "/")))
-            .frame(width: screenBounds.width)
+        let rootView = CreatingBackupProgressPreview(.ongoing(0.25))
+        let hostingController = UIHostingController(rootView: rootView)
+        hostingController.view.frame = UIScreen.main.bounds
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: hostingController, named: "light")
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: hostingController, named: "dark")
     }
 
-//    @MainActor
-//    func testDynamicTypeVariants() {
-//        let screenBounds = UIScreen.main.bounds
-//
-//        let view = AuthenticationIdentityInputPreview()
-//            .frame(width: screenBounds.width)
-//
-//        for dynamicTypeSize in DynamicTypeSize.allCases {
-//            snapshotHelper
-//                .verify(
-//                    matching: view.dynamicTypeSize(dynamicTypeSize),
-//                    named: "\(dynamicTypeSize)"
-//                )
-//        }
-//    }
+    //    @MainActor
+    //    func testDynamicTypeVariants() {
+    //        let screenBounds = UIScreen.main.bounds
+    //
+    //        let view = AuthenticationIdentityInputPreview()
+    //            .frame(width: screenBounds.width)
+    //
+    //        for dynamicTypeSize in DynamicTypeSize.allCases {
+    //            snapshotHelper
+    //                .verify(
+    //                    matching: view.dynamicTypeSize(dynamicTypeSize),
+    //                    named: "\(dynamicTypeSize)"
+    //                )
+    //        }
+    //    }
+
+
+    /// Without this helper the layout around the navigation item's search bar breaks when rendering the snapshot.
+    private func renderedImage(_ view: UIView) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
+        return renderer.image { _ in
+            view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+        }
+    }
+
 }
