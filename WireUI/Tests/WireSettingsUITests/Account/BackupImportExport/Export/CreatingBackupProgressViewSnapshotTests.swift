@@ -39,63 +39,29 @@ final class CreatingBackupProgressViewSnapshotTests: XCTestCase {
     }
 
     func testOngoingColorSchemeVariants() async throws {
-        UIView.setAnimationsEnabled(false)
-        defer { UIView.setAnimationsEnabled(true) }
-
-//        let windowScene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
-        //let window = try XCTUnwrap(windowScene.keyWindow)
-
-        let rootView = CreatingBackupProgressPreview(.ongoing(0.25))
-//        let hostingController = UIHostingController(rootView: rootView)
-        let hostingController = UIHostingController(rootView: S())
-        let window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = hostingController
-        window.makeKeyAndVisible()
-
-        try! await Task.sleep(for: .milliseconds(4000))
+        let sut = CreatingBackupProgressView(progress: .ongoing(0.25)) {}
+            .frame(width: 390, height: 220)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: renderedImage(hostingController.view), named: "light")
+            .verify(matching: sut, named: "light")
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: renderedImage(hostingController.view), named: "dark")
-
-        window.isHidden = true
+            .verify(matching: sut, named: "dark")
     }
 
-    struct S: View {
-        @State private var isSheetPresented = false
-        var body: some View {
-            Color.white
-                .sheet(isPresented: $isSheetPresented) {
-                    CreatingBackupProgressView(progress: .ongoing(0.25)) {}
-                        .presentationDetents([.medium])
-                        .interactiveDismissDisabled()
-                }
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                        isSheetPresented = true
-                    }
-                }
-        }
-    }
-
-    func testFinishedColorSchemeVariants() {
-        UIView.setAnimationsEnabled(false)
-        defer { UIView.setAnimationsEnabled(true) }
-
-        let rootView = CreatingBackupProgressPreview(.ongoing(0.25))
-        let hostingController = UIHostingController(rootView: rootView)
-        hostingController.view.frame = UIScreen.main.bounds
+    func testFinishedColorSchemeVariants() async throws {
+        let sut = CreatingBackupProgressView(progress: .finished(URL(fileURLWithPath: "/"))) {}
+            .frame(width: 390, height: 220)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: hostingController, named: "light")
+            .verify(matching: sut, named: "light")
+
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: hostingController, named: "dark")
+            .verify(matching: sut, named: "dark")
     }
 
     //    @MainActor
@@ -113,14 +79,5 @@ final class CreatingBackupProgressViewSnapshotTests: XCTestCase {
     //                )
     //        }
     //    }
-
-
-    /// Without this helper the layout around the navigation item's search bar breaks when rendering the snapshot.
-    private func renderedImage(_ view: UIView) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
-        return renderer.image { _ in
-            view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
-        }
-    }
 
 }
