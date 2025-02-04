@@ -23,11 +23,11 @@ public struct RootView: View {
 
     @ObservedObject var viewModel: RootViewModel
 
-    let builder: DetermineAuthMethodBuilder
+    let builder: any DetermineAuthMethodBuilder
 
     public init(
         viewModel: RootViewModel,
-        builder: DetermineAuthMethodBuilder
+        builder: any DetermineAuthMethodBuilder
     ) {
         self.viewModel = viewModel
         self.builder = builder

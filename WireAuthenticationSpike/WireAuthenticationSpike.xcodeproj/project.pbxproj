@@ -8,33 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		EE7442732D3132570025271D /* NeedleFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EE7442722D3132570025271D /* NeedleFoundation */; };
-		EEC7392D2D022FE0003C0FC9 /* WireAuthenticationSpikeUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */; };
-		EEC7392E2D022FE0003C0FC9 /* WireAuthenticationSpikeUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		EEC7392F2D022FE0003C0FC9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EEC738B72D022D30003C0FC9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = EEC738DF2D022EDB003C0FC9;
-			remoteInfo = WireAuthenticationUI;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		EEC739312D022FE0003C0FC9 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EEC7392E2D022FE0003C0FC9 /* WireAuthenticationSpikeUI.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EEC739362D022FE8003C0FC9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -48,7 +25,6 @@
 
 /* Begin PBXFileReference section */
 		EEC738C02D022D30003C0FC9 /* WireAuthenticationSpike.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationSpike.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationSpikeUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -58,13 +34,6 @@
 				WireAuthentication.h,
 			);
 			target = EEC738BF2D022D30003C0FC9 /* WireAuthenticationSpike */;
-		};
-		EEC738F12D022EDC003C0FC9 /* Exceptions for "WireAuthenticationUI" folder in "WireAuthenticationSpikeUI" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				WireAuthenticationUI.h,
-			);
-			target = EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -77,14 +46,6 @@
 			path = WireAuthentication;
 			sourceTree = "<group>";
 		};
-		EEC738E12D022EDB003C0FC9 /* WireAuthenticationUI */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				EEC738F12D022EDC003C0FC9 /* Exceptions for "WireAuthenticationUI" folder in "WireAuthenticationSpikeUI" target */,
-			);
-			path = WireAuthenticationUI;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,14 +54,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE7442732D3132570025271D /* NeedleFoundation in Frameworks */,
-				EEC7392D2D022FE0003C0FC9 /* WireAuthenticationSpikeUI.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EEC738DD2D022EDB003C0FC9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,7 +64,6 @@
 			isa = PBXGroup;
 			children = (
 				EEC738C22D022D30003C0FC9 /* WireAuthentication */,
-				EEC738E12D022EDB003C0FC9 /* WireAuthenticationUI */,
 				EEC739242D022FE0003C0FC9 /* Frameworks */,
 				EEC738C12D022D30003C0FC9 /* Products */,
 			);
@@ -121,7 +73,6 @@
 			isa = PBXGroup;
 			children = (
 				EEC738C02D022D30003C0FC9 /* WireAuthenticationSpike.framework */,
-				EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -137,13 +88,6 @@
 
 /* Begin PBXHeadersBuildPhase section */
 		EEC738BB2D022D30003C0FC9 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EEC738DB2D022EDB003C0FC9 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -166,7 +110,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				EEC739302D022FE0003C0FC9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				EEC738C22D022D30003C0FC9 /* WireAuthentication */,
@@ -177,30 +120,6 @@
 			);
 			productName = WireAuthentication;
 			productReference = EEC738C02D022D30003C0FC9 /* WireAuthenticationSpike.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = EEC738F22D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeUI" */;
-			buildPhases = (
-				EEC738DB2D022EDB003C0FC9 /* Headers */,
-				EEC738DC2D022EDB003C0FC9 /* Sources */,
-				EEC738DD2D022EDB003C0FC9 /* Frameworks */,
-				EEC738DE2D022EDB003C0FC9 /* Resources */,
-				EEC739362D022FE8003C0FC9 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				EEC738E12D022EDB003C0FC9 /* WireAuthenticationUI */,
-			);
-			name = WireAuthenticationSpikeUI;
-			packageProductDependencies = (
-			);
-			productName = WireAuthenticationUI;
-			productReference = EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -214,9 +133,6 @@
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					EEC738BF2D022D30003C0FC9 = {
-						CreatedOnToolsVersion = 16.1;
-					};
-					EEC738DF2D022EDB003C0FC9 = {
 						CreatedOnToolsVersion = 16.1;
 					};
 				};
@@ -258,20 +174,12 @@
 			projectRoot = "";
 			targets = (
 				EEC738BF2D022D30003C0FC9 /* WireAuthenticationSpike */,
-				EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		EEC738BE2D022D30003C0FC9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EEC738DE2D022EDB003C0FC9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -288,22 +196,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EEC738DC2D022EDB003C0FC9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		EEC739302D022FE0003C0FC9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */;
-			targetProxy = EEC7392F2D022FE0003C0FC9 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		EEC738D42D022D30003C0FC9 /* Debug */ = {
@@ -520,81 +413,6 @@
 			};
 			name = Release;
 		};
-		EEC738F32D022EDC003C0FC9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EDF3JCE8BC;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireAuthenticationUI;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		EEC738F42D022EDC003C0FC9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EDF3JCE8BC;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireAuthenticationUI;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -612,15 +430,6 @@
 			buildConfigurations = (
 				EEC738D42D022D30003C0FC9 /* Debug */,
 				EEC738D52D022D30003C0FC9 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		EEC738F22D022EDC003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeUI" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				EEC738F32D022EDC003C0FC9 /* Debug */,
-				EEC738F42D022EDC003C0FC9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -48,6 +48,7 @@ let package = Package(
         .target(
             name: "WireAuthenticationUI",
             dependencies: [
+                "WireAuthenticationAPI",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation",
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
