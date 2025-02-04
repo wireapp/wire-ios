@@ -20,8 +20,3 @@
 public protocol CreateBackupUseCaseProtocol: Sendable {
     func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error>
 }
-
-// TODO: use `.completeFileProtection` if possible
-// let data = "".data(using: .utf8)
-// let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("sensitive.txt")
-// try? data?.write(to: fileURL, options: [.atomic, .completeFileProtection])

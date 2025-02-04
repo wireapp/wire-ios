@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 
+/// This view controller was created because `UIActivityViewController` allows for assigning a 
+/// `completionWithItemsHandler` closure, which SwiftUI's fileExporter doesn't.
 final class CreatingBackupProgressViewController: UIViewController {
 
     // MARK: State Properties

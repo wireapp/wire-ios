@@ -133,21 +133,44 @@ final class ImportBackupViewModel: ObservableObject {
 
     private func updatePublishedProperties() {
 
-        isImportProgressPresented = switch state { case .importingBackup, .requestingPassword: true default: false }
+        isImportProgressPresented = switch state {
+        case .importingBackup, .requestingPassword:
+            true
+        default:
+            false
+        }
 
-        isEnterBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
+        isEnterBackupPasswordPresented = if case .requestingPassword = state {
+            true
+        } else {
+            false
+        }
 
-        isBackupPasswordWrong = if case let .requestingPassword(_, isWrong) = state { isWrong } else { false }
+        isBackupPasswordWrong = if case let .requestingPassword(_, isWrong) = state {
+            isWrong
+        } else {
+            false
+        }
 
         // TODO: find better workaround for presentation issue
-        let isAlertPresented = switch state { case .restoreFailed, .confirmation: true default: false }
+        let isAlertPresented = switch state {
+        case .restoreFailed, .confirmation:
+            true
+        default:
+            false
+        }
         if isAlertPresented {
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { self.isAlertPresented = true }
         } else {
             self.isAlertPresented = false
         }
 
-        importProgress = switch state { case let .importingBackup(progress): progress default: 0 }
+        importProgress = switch state {
+        case let .importingBackup(progress):
+            progress
+        default:
+            0
+        }
 
     }
 }

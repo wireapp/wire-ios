@@ -105,14 +105,25 @@ final class ExportBackupViewModel: ObservableObject {
 
         // outer sheet
         let isCreatingBackupProgressPresented = switch state {
-        case .requestingPassword, .creatingBackup, .backupReady: true
-        default: false
+        case .requestingPassword, .creatingBackup, .backupReady:
+            true
+        default:
+            false
         }
 
         // inner sheet
-        let isSetBackupPasswordPresented = if case .requestingPassword = state { true } else { false }
+        let isSetBackupPasswordPresented = if case .requestingPassword = state {
+            true
+        } else {
+            false
+        }
 
-        let isErrorAlertPresented = switch state { case .backupFailed: true default: false }
+        let isErrorAlertPresented = switch state {
+        case .backupFailed:
+            true
+        default:
+            false
+        }
 
         // Workarounds for presentation issues with several sheet or alert presentation flags toggled at once.
         // This code assumes the presentation or dismissal of a modal view controller lasts less than 400ms.
