@@ -127,7 +127,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         userClient.user = selfUser
                         userClient.markAsSelfClient()
                         try context.save()
-                        print(temporaryStack.viewContext.persistentStoreCoordinator!.persistentStores)
                     }
 
                     await appStateUpdater.selectAccountAndTriggerSlowSync(account)
