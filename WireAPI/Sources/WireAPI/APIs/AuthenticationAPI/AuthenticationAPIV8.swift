@@ -26,6 +26,7 @@ final class AuthenticationAPIV8: AuthenticationAPIV7 {
     override func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
         let path = "/get-domain-registration"
         let body = GetDomainRegistrationParametersV8(email: email)
+
         let encodedJSON: Data
         do {
             encodedJSON = try JSONEncoder.defaultEncoder.encode(body)
@@ -33,7 +34,7 @@ final class AuthenticationAPIV8: AuthenticationAPIV7 {
             assertionFailure("failed to encode body")
             throw AuthenticationAPIError.invalidRequestBody
         }
-        
+
         let request = try URLRequestBuilder(path: path)
             .withBody(encodedJSON, contentType: .json)
             .withMethod(.post)

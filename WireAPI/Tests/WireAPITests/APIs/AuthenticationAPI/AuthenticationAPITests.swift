@@ -85,7 +85,8 @@ final class AuthenticationAPITests: XCTestCase {
             backendUrl: "https://example.com",
             domainRedirect: .none,
             dueToExistingAccount: false,
-            ssoCode: "99db9768-04e3-4b5d-9268-831b6a25c4ab"))
+            ssoCode: "99db9768-04e3-4b5d-9268-831b6a25c4ab")
+        )
     }
 
     func testGetDomainRegistration_Response_Handling_V8_Invalid_Domain() async throws {
