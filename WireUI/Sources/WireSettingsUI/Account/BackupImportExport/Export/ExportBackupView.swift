@@ -33,7 +33,7 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                 viewModel.requestBackupPassword()
             } label: {
                 Text(L10n.Localizable.Settings.ExportBackup.action)
-                    .wireTextStyle(.body2) // TODO: replace
+                    .font(.callout.weight(.semibold))
                     .foregroundStyle(Color.primaryText)
             }
 

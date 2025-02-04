@@ -31,7 +31,7 @@ struct ImportBackupView: View {
                 isFileImporterPresented = true
             } label: {
                 Text(L10n.Localizable.Settings.RestoreFromBackup.action)
-                    .font(.textStyle(.body2))
+                    .font(.callout.weight(.semibold))
                     .foregroundStyle(Color.primaryText)
             }
 

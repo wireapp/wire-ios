@@ -46,7 +46,7 @@ struct SetBackupPasswordView: View {
             let scrollView = ScrollView {
                 VStack(spacing: 20) {
                     Text(L10n.Localizable.ExportBackup.description)
-                        .wireTextStyle(.body1) // TODO: replace
+                        .font(.body)
                         .foregroundStyle(Color.primaryText)
                         .multilineTextAlignment(.leading)
                         .padding(.horizontal)

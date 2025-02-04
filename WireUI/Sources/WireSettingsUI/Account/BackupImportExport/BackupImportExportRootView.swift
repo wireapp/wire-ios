@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireDesign
-import WireFoundation
 
 struct BackupImportExportRootView<Content: View>: View {
 
@@ -29,7 +28,6 @@ struct BackupImportExportRootView<Content: View>: View {
             .listStyle(.grouped)
             .background(Color(ColorTheme.Backgrounds.background))
             .scrollContentBackground(.hidden)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping()) // TODO: remove?
     }
 }
 

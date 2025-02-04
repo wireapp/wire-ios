@@ -23,22 +23,68 @@ import XCTest
 @testable import WireSettingsUI
 
 @MainActor
-final class CreatingBackupProgressViewSnapshotTests: XCTestCase {
+final class SetBackupPasswordViewSnapshotTests: XCTestCase {
 
+    private var backupPasswordValidator: (any BackupPasswordValidatorProtocol)!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() async throws {
+        backupPasswordValidator = BackupImportExportBuilder.previewBuilder.backupPasswordValidator
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() async throws {
         snapshotHelper = nil
+        backupPasswordValidator = nil
     }
 
-    func testOngoingColorSchemeVariants() async throws {
+    func testInvalidPassword() async throws {
         let screenBounds = UIScreen.main.bounds
-        let sut = CreatingBackupProgressView(progress: .ongoing(0.25)) {}
+        let viewModel = SetBackupPasswordViewModel(
+            passwordValidator: backupPasswordValidator,
+            cancelAction: {},
+            setPasswordAction: { _ in }
+        )
+        viewModel.password = "invalid"
+        let sut = SetBackupPasswordView(viewModel: viewModel)
+            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: sut, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark")
+    }
+
+    func testGoodPassword() async throws {
+        let screenBounds = UIScreen.main.bounds
+        let viewModel = SetBackupPasswordViewModel(
+            passwordValidator: backupPasswordValidator,
+            cancelAction: {},
+            setPasswordAction: { _ in }
+        )
+        viewModel.password = "G00dPassword"
+        let sut = SetBackupPasswordView(viewModel: viewModel)
+            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: sut, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark")
+    }
+
+    func testColorSchemeVariants() async throws {
+        let screenBounds = UIScreen.main.bounds
+        let viewModel = SetBackupPasswordViewModel(
+            passwordValidator: backupPasswordValidator,
+            cancelAction: {},
+            setPasswordAction: { _ in }
+        )
+        let sut = SetBackupPasswordView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -46,35 +92,14 @@ final class CreatingBackupProgressViewSnapshotTests: XCTestCase {
             .verify(matching: sut, named: "dark")
     }
 
-    func testFinishedColorSchemeVariants() async throws {
+    func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
-        let sut = CreatingBackupProgressView(progress: .finished(URL(fileURLWithPath: "/"))) {}
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
-    }
-
-    func testOngoingDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
-
-        let sut = CreatingBackupProgressView(progress: .ongoing(0.25)) {}
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: sut.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
-    func testFinishedDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
-
-        let sut = CreatingBackupProgressView(progress: .finished(URL(fileURLWithPath: "/"))) {}
+        let viewModel = SetBackupPasswordViewModel(
+            passwordValidator: backupPasswordValidator,
+            cancelAction: {},
+            setPasswordAction: { _ in }
+        )
+        let sut = SetBackupPasswordView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
