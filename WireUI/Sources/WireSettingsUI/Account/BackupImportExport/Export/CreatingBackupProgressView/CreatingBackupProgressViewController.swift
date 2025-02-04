@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 
-/// This view controller was created because `UIActivityViewController` allows for assigning a 
+/// This view controller was created because `UIActivityViewController` allows for assigning a
 /// `completionWithItemsHandler` closure, which SwiftUI's fileExporter doesn't.
 final class CreatingBackupProgressViewController: UIViewController {
 
@@ -94,9 +94,7 @@ final class CreatingBackupProgressViewController: UIViewController {
 
     private lazy var exportButton = {
         let title = String(localized: "exportBackup.creatingBackup.saveButton.title", bundle: .module)
-        let exportButton = UIButton()
-        exportButton.wireButtonStyle = .primary
-        exportButton.setTitle(title, for: .normal)
+        let exportButton = UIButton(configuration: .primary, primaryAction: .init(title: title) { _ in })
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
         exportButton.accessibilityIdentifier = "" // TODO: [WPB-15466] fix accessibility
         exportButton.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility

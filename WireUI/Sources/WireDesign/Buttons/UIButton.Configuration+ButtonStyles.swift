@@ -19,20 +19,17 @@
 import UIKit
 import WireFoundation
 
-public extension UIButton {
+public extension UIButton.Configuration {
 
-    var wireButtonStyle: WireButtonStyle? {
-        get { objc_getAssociatedObject(self, &wireButtonStyleKey) as? WireButtonStyle }
-        set {
-            objc_setAssociatedObject(self, &wireButtonStyleKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            setConfiguration(wireButtonStyle)
-        }
+    static var primary: Self {
+
+        var configuration = shared
+        configuration.baseBackgroundColor = ColorTheme.Buttons.Primary.enabled
+        return configuration
+
     }
 
-    private func setConfiguration(_ wireButtonStyle: WireButtonStyle?) {
-        guard let wireButtonStyle else {
-            return configuration = .none
-        }
+    private static var shared: Self {
 
         var configuration = UIButton.Configuration.filled()
         configuration.buttonSize = .large
@@ -41,18 +38,8 @@ public extension UIButton {
             attributeContainer.font = .preferredFont(forTextStyle: .headline)
             return attributeContainer
         }
-        switch wireButtonStyle {
-        case .primary:
-            configuration.baseBackgroundColor = ColorTheme.Buttons.Primary.enabled
-        case .secondary:
-            configuration.baseBackgroundColor = ColorTheme.Buttons.Secondary.enabled
-        case .tertiary:
-            configuration.baseBackgroundColor = ColorTheme.Buttons.Tertiary.enabled
-        case .link:
-            fatalError("not implemented yet")
-        }
-        self.configuration = configuration
-    }
-}
+        return configuration
 
-@MainActor private var wireButtonStyleKey = 0
+    }
+
+}

@@ -45,7 +45,7 @@ struct IndividualToTeamMigrationUseCaseProtocolAdapter: WireIndividualToTeamMigr
             switch error {
             case .userAlreadyInTeam:
                 throw WireIndividualToTeamMigrationUI.IndividualToTeamMigrationError.userAlreadyInTeam
-            case .generic(let error):
+            case let .generic(error):
                 throw WireIndividualToTeamMigrationUI.IndividualToTeamMigrationError.generic(error)
             }
         }
