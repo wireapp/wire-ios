@@ -52,12 +52,12 @@ struct ToggleablePasswordField: View {
                 isPasswordVisible.toggle()
             } label: {
                 Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
-                    .foregroundColor(Color(uiColor: BaseColorPalette.Neutrals.black))
+                    .foregroundColor(Color(uiColor: ColorTheme.Backgrounds.onSurface))
             }
 
         }
         .padding()
-        .background(Color(uiColor: BaseColorPalette.Neutrals.white))
+        .background(Color(uiColor: ColorTheme.Backgrounds.surface))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)

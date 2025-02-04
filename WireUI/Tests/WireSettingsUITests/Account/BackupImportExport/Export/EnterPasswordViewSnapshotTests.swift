@@ -23,7 +23,7 @@ import XCTest
 @testable import WireSettingsUI
 
 @MainActor
-final class SetBackupPasswordViewSnapshotTests: XCTestCase {
+final class EnterPasswordViewSnapshotTests: XCTestCase {
 
     private var backupPasswordValidator: (any BackupPasswordValidatorProtocol)!
     private var snapshotHelper: SnapshotHelper!
@@ -41,14 +41,13 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
 
     func testInvalidPassword() async throws {
         let screenBounds = UIScreen.main.bounds
-        let viewModel = SetBackupPasswordViewModel(
-            passwordValidator: backupPasswordValidator,
-            cancelAction: {},
-            setPasswordAction: { _ in }
+        let sut = EnterPasswordView(
+            password: .constant("invalid"),
+            passwordIsWrong: .constant(true),
+            continueAction: { _ in },
+            cancelAction: {}
         )
-        viewModel.password = "invalid"
-        let sut = SetBackupPasswordView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -60,14 +59,13 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
 
     func testNonEmptyPassword() async throws {
         let screenBounds = UIScreen.main.bounds
-        let viewModel = SetBackupPasswordViewModel(
-            passwordValidator: backupPasswordValidator,
-            cancelAction: {},
-            setPasswordAction: { _ in }
+        let sut = EnterPasswordView(
+            password: .constant("G00dPassword!"),
+            passwordIsWrong: .constant(false),
+            continueAction: { _ in },
+            cancelAction: {}
         )
-        viewModel.password = "G00dPassword"
-        let sut = SetBackupPasswordView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -79,13 +77,13 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
 
     func testColorSchemeVariants() async throws {
         let screenBounds = UIScreen.main.bounds
-        let viewModel = SetBackupPasswordViewModel(
-            passwordValidator: backupPasswordValidator,
-            cancelAction: {},
-            setPasswordAction: { _ in }
+        let sut = EnterPasswordView(
+            password: .constant(""),
+            passwordIsWrong: .constant(false),
+            continueAction: { _ in },
+            cancelAction: {}
         )
-        let sut = SetBackupPasswordView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
@@ -94,13 +92,13 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
 
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
-        let viewModel = SetBackupPasswordViewModel(
-            passwordValidator: backupPasswordValidator,
-            cancelAction: {},
-            setPasswordAction: { _ in }
+        let sut = EnterPasswordView(
+            password: .constant(""),
+            passwordIsWrong: .constant(false),
+            continueAction: { _ in },
+            cancelAction: {}
         )
-        let sut = SetBackupPasswordView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
