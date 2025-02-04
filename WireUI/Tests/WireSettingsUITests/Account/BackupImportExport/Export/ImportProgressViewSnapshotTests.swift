@@ -23,7 +23,7 @@ import XCTest
 @testable import WireSettingsUI
 
 @MainActor
-final class EnterPasswordViewSnapshotTests: XCTestCase {
+final class ImportProgressViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -36,50 +36,9 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    func testInvalidPassword() async throws {
-        let screenBounds = UIScreen.main.bounds
-        let sut = EnterPasswordView(
-            password: .constant("invalid"),
-            passwordIsWrong: .constant(true),
-            continueAction: { _ in },
-            cancelAction: {}
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: sut, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
-    }
-
-    func testNonEmptyPassword() async throws {
-        let screenBounds = UIScreen.main.bounds
-        let sut = EnterPasswordView(
-            password: .constant("G00dPassword!"),
-            passwordIsWrong: .constant(false),
-            continueAction: { _ in },
-            cancelAction: {}
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: sut, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
-    }
-
     func testColorSchemeVariants() async throws {
         let screenBounds = UIScreen.main.bounds
-        let sut = EnterPasswordView(
-            password: .constant(""),
-            passwordIsWrong: .constant(false),
-            continueAction: { _ in },
-            cancelAction: {}
-        )
+        let sut = ImportProgressView(progressValue: 0.25) {}
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -89,12 +48,7 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
 
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
-        let sut = EnterPasswordView(
-            password: .constant(""),
-            passwordIsWrong: .constant(false),
-            continueAction: { _ in },
-            cancelAction: {}
-        )
+        let sut = ImportProgressView(progressValue: 0.25) {}
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
