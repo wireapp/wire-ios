@@ -45,33 +45,13 @@ public extension UIButton {
         case .primary:
             configuration.baseBackgroundColor = ColorTheme.Buttons.Primary.enabled
         case .secondary:
-            fatalError("not implemented yet")
+            configuration.baseBackgroundColor = ColorTheme.Buttons.Secondary.enabled
         case .tertiary:
-            fatalError("not implemented yet")
+            configuration.baseBackgroundColor = ColorTheme.Buttons.Tertiary.enabled
         case .link:
             fatalError("not implemented yet")
         }
         self.configuration = configuration
-    }
-
-    func wireButtonStyle(_ wireButtonStyle: WireButtonStyle) -> Self {
-
-        let backgroundImage = UIImage.from(solidColor: .blue)
-
-
-//        typealias PrimaryTheme = ColorTheme.Buttons.Primary
-//
-//        func makeBody(configuration: Configuration) -> some View {
-//            configuration.label
-//                .lineLimit(1)
-//                .padding()
-//                .frame(maxWidth: .infinity)
-//                .background(isEnabled ? PrimaryTheme.enabled.color : PrimaryTheme.disabled.color)
-//                .foregroundStyle(isEnabled ? PrimaryTheme.onEnabled.color : PrimaryTheme.onDisabled.color)
-//                .wireTextStyle(.buttonBig)
-//                .clipShape(.rect(cornerRadius: 16))
-//        }
-        return self
     }
 }
 
