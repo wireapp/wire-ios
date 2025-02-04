@@ -297,7 +297,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
     }
 
-    func testThatWhenSendingProteusMessageFailsWithTemporaryErrorButHasExpired_thenThrowError() async throws {
+    func testThatWhenSendingProteusExpiredMessageFailsIndefinitely_thenThrowError() async throws {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: 0)
         let message = GenericMessageEntity(
@@ -313,11 +313,40 @@ final class MessageSenderTests: MessagingTestBase {
             .withQuickSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
-            .withSendProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
+            // simulates a potential infinite loop when sending proteus message keeps failing
+            .withSendProteusMessageFailing(with: NetworkError.errorDecodingResponse(response), failsIndefinitely: true)
             .arrange()
 
         // then
         await assertItThrows(error: MessageSendError.messageExpired) {
+            // Ensures it breaks the loop and throws error
+            try await messageSender.sendMessage(message: message)
+        }
+    }
+
+    func testThatWhenSendingProteusMessageFailsIndefinitely_thenThrowError() async throws {
+        // given
+        let response = ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: 0)
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+        message.isExpired = false
+
+        let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
+            .withQuickSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v0)
+            // simulates a potential infinite loop when sending proteus message keeps failing
+            .withSendProteusMessageFailing(with: NetworkError.errorDecodingResponse(response), failsIndefinitely: true)
+            .arrange()
+
+        // then
+        await assertItThrows(error: MessageSendError.failed(NetworkError.errorDecodingResponse(.init()))) {
+            // Ensures it breaks the loop and throws error
             try await messageSender.sendMessage(message: message)
         }
     }
@@ -688,15 +717,20 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withSendProteusMessageFailing(with error: NetworkError) -> Arrangement {
+        func withSendProteusMessageFailing(with error: NetworkError, failsIndefinitely: Bool = false) -> Arrangement {
             messageApi.sendProteusMessageMessageConversationIDExpirationDate_MockMethod = { [weak messageApi] _, _, _ in
-                if let count = messageApi?.sendProteusMessageMessageConversationIDExpirationDate_Invocations.count,
-                   count > 1 {
-                    return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
-                } else {
+                if failsIndefinitely {
                     throw error
+                } else {
+                    if let count = messageApi?.sendProteusMessageMessageConversationIDExpirationDate_Invocations.count,
+                       count > 1 {
+                        return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
+                    } else {
+                        throw error
+                    }
                 }
             }
+
             return self
         }
 
@@ -785,4 +819,29 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
+}
+
+extension MessageSendError: @retroactive Equatable {
+    public static func == (lhs: MessageSendError, rhs: MessageSendError) -> Bool {
+        switch (lhs, rhs) {
+        case let (.failed(lhsError), .failed(rhsError)):
+            lhsError as NSError == rhsError as NSError
+        case (.missingMessageProtocol, .missingMessageProtocol):
+            true
+        case (.missingGroupID, .missingGroupID):
+            true
+        case (.missingQualifiedID, .missingQualifiedID):
+            true
+        case (.missingMlsService, .missingMlsService):
+            true
+        case (.unresolvedApiVersion, .unresolvedApiVersion):
+            true
+        case (.messageExpired, .messageExpired):
+            true
+        case (.missingProteusService, .missingProteusService):
+            true
+        default:
+            false
+        }
+    }
 }
