@@ -84,7 +84,7 @@ for target in package.targets {
         target.dependencies += [WireTestingPackage]
     }
     target.swiftSettings = (target.swiftSettings ?? []) + [
-//        .enableUpcomingFeature("ExistentialAny"), TODO: Enable
+        // TODO: [WPB-15967] Enable `ExistentialAny` upcoming feature
         .enableUpcomingFeature("GlobalConcurrency"),
         .enableExperimentalFeature("StrictConcurrency")
     ]
