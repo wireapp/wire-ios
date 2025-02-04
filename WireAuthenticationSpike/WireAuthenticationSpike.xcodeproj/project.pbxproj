@@ -58,7 +58,6 @@
 		EEC738C02D022D30003C0FC9 /* WireAuthenticationSpike.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationSpike.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireAuthenticationSpikeUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEC738E92D022EDB003C0FC9 /* WireAuthenticationSpikeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireAuthenticationSpikeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EEC739062D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireAuthenticationSpikeLogicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -100,11 +99,6 @@
 			path = WireAuthenticationUITests;
 			sourceTree = "<group>";
 		};
-		EEC7390A2D022EF6003C0FC9 /* WireAuthenticationLogicTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireAuthenticationLogicTests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,13 +126,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EEC739032D022EF6003C0FC9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -148,7 +135,6 @@
 				EEC738C22D022D30003C0FC9 /* WireAuthentication */,
 				EEC738E12D022EDB003C0FC9 /* WireAuthenticationUI */,
 				EEC738ED2D022EDB003C0FC9 /* WireAuthenticationUITests */,
-				EEC7390A2D022EF6003C0FC9 /* WireAuthenticationLogicTests */,
 				EEC739242D022FE0003C0FC9 /* Frameworks */,
 				EEC738C12D022D30003C0FC9 /* Products */,
 			);
@@ -160,7 +146,6 @@
 				EEC738C02D022D30003C0FC9 /* WireAuthenticationSpike.framework */,
 				EEC738E02D022EDB003C0FC9 /* WireAuthenticationSpikeUI.framework */,
 				EEC738E92D022EDB003C0FC9 /* WireAuthenticationSpikeUITests.xctest */,
-				EEC739062D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -265,28 +250,6 @@
 			productReference = EEC738E92D022EDB003C0FC9 /* WireAuthenticationSpikeUITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		EEC739052D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = EEC739122D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeLogicTests" */;
-			buildPhases = (
-				EEC739022D022EF6003C0FC9 /* Sources */,
-				EEC739032D022EF6003C0FC9 /* Frameworks */,
-				EEC739042D022EF6003C0FC9 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				EEC7390A2D022EF6003C0FC9 /* WireAuthenticationLogicTests */,
-			);
-			name = WireAuthenticationSpikeLogicTests;
-			packageProductDependencies = (
-			);
-			productName = WireAuthenticationCoreTests;
-			productReference = EEC739062D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -304,9 +267,6 @@
 						CreatedOnToolsVersion = 16.1;
 					};
 					EEC738E82D022EDB003C0FC9 = {
-						CreatedOnToolsVersion = 16.1;
-					};
-					EEC739052D022EF6003C0FC9 = {
 						CreatedOnToolsVersion = 16.1;
 					};
 				};
@@ -350,7 +310,6 @@
 				EEC738BF2D022D30003C0FC9 /* WireAuthenticationSpike */,
 				EEC738DF2D022EDB003C0FC9 /* WireAuthenticationSpikeUI */,
 				EEC738E82D022EDB003C0FC9 /* WireAuthenticationSpikeUITests */,
-				EEC739052D022EF6003C0FC9 /* WireAuthenticationSpikeLogicTests */,
 			);
 		};
 /* End PBXProject section */
@@ -377,13 +336,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EEC739042D022EF6003C0FC9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -402,13 +354,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		EEC738E52D022EDB003C0FC9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EEC739022D022EF6003C0FC9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -761,47 +706,6 @@
 			};
 			name = Release;
 		};
-		EEC739132D022EF6003C0FC9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EDF3JCE8BC;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireAuthenticationLogicTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		EEC739142D022EF6003C0FC9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EDF3JCE8BC;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireAuthenticationLogicTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -837,15 +741,6 @@
 			buildConfigurations = (
 				EEC738F62D022EDC003C0FC9 /* Debug */,
 				EEC738F72D022EDC003C0FC9 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		EEC739122D022EF6003C0FC9 /* Build configuration list for PBXNativeTarget "WireAuthenticationSpikeLogicTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				EEC739132D022EF6003C0FC9 /* Debug */,
-				EEC739142D022EF6003C0FC9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
