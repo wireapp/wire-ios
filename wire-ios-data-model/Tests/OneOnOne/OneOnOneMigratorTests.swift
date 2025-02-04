@@ -90,6 +90,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         await syncContext.perform {
             XCTAssertEqual(mlsConversation.oneOnOneUser?.remoteIdentifier, userID.uuid)
+            XCTAssertEqual(mlsConversation.allMessages.count, 0, "no system message should be inserted")
         }
         withExtendedLifetime(handler) {}
     }
