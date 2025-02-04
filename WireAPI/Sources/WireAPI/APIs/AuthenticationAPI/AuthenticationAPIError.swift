@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class ConversationsAPIV7: ConversationsAPIV6 {
+import Foundation
 
-    override var apiVersion: APIVersion { .v7 }
+public enum AuthenticationAPIError: Error {
 
-    override var oneToOneConversationsPath: String {
-        "\(pathPrefix)/one2one-conversations"
-    }
+    case unsupportedEndpointForAPIVersion
+
+    case invalidDomain
+
+    case invalidRequestBody
+
 }
+

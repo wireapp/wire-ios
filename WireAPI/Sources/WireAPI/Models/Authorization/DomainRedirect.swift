@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class ConversationsAPIV7: ConversationsAPIV6 {
-
-    override var apiVersion: APIVersion { .v7 }
-
-    override var oneToOneConversationsPath: String {
-        "\(pathPrefix)/one2one-conversations"
-    }
+public enum DomainRedirect: String, Decodable, Sendable {
+    case locked
+    case sso
+    case backend
+    case noRegistration = "no-registration"
+    case preAuthorized = "pre-authorized"
+    case none
 }

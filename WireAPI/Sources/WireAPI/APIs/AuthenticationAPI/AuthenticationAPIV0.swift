@@ -16,11 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class ConversationsAPIV7: ConversationsAPIV6 {
+import Foundation
 
-    override var apiVersion: APIVersion { .v7 }
+class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
+    let apiService: any APIServiceProtocol
 
-    override var oneToOneConversationsPath: String {
-        "\(pathPrefix)/one2one-conversations"
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
+    }
+
+    var apiVersion: APIVersion {
+        .v0
+    }
+
+    func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
+        throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
 }

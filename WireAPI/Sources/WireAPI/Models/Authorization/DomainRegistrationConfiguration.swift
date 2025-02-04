@@ -16,11 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class ConversationsAPIV7: ConversationsAPIV6 {
+import Foundation
 
-    override var apiVersion: APIVersion { .v7 }
+/// The domain redirect configuration.
 
-    override var oneToOneConversationsPath: String {
-        "\(pathPrefix)/one2one-conversations"
-    }
+public struct DomainRegistrationConfiguration: Equatable, Sendable {
+
+    /// The url of the backend.
+
+    public let backendUrl: String?
+
+    /// The configuration value that explains the appropriate login/registration flow.
+
+    public let domainRedirect: DomainRedirect
+
+    /// Whether the email is already in use on the cloud.
+
+    public let dueToExistingAccount: Bool?
+
+    /// SSO code.
+
+    public let ssoCode: String?
+
 }
