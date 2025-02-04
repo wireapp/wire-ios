@@ -45,14 +45,6 @@ struct EnterPasswordView: View {
                         .accessibilityIdentifier("cancel")
                     }
                 }
-            // TODO: could be tested if moved to view model
-//                .onAppear {
-//                    isTextFieldFocused = true
-//                    passwordIsWrong = !password.isEmpty
-//                }
-//                .onChange(of: password) { _ in
-//                    passwordIsWrong = false
-//                }
         }
     }
 

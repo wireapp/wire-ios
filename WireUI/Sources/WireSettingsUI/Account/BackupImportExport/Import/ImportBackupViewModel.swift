@@ -32,7 +32,7 @@ final class ImportBackupViewModel: ObservableObject {
 
     @Published var isImportProgressPresented = false
     @Published var isEnterBackupPasswordPresented = false
-    @Published var alertContent = ImportBackupAlertContent()
+    @Published var alertContent = AlertContent()
     @Published var isAlertPresented = false
 
     @Published private(set) var importProgress = Float()
@@ -188,4 +188,10 @@ final class ImportBackupViewModel: ObservableObject {
         isAlertPresented = isAlertPresented
 
     }
+
+    struct AlertContent: Equatable {
+        var title = ""
+        var message = ""
+    }
+
 }

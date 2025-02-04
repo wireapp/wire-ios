@@ -25,6 +25,8 @@ import WireIndividualToTeamMigrationUI
 
 // Instead of linking WireDomainPkg into WireUI targets several symlinks have been created.
 // Therefore many types exist twice, once in their original target (WireDomainPkg) and once in WireUI.
+typealias IndividualToTeamMigrationError = WireDomainPkg.IndividualToTeamMigrationError
+typealias IndividualToTeamMigrationResult = WireDomainPkg.IndividualToTeamMigrationResult
 typealias IndividualToTeamMigrationUseCaseProtocol = WireDomainPkg.IndividualToTeamMigrationUseCaseProtocol
 struct IndividualToTeamMigrationUseCaseProtocolAdapter: WireIndividualToTeamMigrationUI
     .IndividualToTeamMigrationUseCaseProtocol {
@@ -36,8 +38,17 @@ struct IndividualToTeamMigrationUseCaseProtocolAdapter: WireIndividualToTeamMigr
     }
 
     func invoke(teamName: String) async throws -> WireIndividualToTeamMigrationUI.IndividualToTeamMigrationResult {
-        // TODO: bridge
-        fatalError()
+        do {
+            let result = try await individualToTeamMigrationUseCase.invoke(teamName: teamName)
+            return .init(result)
+        } catch let error as IndividualToTeamMigrationError {
+            switch error {
+            case .userAlreadyInTeam:
+                throw WireIndividualToTeamMigrationUI.IndividualToTeamMigrationError.userAlreadyInTeam
+            case .generic(let error):
+                throw WireIndividualToTeamMigrationUI.IndividualToTeamMigrationError.generic(error)
+            }
+        }
     }
 
 }
@@ -62,4 +73,14 @@ func IndividualToTeamMigrationViewController(
         actionCallback: actionCallback
     )
 
+}
+
+extension WireIndividualToTeamMigrationUI.IndividualToTeamMigrationResult {
+
+    init(_ migrationResult: IndividualToTeamMigrationResult) {
+        self.init(
+            teamID: migrationResult.teamID,
+            teamName: migrationResult.teamName
+        )
+    }
 }
