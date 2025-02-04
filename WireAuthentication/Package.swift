@@ -22,10 +22,17 @@ let package = Package(
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(name: "WireUI", path: "../WireUI"),
         .package(path: "../WirePlugins"),
+        .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
     ],
     targets: [
         .target(
-            name: "WireAuthentication"
+            name: "WireAuthentication",
+            dependencies: [
+                "WireAuthenticationAPI",
+                "WireAuthenticationUI",
+                "WireAuthenticationLogic",
+                .product(name: "NeedleFoundation", package: "needle")
+            ]
         ),
         .testTarget(
             name: "WireAuthenticationTests",
@@ -77,7 +84,7 @@ for target in package.targets {
         target.dependencies += [WireTestingPackage]
     }
     target.swiftSettings = (target.swiftSettings ?? []) + [
-        .enableUpcomingFeature("ExistentialAny"),
+//        .enableUpcomingFeature("ExistentialAny"), TODO: Enable
         .enableUpcomingFeature("GlobalConcurrency"),
         .enableExperimentalFeature("StrictConcurrency")
     ]
