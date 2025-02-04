@@ -899,7 +899,7 @@ struct ConversationEventPayloadProcessor {
             case .mixed:
                 break // no update, ignore
             case .mls:
-                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+                conversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
                 conversation.messageProtocol = newMessageProtocol
             }
 
