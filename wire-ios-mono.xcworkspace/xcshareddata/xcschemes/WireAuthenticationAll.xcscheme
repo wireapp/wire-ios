@@ -91,6 +91,20 @@
                ReferencedContainer = "container:WireAuthentication">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireAuthenticationLogic"
+               BuildableName = "WireAuthenticationLogic"
+               BlueprintName = "WireAuthenticationLogic"
+               ReferencedContainer = "container:WireAuthentication">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
