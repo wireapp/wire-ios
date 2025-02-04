@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireDesign
-import WireReusableUIComponents
 
 struct CreatingBackupProgressView: View {
 

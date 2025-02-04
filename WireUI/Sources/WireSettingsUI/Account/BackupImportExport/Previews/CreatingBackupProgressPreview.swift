@@ -17,6 +17,8 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireFoundation
 
 @MainActor @ViewBuilder
 func CreatingBackupProgressPreview(_ progress: CreatingBackupProgressModel) -> some View {
@@ -26,4 +28,5 @@ func CreatingBackupProgressPreview(_ progress: CreatingBackupProgressModel) -> s
                 .presentationDetents([.medium])
                 .interactiveDismissDisabled()
         }
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping()) // TODO: remove?
 }

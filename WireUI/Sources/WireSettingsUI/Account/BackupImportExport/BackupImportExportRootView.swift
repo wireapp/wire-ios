@@ -29,7 +29,7 @@ struct BackupImportExportRootView<Content: View>: View {
             .listStyle(.grouped)
             .background(Color(ColorTheme.Backgrounds.background))
             .scrollContentBackground(.hidden)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping()) // TODO: remove?
     }
 }
 

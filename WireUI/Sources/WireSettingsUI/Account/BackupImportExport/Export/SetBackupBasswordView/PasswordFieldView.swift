@@ -39,7 +39,7 @@ struct PasswordFieldView: View {
             ZStack {
                 if isPasswordVisible {
                     TextField(L10n.Localizable.ExportBackup.SetBackupPassword.placeholder, text: $password)
-                        .wireTextStyle(.body1)
+                        .wireTextStyle(.body1) // TODO: replace
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .focused($isFocused)
                 } else {
@@ -98,7 +98,7 @@ struct PasswordFieldView: View {
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules),
         password: .constant(""),
         isPasswordVisible: false
-    ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    ).environment(\.wireTextStyleMapping, WireTextStyleMapping()) // TODO: remove
 }
 
 #Preview("Invalid Password - Visible") {
@@ -106,7 +106,7 @@ struct PasswordFieldView: View {
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules),
         password: .constant("ValidPassword1!"),
         isPasswordVisible: true
-    ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    ).environment(\.wireTextStyleMapping, WireTextStyleMapping()) // TODO: remove
 }
 
 #Preview("Valid Password - Hidden") {
@@ -114,7 +114,7 @@ struct PasswordFieldView: View {
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules),
         password: .constant("ValidPassword1!"),
         isPasswordVisible: false
-    ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    ).environment(\.wireTextStyleMapping, WireTextStyleMapping()) // TODO: remove
 }
 
 #Preview("Valid Password - Visible") {
@@ -122,5 +122,5 @@ struct PasswordFieldView: View {
         passwordRules: Text(L10n.Localizable.ExportBackup.SetBackupPassword.rules),
         password: .constant("ValidPassword1!"),
         isPasswordVisible: true
-    ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    ).environment(\.wireTextStyleMapping, WireTextStyleMapping()) // TODO: remove
 }
