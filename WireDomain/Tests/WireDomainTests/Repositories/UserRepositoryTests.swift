@@ -217,20 +217,6 @@ final class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(userLocalStore.addSelfLegalHoldRequestUserIDClientIDLastPrekey_Invocations.count, 1)
     }
 
-    func testPushSelfSupportedProtocols_It_Invokes_Self_Users_API_Method() async throws {
-        // Given
-        selfUsersAPI.pushSupportedProtocols_MockMethod = { _ in () }
-        XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [])
-
-        // When
-        try await sut.pushSelfSupportedProtocols([.proteus])
-
-        // Then
-        let expectedProtocols = Set([WireAPI.MessageProtocol.proteus])
-
-        XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [expectedProtocols])
-    }
-
     func testDeleteUserAccountForSelfUser_It_Invokes_Local_Store_Methods() async throws {
         // Mock
 

@@ -1569,6 +1569,35 @@ public class MockPullSelfUserClientsProtocol: PullSelfUserClientsProtocol {
 
 }
 
+public class MockPushSupportedProtocolsSyncProtocol: PushSupportedProtocolsSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - push
+
+    public var pushSupportedProtocols_Invocations: [Set<WireAPI.MessageProtocol>] = []
+    public var pushSupportedProtocols_MockError: Error?
+    public var pushSupportedProtocols_MockMethod: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
+
+    public func push(supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
+        pushSupportedProtocols_Invocations.append(supportedProtocols)
+
+        if let error = pushSupportedProtocols_MockError {
+            throw error
+        }
+
+        guard let mock = pushSupportedProtocols_MockMethod else {
+            fatalError("no mock for `pushSupportedProtocols`")
+        }
+
+        try await mock(supportedProtocols)
+    }
+
+}
+
 public class MockPushSupportedProtocolsUseCaseProtocol: PushSupportedProtocolsUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -2768,6 +2797,21 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         await mock(isReadReceiptsEnabled, isReadReceiptsEnabledChangedRemotely)
     }
 
+    // MARK: - updateSelfUserSupportedProtocols
+
+    public var updateSelfUserSupportedProtocolsSupportedProtocols_Invocations: [Set<WireDataModel.MessageProtocol>] = []
+    public var updateSelfUserSupportedProtocolsSupportedProtocols_MockMethod: ((Set<WireDataModel.MessageProtocol>) async -> Void)?
+
+    public func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async {
+        updateSelfUserSupportedProtocolsSupportedProtocols_Invocations.append(supportedProtocols)
+
+        guard let mock = updateSelfUserSupportedProtocolsSupportedProtocols_MockMethod else {
+            fatalError("no mock for `updateSelfUserSupportedProtocolsSupportedProtocols`")
+        }
+
+        await mock(supportedProtocols)
+    }
+
     // MARK: - fetchUsersQualifiedIDs
 
     public var fetchUsersQualifiedIDs_Invocations: [Void] = []
@@ -2980,26 +3024,6 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         } else {
             fatalError("no mock for `fetchUserIdDomain`")
         }
-    }
-
-    // MARK: - pushSelfSupportedProtocols
-
-    public var pushSelfSupportedProtocols_Invocations: [Set<WireAPI.MessageProtocol>] = []
-    public var pushSelfSupportedProtocols_MockError: Error?
-    public var pushSelfSupportedProtocols_MockMethod: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
-
-    public func pushSelfSupportedProtocols(_ supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
-        pushSelfSupportedProtocols_Invocations.append(supportedProtocols)
-
-        if let error = pushSelfSupportedProtocols_MockError {
-            throw error
-        }
-
-        guard let mock = pushSelfSupportedProtocols_MockMethod else {
-            fatalError("no mock for `pushSelfSupportedProtocols`")
-        }
-
-        try await mock(supportedProtocols)
     }
 
     // MARK: - pullKnownUsers
