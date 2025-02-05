@@ -16,14 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import SwiftUI
+import WireAuthenticationAPI
 
-//! Project version number for WireAuthenticationLogic.
-FOUNDATION_EXPORT double WireAuthenticationLogicVersionNumber;
+public struct RootView: View {
 
-//! Project version string for WireAuthenticationLogic.
-FOUNDATION_EXPORT const unsigned char WireAuthenticationLogicVersionString[];
+    @ObservedObject var viewModel: RootViewModel
 
-// In this header, you should import all the public headers of your framework using statements like #import <WireAuthenticationLogic/PublicHeader.h>
+    let builder: any DetermineAuthMethodBuilder
 
+    public init(
+        viewModel: RootViewModel,
+        builder: any DetermineAuthMethodBuilder
+    ) {
+        self.viewModel = viewModel
+        self.builder = builder
+    }
 
+    public var body: some View {
+        NavigationStack(path: $viewModel.path) {
+            builder.determineAuthMethodView
+        }
+    }
+
+}
+
+#Preview {
+    MockDependencies().rootView
+}

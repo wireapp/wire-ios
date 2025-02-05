@@ -28,13 +28,13 @@ public struct DetermineAuthMethodView: View {
 
     @ObservedObject var viewModel: DetermineAuthMethodViewModel
 
-    let builder: LoginViaEmailBuilder
+    let builder: any LoginViaEmailBuilder
 
     @State private var emailOrSSOCode = ""
 
     public init(
         viewModel: DetermineAuthMethodViewModel,
-        builder: LoginViaEmailBuilder
+        builder: any LoginViaEmailBuilder
     ) {
         self.viewModel = viewModel
         self.builder = builder
