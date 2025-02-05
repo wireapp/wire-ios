@@ -47,16 +47,30 @@ final class ImportBackupViewModelTest: XCTestCase {
         mockImportBackupUseCase = nil
     }
 
-    func testConfirmationIsNeededBeforeProceeding() {
+    func testConfirmationIsNeededBeforeProceeding() throws {
         // Given
-        let url = URL(fileURLWithPath: "/")
+        let fileManager = FileManager.default
+        let temporaryDirectory = try fileManager.url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: Bundle(for: Self.self).bundleURL,
+            create: true
+        )
+        defer { try? fileManager.removeItem(at: temporaryDirectory) }
+        let temporaryFile = temporaryDirectory
+            .appending(component: "someFile", directoryHint: .notDirectory)
+        try Data("data".utf8).write(to: temporaryFile)
         let sut = sut as ImportBackupViewModel
 
         // When
-        sut.pickedBackupFile(result: .success(url))
+        sut.pickedBackupFile(result: .success(temporaryFile))
 
         // Then
         wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
+        XCTAssertFalse(sut.alertContent.title.isEmpty)
+        XCTAssertFalse(sut.alertContent.message.isEmpty)
+        XCTAssertFalse(sut.alertContent.cancel.isEmpty)
+        XCTAssertFalse(sut.alertContent.action.isEmpty)
     }
 
     /*

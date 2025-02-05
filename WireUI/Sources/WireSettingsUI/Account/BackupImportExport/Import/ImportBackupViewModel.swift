@@ -41,6 +41,7 @@ final class ImportBackupViewModel: ObservableObject {
     private var importTask: Task<Void, Never>?
 
     private let logger: any WireSettingsUILogger
+    private let fileManager = FileManager.default
 
     init(
         importBackupUseCase: any ImportBackupUseCaseProtocol,
@@ -68,7 +69,6 @@ final class ImportBackupViewModel: ObservableObject {
                 let gotAccess = url.startAccessingSecurityScopedResource()
                 // let the file manager call throw the error in case `gotAccess` is `false`.
 
-                let fileManager = FileManager.default
                 let tmpDirectory = try fileManager.url(
                     for: .itemReplacementDirectory,
                     in: .userDomainMask,
