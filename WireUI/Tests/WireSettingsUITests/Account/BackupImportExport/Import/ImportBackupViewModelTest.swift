@@ -49,6 +49,7 @@ final class ImportBackupViewModelTest: XCTestCase {
 
         mockLogger = .init()
         mockLogger.debug_MockMethod = { _ in }
+        mockLogger.warn_MockMethod = { _ in }
 
         sut = .init(
             importBackupUseCase: mockImportBackupUseCase,
@@ -96,71 +97,29 @@ final class ImportBackupViewModelTest: XCTestCase {
         XCTAssertFalse(sut.isBackupPasswordWrong)
     }
 
-    /*
-    func testInitialValues() {
-        XCTAssertFalse(sut.isCreatingBackupProgressPresented)
-        XCTAssertFalse(sut.isSetBackupPasswordPresented)
-        XCTAssertFalse(sut.isErrorAlertPresented)
-    }
-
     func testProgressIsReported() {
         // Given
-        var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
-        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
-        let url = URL(fileURLWithPath: "/")
-        let sut = sut as ExportBackupViewModel
-
-        // When / Then
-        sut.showPasswordDialog()
-        wait(forConditionToBeTrue: sut.isSetBackupPasswordPresented, timeout: 3)
-
-        sut.createBackup(password: "pw")
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
-
-        continuation.yield(.done(url))
-        wait(forConditionToBeTrue: sut.backupProgress == .finished(url), timeout: 3)
-
-        continuation.finish()
-        sut.cancel()
-        wait(forConditionToBeTrue: !self.mockCleanUpBackupsUseCase.invoke_Invocations.isEmpty, timeout: 3)
-    }
-
-    func testCancelTerminatesTask() {
-        // Given
-        var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
-        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
-        let sut = sut as ExportBackupViewModel
-        let expectation = XCTestExpectation()
-        continuation.onTermination = { @Sendable _ in expectation.fulfill() }
+        var continuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation!
+        mockImportBackupUseCase.invokeUrlPassword_MockValue = .init { continuation = $0 }
+        let sut = sut as ImportBackupViewModel
 
         // When
-        sut.showPasswordDialog()
-        sut.createBackup(password: "pw")
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
-        sut.cancel()
+        sut.pickedBackupFile(result: .success(temporaryFile))
+        wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
+        sut.confirmOverwrite()
+        wait(forConditionToBeTrue: sut.importProgress == 0, timeout: 3)
+        continuation.finish(throwing: ImportBackupError.decryptionError)
+        wait(forConditionToBeTrue: sut.isEnterBackupPasswordPresented, timeout: 3)
+        mockImportBackupUseCase.invokeUrlPassword_MockValue = .init { continuation = $0 }
+        sut.enterPassword("pw")
 
         // Then
-        wait(for: [expectation], timeout: 3)
+        wait(forConditionToBeTrue: sut.importProgress == 0, timeout: 3)
+        continuation.yield(.progress(0.25))
+        wait(forConditionToBeTrue: sut.importProgress == 0.25, timeout: 3)
+        continuation.yield(.done)
+        wait(forConditionToBeTrue: sut.importProgress == 1, timeout: 3)
+        wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
     }
-
-    func testErrorPresentsAlert() {
-        // Given
-        var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
-        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
-        let sut = sut as ExportBackupViewModel
-
-        // When
-        sut.showPasswordDialog()
-        sut.createBackup(password: "pw")
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
-        continuation.finish(throwing: NSError(domain: "ExportBackupViewModelTests", code: 987))
-
-        // Then
-        wait(forConditionToBeTrue: sut.isErrorAlertPresented, timeout: 3)
-    }
-     */
 
 }

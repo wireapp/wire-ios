@@ -176,6 +176,8 @@ final class ImportBackupViewModel: ObservableObject {
         importProgress = switch state {
         case let .importingBackup(progress):
             progress
+        case .success:
+            1
         default:
             0
         }
