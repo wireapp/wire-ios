@@ -24,17 +24,23 @@ public struct BackupImportExportBuilder {
     let createBackupUseCase: any CreateBackupUseCaseProtocol
     let importBackupUseCase: any ImportBackupUseCaseProtocol
     let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
+    let exportBackupLogger: any WireSettingsUILogger
+    let importBackupLogger: any WireSettingsUILogger
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
         createBackupUseCase: any CreateBackupUseCaseProtocol,
         importBackupUseCase: any ImportBackupUseCaseProtocol,
-        cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
+        cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
+        exportBackupLogger: any WireSettingsUILogger,
+        importBackupLogger: any WireSettingsUILogger
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase
         self.importBackupUseCase = importBackupUseCase
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
+        self.exportBackupLogger = exportBackupLogger
+        self.importBackupLogger = importBackupLogger
     }
 
     @MainActor
@@ -95,7 +101,10 @@ public struct BackupImportExportBuilder {
     @MainActor @ViewBuilder
     func buildImportBackupView() -> some View {
 
-        let importBackupViewModel = ImportBackupViewModel(importBackupUseCase: importBackupUseCase)
+        let importBackupViewModel = ImportBackupViewModel(
+            importBackupUseCase: importBackupUseCase,
+            logger: importBackupLogger
+        )
         ImportBackupView(viewModel: importBackupViewModel)
 
     }
@@ -110,7 +119,9 @@ extension BackupImportExportBuilder {
             backupPasswordValidator: MockBackupPasswordValidator(),
             createBackupUseCase: PreviewCreateBackupUseCase(),
             importBackupUseCase: PreviewImportBackupUseCase(),
-            cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase()
+            cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase(),
+            exportBackupLogger: PreviewLogger(),
+            importBackupLogger: PreviewLogger()
         )
     }
 }

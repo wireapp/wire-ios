@@ -16,12 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum CreateLegacyBackupError: Error {
-    case notAuthenticated
-    case noActiveAccount
-    case compressionError
-    case invalidFileExtension
-    case keyCreationFailed
-    case decryptionError
-    case unknown
+struct PreviewLogger: WireSettingsUILogger {
+
+    func debug(_ message: String) {
+        print("[debug] \(message)")
+    }
+
+    func info(_ message: String) {
+        print("[info] \(message)")
+    }
+
+    func notice(_ message: String) {
+        print("[notice] \(message)")
+    }
+
+    func warn(_ message: String) {
+        print("[warn] \(message)")
+    }
+
+    func error(_ message: String) {
+        print("[error] \(message)")
+    }
+
+    func critical(_ message: String) {
+        print("[critical] \(message)")
+    }
+
 }

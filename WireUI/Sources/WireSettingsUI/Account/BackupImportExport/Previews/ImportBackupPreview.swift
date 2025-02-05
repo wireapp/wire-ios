@@ -22,7 +22,10 @@ import SwiftUI
 func ImportBackupPreview() -> some View {
     List {
         ImportBackupView(
-            viewModel: .init(importBackupUseCase: PreviewImportBackupUseCase())
+            viewModel: ImportBackupViewModel(
+                importBackupUseCase: PreviewImportBackupUseCase(),
+                logger: PreviewLogger()
+            )
         )
     }
     .listStyle(.grouped)

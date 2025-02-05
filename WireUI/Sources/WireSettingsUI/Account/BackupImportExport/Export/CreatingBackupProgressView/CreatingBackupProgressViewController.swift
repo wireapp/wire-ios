@@ -150,7 +150,6 @@ final class CreatingBackupProgressViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        // TODO: check calculation (e.g. regarding safe area bottom inset)
         let stackViewHeight = stackView.frame.maxY + (navigationController?.navigationBar.frame.height ?? 0)
         if let sheetPresentationController = navigationController?.sheetPresentationController {
             sheetPresentationController.detents = [.custom { _ in stackViewHeight }]

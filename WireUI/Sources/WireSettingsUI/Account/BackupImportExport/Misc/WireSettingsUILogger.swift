@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum CreateLegacyBackupError: Error {
-    case notAuthenticated
-    case noActiveAccount
-    case compressionError
-    case invalidFileExtension
-    case keyCreationFailed
-    case decryptionError
-    case unknown
+// TODO: [WPB-14297] remove this file eventually
+public protocol WireSettingsUILogger: Sendable {
+    func debug(_ message: String)
+    func info(_ message: String)
+    func notice(_ message: String)
+    func warn(_ message: String)
+    func error(_ message: String)
+    func critical(_ message: String)
 }

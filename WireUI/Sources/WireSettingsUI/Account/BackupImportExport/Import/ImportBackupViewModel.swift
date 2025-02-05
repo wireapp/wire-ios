@@ -34,14 +34,20 @@ final class ImportBackupViewModel: ObservableObject {
     @Published var isEnterBackupPasswordPresented = false
     @Published var alertContent = AlertContent(title: "", message: "", cancel: "", action: "")
     @Published var isImportConfirmationPresented = false
-    @Published var isAlertPresented = false // TODO: rename just alert
+    @Published var isAlertPresented = false
 
     @Published private(set) var importProgress = Float()
 
     private var importTask: Task<Void, Never>?
 
-    init(importBackupUseCase: any ImportBackupUseCaseProtocol) {
+    private let logger: any WireSettingsUILogger
+
+    init(
+        importBackupUseCase: any ImportBackupUseCaseProtocol,
+        logger: any WireSettingsUILogger
+    ) {
         self.importBackupUseCase = importBackupUseCase
+        self.logger = logger
     }
 
     // MARK: - Methods
@@ -56,15 +62,11 @@ final class ImportBackupViewModel: ObservableObject {
             switch result {
 
             case let .failure(error):
-                print(error.localizedDescription)
                 throw error
 
             case let .success(url):
                 let gotAccess = url.startAccessingSecurityScopedResource()
-                guard gotAccess else {
-                    // TODO: throw error
-                    return assertionFailure("TODO: handle/display error")
-                }
+                // let the file manager call throw the error in case `gotAccess` is `false`.
 
                 let fileManager = FileManager.default
                 let tmpDirectory = try fileManager.url(
@@ -75,7 +77,9 @@ final class ImportBackupViewModel: ObservableObject {
                 )
                 let copy = tmpDirectory.appendingPathComponent(url.lastPathComponent)
                 try fileManager.copyItem(at: url, to: copy)
-                url.stopAccessingSecurityScopedResource()
+                if gotAccess {
+                    url.stopAccessingSecurityScopedResource()
+                }
 
                 alertContent = .init(
                     title: L10n.Localizable.ImportBackup.OverwriteConfirmation.title,
@@ -86,7 +90,7 @@ final class ImportBackupViewModel: ObservableObject {
                 state = .requestConfirmation(url: copy)
             }
         } catch {
-            assertionFailure("TODO") // TODO: also log before every assertionFailure
+            logger.error("failed to pick backup file to restore: " + String(reflecting: error))
             state = .restoreFailed
         }
     }
@@ -120,12 +124,14 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .success
                     }
                 }
-                // TODO: add logging
             } catch ImportBackupError.passwordRequired {
+                logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
             } catch ImportBackupError.decryptionError {
+                logger.warn("failed to decrypt backup file, presenting the password input again")
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
             } catch ImportBackupError.incompatibleFileFormat {
+                logger.warn("restore failed due to incompatible file format")
                 alertContent = .init(
                     title: L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.title,
                     message: L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.message,
@@ -134,6 +140,7 @@ final class ImportBackupViewModel: ObservableObject {
                 )
                 state = .restoreFailed
             } catch ImportBackupError.invalidAccountID {
+                logger.warn("restore failed due to invalid account ID")
                 alertContent = .init(
                     title: L10n.Localizable.ImportBackup.Alert.WrongFileError.title,
                     message: L10n.Localizable.ImportBackup.Alert.WrongFileError.message,
@@ -142,8 +149,10 @@ final class ImportBackupViewModel: ObservableObject {
                 )
                 state = .restoreFailed
             } catch is CancellationError {
+                logger.info("restore cancelled")
                 reset()
             } catch {
+                logger.error("unexpected error while restoring: " + String(reflecting: error))
                 alertContent = .init(
                     title: L10n.Localizable.ImportBackup.Alert.GenericError.title,
                     message: L10n.Localizable.ImportBackup.Alert.GenericError.message,

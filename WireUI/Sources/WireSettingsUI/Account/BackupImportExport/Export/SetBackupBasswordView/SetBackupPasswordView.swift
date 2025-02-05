@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDesign
 import SwiftUI
-import WireReusableUIComponents
 
 struct SetBackupPasswordView: View {
 
@@ -31,11 +31,13 @@ struct SetBackupPasswordView: View {
                 .navigationTitle(Text(L10n.Localizable.ExportBackup.title))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        CloseButton(
-                            action: { viewModel.cancel() },
-                            accessibilityLabel: L10n.Accessibility.SetBackupPassword.Close.label
-                        )
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button { viewModel.cancel() } label: {
+                            Text("exportBackup.cancel.title", bundle: .module)
+                        }
+                        .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                        .accessibilityLabel(Text(L10n.Accessibility.SetBackupPassword.Close.label))
+                        .accessibilityIdentifier("cancel")
                     }
                 }
         }

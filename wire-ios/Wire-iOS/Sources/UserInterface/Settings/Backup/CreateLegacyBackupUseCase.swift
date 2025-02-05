@@ -34,9 +34,6 @@ struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {
         AsyncThrowingStream { continuation in
             Task<Void, Never> { @MainActor in
                 do {
-                    if password.isEmpty {
-                        return continuation.finish(throwing: CreateLegacyBackupError.passwordRequired)
-                    }
 
                     let sessionManager = sessionManager()
 
