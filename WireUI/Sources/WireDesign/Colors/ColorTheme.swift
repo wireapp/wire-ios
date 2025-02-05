@@ -110,7 +110,7 @@ public enum ColorTheme {
             static let selectedOutline = UIColor(light: .blue300Light, dark: .blue800Dark)
         }
 
-        public enum Tertiary {
+        enum Tertiary {
 
             static let enabled = UIColor(light: .white, dark: .gray90)
             public static let onEnabled = UIColor(light: .black, dark: .white)

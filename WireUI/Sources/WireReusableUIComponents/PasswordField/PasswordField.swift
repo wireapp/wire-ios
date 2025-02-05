@@ -130,7 +130,7 @@ public struct PasswordField: View {
     }
 
     private var iconColor: Color {
-        password.isEmpty ? ColorTheme.Strokes.disabledOutline.color : ColorTheme.Buttons.Tertiary.onEnabled.color
+        password.isEmpty ? ColorTheme.Strokes.disabledOutline.color : ColorTheme.Buttons.Secondary.onEnabled.color
     }
 
 }
