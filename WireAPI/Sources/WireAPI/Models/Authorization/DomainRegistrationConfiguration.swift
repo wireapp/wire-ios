@@ -45,7 +45,7 @@ public struct DomainRegistrationConfiguration: Equatable, Sendable {
         isCloudAccountAlreadyRegistered: Bool?,
         ssoCodeString: String?
     ) {
-        self.backendURL = backendUrlStr.flatMap { urlString in
+        self.backendURL = backendURLString.flatMap { urlString in
             if let url = URL(string: urlString) {
                 return url
             } else {
@@ -55,9 +55,9 @@ public struct DomainRegistrationConfiguration: Equatable, Sendable {
         }
 
         self.domainRedirect = domainRedirect
-        self.isCloudAccountAlreadyRegistered = dueToExistingAccount
+        self.isCloudAccountAlreadyRegistered = isCloudAccountAlreadyRegistered
 
-        self.ssoCode = ssoCodeStr.flatMap { uuidString in
+        self.ssoCode = ssoCodeString.flatMap { uuidString in
             if let uuid = UUID(uuidString: uuidString) {
                 return uuid
             } else {

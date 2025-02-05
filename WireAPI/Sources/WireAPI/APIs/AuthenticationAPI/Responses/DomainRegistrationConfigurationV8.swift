@@ -21,23 +21,23 @@ import Foundation
 struct DomainRegistrationConfigurationV8: Decodable, ToAPIModelConvertible {
 
     enum CodingKeys: String, CodingKey {
-        case backendUrl = "backend_url"
+        case backendURLString = "backend_url"
         case domainRedirect = "domain_redirect"
-        case dueToExistingAccount = "due_to_existing_account"
-        case ssoCode = "sso_code"
+        case isCloudAccountAlreadyRegistered = "due_to_existing_account"
+        case ssoCodeString = "sso_code"
     }
 
-    public let backendUrl: String?
+    public let backendURLString: String?
     public let domainRedirect: DomainRedirectV8
-    public let dueToExistingAccount: Bool?
-    public let ssoCode: String?
+    public let isCloudAccountAlreadyRegistered: Bool?
+    public let ssoCodeString: String?
 
     func toAPIModel() -> DomainRegistrationConfiguration {
         DomainRegistrationConfiguration(
-            backendUrlStr: backendUrl,
+            backendURLString: backendURLString,
             domainRedirect: domainRedirect.toAPIModel(),
-            dueToExistingAccount: dueToExistingAccount,
-            ssoCodeStr: ssoCode
+            isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered,
+            ssoCodeString: ssoCodeString
         )
     }
 

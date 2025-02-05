@@ -84,10 +84,10 @@ final class AuthenticationAPITests: XCTestCase {
         XCTAssertEqual(
             response,
             DomainRegistrationConfiguration(
-                backendUrlStr: "https://example.com",
+                backendURLString: "https://example.com",
                 domainRedirect: .none,
-                dueToExistingAccount: false,
-                ssoCodeStr: "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                isCloudAccountAlreadyRegistered: false,
+                ssoCodeString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"
             )
         )
     }
@@ -107,10 +107,10 @@ final class AuthenticationAPITests: XCTestCase {
         XCTAssertEqual(
             response,
             DomainRegistrationConfiguration(
-                backendUrlStr: nil,
+                backendURLString: nil,
                 domainRedirect: .preAuthorized,
-                dueToExistingAccount: false,
-                ssoCodeStr: nil
+                isCloudAccountAlreadyRegistered: false,
+                ssoCodeString: nil
             )
         )
     }
