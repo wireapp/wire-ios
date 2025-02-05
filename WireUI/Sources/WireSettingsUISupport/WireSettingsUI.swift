@@ -16,13 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-14297] remove this file eventually
-// sourcery: AutoMockable
-public protocol WireSettingsUILogger: Sendable {
-    func debug(_ message: String)
-    func info(_ message: String)
-    func notice(_ message: String)
-    func warn(_ message: String)
-    func error(_ message: String)
-    func critical(_ message: String)
-}
+// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
+// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
+// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script

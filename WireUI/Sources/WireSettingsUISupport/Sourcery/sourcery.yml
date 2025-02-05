@@ -1,0 +1,10 @@
+sources:
+- ${PACKAGE_ROOT_DIR}/Sources/WireSettingsUI
+templates:
+- ${TARGET_DIR}/Sourcery/AutoMockable.stencil
+output:
+  ${DERIVED_SOURCES_DIR}
+args:
+  autoMockableImports: ["Foundation", "WireSettingsUI"]
+#  autoMockablePublicImports: ["Foundation", "WireAnalytics"]
+#  autoMockableTestableImports: ["UserNotifications"]

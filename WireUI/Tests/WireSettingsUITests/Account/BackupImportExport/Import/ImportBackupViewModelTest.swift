@@ -16,13 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-14297] remove this file eventually
-// sourcery: AutoMockable
-public protocol WireSettingsUILogger: Sendable {
-    func debug(_ message: String)
-    func info(_ message: String)
-    func notice(_ message: String)
-    func warn(_ message: String)
-    func error(_ message: String)
-    func critical(_ message: String)
+import Testing
+
+@testable import WireSettingsUI
+@testable import WireSettingsUISupport
+
+@MainActor
+struct ImportBackupViewModelTest {
+
+    var sut: ImportBackupViewModel {
+        ImportBackupViewModel(
+            importBackupUseCase: MockImportBackupUseCaseProtocol(),
+            logger: MockWireSettingsUILogger()
+        )
+    }
+
+    @Test func testSomething() async throws {
+        let sut = sut
+
+    }
+
 }
