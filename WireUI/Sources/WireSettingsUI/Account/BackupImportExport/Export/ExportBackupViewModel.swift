@@ -38,12 +38,16 @@ final class ExportBackupViewModel: ObservableObject {
 
     private var backupTask: Task<Void, Never>?
 
+    private let logger: any WireSettingsUILogger
+
     init(
         createBackupUseCase: any CreateBackupUseCaseProtocol,
-        cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
+        cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
+        logger: any WireSettingsUILogger
     ) {
         self.createBackupUseCase = createBackupUseCase
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
+        self.logger = logger
     }
 
     func reset() {
@@ -70,8 +74,10 @@ final class ExportBackupViewModel: ObservableObject {
                     }
                 }
             } catch is CancellationError {
+                logger.info("backup cancelled")
                 state = nil
             } catch {
+                logger.error("backup failed unexpectedly: " + String(reflecting: error))
                 state = .backupFailed(error)
             }
         }
@@ -88,6 +94,7 @@ final class ExportBackupViewModel: ObservableObject {
             Task { try? await cleanUpBackupsUseCase.invoke() }
             state = nil
         case .backupFailed, .none:
+            logger.error("unexpected state while received cancel: \(state == nil ? "nil" : ".backupFailed")")
             assertionFailure("unexpected state")
         }
     }

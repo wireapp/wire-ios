@@ -19,6 +19,7 @@
 import Foundation
 import WireDomainPkg
 import WireSettingsUI
+import WireLogging
 
 // TODO: [WPB-15347] delete this workaround
 
@@ -90,7 +91,39 @@ func BackupImportExportBuilder(
         backupPasswordValidator: backupPasswordValidator,
         createBackupUseCase: createBackupUseCase,
         importBackupUseCase: importBackupUseCase,
-        cleanUpBackupsUseCase: cleanUpBackupsUseCase
+        cleanUpBackupsUseCase: cleanUpBackupsUseCase,
+        exportBackupLogger: LoggerAdapter(logger: .backupExport),
+        importBackupLogger: LoggerAdapter(logger: .backupImport)
     )
+
+}
+
+private struct LoggerAdapter: WireSettingsUILogger {
+
+    var logger: WireLogger
+
+    func debug(_ message: String) {
+        logger.debug(message)
+    }
+
+    func info(_ message: String) {
+        logger.info(message)
+    }
+
+    func notice(_ message: String) {
+        logger.notice(message)
+    }
+
+    func warn(_ message: String) {
+        logger.warn(message)
+    }
+
+    func error(_ message: String) {
+        logger.error(message)
+    }
+
+    func critical(_ message: String) {
+        logger.critical(message)
+    }
 
 }

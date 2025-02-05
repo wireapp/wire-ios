@@ -61,7 +61,8 @@ public struct BackupImportExportBuilder {
 
         let viewModel = ExportBackupViewModel(
             createBackupUseCase: createBackupUseCase,
-            cleanUpBackupsUseCase: cleanUpBackupsUseCase
+            cleanUpBackupsUseCase: cleanUpBackupsUseCase,
+            logger: exportBackupLogger
         )
 
         ExportBackupView(
