@@ -24,7 +24,7 @@ internal import WireAuthenticationLogic
 
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
-    @MainActor var router: Router { get }
+    @MainActor var router: any Router { get }
 
 }
 

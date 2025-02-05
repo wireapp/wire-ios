@@ -1,7 +1,0 @@
-# ``WireAuthenticationLogic``
-
-## Overview
-
-## Topics
-
-### Group

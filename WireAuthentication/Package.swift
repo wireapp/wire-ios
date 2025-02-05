@@ -11,18 +11,28 @@ let package = Package(
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
         .library(name: "WireAuthentication", targets: ["WireAuthentication"]),
+        .library(name: "WireAuthenticationAPI", targets: ["WireAuthenticationAPI"]),
+        .library(name: "WireAuthenticationLogic", targets: ["WireAuthenticationLogic"]),
         .library(name: "WireAuthenticationUI", targets: ["WireAuthenticationUI"]),
         .library(name: "WireViewsDebugUI", targets: ["WireViewsDebugUI"])
     ],
     dependencies: [
+        .package(name: "WireAPI", path: "../WireAPI"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(name: "WireUI", path: "../WireUI"),
         .package(path: "../WirePlugins"),
+        .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
     ],
     targets: [
         .target(
-            name: "WireAuthentication"
+            name: "WireAuthentication",
+            dependencies: [
+                "WireAuthenticationAPI",
+                "WireAuthenticationUI",
+                "WireAuthenticationLogic",
+                .product(name: "NeedleFoundation", package: "needle")
+            ]
         ),
         .testTarget(
             name: "WireAuthenticationTests",
@@ -30,8 +40,22 @@ let package = Package(
         ),
 
         .target(
+            name: "WireAuthenticationAPI"
+        ),
+
+        .target(
+            name: "WireAuthenticationLogic",
+            dependencies: ["WireAuthenticationAPI", "WireAPI"]
+        ),
+        .testTarget(
+            name: "WireAuthenticationLogicTests",
+            dependencies: ["WireAuthenticationLogic"]
+        ),
+
+        .target(
             name: "WireAuthenticationUI",
             dependencies: [
+                "WireAuthenticationAPI",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation",
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
@@ -60,7 +84,7 @@ for target in package.targets {
         target.dependencies += [WireTestingPackage]
     }
     target.swiftSettings = (target.swiftSettings ?? []) + [
-        .enableUpcomingFeature("ExistentialAny"),
+        // TODO: [WPB-15967] Enable `ExistentialAny` upcoming feature
         .enableUpcomingFeature("GlobalConcurrency"),
         .enableExperimentalFeature("StrictConcurrency")
     ]

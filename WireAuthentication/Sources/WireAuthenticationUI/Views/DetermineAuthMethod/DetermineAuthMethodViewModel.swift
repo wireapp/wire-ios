@@ -24,11 +24,11 @@ import WireAuthenticationAPI
 @MainActor
 public final class DetermineAuthMethodViewModel: ObservableObject {
 
-    let router: Router
+    let router: any Router
     let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
 
     public init(
-        router: Router,
+        router: any Router,
         determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
     ) {
         self.router = router
