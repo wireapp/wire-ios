@@ -177,7 +177,6 @@ final class ImportBackupUseCaseTests: XCTestCase {
         let sequence = try await sut.invoke(url: url, password: "c<%I2f41\"6!'")
             .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
 
-
         // Then
         XCTAssertEqual(sequence, [.progress(0.25), .progress(0.5), .done])
         XCTAssertEqual(mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.accountID, accountID)

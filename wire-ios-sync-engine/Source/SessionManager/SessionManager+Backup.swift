@@ -178,15 +178,19 @@ extension SessionManager {
     // MARK: - Encryption & Decryption
 
     static func encrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
-        guard let inputStream = InputStream(url: input) else { throw CreateLegacyBackupError.failedToCreateStreamsForEncryption }
-        guard let outputStream = OutputStream(url: output, append: false) else { throw CreateLegacyBackupError.failedToCreateStreamsForEncryption }
+        guard let inputStream = InputStream(url: input)
+        else { throw CreateLegacyBackupError.failedToCreateStreamsForEncryption }
+        guard let outputStream = OutputStream(url: output, append: false)
+        else { throw CreateLegacyBackupError.failedToCreateStreamsForEncryption }
         let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountId)
         try ChaCha20Poly1305.StreamEncryption.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
     }
 
     static func decrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
-        guard let inputStream = InputStream(url: input) else { throw ImportBackupError.failedToCreateStreamForDecryption }
-        guard let outputStream = OutputStream(url: output, append: false) else { throw ImportBackupError.failedToCreateStreamForDecryption }
+        guard let inputStream = InputStream(url: input)
+        else { throw ImportBackupError.failedToCreateStreamForDecryption }
+        guard let outputStream = OutputStream(url: output, append: false)
+        else { throw ImportBackupError.failedToCreateStreamForDecryption }
         let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountId)
         try ChaCha20Poly1305.StreamEncryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
     }

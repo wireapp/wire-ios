@@ -19,8 +19,8 @@
 import Foundation
 import WireDataModelSupport
 import WireTesting
-import XCTest
 import WireTestingPackage
+import XCTest
 
 @testable import WireSyncEngine
 
