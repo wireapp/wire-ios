@@ -28,17 +28,17 @@ enum DomainRedirectV8: String, Decodable, Sendable {
     func toAPIModel() -> DomainRedirect {
         switch self {
         case .locked:
-                .locked
+            .locked
         case .sso:
-                .sso
+            .sso
         case .backend:
-                .backend
+            .backend
         case .noRegistration:
-                .noRegistration
+            .noRegistration
         case .preAuthorized:
-                .preAuthorized
+            .preAuthorized
         case .none:
-                .none
+            .none
         }
     }
 
