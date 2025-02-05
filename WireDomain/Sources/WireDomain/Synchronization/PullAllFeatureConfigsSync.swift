@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,16 +19,6 @@
 import Foundation
 import WireAPI
 
-// sourcery: AutoMockable
-protocol PullAllFeatureConfigsSyncProtocol {
-
-    func pull() async throws
-
-}
-
-/// An object to keep the local feature configs up to date
-/// with the remote feature configs.
-
 struct PullAllFeatureConfigsSync: PullAllFeatureConfigsSyncProtocol {
 
     private let api: any FeatureConfigsAPI
@@ -41,9 +31,6 @@ struct PullAllFeatureConfigsSync: PullAllFeatureConfigsSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch all conversation labels from remote, then create and update
-    /// them locally.
 
     func pull() async throws {
         let featureConfigs = try await api.getFeatureConfigs()
