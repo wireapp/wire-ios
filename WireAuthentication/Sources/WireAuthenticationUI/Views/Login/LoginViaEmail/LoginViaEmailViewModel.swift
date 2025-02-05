@@ -24,13 +24,13 @@ import WireAuthenticationAPI
 @MainActor
 public final class LoginViaEmailViewModel: ObservableObject {
 
-    let router: Router
+    let router: any Router
     let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
 
     let email: String
 
     public init(
-        router: Router,
+        router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         email: String
     ) {
