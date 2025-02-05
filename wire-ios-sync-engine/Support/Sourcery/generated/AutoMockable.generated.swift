@@ -386,21 +386,6 @@ public class MockImportBackupAppStateUpdaterProtocol: ImportBackupAppStateUpdate
     public init() {}
 
 
-    // MARK: - reportImportProgress
-
-    public var reportImportProgressProgress_Invocations: [Float] = []
-    public var reportImportProgressProgress_MockMethod: ((Float) -> Void)?
-
-    public func reportImportProgress(progress: Float) {
-        reportImportProgressProgress_Invocations.append(progress)
-
-        guard let mock = reportImportProgressProgress_MockMethod else {
-            fatalError("no mock for `reportImportProgressProgress`")
-        }
-
-        mock(progress)
-    }
-
     // MARK: - reportMigrationNeeded
 
     public var reportMigrationNeeded_Invocations: [Void] = []

@@ -16,29 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import Testing
+public import XCTest
 
-@testable import WireSettingsUI
-@testable import WireSettingsUISupport
+public extension XCTestExpectation {
 
-@MainActor
-struct ExportBackupViewModelTest {
-
-    var sut: ExportBackupViewModel {
-        ExportBackupViewModel(
-            createBackupUseCase: MockCreateBackupUseCaseProtocol(),
-            cleanUpBackupsUseCase: MockCleanUpBackupsUseCaseProtocol(),
-            logger: MockWireSettingsUILogger()
-        )
+    func inverted() -> Self {
+        isInverted = true
+        return self
     }
-
-    @Test
-    func testGreenPath() async throws {
-        // Given
-        let sut = sut
-
-        // TODO: finish implementation
-    }
-
 }

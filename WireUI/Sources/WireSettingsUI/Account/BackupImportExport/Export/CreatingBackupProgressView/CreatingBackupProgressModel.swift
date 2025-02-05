@@ -18,7 +18,7 @@
 
 import Foundation
 
-enum CreatingBackupProgressModel {
+enum CreatingBackupProgressModel: Equatable {
     case ongoing(_ percentage: Float)
     case finished(_ url: URL)
 }

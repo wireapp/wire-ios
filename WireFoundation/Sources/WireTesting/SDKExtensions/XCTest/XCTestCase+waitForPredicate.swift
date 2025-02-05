@@ -16,12 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+public import XCTest
 
-public extension XCTestExpectation {
+public extension XCTestCase {
 
-    func inverted() -> Self {
-        isInverted = true
-        return self
+    func wait(
+        forConditionToBeTrue predicate: @escaping @autoclosure () -> Bool,
+        timeout seconds: TimeInterval
+    ) {
+        let expectation = XCTNSPredicateExpectation(
+            predicate: .init { _, _ in predicate() },
+            object: .none
+        )
+        wait(for: [expectation], timeout: seconds)
     }
 }

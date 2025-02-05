@@ -1190,21 +1190,19 @@ public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
     // MARK: - invoke
 
     public var invokeUrlPassword_Invocations: [(url: URL, password: String)] = []
-    public var invokeUrlPassword_MockError: Error?
-    public var invokeUrlPassword_MockMethod: ((URL, String) async throws -> Void)?
+    public var invokeUrlPassword_MockMethod: ((URL, String) -> AsyncThrowingStream<ImportBackupProgress, any Error>)?
+    public var invokeUrlPassword_MockValue: AsyncThrowingStream<ImportBackupProgress, any Error>?
 
-    public func invoke(url: URL, password: String) async throws {
+    public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         invokeUrlPassword_Invocations.append((url: url, password: password))
 
-        if let error = invokeUrlPassword_MockError {
-            throw error
-        }
-
-        guard let mock = invokeUrlPassword_MockMethod else {
+        if let mock = invokeUrlPassword_MockMethod {
+            return mock(url, password)
+        } else if let mock = invokeUrlPassword_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `invokeUrlPassword`")
         }
-
-        try await mock(url, password)
     }
 
 }

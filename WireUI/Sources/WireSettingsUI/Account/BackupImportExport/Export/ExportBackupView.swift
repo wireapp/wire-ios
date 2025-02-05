@@ -30,7 +30,7 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
         Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
 
             Button {
-                viewModel.requestBackupPassword()
+                viewModel.start()
             } label: {
                 Text(L10n.Localizable.Settings.ExportBackup.action)
                     .font(.callout.weight(.semibold))
