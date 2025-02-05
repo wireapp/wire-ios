@@ -30,7 +30,7 @@ final class ExportBackupViewModel: ObservableObject {
 
     // CreatingBackupProgress is the outer sheet, which contains/presents SetBackupPassword
     @Published var isCreatingBackupProgressPresented = false
-    @Published var isSetBackupPasswordPresented = false
+    @Published var isSetBackupPasswordPresented = false { didSet { print("isSetBackupPasswordPresented: \(isSetBackupPasswordPresented)") }}
     @Published var isErrorAlertPresented = false
 
     @Published private(set) var backupProgress: CreatingBackupProgressModel = .ongoing(0)
@@ -55,10 +55,14 @@ final class ExportBackupViewModel: ObservableObject {
         state = nil
     }
 
-    func start() {
-        guard state == nil else { return assertionFailure() }
-
+    func showPasswordDialog() {
+        guard state == nil else {
+            logger.error("\(#function): state != nil")
+            return assertionFailure()
+        }
+        print("setting state")
         state = .requestingPassword(password: "")
+        print("did set state")
     }
 
     func createBackup(password: String) {

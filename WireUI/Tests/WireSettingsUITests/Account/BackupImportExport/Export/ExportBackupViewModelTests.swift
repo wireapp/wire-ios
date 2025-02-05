@@ -55,35 +55,29 @@ final class ExportBackupViewModelTests: XCTestCase {
         // Given
         var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
         mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
+        let url = URL(fileURLWithPath: "/")
+        let sut = sut as ExportBackupViewModel
 
-        // When / Then
-        sut.start()
-        XCTAssertEqual(sut.backupProgress, .ongoing(0))
-
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: self.sut.backupProgress == .ongoing(0.5), timeout: 1)
-
-        continuation.yield(.done(URL(fileURLWithPath: "/")))
-        wait(forConditionToBeTrue: self.sut.backupProgress == .ongoing(1), timeout: 1)
-
-        continuation.finish()
-
-//        mockCreateBackupUseCase.invokePassword_MockValue = .init { [self] continuation in
-//            defer { continuation.finish() }
-//
-//            // When
-//            sut.start()
-//            continuation.yield(.progress(0.5))
-//
-//            // Then
-//            XCTAssertEqual(sut.backupProgress, .ongoing(0.5))
+//        func p<V>(_ value: V) -> V {
+//            print("value: \(value)")
+//            return value
 //        }
 
-//        let i = AsyncThrowingStream<Int, any Error> { continuation in
-//            //
-//        }.makeAsyncIterator()
-//
-//        i.next()
+        // When / Then
+        sut.showPasswordDialog()
+        //print("before wait")
+        // wait(forConditionToBeTrue: p(sut.isSetBackupPasswordPresented), timeout: 10)
+        wait(forConditionToBeTrue: sut.isSetBackupPasswordPresented, timeout: 3)
+        //print("after wait")
+
+        sut.createBackup(password: "pw")
+        continuation.yield(.progress(0.5))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+
+        continuation.yield(.done(url))
+        wait(forConditionToBeTrue: sut.backupProgress == .finished(url), timeout: 3)
+
+        continuation.finish()
     }
 
     /*

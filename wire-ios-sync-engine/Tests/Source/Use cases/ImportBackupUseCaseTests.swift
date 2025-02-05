@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireDomainPkg
 import XCTest
 
 @testable import WireSyncEngine
@@ -141,6 +142,21 @@ final class ImportBackupUseCaseTests: XCTestCase {
             do {
                 // When
                 let filePath = "/path/to/file.\(extensions)"
+
+//                for try await update in importBackupUseCase.invoke(url: url, password: password) {
+//                    switch update {
+//                    case let .progress(fraction):
+//                        state = .importingBackup(progress: fraction)
+//                    case .done:
+//                        alertContent = .init(
+//                            title: L10n.Localizable.ImportBackup.Alert.Success.title,
+//                            message: L10n.Localizable.ImportBackup.Alert.Success.message,
+//                            cancel: "",
+//                            action: L10n.Localizable.ImportBackup.Alert.ok
+//                        )
+//                        state = .success
+//                    }
+//                }
 
                 sut.invoke(url: URL(fileURLWithPath: filePath), password: "")
                 XCTFail("Unexpected success")
