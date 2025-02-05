@@ -55,6 +55,8 @@ public struct BackendInfoAPIBuilder {
             BackendInfoAPIV6(apiService: apiService)
         case .v7:
             BackendInfoAPIV7(apiService: apiService)
+        case .v8:
+            BackendInfoAPIV8(apiService: apiService)
         }
     }
 
