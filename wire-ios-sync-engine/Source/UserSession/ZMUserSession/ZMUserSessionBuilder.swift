@@ -166,7 +166,7 @@ struct ZMUserSessionBuilder {
         let earService = earService ?? EARService(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
-                coreDataStack.viewContext, // TODO: make weak?
+                coreDataStack.viewContext, 
                 coreDataStack.syncContext,
                 coreDataStack.searchContext
             ],

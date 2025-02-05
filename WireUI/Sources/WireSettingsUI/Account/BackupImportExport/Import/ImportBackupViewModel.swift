@@ -249,13 +249,6 @@ final class ImportBackupViewModel: ObservableObject {
         let cancel: String
         let action: String
 
-        init(title: String, message: String, cancel: String, action: String) {
-            self.title = title
-            self.message = message
-            self.cancel = cancel
-            self.action = action
-        }
-
     }
 
 }

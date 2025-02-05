@@ -50,7 +50,6 @@ struct ImportBackupView: View {
                 )
                 .interactiveDismissDisabled()
                 .presentationDetents([.medium])
-
                 .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
                     EnterPasswordView(
                         password: $viewModel.backupPassword,
