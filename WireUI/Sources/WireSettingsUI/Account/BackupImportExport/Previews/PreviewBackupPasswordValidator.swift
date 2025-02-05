@@ -16,22 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+struct PreviewBackupPasswordValidator: BackupPasswordValidatorProtocol {
 
-struct SetBackupPasswordPreview: View {
-
-    @State private var isPresented = true
-
-    var body: some View {
-        Color.white
-            .sheet(isPresented: .constant(true)) {
-                BackupImportExportBuilder.previewBuilder
-                    .buildSetBackupPasswordView(
-                        cancelAction: {},
-                        setPasswordAction: { _ in }
-                    )
-                    .interactiveDismissDisabled()
-                    .presentationDetents([.medium])
-            }
+    func isPasswordValid(_ password: String) -> Bool {
+        password.count > 8
     }
+
+    var localizedRulesDescription: String {
+        "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."
+    }
+
 }

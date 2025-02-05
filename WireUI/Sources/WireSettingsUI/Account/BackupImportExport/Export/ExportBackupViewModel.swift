@@ -51,6 +51,7 @@ final class ExportBackupViewModel: ObservableObject {
     }
 
     func reset() {
+        backupTask?.cancel()
         state = nil
     }
 

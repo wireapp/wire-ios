@@ -117,7 +117,7 @@ extension BackupImportExportBuilder {
 
     static var previewBuilder: BackupImportExportBuilder {
         BackupImportExportBuilder(
-            backupPasswordValidator: MockBackupPasswordValidator(),
+            backupPasswordValidator: PreviewBackupPasswordValidator(),
             createBackupUseCase: PreviewCreateBackupUseCase(),
             importBackupUseCase: PreviewImportBackupUseCase(),
             cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase(),
