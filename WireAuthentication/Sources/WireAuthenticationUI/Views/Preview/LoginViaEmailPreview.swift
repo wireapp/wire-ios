@@ -45,3 +45,19 @@ package struct LoginViaEmailPreview: View {
         )
     }
 }
+
+package struct MockPasswordValidator: PasswordValidator {
+    let validationCallback: @Sendable (String) -> Bool
+
+    package init(validationCallback: @Sendable @escaping (String) -> Bool) {
+        self.validationCallback = validationCallback
+    }
+
+    package func validate(_ password: String) -> Bool {
+        validationCallback(password)
+    }
+
+    package var localizedRulesDescription: String? {
+        "Password rules"
+    }
+}
