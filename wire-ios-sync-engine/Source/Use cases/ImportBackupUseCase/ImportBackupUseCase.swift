@@ -54,12 +54,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         _ password: String
     ) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-
-            guard !password.isEmpty else {
-                // legacy backups always need a password
-                return continuation.finish(throwing: ImportBackupError.passwordRequired)
-            }
-
             Task<Void, Never> { @MainActor in
                 do {
 
