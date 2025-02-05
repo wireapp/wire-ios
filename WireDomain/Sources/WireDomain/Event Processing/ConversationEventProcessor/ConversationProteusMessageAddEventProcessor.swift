@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,6 @@
 import WireAPI
 import WireDataModel
 import WireLogging
-
-/// Process conversation proteus message add events.
-
-protocol ConversationProteusMessageAddEventProcessorProtocol {
-
-    /// Process a conversation proteus message add event.
-    ///
-    /// - Parameter event: A conversation proteus message add event.
-
-    func processEvent(_ event: ConversationProteusMessageAddEvent) async throws
-
-}
 
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
 

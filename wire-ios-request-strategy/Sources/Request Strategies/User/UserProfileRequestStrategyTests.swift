@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import WireRequestStrategySupport
 import WireTransport
 import XCTest
@@ -27,6 +28,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     var sut: UserProfileRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
+    var mockOneOnOneResolver: MockOneOnOneResolverInterface!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -44,10 +46,14 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         mockSyncProgress.currentSyncPhase = .done
         mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
 
+        mockOneOnOneResolver = MockOneOnOneResolverInterface()
+        mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockValue = .noAction
+
         sut = UserProfileRequestStrategy(
             managedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
-            syncProgress: mockSyncProgress
+            syncProgress: mockSyncProgress,
+            oneOnOneResolver: mockOneOnOneResolver
         )
         apiVersion = .v0
     }
@@ -56,6 +62,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
+        mockOneOnOneResolver = nil
 
         super.tearDown()
     }

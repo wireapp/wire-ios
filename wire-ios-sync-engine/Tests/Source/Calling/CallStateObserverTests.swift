@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     func testThatMissedCallMessageIsAppendedForCanceledCallByReceiver() {
 
         // when
-        let firstCallState: CallState = .incoming(video: false, shouldRing: false, degraded: false)
+        let firstCallState: CallState = .incoming(isVideo: false, shouldRing: false, degraded: false)
         sut.callCenterDidChange(
             callState: firstCallState,
             conversation: conversationUI,
@@ -136,7 +136,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: false, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: false, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
@@ -171,13 +171,13 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             .terminating(reason: .lostMedia),
             .terminating(reason: .internalError),
             .terminating(reason: .unknown),
-            .incoming(video: true, shouldRing: false, degraded: false),
-            .incoming(video: false, shouldRing: false, degraded: false),
-            .incoming(video: true, shouldRing: true, degraded: false),
-            .incoming(video: false, shouldRing: true, degraded: false),
+            .incoming(isVideo: true, shouldRing: false, degraded: false),
+            .incoming(isVideo: false, shouldRing: false, degraded: false),
+            .incoming(isVideo: true, shouldRing: true, degraded: false),
+            .incoming(isVideo: false, shouldRing: true, degraded: false),
             .answered(degraded: false),
             .established,
-            .outgoing(degraded: false)
+            .outgoing(isVideo: false, degraded: false)
         ]
 
         // when
@@ -233,7 +233,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: Date(),
@@ -258,7 +258,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
@@ -278,7 +278,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: Date(),
@@ -296,7 +296,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
@@ -315,7 +315,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             clientId: "1234567",
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init()
         )
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(
@@ -349,7 +350,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             clientId: "1234567",
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init()
         )
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(
@@ -383,7 +385,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             clientId: "1234567",
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init()
         )
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(
@@ -437,7 +440,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: false, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: false, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
@@ -466,7 +469,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: false, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: false, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
@@ -499,7 +502,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
@@ -525,7 +528,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
@@ -553,7 +556,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
@@ -631,7 +634,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         sut.callCenterDidChange(
-            callState: .incoming(video: false, shouldRing: true, degraded: false),
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: Date(),

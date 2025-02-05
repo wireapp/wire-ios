@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,12 @@
 import Foundation
 import WireAPI
 import WireDomain
-import WireDomainAPI
+import WireDomainPkg
 
 public extension ZMUserSession {
-    func createIndividualToTeamMigrationUseCase(apiVersion: WireAPI.APIVersion) -> IndividualToTeamMigrationUseCase? {
+    func createIndividualToTeamMigrationUseCase(
+        apiVersion: WireAPI.APIVersion
+    ) -> IndividualToTeamMigrationUseCaseProtocol? {
         guard let apiService else {
             assertionFailure("apiService is nil")
             return nil
@@ -31,7 +33,7 @@ public extension ZMUserSession {
         let builder = AccountsAPIBuilder(apiService: apiService)
         let accountsAPI = builder.makeAPI(for: apiVersion)
 
-        return IndividualToTeamMigrationUseCaseImplementation(
+        return IndividualToTeamMigrationUseCase(
             accountsAPI: accountsAPI,
             context: syncContext
         )

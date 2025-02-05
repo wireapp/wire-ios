@@ -14,8 +14,19 @@
         "argument" : "-NSShowNonLocalizedStrings YES"
       }
     ],
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireUI",
+      "identifier" : "WireDesignTests",
+      "name" : "WireDesignTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
@@ -29,36 +40,15 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireConversationListUITests",
-        "name" : "WireConversationListUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireSettingsUITests",
-        "name" : "WireSettingsUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireIndividualToTeamMigrationUITests",
-        "name" : "WireIndividualToTeamMigrationUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireAccountImageUITests",
-        "name" : "WireAccountImageUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
         "identifier" : "WireSidebarUITests",
         "name" : "WireSidebarUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireAuthenticationUITests",
+        "name" : "WireAuthenticationUITests"
       }
     },
     {
@@ -71,6 +61,13 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
+        "identifier" : "WireSettingsUITests",
+        "name" : "WireSettingsUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
         "identifier" : "WireDesignTests",
         "name" : "WireDesignTests"
       }
@@ -78,15 +75,29 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireReusableUIComponentsTests",
-        "name" : "WireReusableUIComponentsTests"
+        "identifier" : "WireIndividualToTeamMigrationUITests",
+        "name" : "WireIndividualToTeamMigrationUITests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireIndividualToTeamMigrationUITests",
-        "name" : "WireIndividualToTeamMigrationUITests"
+        "identifier" : "WireConversationListUITests",
+        "name" : "WireConversationListUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireAccountImageUITests",
+        "name" : "WireAccountImageUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
       }
     }
   ],

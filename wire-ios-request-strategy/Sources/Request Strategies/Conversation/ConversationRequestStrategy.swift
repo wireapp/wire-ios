@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -399,7 +399,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         // 1) selfUser edits the conversation name: a save will be enqueue when user is done editing
         // Note: when another user edited the conversation name, ConversationEventProcessor is called directly as
         // EventAsyncConsumer and a save will be done in EventProcessor
-        conversationEventProcessor.processPayload(payload)
+        conversationEventProcessor.processConversationRenamePayload(payload)
 
         return false
     }

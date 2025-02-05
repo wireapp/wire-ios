@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,6 +46,9 @@ public enum ColorTheme {
         public static let secondaryText = UIColor(light: .gray70, dark: .gray60)
 
         public static let requiredField = UIColor(light: .red500Light, dark: .red500Dark)
+
+        public static let labelTitle = UIColor(light: .gray80, dark: .gray50)
+        public static let onDisabled = UIColor(light: .gray80, dark: .gray50)
     }
 
     public enum Backgrounds {
@@ -109,19 +112,31 @@ public enum ColorTheme {
 
         enum Tertiary {
 
-            public static let enabled = UIColor.clear
+            static let enabled = UIColor(light: .white, dark: .gray90)
             public static let onEnabled = UIColor(light: .black, dark: .white)
+            static let enabledOutline = UIColor(light: .gray40, dark: .gray90)
 
-            public static let disabled = UIColor.clear
-            public static let onDisabled = UIColor(light: .gray60, dark: .gray60)
+            static let disabled = UIColor(light: .gray20, dark: .gray95)
+            static let onDisabled = UIColor(light: .gray70, dark: .gray50)
+            static let disabledOutline = UIColor(light: .gray40, dark: .gray95)
 
-            public static let focus = UIColor(light: .gray30, dark: .gray90)
-            public static let onFocus = UIColor(light: .black, dark: .white)
-            public static let focusOutline = UIColor(light: .blue500Light, dark: .blue500Dark)
+            static let focus = UIColor(light: .gray30, dark: .blue800Dark)
+            static let onFocus = UIColor(light: .black, dark: .white)
+            static let focusOutline = UIColor(light: .blue500Light, dark: .blue500Dark)
 
-            public static let selected = UIColor(light: .blue50Light, dark: .gray95)
-            public static let onSelected = UIColor(light: .blue500Light, dark: .blue500Dark)
-            public static let selectedOutline = UIColor(light: .blue300Light, dark: .gray90)
+            static let selected = UIColor(light: .blue50Light, dark: .blue800Dark)
+            static let onSelected = UIColor(light: .blue500Light, dark: .white)
+            static let selectedOutline = UIColor(light: .blue300Light, dark: .blue800Dark)
+        }
+
+        enum Link {
+            public static let onEnabled = Backgrounds.onSurface
+
+            static let onDisabled = Base.secondaryText
+
+            static let onFocus = Base.primary
+
+            static let onSelected = Base.primary
         }
     }
 
@@ -133,6 +148,7 @@ public enum ColorTheme {
     public enum Strokes {
 
         public static let outline = UIColor(light: .gray40, dark: .gray90)
+        public static let disabledOutline = UIColor(light: .gray50, dark: .gray80)
         public static let dividersOutlineVariant = UIColor(light: .gray20, dark: .gray100)
     }
 

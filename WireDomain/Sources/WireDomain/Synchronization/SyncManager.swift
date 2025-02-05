@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,22 +23,6 @@ import WireDataModel
 import WireLogging
 import WireSystem
 
-protocol SyncManagerProtocol {
-
-    /// Pulls and stores all required objects for the database to be initially up-to-date.
-
-    func performSlowSync() async throws
-
-    /// Fetch events from the server and process all pending events.
-
-    func performQuickSync() async throws
-
-    /// Stop all syncing activities and prepare to idle.
-
-    func suspend() async throws
-
-}
-
 final class SyncManager: SyncManagerProtocol {
 
     enum Failure: Error {
@@ -59,6 +43,7 @@ final class SyncManager: SyncManagerProtocol {
     private let userRepository: any UserRepositoryProtocol
     private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
     private let featureConfigsRepository: any FeatureConfigRepositoryProtocol
+    private let backendConfigRepository: any BackendConfigRepositoryProtocol
     private let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
     private let mlsProvider: MLSProvider
     private let context: NSManagedObjectContext
@@ -77,6 +62,7 @@ final class SyncManager: SyncManagerProtocol {
         userRepository: any UserRepositoryProtocol,
         conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
         featureConfigsRepository: any FeatureConfigRepositoryProtocol,
+        backendConfigRepository: any BackendConfigRepositoryProtocol,
         updateEventProcessor: any UpdateEventProcessorProtocol,
         pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol,
         mlsProvider: MLSProvider,
@@ -89,6 +75,7 @@ final class SyncManager: SyncManagerProtocol {
         self.userRepository = userRepository
         self.conversationLabelsRepository = conversationLabelsRepository
         self.featureConfigsRepository = featureConfigsRepository
+        self.backendConfigRepository = backendConfigRepository
         self.updateEventProcessor = updateEventProcessor
         self.pushSupportedProtocolsUseCase = pushSupportedProtocolsUseCase
         self.mlsProvider = mlsProvider
@@ -108,6 +95,7 @@ final class SyncManager: SyncManagerProtocol {
             try await teamRepository.pullSelfLegalholdInfo()
             try await conversationLabelsRepository.pullConversationLabels()
             try await featureConfigsRepository.pullFeatureConfigs()
+            await backendConfigRepository.pullMLSBackendStatus()
             try await pushSupportedProtocolsUseCase.invoke()
             let oneOnOneResolver = makeOneOnOneResolver()
             try await oneOnOneResolver.resolveAllOneOnOneConversations()

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,17 +20,6 @@ import CoreData
 import WireAPI
 import WireDataModel
 import WireLogging
-
-// sourcery: AutoMockable
-/// Resolves 1:1 conversations
-public protocol OneOnOneResolverProtocol {
-
-    func resolveOneOnOneConversation(
-        with userID: WireDataModel.QualifiedID
-    ) async throws
-
-    func resolveAllOneOnOneConversations() async throws
-}
 
 struct OneOnOneResolver: OneOnOneResolverProtocol {
 
@@ -180,7 +169,8 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         await switchLocalConversationToMLS(
             mlsConversation: mlsConversation,
-            for: user
+            for: user,
+            userID: userID
         )
     }
 
@@ -230,21 +220,75 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     private func switchLocalConversationToMLS(
         mlsConversation: ZMConversation,
-        for user: ZMUser
+        for user: ZMUser,
+        userID: WireDataModel.QualifiedID
     ) async {
         await context.perform {
-            /// Move local messages from proteus conversation if it exists
-            if let proteusConversation = user.oneOnOneConversation {
-                /// Since ZMMessages only have a single conversation connected,
-                /// forming this union also removes the relationship to the proteus conversation.
+
+            // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both
+            // conversations here.
+            let proteusConversations: [ZMConversation] = fetchAllTeamOneOnOneProteusConversations(
+                otherUserID: userID,
+                in: context
+            )
+
+            var allProteusConversations = Set(proteusConversations)
+            if let existingConversation = user.oneOnOneConversation,
+               existingConversation.messageProtocol == .proteus {
+                allProteusConversations.insert(existingConversation)
+            }
+
+            // move local messages from proteus conversations if they exist
+            for proteusConversation in allProteusConversations {
+                // Since ZMMessages only have a single conversation connected,
+                // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+            }
+
+            if !allProteusConversations.isEmpty {
+                // insert system message that we moved from proteus to MLS
+                let sender = ZMUser.selfUser(in: context)
+                mlsConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
+
                 mlsConversation.isForcedReadOnly = false
+                // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }
 
             /// Switch active conversation
             user.oneOnOneConversation = mlsConversation
         }
+    }
+
+    private func fetchAllTeamOneOnOneProteusConversations(
+        otherUserID: WireDataModel.QualifiedID,
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
+        guard let otherUser = ZMUser.fetch(with: otherUserID, in: context) else {
+            return []
+        }
+        let selfUser = ZMUser.selfUser(in: context)
+        guard selfUser.team != nil else {
+            return []
+        }
+
+        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        let teamOneOnOnePredicate = ZMConversation.predicateForTeamOneToOneConversation()
+
+        let sameParticipant = NSPredicate(
+            format: "ANY %K.user == %@ AND ANY %K.user == %@",
+            ZMConversationParticipantRolesKey,
+            otherUser,
+            ZMConversationParticipantRolesKey,
+            selfUser
+        )
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            teamOneOnOnePredicate,
+            sameParticipant
+        ])
+
+        return context.fetchOrAssert(request: request)
     }
 
     /// Resolves a Proteus 1:1 conversation.

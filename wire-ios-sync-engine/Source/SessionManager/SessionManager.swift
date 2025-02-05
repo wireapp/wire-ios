@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -284,6 +284,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var environment: BackendEnvironment {
         didSet {
+            apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
             authenticatedSessionFactory.environment = environment
@@ -552,7 +553,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
             deviceModel: UIDevice.current.model,
-            deviceOS: UIDevice.current.systemVersion,
+            osVersion: UIDevice.current.systemVersion,
             countlyProvider: countlyProvider
         )
 
@@ -746,8 +747,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 account,
                 from: selectedAccount,
                 userSessionCanBeTornDown: { [weak self] in
-                    self?.activeUserSession = nil
-                    tearDownCompletion?()
+                    self?.tearDownActiveSession(completion: tearDownCompletion)
                     guard let self else {
                         completion?(nil)
                         return
@@ -1007,6 +1007,16 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate?.sessionManagerAsksToRetryStart()
     }
 
+    // TODO: [WPB-14616] use this method for restoring a backup from the settings
+    /// The active user session will be torn down and the app goes into migration state.
+    public func prepareForRestoreWithMigration(completion: @escaping () -> Void) {
+        guard let delegate else { return completion() }
+
+        delegate.sessionManagerWillMigrateAccount {
+            self.tearDownActiveSession(completion: completion)
+        }
+    }
+
     private func setupUserSession(
         account: Account,
         onCompletion: @escaping (ZMUserSession?) -> Void
@@ -1180,6 +1190,11 @@ public final class SessionManager: NSObject, SessionManagerType {
                 WireLogger.sessionManager.error("Failed to delete messages older than the retention limit")
             }
         }
+    }
+
+    private func tearDownActiveSession(completion: (() -> Void)?) {
+        activeUserSession = nil
+        completion?()
     }
 
     // Creates the user session for @c account given, calls @c completion when done.

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,21 +19,6 @@
 import Foundation
 import WireAPI
 import WireDataModel
-
-// sourcery: AutoMockable
-/// Decrypt proteus messages.
-protocol ProteusMessageDecryptorProtocol {
-
-    /// Decrypt a proteus message.
-    ///
-    /// - Parameter eventData: A payload containing the encrypted message.
-    /// - Returns: The payload containing the decrypted message.
-
-    func decryptedEventData(
-        from eventData: ConversationProteusMessageAddEvent
-    ) async throws -> ConversationProteusMessageAddEvent
-
-}
 
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 

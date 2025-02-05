@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,6 @@
 
 import WireAPI
 import WireSystem
-
-/// Process conversation member update events.
-
-protocol ConversationMemberUpdateEventProcessorProtocol {
-
-    /// Process a conversation member update event.
-    ///
-    /// - Parameter event: A conversation member update event.
-
-    func processEvent(_ event: ConversationMemberUpdateEvent) async throws
-
-}
 
 struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProcessorProtocol {
 

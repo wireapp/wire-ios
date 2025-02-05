@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,9 +54,19 @@ public extension ZMUser {
     func createOrDeleteMembershipIfBelongingToTeam() {
         guard
             let teamIdentifier,
-            let managedObjectContext,
-            let team = Team.fetch(with: teamIdentifier, in: managedObjectContext)
+            let managedObjectContext
         else {
+            return
+        }
+
+        let team: Team
+        if isSelfUser {
+            team = Team.fetchOrCreate(with: teamIdentifier, in: managedObjectContext)
+            team.needsToBeUpdatedFromBackend = true
+            team.needsToRedownloadMembers = true
+        } else if let existingTeam = Team.fetch(with: teamIdentifier, in: managedObjectContext) {
+            team = existingTeam
+        } else {
             return
         }
 

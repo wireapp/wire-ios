@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,6 +49,9 @@ final class ServerTrustValidatorTests: XCTestCase {
     }
 
     func testValidate_whenNoMatchingPublicKey() async throws {
+        // NOTE: This test may fail due to certificate data being outdated. See comments in `SecTrust+Mock.swift` for
+        // instructions on how to update the certificate data.
+
         // GIVEN
         let sut = ServerTrustValidator(
             pinnedKeys: [

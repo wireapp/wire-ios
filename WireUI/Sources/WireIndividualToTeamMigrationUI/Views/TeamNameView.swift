@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 struct TeamNameView: View {
 
@@ -29,33 +30,32 @@ struct TeamNameView: View {
     let actionCallback: (Action) -> Void
     @State private var teamName: String = ""
 
+    var validTeamName: String {
+        teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(String.localized(key: "individualToTeam.teamName.body", bundle: .module))
                 .wireTextStyle(.body1)
             Spacer()
                 .frame(height: 24)
-            (
-                Text(String.localized(key: "individualToTeam.teamName.field.title", bundle: .module)) +
-                    Text(verbatim: " *")
-                    .foregroundColor(ColorTheme.Base.requiredField.color)
+
+            LabeledTextField(
+                isMandatory: true,
+                placeholder: .localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module),
+                title: .localized(key: "individualToTeam.teamName.field.title", bundle: .module),
+                string: $teamName
             )
-            .wireTextStyle(.h4)
-            TextField(
-                String.localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module),
-                text: $teamName
-            )
-            .textFieldStyle(.roundedBorder)
-            .wireTextStyle(.body1)
 
             Spacer()
 
             Button(
-                action: { actionCallback(.continue(teamName: teamName)) },
+                action: { actionCallback(.continue(teamName: validTeamName)) },
                 label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
             )
             .wireButtonStyle(.primary)
-            .disabled(teamName.isEmpty)
+            .disabled(validTeamName.isEmpty)
         }
     }
 }

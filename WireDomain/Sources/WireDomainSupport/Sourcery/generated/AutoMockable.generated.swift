@@ -3,7 +3,7 @@
 
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 
 import WireAPI
 import WireDataModel
+import WireDomainPkg
 
 @testable import WireDomain
 
@@ -49,6 +50,61 @@ import WireDataModel
 
 
 
+
+class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - isMLSEnabled
+
+    var isMLSEnabled: Bool {
+        get { return underlyingIsMLSEnabled }
+        set(value) { underlyingIsMLSEnabled = value }
+    }
+
+    var underlyingIsMLSEnabled: Bool!
+
+
+    // MARK: - storeIsMLSEnabledStatus
+
+    var storeIsMLSEnabledStatusNewValue_Invocations: [Bool] = []
+    var storeIsMLSEnabledStatusNewValue_MockMethod: ((Bool) -> Void)?
+
+    func storeIsMLSEnabledStatus(newValue: Bool) {
+        storeIsMLSEnabledStatusNewValue_Invocations.append(newValue)
+
+        guard let mock = storeIsMLSEnabledStatusNewValue_MockMethod else {
+            fatalError("no mock for `storeIsMLSEnabledStatusNewValue`")
+        }
+
+        mock(newValue)
+    }
+
+}
+
+class MockBackendConfigRepositoryProtocol: BackendConfigRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pullMLSBackendStatus
+
+    var pullMLSBackendStatus_Invocations: [Void] = []
+    var pullMLSBackendStatus_MockMethod: (() async -> Void)?
+
+    func pullMLSBackendStatus() async {
+        pullMLSBackendStatus_Invocations.append(())
+
+        guard let mock = pullMLSBackendStatus_MockMethod else {
+            fatalError("no mock for `pullMLSBackendStatus`")
+        }
+
+        await mock()
+    }
+
+}
 
 public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
 
@@ -135,44 +191,24 @@ public class MockConversationLabelsLocalStoreProtocol: ConversationLabelsLocalSt
     public init() {}
 
 
-    // MARK: - storeLabel
+    // MARK: - setLabels
 
-    public var storeLabel_Invocations: [ConversationLabelInfo] = []
-    public var storeLabel_MockError: Error?
-    public var storeLabel_MockMethod: ((ConversationLabelInfo) async throws -> Void)?
+    public var setLabels_Invocations: [[ConversationLabelInfo]] = []
+    public var setLabels_MockError: Error?
+    public var setLabels_MockMethod: (([ConversationLabelInfo]) async throws -> Void)?
 
-    public func storeLabel(_ conversationLabel: ConversationLabelInfo) async throws {
-        storeLabel_Invocations.append(conversationLabel)
+    public func setLabels(_ labels: [ConversationLabelInfo]) async throws {
+        setLabels_Invocations.append(labels)
 
-        if let error = storeLabel_MockError {
+        if let error = setLabels_MockError {
             throw error
         }
 
-        guard let mock = storeLabel_MockMethod else {
-            fatalError("no mock for `storeLabel`")
+        guard let mock = setLabels_MockMethod else {
+            fatalError("no mock for `setLabels`")
         }
 
-        try await mock(conversationLabel)
-    }
-
-    // MARK: - deleteOldLabelsLocally
-
-    public var deleteOldLabelsLocallyExcludedLabels_Invocations: [[ConversationLabelInfo]] = []
-    public var deleteOldLabelsLocallyExcludedLabels_MockError: Error?
-    public var deleteOldLabelsLocallyExcludedLabels_MockMethod: (([ConversationLabelInfo]) async throws -> Void)?
-
-    public func deleteOldLabelsLocally(excludedLabels: [ConversationLabelInfo]) async throws {
-        deleteOldLabelsLocallyExcludedLabels_Invocations.append(excludedLabels)
-
-        if let error = deleteOldLabelsLocallyExcludedLabels_MockError {
-            throw error
-        }
-
-        guard let mock = deleteOldLabelsLocallyExcludedLabels_MockMethod else {
-            fatalError("no mock for `deleteOldLabelsLocallyExcludedLabels`")
-        }
-
-        try await mock(excludedLabels)
+        try await mock(labels)
     }
 
 }
@@ -1144,6 +1180,38 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
 }
 
+public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigrationUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeTeamName_Invocations: [String] = []
+    public var invokeTeamName_MockError: Error?
+    public var invokeTeamName_MockMethod: ((String) async throws -> IndividualToTeamMigrationResult)?
+    public var invokeTeamName_MockValue: IndividualToTeamMigrationResult?
+
+    public func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
+        invokeTeamName_Invocations.append(teamName)
+
+        if let error = invokeTeamName_MockError {
+            throw error
+        }
+
+        if let mock = invokeTeamName_MockMethod {
+            return try await mock(teamName)
+        } else if let mock = invokeTeamName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeTeamName`")
+        }
+    }
+
+}
+
 class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
     // MARK: - Life cycle
@@ -1468,6 +1536,35 @@ class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
         } else {
             fatalError("no mock for `decryptedEventDataFrom`")
         }
+    }
+
+}
+
+public class MockPullSelfUserClientsProtocol: PullSelfUserClientsProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullSelfClients
+
+    public var pullSelfClients_Invocations: [Void] = []
+    public var pullSelfClients_MockError: Error?
+    public var pullSelfClients_MockMethod: (() async throws -> Void)?
+
+    public func pullSelfClients() async throws {
+        pullSelfClients_Invocations.append(())
+
+        if let error = pullSelfClients_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfClients_MockMethod else {
+            fatalError("no mock for `pullSelfClients`")
+        }
+
+        try await mock()
     }
 
 }

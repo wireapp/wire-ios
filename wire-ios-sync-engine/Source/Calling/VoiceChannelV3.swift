@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -210,9 +210,8 @@ extension VoiceChannelV3: CallActions {
         }
     }
 
-    public func request(videoStreams: [AVSClient]) {
+    public func request(videoStreams: [AVSClientVideoStream]) {
         guard let conversationId = conversation?.avsIdentifier else { return }
-
         callCenter?.requestVideoStreams(conversationId: conversationId, clients: videoStreams)
     }
 }

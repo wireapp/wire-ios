@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import Foundation
 import WireAnalytics
-import WireCryptobox
+import WireCrypto
 import WireDataModel
 import WireLogging
 import WireUtilities
@@ -106,6 +106,8 @@ extension SessionManager {
     }
 
     // MARK: - Import
+
+    // TODO: [WPB-14616] delete import related code when the restore button from the authentication flow is removed
 
     /// Restores the account database from the Wire iOS database back up file.
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
@@ -256,7 +258,7 @@ private extension BackupMetadata {
 
 // MARK: - Zip Helper
 
-extension URL {
+private extension URL {
     func zipDirectory(to url: URL) -> Bool {
         SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
     }

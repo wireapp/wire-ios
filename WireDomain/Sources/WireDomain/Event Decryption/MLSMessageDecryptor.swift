@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,21 +20,6 @@ import Foundation
 import WireAPI
 import WireDataModel
 import WireLogging
-
-// sourcery: AutoMockable
-/// Decrypt MLS messages.
-protocol MLSMessageDecryptorProtocol {
-
-    /// Decrypt a MLS message.
-    ///
-    /// - Parameter eventData: A payload containing the encrypted message.
-    /// - Returns: The payload containing the decrypted message.
-
-    func decryptedEventData(
-        from eventData: ConversationMLSMessageAddEvent
-    ) async throws -> ConversationMLSMessageAddEvent
-
-}
 
 struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
@@ -65,7 +50,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
 
-        let decryptionResults = await decryptMLSMessage(
+        let decryptionResults = try await decryptMLSMessage(
             message: eventData.message,
             mlsGroupID: mlsGroupID,
             subconversation: eventData.subconversation
@@ -89,33 +74,24 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         message: String,
         mlsGroupID: MLSGroupID,
         subconversation: String?
-    ) async -> [MLSDecryptResult] {
-        do {
-            let subconvType = subconversation != nil ? SubgroupType(rawValue: subconversation!) : nil
+    ) async throws -> [MLSDecryptResult] {
+        let subconvType = subconversation != nil ? SubgroupType(rawValue: subconversation!) : nil
 
-            let results = try await mlsDecryptionService.decrypt(
-                message: message,
-                for: mlsGroupID,
-                subconversationType: subconvType
-            )
+        let results = try await mlsDecryptionService.decrypt(
+            message: message,
+            for: mlsGroupID,
+            subconversationType: subconvType
+        )
 
-            if results.isEmpty {
-                WireLogger.mls.info(
-                    "successfully decrypted mls message but no result was returned"
-                )
-
-                return []
-            }
-
-            return results
-
-        } catch {
-            WireLogger.mls.error(
-                "failed to decrypt mls message: \(String(describing: error))"
+        if results.isEmpty {
+            WireLogger.mls.info(
+                "successfully decrypted mls message but no result was returned"
             )
 
             return []
         }
+
+        return results
     }
 
     private func processMLSMessageDecryptionResults(

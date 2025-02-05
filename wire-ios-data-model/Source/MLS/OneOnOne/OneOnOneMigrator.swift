@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         )
 
         await context.perform {
+
             _ = context.saveOrRollback()
         }
 
@@ -151,17 +152,29 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
-            // move local messages from proteus conversation if it exists
-            if let existingConversation = otherUser.oneOnOneConversation,
-               existingConversation.messageProtocol == .proteus {
+            // Note on proteus, it's possible to have duplicate 1-1 conversations, so we need to fetch all relevant
+            // 1-1 conversations here.
+            let source = OneOnOneSource(context: context)
+            let proteusConversations = try source.fetchOneOnOnes(
+                user: otherUser,
+                types: [.fake, .proteus, .proteusPending]
+            )
+
+            // Move local messages from all proteus conversations
+            for proteusConversation in proteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(existingConversation.allMessages)
+                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+            }
+
+            if !proteusConversations.isEmpty {
+                // insert system message that we moved from proteus to MLS
+                let sender = ZMUser.selfUser(in: context)
+                mlsConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
 
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }
-
             // switch active conversation
             otherUser.oneOnOneConversation = mlsConversation
         }

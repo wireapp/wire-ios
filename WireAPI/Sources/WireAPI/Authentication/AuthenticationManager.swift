@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,12 +43,12 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
     }
 
     private var currentToken: CurrentToken?
-    private let clientID: String
+    private let clientID: String?
     private let cookieStorage: any CookieStorageProtocol
     private let networkService: NetworkService
 
     init(
-        clientID: String,
+        clientID: String?,
         cookieStorage: any CookieStorageProtocol,
         networkService: NetworkService
     ) {
@@ -119,12 +119,19 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
         Task {
             let cookies = try await cookieStorage.fetchCookies()
 
-            var request = try URLRequestBuilder(path: "/access")
-                .withQueryItem(name: "client_id", value: clientID)
+            var requestBuilder = try URLRequestBuilder(path: "/access")
                 .withMethod(.post)
                 .withAcceptType(.json)
                 .withCookies(cookies)
-                .build()
+
+            if let clientID {
+                requestBuilder = requestBuilder.withQueryItem(
+                    name: "client_id",
+                    value: clientID
+                )
+            }
+
+            var request = requestBuilder.build()
 
             if let lastKnownToken {
                 request.setAccessToken(lastKnownToken)

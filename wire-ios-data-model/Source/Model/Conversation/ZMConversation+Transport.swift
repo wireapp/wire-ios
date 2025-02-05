@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import WireTransport
 
 /// This enum matches the backend convention for type
 @objc(ZMBackendConversationType)
-public enum BackendConversationType: Int {
+public enum BackendConversationType: Int, Equatable {
     case group = 0
     case `self` = 1
     case oneOnOne = 2
@@ -128,18 +128,26 @@ public extension ZMConversation {
         }
     }
 
-    func updateMembers(_ usersAndRoles: [(ZMUser, Role?)], selfUserRole: Role?) {
+    func updateMembers(
+        _ usersAndRoles: [(ZMUser, Role?)],
+        selfUserRole: Role?,
+        shouldRemoveParticipants: Bool = true
+    ) {
         guard let context = managedObjectContext else {
             return
         }
 
-        let allParticipants = Set(usersAndRoles.map(\.0))
-        let removedParticipants = localParticipantsExcludingSelf.subtracting(allParticipants)
         addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        removeParticipantsAndUpdateConversationState(
-            users: removedParticipants,
-            initiatingUser: ZMUser.selfUser(in: context)
-        )
+
+        if shouldRemoveParticipants {
+            let allParticipants = Set(usersAndRoles.map(\.0))
+            let removedParticipants = localParticipantsExcludingSelf.subtracting(allParticipants)
+
+            removeParticipantsAndUpdateConversationState(
+                users: removedParticipants,
+                initiatingUser: ZMUser.selfUser(in: context)
+            )
+        }
 
         let selfUser = ZMUser.selfUser(in: context)
         if let role = selfUserRole {

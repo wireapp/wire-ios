@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -421,7 +421,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         userSession: UserSession,
         trackingManager: TrackingManager
     ) -> AuthenticatedRouter? {
-        guard let userSession = ZMUserSession.shared() else { return nil }
+        guard let userSession = userSession as? ZMUserSession else { return nil }
 
         return AuthenticatedRouter(
             mainWindow: mainWindow,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,26 +20,6 @@ import WireAPI
 import WireDataModel
 import WireLogging
 import WireProtos
-
-// sourcery: AutoMockable
-/// A common processor for processing MLS / Proteus protobuf message.
-/// Used by `ConversationMLSMessageAddEventProcessor` and `ConversationProteusMessageAddEventProcessor`
-/// The message content is encoded using protocol buffers. There is a common protocol buffer definition adopted by all
-/// Wire client.
-public protocol ConversationProtobufMessageProcessorProtocol {
-
-    func processProtobufMessage(
-        _ message: GenericMessage,
-        content: GenericMessage.OneOf_Content,
-        conversation: ZMConversation,
-        conversationID: ConversationID,
-        senderID: UserID,
-        senderClientID: String?,
-        date: Date,
-        eventMessage: String
-    ) async throws
-
-}
 
 struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 

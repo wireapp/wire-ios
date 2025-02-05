@@ -3,7 +3,7 @@
 
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -375,6 +375,211 @@ public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerpri
         } else {
             fatalError("no mock for `invokeUserClient`")
         }
+    }
+
+}
+
+public class MockImportBackupAppStateUpdaterProtocol: ImportBackupAppStateUpdaterProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - reportImportProgress
+
+    public var reportImportProgressProgress_Invocations: [Float] = []
+    public var reportImportProgressProgress_MockMethod: ((Float) -> Void)?
+
+    public func reportImportProgress(progress: Float) {
+        reportImportProgressProgress_Invocations.append(progress)
+
+        guard let mock = reportImportProgressProgress_MockMethod else {
+            fatalError("no mock for `reportImportProgressProgress`")
+        }
+
+        mock(progress)
+    }
+
+    // MARK: - reportMigrationNeeded
+
+    public var reportMigrationNeeded_Invocations: [Void] = []
+    public var reportMigrationNeeded_MockMethod: (() async -> Void)?
+
+    public func reportMigrationNeeded() async {
+        reportMigrationNeeded_Invocations.append(())
+
+        guard let mock = reportMigrationNeeded_MockMethod else {
+            fatalError("no mock for `reportMigrationNeeded`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - selectAccountAndTriggerSlowSync
+
+    public var selectAccountAndTriggerSlowSync_Invocations: [Account] = []
+    public var selectAccountAndTriggerSlowSync_MockMethod: ((Account) async -> Void)?
+
+    public func selectAccountAndTriggerSlowSync(_ account: Account) async {
+        selectAccountAndTriggerSlowSync_Invocations.append(account)
+
+        guard let mock = selectAccountAndTriggerSlowSync_MockMethod else {
+            fatalError("no mock for `selectAccountAndTriggerSlowSync`")
+        }
+
+        await mock(account)
+    }
+
+}
+
+public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStorageProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - importsDirectory
+
+    public var importsDirectory: URL {
+        get { return underlyingImportsDirectory }
+        set(value) { underlyingImportsDirectory = value }
+    }
+
+    public var underlyingImportsDirectory: URL!
+
+
+    // MARK: - replacePersistentStore
+
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations: [(accountIdentifier: UUID, backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup)] = []
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError: Error?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod: ((UUID, URL, URL, ZMSDispatchGroup) async throws -> URL)?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue: URL?
+
+    @discardableResult
+    public func replacePersistentStore(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup) async throws -> URL {
+        replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.append((accountIdentifier: accountIdentifier, backupDirectory: backupDirectory, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
+
+        if let error = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError {
+            throw error
+        }
+
+        if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod {
+            return try await mock(accountIdentifier, backupDirectory, applicationContainer, dispatchGroup)
+        } else if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup`")
+        }
+    }
+
+    // MARK: - createContextProvider
+
+    public var createContextProviderAccountApplicationContainerDispatchGroup_Invocations: [(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?)] = []
+    public var createContextProviderAccountApplicationContainerDispatchGroup_MockError: Error?
+    public var createContextProviderAccountApplicationContainerDispatchGroup_MockMethod: ((Account, URL, ZMSDispatchGroup?) async throws -> ContextProvider)?
+    public var createContextProviderAccountApplicationContainerDispatchGroup_MockValue: ContextProvider?
+
+    public func createContextProvider(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?) async throws -> ContextProvider {
+        createContextProviderAccountApplicationContainerDispatchGroup_Invocations.append((account: account, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
+
+        if let error = createContextProviderAccountApplicationContainerDispatchGroup_MockError {
+            throw error
+        }
+
+        if let mock = createContextProviderAccountApplicationContainerDispatchGroup_MockMethod {
+            return try await mock(account, applicationContainer, dispatchGroup)
+        } else if let mock = createContextProviderAccountApplicationContainerDispatchGroup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createContextProviderAccountApplicationContainerDispatchGroup`")
+        }
+    }
+
+}
+
+class MockImportBackupFileArchiverProtocol: ImportBackupFileArchiverProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - unzipFile
+
+    var unzipFileAtTo_Invocations: [(sourceURL: URL, destinationURL: URL)] = []
+    var unzipFileAtTo_MockError: Error?
+    var unzipFileAtTo_MockMethod: ((URL, URL) throws -> Void)?
+
+    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        unzipFileAtTo_Invocations.append((sourceURL: sourceURL, destinationURL: destinationURL))
+
+        if let error = unzipFileAtTo_MockError {
+            throw error
+        }
+
+        guard let mock = unzipFileAtTo_MockMethod else {
+            fatalError("no mock for `unzipFileAtTo`")
+        }
+
+        try mock(sourceURL, destinationURL)
+    }
+
+}
+
+public class MockImportBackupStreamDecryptorProtocol: ImportBackupStreamDecryptorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - decrypt
+
+    public var decryptInputOutputAccountIDPassword_Invocations: [(input: InputStream, output: OutputStream, accountID: UUID, password: String)] = []
+    public var decryptInputOutputAccountIDPassword_MockError: Error?
+    public var decryptInputOutputAccountIDPassword_MockMethod: ((InputStream, OutputStream, UUID, String) throws -> Void)?
+
+    public func decrypt(input: InputStream, output: OutputStream, accountID: UUID, password: String) throws {
+        decryptInputOutputAccountIDPassword_Invocations.append((input: input, output: output, accountID: accountID, password: password))
+
+        if let error = decryptInputOutputAccountIDPassword_MockError {
+            throw error
+        }
+
+        guard let mock = decryptInputOutputAccountIDPassword_MockMethod else {
+            fatalError("no mock for `decryptInputOutputAccountIDPassword`")
+        }
+
+        try mock(input, output, accountID, password)
+    }
+
+}
+
+public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUrlPassword_Invocations: [(url: URL, password: String)] = []
+    public var invokeUrlPassword_MockError: Error?
+    public var invokeUrlPassword_MockMethod: ((URL, String) async throws -> Void)?
+
+    public func invoke(url: URL, password: String) async throws {
+        invokeUrlPassword_Invocations.append((url: url, password: password))
+
+        if let error = invokeUrlPassword_MockError {
+            throw error
+        }
+
+        guard let mock = invokeUrlPassword_MockMethod else {
+            fatalError("no mock for `invokeUrlPassword`")
+        }
+
+        try await mock(url, password)
     }
 
 }

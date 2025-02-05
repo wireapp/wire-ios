@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,7 +47,9 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
         // analytics
         let isNotificationsBadgeVisible = viewController.accountInfo.showNotificationsBadge
         let analyticsEventTracker = analyticsEventTracker()
-        analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+        #if false // [WPB-15245] This event has temporarily been disabled.
+            analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+        #endif
 
         // open profile
         Task { @MainActor in

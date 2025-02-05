@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,6 +63,7 @@ class BaseTest: ZMTBaseTest {
     var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
     var mockEARService: MockEARServiceInterface!
     var mockProteusService: MockProteusServiceInterface!
+    var mockMLSService: MockMLSServiceInterface!
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
     override func setUp() {
@@ -148,6 +149,7 @@ class BaseTest: ZMTBaseTest {
         mockEARService.lockDatabase_MockMethod = {}
 
         mockProteusService = MockProteusServiceInterface()
+        mockMLSService = MockMLSServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
 
         context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
@@ -195,6 +197,7 @@ class BaseTest: ZMTBaseTest {
             earService: earService,
             contextStorage: MockLAContextStorable(),
             proteusService: mockProteusService,
+            mlsService: mockMLSService,
             mlsDecryptionService: mockMLSDecryptionService,
             sharedUserDefaults: .temporary()
         )
