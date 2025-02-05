@@ -66,7 +66,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         descriptionLabel.font = .preferredFont(forTextStyle: .caption1)
         descriptionLabel.textColor = BaseColorPalette.Grays.gray70
         descriptionLabel.adjustsFontForContentSizeCategory = true
-        descriptionLabel.accessibilityIdentifier = "" // TODO: [WPB-15466] fix accessibility
+        descriptionLabel.accessibilityIdentifier = "descriptionLabel"
         descriptionLabel.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return descriptionLabel
     }()
@@ -79,7 +79,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         progressLabel.adjustsFontForContentSizeCategory = true
         progressLabel.textColor = BaseColorPalette.Grays.gray70
         progressLabel.textAlignment = .center
-        progressLabel.accessibilityIdentifier = "" // TODO: [WPB-15466] fix accessibility
+        progressLabel.accessibilityIdentifier = "progressLabel"
         progressLabel.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return progressLabel
     }()
@@ -87,7 +87,7 @@ final class CreatingBackupProgressViewController: UIViewController {
     private lazy var progressView = {
         let progressView = UIProgressView()
         progressView.progressTintColor = ColorTheme.Base.primary
-        progressView.accessibilityIdentifier = "" // TODO: [WPB-15466] fix accessibility
+        progressView.accessibilityIdentifier = "progressView"
         progressView.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return progressView
     }()
@@ -96,7 +96,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         let title = String(localized: "exportBackup.creatingBackup.saveButton.title", bundle: .module)
         let exportButton = UIButton(configuration: .primary, primaryAction: .init(title: title) { _ in })
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
-        exportButton.accessibilityIdentifier = "" // TODO: [WPB-15466] fix accessibility
+        exportButton.accessibilityIdentifier = "exportButton"
         exportButton.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return exportButton
     }()
