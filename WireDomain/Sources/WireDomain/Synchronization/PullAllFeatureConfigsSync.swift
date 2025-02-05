@@ -46,61 +46,61 @@ private extension FeatureConfigLocalStoreProtocol {
 
     func storeFeatureConfig(_ featureConfig: WireAPI.FeatureConfig) async {
         switch featureConfig {
-        case .appLock(let config):
+        case let .appLock(config):
             await storeFeature(
                 name: .appLock,
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
-        case .classifiedDomains(let config):
+        case let .classifiedDomains(config):
             await storeFeature(
                 name: .classifiedDomains,
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
-        case .conferenceCalling(let config):
+        case let .conferenceCalling(config):
             await storeFeature(
                 name: .conferenceCalling,
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
-        case .conversationGuestLinks(let config):
+        case let .conversationGuestLinks(config):
             await storeFeature(
                 name: .conversationGuestLinks,
                 isEnabled: config.status == .enabled,
                 config: nil
             )
-        case .digitalSignature(let config):
+        case let .digitalSignature(config):
             await storeFeature(
                 name: .digitalSignature,
                 isEnabled: config.status == .enabled,
                 config: nil
             )
-        case .endToEndIdentity(let config):
+        case let .endToEndIdentity(config):
             await storeFeature(
                 name: .e2ei,
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
-        case .fileSharing(let config):
+        case let .fileSharing(config):
             await storeFeature(
                 name: .fileSharing,
                 isEnabled: config.status == .enabled,
                 config: nil
             )
-        case .mls(let config):
+        case let .mls(config):
             await storeFeature(
                 name: .mls,
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
-        case .mlsMigration(let config):
+        case let .mlsMigration(config):
             await storeFeature(
                 name: .mlsMigration,
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
-        case .selfDeletingMessages(let config):
+        case let .selfDeletingMessages(config):
             await storeFeature(
                 name: .selfDeletingMessages,
                 isEnabled: config.status == .enabled,
