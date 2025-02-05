@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import Testing
 
 @testable import WireSettingsUI
@@ -31,9 +32,14 @@ struct ImportBackupViewModelTest {
         )
     }
 
-    @Test func testSomething() async throws {
+    @Test func testGreenPath() async throws {
+        // Given
         let sut = sut
+        let pickedFile = URL(fileURLWithPath: "/path/to/backup/file")
 
+        // sut.pickedBackupFile(result: .success(pickedFile))
+
+        // TODO: finish implementation
     }
 
 }

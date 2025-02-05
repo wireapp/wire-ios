@@ -16,12 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Determines if a given password is valid for encrypting a backup.
-public protocol BackupPasswordValidatorProtocol {
+import Foundation
+import Testing
 
-    func isPasswordValid(_ password: String) -> Bool
+@testable import WireSettingsUI
+@testable import WireSettingsUISupport
 
-    var localizedRulesDescription: String { get }
+@MainActor
+struct ExportBackupViewModelTest {
+
+    var sut: ExportBackupViewModel {
+        ExportBackupViewModel(
+            createBackupUseCase: MockCreateBackupUseCaseProtocol(),
+            cleanUpBackupsUseCase: MockCleanUpBackupsUseCaseProtocol(),
+            logger: MockWireSettingsUILogger()
+        )
+    }
+
+    @Test func testGreenPath() async throws {
+        // Given
+        let sut = sut
+
+        // TODO: finish implementation
+    }
 
 }
