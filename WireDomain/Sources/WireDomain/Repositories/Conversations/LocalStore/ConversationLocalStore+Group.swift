@@ -64,7 +64,8 @@ extension ConversationLocalStore {
 
     func updateMembers(
         from conversation: Conversation,
-        for localConversation: ZMConversation
+        for localConversation: ZMConversation,
+        shouldRemoveParticipants: Bool = true
     ) {
         guard let members = conversation.members else {
             return
@@ -84,7 +85,8 @@ extension ConversationLocalStore {
 
         localConversation.updateMembers(
             otherMembers,
-            selfUserRole: selfUserRole
+            selfUserRole: selfUserRole,
+            shouldRemoveParticipants: shouldRemoveParticipants
         )
     }
 

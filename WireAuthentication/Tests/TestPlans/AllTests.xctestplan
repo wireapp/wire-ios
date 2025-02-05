@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "5A308D1F-68E9-4557-A903-DDA55B8AB1B9",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireAuthentication",
+        "identifier" : "WireAuthenticationUITests",
+        "name" : "WireAuthenticationUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireAuthentication",
+        "identifier" : "WireAuthenticationTests",
+        "name" : "WireAuthenticationTests"
+      }
+    }
+  ],
+  "version" : 1
+}
