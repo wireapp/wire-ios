@@ -16,23 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import Foundation;
-@import CoreGraphics;
+import CoreGraphics
+import Foundation
 
-@class ZMIImageProperties;
+@objcMembers
+public class ZMIImageProperties: NSObject {
+    public let size: CGSize
+    public let length: UInt
+    public let mimeType: String
 
-@interface ZMImageLoadOperation : NSOperation
+    public init(size: CGSize, length: UInt, mimeType: String) {
+        self.size = size
+        self.length = length
+        self.mimeType = mimeType
+    }
 
-- (instancetype)initWithImageData:(NSData *)imageData;
-- (instancetype)initWithImageFileURL:(NSURL *)fileURL;
-
-@property (nonatomic, readonly) CGImageRef CGImage;
-@property (nonatomic, readonly, copy) NSDictionary *sourceImageProperties;
-
-@property (nonatomic, readonly) int tiffOrientation;
-@property (nonatomic, readonly) ZMIImageProperties *computedImageProperties;
-@property (nonatomic, readonly, copy) NSData *originalImageData;
-
-@property (nonatomic, readonly, copy) NSString *inputDescription;
-
-@end
+    public override var description: String {
+        "{ length: \(length), type: \(mimeType), size: (\(size.width), \(size.height)}"
+    }
+}
