@@ -25,6 +25,7 @@ import WireSettingsUI
 
 // Instead of linking WireDomainPkg into WireUI targets several symlinks have been created.
 // Therefore several types exist twice, once in their original target (WireDomainPkg) and once in WireUI.
+
 struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCaseProtocol {
 
     private let importBackupUseCase: any WireDomainPkg.ImportBackupUseCaseProtocol

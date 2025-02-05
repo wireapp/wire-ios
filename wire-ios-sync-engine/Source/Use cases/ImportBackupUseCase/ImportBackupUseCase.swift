@@ -70,7 +70,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     }
 
                     // before we start the first operation let the user know, the progress has started
-                    appStateUpdater.reportImportProgress(progress: 0.25)
+                    continuation.yield(.progress(0.25))
 
                     let unzippedURL = try decryptAndUnzipBackup(
                         url: url,
@@ -78,7 +78,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         accountID: account.userIdentifier
                     )
 
-                    appStateUpdater.reportImportProgress(progress: 0.5)
+                    continuation.yield(.progress(0.5))
 
                     // backup the self user and the self client
                     let selfUserQualifiedID: QualifiedID?

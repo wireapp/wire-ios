@@ -43,7 +43,6 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
 
     let sessionManager: SessionManager
 
-    func reportImportProgress(progress: Float) { print("importProgress: \(Int(round(progress * 100)))%") }
     @MainActor
     func reportMigrationNeeded() async {
         await withCheckedContinuation { continuation in
