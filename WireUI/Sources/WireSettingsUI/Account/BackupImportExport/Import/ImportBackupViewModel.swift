@@ -133,15 +133,16 @@ final class ImportBackupViewModel: ObservableObject {
             } catch ImportBackupError.passwordRequired {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
+                return // don't clean up temporary file
             } catch ImportBackupError.decryptionError {
                 logger.warn("failed to decrypt backup file, presenting the password input again")
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
+                return // don't clean up temporary file
             } catch ImportBackupError.incompatibleFileFormat {
                 logger.warn("restore failed due to incompatible file format")
                 alertContent = .init(
                     title: L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.title,
                     message: L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.message,
-                    cancel: "",
                     action: L10n.Localizable.ImportBackup.Alert.ok
                 )
                 state = .restoreFailed
@@ -166,6 +167,7 @@ final class ImportBackupViewModel: ObservableObject {
                 )
                 state = .restoreFailed
             }
+            try? fileManager.removeItem(at: url)
         }
     }
 

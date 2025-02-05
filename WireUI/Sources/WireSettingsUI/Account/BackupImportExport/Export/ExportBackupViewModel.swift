@@ -69,6 +69,7 @@ final class ExportBackupViewModel: ObservableObject {
         backupTask?.cancel()
         backupTask = Task {
             do {
+                state = .creatingBackup(progress: 0)
                 for try await update in createBackupUseCase.invoke(password: password) {
                     switch update {
                     case let .progress(fraction):

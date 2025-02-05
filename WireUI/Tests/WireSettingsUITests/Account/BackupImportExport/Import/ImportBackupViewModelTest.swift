@@ -25,15 +25,30 @@ import XCTest
 @MainActor
 final class ImportBackupViewModelTest: XCTestCase {
 
+    private var temporaryDirectory: URL!
+    private var temporaryFile: URL!
     private var mockImportBackupUseCase: MockImportBackupUseCaseProtocol!
     private var mockLogger: MockWireSettingsUILogger!
     private var sut: ImportBackupViewModel!
 
+    private var fileManager: FileManager { .default }
+
     override func setUp() async throws {
+
+        temporaryDirectory = try fileManager.url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: Bundle(for: Self.self).bundleURL,
+            create: true
+        )
+        temporaryFile = temporaryDirectory
+            .appending(component: "someFile", directoryHint: .notDirectory)
+        try Data("data".utf8).write(to: temporaryFile)
+
         mockImportBackupUseCase = .init()
 
         mockLogger = .init()
-        mockLogger.error_MockMethod = { _ in }
+        mockLogger.debug_MockMethod = { _ in }
 
         sut = .init(
             importBackupUseCase: mockImportBackupUseCase,
@@ -45,21 +60,12 @@ final class ImportBackupViewModelTest: XCTestCase {
         sut = nil
         mockLogger = nil
         mockImportBackupUseCase = nil
+
+        try fileManager.removeItem(at: temporaryDirectory)
     }
 
     func testConfirmationIsNeededBeforeProceeding() throws {
         // Given
-        let fileManager = FileManager.default
-        let temporaryDirectory = try fileManager.url(
-            for: .itemReplacementDirectory,
-            in: .userDomainMask,
-            appropriateFor: Bundle(for: Self.self).bundleURL,
-            create: true
-        )
-        defer { try? fileManager.removeItem(at: temporaryDirectory) }
-        let temporaryFile = temporaryDirectory
-            .appending(component: "someFile", directoryHint: .notDirectory)
-        try Data("data".utf8).write(to: temporaryFile)
         let sut = sut as ImportBackupViewModel
 
         // When
@@ -71,6 +77,23 @@ final class ImportBackupViewModelTest: XCTestCase {
         XCTAssertFalse(sut.alertContent.message.isEmpty)
         XCTAssertFalse(sut.alertContent.cancel.isEmpty)
         XCTAssertFalse(sut.alertContent.action.isEmpty)
+    }
+
+    func testPasswordIsRequested() {
+        // Given
+        var continuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation!
+        mockImportBackupUseCase.invokeUrlPassword_MockValue = .init { continuation = $0 }
+        let sut = sut as ImportBackupViewModel
+
+        // When
+        sut.pickedBackupFile(result: .success(temporaryFile))
+        wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
+        sut.confirmOverwrite()
+        continuation.finish(throwing: ImportBackupError.passwordRequired)
+
+        // Then
+        wait(forConditionToBeTrue: sut.isEnterBackupPasswordPresented, timeout: 3)
+        XCTAssertFalse(sut.isBackupPasswordWrong)
     }
 
     /*
