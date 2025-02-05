@@ -33,7 +33,7 @@ public struct DomainRegistrationConfiguration: Equatable, Sendable {
 
     /// Whether the email is already in use on the cloud.
 
-    public let dueToExistingAccount: Bool?
+    public let isCloudAccountAlreadyRegistered: Bool?
 
     /// SSO code.
 
