@@ -60,7 +60,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     // to start with we need an active user session, later the session will be torn down
                     weak var userSession = userSession()
                     guard let account = userSession?.contextProvider.account else {
-                        throw ImportBackupError.noActiveAccount
+                        throw ImportBackupError.noActiveAccountForImport
                     }
 
                     // before we start the first operation let the user know, the progress has started
@@ -85,7 +85,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         selfUserQualifiedID = qualifiedID
                         selfClientBackup = backup
                     } else {
-                        throw ImportBackupError.unknown
+                        throw ImportBackupError.faildToBackUpUserClient
                     }
 
                     // user session needs to be torn down
@@ -144,7 +144,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         guard
             let inputStream = InputStream(url: url),
             let outputStream = OutputStream(url: decryptedURL, append: false)
-        else { throw ImportBackupError.unknown }
+        else { throw ImportBackupError.failedToCreateStreamForDecryption }
 
         try streamDecryptor.decrypt(
             input: inputStream,

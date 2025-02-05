@@ -38,7 +38,7 @@ extension SessionManager {
             let handle = activeUserSession.flatMap(ZMUser.selfUser)?.handle,
             let activeUserSession
         else {
-            return completion(.failure(CreateLegacyBackupError.noActiveAccount))
+            return completion(.failure(CreateLegacyBackupError.noActiveAccountForExport))
         }
 
         CoreDataStack.backupLocalStorage(
@@ -118,14 +118,14 @@ extension SessionManager {
             let status = unauthenticatedSession?.authenticationStatus,
             let userId = status.authenticatedUserIdentifier
         else {
-            return completion(.failure(CreateLegacyBackupError.notAuthenticated))
+            return completion(.failure(ImportBackupError.notAuthenticated))
         }
 
         // Verify the imported file has the correct file extension.
         guard BackupFileExtensions.allCases.contains(where: {
             $0.rawValue == location.pathExtension
         }) else {
-            return completion(.failure(CreateLegacyBackupError.invalidFileExtension))
+            return completion(.failure(ImportBackupError.invalidFileExtension))
         }
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
@@ -149,10 +149,10 @@ extension SessionManager {
                     accountId: userId
                 )
             } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
-                return complete(.failure(CreateLegacyBackupError.decryptionError))
+                return complete(.failure(ImportBackupError.decryptionError))
 
             } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
-                return complete(.failure(CreateLegacyBackupError.keyCreationFailed))
+                return complete(.failure(ImportBackupError.keyCreationFailed))
 
             } catch {
                 return complete(.failure(error))
@@ -178,15 +178,15 @@ extension SessionManager {
     // MARK: - Encryption & Decryption
 
     static func encrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
-        guard let inputStream = InputStream(url: input) else { throw CreateLegacyBackupError.unknown }
-        guard let outputStream = OutputStream(url: output, append: false) else { throw CreateLegacyBackupError.unknown }
+        guard let inputStream = InputStream(url: input) else { throw CreateLegacyBackupError.failedToCreateStreamsForEncryption }
+        guard let outputStream = OutputStream(url: output, append: false) else { throw CreateLegacyBackupError.failedToCreateStreamsForEncryption }
         let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountId)
         try ChaCha20Poly1305.StreamEncryption.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
     }
 
     static func decrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
-        guard let inputStream = InputStream(url: input) else { throw CreateLegacyBackupError.unknown }
-        guard let outputStream = OutputStream(url: output, append: false) else { throw CreateLegacyBackupError.unknown }
+        guard let inputStream = InputStream(url: input) else { throw ImportBackupError.failedToCreateStreamForDecryption }
+        guard let outputStream = OutputStream(url: output, append: false) else { throw ImportBackupError.failedToCreateStreamForDecryption }
         let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountId)
         try ChaCha20Poly1305.StreamEncryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
     }

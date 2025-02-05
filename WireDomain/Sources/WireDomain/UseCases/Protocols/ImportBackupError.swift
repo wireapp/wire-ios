@@ -17,7 +17,8 @@
 //
 
 public enum ImportBackupError: Error, CaseIterable {
-    case noActiveAccount
+    case notAuthenticated // TODO: [WPB-15336 delete this case?
+    case noActiveAccountForImport
     /// The backup file is encrypted and a password is needed for decryption.
     case passwordRequired
     /// E.g. if the file to import was created with a different (incompatible) version of the app.
@@ -27,5 +28,7 @@ public enum ImportBackupError: Error, CaseIterable {
     case invalidFileExtension
     case keyCreationFailed
     case decryptionError
-    case unknown
+    case faildToBackUpUserClient
+    /// Failed to create `InputStream` or `OutputStream` from `URL`.
+    case failedToCreateStreamForDecryption
 }

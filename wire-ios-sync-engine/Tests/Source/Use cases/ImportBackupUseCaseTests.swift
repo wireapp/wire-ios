@@ -155,14 +155,14 @@ final class ImportBackupUseCaseTests: XCTestCase {
         // Given
         let extensions = ["zip"]
         mockUserSession = nil
-        fatalError("TODO")
+
         for extensions in extensions {
             do {
                 // When
                 let filePath = "/path/to/file.\(extensions)"
-                try await sut.invoke(url: URL(fileURLWithPath: filePath), password: "")
+                for try await update in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
                 XCTFail("Unexpected success")
-            } catch CreateLegacyBackupError.invalidFileExtension {
+            } catch ImportBackupError.invalidFileExtension {
                 // Then
             }
         }

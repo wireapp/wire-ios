@@ -17,11 +17,8 @@
 //
 
 public enum CreateLegacyBackupError: Error {
-    case notAuthenticated
-    case noActiveAccount
+    case noActiveAccountForExport
     case compressionError
-    case invalidFileExtension
-    case keyCreationFailed
-    case decryptionError
-    case unknown
+    /// Failed to create `InputStream` or `OutputStream` from `URL`.
+    case failedToCreateStreamsForEncryption
 }
