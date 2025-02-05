@@ -2,4 +2,4 @@ curl \
 	--request POST \
 	--header "Content-Type: application/json" \
 	--data "{\"size\":500}" \
-	"/v3/list-connections/"
+	"/v3/list-connections"

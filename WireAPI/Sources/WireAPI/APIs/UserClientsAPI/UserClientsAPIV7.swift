@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class UserClientsAPIV7: UserClientsAPIV6 {
+class UserClientsAPIV7: UserClientsAPIV6 {
 
     override var apiVersion: APIVersion { .v7 }
 

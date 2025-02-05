@@ -16,6 +16,9 @@ public class KeyboardGalleryPage extends IOSPage {
                             "**/XCUIElementTypeCollectionView/XCUIElementTypeCell[2]")
     private WebElement firstGalleryPicture;
 
+    @iOSXCUITFindBy(xpath ="//XCUIElementTypeButton[@name=\"OK\"]")
+    private WebElement okButton;
+
     public KeyboardGalleryPage(WebDriver driver) {
         super(driver);
     }
@@ -30,6 +33,9 @@ public class KeyboardGalleryPage extends IOSPage {
 
     public void tapFullScreenButton(){
         fullscreenCameraButton.click();
+    }
+    public void tapOkButton() {
+        okButton.click();
     }
 
     public boolean isFirstItemGalleryVisible(){

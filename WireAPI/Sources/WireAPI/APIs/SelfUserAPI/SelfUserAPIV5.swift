@@ -28,7 +28,7 @@ class SelfUserAPIV5: SelfUserAPIV4 {
         let encoder = JSONEncoder.defaultEncoder
         let payload = SupportedProtocolsPayloadV5(supportedProtocols: supportedProtocols)
         let body = try encoder.encode(payload)
-        let path = resourcePath + "supported-protocols"
+        let path = resourcePath + "/supported-protocols"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.put)

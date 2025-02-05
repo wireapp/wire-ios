@@ -917,7 +917,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 from: conversation,
                 for: localConversation,
                 serverTimestamp: serverTimestamp,
-                isFederationEnabled: isFederationEnabled
+                isFederationEnabled: isFederationEnabled,
+                shouldRemoveParticipants: false
             )
 
             updateConversationStatus(
@@ -1067,7 +1068,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         from conversation: Conversation,
         for localConversation: ZMConversation,
         serverTimestamp: Date,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        shouldRemoveParticipants: Bool = true
     ) {
         updateAttributes(
             from: conversation,
@@ -1082,7 +1084,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         updateMembers(
             from: conversation,
-            for: localConversation
+            for: localConversation,
+            shouldRemoveParticipants: shouldRemoveParticipants
         )
 
         updateConversationTimestamps(

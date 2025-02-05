@@ -63,6 +63,7 @@ class BaseTest: ZMTBaseTest {
     var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
     var mockEARService: MockEARServiceInterface!
     var mockProteusService: MockProteusServiceInterface!
+    var mockMLSService: MockMLSServiceInterface!
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
     override func setUp() {
@@ -148,6 +149,7 @@ class BaseTest: ZMTBaseTest {
         mockEARService.lockDatabase_MockMethod = {}
 
         mockProteusService = MockProteusServiceInterface()
+        mockMLSService = MockMLSServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
 
         context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
@@ -195,6 +197,7 @@ class BaseTest: ZMTBaseTest {
             earService: earService,
             contextStorage: MockLAContextStorable(),
             proteusService: mockProteusService,
+            mlsService: mockMLSService,
             mlsDecryptionService: mockMLSDecryptionService,
             sharedUserDefaults: .temporary()
         )

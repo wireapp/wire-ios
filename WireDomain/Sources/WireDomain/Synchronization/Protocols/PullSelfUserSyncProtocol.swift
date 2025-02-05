@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 protocol PullSelfUserSyncProtocol {
 
-    func pull() async throws
+    @discardableResult
+    func pull() async throws -> (id: UUID, domain: String?, teamID: UUID?)
 
 }
