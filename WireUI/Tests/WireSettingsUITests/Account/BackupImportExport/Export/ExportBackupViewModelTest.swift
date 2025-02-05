@@ -33,7 +33,8 @@ struct ExportBackupViewModelTest {
         )
     }
 
-    @Test func testGreenPath() async throws {
+    @Test
+    func testGreenPath() async throws {
         // Given
         let sut = sut
 

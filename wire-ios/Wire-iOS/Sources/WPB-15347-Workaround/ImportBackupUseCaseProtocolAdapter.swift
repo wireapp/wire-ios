@@ -18,13 +18,13 @@
 
 import Foundation
 import WireDomainPkg
-import WireSettingsUI
 import WireLogging
+import WireSettingsUI
 
 // TODO: [WPB-15347] delete this workaround
 
 // Instead of linking WireDomainPkg into WireUI targets several symlinks have been created.
-// Therefore many types exist twice, once in their original target (WireDomainPkg) and once in WireUI.
+// Therefore several types exist twice, once in their original target (WireDomainPkg) and once in WireUI.
 struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCaseProtocol {
 
     private let importBackupUseCase: any WireDomainPkg.ImportBackupUseCaseProtocol

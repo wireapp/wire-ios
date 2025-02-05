@@ -32,7 +32,8 @@ struct ImportBackupViewModelTest {
         )
     }
 
-    @Test func testGreenPath() async throws {
+    @Test
+    func testGreenPath() async throws {
         // Given
         let sut = sut
         let pickedFile = URL(fileURLWithPath: "/path/to/backup/file")

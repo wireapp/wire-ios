@@ -26,7 +26,6 @@ public class MockCleanUpBackupsUseCaseProtocol: CleanUpBackupsUseCaseProtocol {
 
     public init() {}
 
-
     // MARK: - invoke
 
     public var invoke_Invocations: [Void] = []
