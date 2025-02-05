@@ -84,10 +84,33 @@ final class AuthenticationAPITests: XCTestCase {
         XCTAssertEqual(
             response,
             DomainRegistrationConfiguration(
-                backendUrl: "https://example.com",
+                backendUrlStr: "https://example.com",
                 domainRedirect: .none,
                 dueToExistingAccount: false,
-                ssoCode: "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                ssoCodeStr: "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+            )
+        )
+    }
+
+    func testGetDomainRegistration_ResponseWithNullValues_Handling_V8_Success() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetDomainRegistrationSuccessResponse_WithNullValues")
+        ])
+
+        let sut = AuthenticationAPIV8(apiService: apiService)
+
+        // When
+        let response = try await sut.getDomainRegistration(forEmail: "email@example.com")
+
+        // Then
+        XCTAssertEqual(
+            response,
+            DomainRegistrationConfiguration(
+                backendUrlStr: nil,
+                domainRedirect: .preAuthorized,
+                dueToExistingAccount: false,
+                ssoCodeStr: nil
             )
         )
     }

@@ -34,10 +34,10 @@ struct DomainRegistrationConfigurationV8: Decodable, ToAPIModelConvertible {
 
     func toAPIModel() -> DomainRegistrationConfiguration {
         DomainRegistrationConfiguration(
-            backendUrl: backendUrl,
+            backendUrlStr: backendUrl,
             domainRedirect: domainRedirect,
             dueToExistingAccount: dueToExistingAccount,
-            ssoCode: ssoCode
+            ssoCodeStr: ssoCode
         )
     }
 

@@ -22,9 +22,9 @@ import Foundation
 
 public struct DomainRegistrationConfiguration: Equatable, Sendable {
 
-    /// The url of the backend.
+    /// The `URL` of the backend.
 
-    public let backendUrl: String?
+    public let backendUrl: URL?
 
     /// The configuration value that explains the appropriate login/registration flow.
 
@@ -36,6 +36,26 @@ public struct DomainRegistrationConfiguration: Equatable, Sendable {
 
     /// SSO code.
 
-    public let ssoCode: String?
+    public let ssoCode: UUID?
+
+    public init(
+        backendUrlStr: String?,
+        domainRedirect: DomainRedirect,
+        dueToExistingAccount: Bool?,
+        ssoCodeStr: String?
+    ) {
+        if let backendUrlStr {
+            self.backendUrl = URL(string: backendUrlStr)
+        } else {
+            self.backendUrl = nil
+        }
+        self.domainRedirect = domainRedirect
+        self.dueToExistingAccount = dueToExistingAccount
+        if let ssoCodeStr {
+            self.ssoCode = UUID(uuidString: ssoCodeStr)
+        } else {
+            self.ssoCode = nil
+        }
+    }
 
 }
