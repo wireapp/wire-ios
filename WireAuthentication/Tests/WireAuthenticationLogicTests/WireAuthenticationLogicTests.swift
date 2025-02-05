@@ -16,31 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireAuthenticationAPI
+import XCTest
+@testable import WireAuthenticationLogic
 
-public struct RootView: View {
+final class WireAuthenticationLogicTests: XCTestCase {
 
-    @ObservedObject var viewModel: RootViewModel
-
-    let builder: DetermineAuthMethodBuilder
-
-    public init(
-        viewModel: RootViewModel,
-        builder: DetermineAuthMethodBuilder
-    ) {
-        self.viewModel = viewModel
-        self.builder = builder
+    override func setUpWithError() throws {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
-    public var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            builder.determineAuthMethodView
-        }
+    override func tearDownWithError() throws {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-}
-
-#Preview {
-    MockDependencies().rootView
+    func testExample() throws {
+        XCTAssert(true, "Tests are running")
+    }
 }

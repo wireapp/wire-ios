@@ -15,3 +15,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import NeedleFoundation
+import SwiftUI
+internal import WireAuthenticationUI
+
+class RootComponent: BootstrapComponent {
+
+    @MainActor public var router: any Router {
+        rootViewModel
+    }
+
+    @MainActor private var rootViewModel: RootViewModel {
+        RootViewModel()
+    }
+
+    @MainActor var rootView: some View {
+        RootView(
+            viewModel: rootViewModel,
+            builder: determineAuthMethodComponent
+        )
+    }
+
+    // MARK: - Children
+
+    var determineAuthMethodComponent: DetermineAuthMethodComponent {
+        DetermineAuthMethodComponent(parent: self)
+    }
+
+}
