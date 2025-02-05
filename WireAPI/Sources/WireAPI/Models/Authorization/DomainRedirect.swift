@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum DomainRedirect: String, Sendable {
+public enum DomainRedirect: Sendable {
     case locked
     case sso
     case backend
-    case noRegistration = "no-registration"
-    case preAuthorized = "pre-authorized"
+    case noRegistration
+    case preAuthorized
     case none
 }
