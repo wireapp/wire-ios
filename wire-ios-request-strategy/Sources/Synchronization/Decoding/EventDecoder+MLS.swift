@@ -63,8 +63,8 @@ extension EventDecoder {
     ) async throws -> [ZMUpdateEvent] {
         WireLogger.mls.info("decrypting mls message")
 
-        guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
-            WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
+        guard let mlsService = await context.perform({ context.mlsService }) else {
+            WireLogger.mls.critical("failed to decrypt mls message: mlsService is missing")
             fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
@@ -98,7 +98,7 @@ extension EventDecoder {
             throw Failure.missingMLSGroupID
         }
 
-        let results = try await decryptionService.decrypt(
+        let results = try await mlsService.decrypt(
             message: payload.data,
             for: groupID,
             subconversationType: payload.subconversationType
