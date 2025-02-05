@@ -143,9 +143,9 @@ final class ImportBackupUseCaseTests: XCTestCase {
             do {
                 // When
                 let filePath = "/path/to/file.\(extensions)"
-                for try await update in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
+                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
                 XCTFail("Unexpected success")
-            } catch ImportBackupError.noActiveAccount {
+            } catch ImportBackupError.noActiveAccountForImport {
                 // Then
             }
         }
@@ -160,7 +160,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
             do {
                 // When
                 let filePath = "/path/to/file.\(extensions)"
-                for try await update in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
+                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
                 XCTFail("Unexpected success")
             } catch ImportBackupError.invalidFileExtension {
                 // Then
@@ -174,9 +174,12 @@ final class ImportBackupUseCaseTests: XCTestCase {
         let accountID = coreDataStack.account.userIdentifier
 
         // When
-        sut.invoke(url: url, password: "c<%I2f41\"6!'")
+        let sequence = try await sut.invoke(url: url, password: "c<%I2f41\"6!'")
+            .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
+
 
         // Then
+        XCTAssertEqual(sequence, [.progress(0.25), .progress(0.5), .done])
         XCTAssertEqual(mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.accountID, accountID)
         XCTAssertEqual(
             mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.password,
