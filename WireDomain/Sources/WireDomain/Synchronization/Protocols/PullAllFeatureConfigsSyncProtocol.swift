@@ -18,9 +18,9 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// An object to keep the local feature configs up to date
 /// with the remote feature configs.
-// sourcery: AutoMockable
 protocol PullAllFeatureConfigsSyncProtocol {
 
     /// Fetch all conversation labels from remote, then create and update
