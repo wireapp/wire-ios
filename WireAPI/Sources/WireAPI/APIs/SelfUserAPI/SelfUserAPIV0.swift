@@ -31,7 +31,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
     }
 
     var resourcePath: String {
-        "\(pathPrefix)/self/"
+        "\(pathPrefix)/self"
     }
 
     func getSelfUser() async throws -> SelfUser {

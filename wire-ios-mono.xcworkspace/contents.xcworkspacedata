@@ -141,9 +141,6 @@
       location = "group:wire-ios/Wire-iOS.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireAuthentication/WireAuthentication.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:WireUI">
    </FileRef>
    <FileRef
@@ -205,6 +202,9 @@
    </FileRef>
    <FileRef
       location = "group:WireAPI">
+   </FileRef>
+   <FileRef
+      location = "group:WireAuthentication">
    </FileRef>
    <FileRef
       location = "group:WireFoundation">
