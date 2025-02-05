@@ -30,7 +30,7 @@ final class ExportBackupViewModel: ObservableObject {
 
     // CreatingBackupProgress is the outer sheet, which contains/presents SetBackupPassword
     @Published var isCreatingBackupProgressPresented = false
-    @Published var isSetBackupPasswordPresented = false { didSet { print("isSetBackupPasswordPresented: \(isSetBackupPasswordPresented)") }}
+    @Published var isSetBackupPasswordPresented = false
     @Published var isErrorAlertPresented = false
 
     @Published private(set) var backupProgress: CreatingBackupProgressModel = .ongoing(0)
@@ -93,8 +93,7 @@ final class ExportBackupViewModel: ObservableObject {
         case .requestingPassword:
             state = nil
         case .creatingBackup:
-            backupTask?.cancel()
-            state = nil
+            reset()
         case .backupReady:
             cleanUpBackups()
             state = nil

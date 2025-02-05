@@ -26,22 +26,30 @@ import XCTest
 final class ExportBackupViewModelTests: XCTestCase {
 
     private var mockCreateBackupUseCase: MockCreateBackupUseCaseProtocol!
-    private var mockCleanUpBackupsUseCaseProtocol: MockCleanUpBackupsUseCaseProtocol!
+    private var mockCleanUpBackupsUseCase: MockCleanUpBackupsUseCaseProtocol!
+    private var mockLogger: MockWireSettingsUILogger!
     private var sut: ExportBackupViewModel!
 
     override func setUp() async throws {
         mockCreateBackupUseCase = .init()
-        mockCleanUpBackupsUseCaseProtocol = .init()
+
+        mockCleanUpBackupsUseCase = .init()
+        mockCleanUpBackupsUseCase.invoke_MockMethod = {}
+
+        mockLogger = .init()
+        mockLogger.error_MockMethod = { _ in }
+
         sut = .init(
             createBackupUseCase: mockCreateBackupUseCase,
-            cleanUpBackupsUseCase: mockCleanUpBackupsUseCaseProtocol,
-            logger: MockWireSettingsUILogger()
+            cleanUpBackupsUseCase: mockCleanUpBackupsUseCase,
+            logger: mockLogger
         )
     }
 
     override func tearDown() async throws {
         sut = nil
-        mockCleanUpBackupsUseCaseProtocol = nil
+        mockLogger = nil
+        mockCleanUpBackupsUseCase = nil
         mockCreateBackupUseCase = nil
     }
 
@@ -58,17 +66,9 @@ final class ExportBackupViewModelTests: XCTestCase {
         let url = URL(fileURLWithPath: "/")
         let sut = sut as ExportBackupViewModel
 
-//        func p<V>(_ value: V) -> V {
-//            print("value: \(value)")
-//            return value
-//        }
-
         // When / Then
         sut.showPasswordDialog()
-        //print("before wait")
-        // wait(forConditionToBeTrue: p(sut.isSetBackupPasswordPresented), timeout: 10)
         wait(forConditionToBeTrue: sut.isSetBackupPasswordPresented, timeout: 3)
-        //print("after wait")
 
         sut.createBackup(password: "pw")
         continuation.yield(.progress(0.5))
@@ -78,80 +78,44 @@ final class ExportBackupViewModelTests: XCTestCase {
         wait(forConditionToBeTrue: sut.backupProgress == .finished(url), timeout: 3)
 
         continuation.finish()
+        sut.cancel()
+        wait(forConditionToBeTrue: !self.mockCleanUpBackupsUseCase.invoke_Invocations.isEmpty, timeout: 3)
     }
 
-    /*
-    func testInvalidPassword() async throws {
-        let screenBounds = UIScreen.main.bounds
-        let viewModel = SetBackupPasswordViewModel(
-            passwordValidator: backupPasswordValidator,
-            cancelAction: {},
-            setPasswordAction: { _ in }
-        )
-        viewModel.password = "invalid"
-        let sut = SetBackupPasswordView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+    func testCancelTerminatesTask() {
+        // Given
+        var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
+        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
+        let sut = sut as ExportBackupViewModel
+        let expectation = XCTestExpectation()
+        continuation.onTermination = { @Sendable _ in expectation.fulfill() }
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: sut, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
+        // When
+        sut.showPasswordDialog()
+        sut.createBackup(password: "pw")
+        continuation.yield(.progress(0.5))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        sut.cancel()
+
+        // Then
+        wait(for: [expectation], timeout: 3)
     }
 
-    func testNonEmptyPassword() async throws {
-        let screenBounds = UIScreen.main.bounds
-        let viewModel = SetBackupPasswordViewModel(
-            passwordValidator: backupPasswordValidator,
-            cancelAction: {},
-            setPasswordAction: { _ in }
-        )
-        viewModel.password = "G00dPassword"
-        let sut = SetBackupPasswordView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+    func testErrorPresentsAlert() {
+        // Given
+        var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
+        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
+        let sut = sut as ExportBackupViewModel
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: sut, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
+        // When
+        sut.showPasswordDialog()
+        sut.createBackup(password: "pw")
+        continuation.yield(.progress(0.5))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        continuation.finish(throwing: NSError(domain: "ExportBackupViewModelTests", code: 987))
+
+        // Then
+        wait(forConditionToBeTrue: sut.isErrorAlertPresented, timeout: 3)
     }
-
-    func testColorSchemeVariants() async throws {
-        let screenBounds = UIScreen.main.bounds
-        let viewModel = SetBackupPasswordViewModel(
-            passwordValidator: backupPasswordValidator,
-            cancelAction: {},
-            setPasswordAction: { _ in }
-        )
-        let sut = SetBackupPasswordView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
-    }
-
-    func testDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let viewModel = SetBackupPasswordViewModel(
-            passwordValidator: backupPasswordValidator,
-            cancelAction: {},
-            setPasswordAction: { _ in }
-        )
-        let sut = SetBackupPasswordView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: sut.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-     */
 
 }
