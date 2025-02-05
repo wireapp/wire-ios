@@ -1,9 +1,7 @@
 
 
-import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationLogic
 internal import WireAuthenticationUI
@@ -26,7 +24,7 @@ private func parent2(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
 #if !NEEDLE_DYNAMIC
 
 private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider: DetermineAuthMethodComponentDependency {
-    var router: Router {
+    var router: any Router {
         return rootComponent.router
     }
     private let rootComponent: RootComponent
@@ -39,7 +37,7 @@ private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: Needle
     return DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider(rootComponent: parent1(component) as! RootComponent)
 }
 private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: LoginViaEmailComponentDependency {
-    var router: Router {
+    var router: any Router {
         return rootComponent.router
     }
     private let rootComponent: RootComponent
@@ -55,19 +53,19 @@ private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: Needle
 #else
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
     public func registerItems() {
-        keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-Router"
+        keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-any Router"
 
     }
 }
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
-        keyPathToName[\LoginViaEmailComponentDependency.router] = "router-Router"
+        keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
-        localTable["router-Router"] = { [unowned self] in self.router as Any }
+        localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
 }
 

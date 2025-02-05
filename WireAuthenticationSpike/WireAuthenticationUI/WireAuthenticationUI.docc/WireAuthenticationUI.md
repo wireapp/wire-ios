@@ -1,8 +1,0 @@
-# ``WireAuthenticationUI``
-
-## Overview
-
-## Topics
-
-### Group
-
