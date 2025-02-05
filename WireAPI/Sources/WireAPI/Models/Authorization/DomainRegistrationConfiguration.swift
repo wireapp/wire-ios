@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 /// The domain redirect configuration.
 
@@ -44,17 +45,25 @@ public struct DomainRegistrationConfiguration: Equatable, Sendable {
         dueToExistingAccount: Bool?,
         ssoCodeStr: String?
     ) {
-        if let backendUrlStr {
-            self.backendUrl = URL(string: backendUrlStr)
-        } else {
-            self.backendUrl = nil
+        self.backendUrl = backendUrlStr.flatMap { urlString in
+            if let url = URL(string: urlString) {
+                return url
+            } else {
+                WireLogger.authentication.error("Invalid backend URL format: \(urlString)")
+                return nil
+            }
         }
+
         self.domainRedirect = domainRedirect
         self.dueToExistingAccount = dueToExistingAccount
-        if let ssoCodeStr {
-            self.ssoCode = UUID(uuidString: ssoCodeStr)
-        } else {
-            self.ssoCode = nil
+
+        self.ssoCode = ssoCodeStr.flatMap { uuidString in
+            if let uuid = UUID(uuidString: uuidString) {
+                return uuid
+            } else {
+                WireLogger.authentication.error("Invalid SSO code format: \(uuidString)")
+                return nil
+            }
         }
     }
 
