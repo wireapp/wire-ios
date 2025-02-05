@@ -16,31 +16,114 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import Testing
+import WireTestingPackage
+import XCTest
 
 @testable import WireSettingsUI
 @testable import WireSettingsUISupport
 
 @MainActor
-struct ImportBackupViewModelTest {
+final class ImportBackupViewModelTest: XCTestCase {
 
-    var sut: ImportBackupViewModel {
-        ImportBackupViewModel(
-            importBackupUseCase: MockImportBackupUseCaseProtocol(),
-            logger: MockWireSettingsUILogger()
+    private var mockImportBackupUseCase: MockImportBackupUseCaseProtocol!
+    private var mockLogger: MockWireSettingsUILogger!
+    private var sut: ImportBackupViewModel!
+
+    override func setUp() async throws {
+        mockImportBackupUseCase = .init()
+
+        mockLogger = .init()
+        mockLogger.error_MockMethod = { _ in }
+
+        sut = .init(
+            importBackupUseCase: mockImportBackupUseCase,
+            logger: mockLogger
         )
     }
 
-    @Test
-    func testGreenPath() async throws {
-        // Given
-        let sut = sut
-        let pickedFile = URL(fileURLWithPath: "/path/to/backup/file")
-
-        // sut.pickedBackupFile(result: .success(pickedFile))
-
-        // TODO: finish implementation
+    override func tearDown() async throws {
+        sut = nil
+        mockLogger = nil
+        mockImportBackupUseCase = nil
     }
+
+    func testConfirmationIsNeededBeforeProceeding() {
+        // Given
+        let url = URL(fileURLWithPath: "/")
+        let sut = sut as ImportBackupViewModel
+
+        // When
+        sut.pickedBackupFile(result: .success(url))
+
+        // Then
+        wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
+    }
+
+    /*
+    func testInitialValues() {
+        XCTAssertFalse(sut.isCreatingBackupProgressPresented)
+        XCTAssertFalse(sut.isSetBackupPasswordPresented)
+        XCTAssertFalse(sut.isErrorAlertPresented)
+    }
+
+    func testProgressIsReported() {
+        // Given
+        var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
+        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
+        let url = URL(fileURLWithPath: "/")
+        let sut = sut as ExportBackupViewModel
+
+        // When / Then
+        sut.showPasswordDialog()
+        wait(forConditionToBeTrue: sut.isSetBackupPasswordPresented, timeout: 3)
+
+        sut.createBackup(password: "pw")
+        continuation.yield(.progress(0.5))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+
+        continuation.yield(.done(url))
+        wait(forConditionToBeTrue: sut.backupProgress == .finished(url), timeout: 3)
+
+        continuation.finish()
+        sut.cancel()
+        wait(forConditionToBeTrue: !self.mockCleanUpBackupsUseCase.invoke_Invocations.isEmpty, timeout: 3)
+    }
+
+    func testCancelTerminatesTask() {
+        // Given
+        var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
+        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
+        let sut = sut as ExportBackupViewModel
+        let expectation = XCTestExpectation()
+        continuation.onTermination = { @Sendable _ in expectation.fulfill() }
+
+        // When
+        sut.showPasswordDialog()
+        sut.createBackup(password: "pw")
+        continuation.yield(.progress(0.5))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        sut.cancel()
+
+        // Then
+        wait(for: [expectation], timeout: 3)
+    }
+
+    func testErrorPresentsAlert() {
+        // Given
+        var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
+        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
+        let sut = sut as ExportBackupViewModel
+
+        // When
+        sut.showPasswordDialog()
+        sut.createBackup(password: "pw")
+        continuation.yield(.progress(0.5))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        continuation.finish(throwing: NSError(domain: "ExportBackupViewModelTests", code: 987))
+
+        // Then
+        wait(forConditionToBeTrue: sut.isErrorAlertPresented, timeout: 3)
+    }
+     */
 
 }

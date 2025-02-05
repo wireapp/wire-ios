@@ -67,7 +67,6 @@ final class ExportBackupViewModel: ObservableObject {
 
     func createBackup(password: String) {
         backupTask?.cancel()
-
         backupTask = Task {
             do {
                 for try await update in createBackupUseCase.invoke(password: password) {
