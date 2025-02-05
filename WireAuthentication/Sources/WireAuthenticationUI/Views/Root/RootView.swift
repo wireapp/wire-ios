@@ -16,8 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator
-ARCHS = arm64 armv7 armv7s
-ONLY_ACTIVE_ARCH = YES
+import SwiftUI
+import WireAuthenticationAPI
 
+public struct RootView: View {
+
+    @ObservedObject var viewModel: RootViewModel
+
+    let builder: any DetermineAuthMethodBuilder
+
+    public init(
+        viewModel: RootViewModel,
+        builder: any DetermineAuthMethodBuilder
+    ) {
+        self.viewModel = viewModel
+        self.builder = builder
+    }
+
+    public var body: some View {
+        NavigationStack(path: $viewModel.path) {
+            builder.determineAuthMethodView
+        }
+    }
+
+}
+
+#Preview {
+    MockDependencies().rootView
+}

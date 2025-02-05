@@ -16,14 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import XCTest
+@testable import WireAuthenticationLogic
 
-//! Project version number for WireAuthenticationLogic.
-FOUNDATION_EXPORT double WireAuthenticationLogicVersionNumber;
+final class WireAuthenticationLogicTests: XCTestCase {
 
-//! Project version string for WireAuthenticationLogic.
-FOUNDATION_EXPORT const unsigned char WireAuthenticationLogicVersionString[];
+    override func setUpWithError() throws {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
+    }
 
-// In this header, you should import all the public headers of your framework using statements like #import <WireAuthenticationLogic/PublicHeader.h>
+    override func tearDownWithError() throws {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
 
-
+    func testExample() throws {
+        XCTAssert(true, "Tests are running")
+    }
+}

@@ -16,31 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import NeedleFoundation
 import SwiftUI
-import WireAuthenticationAPI
+internal import WireAuthenticationUI
 
-public struct RootView: View {
+class RootComponent: BootstrapComponent {
 
-    @ObservedObject var viewModel: RootViewModel
-
-    let builder: DetermineAuthMethodBuilder
-
-    public init(
-        viewModel: RootViewModel,
-        builder: DetermineAuthMethodBuilder
-    ) {
-        self.viewModel = viewModel
-        self.builder = builder
+    @MainActor public var router: any Router {
+        rootViewModel
     }
 
-    public var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            builder.determineAuthMethodView
-        }
+    @MainActor private var rootViewModel: RootViewModel {
+        RootViewModel()
     }
 
-}
+    @MainActor var rootView: some View {
+        RootView(
+            viewModel: rootViewModel,
+            builder: determineAuthMethodComponent
+        )
+    }
 
-#Preview {
-    MockDependencies().rootView
+    // MARK: - Children
+
+    var determineAuthMethodComponent: DetermineAuthMethodComponent {
+        DetermineAuthMethodComponent(parent: self)
+    }
+
 }
