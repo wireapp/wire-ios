@@ -72,7 +72,7 @@ final class AuthenticationAPITests: XCTestCase {
     func testGetDomainRegistration_Response_Handling_V8_Success() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetDomainRegistrationSuccessResponse")
+            (.ok, "GetDomainRegistrationSuccessResponseV8")
         ])
 
         let sut = AuthenticationAPIV8(apiService: apiService)
@@ -95,7 +95,7 @@ final class AuthenticationAPITests: XCTestCase {
     func testGetDomainRegistration_ResponseWithNullValues_Handling_V8_Success() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetDomainRegistrationSuccessResponse_WithNullValues")
+            (.ok, "GetDomainRegistrationSuccessResponse_WithNullValuesV8")
         ])
 
         let sut = AuthenticationAPIV8(apiService: apiService)
@@ -118,7 +118,7 @@ final class AuthenticationAPITests: XCTestCase {
     func testGetDomainRegistration_Response_Handling_V8_Invalid_Domain() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
-            (.badRequest, "GetDomainRegistrationErrorResponse_InvalidDomain")
+            (.badRequest, "GetDomainRegistrationErrorResponse_InvalidDomainV8")
         ])
 
         let sut = AuthenticationAPIV8(apiService: apiService)

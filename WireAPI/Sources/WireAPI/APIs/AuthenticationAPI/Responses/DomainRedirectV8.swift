@@ -16,11 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum DomainRedirect: String, Sendable {
+enum DomainRedirectV8: String, Decodable, Sendable {
+
     case locked
     case sso
     case backend
     case noRegistration = "no-registration"
     case preAuthorized = "pre-authorized"
     case none
+
+    func toAPIModel() -> DomainRedirect {
+        switch self {
+        case .locked:
+                .locked
+        case .sso:
+                .sso
+        case .backend:
+                .backend
+        case .noRegistration:
+                .noRegistration
+        case .preAuthorized:
+                .preAuthorized
+        case .none:
+                .none
+        }
+    }
+
 }

@@ -28,14 +28,14 @@ struct DomainRegistrationConfigurationV8: Decodable, ToAPIModelConvertible {
     }
 
     public let backendUrl: String?
-    public let domainRedirect: DomainRedirect
+    public let domainRedirect: DomainRedirectV8
     public let dueToExistingAccount: Bool?
     public let ssoCode: String?
 
     func toAPIModel() -> DomainRegistrationConfiguration {
         DomainRegistrationConfiguration(
             backendUrlStr: backendUrl,
-            domainRedirect: domainRedirect,
+            domainRedirect: domainRedirect.toAPIModel(),
             dueToExistingAccount: dueToExistingAccount,
             ssoCodeStr: ssoCode
         )
