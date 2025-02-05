@@ -40,10 +40,10 @@ public struct DomainRegistrationConfiguration: Equatable, Sendable {
     public let ssoCode: UUID?
 
     public init(
-        backendUrlStr: String?,
+        backendURLString: String?,
         domainRedirect: DomainRedirect,
-        dueToExistingAccount: Bool?,
-        ssoCodeStr: String?
+        isCloudAccountAlreadyRegistered: Bool?,
+        ssoCodeString: String?
     ) {
         self.backendURL = backendUrlStr.flatMap { urlString in
             if let url = URL(string: urlString) {
