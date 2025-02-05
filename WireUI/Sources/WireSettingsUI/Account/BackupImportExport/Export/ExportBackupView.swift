@@ -49,16 +49,16 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
             }
 
             .alert(
-                Text("exportBackup.errorAlert.title", bundle: .module),
+                Text(L10n.Localizable.ExportBackup.ErrorAlert.title),
                 isPresented: $viewModel.isErrorAlertPresented
             ) {
                 Button {
                     viewModel.reset()
                 } label: {
-                    Text("exportBackup.errorAlert.ok", bundle: .module)
+                    Text(L10n.Localizable.ExportBackup.ErrorAlert.ok)
                 }
             } message: {
-                Text("exportBackup.errorAlert.message", bundle: .module)
+                Text(L10n.Localizable.ExportBackup.ErrorAlert.message)
             }
 
         }

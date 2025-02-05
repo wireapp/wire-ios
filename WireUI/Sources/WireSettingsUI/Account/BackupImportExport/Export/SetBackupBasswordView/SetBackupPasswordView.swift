@@ -33,7 +33,7 @@ struct SetBackupPasswordView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button { viewModel.cancel() } label: {
-                            Text("exportBackup.cancel.title", bundle: .module)
+                            Text(L10n.Localizable.ExportBackup.Cancel.title)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
                         .accessibilityLabel(Text(L10n.Accessibility.SetBackupPassword.Close.label))

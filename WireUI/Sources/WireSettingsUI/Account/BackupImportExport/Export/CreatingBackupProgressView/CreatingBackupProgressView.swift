@@ -33,10 +33,10 @@ struct CreatingBackupProgressView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(action: cancelAction) {
-                            Text("exportBackup.cancel.title", bundle: .module)
+                            Text(L10n.Localizable.ExportBackup.Cancel.title)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(Text("exportBackup.cancel.label"))
+                        .accessibilityLabel(Text(L10n.Accessibility.ExportBackup.Cancel.label))
                         .accessibilityIdentifier("cancel")
                     }
                 }

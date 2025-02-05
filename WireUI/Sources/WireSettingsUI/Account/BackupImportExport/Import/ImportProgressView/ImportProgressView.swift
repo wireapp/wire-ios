@@ -28,15 +28,15 @@ struct ImportProgressView: View {
         NavigationStack {
             progressView
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
-                .navigationTitle(Text("importBackup.restoringHistory.title", bundle: .module))
+                .navigationTitle(Text(L10n.Localizable.ImportBackup.RestoringHistory.title))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(action: cancelAction) {
-                            Text("importBackup.cancel.title", bundle: .module)
+                            Text(L10n.Localizable.ImportBackup.Cancel.title)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(Text("importBackup.cancel.label")) // TODO: use SwiftGen
+                        .accessibilityLabel(Text(L10n.Accessibility.ImportBackup.Cancel.label))
                         .accessibilityIdentifier("cancel")
                     }
                 }
@@ -47,7 +47,7 @@ struct ImportProgressView: View {
         VStack {
             Spacer()
             HStack {
-                Text("importBackup.restoringHistory.message", bundle: .module)
+                Text(L10n.Localizable.ImportBackup.RestoringHistory.message)
                 Spacer()
             }
             .padding(.bottom)
