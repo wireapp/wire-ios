@@ -35,7 +35,6 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     private var stack: CoreDataStack!
     private var modelHelper: ModelHelper!
 
-
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
