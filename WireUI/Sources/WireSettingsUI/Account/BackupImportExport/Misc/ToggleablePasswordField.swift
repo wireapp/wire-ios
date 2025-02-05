@@ -25,8 +25,11 @@ struct ToggleablePasswordField: View {
 
     var titleColor: Color
     var borderColor: Color
+    var focusOnAppear = true
 
     @State private var isPasswordVisible = false
+
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         HStack {
@@ -37,6 +40,7 @@ struct ToggleablePasswordField: View {
                         .font(.body)
                         .foregroundStyle(titleColor)
                 }
+                .focused($isFocused)
                 .textContentType(.password)
                 .autocapitalization(.none)
             } else {
@@ -45,6 +49,7 @@ struct ToggleablePasswordField: View {
                         .font(.body)
                         .foregroundStyle(titleColor)
                 }
+                .focused($isFocused)
                 .textContentType(.password)
             }
 
@@ -63,6 +68,11 @@ struct ToggleablePasswordField: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(borderColor, lineWidth: 1)
         )
+        .onAppear {
+            if focusOnAppear {
+                isFocused = true
+            }
+        }
     }
 }
 

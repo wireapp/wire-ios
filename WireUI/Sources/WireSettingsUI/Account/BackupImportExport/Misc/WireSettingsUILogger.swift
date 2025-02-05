@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-14297] remove this file eventually
+// TODO: [WPB-14297] remove this file when WireLogging can be imported
 // sourcery: AutoMockable
 public protocol WireSettingsUILogger: Sendable {
     func debug(_ message: String)

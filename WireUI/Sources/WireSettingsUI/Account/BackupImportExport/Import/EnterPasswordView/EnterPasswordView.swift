@@ -27,8 +27,6 @@ struct EnterPasswordView: View {
     let continueAction: (_ password: String) -> Void
     let cancelAction: () -> Void
 
-    @FocusState private var isTextFieldFocused: Bool
-
     var body: some View {
         NavigationStack {
             enterPasswordView
@@ -68,9 +66,9 @@ struct EnterPasswordView: View {
                     ToggleablePasswordField(
                         password: $password,
                         titleColor: passwordFieldTitleColor,
-                        borderColor: passwordFieldBorderColor
+                        borderColor: passwordFieldBorderColor,
+                        focusOnAppear: true
                     )
-                    .focused($isTextFieldFocused)
                     .padding(.bottom, 8)
 
                     if passwordIsWrong {

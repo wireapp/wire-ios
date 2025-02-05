@@ -32,7 +32,7 @@ final class ImportBackupViewModel: ObservableObject {
 
     @Published var isImportProgressPresented = false
     @Published var isEnterBackupPasswordPresented = false
-    @Published var alertContent = AlertContent(title: "", message: "", cancel: "", action: "")
+    @Published var alertContent = AlertContent(title: "", message: "", action: "")
     @Published var isImportConfirmationPresented = false
     @Published var isAlertPresented = false
 
@@ -96,12 +96,18 @@ final class ImportBackupViewModel: ObservableObject {
     }
 
     func confirmOverwrite() {
-        guard case let .requestConfirmation(url) = state else { return assertionFailure() }
+        guard case let .requestConfirmation(url) = state else {
+            logger.error("confirmOverwrite called while not in state `.requestConfirmation`")
+            return assertionFailure()
+        }
         importBackup(from: url, password: "")
     }
 
     func enterPassword(_ password: String) {
-        guard case let .requestingPassword(url, _) = state else { return assertionFailure() }
+        guard case let .requestingPassword(url, _) = state else {
+            logger.error("enterPassword called while not in state `.requestingPassword`")
+            return assertionFailure()
+        }
         importBackup(from: url, password: password)
     }
 
@@ -156,7 +162,6 @@ final class ImportBackupViewModel: ObservableObject {
                 alertContent = .init(
                     title: L10n.Localizable.ImportBackup.Alert.GenericError.title,
                     message: L10n.Localizable.ImportBackup.Alert.GenericError.message,
-                    cancel: "",
                     action: L10n.Localizable.ImportBackup.Alert.ok
                 )
                 state = .restoreFailed
@@ -246,7 +251,7 @@ final class ImportBackupViewModel: ObservableObject {
 
         let title: String
         let message: String
-        let cancel: String
+        var cancel = ""
         let action: String
 
     }
