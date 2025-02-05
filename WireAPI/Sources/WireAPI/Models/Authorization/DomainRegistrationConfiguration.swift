@@ -23,9 +23,9 @@ import WireLogging
 
 public struct DomainRegistrationConfiguration: Equatable, Sendable {
 
-    /// The `URL` of the backend.
+    /// The `URL` of the on-prem backend.
 
-    public let backendUrl: URL?
+    public let backendURL: URL?
 
     /// The configuration value that explains the appropriate login/registration flow.
 
