@@ -16,13 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAnalytics
-import WireCrypto
-import WireDataModel
 import WireDomainPkg
-import WireLogging
-import WireUtilities
+import WireCrypto
+import Foundation
 import ZipArchive
 
 extension SessionManager {
@@ -96,86 +92,7 @@ extension SessionManager {
         }
     }
 
-    // MARK: - Import
-
-    // TODO: [WPB-14616] delete import related code when the restore button from the authentication flow is removed
-
-    /// Restores the account database from the Wire iOS database back up file.
-    /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
-    /// is called.
-    public func restoreFromBackup(
-        at location: URL,
-        password: String,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
-        func complete(_ result: Result<Void, Error>) {
-            DispatchQueue.main.async(group: dispatchGroup) {
-                completion(result)
-            }
-        }
-
-        guard
-            let status = unauthenticatedSession?.authenticationStatus,
-            let userId = status.authenticatedUserIdentifier
-        else {
-            return completion(.failure(ImportBackupError.notAuthenticated))
-        }
-
-        // Verify the imported file has the correct file extension.
-        guard BackupFileExtensions.allCases.contains(where: {
-            $0.rawValue == location.pathExtension
-        }) else {
-            return completion(.failure(ImportBackupError.invalidFileExtension))
-        }
-
-        SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
-            guard let self else {
-                completion(.failure(NSError(
-                    userSessionErrorCode: .unknownError,
-                    userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"]
-                )))
-                return
-            }
-
-            let decryptedURL = SessionManager.temporaryURL(for: location)
-
-            WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
-
-            do {
-                try SessionManager.decrypt(
-                    from: location,
-                    to: decryptedURL,
-                    password: password,
-                    accountId: userId
-                )
-            } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
-                return complete(.failure(ImportBackupError.decryptionError))
-
-            } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
-                return complete(.failure(ImportBackupError.keyCreationFailed))
-
-            } catch {
-                return complete(.failure(error))
-            }
-
-            let url = SessionManager.unzippedBackupURL(for: location)
-
-            guard decryptedURL.unzip(to: url) else {
-                return complete(.failure(CreateLegacyBackupError.compressionError))
-            }
-
-            CoreDataStack.importLocalStorage(
-                accountIdentifier: userId,
-                from: url,
-                applicationContainer: sharedContainerURL,
-                dispatchGroup: dispatchGroup
-            ) { result in
-                completion(result.map { _ in })
-            }
-        }
-    }
-
-    // MARK: - Encryption & Decryption
+    // MARK: - Encryption
 
     static func encrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
         guard let inputStream = InputStream(url: input)
@@ -186,15 +103,6 @@ extension SessionManager {
         try ChaCha20Poly1305.StreamEncryption.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
     }
 
-    static func decrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
-        guard let inputStream = InputStream(url: input)
-        else { throw ImportBackupError.failedToCreateStreamForDecryption }
-        guard let outputStream = OutputStream(url: output, append: false)
-        else { throw ImportBackupError.failedToCreateStreamForDecryption }
-        let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountId)
-        try ChaCha20Poly1305.StreamEncryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
-    }
-
     // MARK: - Helper
 
     /// Deletes all previously exported and imported backups.
@@ -202,19 +110,11 @@ extension SessionManager {
         CoreDataStack.clearBackupDirectory(dispatchGroup: dispatchGroup)
     }
 
-    // MARK: - Static Helpers
-
-    private static func unzippedBackupURL(for url: URL) -> URL {
-        let filename = url.deletingPathExtension().lastPathComponent
-        return CoreDataStack.importsDirectory.appendingPathComponent(filename)
-    }
-
     private static func compress(backup: CoreDataStack.BackupInfo) throws -> URL {
         let url = temporaryURL(for: backup.url)
         guard backup.url.zipDirectory(to: url) else { throw CreateLegacyBackupError.compressionError }
         return url
     }
-
     private static func targetBackupURL(for backup: CoreDataStack.BackupInfo, handle: String) -> URL {
         let component = backup.metadata.backupFilename(for: handle)
         return backup.url.deletingLastPathComponent().appendingPathComponent(component)
@@ -256,9 +156,5 @@ private extension BackupMetadata {
 private extension URL {
     func zipDirectory(to url: URL) -> Bool {
         SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
-    }
-
-    func unzip(to url: URL) -> Bool {
-        SSZipArchive.unzipFile(atPath: path, toDestination: url.path)
     }
 }
