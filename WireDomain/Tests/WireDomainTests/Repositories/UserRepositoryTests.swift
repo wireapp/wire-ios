@@ -370,7 +370,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        let isSelfUser = try await sut.isSelfUser(
+        _ = try await sut.isSelfUser(
             id: .mockID1,
             domain: Scaffolding.domain
         )
