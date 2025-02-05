@@ -212,7 +212,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         )
 
         await context.perform {
-            guard userInfo.deleted == false else {
+            guard !userInfo.isDeleted else {
                 return persistedUser.markAccountAsDeleted(at: Date())
             }
 
