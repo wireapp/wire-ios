@@ -92,7 +92,7 @@ final class ExportBackupViewModel: ObservableObject {
             backupTask?.cancel()
             state = nil
         case .backupReady:
-            Task { try? await cleanUpBackupsUseCase.invoke() }
+            cleanUpBackups()
             state = nil
         case .backupFailed, .none:
             logger.error("unexpected state while received cancel: \(state == nil ? "nil" : ".backupFailed")")
@@ -162,4 +162,15 @@ final class ExportBackupViewModel: ObservableObject {
         self.isErrorAlertPresented = isErrorAlertPresented
 
     }
+
+    private func cleanUpBackups() {
+        Task {
+            do {
+                try await cleanUpBackupsUseCase.invoke()
+            } catch {
+                logger.error("cleaning up backups failed: \(String(reflecting: error))")
+            }
+        }
+    }
+
 }
