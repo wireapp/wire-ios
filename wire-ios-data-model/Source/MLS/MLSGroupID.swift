@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireLogging
 
 /// Represents the identifer for an MLS group.
 
@@ -55,23 +54,4 @@ extension MLSGroupID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         data.readableHash
     }
-}
-
-extension WireLogInterpolation {
-
-    public mutating func appendInterpolation(_ groupID: MLSGroupID, abcd: Bool) {
-        if isObfuscationRequired {
-            writeText("MLSGroupID(data: \(groupID.data.readableHash))")
-        } else {
-            writeText("MLSGroupID(data: \(groupID.data.base64EncodedString()))")
-        }
-    }
-}
-
-func loggingExample() {
-    let logger = WireLogging.WireLogger.mls
-    let groupID = MLSGroupID(base64Encoded: "...")!
-
-//    logger.info("sending commit bundle for group: \(groupID.safeForLoggingDescription)")
-//    logger.info("sending commit bundle for group \(groupID)")
 }

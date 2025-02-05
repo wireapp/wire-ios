@@ -42,8 +42,8 @@ extension WireLogInterpolation {
 
 extension WireLogInterpolation {
 
-//    @available(*, deprecated, message: "Overload `WireLogInterpolation.appendInterpolation` instead.")
-//    public mutating func appendInterpolation(_ value: String) {
-//        writeText(value)
-//    }
+    @available(*, deprecated, message: "Overload `WireLogInterpolation.appendInterpolation` instead.")
+    public mutating func appendInterpolation(_ value: String) {
+        writeText(value)
+    }
 }
