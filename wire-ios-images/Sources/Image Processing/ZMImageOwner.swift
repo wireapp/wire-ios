@@ -16,11 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-@interface NSOperationQueue (Helpers)
+@objc
+public protocol ZMImageOwner: NSObjectProtocol {
 
-+ (instancetype)serialQueueWithName:(NSString *)name;
-- (void)waitUntilAllOperationsAreFinishedWithTimeout:(NSTimeInterval)timeout;
+    /// The image formats that this ``ZMImageOwner`` wants preprocessed. Order of formats determines order in which data
+    /// is preprocessed
 
-@end
+    @objc
+    func requiredImageFormats() -> NSOrderedSet
+
+    @objc
+    func originalImageData() -> Data?
+
+}
