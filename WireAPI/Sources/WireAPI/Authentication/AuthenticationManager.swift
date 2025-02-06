@@ -160,7 +160,7 @@ extension AccessToken {
 
 }
 
-private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
+struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
 
     let user: UUID
     let accessToken: String

@@ -25,8 +25,95 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         self.apiService = apiService
     }
 
+    private lazy var encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        return encoder
+    }()
+
     var apiVersion: APIVersion {
         .v0
+    }
+
+    func login(
+        email: String,
+        password: String,
+        verificationCode: String?
+    ) async throws -> ([HTTPCookie], AccessToken) {
+        let path = "\(pathPrefix)/login"
+        let body = LoginRequestBodyV0(
+            email: email,
+            password: password,
+            verificationCode: verificationCode,
+            label: UUID().uuidString
+        )
+
+        let encodedJSON: Data
+        do {
+            encodedJSON = try encoder.encode(body)
+        } catch {
+            assertionFailure("failed to encode body")
+            throw AuthenticationAPIError.invalidRequestBody
+        }
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(encodedJSON, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: false
+        )
+
+        guard
+            let responseURL = response.url,
+            let responseHeaders = response.allHeaderFields as? [String: String]
+        else {
+            throw AuthenticationAPIError.invalidResponse
+        }
+
+        let cookies = HTTPCookie.cookies(
+            withResponseHeaderFields: responseHeaders,
+            for: responseURL
+        )
+
+        let accessToken = try ResponseParser()
+            .success(
+                code: .ok,
+                type: AccessTokenPayload.self
+            )
+            .failure(
+                code: .forbidden,
+                label: "code-authentication-required",
+                error: AuthenticationAPIError.twoFactorAuthenticationRequired
+            )
+            .failure(
+                code: .forbidden,
+                label: "code-authentication-failed",
+                error: AuthenticationAPIError.twoFactorAuthenticationFailed
+            )
+            .failure(
+                code: .forbidden,
+                label: "pending-activation",
+                error: AuthenticationAPIError.accountPendingActivation
+            )
+            .failure(
+                code: .forbidden,
+                label: "suspended",
+                error: AuthenticationAPIError.accountSuspended
+            )
+            .failure(
+                code: .forbidden,
+                label: "invalid-credentials",
+                error: AuthenticationAPIError.invalidCredentials
+            )
+            .parse(
+                code: response.statusCode,
+                data: data
+            )
+
+        return (cookies, accessToken)
     }
 
     func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo {

@@ -16,24 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+struct LoginRequestBodyV0: Encodable {
 
-public protocol AuthenticationAPI {
-
-    /// Login via emain
-
-    func login(
-        email: String,
-        password: String,
-        verificationCode: String?
-    ) async throws -> ([HTTPCookie], AccessToken)
-
-    /// Get on-prem config `URL` for domain
-
-    func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo
-
-    /// Get domain registration configuration by email
-
-    func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration
+    let email: String
+    let password: String
+    let verificationCode: String?
+    let label: String?
 
 }

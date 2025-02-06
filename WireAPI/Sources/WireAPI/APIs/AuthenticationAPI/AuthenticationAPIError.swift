@@ -26,8 +26,19 @@ public enum AuthenticationAPIError: Error {
 
     case invalidRequestBody
 
+    case invalidResponse
+
     case configNotFound
 
     case domainNotFound
 
+    case twoFactorAuthenticationRequired
+
+    case twoFactorAuthenticationFailed
+
+    case accountPendingActivation
+
+    case accountSuspended
+
+    case invalidCredentials
 }
