@@ -53,8 +53,6 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
 
                 } catch let error as ImportBackupError {
                     switch error {
-                    case .notAuthenticated:
-                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.notAuthenticated)
                     case .noActiveAccountForImport:
                         continuation.finish(throwing: WireSettingsUI.ImportBackupError.noActiveAccountForImport)
                     case .passwordRequired:

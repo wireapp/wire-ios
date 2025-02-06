@@ -17,7 +17,6 @@
 //
 
 public enum ImportBackupError: Error, Equatable, CaseIterable {
-    case notAuthenticated // TODO: delete this case when removing restore from authentication
     case noActiveAccountForImport
     /// The backup file is encrypted and a password is needed for decryption.
     case passwordRequired
