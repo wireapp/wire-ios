@@ -17,6 +17,9 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireFoundation
+import WireReusableUIComponents
 
 public protocol DetermineAuthMethodBuilder {
 
@@ -41,21 +44,37 @@ public struct DetermineAuthMethodView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 20) {
-            Text("Wire").font(.largeTitle)
-            Text("Enter your email to start")
-
-            TextField("Email or SSO Code", text: $emailOrSSOCode)
-                .textFieldStyle(.roundedBorder)
-
-            Button("Next") {
-                viewModel.submitEmailOrSSOCode(emailOrSSOCode)
+        VStack(alignment: .center, spacing: 16) {
+            HStack {
+                Spacer()
+                    .frame(maxWidth: .infinity)
+                Logo()
+                    .frame(width: 164, height: 95)
+                Spacer()
+                    .frame(maxWidth: .infinity)
             }
+            Text(L10n.Authentication.Identity.Input.body)
+                .multilineTextAlignment(.leading)
+                .wireTextStyle(.body1)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.trailing)
+            LabeledTextField(
+                isMandatory: false,
+                placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
+                title: L10n.Authentication.Identity.Input.Field.title,
+                string: $emailOrSSOCode
+            )
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
+            Button(action: {
+                viewModel.submitEmailOrSSOCode(emailOrSSOCode)
+            }, label: {
+                Text(L10n.Authentication.Identity.Input.submit)
+                    .lineLimit(nil)
+            })
+            .wireButtonStyle(.primary)
             .disabled(!viewModel.isValidEmailOrSSOCode(emailOrSSOCode))
-
-            Text("By pressing on “Next”, you accept Wire’s Terms and Conditions")
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
         .padding()
         .navigationDestination(for: Destination.self) {
@@ -81,5 +100,8 @@ public struct DetermineAuthMethodView: View {
 }
 
 #Preview {
-    MockDependencies().determineAuthMethodView
+    BackgroundView()
+        .sheet(isPresented: .constant(true)) {
+            MockDependencies().determineAuthMethodView
+        }
 }
