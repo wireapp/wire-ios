@@ -16,14 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-/// Information about on-prem backend
+struct PullSelfUserSettingsSync: PullSelfUserSettingsSyncProtocol {
 
-public struct DomainInfo: Equatable, Sendable {
+    private let api: any UserPropertiesAPI
+    private let store: any UserLocalStoreProtocol
 
-    /// This `URL` is used to fetch the JSON configuration with all relevant endpoints.
+    init(
+        api: any UserPropertiesAPI,
+        store: any UserLocalStoreProtocol
+    ) {
+        self.api = api
+        self.store = store
+    }
 
-    public let configurationURL: URL
+    func pull() async throws {
+        let areReadReceiptsEnabled = try await api.areReadReceiptsEnabled
+        await store.updateSelfUserReadReceipts(
+            isReadReceiptsEnabled: areReadReceiptsEnabled,
+            isReadReceiptsEnabledChangedRemotely: false
+        )
+    }
 
 }

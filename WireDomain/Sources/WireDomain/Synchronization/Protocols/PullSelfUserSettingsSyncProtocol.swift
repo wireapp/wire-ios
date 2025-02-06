@@ -18,12 +18,14 @@
 
 import Foundation
 
-/// Information about on-prem backend
+// sourcery: AutoMockable
+/// An object to keep the local self user settings (e.g read receipts)
+/// up to date with the remote self user settings.
+protocol PullSelfUserSettingsSyncProtocol {
 
-public struct DomainInfo: Equatable, Sendable {
+    /// Fetch the self user settings from remote, then store them
+    /// locally.
 
-    /// This `URL` is used to fetch the JSON configuration with all relevant endpoints.
-
-    public let configurationURL: URL
+    func pull() async throws
 
 }
