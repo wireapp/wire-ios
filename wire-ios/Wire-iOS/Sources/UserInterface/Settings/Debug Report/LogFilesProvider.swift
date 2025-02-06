@@ -161,7 +161,7 @@ struct LogFilesProvider: LogFilesProviding {
         }
         return body
     }
-    
+
     private func createInfoFile(at url: URL) throws -> URL {
         let infoFileURL = url.appendingPathComponent("info.txt")
 
