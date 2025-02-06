@@ -27,7 +27,7 @@ public struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
     @MainActor
     public func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .login(email: emailOrSSOCode)
+        .loginViaEmail(email: emailOrSSOCode)
     }
 
 }

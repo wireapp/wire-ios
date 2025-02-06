@@ -38,7 +38,7 @@ final class MockDependencies {
 extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
 
     func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .login(email: emailOrSSOCode)
+        .loginViaEmail(email: emailOrSSOCode)
     }
 
 }

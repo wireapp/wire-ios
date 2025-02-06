@@ -48,10 +48,10 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
             )
 
             switch method {
-            case let .login(email):
+            case let .loginViaEmail(email):
                 router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
 
-            case let .loginOrRegister(email):
+            case let .loginOrRegisterViaEmail(email):
                 router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
             default:
