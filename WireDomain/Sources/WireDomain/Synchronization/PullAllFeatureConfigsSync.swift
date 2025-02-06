@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAPI
+import WireLogging
 
 struct PullAllFeatureConfigsSync: PullAllFeatureConfigsSyncProtocol {
 
@@ -106,7 +107,8 @@ private extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
-        case .unknown:
+        case let .unknown(name):
+            WireLogger.featureConfigs.warn("encountered unknown feature config '\(name)' when storing, skipping")
             return
         }
     }
