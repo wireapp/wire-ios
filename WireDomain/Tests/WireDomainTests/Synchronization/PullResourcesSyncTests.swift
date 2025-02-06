@@ -25,6 +25,7 @@ final class PullResourcesSyncTests: XCTestCase {
     private var sut: PullResourcesSync!
 
     private var pullSelfUserSync: MockPullSelfUserSyncProtocol!
+    private var pullSelfUserSettingsSync: MockPullSelfUserSettingsSyncProtocol!
     private var pullSelfTeamSync: MockPullSelfTeamSyncProtocol!
     private var pullSelfTeamRolesSync: MockPullSelfTeamRolesSyncProtocol!
     private var pullSelfTeamMembersSync: MockPullSelfTeamMembersSyncProtocol!
@@ -37,6 +38,7 @@ final class PullResourcesSyncTests: XCTestCase {
 
     override func setUp() async throws {
         pullSelfUserSync = MockPullSelfUserSyncProtocol()
+        pullSelfUserSettingsSync = MockPullSelfUserSettingsSyncProtocol()
         pullSelfTeamSync = MockPullSelfTeamSyncProtocol()
         pullSelfTeamRolesSync = MockPullSelfTeamRolesSyncProtocol()
         pullSelfTeamMembersSync = MockPullSelfTeamMembersSyncProtocol()
@@ -49,6 +51,7 @@ final class PullResourcesSyncTests: XCTestCase {
 
         sut = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
+            pullSelfUserSettingsSync: pullSelfUserSettingsSync,
             pullSelfTeamSync: pullSelfTeamSync,
             pullSelfTeamRolesSync: pullSelfTeamRolesSync,
             pullSelfTeamMembersSync: pullSelfTeamMembersSync,
@@ -63,6 +66,7 @@ final class PullResourcesSyncTests: XCTestCase {
 
     override func tearDown() async throws {
         pullSelfUserSync = nil
+        pullSelfUserSettingsSync = nil
         pullSelfTeamSync = nil
         pullSelfTeamRolesSync = nil
         pullSelfTeamMembersSync = nil
@@ -78,6 +82,7 @@ final class PullResourcesSyncTests: XCTestCase {
     func testPull() async throws {
         // Mock
         pullSelfUserSync.pull_MockValue = (id: Scaffolding.userID, domain: Scaffolding.domain, teamID: Scaffolding.teamID)
+        pullSelfUserSettingsSync.pull_MockMethod = {}
         pullSelfTeamSync.pullSelfTeamID_MockMethod = { _ in }
         pullSelfTeamRolesSync.pullSelfTeamID_MockMethod = { _ in }
         pullSelfTeamMembersSync.pullSelfTeamID_MockMethod = { _ in }
@@ -93,6 +98,7 @@ final class PullResourcesSyncTests: XCTestCase {
 
         // Then
         XCTAssertEqual(pullSelfUserSync.pull_Invocations.count, 1)
+        XCTAssertEqual(pullSelfUserSettingsSync.pull_Invocations.count, 1)
         XCTAssertEqual(pullSelfTeamSync.pullSelfTeamID_Invocations, [Scaffolding.teamID])
         XCTAssertEqual(pullSelfTeamRolesSync.pullSelfTeamID_Invocations, [Scaffolding.teamID])
         XCTAssertEqual(pullSelfTeamMembersSync.pullSelfTeamID_Invocations, [Scaffolding.teamID])

@@ -22,6 +22,7 @@ import WireLogging
 struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private let pullSelfUserSync: any PullSelfUserSyncProtocol
+    private let pullSelfUserSettingsSync: any PullSelfUserSettingsSyncProtocol
     private let pullSelfTeamSync: any PullSelfTeamSyncProtocol
     private let pullSelfTeamRolesSync: any PullSelfTeamRolesSyncProtocol
     private let pullSelfTeamMembersSync: any PullSelfTeamMembersSyncProtocol
@@ -36,6 +37,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     init(
         pullSelfUserSync: any PullSelfUserSyncProtocol,
+        pullSelfUserSettingsSync: any PullSelfUserSettingsSyncProtocol,
         pullSelfTeamSync: any PullSelfTeamSyncProtocol,
         pullSelfTeamRolesSync: any PullSelfTeamRolesSyncProtocol,
         pullSelfTeamMembersSync: any PullSelfTeamMembersSyncProtocol,
@@ -47,6 +49,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         pullAllFeatureConfigsSync: any PullAllFeatureConfigsSyncProtocol
     ) {
         self.pullSelfUserSync = pullSelfUserSync
+        self.pullSelfUserSettingsSync = pullSelfUserSettingsSync
         self.pullSelfTeamSync = pullSelfTeamSync
         self.pullSelfTeamRolesSync = pullSelfTeamRolesSync
         self.pullSelfTeamMembersSync = pullSelfTeamMembersSync
@@ -61,6 +64,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
     func pull() async throws {
         try await logger.measureTime(label: "pull resources") {
             let teamID = try await pullSelfUser()
+            try await pullSelfUserSettings()
 
             if let teamID {
                 try await pullSelfTeam(teamID: teamID)
@@ -87,6 +91,15 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
             return try await pullSelfUserSync.pull().teamID
         } catch {
             throw Failure(resourceName: "pull self user", reason: error)
+        }
+    }
+
+    private func pullSelfUserSettings() async throws {
+        do {
+            logger.debug("pulling self user settings")
+            try await pullSelfUserSettingsSync.pull()
+        } catch {
+            throw Failure(resourceName: "pull self user settings", reason: error)
         }
     }
 
