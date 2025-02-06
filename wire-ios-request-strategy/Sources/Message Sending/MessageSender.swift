@@ -19,7 +19,7 @@
 import WireDataModel
 import WireLogging
 
-public enum MessageSendError: Error, Equatable {
+public enum MessageSendError: Error {
     case missingMessageProtocol
     case missingGroupID
     case missingQualifiedID
@@ -27,6 +27,7 @@ public enum MessageSendError: Error, Equatable {
     case unresolvedApiVersion
     case messageExpired
     case missingProteusService
+    case failed(Error)
 }
 
 public typealias SendableMessage = MLSMessage & ProteusMessage
@@ -68,6 +69,8 @@ public final class MessageSender: MessageSenderInterface {
     private let proteusPayloadProcessor = MessageSendingStatusPayloadProcessor()
     private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
     private let logAttributesBuilder: MessageLogAttributesBuilder
+    private let maxRetryAttempts = 3
+    private var retryCount = 0
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
@@ -170,9 +173,16 @@ public final class MessageSender: MessageSenderInterface {
                 .broadcastProteusMessage(message: messageData)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
-            let missingClients = try await handleProteusFailure(message: message, networkError)
-            try await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
-            try await broadcastMessage(message: message)
+            let retryOperation: () async throws -> Void = { [weak self] in
+                try await self?.broadcastMessage(message: message)
+            }
+
+            try await handleNetworkError(
+                networkError,
+                message: message,
+                apiVersion: apiVersion,
+                retryOperation: retryOperation
+            )
         }
     }
 
@@ -229,9 +239,39 @@ public final class MessageSender: MessageSenderInterface {
                 )
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
+            let retryOperation: () async throws -> Void = { [weak self] in
+                try await self?.sendMessage(message: message)
+            }
+
+            try await handleNetworkError(
+                networkError,
+                message: message,
+                apiVersion: apiVersion,
+                retryOperation: retryOperation
+            )
+        }
+    }
+
+    private func handleNetworkError(
+        _ networkError: NetworkError,
+        message: any ProteusMessage,
+        apiVersion: APIVersion,
+        retryOperation: () async throws -> Void
+    ) async throws {
+        do {
             let missingClients = try await handleProteusFailure(message: message, networkError)
             try await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
-            try await sendMessage(message: message)
+        } catch let error as MessageSendError {
+            guard retryCount < maxRetryAttempts else {
+                retryCount = 0
+                throw error
+            }
+
+            retryCount += 1
+
+            try await retryOperation()
+        } catch {
+            throw error
         }
     }
 
@@ -295,7 +335,8 @@ public final class MessageSender: MessageSenderInterface {
                         "attempt to send with proteus failed - try again later",
                         attributes: logAttributes
                     )
-                    return Set() // FIXME: [WPB-5454] it's dangerous to retry indefinitely like this - [jacob]
+
+                    throw MessageSendError.failed(failure)
                 }
             } else {
                 throw failure
