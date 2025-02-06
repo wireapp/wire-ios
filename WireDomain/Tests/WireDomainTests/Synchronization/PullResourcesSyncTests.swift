@@ -81,7 +81,11 @@ final class PullResourcesSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        pullSelfUserSync.pull_MockValue = (id: Scaffolding.userID, domain: Scaffolding.domain, teamID: Scaffolding.teamID)
+        pullSelfUserSync.pull_MockValue = (
+            id: Scaffolding.userID,
+            domain: Scaffolding.domain,
+            teamID: Scaffolding.teamID
+        )
         pullSelfUserSettingsSync.pull_MockMethod = {}
         pullSelfTeamSync.pullSelfTeamID_MockMethod = { _ in }
         pullSelfTeamRolesSync.pullSelfTeamID_MockMethod = { _ in }
