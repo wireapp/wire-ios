@@ -67,108 +67,11 @@ final class BackupRestoreController: NSObject { // TODO: [WPB-15336] is it still
         controller.addAction(UIAlertAction(
             title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.proceed,
             style: .default,
-            handler: { [showFilePicker] _ in
-                showFilePicker()
+            handler: { _ in
+                //showFilePicker()
             }
         ))
 
         target.present(controller, animated: true)
-    }
-
-    private func showFilePicker() {
-        let picker = UIDocumentPickerViewController(
-            forOpeningContentTypes: WireBackupUTIs,
-            asCopy: true
-        )
-
-        picker.delegate = self
-        target.present(picker, animated: true)
-    }
-
-    private func restore(with url: URL) {
-        requestPassword { password in
-            self.performRestore(
-                using: password,
-                from: url
-            )
-        }
-    }
-
-    private func performRestore(
-        using password: String,
-        from url: URL
-    ) {
-        guard
-            let sessionManager = SessionManager.shared,
-            let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup")
-        else {
-            return
-        }
-
-        Task { @MainActor in activityIndicator.start() }
-        //       sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
-        //           guard let self else {
-        //               BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-        //               WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
-        //               return
-        //           }
-//
-        //           switch result {
-        //           case .failure(ImportBackupError.decryptionError):
-        //               WireLogger.localStorage.error("Failed restoring backup: \(ImportBackupError.decryptionError)")
-        //               Task { @MainActor in self.activityIndicator.stop() }
-        //               BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-        //               showWrongPasswordAlert { _ in
-        //                   self.restore(with: url)
-        //               }
-//
-        //           case let .failure(error):
-        //               WireLogger.localStorage.error("Failed restoring backup: \(error)")
-        //               showRestoreError(error)
-        //               Task { @MainActor in self.activityIndicator.stop() }
-        //               BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-//
-        //           case .success:
-        //               temporaryFilesService.removeTemporaryData()
-        //               delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: true)
-        //               BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-        //           }
-        //       }
-    }
-
-    // MARK: - Alerts
-
-    private func requestPassword(completion: @escaping (String) -> Void) {
-        let controller = requestRestorePassword { password in
-            password.map(completion)
-        }
-
-        target.present(controller, animated: true, completion: nil)
-    }
-
-    private func showWrongPasswordAlert(completion: @escaping (UIAlertAction) -> Void) {
-        let controller = importWrongPasswordError(completion: completion)
-        target.present(controller, animated: true, completion: nil)
-    }
-
-    private func showRestoreError(_ error: Error) {
-        let controller = restoreBackupFailed(
-            error: error,
-            onTryAgain: { [unowned self] in showFilePicker() },
-            onCancel: { [unowned self] in delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: false) }
-        )
-
-        target.present(controller, animated: true)
-    }
-}
-
-extension BackupRestoreController: UIDocumentPickerDelegate {
-    func documentPicker(
-        _ controller: UIDocumentPickerViewController,
-        didPickDocumentAt url: URL
-    ) {
-        WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
-
-        restore(with: url)
     }
 }
