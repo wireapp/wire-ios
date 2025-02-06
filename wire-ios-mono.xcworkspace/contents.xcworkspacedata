@@ -207,6 +207,9 @@
       location = "group:WireAuthentication">
    </FileRef>
    <FileRef
+      location = "group:WireCells">
+   </FileRef>
+   <FileRef
       location = "group:WireFoundation">
    </FileRef>
    <FileRef
