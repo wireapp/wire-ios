@@ -33,8 +33,6 @@ public struct DetermineAuthMethodView: View {
 
     let builder: any LoginViaEmailBuilder
 
-    @State private var emailOrSSOCode = ""
-
     public init(
         viewModel: DetermineAuthMethodViewModel,
         builder: any LoginViaEmailBuilder
@@ -63,18 +61,18 @@ public struct DetermineAuthMethodView: View {
                 isMandatory: false,
                 placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
                 title: L10n.Authentication.Identity.Input.Field.title,
-                string: $emailOrSSOCode
+                string: $viewModel.emailOrSSOCode
             )
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             Button(action: {
-                viewModel.submitEmailOrSSOCode(emailOrSSOCode)
+                viewModel.submitEmailOrSSOCode()
             }, label: {
                 Text(L10n.Authentication.Identity.Input.submit)
                     .lineLimit(nil)
             })
             .wireButtonStyle(.primary)
-            .disabled(!viewModel.isValidEmailOrSSOCode(emailOrSSOCode))
+            .disabled(viewModel.isNextButtonEnabled)
         }
         .padding()
         .navigationDestination(for: Destination.self) {

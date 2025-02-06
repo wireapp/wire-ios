@@ -27,6 +27,12 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
     let router: any Router
     let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
 
+    @Published var emailOrSSOCode: String = ""
+
+    var isNextButtonEnabled: Bool {
+        !isValidEmailOrSSOCode()
+    }
+
     public init(
         router: any Router,
         determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
@@ -35,11 +41,7 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
         self.determineAuthMethod = determineAuthMethod
     }
 
-    func isValidEmailOrSSOCode(_ emailOrSSOCode: String) -> Bool {
-        !emailOrSSOCode.isEmpty
-    }
-
-    func submitEmailOrSSOCode(_ emailOrSSOCode: String) {
+    func submitEmailOrSSOCode() {
         Task { [router] in
             let method = await self.determineAuthMethod.invoke(
                 emailOrSSOCode: emailOrSSOCode
@@ -56,6 +58,12 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
                 break
             }
         }
+    }
+
+    // MARK: - Private
+
+    private func isValidEmailOrSSOCode() -> Bool {
+        !emailOrSSOCode.isEmpty
     }
 
 }
