@@ -18,14 +18,8 @@
 
 import Foundation
 
-public protocol AuthenticationAPI {
+public struct DomainInfo: Equatable, Sendable {
 
-    /// Get on-prem config `URL` for domain
-
-    func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo
-
-    /// Get domain registration configuration by email
-
-    func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration
+    public let configurationURL: URL
 
 }
