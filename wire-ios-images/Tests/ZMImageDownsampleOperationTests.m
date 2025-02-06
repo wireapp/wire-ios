@@ -19,8 +19,6 @@
 @import WireImages;
 @import WireTesting;
 
-#import "NSOperationQueue+Helpers.h"
-
 static NSString const * TypeJPEG = @"image/jpeg";
 
 @interface ZMImageDownsampleOperationTests : ZMTBaseTest
