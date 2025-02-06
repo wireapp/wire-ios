@@ -46,7 +46,7 @@ final class PullSelfUserSyncTests: XCTestCase {
         store.persistUserUserInfo_MockMethod = { _ in }
 
         // When
-        try await sut.pull()
+        let result = try await sut.pull()
 
         // Then
         XCTAssertEqual(api.getSelfUser_Invocations.count, 1)
@@ -54,6 +54,10 @@ final class PullSelfUserSyncTests: XCTestCase {
         let storeInvocations = store.persistUserUserInfo_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0], Scaffolding.localSelfUser)
+
+        XCTAssertEqual(result.id, Scaffolding.remoteSelfUser.qualifiedID.uuid)
+        XCTAssertEqual(result.domain, Scaffolding.remoteSelfUser.qualifiedID.domain)
+        XCTAssertEqual(result.teamID, Scaffolding.remoteSelfUser.teamID)
     }
 
 }

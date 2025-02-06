@@ -29,6 +29,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
+    case newInitialSync
 
     public var description: String {
         switch self {
@@ -52,6 +53,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .forceCRLExpiryAfterOneMinute:
             "Turn on to force CRLs to expire after 1 minute"
+
+        case .newInitialSync:
+            "Use the new and improved 'Initial Sync™' (formerly slow sync)"
         }
     }
 
@@ -80,16 +84,14 @@ public enum DeveloperFlag: String, CaseIterable {
 
     var bundleKey: String? {
         switch self {
-        case .showCreateMLSGroupToggle:
-            nil
         case .proteusViaCoreCrypto:
             "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             "ForceDatabaseLoadingFailure"
-        case .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep:
-            nil
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        default:
+            nil
         }
     }
 

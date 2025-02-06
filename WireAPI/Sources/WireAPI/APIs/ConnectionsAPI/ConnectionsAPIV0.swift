@@ -35,7 +35,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 
     var resourcePath: String {
-        "\(pathPrefix)/list-connections/"
+        "\(pathPrefix)/list-connections"
     }
 
     func getConnections() async throws -> PayloadPager<Connection> {
