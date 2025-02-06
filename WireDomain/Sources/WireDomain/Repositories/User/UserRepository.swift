@@ -89,12 +89,6 @@ public final class UserRepository: UserRepositoryProtocol {
         )
     }
 
-    public func pushSelfSupportedProtocols(
-        _ supportedProtocols: Set<WireAPI.MessageProtocol>
-    ) async throws {
-        try await selfUserAPI.pushSupportedProtocols(supportedProtocols)
-    }
-
     public func pullKnownUsers() async throws {
         try await pullKnownUsersSync.pull()
     }
