@@ -26,6 +26,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WireAnalytics"),
+        .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WirePlugins")
     ],
@@ -51,7 +52,7 @@ let package = Package(
             name: "WireIndividualToTeamMigrationUI",
             dependencies: [
                 "WireAnalytics",
-                // "WireDomain", // TODO: [WPB-15347] fix linking issues and then add `WireDomain` as dependency
+                .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
                 "WireReusableUIComponents"
             ]
