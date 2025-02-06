@@ -2026,6 +2026,60 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
     }
 
+    func test_RetryOnCommitFailure_Keep_Throwing_Commit_Error_Prevents_Infinite_Loop() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Since `retryOnCommitFailure` is a recursive function for specific error
+        // `CommitError.failedToSendCommit(recovery: .retryAfterQuickSync`, we'll try to create an infinite loop by keep throwing the same error over and over again.
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+        }
+
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+        }
+
+        // Mock quick sync.
+        mockSyncStatus.mockPerformQuickSync = {}
+
+        do {
+            // When
+            try await sut.updateKeyMaterial(for: groupID)
+        } catch let error as SendMLSMessageAction.Failure {
+            // Then, infinite loop is broken after a few attempts, it throws an error
+            XCTAssertEqual(error, .mlsStaleMessage)
+        }
+    }
+
+    func test_RetryOnCommitFailure_Keep_Throwing_External_Commit_Error_Prevents_Infinite_Loop() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Since `retryOnCommitFailure` is a recursive function for specific error
+        // `ExternalCommitError.failedToSendCommit(recovery: .retry)`, we'll try to create an infinite loop by keep throwing the same error over and over again.
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
+        }
+
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
+        }
+
+        // Mock quick sync.
+        mockSyncStatus.mockPerformQuickSync = {}
+
+        do {
+            // When
+            try await sut.updateKeyMaterial(for: groupID)
+        } catch let error as SendMLSMessageAction.Failure {
+            // Then, infinite loop is broken after a few attempts, it throws an error
+            XCTAssertEqual(error, .mlsStaleMessage)
+        }
+    }
+
     func test_RetryOnCommitFailure_ChainMultipleRecoverableOperations() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ImportBackupError: Error, CaseIterable {
+public enum ImportBackupError: Error, Equatable, CaseIterable {
     case notAuthenticated // TODO: [WPB-15336]: delete this case when removing restore from authentication
     case noActiveAccountForImport
     /// The backup file is encrypted and a password is needed for decryption.

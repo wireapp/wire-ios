@@ -35,7 +35,7 @@ protocol BackupRestoreControllerDelegate: AnyObject {
 
 /// An object that coordinates restoring a backup.
 
-final class BackupRestoreController: NSObject {
+final class BackupRestoreController: NSObject { // TODO: [WPB-15336] is it still used?
 
     weak var delegate: BackupRestoreControllerDelegate?
 
@@ -115,8 +115,8 @@ final class BackupRestoreController: NSObject {
             }
 
             switch result {
-            case .failure(CreateLegacyBackupError.decryptionError):
-                WireLogger.localStorage.error("Failed restoring backup: \(CreateLegacyBackupError.decryptionError)")
+            case .failure(ImportBackupError.decryptionError):
+                WireLogger.localStorage.error("Failed restoring backup: \(ImportBackupError.decryptionError)")
                 Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 showWrongPasswordAlert { _ in

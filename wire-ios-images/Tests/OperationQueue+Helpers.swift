@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import CoreGraphics;
-@import Foundation;
+import Foundation
 
-@interface ZMIImageProperties : NSObject
+extension OperationQueue {
 
-@property (nonatomic, readonly) CGSize size;
-@property (nonatomic, readonly) NSUInteger length;
-@property (nonatomic, readonly, copy) NSString *mimeType;
+    @objc
+    static func serialQueue(name: String) -> OperationQueue {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        queue.name = name
+        return queue
+    }
 
-+ (instancetype)imagePropertiesWithSize:(CGSize)size length:(NSUInteger)length mimeType:(NSString *)type;
-
-@end
+}
