@@ -41,18 +41,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		59AB64662D43D300005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		59610DE62D5523B5003A85C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				TestPlans/AllTests.xctestplan,
+				Info.plist,
 			);
-			target = 096960151B663E7C006DF53B /* WireImages-iosTests */;
+			target = 870253DF1DAB7A9F0095D272 /* WireImages-iosTestHost */;
 		};
-		59AB64942D43D307005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		59610E132D5523C0003A85C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
 				"Image Processing/ZMAssetsPreprocessor.h",
-				"Image Processing/ZMIImageProperties.h",
 				"Image Processing/ZMImageDownsampleOperation.h",
 				"Image Processing/ZMImageLoadOperation.h",
 				"Image Processing/ZMImageOwner.h",
@@ -61,20 +60,27 @@
 			);
 			target = 0969600B1B663E7B006DF53B /* WireImages-ios */;
 		};
-		59AB73352D43D63F005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		CBBAE5472D43EDF20044B7B4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				"OperationQueue+Helpers.swift",
 			);
-			target = 870253DF1DAB7A9F0095D272 /* WireImages-iosTestHost */;
+			target = 0969600B1B663E7B006DF53B /* WireImages-ios */;
+		};
+		CBBAE5482D43EDF20044B7B4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestPlans/AllTests.xctestplan,
+			);
+			target = 096960151B663E7C006DF53B /* WireImages-iosTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		59AB643C2D43D300005D2D17 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59AB64662D43D300005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
-		59AB64712D43D303005D2D17 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
-		59AB64832D43D307005D2D17 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59AB64942D43D307005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Sources; sourceTree = "<group>"; };
-		59AB732E2D43D63F005D2D17 /* WireImages-iosTestHost */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59AB73352D43D63F005D2D17 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "WireImages-iosTestHost"; sourceTree = "<group>"; };
+		59610DDF2D5523B5003A85C9 /* WireImages-iosTestHost */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59610DE62D5523B5003A85C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "WireImages-iosTestHost"; sourceTree = "<group>"; };
+		59610DF02D5523BC003A85C9 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
+		59610E022D5523C0003A85C9 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59610E132D5523C0003A85C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Sources; sourceTree = "<group>"; };
+		CBBAE51C2D43EDF10044B7B4 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (CBBAE5472D43EDF20044B7B4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, CBBAE5482D43EDF20044B7B4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,10 +125,10 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC892BD158D600F7853F /* WireImages.docc */,
-				59AB64712D43D303005D2D17 /* Resources */,
-				59AB64832D43D307005D2D17 /* Sources */,
-				59AB643C2D43D300005D2D17 /* Tests */,
-				59AB732E2D43D63F005D2D17 /* WireImages-iosTestHost */,
+				59610E022D5523C0003A85C9 /* Sources */,
+				59610DF02D5523BC003A85C9 /* Resources */,
+				CBBAE51C2D43EDF10044B7B4 /* Tests */,
+				59610DDF2D5523B5003A85C9 /* WireImages-iosTestHost */,
 				098CB1191B5FA6E100712DF9 /* Frameworks */,
 				09DD1EB31B5D41E1005EBCC4 /* Products */,
 			);
@@ -169,7 +175,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				59AB64832D43D307005D2D17 /* Sources */,
+				59610E022D5523C0003A85C9 /* Sources */,
 			);
 			name = "WireImages-ios";
 			productName = "zimages-ios";
@@ -191,7 +197,7 @@
 				096960191B663E7C006DF53B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				59AB643C2D43D300005D2D17 /* Tests */,
+				CBBAE51C2D43EDF10044B7B4 /* Tests */,
 			);
 			name = "WireImages-iosTests";
 			productName = "zimages-iosTests";
@@ -211,7 +217,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				59AB732E2D43D63F005D2D17 /* WireImages-iosTestHost */,
+				59610DDF2D5523B5003A85C9 /* WireImages-iosTestHost */,
 			);
 			name = "WireImages-iosTestHost";
 			productName = "zimages-iosTestHost";
@@ -330,7 +336,7 @@
 /* Begin XCBuildConfiguration section */
 		096960201B663E7C006DF53B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 59AB64712D43D303005D2D17 /* Resources */;
+			baseConfigurationReferenceAnchor = 59610DF02D5523BC003A85C9 /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireImages.xcconfig;
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
@@ -342,7 +348,7 @@
 		};
 		096960211B663E7C006DF53B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 59AB64712D43D303005D2D17 /* Resources */;
+			baseConfigurationReferenceAnchor = 59610DF02D5523BC003A85C9 /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireImages.xcconfig;
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
@@ -376,7 +382,7 @@
 		};
 		09DD1EC61B5D41E1005EBCC4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 59AB64712D43D303005D2D17 /* Resources */;
+			baseConfigurationReferenceAnchor = 59610DF02D5523BC003A85C9 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project-debug.xcconfig";
 			buildSettings = {
 				ONLY_ACTIVE_ARCH = YES;
@@ -387,7 +393,7 @@
 		};
 		09DD1EC71B5D41E1005EBCC4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 59AB64712D43D303005D2D17 /* Resources */;
+			baseConfigurationReferenceAnchor = 59610DF02D5523BC003A85C9 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project.xcconfig";
 			buildSettings = {
 				SDKROOT = iphoneos;

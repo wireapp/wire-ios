@@ -1,0 +1,150 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import SwiftUI
+import WireTestingPackage
+import XCTest
+
+@testable import WireReusableUIComponents
+
+final class PasswordFieldSnapshotTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
+
+    @MainActor
+    override func setUp() async throws {
+        snapshotHelper = .init()
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+    }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+    }
+
+    // MARK: - Snapshot Tests
+
+    @MainActor
+    func testInvalidHidden() {
+        let screenBounds = UIScreen.main.bounds
+        let view = PasswordField(
+            isPasswordVisible: false,
+            isPasswordValid: .constant(false),
+            password: .constant("Invalid password"),
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
+            placeholder: L10n.Passwordtextfield.Preview.placeholder,
+            title: L10n.Passwordtextfield.Preview.title
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        snapshotHelper.verify(matching: view)
+    }
+
+    @MainActor
+    func testInvalidVisible() {
+        let screenBounds = UIScreen.main.bounds
+        let view = PasswordField(
+            isPasswordVisible: true,
+            isPasswordValid: .constant(false),
+            password: .constant("Invalid password"),
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
+            placeholder: L10n.Passwordtextfield.Preview.placeholder,
+            title: L10n.Passwordtextfield.Preview.title
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        snapshotHelper.verify(matching: view)
+    }
+
+    @MainActor
+    func testValidHidden() {
+        let screenBounds = UIScreen.main.bounds
+        let view = PasswordField(
+            isPasswordVisible: false,
+            isPasswordValid: .constant(true),
+            password: .constant("Valid password!"),
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            placeholder: L10n.Passwordtextfield.Preview.placeholder,
+            title: L10n.Passwordtextfield.Preview.title
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        snapshotHelper.verify(matching: view)
+    }
+
+    @MainActor
+    func testValidVisible() {
+        let screenBounds = UIScreen.main.bounds
+        let view = PasswordField(
+            isPasswordVisible: true,
+            isPasswordValid: .constant(true),
+            password: .constant("Valid password!"),
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            placeholder: L10n.Passwordtextfield.Preview.placeholder,
+            title: L10n.Passwordtextfield.Preview.title
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        snapshotHelper.verify(matching: view)
+    }
+
+    @MainActor
+    func testColorSchemeVariants() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = PasswordField(
+            isPasswordVisible: false,
+            isPasswordValid: .constant(true),
+            password: .constant("Valid password!"),
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            placeholder: L10n.Passwordtextfield.Preview.placeholder,
+            title: L10n.Passwordtextfield.Preview.title
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariants() {
+        let screenBounds = UIScreen.main.bounds
+        let view = PasswordField(
+            isPasswordVisible: false,
+            isPasswordValid: .constant(true),
+            password: .constant("Valid password!"),
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            placeholder: L10n.Passwordtextfield.Preview.placeholder,
+            title: L10n.Passwordtextfield.Preview.title
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+}

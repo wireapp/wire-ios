@@ -29,6 +29,14 @@ extension SecTrust {
         get throws { try make(data: Certificates.load().wire) }
     }
 
+    /// This is the trust certificate from `google.com`. It will likely become invalid in the future and will need to be
+    /// updated. To do this run the following from the command line:
+    /// ```
+    /// openssl s_client -connect google.com:443 -showcerts
+    /// ```
+    /// Then copy each certificate into the `other` section of `certificates.json` file of `WireAPI`. This requires a
+    /// bit of text wrangling such as removing line breaks etc.
+
     static var other: SecTrust {
         get throws { try make(data: Certificates.load().other) }
     }

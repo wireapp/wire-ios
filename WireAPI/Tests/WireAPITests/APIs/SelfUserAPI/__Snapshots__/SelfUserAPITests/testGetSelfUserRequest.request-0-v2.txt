@@ -1,2 +1,2 @@
 curl \
-	"/v2/self/"
+	"/v2/self"

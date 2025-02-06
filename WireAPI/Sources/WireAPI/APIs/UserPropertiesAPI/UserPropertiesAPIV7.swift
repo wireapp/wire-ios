@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UserPropertiesAPIV7: UserPropertiesAPIV6 {
+class UserPropertiesAPIV7: UserPropertiesAPIV6 {
     override var apiVersion: APIVersion { .v7 }
 }
