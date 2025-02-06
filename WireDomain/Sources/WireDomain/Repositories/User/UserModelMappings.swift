@@ -142,7 +142,7 @@ extension WireAPI.User {
             completeAssetKey: assets
                 .first(where: { $0.size == .complete })
                 .map(\.key),
-            deleted: deleted,
+            isDeleted: deleted ?? false,
             email: email,
             expiresAt: expiresAt,
             serviceID: service?.id,
@@ -169,7 +169,7 @@ extension WireAPI.SelfUser {
             completeAssetKey: assets?
                 .first(where: { $0.size == .complete })
                 .map(\.key),
-            deleted: deleted,
+            isDeleted: deleted ?? false,
             email: email,
             expiresAt: expiresAt,
             serviceID: service?.id,
