@@ -19,37 +19,16 @@
 import UIKit
 import WireCommonComponents
 
-/// The view that displays the restore from backup button.
+/// The step that displays information about not having any conversation history.
 
-final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
+final class BackupRestoreStepDescription: AuthenticationStepDescription { // TODO: consider renaming
 
-    let views: [ViewDescriptor]
-    weak var actioner: AuthenticationActioner?
-
-    typealias NoHistory = L10n.Localizable.Registration.NoHistory
-
-    init() {
-        let restoreButton = SecondaryButtonDescription(
-            title: NoHistory.restoreBackup.capitalized,
-            accessibilityIdentifier: "restore_backup"
-        )
-        self.views = [restoreButton]
-
-        restoreButton.buttonTapped = { [weak self] in
-            self?.actioner?.executeAction(.startBackupFlow)
-        }
-    }
-}
-
-/// The step that displays information about the history.
-
-final class BackupRestoreStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
-    let footerView: AuthenticationFooterViewDescription?
+    let footerView: AuthenticationFooterViewDescription? = nil
 
     init(context: NoHistoryContext) {
         self.backButton = BackButtonDescription()
@@ -66,13 +45,6 @@ final class BackupRestoreStepDescription: AuthenticationStepDescription {
             self.headline = L10n.Localizable.Registration.NoHistory.LoggedOut.hero
             self.subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle, style: .login)
         }
-
-        guard SecurityFlags.backup.isEnabled else {
-            self.footerView = nil
-            return
-        }
-
-        self.footerView = BackupRestoreStepDescriptionFooterView()
 
     }
 
