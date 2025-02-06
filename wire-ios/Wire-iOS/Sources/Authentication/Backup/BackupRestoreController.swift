@@ -106,35 +106,34 @@ final class BackupRestoreController: NSObject { // TODO: [WPB-15336] is it still
         }
 
         Task { @MainActor in activityIndicator.start() }
-
-        sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
-            guard let self else {
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
-                return
-            }
-
-            switch result {
-            case .failure(ImportBackupError.decryptionError):
-                WireLogger.localStorage.error("Failed restoring backup: \(ImportBackupError.decryptionError)")
-                Task { @MainActor in self.activityIndicator.stop() }
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                showWrongPasswordAlert { _ in
-                    self.restore(with: url)
-                }
-
-            case let .failure(error):
-                WireLogger.localStorage.error("Failed restoring backup: \(error)")
-                showRestoreError(error)
-                Task { @MainActor in self.activityIndicator.stop() }
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-
-            case .success:
-                temporaryFilesService.removeTemporaryData()
-                delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: true)
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-            }
-        }
+        //       sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
+        //           guard let self else {
+        //               BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+        //               WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
+        //               return
+        //           }
+//
+        //           switch result {
+        //           case .failure(ImportBackupError.decryptionError):
+        //               WireLogger.localStorage.error("Failed restoring backup: \(ImportBackupError.decryptionError)")
+        //               Task { @MainActor in self.activityIndicator.stop() }
+        //               BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+        //               showWrongPasswordAlert { _ in
+        //                   self.restore(with: url)
+        //               }
+//
+        //           case let .failure(error):
+        //               WireLogger.localStorage.error("Failed restoring backup: \(error)")
+        //               showRestoreError(error)
+        //               Task { @MainActor in self.activityIndicator.stop() }
+        //               BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+//
+        //           case .success:
+        //               temporaryFilesService.removeTemporaryData()
+        //               delegate?.backupResoreControllerDidFinishRestoring(self, didSucceed: true)
+        //               BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+        //           }
+        //       }
     }
 
     // MARK: - Alerts

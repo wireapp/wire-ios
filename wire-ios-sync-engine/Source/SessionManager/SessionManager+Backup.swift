@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPkg
-import WireCrypto
 import Foundation
+import WireCrypto
+import WireDomainPkg
 import ZipArchive
 
 extension SessionManager {
@@ -115,6 +115,7 @@ extension SessionManager {
         guard backup.url.zipDirectory(to: url) else { throw CreateLegacyBackupError.compressionError }
         return url
     }
+
     private static func targetBackupURL(for backup: CoreDataStack.BackupInfo, handle: String) -> URL {
         let component = backup.metadata.backupFilename(for: handle)
         return backup.url.deletingLastPathComponent().appendingPathComponent(component)
