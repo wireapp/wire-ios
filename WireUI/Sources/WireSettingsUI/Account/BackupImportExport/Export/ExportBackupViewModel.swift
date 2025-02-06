@@ -60,9 +60,7 @@ final class ExportBackupViewModel: ObservableObject {
             logger.error("\(#function): state != nil")
             return assertionFailure()
         }
-        print("setting state")
         state = .requestingPassword(password: "")
-        print("did set state")
     }
 
     func createBackup(password: String) {
