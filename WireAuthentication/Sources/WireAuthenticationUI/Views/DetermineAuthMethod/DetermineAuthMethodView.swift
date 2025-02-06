@@ -42,39 +42,40 @@ public struct DetermineAuthMethodView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .center, spacing: 16) {
-            HStack {
-                Spacer()
-                    .frame(maxWidth: .infinity)
-                Logo()
-                    .frame(width: 164, height: 95)
-                Spacer()
-                    .frame(maxWidth: .infinity)
-            }
-            Text(L10n.Authentication.Identity.Input.body)
-                .multilineTextAlignment(.leading)
-                .wireTextStyle(.body1)
+        ScrollView {
+            VStack(alignment: .center, spacing: 16) {
+                HStack {
+                    Spacer()
+                        .frame(maxWidth: .infinity)
+                    Logo()
+                        .frame(width: 164, height: 95)
+                    Spacer()
+                        .frame(maxWidth: .infinity)
+                }
+                Text(L10n.Authentication.Identity.Input.body)
+                    .multilineTextAlignment(.leading)
+                    .wireTextStyle(.body1)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.trailing)
+                LabeledTextField(
+                    isMandatory: false,
+                    placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
+                    title: L10n.Authentication.Identity.Input.Field.title,
+                    string: $viewModel.emailOrSSOCode
+                )
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.trailing)
-            LabeledTextField(
-                isMandatory: false,
-                placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
-                title: L10n.Authentication.Identity.Input.Field.title,
-                string: $viewModel.emailOrSSOCode
-            )
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
-            Button(action: {
-                viewModel.submitEmailOrSSOCode()
-            }, label: {
-                Text(L10n.Authentication.Identity.Input.submit)
-                    .lineLimit(nil)
-            })
-            .wireButtonStyle(.primary)
-            .disabled(viewModel.isNextButtonEnabled)
+                Button(action: {
+                    viewModel.submitEmailOrSSOCode()
+                }, label: {
+                    Text(L10n.Authentication.Identity.Input.submit)
+                        .lineLimit(nil)
+                })
+                .wireButtonStyle(.primary)
+                .disabled(viewModel.isNextButtonEnabled)
+            }.padding()
         }
-        .padding()
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
