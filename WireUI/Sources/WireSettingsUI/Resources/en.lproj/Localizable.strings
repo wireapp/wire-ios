@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"settings.exportBackup.action" = "Back Up Now";
-"settings.exportBackup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.";
+"backup.export.action" = "Back Up Now";
+"backup.export.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.";
 
-"settings.restoreFromBackup.action" = "Restore from Backup";
-"settings.restoreFromBackup.description" = "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.";
+"backup.import.action" = "Restore from Backup";
+"backup.import.description" = "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.";
 
 "exportBackup.title" = "Set password";
 "exportBackup.description" = "The backup will be compressed. If you use a password, Wire also encrypts the backup file. Make sure to store the password in a secure place.";

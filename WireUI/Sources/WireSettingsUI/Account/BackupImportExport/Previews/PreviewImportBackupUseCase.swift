@@ -24,13 +24,14 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never>.detached {
                 do {
+                    let steps = 10
 
                     var failAtIndex: Int?
                     if .random() {
-                        failAtIndex = .random(in: 0 ... 10)
+                        failAtIndex = .random(in: 0 ... steps)
                     }
 
-                    for i in 0 ... 10 {
+                    for i in 0 ... steps {
 
                         try Task.checkCancellation()
 
@@ -38,7 +39,7 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
                             throw ImportBackupError.allCases.randomElement()!
                         }
 
-                        continuation.yield(.progress(Float(i) / 10))
+                        continuation.yield(.progress(Float(i) / Float(steps)))
 
                         try await Task.sleep(for: .milliseconds(.random(in: 50 ... 300)))
                     }

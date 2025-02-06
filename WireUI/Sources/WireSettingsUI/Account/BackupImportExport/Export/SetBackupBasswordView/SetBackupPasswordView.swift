@@ -23,21 +23,22 @@ struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
 
+    private typealias Strings = L10n.Localizable
+    private typealias Labels = L10n.Accessibility.SetBackupPassword
+
     var body: some View {
         NavigationStack {
             setBackupPasswordView
                 .background(Color.viewBackground)
                 .scrollContentBackground(.hidden)
-                .navigationTitle(Text(L10n.Localizable.ExportBackup.title))
+                .navigationTitle(Strings.ExportBackup.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button { viewModel.cancel() } label: {
-                            Text(L10n.Localizable.ExportBackup.Cancel.title)
-                        }
-                        .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(Text(L10n.Accessibility.SetBackupPassword.Close.label))
-                        .accessibilityIdentifier("cancel")
+                        Button(Strings.ExportBackup.Cancel.title) { viewModel.cancel() }
+                            .foregroundStyle(ColorTheme.Base.primary.color)
+                            .accessibilityLabel(Labels.Close.label)
+                            .accessibilityIdentifier("cancel")
                     }
                 }
         }
@@ -47,7 +48,7 @@ struct SetBackupPasswordView: View {
         VStack {
             let scrollView = ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text(L10n.Localizable.ExportBackup.description)
+                    Text(Strings.ExportBackup.description)
                         .font(.body)
                         .foregroundStyle(Color.primaryText)
                         .multilineTextAlignment(.leading)
@@ -71,15 +72,11 @@ struct SetBackupPasswordView: View {
 
             Spacer()
 
-            Button {
-                viewModel.triggerExport()
-            } label: {
-                Text(L10n.Localizable.ExportBackup.button)
-                    .bold()
-            }
-            .disabled(!viewModel.isPasswordValid)
-            .wireButtonStyle(.primary)
-            .padding()
+            Button(Strings.ExportBackup.button, action: viewModel.triggerExport)
+                .bold()
+                .disabled(!viewModel.isPasswordValid)
+                .wireButtonStyle(.primary)
+                .padding()
         }
     }
 

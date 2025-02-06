@@ -24,17 +24,16 @@ struct ImportBackupView: View {
 
     @State private var isFileImporterPresented = false
 
+    private typealias Strings = L10n.Localizable
+
     var body: some View {
-        Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
+        Section(footer: Text(Strings.Backup.Import.description)) {
 
-            Button {
+            Button(Strings.Backup.Import.action) {
                 isFileImporterPresented = true
-            } label: {
-                Text(L10n.Localizable.Settings.RestoreFromBackup.action)
-                    .font(.callout.weight(.semibold))
-                    .foregroundStyle(Color.primaryText)
             }
-
+            .font(.callout.weight(.semibold))
+            .foregroundStyle(Color.primaryText)
             .fileImporter(
                 isPresented: $isFileImporterPresented,
                 allowedContentTypes: WireBackupUTIs
@@ -46,7 +45,7 @@ struct ImportBackupView: View {
 
                 ImportProgressView(
                     progressValue: viewModel.importProgress,
-                    cancelAction: { viewModel.reset() }
+                    cancelAction: viewModel.reset
                 )
                 .interactiveDismissDisabled()
                 .presentationDetents([.medium])
@@ -55,7 +54,7 @@ struct ImportBackupView: View {
                         password: $viewModel.backupPassword,
                         passwordIsWrong: $viewModel.isBackupPasswordWrong,
                         continueAction: { viewModel.enterPassword($0) },
-                        cancelAction: { viewModel.reset() }
+                        cancelAction: viewModel.reset
                     )
                     .interactiveDismissDisabled()
                     .presentationDetents([.large])
@@ -71,15 +70,11 @@ struct ImportBackupView: View {
                     isPresented: $viewModel.isImportConfirmationPresented,
                     presenting: viewModel.alertContent
                 ) { _ in
-                    Button {
+                    Button(Strings.ImportBackup.OverwriteConfirmation.cancel, role: .cancel) {
                         viewModel.reset()
-                    } label: {
-                        Text(L10n.Localizable.ImportBackup.OverwriteConfirmation.cancel)
                     }
-                    Button {
+                    Button(Strings.ImportBackup.OverwriteConfirmation.proceed, role: .destructive) {
                         viewModel.confirmOverwrite()
-                    } label: {
-                        Text(L10n.Localizable.ImportBackup.OverwriteConfirmation.proceed)
                     }
                 } message: { alertContent in
                     Text(alertContent.message)
@@ -91,10 +86,8 @@ struct ImportBackupView: View {
                 isPresented: $viewModel.isAlertPresented,
                 presenting: viewModel.alertContent
             ) { _ in
-                Button {
+                Button(Strings.ImportBackup.Alert.ok) {
                     viewModel.reset()
-                } label: {
-                    Text(L10n.Localizable.ImportBackup.Alert.ok)
                 }
             } message: { alertContent in
                 Text(alertContent.message)

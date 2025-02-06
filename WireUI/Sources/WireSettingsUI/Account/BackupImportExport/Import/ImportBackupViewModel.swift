@@ -43,6 +43,8 @@ final class ImportBackupViewModel: ObservableObject {
     private let logger: any WireSettingsUILogger
     private let fileManager = FileManager.default
 
+    private typealias Strings = L10n.Localizable.ImportBackup
+
     init(
         importBackupUseCase: any ImportBackupUseCaseProtocol,
         logger: any WireSettingsUILogger
@@ -82,10 +84,10 @@ final class ImportBackupViewModel: ObservableObject {
                 }
 
                 alertContent = .init(
-                    title: L10n.Localizable.ImportBackup.OverwriteConfirmation.title,
-                    message: L10n.Localizable.ImportBackup.OverwriteConfirmation.message,
-                    cancel: L10n.Localizable.ImportBackup.OverwriteConfirmation.cancel,
-                    action: L10n.Localizable.ImportBackup.OverwriteConfirmation.proceed
+                    title: Strings.OverwriteConfirmation.title,
+                    message: Strings.OverwriteConfirmation.message,
+                    cancel: Strings.OverwriteConfirmation.cancel,
+                    action: Strings.OverwriteConfirmation.proceed
                 )
                 state = .requestConfirmation(url: copy)
             }
@@ -122,10 +124,9 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .importingBackup(progress: fraction)
                     case .done:
                         alertContent = .init(
-                            title: L10n.Localizable.ImportBackup.Alert.Success.title,
-                            message: L10n.Localizable.ImportBackup.Alert.Success.message,
-                            cancel: "",
-                            action: L10n.Localizable.ImportBackup.Alert.ok
+                            title: Strings.Alert.Success.title,
+                            message: Strings.Alert.Success.message,
+                            action: Strings.Alert.ok
                         )
                         state = .success
                     }
@@ -141,18 +142,17 @@ final class ImportBackupViewModel: ObservableObject {
             } catch ImportBackupError.incompatibleFileFormat {
                 logger.warn("restore failed due to incompatible file format")
                 alertContent = .init(
-                    title: L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.title,
-                    message: L10n.Localizable.ImportBackup.Alert.IncompatibleBackupError.message,
-                    action: L10n.Localizable.ImportBackup.Alert.ok
+                    title: Strings.Alert.IncompatibleBackupError.title,
+                    message: Strings.Alert.IncompatibleBackupError.message,
+                    action: Strings.Alert.ok
                 )
                 state = .restoreFailed
             } catch ImportBackupError.invalidAccountID {
                 logger.warn("restore failed due to invalid account ID")
                 alertContent = .init(
-                    title: L10n.Localizable.ImportBackup.Alert.WrongFileError.title,
-                    message: L10n.Localizable.ImportBackup.Alert.WrongFileError.message,
-                    cancel: "",
-                    action: L10n.Localizable.ImportBackup.Alert.ok
+                    title: Strings.Alert.WrongFileError.title,
+                    message: Strings.Alert.WrongFileError.message,
+                    action: Strings.Alert.ok
                 )
                 state = .restoreFailed
             } catch is CancellationError {
@@ -161,9 +161,9 @@ final class ImportBackupViewModel: ObservableObject {
             } catch {
                 logger.error("unexpected error while restoring: " + String(reflecting: error))
                 alertContent = .init(
-                    title: L10n.Localizable.ImportBackup.Alert.GenericError.title,
-                    message: L10n.Localizable.ImportBackup.Alert.GenericError.message,
-                    action: L10n.Localizable.ImportBackup.Alert.ok
+                    title: Strings.Alert.GenericError.title,
+                    message: Strings.Alert.GenericError.message,
+                    action: Strings.Alert.ok
                 )
                 state = .restoreFailed
             }

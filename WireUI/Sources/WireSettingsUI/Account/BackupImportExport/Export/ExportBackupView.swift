@@ -25,41 +25,34 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
     private(set) var setBackupPasswordView: () -> PasswordView
     private(set) var creatingBackupProgressView: () -> ProgressView
 
+    private typealias Strings = L10n.Localizable
+
     var body: some View {
 
-        Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
+        Section(footer: Text(Strings.Backup.Export.description)) {
 
-            Button {
-                viewModel.showPasswordDialog()
-            } label: {
-                Text(L10n.Localizable.Settings.ExportBackup.action)
-                    .font(.callout.weight(.semibold))
-                    .foregroundStyle(Color.primaryText)
-            }
-
-            .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
-                creatingBackupProgressView()
-                    .interactiveDismissDisabled()
-                    .presentationDetents([.medium])
-                    .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
-                        setBackupPasswordView()
-                            .interactiveDismissDisabled()
-                            .presentationDetents([.medium])
-                    }
-            }
-
-            .alert(
-                Text(L10n.Localizable.ExportBackup.ErrorAlert.title),
-                isPresented: $viewModel.isErrorAlertPresented
-            ) {
-                Button {
-                    viewModel.reset()
-                } label: {
-                    Text(L10n.Localizable.ExportBackup.ErrorAlert.ok)
+            Button(Strings.Backup.Export.action, action: viewModel.showPasswordDialog)
+                .font(.callout.weight(.semibold))
+                .foregroundStyle(Color.primaryText)
+                .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
+                    creatingBackupProgressView()
+                        .interactiveDismissDisabled()
+                        .presentationDetents([.medium])
+                        .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
+                            setBackupPasswordView()
+                                .interactiveDismissDisabled()
+                                .presentationDetents([.medium])
+                        }
                 }
-            } message: {
-                Text(L10n.Localizable.ExportBackup.ErrorAlert.message)
-            }
+
+                .alert(
+                    Text(Strings.ExportBackup.ErrorAlert.title),
+                    isPresented: $viewModel.isErrorAlertPresented
+                ) {
+                    Button(Strings.ExportBackup.ErrorAlert.ok, action: viewModel.reset)
+                } message: {
+                    Text(Strings.ExportBackup.ErrorAlert.message)
+                }
 
         }
     }

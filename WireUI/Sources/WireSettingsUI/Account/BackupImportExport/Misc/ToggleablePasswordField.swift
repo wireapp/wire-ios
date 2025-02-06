@@ -31,12 +31,14 @@ struct ToggleablePasswordField: View {
 
     @FocusState private var isFocused: Bool
 
+    private typealias Strings = L10n.Localizable.ImportBackup
+
     var body: some View {
         HStack {
 
             if isPasswordVisible {
                 TextField(text: $password) {
-                    Text(L10n.Localizable.ImportBackup.EnterPassword.TextField.placeholder)
+                    Text(Strings.EnterPassword.TextField.placeholder)
                         .font(.body)
                         .foregroundStyle(titleColor)
                 }
@@ -45,7 +47,7 @@ struct ToggleablePasswordField: View {
                 .autocapitalization(.none)
             } else {
                 SecureField(text: $password) {
-                    Text(L10n.Localizable.ImportBackup.EnterPassword.TextField.placeholder)
+                    Text(Strings.EnterPassword.TextField.placeholder)
                         .font(.body)
                         .foregroundStyle(titleColor)
                 }
@@ -57,12 +59,12 @@ struct ToggleablePasswordField: View {
                 isPasswordVisible.toggle()
             } label: {
                 Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
-                    .foregroundColor(Color(uiColor: ColorTheme.Backgrounds.onSurface))
+                    .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
             }
 
         }
         .padding()
-        .background(Color(uiColor: ColorTheme.Backgrounds.surface))
+        .background(ColorTheme.Backgrounds.surface.color)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
@@ -79,8 +81,8 @@ struct ToggleablePasswordField: View {
 #Preview {
     ToggleablePasswordField(
         password: .constant(""),
-        titleColor: Color(uiColor: BaseColorPalette.Neutrals.black),
-        borderColor: Color(uiColor: BaseColorPalette.Neutrals.black)
+        titleColor: BaseColorPalette.Neutrals.black.color,
+        borderColor: BaseColorPalette.Neutrals.black.color
     )
     .padding()
 }
