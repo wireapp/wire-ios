@@ -32,9 +32,7 @@ struct SetBackupPasswordView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button { viewModel.cancel() } label: {
-                            Text(L10n.Localizable.ExportBackup.Cancel.title)
-                        }
+                        Button(L10n.Localizable.ExportBackup.Cancel.title) { viewModel.cancel() }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
                         .accessibilityLabel(Text(L10n.Accessibility.SetBackupPassword.Close.label))
                         .accessibilityIdentifier("cancel")
@@ -71,12 +69,10 @@ struct SetBackupPasswordView: View {
 
             Spacer()
 
-            Button {
+            Button(L10n.Localizable.ExportBackup.button) {
                 viewModel.triggerExport()
-            } label: {
-                Text(L10n.Localizable.ExportBackup.button)
-                    .bold()
             }
+            .bold()
             .disabled(!viewModel.isPasswordValid)
             .wireButtonStyle(.primary)
             .padding()

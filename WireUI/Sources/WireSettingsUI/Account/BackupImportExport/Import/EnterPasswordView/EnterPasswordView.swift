@@ -92,12 +92,10 @@ struct EnterPasswordView: View {
 
             Spacer()
 
-            Button {
+            Button(L10n.Localizable.ImportBackup.EnterPassword.Button.title) {
                 continueAction(password)
-            } label: {
-                Text(L10n.Localizable.ImportBackup.EnterPassword.Button.title)
-                    .bold()
             }
+            .bold()
             .disabled(password.isEmpty || passwordIsWrong)
             .wireButtonStyle(.primary)
             .padding()

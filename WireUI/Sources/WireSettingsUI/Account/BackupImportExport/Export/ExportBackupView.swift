@@ -29,13 +29,11 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
 
         Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
 
-            Button {
+            Button(L10n.Localizable.Settings.ExportBackup.action) {
                 viewModel.showPasswordDialog()
-            } label: {
-                Text(L10n.Localizable.Settings.ExportBackup.action)
-                    .font(.callout.weight(.semibold))
-                    .foregroundStyle(Color.primaryText)
             }
+            .font(.callout.weight(.semibold))
+            .foregroundStyle(Color.primaryText)
 
             .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
                 creatingBackupProgressView()
@@ -52,10 +50,8 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                 Text(L10n.Localizable.ExportBackup.ErrorAlert.title),
                 isPresented: $viewModel.isErrorAlertPresented
             ) {
-                Button {
+                Button(L10n.Localizable.ExportBackup.ErrorAlert.ok) {
                     viewModel.reset()
-                } label: {
-                    Text(L10n.Localizable.ExportBackup.ErrorAlert.ok)
                 }
             } message: {
                 Text(L10n.Localizable.ExportBackup.ErrorAlert.message)

@@ -27,13 +27,11 @@ struct ImportBackupView: View {
     var body: some View {
         Section(footer: Text(L10n.Localizable.Settings.RestoreFromBackup.description)) {
 
-            Button {
+            Button(L10n.Localizable.Settings.RestoreFromBackup.action) {
                 isFileImporterPresented = true
-            } label: {
-                Text(L10n.Localizable.Settings.RestoreFromBackup.action)
-                    .font(.callout.weight(.semibold))
-                    .foregroundStyle(Color.primaryText)
             }
+            .font(.callout.weight(.semibold))
+            .foregroundStyle(Color.primaryText)
 
             .fileImporter(
                 isPresented: $isFileImporterPresented,
@@ -71,15 +69,11 @@ struct ImportBackupView: View {
                     isPresented: $viewModel.isImportConfirmationPresented,
                     presenting: viewModel.alertContent
                 ) { _ in
-                    Button {
+                    Button(L10n.Localizable.ImportBackup.OverwriteConfirmation.cancel, role: .cancel) {
                         viewModel.reset()
-                    } label: {
-                        Text(L10n.Localizable.ImportBackup.OverwriteConfirmation.cancel)
                     }
-                    Button {
+                    Button(L10n.Localizable.ImportBackup.OverwriteConfirmation.proceed, role: .destructive) {
                         viewModel.confirmOverwrite()
-                    } label: {
-                        Text(L10n.Localizable.ImportBackup.OverwriteConfirmation.proceed)
                     }
                 } message: { alertContent in
                     Text(alertContent.message)
@@ -91,10 +85,8 @@ struct ImportBackupView: View {
                 isPresented: $viewModel.isAlertPresented,
                 presenting: viewModel.alertContent
             ) { _ in
-                Button {
+                Button(L10n.Localizable.ImportBackup.Alert.ok) {
                     viewModel.reset()
-                } label: {
-                    Text(L10n.Localizable.ImportBackup.Alert.ok)
                 }
             } message: { alertContent in
                 Text(alertContent.message)
