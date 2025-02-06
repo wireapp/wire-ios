@@ -744,14 +744,6 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Progress Events
 
-    // temporary function to simplify call to EventProcessor
-    // might be replaced by something more elegant
-    public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: syncContext) {
-            try? await self.updateEventProcessor?.processEvents(events)
-        }
-    }
-
     // temporary function to simplify call to ConversationEventProcessor
     // might be replaced by something more elegant
     public func processConversationEvents(_ events: [ZMUpdateEvent], completion: (() -> Void)?) {
@@ -895,6 +887,11 @@ extension ZMUserSession: UpdateEventProcessor {
         try await updateEventProcessor?.processEvents(events)
     }
 
+    public func processLiveEvents(_ events: [WireTransport.ZMUpdateEvent]) async throws {
+        assertionFailure("should not be used")
+    }
+
+    
     public func processBufferedEvents() async throws {
         try await updateEventProcessor?.processBufferedEvents()
     }
