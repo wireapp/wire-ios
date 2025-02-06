@@ -26,7 +26,7 @@ public protocol PushSupportedProtocolsSyncProtocol {
 
 }
 
-/// An object to keep update the supported protocols of the
+/// An object to update the supported protocols of the
 /// self user both locally and remotely.
 
 public struct PushSupportedProtocolsSync: PushSupportedProtocolsSyncProtocol {
