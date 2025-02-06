@@ -1,7 +1,0 @@
-# ``WireAuthentication``
-
-## Overview
-
-## Topics
-
-### Group

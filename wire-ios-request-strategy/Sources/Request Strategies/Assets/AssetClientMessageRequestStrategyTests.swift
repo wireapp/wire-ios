@@ -80,7 +80,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         if isImage {
             let size = CGSize(width: 368, height: 520)
-            let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")!
+            let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")
             message.assets.first?.updateWithPreprocessedData(imageData, imageProperties: properties)
             XCTAssertEqual(message.mimeType, "image/jpg", line: line)
             XCTAssertEqual(message.size, 1024, line: line)
