@@ -26,6 +26,8 @@ import WireSettingsUI
 // Instead of linking WireDomainPkg into WireUI targets several symlinks have been created.
 // Therefore several types exist twice, once in their original target (WireDomainPkg) and once in WireUI.
 
+typealias ImportBackupError = WireDomainPkg.ImportBackupError
+
 struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCaseProtocol {
 
     private let importBackupUseCase: any WireDomainPkg.ImportBackupUseCaseProtocol
@@ -49,10 +51,12 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
                     }
                     continuation.finish()
 
-                } catch let error as WireDomainPkg.ImportBackupError {
+                } catch let error as ImportBackupError {
                     switch error {
-                    case .noActiveAccount:
-                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.noActiveAccount)
+                    case .notAuthenticated:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.notAuthenticated)
+                    case .noActiveAccountForImport:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.noActiveAccountForImport)
                     case .passwordRequired:
                         continuation.finish(throwing: WireSettingsUI.ImportBackupError.passwordRequired)
                     case .incompatibleFileFormat:
@@ -67,9 +71,11 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
                         continuation.finish(throwing: WireSettingsUI.ImportBackupError.keyCreationFailed)
                     case .decryptionError:
                         continuation.finish(throwing: WireSettingsUI.ImportBackupError.decryptionError)
-                    case .unknown:
-                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.unknown)
-                    }
+                    case .faildToBackUpUserClient:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.faildToBackUpUserClient)
+                    case .failedToCreateStreamForDecryption:
+                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.failedToCreateStreamForDecryption)
+                     }
 
                 } catch {
                     continuation.finish(throwing: error)
