@@ -43,6 +43,7 @@ final class PullSelfUserSettingsSyncTests: XCTestCase {
     func testPull() async throws {
         // Mock
         api.areReadReceiptsEnabledClosure = { true }
+        // swiftlint:disable:next line_length
         store.updateSelfUserReadReceiptsIsReadReceiptsEnabledIsReadReceiptsEnabledChangedRemotely_MockMethod = { _, _ in }
 
         // When
@@ -51,6 +52,7 @@ final class PullSelfUserSettingsSyncTests: XCTestCase {
         // Then
         XCTAssertEqual(api.areReadReceiptsEnabledCallsCount, 1)
 
+        // swiftlint:disable:next line_length
         let storeInvocations = store.updateSelfUserReadReceiptsIsReadReceiptsEnabledIsReadReceiptsEnabledChangedRemotely_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0].isReadReceiptsEnabled, true)
