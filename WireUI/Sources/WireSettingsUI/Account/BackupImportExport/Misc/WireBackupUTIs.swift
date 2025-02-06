@@ -23,7 +23,7 @@ import UniformTypeIdentifiers
 // of legacy iOS backup file extensions: 'ios_wbu' and 'ios-wbu'.
 
 public let WireBackupUTIs = [
-    UTType("com.wire.backup-universal")!,
-    UTType("com.wire.backup-ios-underscore")!,
-    UTType("com.wire.backup-ios-hyphen")!
-]
+    UTType("com.wire.backup-universal"),
+    UTType("com.wire.backup-ios-underscore"),
+    UTType("com.wire.backup-ios-hyphen")
+].compactMap(\.self)
