@@ -18,7 +18,6 @@
 
 @import Foundation;
 
-@protocol ZMSyncStateDelegate;
 @protocol ZMApplication;
 @protocol FlowManagerType;
 @protocol TransportSessionType;
