@@ -29,6 +29,7 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
+    @Published private(set) var errorMessage: String?
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
@@ -36,10 +37,16 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
 
     public init(
         router: any Router,
-        determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+        determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
+        emailOrSSOCode: String = "",
+        isLoading: Bool = false,
+        errorMessage: String? = nil
     ) {
         self.router = router
         self.determineAuthMethod = determineAuthMethod
+        self.emailOrSSOCode = emailOrSSOCode
+        self.isLoading = isLoading
+        self.errorMessage = errorMessage
     }
 
     func submitEmailOrSSOCode() {

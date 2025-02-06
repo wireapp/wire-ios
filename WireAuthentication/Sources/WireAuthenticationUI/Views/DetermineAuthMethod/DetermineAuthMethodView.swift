@@ -52,20 +52,33 @@ public struct DetermineAuthMethodView: View {
                     Spacer()
                         .frame(maxWidth: .infinity)
                 }
+
                 Text(L10n.Authentication.Identity.Input.body)
                     .multilineTextAlignment(.leading)
                     .wireTextStyle(.body1)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.trailing)
-                LabeledTextField(
-                    isMandatory: false,
-                    placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
-                    title: L10n.Authentication.Identity.Input.Field.title,
-                    string: $viewModel.emailOrSSOCode
-                )
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    LabeledTextField(
+                        isMandatory: false,
+                        placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
+                        title: L10n.Authentication.Identity.Input.Field.title,
+                        string: $viewModel.emailOrSSOCode
+                    )
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                    if let errorMessage = viewModel.errorMessage {
+                        Text(errorMessage)
+                            .wireTextStyle(.subline1)
+                            .foregroundColor(ColorTheme.Base.error.color)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+
                 Button(action: {
                     viewModel.submitEmailOrSSOCode()
                 }, label: {
@@ -108,6 +121,10 @@ public struct DetermineAuthMethodView: View {
 #Preview {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            MockDependencies().determineAuthMethodView
+            MockDependencies().makeDetermineAuthMethodView(
+                emailOrSSOCode: "sam@wire.com",
+                isLoading: false,
+                errorMessage: "Some error message that is too long to fit on a single line"
+            )
         }
 }

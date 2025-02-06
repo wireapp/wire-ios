@@ -33,6 +33,23 @@ final class MockDependencies {
         )
     }
 
+    func makeDetermineAuthMethodView(
+        emailOrSSOCode: String,
+        isLoading: Bool,
+        errorMessage: String?
+    ) -> DetermineAuthMethodView {
+        DetermineAuthMethodView(
+            viewModel: DetermineAuthMethodViewModel(
+                router: rootViewModel,
+                determineAuthMethod: self,
+                emailOrSSOCode: emailOrSSOCode,
+                isLoading: isLoading,
+                errorMessage: errorMessage
+            ),
+            builder: self
+        )
+    }
+
 }
 
 extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
