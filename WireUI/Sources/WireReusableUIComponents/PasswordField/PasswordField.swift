@@ -79,7 +79,7 @@ public struct PasswordField: View {
                     Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                         .foregroundColor(iconColor)
                         .frame(width: 16, height: 16)
-                        .padding(19)
+                        .padding(16)
                 })
                 .accessibilityLabel(isPasswordVisible ? Strings.hidePassword : Strings.showPassword)
             }
@@ -100,6 +100,7 @@ public struct PasswordField: View {
                     .foregroundColor(titleColor)
             }
         }
+        .padding(.horizontal)
         .onChange(of: password, perform: { newPassword in
             isPasswordValid = passwordValidator.validate(newPassword)
         })

@@ -20,44 +20,44 @@ import SwiftUI
 import WireFoundation
 import WireReusableUIComponents
 
-package struct LoginViaEmailPreview: View {
-    private let viewModel: LoginViaEmailViewModel
-
-    package init(
-        email: String = "email@wire.com",
-        forgotPasswordURL: URL = URL(string: "https://example.com")!,
-        passwordValidator: any PasswordValidator = MockPasswordValidator(validationCallback: { _ in false }),
-        showCreateAccount: Bool = false,
-        onCreateAccount: @escaping (@Sendable () -> Void) = {}
-    ) {
-        self.viewModel = LoginViaEmailViewModel(
-            email: email,
-            forgotPasswordURL: forgotPasswordURL,
-            passwordValidator: passwordValidator,
-            showCreateAccount: showCreateAccount,
-            onCreateAccount: onCreateAccount
-        )
-    }
-
-    package var body: some View {
-        LoginViaEmailView(
-            viewModel: viewModel
-        )
-    }
-}
-
-package struct MockPasswordValidator: PasswordValidator {
-    let validationCallback: @Sendable (String) -> Bool
-
-    package init(validationCallback: @Sendable @escaping (String) -> Bool) {
-        self.validationCallback = validationCallback
-    }
-
-    package func validate(_ password: String) -> Bool {
-        validationCallback(password)
-    }
-
-    package var localizedRulesDescription: String? {
-        "Password rules"
-    }
-}
+//package struct LoginViaEmailPreview: View {
+//    private let viewModel: LoginViaEmailViewModel
+//
+//    package init(
+//        email: String = "email@wire.com",
+//        forgotPasswordURL: URL = URL(string: "https://example.com")!,
+//        passwordValidator: any PasswordValidator = MockPasswordValidator(validationCallback: { _ in false }),
+//        showCreateAccount: Bool = false,
+//        onCreateAccount: @escaping (@Sendable () -> Void) = {}
+//    ) {
+//        self.viewModel = LoginViaEmailViewModel(
+//            email: email,
+//            forgotPasswordURL: forgotPasswordURL,
+//            passwordValidator: passwordValidator,
+//            showCreateAccount: showCreateAccount,
+//            onCreateAccount: onCreateAccount
+//        )
+//    }
+//
+//    package var body: some View {
+//        LoginViaEmailView(
+//            viewModel: viewModel
+//        )
+//    }
+//}
+//
+//package struct MockPasswordValidator: PasswordValidator {
+//    let validationCallback: @Sendable (String) -> Bool
+//
+//    package init(validationCallback: @Sendable @escaping (String) -> Bool) {
+//        self.validationCallback = validationCallback
+//    }
+//
+//    package func validate(_ password: String) -> Bool {
+//        validationCallback(password)
+//    }
+//
+//    package var localizedRulesDescription: String? {
+//        "Password rules"
+//    }
+//}

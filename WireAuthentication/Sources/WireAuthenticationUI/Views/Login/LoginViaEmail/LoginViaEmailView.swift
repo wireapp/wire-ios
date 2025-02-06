@@ -17,53 +17,131 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireReusableUIComponents
 
-public protocol LoginViaEmailBuilder {
+package struct LoginViaEmailView: View {
+    private let viewModel: LoginViaEmailViewModel
 
-    @MainActor
-    func loginViaEmailView(email: String) -> LoginViaEmailView
+    @State var password: String = ""
+    @State var isPasswordValid = true
 
-}
-
-public struct LoginViaEmailView: View {
-
-    @ObservedObject var viewModel: LoginViaEmailViewModel
-
-    @State private var password = ""
-
-    public init(
+    package init(
         viewModel: LoginViaEmailViewModel
     ) {
         self.viewModel = viewModel
     }
 
-    public var body: some View {
-        VStack(spacing: 20) {
-            TextField("", text: .constant(viewModel.email))
-                .textFieldStyle(.roundedBorder)
-                .foregroundStyle(.secondary)
-                .disabled(true)
+    package var body: some View {
+        VStack(alignment: .center, spacing: 14) {
+            LabeledTextField(
+                placeholder: nil,
+                title: L10n.CloudUserLogin.InputEmail.title,
+                string: .constant(viewModel.email)
+            )
+            .disabled(true)
 
-            SecureField("Password", text: $password)
-                .textFieldStyle(.roundedBorder)
+            PasswordField(
+                isPasswordValid: $isPasswordValid,
+                password: $password,
+                passwordValidator: viewModel.passwordValidator,
+                placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
+                title: L10n.CloudUserLogin.InputPassword.title
+            )
 
-            Button("Next") {
+            Button(action: {
                 viewModel.submitPassword(password)
-            }
-            .disabled(!viewModel.isValidPassword(password))
+            }, label: {
+                Text(L10n.CloudUserLogin.submit)
+                    .lineLimit(nil)
+            })
+            .wireButtonStyle(.primary)
+            .disabled(!isPasswordValid)
 
-            Text("Forgot password?")
-                .underline()
+            Button(action: {
+                UIApplication.shared.open(viewModel.forgotPasswordURL)
+            }, label: {
+                Text(L10n.CloudUserLogin.forgotPassword)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            })
+            .wireButtonStyle(.link)
 
-            Spacer()
+//            if viewModel.showCreateAccount {
+//                VStack(spacing: 4) {
+//                    Text(L10n.CreatePersonalAccount.title)
+//                        .multilineTextAlignment(.center)
+//                        .wireTextStyle(.body1)
+//                        .lineLimit(nil)
+//                        .fixedSize(horizontal: false, vertical: true)
+//
+//                    Button(action: {
+//                        viewModel.onCreateAccount()
+//                    }, label: {
+//                        Text(L10n.CreatePersonalAccount.button)
+//                            .multilineTextAlignment(.center)
+//                            .lineLimit(nil)
+//                            .minimumScaleFactor(0.5)
+//                            .fixedSize(horizontal: false, vertical: true)
+//                    })
+//                    .wireButtonStyle(.link)
+//                }
+//                .frame(maxWidth: .infinity)
+//                .padding()
+//                .background {
+//                    if #available(iOS 17.0, *) {
+//                        RoundedRectangle(cornerRadius: 10)
+//                            .fill(ColorTheme.Backgrounds.backgroundVariant.color)
+//                            .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
+//                    } else {
+//                        RoundedRectangle(cornerRadius: 10)
+//                            .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
+//                            .background(ColorTheme.Backgrounds.backgroundVariant.color)
+//                            .cornerRadius(12)
+//                    }
+//                }
+//            }
         }
-        .navigationTitle("Enter your password to log in")
-        .navigationBarTitleDisplayMode(.inline)
-        .padding()
+        .navigationTitle(L10n.CloudUserLogin.title)
+        .padding(32)
+        .background(ColorTheme.Backgrounds.surface.color)
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
+        )
     }
-
 }
 
-#Preview {
-    MockDependencies().loginViaEmailView(email: "foo@bar.com")
-}
+//#Preview("Regular fonts") {
+//    BackgroundView()
+//        .overlay {
+//            VStack(spacing: 0) {
+//                Spacer()
+//                    .frame(maxHeight: .infinity)
+//                LoginViaEmailPreview()
+//            }
+//        }
+//}
+//
+//#Preview("Large fonts") {
+//    BackgroundView()
+//        .overlay {
+//            VStack(spacing: 0) {
+//                Spacer()
+//                    .frame(maxHeight: .infinity)
+//                if #available(iOS 16.4, *) {
+//                    ScrollView(.vertical) {
+//                        LoginViaEmailPreview()
+//                    }
+//                    .scrollBounceBehavior(.basedOnSize)
+//                } else {
+//                    ScrollView(.vertical) {
+//                        LoginViaEmailPreview()
+//                    }
+//                }
+//            }
+//        }
+//        .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+//}

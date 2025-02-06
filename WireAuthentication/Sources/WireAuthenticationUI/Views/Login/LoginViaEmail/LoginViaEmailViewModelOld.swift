@@ -16,38 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
-import WireReusableUIComponents
+import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class LoginViaEmailViewModel: ObservableObject {
+public final class LoginViaEmailViewModelOld: ObservableObject {
 
     let router: any Router
     let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
 
     let email: String
-    let forgotPasswordURL: URL
-    let passwordValidator: any PasswordValidator
-
-    // MARK: - Life cycle
 
     public init(
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
-        email: String,
-        forgotPasswordURL: URL,
-        passwordValidator: any PasswordValidator
+        email: String
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.email = email
-        self.forgotPasswordURL = forgotPasswordURL
-        self.passwordValidator = passwordValidator
     }
 
     func isValidPassword(_ password: String) -> Bool {
-        passwordValidator.validate(password)
+        !password.isEmpty
     }
 
     func submitPassword(_ password: String) {
@@ -58,7 +51,6 @@ public final class LoginViaEmailViewModel: ObservableObject {
                     password: password
                 )
             } catch {
-                // TODO: [WPB-15940] Error handling
                 print("error: \(error)")
             }
         }
