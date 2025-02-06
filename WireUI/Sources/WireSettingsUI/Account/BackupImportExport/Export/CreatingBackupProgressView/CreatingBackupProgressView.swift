@@ -36,7 +36,7 @@ struct CreatingBackupProgressView: View {
                             Text(L10n.Localizable.ExportBackup.Cancel.title)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(Text(L10n.Accessibility.ExportBackup.Cancel.label))
+                        .accessibilityLabel(L10n.Accessibility.ExportBackup.Cancel.label)
                         .accessibilityIdentifier("cancel")
                     }
                 }

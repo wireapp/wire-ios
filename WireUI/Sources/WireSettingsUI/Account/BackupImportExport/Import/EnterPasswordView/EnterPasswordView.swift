@@ -39,7 +39,7 @@ struct EnterPasswordView: View {
                             Text(L10n.Localizable.ImportBackup.Cancel.title)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(Text(L10n.Accessibility.ImportBackup.Cancel.label))
+                        .accessibilityLabel(L10n.Accessibility.ImportBackup.Cancel.label)
                         .accessibilityIdentifier("cancel")
                     }
                 }
