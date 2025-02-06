@@ -69,11 +69,18 @@ public struct DetermineAuthMethodView: View {
                 Button(action: {
                     viewModel.submitEmailOrSSOCode()
                 }, label: {
-                    Text(L10n.Authentication.Identity.Input.submit)
-                        .lineLimit(nil)
+                    HStack {
+                        // TODO: [WPB-15725] Implement custom loading indicator
+                        if viewModel.isLoading {
+                            ProgressView()
+                        }
+
+                        Text(L10n.Authentication.Identity.Input.submit)
+                            .lineLimit(nil)
+                    }
                 })
                 .wireButtonStyle(.primary)
-                .disabled(viewModel.isNextButtonEnabled)
+                .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }.padding()
         }
         .navigationDestination(for: Destination.self) {

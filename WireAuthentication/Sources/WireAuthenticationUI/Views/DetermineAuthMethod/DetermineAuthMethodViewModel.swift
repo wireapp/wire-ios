@@ -28,6 +28,7 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
     let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
 
     @Published var emailOrSSOCode: String = ""
+    @Published private(set) var isLoading = false
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
@@ -42,8 +43,11 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     func submitEmailOrSSOCode() {
-        Task { [router] in
-            let method = await self.determineAuthMethod.invoke(
+        isLoading = true
+
+        Task { [self] in
+            // TODO: [WPB-15920] Handle errors
+            let method = try! await self.determineAuthMethod.invoke(
                 emailOrSSOCode: emailOrSSOCode
             )
 
@@ -54,8 +58,16 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
             case let .loginOrRegisterViaEmail(email):
                 router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
-            default:
+            case let .loginViaSSO(code):
+                // TODO: [WPB-15920] Handle login via SSO
                 break
+            case let .onPremLogin(email, backendConfig):
+                // TODO: [WPB-15920] Handle on-prem login
+                break
+            }
+
+            Task { @MainActor in
+                isLoading = false
             }
         }
     }

@@ -21,7 +21,7 @@ import Foundation
 public protocol DetermineAuthMethodUseCaseProtocol {
 
     @MainActor
-    func invoke(emailOrSSOCode: String) async -> AuthenticationMethod
+    func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod
 
 }
 

@@ -19,15 +19,15 @@
 import Foundation
 import WireAuthenticationAPI
 
-// If we were using a Swift package, we should use the `package` access modifier here.
+package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
-public struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
-
-    public init() {}
+    package init() {}
 
     @MainActor
-    public func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .loginViaEmail(email: emailOrSSOCode)
+    package func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod {
+        try await Task.sleep(for: .seconds(3))
+
+        return .loginViaEmail(email: emailOrSSOCode)
     }
 
 }
