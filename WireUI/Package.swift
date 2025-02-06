@@ -28,6 +28,7 @@ let package = Package(
         .package(path: "../WireAnalytics"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -83,9 +84,10 @@ let package = Package(
             name: "WireSettingsUI",
             dependencies: [
                 "WireDesign",
-                "WireFoundation",
-                "WireReusableUIComponents",
                 .product(name: "WireDomainPackage", package: "WireDomainPackage"),
+                "WireFoundation",
+                "WireLogging",
+                "WireReusableUIComponents",
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),

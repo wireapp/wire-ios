@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireDomainPkg
 
 @MainActor
@@ -41,14 +42,14 @@ final class ImportBackupViewModel: ObservableObject {
 
     private var importTask: Task<Void, Never>?
 
-    private let logger: any WireSettingsUILogger
+    private let logger: any LoggerProtocol
     private let fileManager = FileManager.default
 
     private typealias Strings = L10n.Localizable.ImportBackup
 
     init(
         importBackupUseCase: any ImportBackupUseCaseProtocol,
-        logger: any WireSettingsUILogger
+        logger: any LoggerProtocol
     ) {
         self.importBackupUseCase = importBackupUseCase
         self.logger = logger

@@ -381,8 +381,8 @@ extension SettingsCellDescriptorFactory {
             createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
-            exportBackupLogger: WireSettingsUILoggingAdapter(.backupExport),
-            importBackupLogger: WireSettingsUILoggingAdapter(.backupImport)
+            exportBackupLogger: WireLogger.backupExport,
+            importBackupLogger: WireLogger.backupImport
         )
     }
 
@@ -466,40 +466,6 @@ extension SettingsCellDescriptorFactory {
 
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
-    }
-
-}
-
-private struct WireSettingsUILoggingAdapter: WireSettingsUILogger { // TODO: try to link WireLogging
-
-    var logger: WireLogger
-
-    init(_ logger: WireLogger) {
-        self.logger = logger
-    }
-
-    func debug(_ message: String) {
-        logger.debug(message)
-    }
-
-    func info(_ message: String) {
-        logger.info(message)
-    }
-
-    func notice(_ message: String) {
-        logger.notice(message)
-    }
-
-    func warn(_ message: String) {
-        logger.warn(message)
-    }
-
-    func error(_ message: String) {
-        logger.error(message)
-    }
-
-    func critical(_ message: String) {
-        logger.critical(message)
     }
 
 }
