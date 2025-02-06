@@ -831,6 +831,11 @@ public class ConversationViewPage extends IOSPage {
         sendButton.click();
     }
 
+    public void sendMessage(String text) {
+        typeMessage(text);
+        tapSendMessageButton();
+    }
+
     public void tapHourglassButton() {
         hourglassButton.click();
     }
