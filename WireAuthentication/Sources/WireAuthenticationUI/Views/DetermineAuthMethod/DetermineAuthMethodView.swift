@@ -29,7 +29,7 @@ public protocol DetermineAuthMethodBuilder {
 
 public struct DetermineAuthMethodView: View {
 
-    @ObservedObject var viewModel: DetermineAuthMethodViewModel
+    @StateObject var viewModel: DetermineAuthMethodViewModel
 
     let builder: any LoginViaEmailBuilder
 
@@ -37,7 +37,7 @@ public struct DetermineAuthMethodView: View {
         viewModel: DetermineAuthMethodViewModel,
         builder: any LoginViaEmailBuilder
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.builder = builder
     }
 
