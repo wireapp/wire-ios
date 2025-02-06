@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CB342A1C2D53984600810BE0 /* WireAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = CB342A1B2D53984600810BE0 /* WireAuthentication */; };
+		CB342A1E2D5399DA00810BE0 /* WireAuthenticationUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB342A1D2D5399DA00810BE0 /* WireAuthenticationUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB342A1C2D53984600810BE0 /* WireAuthentication in Frameworks */,
+				CB342A1E2D5399DA00810BE0 /* WireAuthenticationUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +81,7 @@
 			name = WireAuthenticationApp;
 			packageProductDependencies = (
 				CB342A1B2D53984600810BE0 /* WireAuthentication */,
+				CB342A1D2D5399DA00810BE0 /* WireAuthenticationUI */,
 			);
 			productName = WireAuthenticationApp;
 			productReference = CB342A0C2D53976B00810BE0 /* WireAuthenticationApp.app */;
@@ -343,6 +346,10 @@
 		CB342A1B2D53984600810BE0 /* WireAuthentication */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAuthentication;
+		};
+		CB342A1D2D5399DA00810BE0 /* WireAuthenticationUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAuthenticationUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

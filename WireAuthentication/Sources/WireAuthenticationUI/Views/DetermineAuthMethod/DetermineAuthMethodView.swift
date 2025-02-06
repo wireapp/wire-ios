@@ -66,6 +66,9 @@ public struct DetermineAuthMethodView: View {
                 Color.red
             }
         }
+        .presentationDetents([.medium, .large])
+        .interactiveDismissDisabled()
+        .presentationDragIndicator(.hidden)
     }
 
     enum Destination: Hashable {

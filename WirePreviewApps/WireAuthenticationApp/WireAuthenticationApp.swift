@@ -17,13 +17,12 @@
 //
 
 import SwiftUI
-import WireAuthentication
 
 @main
 struct WireAuthenticationApp: App {
     var body: some Scene {
         WindowGroup {
-            WireAuthenticationAssembly().assemble()
+            ContentView()
         }
     }
 }
