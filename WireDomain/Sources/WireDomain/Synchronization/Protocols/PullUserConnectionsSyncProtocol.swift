@@ -16,7 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
+/// An object to keep the local user connections up to date
+/// with the remote user connections.
 protocol PullUserConnectionsSyncProtocol {
+
+    /// Fetch all user connections from remote, then create or update
+    /// them locally.
 
     func pull() async throws
 
