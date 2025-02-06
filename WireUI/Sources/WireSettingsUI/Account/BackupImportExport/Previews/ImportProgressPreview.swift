@@ -20,7 +20,7 @@ import SwiftUI
 
 @MainActor @ViewBuilder
 func ImportProgressPreview() -> some View {
-    Color.white
+    Color(uiColor: .systemBackground)
         .sheet(isPresented: .constant(true)) {
             ImportProgressView(progressValue: 0.25) {}
                 .interactiveDismissDisabled()

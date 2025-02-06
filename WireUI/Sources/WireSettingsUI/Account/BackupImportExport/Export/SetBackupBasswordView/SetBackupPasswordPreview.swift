@@ -23,7 +23,7 @@ struct SetBackupPasswordPreview: View {
     @State private var isPresented = true
 
     var body: some View {
-        Color.white
+        Color(uiColor: .systemBackground)
             .sheet(isPresented: .constant(true)) {
                 BackupImportExportBuilder.previewBuilder
                     .buildSetBackupPasswordView(

@@ -31,32 +31,28 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
 
         Section(footer: Text(Strings.Backup.Export.description)) {
 
-            Button(Strings.Backup.Export.action) {
-                viewModel.showPasswordDialog()
-            }
-            .font(.callout.weight(.semibold))
-            .foregroundStyle(Color.primaryText)
-            .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
-                creatingBackupProgressView()
-                    .interactiveDismissDisabled()
-                    .presentationDetents([.medium])
-                    .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
-                        setBackupPasswordView()
-                            .interactiveDismissDisabled()
-                            .presentationDetents([.medium])
-                    }
-            }
-
-            .alert(
-                Text(Strings.ExportBackup.ErrorAlert.title),
-                isPresented: $viewModel.isErrorAlertPresented
-            ) {
-                Button(Strings.ExportBackup.ErrorAlert.ok) {
-                    viewModel.reset()
+            Button(Strings.Backup.Export.action, action: viewModel.showPasswordDialog)
+                .font(.callout.weight(.semibold))
+                .foregroundStyle(Color.primaryText)
+                .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
+                    creatingBackupProgressView()
+                        .interactiveDismissDisabled()
+                        .presentationDetents([.medium])
+                        .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
+                            setBackupPasswordView()
+                                .interactiveDismissDisabled()
+                                .presentationDetents([.medium])
+                        }
                 }
-            } message: {
-                Text(Strings.ExportBackup.ErrorAlert.message)
-            }
+
+                .alert(
+                    Text(Strings.ExportBackup.ErrorAlert.title),
+                    isPresented: $viewModel.isErrorAlertPresented
+                ) {
+                    Button(Strings.ExportBackup.ErrorAlert.ok, action: viewModel.reset)
+                } message: {
+                    Text(Strings.ExportBackup.ErrorAlert.message)
+                }
 
         }
     }

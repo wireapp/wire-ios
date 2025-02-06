@@ -126,7 +126,6 @@ final class ImportBackupViewModel: ObservableObject {
                         alertContent = .init(
                             title: Strings.Alert.Success.title,
                             message: Strings.Alert.Success.message,
-                            cancel: "",
                             action: Strings.Alert.ok
                         )
                         state = .success
@@ -153,7 +152,6 @@ final class ImportBackupViewModel: ObservableObject {
                 alertContent = .init(
                     title: Strings.Alert.WrongFileError.title,
                     message: Strings.Alert.WrongFileError.message,
-                    cancel: "",
                     action: Strings.Alert.ok
                 )
                 state = .restoreFailed

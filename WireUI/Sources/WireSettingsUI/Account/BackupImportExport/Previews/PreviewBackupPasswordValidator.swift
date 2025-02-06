@@ -19,11 +19,11 @@
 struct PreviewBackupPasswordValidator: BackupPasswordValidatorProtocol {
 
     func isPasswordValid(_ password: String) -> Bool {
-        password.count > 8
+        password.count > 3
     }
 
     var localizedRulesDescription: String {
-        "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character."
+        "Use at least 3 characters."
     }
 
 }

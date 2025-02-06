@@ -24,7 +24,7 @@ struct EnterPasswordPreview: View {
     @State private(set) var isPasswordWrong = false
 
     var body: some View {
-        Color.white
+        Color(uiColor: .systemBackground)
             .sheet(isPresented: .constant(true)) {
                 EnterPasswordView(
                     password: $password,

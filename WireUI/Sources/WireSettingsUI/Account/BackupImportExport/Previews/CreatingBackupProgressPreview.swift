@@ -21,7 +21,7 @@ import WireDesign
 
 @MainActor @ViewBuilder
 func CreatingBackupProgressPreview(_ progress: CreatingBackupProgressModel) -> some View {
-    Color.white
+    Color(uiColor: .systemBackground)
         .sheet(isPresented: .constant(true)) {
             CreatingBackupProgressView(progress: progress) {}
                 .presentationDetents([.medium])
