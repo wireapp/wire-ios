@@ -19,7 +19,7 @@
 import SwiftUI
 import WireDesign
 
-struct PasswordFieldView: View {
+struct PasswordFieldView: View { // TODO: [WPB-15211] try to use `ToggleablePasswordField`
 
     let passwordRules: Text
     @Binding var password: String
@@ -82,12 +82,13 @@ struct PasswordFieldView: View {
 
     // MARK: - Helper
 
+    // TODO: [WPB-15211] actually there are different gray colors for the title, the border and the rules text.
     private var calculatedColor: Color {
         switch (password.isEmpty, isPasswordValid) {
         case (_, false):
             ColorTheme.Base.error.color
         case (true, _):
-            ColorTheme.Base.secondaryText.color
+            ColorTheme.Base.labelTitle.color
         case (false, true):
             ColorTheme.Base.primary.color
         }
