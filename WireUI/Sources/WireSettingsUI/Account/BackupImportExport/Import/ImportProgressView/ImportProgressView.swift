@@ -30,7 +30,7 @@ struct ImportProgressView: View {
     var body: some View {
         NavigationStack {
             progressView
-                .background(Color(uiColor: ColorTheme.Backgrounds.background))
+                .background(ColorTheme.Backgrounds.background.color)
                 .navigationTitle(Strings.RestoringHistory.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -38,7 +38,7 @@ struct ImportProgressView: View {
                         Button(action: cancelAction) {
                             Text(Strings.Cancel.title)
                         }
-                        .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                        .foregroundStyle(ColorTheme.Base.primary.color)
                         .accessibilityLabel(Labels.Cancel.label)
                         .accessibilityIdentifier("cancel")
                     }

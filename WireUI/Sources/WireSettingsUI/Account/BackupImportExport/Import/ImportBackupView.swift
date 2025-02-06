@@ -45,7 +45,7 @@ struct ImportBackupView: View {
 
                 ImportProgressView(
                     progressValue: viewModel.importProgress,
-                    cancelAction: { viewModel.reset() }
+                    cancelAction: viewModel.reset
                 )
                 .interactiveDismissDisabled()
                 .presentationDetents([.medium])
@@ -54,7 +54,7 @@ struct ImportBackupView: View {
                         password: $viewModel.backupPassword,
                         passwordIsWrong: $viewModel.isBackupPasswordWrong,
                         continueAction: { viewModel.enterPassword($0) },
-                        cancelAction: { viewModel.reset() }
+                        cancelAction: viewModel.reset
                     )
                     .interactiveDismissDisabled()
                     .presentationDetents([.large])

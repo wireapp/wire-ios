@@ -29,14 +29,14 @@ struct CreatingBackupProgressView: View {
 
     var body: some View {
         NavigationStack {
-            backupProgressViewControllerRepresentable
-                .background(Color(uiColor: ColorTheme.Backgrounds.background))
+            backupProgressView
+                .background(ColorTheme.Backgrounds.background.color)
                 .navigationTitle(Strings.CreatingBackup.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(Strings.Cancel.title, action: cancelAction)
-                            .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                            .foregroundStyle(ColorTheme.Base.primary.color)
                             .accessibilityLabel(Labels.Cancel.label)
                             .accessibilityIdentifier("cancel")
                     }
@@ -44,7 +44,7 @@ struct CreatingBackupProgressView: View {
         }
     }
 
-    @ViewBuilder private var backupProgressViewControllerRepresentable: some View {
+    @ViewBuilder private var backupProgressView: some View {
 
         let completedAction: (Bool) -> Void = { completed in
             completed ? cancelAction() : ()

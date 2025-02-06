@@ -33,13 +33,13 @@ struct EnterPasswordView: View {
     var body: some View {
         NavigationStack {
             enterPasswordView
-                .background(Color(uiColor: ColorTheme.Backgrounds.background))
+                .background(ColorTheme.Backgrounds.background.color)
                 .navigationTitle(Strings.EnterPassword.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(Strings.Cancel.title, action: cancelAction)
-                            .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                            .foregroundStyle(ColorTheme.Base.primary.color)
                             .accessibilityLabel(Labels.Cancel.label)
                             .accessibilityIdentifier("cancel")
                     }
@@ -50,45 +50,11 @@ struct EnterPasswordView: View {
     @ViewBuilder private var enterPasswordView: some View {
         VStack {
 
-            let scrollView = ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    Spacer()
-
-                    Text(Strings.EnterPassword.description)
-                        .font(.body)
-                        .padding(.bottom, 28)
-
-                    Text(Strings.EnterPassword.TextField.title)
-                        .foregroundStyle(passwordFieldTitleColor)
-                        .font(.subheadline)
-                        .foregroundStyle(Color(uiColor: BaseColorPalette.Grays.gray80))
-                        .padding(.bottom, 2)
-
-                    ToggleablePasswordField(
-                        password: $password,
-                        titleColor: passwordFieldTitleColor,
-                        borderColor: passwordFieldBorderColor,
-                        focusOnAppear: true
-                    )
-                    .padding(.bottom, 8)
-
-                    if passwordIsWrong {
-                        Text(Strings.EnterPassword.wrongPassword)
-                            .foregroundStyle(passwordFieldTitleColor)
-                            .font(.caption)
-                            .foregroundStyle(Color(uiColor: BaseColorPalette.Grays.gray80))
-                    }
-
-                    Spacer()
-                }
-                .padding()
-            }
-
             if #available(iOS 16.4, *) {
-                scrollView
+                ScrollView(content: scrollViewContent)
                     .scrollBounceBehavior(.basedOnSize)
             } else {
-                scrollView
+                ScrollView(content: scrollViewContent)
             }
 
             Spacer()
@@ -103,23 +69,58 @@ struct EnterPasswordView: View {
         }
     }
 
+    @ViewBuilder
+    private func scrollViewContent() -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Spacer()
+
+            Text(Strings.EnterPassword.description)
+                .font(.body)
+                .padding(.bottom, 28)
+
+            Text(Strings.EnterPassword.TextField.title)
+                .foregroundStyle(passwordFieldTitleColor)
+                .font(.subheadline)
+                .foregroundStyle(BaseColorPalette.Grays.gray80.color)
+                .padding(.bottom, 2)
+
+            ToggleablePasswordField(
+                password: $password,
+                titleColor: passwordFieldTitleColor,
+                borderColor: passwordFieldBorderColor,
+                focusOnAppear: true
+            )
+            .padding(.bottom, 8)
+
+            if passwordIsWrong {
+                Text(Strings.EnterPassword.wrongPassword)
+                    .foregroundStyle(passwordFieldTitleColor)
+                    .font(.caption)
+                    .foregroundStyle(BaseColorPalette.Grays.gray80.color)
+            }
+
+            Spacer()
+        }
+        .padding()
+    }
+
     private var passwordFieldTitleColor: Color {
         if passwordIsWrong {
-            Color(uiColor: ColorTheme.Base.error)
+            ColorTheme.Base.error.color
         } else if password.isEmpty {
-            Color(uiColor: BaseColorPalette.Grays.gray70)
+            BaseColorPalette.Grays.gray70.color
         } else {
-            Color(uiColor: ColorTheme.Base.primary)
+            ColorTheme.Base.primary.color
         }
     }
 
     private var passwordFieldBorderColor: Color {
         if passwordIsWrong {
-            Color(uiColor: ColorTheme.Base.error)
+            ColorTheme.Base.error.color
         } else if password.isEmpty {
-            Color(uiColor: BaseColorPalette.Grays.gray40)
+            BaseColorPalette.Grays.gray40.color // TODO: [WPB-15211] support dark mode
         } else {
-            Color(uiColor: ColorTheme.Base.primary)
+            ColorTheme.Base.primary.color
         }
     }
 }
