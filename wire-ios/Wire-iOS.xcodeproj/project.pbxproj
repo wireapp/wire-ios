@@ -527,7 +527,7 @@
 		5E8FFC0321ECC5CF0052DF03 /* AuthenticationFeatureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC0221ECC5CF0052DF03 /* AuthenticationFeatureProvider.swift */; };
 		5E8FFC0621ECCC7C0052DF03 /* AuthenticationInterfaceBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC0521ECCC7C0052DF03 /* AuthenticationInterfaceBuilderTests.swift */; };
 		5E8FFC0821ECCC9B0052DF03 /* MockAuthenticationFeatureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC0721ECCC9B0052DF03 /* MockAuthenticationFeatureProvider.swift */; };
-		5E8FFC0A21ECE3920052DF03 /* BackupRestoreStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC0921ECE3920052DF03 /* BackupRestoreStepDescription.swift */; };
+		5E8FFC0A21ECE3920052DF03 /* NoHistoryHintStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC0921ECE3920052DF03 /* NoHistoryHintStepDescription.swift */; };
 		5E8FFC0C21EDDB970052DF03 /* SolidButtonDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC0B21EDDB970052DF03 /* SolidButtonDescription.swift */; };
 		5E8FFC1021EE0CA60052DF03 /* AuthenticationButtonTapInputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC0F21EE0CA60052DF03 /* AuthenticationButtonTapInputHandler.swift */; };
 		5E8FFC1821EF61A90052DF03 /* ClientUnregisterInvitationStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8FFC1721EF61A80052DF03 /* ClientUnregisterInvitationStepDescription.swift */; };
@@ -2440,7 +2440,7 @@
 		5E8FFC0221ECC5CF0052DF03 /* AuthenticationFeatureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationFeatureProvider.swift; sourceTree = "<group>"; };
 		5E8FFC0521ECCC7C0052DF03 /* AuthenticationInterfaceBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationInterfaceBuilderTests.swift; sourceTree = "<group>"; };
 		5E8FFC0721ECCC9B0052DF03 /* MockAuthenticationFeatureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAuthenticationFeatureProvider.swift; sourceTree = "<group>"; };
-		5E8FFC0921ECE3920052DF03 /* BackupRestoreStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRestoreStepDescription.swift; sourceTree = "<group>"; };
+		5E8FFC0921ECE3920052DF03 /* NoHistoryHintStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoHistoryHintStepDescription.swift; sourceTree = "<group>"; };
 		5E8FFC0B21EDDB970052DF03 /* SolidButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolidButtonDescription.swift; sourceTree = "<group>"; };
 		5E8FFC0D21EE0B180052DF03 /* LayoutDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutDirection.swift; sourceTree = "<group>"; };
 		5E8FFC0F21EE0CA60052DF03 /* AuthenticationButtonTapInputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationButtonTapInputHandler.swift; sourceTree = "<group>"; };
@@ -4659,7 +4659,7 @@
 				5E21344A21E351D400273D0D /* LogInStepDescription.swift */,
 				16D74BED2B5933D000160298 /* AddUsernameStepDescription.swift */,
 				5E90418A21F61CBF00C3B413 /* ReauthenticateStepDescription.swift */,
-				5E8FFC0921ECE3920052DF03 /* BackupRestoreStepDescription.swift */,
+				5E8FFC0921ECE3920052DF03 /* NoHistoryHintStepDescription.swift */,
 				5E8FFC1721EF61A80052DF03 /* ClientUnregisterInvitationStepDescription.swift */,
 				5E8FFC1B21EF7CB50052DF03 /* AddEmailPasswordStepDescription.swift */,
 				5E8FFC2121EF86000052DF03 /* EmailLinkVerificationStepDescription.swift */,
@@ -9471,7 +9471,7 @@
 				068500DF26BD4E4B00721F80 /* UIView+Subviews.swift in Sources */,
 				E92A07A02817E553006BA73B /* DynamicFontButton.swift in Sources */,
 				5E35F77C2182124E00D3F4FE /* PerformanceDebugger.swift in Sources */,
-				5E8FFC0A21ECE3920052DF03 /* BackupRestoreStepDescription.swift in Sources */,
+				5E8FFC0A21ECE3920052DF03 /* NoHistoryHintStepDescription.swift in Sources */,
 				EEA65C2725D27A8300AA7519 /* Strings+Generated.swift in Sources */,
 				87DCF49C1D34E9E600BB420F /* LocationSendViewController.swift in Sources */,
 				F1199D421FC849450070FAC3 /* VerificationCodeFieldDescription.swift in Sources */,

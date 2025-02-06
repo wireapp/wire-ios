@@ -21,7 +21,7 @@ import WireCommonComponents
 
 /// The step that displays information about not having any conversation history.
 
-final class BackupRestoreStepDescription: AuthenticationStepDescription { // TODO: consider renaming
+final class NoHistoryHintStepDescription: AuthenticationStepDescription {
 
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
