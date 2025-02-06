@@ -81,7 +81,12 @@ let package = Package(
 
         .target(
             name: "WireSettingsUI",
-            dependencies: ["WireDesign", "WireFoundation", "WireReusableUIComponents"],
+            dependencies: [
+                "WireDesign",
+                "WireFoundation",
+                "WireReusableUIComponents",
+                .product(name: "WireDomainPackage", package: "WireDomainPackage"),
+            ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .target(

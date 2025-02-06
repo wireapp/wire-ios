@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDomainPkg
 
 public struct BackupImportExportBuilder {
 

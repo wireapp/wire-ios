@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomainPkg
 
 @MainActor
 final class ImportBackupViewModel: ObservableObject {
