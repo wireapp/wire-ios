@@ -1210,7 +1210,6 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
 }
 
-
 // MARK: - URLActionProcessor
 
 extension ZMUserSession: URLActionProcessor {
