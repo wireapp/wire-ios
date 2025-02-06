@@ -74,8 +74,9 @@ struct ImportBackupUseCaseProtocolAdapter: WireSettingsUI.ImportBackupUseCasePro
                     case .faildToBackUpUserClient:
                         continuation.finish(throwing: WireSettingsUI.ImportBackupError.faildToBackUpUserClient)
                     case .failedToCreateStreamForDecryption:
-                        continuation.finish(throwing: WireSettingsUI.ImportBackupError.failedToCreateStreamForDecryption)
-                     }
+                        continuation
+                            .finish(throwing: WireSettingsUI.ImportBackupError.failedToCreateStreamForDecryption)
+                    }
 
                 } catch {
                     continuation.finish(throwing: error)
