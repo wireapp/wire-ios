@@ -31,12 +31,14 @@ struct ToggleablePasswordField: View {
 
     @FocusState private var isFocused: Bool
 
+    private typealias Strings = L10n.Localizable.ImportBackup
+
     var body: some View {
         HStack {
 
             if isPasswordVisible {
                 TextField(text: $password) {
-                    Text(L10n.Localizable.ImportBackup.EnterPassword.TextField.placeholder)
+                    Text(Strings.EnterPassword.TextField.placeholder)
                         .font(.body)
                         .foregroundStyle(titleColor)
                 }
@@ -45,7 +47,7 @@ struct ToggleablePasswordField: View {
                 .autocapitalization(.none)
             } else {
                 SecureField(text: $password) {
-                    Text(L10n.Localizable.ImportBackup.EnterPassword.TextField.placeholder)
+                    Text(Strings.EnterPassword.TextField.placeholder)
                         .font(.body)
                         .foregroundStyle(titleColor)
                 }

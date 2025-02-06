@@ -23,19 +23,22 @@ struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
 
+    private typealias Strings = L10n.Localizable
+    private typealias Labels = L10n.Accessibility.SetBackupPassword
+
     var body: some View {
         NavigationStack {
             setBackupPasswordView
                 .background(Color.viewBackground)
                 .scrollContentBackground(.hidden)
-                .navigationTitle(Text(L10n.Localizable.ExportBackup.title))
+                .navigationTitle(Strings.ExportBackup.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button(L10n.Localizable.ExportBackup.Cancel.title) { viewModel.cancel() }
-                        .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(L10n.Accessibility.SetBackupPassword.Close.label)
-                        .accessibilityIdentifier("cancel")
+                        Button(Strings.ExportBackup.Cancel.title) { viewModel.cancel() }
+                            .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                            .accessibilityLabel(Labels.Close.label)
+                            .accessibilityIdentifier("cancel")
                     }
                 }
         }
@@ -45,7 +48,7 @@ struct SetBackupPasswordView: View {
         VStack {
             let scrollView = ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text(L10n.Localizable.ExportBackup.description)
+                    Text(Strings.ExportBackup.description)
                         .font(.body)
                         .foregroundStyle(Color.primaryText)
                         .multilineTextAlignment(.leading)
@@ -69,7 +72,7 @@ struct SetBackupPasswordView: View {
 
             Spacer()
 
-            Button(L10n.Localizable.ExportBackup.button) {
+            Button(Strings.ExportBackup.button) {
                 viewModel.triggerExport()
             }
             .bold()

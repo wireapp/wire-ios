@@ -25,16 +25,17 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
     private(set) var setBackupPasswordView: () -> PasswordView
     private(set) var creatingBackupProgressView: () -> ProgressView
 
+    private typealias Strings = L10n.Localizable
+
     var body: some View {
 
-        Section(footer: Text(L10n.Localizable.Settings.ExportBackup.description)) {
+        Section(footer: Text(Strings.Backup.Export.description)) {
 
-            Button(L10n.Localizable.Settings.ExportBackup.action) {
+            Button(Strings.Backup.Export.action) {
                 viewModel.showPasswordDialog()
             }
             .font(.callout.weight(.semibold))
             .foregroundStyle(Color.primaryText)
-
             .sheet(isPresented: $viewModel.isCreatingBackupProgressPresented) {
                 creatingBackupProgressView()
                     .interactiveDismissDisabled()
@@ -47,14 +48,14 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
             }
 
             .alert(
-                Text(L10n.Localizable.ExportBackup.ErrorAlert.title),
+                Text(Strings.ExportBackup.ErrorAlert.title),
                 isPresented: $viewModel.isErrorAlertPresented
             ) {
-                Button(L10n.Localizable.ExportBackup.ErrorAlert.ok) {
+                Button(Strings.ExportBackup.ErrorAlert.ok) {
                     viewModel.reset()
                 }
             } message: {
-                Text(L10n.Localizable.ExportBackup.ErrorAlert.message)
+                Text(Strings.ExportBackup.ErrorAlert.message)
             }
 
         }

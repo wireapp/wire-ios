@@ -24,20 +24,21 @@ struct CreatingBackupProgressView: View {
     var progress: CreatingBackupProgressModel
     var cancelAction: () -> Void
 
+    private typealias Strings = L10n.Localizable.ExportBackup
+    private typealias Labels = L10n.Accessibility.ExportBackup
+
     var body: some View {
         NavigationStack {
             backupProgressViewControllerRepresentable
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
-                .navigationTitle(Text(L10n.Localizable.ExportBackup.CreatingBackup.title))
+                .navigationTitle(Strings.CreatingBackup.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button(action: cancelAction) {
-                            Text(L10n.Localizable.ExportBackup.Cancel.title)
-                        }
-                        .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(L10n.Accessibility.ExportBackup.Cancel.label)
-                        .accessibilityIdentifier("cancel")
+                        Button(Strings.Cancel.title, action: cancelAction)
+                            .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                            .accessibilityLabel(Labels.Cancel.label)
+                            .accessibilityIdentifier("cancel")
                     }
                 }
         }

@@ -27,20 +27,21 @@ struct EnterPasswordView: View {
     let continueAction: (_ password: String) -> Void
     let cancelAction: () -> Void
 
+    private typealias Strings = L10n.Localizable.ImportBackup
+    private typealias Labels = L10n.Accessibility.ImportBackup
+
     var body: some View {
         NavigationStack {
             enterPasswordView
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
-                .navigationTitle(Text(L10n.Localizable.ImportBackup.EnterPassword.title))
+                .navigationTitle(Strings.EnterPassword.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button(action: cancelAction) {
-                            Text(L10n.Localizable.ImportBackup.Cancel.title)
-                        }
-                        .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(L10n.Accessibility.ImportBackup.Cancel.label)
-                        .accessibilityIdentifier("cancel")
+                        Button(Strings.Cancel.title, action: cancelAction)
+                            .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
+                            .accessibilityLabel(Labels.Cancel.label)
+                            .accessibilityIdentifier("cancel")
                     }
                 }
         }
@@ -53,11 +54,11 @@ struct EnterPasswordView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Spacer()
 
-                    Text(L10n.Localizable.ImportBackup.EnterPassword.description)
+                    Text(Strings.EnterPassword.description)
                         .font(.body)
                         .padding(.bottom, 28)
 
-                    Text(L10n.Localizable.ImportBackup.EnterPassword.TextField.title)
+                    Text(Strings.EnterPassword.TextField.title)
                         .foregroundStyle(passwordFieldTitleColor)
                         .font(.subheadline)
                         .foregroundStyle(Color(uiColor: BaseColorPalette.Grays.gray80))
@@ -72,7 +73,7 @@ struct EnterPasswordView: View {
                     .padding(.bottom, 8)
 
                     if passwordIsWrong {
-                        Text(L10n.Localizable.ImportBackup.EnterPassword.wrongPassword)
+                        Text(Strings.EnterPassword.wrongPassword)
                             .foregroundStyle(passwordFieldTitleColor)
                             .font(.caption)
                             .foregroundStyle(Color(uiColor: BaseColorPalette.Grays.gray80))
@@ -92,7 +93,7 @@ struct EnterPasswordView: View {
 
             Spacer()
 
-            Button(L10n.Localizable.ImportBackup.EnterPassword.Button.title) {
+            Button(Strings.EnterPassword.Button.title) {
                 continueAction(password)
             }
             .bold()

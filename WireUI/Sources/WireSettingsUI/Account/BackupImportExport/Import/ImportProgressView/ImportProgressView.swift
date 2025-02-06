@@ -24,19 +24,22 @@ struct ImportProgressView: View {
     var progressValue = Float()
     var cancelAction: () -> Void
 
+    private typealias Strings = L10n.Localizable.ImportBackup
+    private typealias Labels = L10n.Accessibility.ImportBackup
+
     var body: some View {
         NavigationStack {
             progressView
                 .background(Color(uiColor: ColorTheme.Backgrounds.background))
-                .navigationTitle(Text(L10n.Localizable.ImportBackup.RestoringHistory.title))
+                .navigationTitle(Strings.RestoringHistory.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(action: cancelAction) {
-                            Text(L10n.Localizable.ImportBackup.Cancel.title)
+                            Text(Strings.Cancel.title)
                         }
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.primary))
-                        .accessibilityLabel(L10n.Accessibility.ImportBackup.Cancel.label)
+                        .accessibilityLabel(Labels.Cancel.label)
                         .accessibilityIdentifier("cancel")
                     }
                 }
@@ -47,7 +50,7 @@ struct ImportProgressView: View {
         VStack {
             Spacer()
             HStack {
-                Text(L10n.Localizable.ImportBackup.RestoringHistory.message)
+                Text(Strings.RestoringHistory.message)
                 Spacer()
             }
             .padding(.bottom)
