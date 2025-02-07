@@ -20,6 +20,7 @@ import API
 import XCTest
 @testable @preconcurrency import Implementation
 
+/// These tests are intended for locally testing the service, not for CI.
 final class WireCellsTests: XCTestCase {
 
     private enum Constants {
