@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+@class UserClient;
 
-@interface ZMAPSMessageDecoder : NSObject
 
-- (instancetype)initWithEncryptionKey:(NSData *)encryptionKey macKey:(NSData *)macKey;
-- (NSData *)decodeData:(NSData *)data;
-- (NSDictionary *)decodeAPSPayload:(NSDictionary *)payload;
+@protocol ZMClientRegistrationStatusDelegate <NSObject>
+
+- (void)didRegisterSelfUserClient:(UserClient *_Nonnull)userClient;
+- (void)didFailToRegisterSelfUserClient:(NSError *_Nonnull)error NS_SWIFT_NAME(didFailToRegisterSelfUserClient(error:));
+- (void)didDeleteSelfUserClient:(NSError *_Nonnull)error NS_SWIFT_NAME(didDeleteSelfUserClient(error:));
 
 @end
