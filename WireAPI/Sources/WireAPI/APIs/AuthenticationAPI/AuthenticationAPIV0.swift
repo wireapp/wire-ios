@@ -76,7 +76,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         let accessToken = try ResponseParser()
             .success(
                 code: .ok,
-                type: AccessTokenPayload.self
+                type: AccessTokenV0.self
             )
             .failure(
                 code: .forbidden,
