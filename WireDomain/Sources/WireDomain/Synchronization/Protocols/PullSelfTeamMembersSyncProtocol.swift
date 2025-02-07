@@ -23,7 +23,7 @@ import Foundation
 /// with the remote self team members.
 protocol PullSelfTeamMembersSyncProtocol {
 
-    /// Fetch the team members0from remote, then create or update
+    /// Fetch the team members from remote, then create or update
     /// them locally.
     ///
     /// - Parameter selfTeamID: The id of the self user's team.
