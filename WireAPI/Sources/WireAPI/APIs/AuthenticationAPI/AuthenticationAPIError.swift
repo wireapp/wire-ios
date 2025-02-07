@@ -41,4 +41,5 @@ public enum AuthenticationAPIError: Error {
     case accountSuspended
 
     case invalidCredentials
+
 }
