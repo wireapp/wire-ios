@@ -77,7 +77,7 @@ final class AuthenticationAPITests: XCTestCase {
             _ = try await sut.getOnPremConfigURL(forDomain: "example com")
         }
     }
-    
+
     func testLoginViaEmailRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.login(
