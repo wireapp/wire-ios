@@ -18,14 +18,16 @@
 
 import Foundation
 
-public protocol AuthenticationAPI {
+struct DomainInfoV0: Decodable, ToAPIModelConvertible {
 
-    /// Get on-prem config `URL` for domain
+    private enum CodingKeys: String, CodingKey {
+        case configurationURL = "config_json_url"
+    }
 
-    func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo
+    public let configurationURL: URL
 
-    /// Get domain registration configuration by email
-
-    func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration
+    func toAPIModel() -> DomainInfo {
+        DomainInfo(configurationURL: configurationURL)
+    }
 
 }
