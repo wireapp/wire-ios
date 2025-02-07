@@ -18,28 +18,27 @@
 
 import Foundation
 
-public enum AuthenticationAPIError: Error {
+struct AccessTokenV0: Decodable, ToAPIModelConvertible {
 
-    case unsupportedEndpointForAPIVersion
+    enum CodingKeys: String, CodingKey {
+        case user
+        case accessToken = "access_token"
+        case tokenType = "token_type"
+        case expiresIn = "expires_in"
+    }
 
-    case invalidDomain
+    let user: UUID
+    let accessToken: String
+    let tokenType: String
+    let expiresIn: Int
 
-    case invalidRequestBody
-
-    case invalidResponse
-
-    case configNotFound
-
-    case domainNotFound
-
-    case twoFactorAuthenticationRequired
-
-    case twoFactorAuthenticationFailed
-
-    case accountPendingActivation
-
-    case accountSuspended
-
-    case invalidCredentials
+    func toAPIModel() -> AccessToken {
+        AccessToken(
+            userID: user,
+            token: accessToken,
+            type: tokenType,
+            expirationDate: Date(timeIntervalSinceNow: TimeInterval(expiresIn))
+        )
+    }
 
 }
