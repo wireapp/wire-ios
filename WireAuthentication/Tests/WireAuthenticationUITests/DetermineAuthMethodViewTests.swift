@@ -78,4 +78,3 @@ class DetermineAuthMethodViewTests: XCTestCase {
         }
     }
 }
-

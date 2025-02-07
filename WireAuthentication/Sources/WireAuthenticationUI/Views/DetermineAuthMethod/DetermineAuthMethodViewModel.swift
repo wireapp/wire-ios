@@ -54,7 +54,7 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
 
         Task { [self] in
             // TODO: [WPB-15920] Handle errors
-            let method = try! await self.determineAuthMethod.invoke(
+            let method = try! await determineAuthMethod.invoke(
                 emailOrSSOCode: emailOrSSOCode
             )
 
@@ -68,6 +68,7 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
             case let .loginViaSSO(code):
                 // TODO: [WPB-15920] Handle login via SSO
                 break
+
             case let .onPremLogin(email, backendConfig):
                 // TODO: [WPB-15920] Handle on-prem login
                 break
