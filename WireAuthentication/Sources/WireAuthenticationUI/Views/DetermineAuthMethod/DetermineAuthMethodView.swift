@@ -119,10 +119,23 @@ public struct DetermineAuthMethodView: View {
 
 }
 
+@MainActor
+public func makeDetermineAuthMethodViewPreview(
+    emailOrSSOCode: String = "",
+    isLoading: Bool = false,
+    errorMessage: String? = nil
+) -> some View {
+    MockDependencies().makeDetermineAuthMethodView(
+        emailOrSSOCode: emailOrSSOCode,
+        isLoading: isLoading,
+        errorMessage: errorMessage
+    )
+}
+
 #Preview {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            MockDependencies().makeDetermineAuthMethodView(
+            makeDetermineAuthMethodViewPreview(
                 emailOrSSOCode: "sam@wire.com",
                 isLoading: false,
                 errorMessage: "Some error message that is too long to fit on a single line"

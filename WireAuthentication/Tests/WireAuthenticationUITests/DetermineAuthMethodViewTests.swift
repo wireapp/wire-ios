@@ -45,9 +45,8 @@ class DetermineAuthMethodViewTests: XCTestCase {
 
         let screenBounds = UIScreen.main.bounds
         for (index, variant) in variants.enumerated() {
-            let view = MockDependencies().makeDetermineAuthMethodView(
+            let view = makeDetermineAuthMethodViewPreview(
                 emailOrSSOCode: variant.emailOrSSOCode,
-                isLoading: false,
                 errorMessage: variant.errorMessage
             )
             .frame(width: screenBounds.width, height: screenBounds.height)
@@ -66,13 +65,9 @@ class DetermineAuthMethodViewTests: XCTestCase {
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().makeDetermineAuthMethodView(
-            emailOrSSOCode: "",
-            isLoading: false,
-            errorMessage: nil
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        let view = makeDetermineAuthMethodViewPreview()
+            .frame(width: screenBounds.width, height: screenBounds.height)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

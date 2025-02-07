@@ -60,14 +60,9 @@ public struct WireAuthenticationUIDebugView: View {
                 fullscreenCover(content: { BackgroundView() })
             case .identificationView:
                 fullscreenCover(content: { BackgroundView()
-                        .overlay {
-                            VStack(spacing: 0) {
-                                Spacer()
-                                    .frame(maxHeight: .infinity)
-                                AuthenticationIdentityInputPreview()
-                                    .background()
-                            }
-                        }
+                    .sheet(isPresented: .constant(true)) {
+                        makeDetermineAuthMethodViewPreview()
+                    }
                 })
             case .switchBackend:
                 fullscreenCover(content: {
