@@ -16,12 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-@interface ZMAPSMessageDecoder : NSObject
+struct DomainInfoV0: Decodable, ToAPIModelConvertible {
 
-- (instancetype)initWithEncryptionKey:(NSData *)encryptionKey macKey:(NSData *)macKey;
-- (NSData *)decodeData:(NSData *)data;
-- (NSDictionary *)decodeAPSPayload:(NSDictionary *)payload;
+    private enum CodingKeys: String, CodingKey {
+        case configurationURL = "config_json_url"
+    }
 
-@end
+    public let configurationURL: URL
+
+    func toAPIModel() -> DomainInfo {
+        DomainInfo(configurationURL: configurationURL)
+    }
+
+}
