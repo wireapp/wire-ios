@@ -20,7 +20,7 @@ import Foundation
 
 public protocol AuthenticationAPI {
 
-    /// Login via emain
+    /// Login via email
 
     func login(
         email: String,
