@@ -888,17 +888,15 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         requireInternal(activeUserSession.userId == account.userIdentifier, "User session and account are different")
 
-        delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [dispatchGroup] in
-            dispatchGroup.enter()
-
+        delegate?.sessionManagerWillLogout(error: error) { [weak self] in
             activeUserSession.close(deleteCookie: deleteCookie) {
                 if deleteAccount {
-                    self.deleteAccountData(for: account)
+                    self?.deleteAccountData(for: account)
                 }
-                dispatchGroup.leave()
             }
-            self.activeUserSession = nil
-        })
+
+            self?.activeUserSession = nil
+        }
     }
 
     /// Loads a session for a given account
