@@ -48,6 +48,7 @@ public struct DetermineAuthMethodView: View {
                     Spacer()
                         .frame(maxWidth: .infinity)
                     Logo()
+                        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
                         .frame(width: 164, height: 95)
                     Spacer()
                         .frame(maxWidth: .infinity)
