@@ -29,6 +29,31 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         .v0
     }
 
+    func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo {
+        guard !domain.isEmpty,
+              let encodedDomain = domain.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        else {
+            throw AuthenticationAPIError.invalidDomain
+        }
+
+        let path = "/custom-backend/by-domain/\(encodedDomain)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: false
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: DomainInfoV0.self)
+            .failure(code: .notFound, label: "custom-backend-not-found", error: AuthenticationAPIError.configNotFound)
+            .failure(code: .notFound, error: AuthenticationAPIError.domainNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
