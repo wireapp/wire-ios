@@ -16,30 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+struct LoginRequestBodyV0: Encodable {
 
-public enum AuthenticationAPIError: Error {
-
-    case unsupportedEndpointForAPIVersion
-
-    case invalidDomain
-
-    case invalidRequestBody
-
-    case invalidResponse
-
-    case configNotFound
-
-    case domainNotFound
-
-    case twoFactorAuthenticationRequired
-
-    case twoFactorAuthenticationFailed
-
-    case accountPendingActivation
-
-    case accountSuspended
-
-    case invalidCredentials
+    let email: String
+    let password: String
+    let verificationCode: String?
+    let label: String?
 
 }
