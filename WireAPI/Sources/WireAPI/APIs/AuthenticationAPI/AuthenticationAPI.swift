@@ -25,7 +25,8 @@ public protocol AuthenticationAPI {
     func login(
         email: String,
         password: String,
-        verificationCode: String?
+        verificationCode: String?,
+        label: String?
     ) async throws -> ([HTTPCookie], AccessToken)
 
     /// Get on-prem config `URL` for domain

@@ -25,12 +25,6 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         self.apiService = apiService
     }
 
-    private lazy var encoder: JSONEncoder = {
-        let encoder = JSONEncoder()
-        encoder.keyEncodingStrategy = .convertToSnakeCase
-        return encoder
-    }()
-
     var apiVersion: APIVersion {
         .v0
     }
@@ -38,27 +32,28 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
     func login(
         email: String,
         password: String,
-        verificationCode: String?
+        verificationCode: String?,
+        label: String?
     ) async throws -> ([HTTPCookie], AccessToken) {
         let path = "\(pathPrefix)/login"
         let body = LoginRequestBodyV0(
             email: email,
             password: password,
             verificationCode: verificationCode,
-            label: UUID().uuidString
+            label: label
         )
 
         let encodedJSON: Data
         do {
-            encodedJSON = try encoder.encode(body)
+            encodedJSON = try JSONEncoder.defaultEncoder.encode(body)
         } catch {
             assertionFailure("failed to encode body")
             throw AuthenticationAPIError.invalidRequestBody
         }
 
         let request = try URLRequestBuilder(path: path)
-            .withMethod(.post)
             .withBody(encodedJSON, contentType: .json)
+            .withMethod(.post)
             .build()
 
         let (data, response) = try await apiService.executeRequest(

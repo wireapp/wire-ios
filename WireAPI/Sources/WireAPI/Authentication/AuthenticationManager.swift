@@ -162,6 +162,13 @@ extension AccessToken {
 
 struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
 
+    enum CodingKeys: String, CodingKey {
+        case user
+        case accessToken = "access_token"
+        case tokenType = "token_type"
+        case expiresIn = "expires_in"
+    }
+
     let user: UUID
     let accessToken: String
     let tokenType: String
