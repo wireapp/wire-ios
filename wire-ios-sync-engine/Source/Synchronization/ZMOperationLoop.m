@@ -125,6 +125,17 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 #endif
 
 
+- (APSSignalingKeysStore *)apsSignalKeyStore
+{
+    if (_apsSignalKeyStore == nil) {
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        if (selfUser.selfClient != nil) {
+            _apsSignalKeyStore = [[APSSignalingKeysStore alloc] initWithUserClient:selfUser.selfClient];
+        }
+    }
+    return _apsSignalKeyStore;
+}
+
 - (ZMTransportRequestGenerator)requestGenerator {
     
     ZM_WEAK(self);

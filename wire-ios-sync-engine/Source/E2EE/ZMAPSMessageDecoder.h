@@ -18,18 +18,10 @@
 
 #import <Foundation/Foundation.h>
 
+@interface ZMAPSMessageDecoder : NSObject
 
-
-@interface NSData (DispatchDataTesting)
-
-- (dispatch_data_t)dispatchData;
-
-@end
-
-
-
-@interface NSData (Test_ZMHTTPDecompression)
-
-- (NSData *)zm_gzipDecompressedHTTPBody;
+- (instancetype)initWithEncryptionKey:(NSData *)encryptionKey macKey:(NSData *)macKey;
+- (NSData *)decodeData:(NSData *)data;
+- (NSDictionary *)decodeAPSPayload:(NSDictionary *)payload;
 
 @end
