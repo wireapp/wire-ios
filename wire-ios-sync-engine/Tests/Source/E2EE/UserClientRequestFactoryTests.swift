@@ -136,6 +136,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         assertRequest(transportRequest, path: "/clients", method: .post)
 
         let payload = try XCTUnwrap(payload(from: transportRequest))
+        try assertSigkeys(payload)
 
         XCTAssertEqual(payload.type, DeviceType.permanent.rawValue)
 
@@ -348,6 +349,12 @@ final class UserClientRequestFactoryTests: MessagingTest {
         XCTAssertEqual(request.path, path)
         XCTAssertEqual(request.method, method)
     }
+
+    private func assertSigkeys(_ payload: [String: Any]) throws {
+        let sigkeys = try XCTUnwrap(payload.sigkeys)
+        XCTAssertNotNil(sigkeys.enckey)
+        XCTAssertNotNil(sigkeys.mackey)
+    }
 }
 
 private extension [String: Any] {
@@ -360,6 +367,7 @@ private extension [String: Any] {
         case key
         case id
         case prekeys
+        case sigkeys
         case enckey
         case mackey
         case mlsPublicKeys = "mls_public_keys"
@@ -396,6 +404,10 @@ private extension [String: Any] {
 
     var prekeys: [[String: Any]]? {
         value(forKey: .prekeys)
+    }
+
+    var sigkeys: [String: Any]? {
+        value(forKey: .sigkeys)
     }
 
     var enckey: String? {
