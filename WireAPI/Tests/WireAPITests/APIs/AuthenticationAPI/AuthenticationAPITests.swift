@@ -67,6 +67,18 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    func testGetOnPremConfigURLRequest() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.getOnPremConfigURL(forDomain: "example.com")
+        }
+    }
+
+    func testGetOnPremConfigURLEncodeRequest() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.getOnPremConfigURL(forDomain: "example com")
+        }
+    }
+
     // MARK: - Response handling
 
     func testGetDomainRegistration_Response_Handling_V8_Success() async throws {
@@ -127,6 +139,39 @@ final class AuthenticationAPITests: XCTestCase {
         await XCTAssertThrowsErrorAsync(AuthenticationAPIError.invalidDomain) {
             // When
             try await sut.getDomainRegistration(forEmail: "email@example.com")
+        }
+    }
+
+    func testGetOnPremConfigURL_Response_Handling_Success() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetOnPremConfigURLSuccessResponseV0")
+        ])
+
+        let sut = AuthenticationAPIV8(apiService: apiService)
+
+        // When
+        let response = try await sut.getOnPremConfigURL(forDomain: "example.com")
+
+        // Then
+        XCTAssertEqual(
+            response,
+            DomainInfo(configurationURL: URL(string: "https://wire.example.com/config.json")!)
+        )
+    }
+
+    func testGetOnPremConfigURL_Response_Handling_Custom_Backend_Not_Found() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.notFound, "GetOnPremConfigURLErrorResponse_CustomBackendNotFound_V0")
+        ])
+
+        let sut = AuthenticationAPIV8(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.configNotFound) {
+            // When
+            try await sut.getOnPremConfigURL(forDomain: "example.com")
         }
     }
 

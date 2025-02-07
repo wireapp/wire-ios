@@ -26,4 +26,8 @@ public enum AuthenticationAPIError: Error {
 
     case invalidRequestBody
 
+    case configNotFound
+
+    case domainNotFound
+
 }
