@@ -18,7 +18,7 @@
 
 import Foundation
 
-package class SwitchBackendConfirmationViewModel {
+public class SwitchBackendConfirmationViewModel {
 
     private typealias Strings = L10n.SwitchBackendConfirmation
 
@@ -46,7 +46,7 @@ package class SwitchBackendConfirmationViewModel {
         )
     }
 
-    package init(
+    public init(
         backendName: String,
         backendURL: String,
         backendWSURL: String,
@@ -70,7 +70,7 @@ package class SwitchBackendConfirmationViewModel {
 
     // MARK: - Events
 
-    package enum Event {
+    public enum Event {
 
         case didCancel
         case didConfirm
