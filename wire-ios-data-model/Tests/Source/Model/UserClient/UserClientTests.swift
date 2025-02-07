@@ -122,6 +122,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             ZMUserClientMarkedToDeleteKey,
             ZMUserClientNumberOfKeysRemainingKey,
             ZMUserClientMissingKey,
+            ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
             UserClient.needsToUploadMLSPublicKeysKey
         ])
@@ -548,6 +549,43 @@ extension UserClientTests {
         // then
         XCTAssertFalse(otherClient.verified)
     }
+}
+
+// MARK: SignalingStore
+
+extension UserClientTests {
+
+    func testThatItDeletesExistingSignalingKeys() {
+
+        // given
+        let selfClient = createSelfClient()
+        selfClient.apsVerificationKey = Data()
+        selfClient.apsDecryptionKey = Data()
+
+        XCTAssertNotNil(selfClient.apsVerificationKey)
+        XCTAssertNotNil(selfClient.apsDecryptionKey)
+
+        // when
+        UserClient.resetSignalingKeysInContext(uiMOC)
+
+        // then
+        XCTAssertNil(selfClient.apsVerificationKey)
+        XCTAssertNil(selfClient.apsDecryptionKey)
+    }
+
+    func testThatItSetsKeysNeedingToBeSynced() {
+
+        // given
+        let selfClient = createSelfClient()
+
+        // when
+        UserClient.resetSignalingKeysInContext(uiMOC)
+
+        // then
+        XCTAssertTrue(selfClient.needsToUploadSignalingKeys)
+        XCTAssertTrue(selfClient.keysThatHaveLocalModifications.contains(ZMUserClientNeedsToUpdateSignalingKeysKey))
+    }
+
 }
 
 // MARK: Capabilities
