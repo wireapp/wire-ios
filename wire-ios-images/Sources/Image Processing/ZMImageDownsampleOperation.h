@@ -19,9 +19,9 @@
 @import Foundation;
 
 #import <WireImages/ZMImageOwner.h>
-#import <WireImages/ZMIImageProperties.h>
 
 @class ZMImageLoadOperation;
+@class ZMIImageProperties;
 
 
 typedef NS_ENUM (int16_t, ZMImageDownsampleType) {

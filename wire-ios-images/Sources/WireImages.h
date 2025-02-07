@@ -32,4 +32,3 @@ FOUNDATION_EXPORT const unsigned char WireImagesVersionString[];
 #import <WireImages/ZMImageLoadOperation.h>
 #import <WireImages/ZMAssetsPreprocessor.h>
 #import <WireImages/ZMImagePreprocessor.h>
-#import <WireImages/ZMIImageProperties.h>

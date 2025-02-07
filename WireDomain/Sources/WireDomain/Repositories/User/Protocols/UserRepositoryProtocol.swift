@@ -48,13 +48,6 @@ public protocol UserRepositoryProtocol {
         domain: String?
     ) async throws -> ZMUser
 
-    /// Push self user supported protocols
-    /// - Parameter supportedProtocols: A list of supported protocols.
-
-    func pushSelfSupportedProtocols(
-        _ supportedProtocols: Set<WireAPI.MessageProtocol>
-    ) async throws
-
     /// Fetch and persist all locally known users
 
     func pullKnownUsers() async throws

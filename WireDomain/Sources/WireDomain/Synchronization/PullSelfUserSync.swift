@@ -38,11 +38,16 @@ struct PullSelfUserSync: PullSelfUserSyncProtocol {
     /// Fetch the self user from remote, then create or update
     /// it locally.
 
-    func pull() async throws {
+    @discardableResult
+    func pull() async throws -> (id: UUID, domain: String?, teamID: UUID?) {
         let remoteSelfUser = try await api.getSelfUser()
+        let localSelfUser = remoteSelfUser.toDomainModel()
+        await store.persistUser(userInfo: localSelfUser)
 
-        await store.persistUser(
-            userInfo: remoteSelfUser.toDomainModel()
+        return (
+            id: localSelfUser.userID.uuid,
+            domain: localSelfUser.userID.domain,
+            teamID: localSelfUser.teamID
         )
     }
 
