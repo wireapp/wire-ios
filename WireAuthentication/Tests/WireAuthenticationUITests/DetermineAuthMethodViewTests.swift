@@ -17,12 +17,13 @@
 //
 
 import SwiftUI
+import WireFoundation
 import WireTestingPackage
 import XCTest
 
 @testable import WireAuthenticationUI
 
-class AuthenticationIdentityInputViewTests: XCTestCase {
+class DetermineAuthMethodViewTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
@@ -36,25 +37,42 @@ class AuthenticationIdentityInputViewTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariants() {
+        let variants: [(emailOrSSOCode: String, errorMessage: String?)] = [
+            ("", nil),
+            ("sam@example.com", "Short error message"),
+            ("sam@example.com", "Long error message that might wrap multiple lines depending on device and font size")
+        ]
+
         let screenBounds = UIScreen.main.bounds
+        for (index, variant) in variants.enumerated() {
+            let view = MockDependencies().makeDetermineAuthMethodView(
+                emailOrSSOCode: variant.emailOrSSOCode,
+                isLoading: false,
+                errorMessage: variant.errorMessage
+            )
+            .frame(width: screenBounds.width, height: screenBounds.height)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
-        let view = AuthenticationIdentityInputPreview()
-            .frame(width: screenBounds.width)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "variant\(index)-light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "variant\(index)-dark")
+        }
     }
 
     @MainActor
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = AuthenticationIdentityInputPreview()
-            .frame(width: screenBounds.width)
+        let view = MockDependencies().makeDetermineAuthMethodView(
+            emailOrSSOCode: "",
+            isLoading: false,
+            errorMessage: nil
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
@@ -65,3 +83,4 @@ class AuthenticationIdentityInputViewTests: XCTestCase {
         }
     }
 }
+
