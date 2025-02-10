@@ -177,6 +177,8 @@ package struct SwitchBackendConfirmationView: View {
 }
 
 public struct SwitchBackendConfirmationPreview: View {
+    public init() {}
+
     public var body: some View {
         BackgroundView()
             .overlay(
