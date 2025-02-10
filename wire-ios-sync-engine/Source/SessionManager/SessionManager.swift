@@ -1014,15 +1014,16 @@ public final class SessionManager: NSObject, SessionManagerType {
             return completion()
         }
 
-        WireLogger.backupExportImport.error("calling tearDownAllBackgroundSessions()")
-        tearDownAllBackgroundSessions()
-        WireLogger.backupExportImport.error("deleting observers accountTokens.removeAll()")
-        accountTokens.removeAll()
-
         WireLogger.backupExportImport.error("SessionManager.delegate.sessionManagerWillMigrateAccount(...)")
-        delegate.sessionManagerWillMigrateAccount {
+        delegate.sessionManagerWillMigrateAccount { [self] in
             WireLogger.backupExportImport.error("userSessionCanBeTornDown { ... }")
-            self.tearDownActiveSession(completion: completion)
+            tearDownActiveSession { [self] in
+                WireLogger.backupExportImport.error("calling tearDownAllBackgroundSessions()")
+                tearDownAllBackgroundSessions()
+                WireLogger.backupExportImport.error("deleting observers accountTokens.removeAll()")
+                accountTokens.removeAll()
+                completion()
+            }
         }
     }
 
@@ -1202,8 +1203,14 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private func tearDownActiveSession(completion: (() -> Void)?) {
-        activeUserSession = nil
-        completion?()
+        if let accountID = activeUserSession?.account.userIdentifier {
+            tearDownBackgroundSession(for: accountID) {
+                self.activeUserSession = nil
+                completion?()
+            }
+        } else {
+            completion?()
+        }
     }
 
     // Creates the user session for @c account given, calls @c completion when done.

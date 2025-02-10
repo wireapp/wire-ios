@@ -17,6 +17,7 @@
 //
 
 import WireDomainPkg
+import WireLogging
 
 public extension SessionManager {
 
@@ -48,6 +49,12 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
         await withCheckedContinuation { continuation in
             sessionManager.prepareForRestoreWithMigration(completion: continuation.resume)
         }
+
+//        while !CoreDataStack.stacks.isEmpty {
+//            WireLogger.backupExportImport.debug("Waiting for CoreDataStack.stacks to be empty")
+//            WireLogger.backupExportImport.debug("sessionManager.backgroundUserSessions: \(sessionManager.backgroundUserSessions)")
+//            try! await Task.sleep(for: .milliseconds(600))
+//        }
     }
 
     @MainActor

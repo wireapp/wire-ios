@@ -58,8 +58,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                 do {
 
                     // to start with we need an active user session, later the session will be torn down
-                    weak var userSession = userSession()
-                    guard let account = userSession?.contextProvider.account else {
+                    guard let account = userSession()?.contextProvider.account else {
                         throw ImportBackupError.noActiveAccountForImport
                     }
 
@@ -81,7 +80,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     let selfClientBackup: [String: Any]
                     // we want to avoid keeping a strong reference to the user
                     // session, the managed object context and the user client
-                    if let userSession,
+                    if let userSession = self.userSession(),
                        let (qualifiedID, backup) = await userSession.contextProvider.viewContext.perform({
                            userSession.selfUserClient.map { ($0.user?.qualifiedID, $0.backup()) } }) {
                         selfUserQualifiedID = qualifiedID

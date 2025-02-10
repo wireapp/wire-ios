@@ -244,7 +244,7 @@ final class ConversationListViewModel: NSObject {
             .sink { [weak userSession] _ in
                 guard let userSession else { return }
 
-                userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
+                //userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
             }.store(in: &tokens)
     }
 
