@@ -34,12 +34,9 @@ struct NoHistoryView: View {
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-            Button(action: {
-                viewModel.confirm()
-            }, label: {
-                Text(L10n.Authentication.NoHistory.confirm)
-            })
-            .wireButtonStyle(.primary)
+            Button(L10n.Authentication.NoHistory.confirm, action: viewModel.confirm)
+                .wireButtonStyle(.primary)
+                .bold()
         }
         .padding()
         .presentationDetents([.medium])
