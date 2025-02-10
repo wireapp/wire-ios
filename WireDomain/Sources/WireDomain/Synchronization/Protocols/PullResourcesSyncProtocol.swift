@@ -16,33 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAPI
+// sourcery: AutoMockable
+/// A sync to pull various resources (e.g self user, team,
+/// conversations, users, etc.) from remote and storing
+/// them locally.
+public protocol PullResourcesSyncProtocol {
 
-struct PullSelfTeamRolesSync: PullSelfTeamRolesSyncProtocol {
+    /// Pull stored data relevant for the self users from remote and store locally.
 
-    private let api: any TeamsAPI
-    private let store: any TeamLocalStoreProtocol
-
-    init(
-        api: any TeamsAPI,
-        store: any TeamLocalStoreProtocol
-    ) {
-        self.api = api
-        self.store = store
-    }
-
-    func pull(selfTeamID: UUID) async throws {
-        let remoteTeamRoles = try await api.getTeamRoles(for: selfTeamID)
-
-        let teamRolesInfo = remoteTeamRoles.map {
-            $0.toDomainModel()
-        }
-
-        try await store.storeTeamRoles(
-            selfTeamID: selfTeamID,
-            teamRolesInfo: teamRolesInfo
-        )
-    }
+    func pull() async throws
 
 }
