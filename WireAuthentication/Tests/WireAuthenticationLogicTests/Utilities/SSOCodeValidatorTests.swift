@@ -18,49 +18,45 @@
 
 import XCTest
 
-@testable import WireAuthenticationUI
+@testable import WireAuthenticationLogic
 
-final class EmailValidatorTests: XCTestCase {
+final class SSOCodeValidatorTests: XCTestCase {
 
-    private var sut: EmailValidator!
+    private var sut: SSOCodeValidator!
 
     override func setUp() {
-        sut = EmailValidator()
+        sut = SSOCodeValidator()
     }
 
     override func tearDown() {
         sut = nil
     }
 
-    func testIsValid_withValidEmails() {
+    func testIsValid_withValidSSOCodes() {
         // given
         let testCases: [String] = [
-            "MARIA@EXAMPLE.COM",
-            "maria@example.com",
-            "maria@sub-team22.example.com"
+            "WIRE-648E79CB-88B9-42A8-8EA7-DD93E97F4DA1",
+            "wire-648e79cb-88b9-42a8-8ea7-dd93e97f4da1"
         ]
 
-        for email in testCases {
+        for ssoCode in testCases {
             // when, then
-            XCTAssertTrue(sut.isValid(email: email), "Email \(email) should be valid")
+            XCTAssertTrue(sut.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
         }
     }
 
-    func testIsValid_withInvalidEmails() {
+    func testIsValid_withValidInvalidSSOCodes() {
         // given
         let testCases: [String] = [
-            "maria@example.com ",
-            " maria@example.com",
-            "something",
-            "@example.com",
-            "something@a.b",
-            "maria@☮️.com",
-            "maria@h香港.com"
+            " wire-648e79cb-88b9-42a8-8ea7-dd93e97f4da1 ",
+            "wire-648e79cb-88b9-42a8-8ea7-dd93e97f4da",
+            "wire-648e79cb-88b9-42a8-8ea7-dd93e97f4da12",
+            "fire-648e79cb-88b9-42a8-8ea7-dd93e97f4da1"
         ]
 
-        for email in testCases {
+        for ssoCode in testCases {
             // when, then
-            XCTAssertFalse(sut.isValid(email: email), "Email \(email) should be invalid")
+            XCTAssertFalse(sut.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
         }
     }
 }
