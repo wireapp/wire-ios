@@ -1,0 +1,132 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import WireDataModel
+import WireLogging
+import WireUtilities
+
+// TODO: [WPB-15440] remove objc interoperability.
+// To temporarily bridge this to legacy code, this inherits from NSObject
+// and exposes a method to objc. Once we integrate the new incremental
+// sync, we won't need to bridge to legacy code and remove the inheritance.
+
+final class SyncAgent: NSObject {
+
+    weak var delegate: SyncAgentDelegate?
+    private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
+
+    private var hasPerformedInitialSync: Bool {
+        lastUpdateEventIDRepository.fetchLastEventID() != nil
+    }
+
+    // MARK: - Life cycle
+
+    init(lastUpdateEventIDRepository: any LastEventIDRepositoryInterface) {
+        self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
+        super.init()
+    }
+
+    // MARK: - API
+
+    /// Performs the appropriate sync depending in the local state.
+    ///
+    /// If no last event id is known, then the initial sync will be performed,
+    /// otherwise the incremental sync will be performed.
+
+    func performSyncIfNeeded() async {
+        if !hasPerformedInitialSync {
+            await performInitialSync()
+        }
+
+        await performIncrementalSync()
+    }
+
+    /// Perform an initial sync.
+
+    func performInitialSync() async {
+        if DeveloperFlag.newInitialSync.isOn {
+            do {
+                delegate?.syncAgentDidStartInitialSync(self)
+                WireLogger.sync.debug("did start new initial sync")
+                // build initial sync and perform
+                WireLogger.sync.debug("did finish new initial sync")
+                delegate?.syncAgentDidFinishInitialSync(self)
+            } catch {
+                WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
+            }
+        } else {
+            // TODO: perform legacy slow sync
+        }
+    }
+
+    /// Perform a resource sync.
+
+    func performResourceSync() async {
+        if DeveloperFlag.newInitialSync.isOn {
+            do {
+                delegate?.syncAgentDidStartInitialSync(self)
+                WireLogger.sync.debug("did start new resource sync")
+                // build initial sync and perform, skipping last event it
+                WireLogger.sync.debug("did finish new resource sync")
+                delegate?.syncAgentDidFinishInitialSync(self)
+            } catch {
+                WireLogger.sync.error("failed to perform new resource sync: \(String(describing: error))")
+            }
+        } else {
+            // TODO: perform legacy resource sync
+        }
+    }
+
+    /// Perform an incremental sync.
+
+    func performIncrementalSync() async {
+        // TODO: perform legacy quick sync
+    }
+
+}
+
+// MARK: - Delegate
+
+// Forward delegate calls from legacy sync status to the
+// sync agent's delegate. We can delete this once we
+// move to the new initial sync.
+
+extension SyncAgent: ZMSyncStateDelegate {
+
+    func didStartSlowSync() {
+        WireLogger.sync.debug("did start legacy slow sync")
+        delegate?.syncAgentDidStartLegacySlowSync(self)
+    }
+
+    func didFinishSlowSync() {
+        WireLogger.sync.debug("did finish legacy slow sync")
+        delegate?.syncAgentDidFinishLegacySlowSync(self)
+    }
+
+    func didStartQuickSync() {
+        WireLogger.sync.debug("did start legacy quick sync")
+        delegate?.syncAgentDidStartLegacyQuickSync(self)
+    }
+
+    func didFinishQuickSync() {
+        WireLogger.sync.debug("did start finish quick sync")
+        delegate?.syncAgentDidFinishLegacyQuickSync(self)
+    }
+
+}

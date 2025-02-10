@@ -451,6 +451,8 @@
 		EE46EF262942033C007BBD99 /* SessionManager+PushToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE46EF252942033C007BBD99 /* SessionManager+PushToken.swift */; };
 		EE4E6A262B714490007C476D /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4E6A252B714490007C476D /* WireRequestStrategySupport.framework */; };
 		EE51FBEE2AE1305B002B503B /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE51FBED2AE1305B002B503B /* UserSession.swift */; };
+		EE5437CE2D55F90900CA96BA /* SyncAgentDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5437CD2D55F90900CA96BA /* SyncAgentDelegate.swift */; };
+		EE5437CF2D55F90900CA96BA /* SyncAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5437CC2D55F90900CA96BA /* SyncAgent.swift */; };
 		EE5AAF3A2874E8C70018FA01 /* BackendEnvironmentProvider+Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5AAF392874E8C70018FA01 /* BackendEnvironmentProvider+Reachability.swift */; };
 		EE5B85202CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5B851F2CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift */; };
 		EE5BF6351F8F907C00B49D06 /* ZMLocalNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5BF6341F8F907C00B49D06 /* ZMLocalNotificationTests.swift */; };
@@ -1090,6 +1092,8 @@
 		EE46EF252942033C007BBD99 /* SessionManager+PushToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+PushToken.swift"; sourceTree = "<group>"; };
 		EE4E6A252B714490007C476D /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE51FBED2AE1305B002B503B /* UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
+		EE5437CC2D55F90900CA96BA /* SyncAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAgent.swift; sourceTree = "<group>"; };
+		EE5437CD2D55F90900CA96BA /* SyncAgentDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAgentDelegate.swift; sourceTree = "<group>"; };
 		EE5AAF392874E8C70018FA01 /* BackendEnvironmentProvider+Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackendEnvironmentProvider+Reachability.swift"; sourceTree = "<group>"; };
 		EE5B851F2CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+AnalyticsUser.swift"; sourceTree = "<group>"; };
 		EE5BF6341F8F907C00B49D06 /* ZMLocalNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZMLocalNotificationTests.swift; path = Tests/Source/Notifications/PushNotifications/ZMLocalNotificationTests.swift; sourceTree = SOURCE_ROOT; };
@@ -2161,6 +2165,8 @@
 		85D85DBFC1F3A95767DEEA45 /* Synchronization */ = {
 			isa = PBXGroup;
 			children = (
+				EE5437CC2D55F90900CA96BA /* SyncAgent.swift */,
+				EE5437CD2D55F90900CA96BA /* SyncAgentDelegate.swift */,
 				59E6A9122B4EE58600DBCC6B /* RecurringActionService */,
 				54F8D6D619AB525400146664 /* Transcoders */,
 				54A170621B30068B001B41A5 /* Strategies */,
@@ -3299,6 +3305,8 @@
 				5458AF841F7021B800E45977 /* PreLoginAuthenticationNotification.swift in Sources */,
 				5943E9BC2D11CB3B00D39FFF /* CallEndedReason+initWithCallClosedReason.swift in Sources */,
 				F9ABE84F1EFD568B00D83214 /* TeamDownloadRequestStrategy.swift in Sources */,
+				EE5437CE2D55F90900CA96BA /* SyncAgentDelegate.swift in Sources */,
+				EE5437CF2D55F90900CA96BA /* SyncAgent.swift in Sources */,
 				EE38DDEE280437E500D4983D /* BlacklistReason.swift in Sources */,
 				EE2DE5E229250C1A00F42F4C /* CallHandle.swift in Sources */,
 				871667FA1BB2AE9C009C6EEA /* APSSignalingKeysStore.swift in Sources */,
