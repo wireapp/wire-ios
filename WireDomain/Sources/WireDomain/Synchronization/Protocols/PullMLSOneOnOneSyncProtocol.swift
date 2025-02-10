@@ -25,7 +25,7 @@ public protocol PullMLSOneOnOneSyncProtocol {
 
     /// Fetch an MLS one on one conversation from remote
     /// and store it locally.
-    /// 
+    ///
     /// - Parameters:
     ///   - userID: The id of the other user.
     ///   - userDomain: The domain of the other user.
