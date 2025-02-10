@@ -49,7 +49,6 @@ final class PasswordFieldSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
             isPasswordVisible: false,
-            isPasswordValid: .constant(false),
             password: .constant("Invalid password"),
             passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
@@ -65,7 +64,6 @@ final class PasswordFieldSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
             isPasswordVisible: true,
-            isPasswordValid: .constant(false),
             password: .constant("Invalid password"),
             passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
@@ -81,7 +79,6 @@ final class PasswordFieldSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
             isPasswordVisible: false,
-            isPasswordValid: .constant(true),
             password: .constant("Valid password!"),
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
@@ -97,7 +94,6 @@ final class PasswordFieldSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
             isPasswordVisible: true,
-            isPasswordValid: .constant(true),
             password: .constant("Valid password!"),
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
@@ -114,7 +110,6 @@ final class PasswordFieldSnapshotTests: XCTestCase {
 
         let view = PasswordField(
             isPasswordVisible: false,
-            isPasswordValid: .constant(true),
             password: .constant("Valid password!"),
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
@@ -136,7 +131,6 @@ final class PasswordFieldSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
             isPasswordVisible: false,
-            isPasswordValid: .constant(true),
             password: .constant("Valid password!"),
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
