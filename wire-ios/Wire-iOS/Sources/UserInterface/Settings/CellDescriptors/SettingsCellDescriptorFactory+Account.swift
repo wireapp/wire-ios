@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSettingsUI
+import WireLogging
 import WireSyncEngine
 
 extension ZMUser {
@@ -377,7 +378,9 @@ extension SettingsCellDescriptorFactory {
             backupPasswordValidator: BackupPasswordValidator(),
             createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
             importBackupUseCase: importBackupUseCase,
-            cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager)
+            cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
+            exportBackupLogger: WireLogger.backupExport,
+            importBackupLogger: WireLogger.backupImport
         )
     }
 

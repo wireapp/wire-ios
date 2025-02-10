@@ -16,29 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct PreviewLogger: WireSettingsUILogger {
+import WireLogging
+import Foundation
 
-    func debug(_ message: String) {
+struct PreviewLogger: LoggerProtocol {
+
+    let logFiles = [URL]()
+
+    func addTag(_ key: LogAttributesKey, value: String?) {}
+
+    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         print("[debug] \(message)")
     }
 
-    func info(_ message: String) {
+    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         print("[info] \(message)")
     }
 
-    func notice(_ message: String) {
+    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         print("[notice] \(message)")
     }
 
-    func warn(_ message: String) {
+    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         print("[warn] \(message)")
     }
 
-    func error(_ message: String) {
+    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         print("[error] \(message)")
     }
 
-    func critical(_ message: String) {
+    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         print("[critical] \(message)")
     }
 
