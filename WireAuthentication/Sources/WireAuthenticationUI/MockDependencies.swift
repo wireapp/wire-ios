@@ -111,7 +111,6 @@ extension MockDependencies: LoginOrRegisterViaEmailBuilder {
 
 }
 
-
 private struct MockPasswordValidator: PasswordValidator {
 
     let validationCallback: @Sendable (String) -> Bool

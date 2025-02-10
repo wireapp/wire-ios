@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireReusableUIComponents
 import WireAuthenticationAPI
+import WireReusableUIComponents
 
 @MainActor
 public final class LoginViaEmailViewModel: ObservableObject {
