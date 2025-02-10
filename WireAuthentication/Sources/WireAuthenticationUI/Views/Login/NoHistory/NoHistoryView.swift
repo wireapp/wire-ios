@@ -23,10 +23,39 @@ struct NoHistoryView: View {
     @ObservedObject var viewModel: NoHistoryViewModel
 
     var body: some View {
-        Color.red
+        VStack(spacing: 20) {
+            Text(L10n.Authentication.NoHistory.title)
+                .multilineTextAlignment(.center)
+                .font(.textStyle(.h2))
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(L10n.Authentication.NoHistory.message)
+                .multilineTextAlignment(.center)
+                .wireTextStyle(.body1)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+            Button(action: {
+                viewModel.confirm()
+            }, label: {
+                Text(L10n.Authentication.NoHistory.confirm)
+            })
+            .wireButtonStyle(.primary)
+        }
+        .padding()
+        .presentationDetents([.medium])
+        .interactiveDismissDisabled()
+        .presentationDragIndicator(.hidden)
     }
+
 }
 
 #Preview {
     NoHistoryView(viewModel: NoHistoryViewModel())
+}
+
+#Preview("With background") {
+    BackgroundView()
+        .sheet(isPresented: .constant(true)) {
+            NoHistoryView(viewModel: NoHistoryViewModel())
+        }
 }
