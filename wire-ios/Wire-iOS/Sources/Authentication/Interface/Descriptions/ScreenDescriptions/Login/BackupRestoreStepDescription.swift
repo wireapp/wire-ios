@@ -52,6 +52,7 @@ final class BackupRestoreStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init(context: NoHistoryContext) {
+
         self.backButton = BackButtonDescription()
         self.mainView = SolidButtonDescription(
             title: L10n.Localizable.Registration.NoHistory.gotIt,
@@ -66,12 +67,6 @@ final class BackupRestoreStepDescription: AuthenticationStepDescription {
             self.headline = L10n.Localizable.Registration.NoHistory.LoggedOut.hero
             self.subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle, style: .login)
         }
-
-        guard SecurityFlags.backup.isEnabled else {
-            self.footerView = nil
-            return
-        }
-
         self.footerView = BackupRestoreStepDescriptionFooterView()
 
     }

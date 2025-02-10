@@ -58,9 +58,7 @@ extension SettingsCellDescriptorFactory {
             sections.append(personalInformationSection(isPublicDomain: isPublicDomain))
         #endif
 
-        if SecurityFlags.backup.isEnabled {
-            sections.append(conversationsSection())
-        }
+        sections.append(conversationsSection())
 
         if let user = ZMUser.selfUser(), !user.usesCompanyLogin {
             sections.append(actionsSection())
