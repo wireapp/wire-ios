@@ -17,23 +17,20 @@
 //
 
 import SwiftUI
+import WireAuthentication
+import WireAuthenticationUI
 
-public struct BackgroundView: View {
-    public init() {}
+struct ContentView: View {
 
-    public var body: some View {
-        GeometryReader { geometry in
-            Image(ImageResource(name: "background", bundle: .module))
-                .resizable()
-                .scaledToFill()
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-                .background(.black)
-        }
-        .ignoresSafeArea()
+    var body: some View {
+        BackgroundView()
+            .sheet(isPresented: .constant(true)) {
+                WireAuthenticationAssembly().assemble()
+            }
     }
+
 }
 
 #Preview {
-    BackgroundView()
+    ContentView()
 }

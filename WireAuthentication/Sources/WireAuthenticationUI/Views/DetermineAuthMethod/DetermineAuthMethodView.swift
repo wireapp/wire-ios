@@ -17,6 +17,8 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireReusableUIComponents
 
 public protocol DetermineAuthMethodBuilder {
 
@@ -26,38 +28,75 @@ public protocol DetermineAuthMethodBuilder {
 
 public struct DetermineAuthMethodView: View {
 
-    @ObservedObject var viewModel: DetermineAuthMethodViewModel
+    @StateObject var viewModel: DetermineAuthMethodViewModel
 
     let builder: any LoginViaEmailBuilder
-
-    @State private var emailOrSSOCode = ""
 
     public init(
         viewModel: DetermineAuthMethodViewModel,
         builder: any LoginViaEmailBuilder
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.builder = builder
     }
 
     public var body: some View {
-        VStack(spacing: 20) {
-            Text("Wire").font(.largeTitle)
-            Text("Enter your email to start")
+        ScrollView {
+            VStack(alignment: .center, spacing: 16) {
+                HStack {
+                    Spacer()
+                        .frame(maxWidth: .infinity)
+                    Logo()
+                        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                        .frame(width: 164, height: 95)
+                    Spacer()
+                        .frame(maxWidth: .infinity)
+                }
 
-            TextField("Email or SSO Code", text: $emailOrSSOCode)
-                .textFieldStyle(.roundedBorder)
+                Text(L10n.Authentication.Identity.Input.body)
+                    .multilineTextAlignment(.leading)
+                    .wireTextStyle(.body1)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.trailing)
 
-            Button("Next") {
-                viewModel.submitEmailOrSSOCode(emailOrSSOCode)
-            }
-            .disabled(!viewModel.isValidEmailOrSSOCode(emailOrSSOCode))
+                VStack(alignment: .leading, spacing: 8) {
+                    // TODO: [WPB-16045] Set error on `LabeledTextField` when supported.
+                    LabeledTextField(
+                        isMandatory: false,
+                        placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
+                        title: L10n.Authentication.Identity.Input.Field.title,
+                        string: $viewModel.emailOrSSOCode
+                    )
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
 
-            Text("By pressing on “Next”, you accept Wire’s Terms and Conditions")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                    if let errorMessage = viewModel.errorMessage {
+                        Text(errorMessage)
+                            .wireTextStyle(.subline1)
+                            .foregroundColor(ColorTheme.Base.error.color)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+
+                Button(action: {
+                    viewModel.submitEmailOrSSOCode()
+                }, label: {
+                    HStack {
+                        // TODO: [WPB-15725] Implement custom loading indicator
+                        if viewModel.isLoading {
+                            ProgressView()
+                        }
+
+                        Text(L10n.Authentication.Identity.Input.submit)
+                            .lineLimit(nil)
+                    }
+                })
+                .wireButtonStyle(.primary)
+                .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
+            }.padding()
         }
-        .padding()
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
@@ -66,6 +105,9 @@ public struct DetermineAuthMethodView: View {
                 Color.red
             }
         }
+        .presentationDetents([.medium, .large])
+        .interactiveDismissDisabled()
+        .presentationDragIndicator(.hidden)
     }
 
     enum Destination: Hashable {
@@ -77,6 +119,26 @@ public struct DetermineAuthMethodView: View {
 
 }
 
+@MainActor
+public func makeDetermineAuthMethodViewPreview(
+    emailOrSSOCode: String = "",
+    isLoading: Bool = false,
+    errorMessage: String? = nil
+) -> some View {
+    MockDependencies().makeDetermineAuthMethodView(
+        emailOrSSOCode: emailOrSSOCode,
+        isLoading: isLoading,
+        errorMessage: errorMessage
+    )
+}
+
 #Preview {
-    MockDependencies().determineAuthMethodView
+    BackgroundView()
+        .sheet(isPresented: .constant(true)) {
+            makeDetermineAuthMethodViewPreview(
+                emailOrSSOCode: "sam@wire.com",
+                isLoading: false,
+                errorMessage: "Some error message that is too long to fit on a single line"
+            )
+        }
 }

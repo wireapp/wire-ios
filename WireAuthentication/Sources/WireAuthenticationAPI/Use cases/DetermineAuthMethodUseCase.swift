@@ -21,15 +21,15 @@ import Foundation
 public protocol DetermineAuthMethodUseCaseProtocol {
 
     @MainActor
-    func invoke(emailOrSSOCode: String) async -> AuthenticationMethod
+    func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod
 
 }
 
 public enum AuthenticationMethod {
 
-    case login(email: String)
-    case loginOrRegister(email: String)
-    case ssoLogin
-    case onPremLogin
+    case loginViaEmail(email: String)
+    case loginOrRegisterViaEmail(email: String)
+    case loginViaSSO(code: String)
+    case onPremLogin(email: String, backendConfig: URL)
 
 }
