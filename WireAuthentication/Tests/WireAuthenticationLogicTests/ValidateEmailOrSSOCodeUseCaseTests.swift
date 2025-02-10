@@ -34,7 +34,7 @@ final class ValidateEmailOrSSOCodeUseCaseTests: XCTestCase {
     }
 
     @MainActor
-    func testInvoke_withValidEmail() throws{
+    func testInvoke_withValidEmail() throws {
         // given, when
         let result = try sut.invoke(input: "foo@example.com")
 
