@@ -23,7 +23,6 @@ import Foundation
 /// from remote and store it locally.
 public protocol PullMLSOneOnOneSyncProtocol {
 
-
     /// Fetch an MLS one on one conversation from remote
     /// and store it locally.
     /// 
