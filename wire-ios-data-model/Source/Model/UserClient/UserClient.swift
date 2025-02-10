@@ -23,6 +23,7 @@ import WireLogging
 import WireUtilities
 
 public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"
+public let ZMUserClientNeedsToUpdateSignalingKeysKey = "needsToUploadSignalingKeys"
 public let ZMUserClientNeedsToUpdateCapabilitiesKey = "needsToUpdateCapabilities"
 
 public let ZMUserClientMarkedToDeleteKey = "markedToDelete"
@@ -60,6 +61,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var model: String?
     @NSManaged public var deviceClass: DeviceClass?
     @NSManaged public var needsToNotifyUser: Bool
+    @NSManaged public var apsVerificationKey: Data?
+    @NSManaged public var apsDecryptionKey: Data?
+    @NSManaged public var needsToUploadSignalingKeys: Bool
     @NSManaged public var needsToUpdateCapabilities: Bool
     @NSManaged public var needsToNotifyOtherUserAboutSessionReset: Bool
     @NSManaged public var needsSessionMigration: Bool
@@ -106,6 +110,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             ZMUserClientMarkedToDeleteKey,
             ZMUserClientNumberOfKeysRemainingKey,
             ZMUserClientMissingKey,
+            ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
             UserClient.needsToUploadMLSPublicKeysKey
         ]
@@ -829,6 +834,24 @@ public extension UserClient {
             }
         }
     }
+}
+
+// MARK: - APSSignaling
+
+public extension UserClient {
+
+    static func resetSignalingKeysInContext(_ context: NSManagedObjectContext) {
+        guard let selfClient = ZMUser.selfUser(in: context).selfClient()
+        else { return }
+
+        selfClient.apsDecryptionKey = nil
+        selfClient.apsVerificationKey = nil
+        selfClient.needsToUploadSignalingKeys = true
+        selfClient.setLocallyModifiedKeys([ZMUserClientNeedsToUpdateSignalingKeysKey])
+
+        context.enqueueDelayedSave()
+    }
+
 }
 
 // MARK: - Update SelfClient Capability

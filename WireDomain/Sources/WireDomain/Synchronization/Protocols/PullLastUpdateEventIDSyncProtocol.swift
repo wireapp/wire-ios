@@ -16,7 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
+/// An object to keep the local last update event id up to date
+/// with the remote last update evnt id.
 protocol PullLastUpdateEventIDSyncProtocol {
+
+    /// Fetch the last update event id from remote, then create
+    /// or update it locally.
 
     func pull() async throws
 

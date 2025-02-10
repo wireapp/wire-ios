@@ -16,7 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
+/// An object to keep the local conversation labels up to date
+/// with the remote conversation labels.
 protocol PullConversationLabelsSyncProtocol {
+
+    /// Fetch all conversation labels from remote, then create and update
+    /// them locally.
 
     func pull() async throws
 

@@ -26,6 +26,7 @@ private enum PushChannelKeys: String {
 
 private enum PushNotificationType: String {
     case plain
+    case cipher
     case notice
 }
 
@@ -45,6 +46,35 @@ public extension ZMOperationLoop {
                let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
                 return UUID(uuidString: rawUUID)
             }
+        case .cipher:
+            return messageNonce(fromEncryptedPushChannelData: notificationData)
+        }
+
+        return nil
+    }
+
+    func messageNonce(fromEncryptedPushChannelData encryptedPayload: [AnyHashable: Any]) -> UUID? {
+        //    @"aps" : @{ @"alert": @{@"loc-args": @[],
+        //                          @"loc-key"   : @"push.notification.new_message"}
+        //              },
+        //    @"data": @{ @"data" : @"SomeEncryptedBase64EncodedString",
+        //                @"mac"  : @"someMacHashToVerifyTheIntegrityOfTheEncodedPayload",
+        //                @"type" : @"cipher"
+        //
+
+        guard let apsSignalKeyStore else {
+            Logging.network.debug("Could not initiate APSSignalingKeystore")
+            return nil
+        }
+
+        guard let decryptedPayload = apsSignalKeyStore.decryptDataDictionary(encryptedPayload) else {
+            Logging.network.debug("Failed to decrypt data dictionary from push payload: \(encryptedPayload)")
+            return nil
+        }
+
+        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
+           let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
+            return UUID(uuidString: rawUUID)
         }
 
         return nil
