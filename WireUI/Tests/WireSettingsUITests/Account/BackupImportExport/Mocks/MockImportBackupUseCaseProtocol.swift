@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPkg
 import Foundation
+import WireDomainPkg
 
 public final class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
 
