@@ -93,6 +93,25 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 }
 
+extension MockDependencies: LoginOrRegisterViaEmailBuilder {
+
+    private func loginViewModel(email: String) -> LoginOrRegisterViaEmailViewModel {
+        LoginOrRegisterViaEmailViewModel(
+            router: rootViewModel,
+            loginViaEmailUseCase: self,
+            email: email,
+            accountsURL: URL(string: "https://example.com")!,
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true })
+        )
+    }
+
+    func loginOrRegisterViaEmailView(email: String) -> LoginOrRegisterViaEmailView {
+        LoginOrRegisterViaEmailView(viewModel: loginViewModel(email: email))
+    }
+
+}
+
+
 private struct MockPasswordValidator: PasswordValidator {
 
     let validationCallback: @Sendable (String) -> Bool
@@ -110,4 +129,3 @@ private struct MockPasswordValidator: PasswordValidator {
     }
 
 }
-

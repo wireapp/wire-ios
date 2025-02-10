@@ -22,7 +22,7 @@ import WireReusableUIComponents
 internal import WireAuthenticationUI
 
 class RootComponent: BootstrapComponent {
-    
+
     private let _accountsURL: URL
     private let _passwordValidator: any PasswordValidator
 

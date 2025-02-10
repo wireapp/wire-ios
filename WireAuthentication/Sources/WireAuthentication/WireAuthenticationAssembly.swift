@@ -19,8 +19,8 @@
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireReusableUIComponents
 import WireAuthenticationAPI
+import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 

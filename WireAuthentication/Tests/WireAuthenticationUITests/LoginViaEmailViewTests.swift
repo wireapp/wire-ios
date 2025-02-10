@@ -40,7 +40,6 @@ class LoginViaEmailViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = MockDependencies().loginViaEmailView(email: "foo@bar.com")
-        //LoginViaEmailPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -56,7 +55,6 @@ class LoginViaEmailViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = MockDependencies().loginViaEmailView(email: "foo@bar.com")
-        //LoginViaEmailPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

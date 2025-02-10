@@ -18,13 +18,12 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireReusableUIComponents
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
 protocol LoginViaEmailComponentDependency: Dependency {
-
 
     @MainActor var router: any Router { get }
     @MainActor var accountsURL: URL { get }
