@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireDesign
-import WireFoundation
 import WireReusableUIComponents
 
 public protocol DetermineAuthMethodBuilder {

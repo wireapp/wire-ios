@@ -29,7 +29,8 @@ public struct BackgroundView: View {
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .clipped()
                 .background(.black)
-        }.ignoresSafeArea()
+        }
+        .ignoresSafeArea()
     }
 }
 
