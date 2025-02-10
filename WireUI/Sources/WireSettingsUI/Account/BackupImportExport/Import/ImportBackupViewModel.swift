@@ -167,7 +167,11 @@ final class ImportBackupViewModel: ObservableObject {
                 )
                 state = .restoreFailed
             }
-            try? fileManager.removeItem(at: url)
+            do {
+                try fileManager.removeItem(at: url)
+            } catch {
+                logger.error("failed to remove temporary file: " + String(reflecting: error))
+            }
         }
     }
 
