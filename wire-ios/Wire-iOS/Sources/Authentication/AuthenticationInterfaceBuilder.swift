@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireAuthentication
 import WireDataModel
 
 /// A type of view controller that can be managed by an authentication coordinator.
@@ -60,8 +61,19 @@ final class AuthenticationInterfaceBuilder {
     /// - returns: The view controller to use for this step, or `nil` if the interface builder
     /// does not support this step.
 
-    func makeViewController(for step: AuthenticationFlowStep) -> AuthenticationStepViewController? {
+    @MainActor
+    func makeViewController(
+        for step: AuthenticationFlowStep,
+        authenticationCoordinator: AuthenticationCoordinator
+    ) -> AuthenticationStepViewController? {
         switch step {
+        case .wireAuthenticationModule:
+            let assembly = WireAuthenticationAssembly()
+            let rootView = assembly.assemble(onFlowCompletion: {
+                authenticationCoordinator.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
+            })
+            return AuthenticationCoordinatedHostingController(rootView: rootView)
+
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
             landingViewController.configure(with: featureProvider)
