@@ -31,7 +31,6 @@ public struct LoginViaEmailView: View {
     @ObservedObject var viewModel: LoginViaEmailViewModel
 
     @State var password: String = ""
-    @State var isPasswordValid = true
 
     public init(
         viewModel: LoginViaEmailViewModel
@@ -50,7 +49,6 @@ public struct LoginViaEmailView: View {
                 .disabled(true)
 
                 PasswordField(
-                    isPasswordValid: $isPasswordValid,
                     password: $password,
                     passwordValidator: viewModel.passwordValidator,
                     placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
@@ -64,7 +62,7 @@ public struct LoginViaEmailView: View {
                         .lineLimit(nil)
                 })
                 .wireButtonStyle(.primary)
-                .disabled(!isPasswordValid)
+                .disabled(!viewModel.isValidPassword(password))
 
                 Button(action: {
                     UIApplication.shared.open(viewModel.forgotPasswordURL)

@@ -30,7 +30,6 @@ public struct PasswordField: View {
 
     @State public private(set) var arePasswordRulesVisible: Bool
     @State public fileprivate(set) var isPasswordVisible: Bool
-    @Binding public fileprivate(set) var isPasswordValid: Bool
     @Binding public fileprivate(set) var password: String
 
     private let passwordValidator: any PasswordValidator
@@ -40,7 +39,6 @@ public struct PasswordField: View {
     public init(
         arePasswordRulesVisible: Bool = false,
         isPasswordVisible: Bool = false,
-        isPasswordValid: Binding<Bool>,
         password: Binding<String>,
         passwordValidator: any PasswordValidator,
         placeholder: String,
@@ -48,7 +46,6 @@ public struct PasswordField: View {
     ) {
         self.arePasswordRulesVisible = arePasswordRulesVisible
         self.isPasswordVisible = isPasswordVisible
-        self._isPasswordValid = isPasswordValid
         self._password = password
         self.passwordValidator = passwordValidator
         self.placeholder = placeholder
@@ -99,15 +96,12 @@ public struct PasswordField: View {
                     .foregroundColor(titleColor)
             }
         }
-        .onChange(of: password, perform: { newPassword in
-            isPasswordValid = passwordValidator.validate(newPassword)
-        })
     }
 
     // MARK: - Helper
 
     private var titleColor: Color {
-        switch (password.isEmpty, isPasswordValid) {
+        switch (password.isEmpty, passwordValidator.validate(password)) {
         case (_, false):
             ColorTheme.Base.error.color
         case (true, _):
@@ -118,7 +112,7 @@ public struct PasswordField: View {
     }
 
     private var borderColor: Color {
-        switch (password.isEmpty, isPasswordValid) {
+        switch (password.isEmpty, passwordValidator.validate(password)) {
         case (_, false):
             ColorTheme.Base.error.color
         case (true, _):
@@ -156,7 +150,6 @@ package struct MockPasswordValidator: PasswordValidator {
 #Preview("Invalid Password - Hidden") {
     PasswordField(
         isPasswordVisible: false,
-        isPasswordValid: .constant(false),
         password: .constant("Invalid password"),
         passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
@@ -169,7 +162,6 @@ package struct MockPasswordValidator: PasswordValidator {
 #Preview("Invalid Password - Visible") {
     PasswordField(
         isPasswordVisible: true,
-        isPasswordValid: .constant(false),
         password: .constant("Invalid password"),
         passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
@@ -182,7 +174,6 @@ package struct MockPasswordValidator: PasswordValidator {
 #Preview("Valid Password - Hidden") {
     PasswordField(
         isPasswordVisible: false,
-        isPasswordValid: .constant(true),
         password: .constant("Valid password!"),
         passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
@@ -195,7 +186,6 @@ package struct MockPasswordValidator: PasswordValidator {
 #Preview("Valid Password - Visible") {
     PasswordField(
         isPasswordVisible: true,
-        isPasswordValid: .constant(true),
         password: .constant("Valid password!"),
         passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
