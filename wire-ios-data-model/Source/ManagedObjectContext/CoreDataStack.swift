@@ -131,12 +131,20 @@ public class CoreDataStack: NSObject, ContextProvider {
 
     // MARK: - Initialization
 
-    public init(
+    public static var stacks = [CoreDataStack]()
+
+    public required init(
         account: Account,
         applicationContainer: URL,
         inMemoryStore: Bool = false,
         dispatchGroup: ZMSDispatchGroup? = nil
     ) {
+
+        precondition(Thread.isMainThread)
+        defer {
+            WireLogger.backupExportImport.debug("stacks.count is \(Self.stacks.count), going to add \(self)")
+            Self.stacks += [self]
+        }
 
         ExtendedSecureUnarchiveFromData.register()
 
@@ -200,6 +208,13 @@ public class CoreDataStack: NSObject, ContextProvider {
 
     deinit {
         close()
+
+        for s in Self.stacks.indices.reversed() {
+            if Self.stacks[s] === self {
+                WireLogger.backupExportImport.debug("[lskdjf] stacks.count is \(Self.stacks.count), going to remove \(self)")
+                Self.stacks.remove(at: s)
+            }
+        }
     }
 
     public func close() {

@@ -74,6 +74,8 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
                     continuation.yield(.progress(0.5))
 
+                    WireLogger.backupExportImport.debug("creating backup of user client")
+
                     // backup the self user and the self client
                     let selfUserQualifiedID: QualifiedID?
                     let selfClientBackup: [String: Any]
@@ -88,8 +90,12 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         throw ImportBackupError.faildToBackUpUserClient
                     }
 
+                    WireLogger.backupExportImport.debug("reporting migration required")
+
                     // user session needs to be torn down
                     await appStateUpdater.reportMigrationNeeded()
+
+                    WireLogger.backupExportImport.debug("replacing persistent store")
 
                     // the imported file replaces the existing persistent store
                     try await entityStorage.replacePersistentStore(
@@ -99,6 +105,8 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         dispatchGroup: dispatchGroup
                     )
 
+                    WireLogger.backupExportImport.debug("opening a temporary context")
+
                     // import the self client from the backup and set the correct self user relation
                     // TODO: [WPB-15714] causes warning: we should try to initialize the model only once
                     let temporaryStack = try await entityStorage
@@ -107,6 +115,9 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                             applicationContainer: sharedContainerURL,
                             dispatchGroup: dispatchGroup
                         )
+
+                    WireLogger.backupExportImport.debug("restoring backup of userclient")
+
                     try await temporaryStack.viewContext.perform {
                         let context = temporaryStack.viewContext
                         let userID = selfUserQualifiedID?.uuid
@@ -123,7 +134,11 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         try context.save()
                     }
 
+                    WireLogger.backupExportImport.debug("select account and start the main UI again")
+
                     await appStateUpdater.selectAccountAndTriggerSlowSync(account)
+
+                    WireLogger.backupExportImport.debug("done")
 
                     continuation.yield(.done)
                     continuation.finish()
