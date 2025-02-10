@@ -17,6 +17,7 @@
 //
 
 import WireAPISupport
+import WireDataModel
 import XCTest
 @testable import WireAPI
 @testable import WireDomain
@@ -59,7 +60,7 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
         // Then
         let apiInvocations = api.getMLSOneToOneConversationUserIDIn_Invocations
         try XCTAssertCount(apiInvocations, count: 1)
-        XCTAssertEqual(apiInvocations[0].userID, Scaffolding.userID.transportString())
+        XCTAssertEqual(apiInvocations[0].userID, Scaffolding.userID.uuidString.lowercased())
         XCTAssertEqual(apiInvocations[0].domain, Scaffolding.userDomain)
 
         let storeInvocations = store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations
@@ -68,7 +69,7 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0].isFederationEnabled, Scaffolding.isFederationEnabled)
         XCTAssertEqual(storeInvocations[0].isMLSEnabled, Scaffolding.isMLSEnabled)
 
-        XCTAssertEqual(mlsGroupID, Scaffolding.mlsGroupID)
+        XCTAssertEqual(mlsGroupID, MLSGroupID(base64Encoded: Scaffolding.mlsGroupID))
     }
 
 }

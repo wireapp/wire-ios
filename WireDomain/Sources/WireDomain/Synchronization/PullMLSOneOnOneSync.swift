@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAPI
+import WireDataModel
 
 public struct PullMLSOneOnOneSync: PullMLSOneOnOneSyncProtocol {
 
@@ -41,13 +42,16 @@ public struct PullMLSOneOnOneSync: PullMLSOneOnOneSyncProtocol {
     public func pull(
         userID: UUID,
         userDomain: String
-    ) async throws -> String {
+    ) async throws -> MLSGroupID {
         let conversation = try await api.getMLSOneToOneConversation(
             userID: userID.transportString(),
             in: userDomain
         )
 
-        guard let mlsGroupID = conversation.mlsGroupID else {
+        guard
+            let rawMLSGroupID = conversation.mlsGroupID,
+            let mlsGroupID = MLSGroupID(base64Encoded: rawMLSGroupID)
+        else {
             throw PullMLSOneOnOneSyncError.mlsConversationMissingGroupID
         }
 

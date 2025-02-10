@@ -1691,10 +1691,10 @@ public class MockPullMLSOneOnOneSyncProtocol: PullMLSOneOnOneSyncProtocol {
 
     public var pullUserIDUserDomain_Invocations: [(userID: UUID, userDomain: String)] = []
     public var pullUserIDUserDomain_MockError: Error?
-    public var pullUserIDUserDomain_MockMethod: ((UUID, String) async throws -> String)?
-    public var pullUserIDUserDomain_MockValue: String?
+    public var pullUserIDUserDomain_MockMethod: ((UUID, String) async throws -> MLSGroupID)?
+    public var pullUserIDUserDomain_MockValue: MLSGroupID?
 
-    public func pull(userID: UUID, userDomain: String) async throws -> String {
+    public func pull(userID: UUID, userDomain: String) async throws -> MLSGroupID {
         pullUserIDUserDomain_Invocations.append((userID: userID, userDomain: userDomain))
 
         if let error = pullUserIDUserDomain_MockError {
