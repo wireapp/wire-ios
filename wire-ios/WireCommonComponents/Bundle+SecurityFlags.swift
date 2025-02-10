@@ -24,7 +24,6 @@ public enum SecurityFlags {
     case forceConstantBitRateCalls
     case customBackend
     case cameraRoll
-    case backup
     case maxNumberAccounts
     case fileSharing
     case locationSharing
@@ -51,8 +50,6 @@ public enum SecurityFlags {
             "CustomBackendEnabled"
         case .cameraRoll:
             "CameraRollEnabled"
-        case .backup:
-            "BackupEnabled"
         case .forceEncryptionAtRest:
             "ForceEncryptionAtRestEnabled"
         case .fileSharing:
