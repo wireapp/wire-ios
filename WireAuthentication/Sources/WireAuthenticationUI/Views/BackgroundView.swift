@@ -18,10 +18,10 @@
 
 import SwiftUI
 
-package struct BackgroundView: View {
-    package init() {}
+public struct BackgroundView: View {
+    public init() {}
 
-    package var body: some View {
+    public var body: some View {
         Image(ImageResource(name: "background", bundle: .module))
             .resizable()
             .scaledToFill()
