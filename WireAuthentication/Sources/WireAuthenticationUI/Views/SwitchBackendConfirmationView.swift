@@ -176,28 +176,29 @@ package struct SwitchBackendConfirmationView: View {
 
 }
 
-public struct SwitchBackendConfirmationPreview: View {
-    public init() {}
-
-    public var body: some View {
-        BackgroundView()
-            .overlay(
-                ZStack {
-                    SwitchBackendConfirmationViewPreview()
-                        .padding()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            )
-    }
-}
-
 // MARK: - Previews
 
 #Preview("Regular fonts") {
-    SwitchBackendConfirmationPreview()
+    BackgroundView()
+        .overlay(
+            ZStack {
+                SwitchBackendConfirmationPreview()
+                    .padding()
+            }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        )
 }
 
 #Preview("Large fonts") {
-    SwitchBackendConfirmationPreview()
-        .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+    VStack{
+        BackgroundView()
+            .overlay(
+                ZStack {
+                    SwitchBackendConfirmationPreview()
+                        .padding()
+                }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            )
+    }
+    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
 }

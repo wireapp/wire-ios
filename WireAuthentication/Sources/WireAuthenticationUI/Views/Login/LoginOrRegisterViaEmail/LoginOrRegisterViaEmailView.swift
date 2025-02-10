@@ -121,5 +121,8 @@ public struct LoginOrRegisterViaEmailView: View {
 }
 
 #Preview {
-    MockDependencies().loginOrRegisterViaEmailView(email: "foo@bar.com")
+    BackgroundView()
+        .sheet(isPresented: .constant(true)) {
+            MockDependencies().loginOrRegisterViaEmailView(email: "foo@bar.com")
+        }
 }
