@@ -74,9 +74,9 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
-        localTable["router-any Router"] = { [unowned self] in self.router as Any }
         localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
+        localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
 }
 
