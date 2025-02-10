@@ -30,12 +30,12 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency>, DetermineAuthMethodBuilder {
 
-    private var validateEmailOrSSOCode: some ValidateEmailOrSSOCodeUseCaseProtocol {
+    private var validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase {
         ValidateEmailOrSSOCodeUseCase()
     }
 
     private var determineAuthMethodUseCase: some DetermineAuthMethodUseCaseProtocol {
-        DetermineAuthMethodUseCase()
+        DetermineAuthMethodUseCase(validateEmailOrSSOCode: validateEmailOrSSOCode)
     }
 
     @MainActor private var viewModel: DetermineAuthMethodViewModel {

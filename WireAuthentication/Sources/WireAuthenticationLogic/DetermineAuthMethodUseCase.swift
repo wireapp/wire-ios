@@ -21,13 +21,23 @@ import WireAuthenticationAPI
 
 package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
-    package init() {}
+    private let validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase
+
+    package init(validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase) {
+        self.validateEmailOrSSOCode = validateEmailOrSSOCode
+    }
 
     @MainActor
     package func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod {
-        try await Task.sleep(for: .seconds(3))
+        let parsedInput = try validateEmailOrSSOCode.invoke(input: emailOrSSOCode)
 
-        return .loginViaEmail(email: emailOrSSOCode)
+        switch parsedInput {
+        case let .email(email):
+            // FIXME: Handle
+            return .loginViaEmail(email: email)
+        case let .ssoCode(ssoCode):
+            return .loginViaSSO(code: ssoCode)
+        }
     }
 
 }
