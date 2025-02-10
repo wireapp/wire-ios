@@ -19,8 +19,15 @@
 import NeedleFoundation
 import SwiftUI
 internal import WireAuthenticationUI
+import WireAuthenticationAPI
 
 class RootComponent: BootstrapComponent {
+
+    public let bridge: WireAuthenticationBridge
+
+    init(bridge: WireAuthenticationBridge) {
+        self.bridge = bridge
+    }
 
     @MainActor public var router: any Router {
         rootViewModel

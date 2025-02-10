@@ -17,23 +17,21 @@
 //
 
 import Foundation
-import NeedleFoundation
-import SwiftUI
-import WireAuthenticationAPI
-internal import WireAuthenticationUI
-internal import WireAuthenticationLogic
 
-public struct WireAuthenticationAssembly {
+/// A object that facilitates intermodule communication, both **inbound**
+/// (from outside into this module) and **outbound** (from inside this module
+/// to the external world).
 
-    public init() {
-        registerProviderFactories()
+public struct WireAuthenticationBridge {
+
+    private let onFlowCompletion: () -> Void
+
+    public init(onFlowCompletion: @escaping () -> Void) {
+        self.onFlowCompletion = onFlowCompletion
     }
 
-    @MainActor
-    public func assemble(onFlowCompletion: @escaping () -> Void) -> some View {
-        let bridge = WireAuthenticationBridge(onFlowCompletion: onFlowCompletion)
-        let rootComponent = RootComponent(bridge: bridge)
-        return rootComponent.rootView
+    public func completeFlow() {
+        onFlowCompletion()
     }
 
 }
