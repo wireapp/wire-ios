@@ -45,10 +45,7 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                         }
                 }
 
-                .alert(
-                    Text(Strings.ExportBackup.ErrorAlert.title),
-                    isPresented: $viewModel.isErrorAlertPresented
-                ) {
+                .alert(Strings.ExportBackup.ErrorAlert.title, isPresented: $viewModel.isErrorAlertPresented) {
                     Button(Strings.ExportBackup.ErrorAlert.ok, action: viewModel.reset)
                 } message: {
                     Text(Strings.ExportBackup.ErrorAlert.message)

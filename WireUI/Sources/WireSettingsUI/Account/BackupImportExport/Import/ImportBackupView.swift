@@ -65,32 +65,24 @@ struct ImportBackupView: View {
                     }
                 }
 
-                .alert(
-                    Text(viewModel.alertContent.title),
-                    isPresented: $viewModel.isImportConfirmationPresented,
-                    presenting: viewModel.alertContent
-                ) { _ in
+                .alert(viewModel.alertContent.title, isPresented: $viewModel.isImportConfirmationPresented) {
                     Button(Strings.ImportBackup.OverwriteConfirmation.cancel, role: .cancel) {
                         viewModel.reset()
                     }
                     Button(Strings.ImportBackup.OverwriteConfirmation.proceed, role: .destructive) {
                         viewModel.confirmOverwrite()
                     }
-                } message: { alertContent in
-                    Text(alertContent.message)
+                } message: {
+                    Text(viewModel.alertContent.message)
                 }
             }
 
-            .alert(
-                Text(viewModel.alertContent.title),
-                isPresented: $viewModel.isAlertPresented,
-                presenting: viewModel.alertContent
-            ) { _ in
+            .alert(viewModel.alertContent.title, isPresented: $viewModel.isAlertPresented) {
                 Button(Strings.ImportBackup.Alert.ok) {
                     viewModel.reset()
                 }
-            } message: { alertContent in
-                Text(alertContent.message)
+            } message: {
+                Text(viewModel.alertContent.message)
             }
         }
     }
