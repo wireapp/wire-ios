@@ -25,7 +25,6 @@ public final class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol 
 
     public init() {}
 
-
     // MARK: - invoke
 
     public var invokeUrlPassword_Invocations: [(url: URL, password: String)] = []
