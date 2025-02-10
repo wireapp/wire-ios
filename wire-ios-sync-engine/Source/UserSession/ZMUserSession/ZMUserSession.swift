@@ -1130,6 +1130,34 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
+    func notifyAuthenticationInvalidated(_ error: Error) {
+        WireLogger.authentication.debug("notifying authentication invalidated")
+        managedObjectContext.performGroupedBlock {  [weak self] in
+            guard
+                let context = self?.managedObjectContext,
+                let accountId = ZMUser.selfUser(in: context).remoteIdentifier
+            else {
+                return
+            }
+
+            self?.delegate?.authenticationInvalidated(error as NSError, accountId: accountId)
+        }
+    }
+
+    func checkE2EICertificateExpiryStatus() {
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+            }
+        }
+    }
+}
+
+// MARK: - ZMClientRegistrationStatusDelegate
+
+extension ZMUserSession: ZMClientRegistrationStatusDelegate {
+
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
@@ -1180,28 +1208,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         notifyAuthenticationInvalidated(error)
     }
 
-    func notifyAuthenticationInvalidated(_ error: Error) {
-        WireLogger.authentication.debug("notifying authentication invalidated")
-        managedObjectContext.performGroupedBlock {  [weak self] in
-            guard
-                let context = self?.managedObjectContext,
-                let accountId = ZMUser.selfUser(in: context).remoteIdentifier
-            else {
-                return
-            }
-
-            self?.delegate?.authenticationInvalidated(error as NSError, accountId: accountId)
-        }
-    }
-
-    func checkE2EICertificateExpiryStatus() {
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
-            if isE2EIFeatureEnabled {
-                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
-            }
-        }
-    }
 }
 
 // MARK: - URLActionProcessor
