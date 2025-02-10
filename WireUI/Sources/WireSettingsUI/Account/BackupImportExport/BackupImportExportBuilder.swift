@@ -17,6 +17,8 @@
 //
 
 import SwiftUI
+import WireDomainPkg
+import WireLogging
 
 public struct BackupImportExportBuilder {
 
@@ -24,16 +26,16 @@ public struct BackupImportExportBuilder {
     let createBackupUseCase: any CreateBackupUseCaseProtocol
     let importBackupUseCase: any ImportBackupUseCaseProtocol
     let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
-    let exportBackupLogger: any WireSettingsUILogger
-    let importBackupLogger: any WireSettingsUILogger
+    let exportBackupLogger: any LoggerProtocol
+    let importBackupLogger: any LoggerProtocol
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
         createBackupUseCase: any CreateBackupUseCaseProtocol,
         importBackupUseCase: any ImportBackupUseCaseProtocol,
         cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
-        exportBackupLogger: any WireSettingsUILogger,
-        importBackupLogger: any WireSettingsUILogger
+        exportBackupLogger: any LoggerProtocol,
+        importBackupLogger: any LoggerProtocol
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase

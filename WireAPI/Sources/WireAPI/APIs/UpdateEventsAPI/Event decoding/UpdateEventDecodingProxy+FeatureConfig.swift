@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 extension UpdateEventDecodingProxy {
 
@@ -85,6 +86,7 @@ extension UpdateEventDecodingProxy {
                 updateEvent = .featureConfig(.update(event))
 
             default:
+                WireLogger.updateEvent.warn("encountered unknown feature config: \(featureName)")
                 let event = FeatureConfigUpdateEvent(featureConfig: .unknown(featureName: featureName))
                 updateEvent = .featureConfig(.update(event))
             }

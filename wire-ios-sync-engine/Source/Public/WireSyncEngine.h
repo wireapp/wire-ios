@@ -28,7 +28,7 @@
 #import <WireSyncEngine/ZMOperationLoop+Private.h>
 #import <WireSyncEngine/ZMHotFixDirectory.h>
 #import <WireSyncEngine/ZMUserSessionRegistrationNotification.h>
-#import <WireSyncEngine/ZMSyncStateDelegate.h>
+#import <WireSyncEngine/ZMClientRegistrationStatusDelegate.h>
 #import <WireSyncEngine/ZMLoginTranscoder.h>
 #import <WireSyncEngine/ZMLoginCodeRequestTranscoder.h>
 #import <WireSyncEngine/ZMLastUpdateEventIDTranscoder.h>

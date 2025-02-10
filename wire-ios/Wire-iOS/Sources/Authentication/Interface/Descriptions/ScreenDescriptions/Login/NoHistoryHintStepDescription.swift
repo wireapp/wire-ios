@@ -31,6 +31,7 @@ final class NoHistoryHintStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription? = nil
 
     init(context: NoHistoryContext) {
+
         self.backButton = BackButtonDescription()
         self.mainView = SolidButtonDescription(
             title: L10n.Localizable.Registration.NoHistory.gotIt,

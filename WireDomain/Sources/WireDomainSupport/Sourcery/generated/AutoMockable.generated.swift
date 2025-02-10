@@ -1567,6 +1567,287 @@ class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
 
 }
 
+class MockPullAllConversationsSyncProtocol: PullAllConversationsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullAllFeatureConfigsSyncProtocol: PullAllFeatureConfigsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullConversationLabelsSyncProtocol: PullConversationLabelsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullKnownUsersSyncProtocol: PullKnownUsersSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullLastUpdateEventIDSyncProtocol: PullLastUpdateEventIDSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+public class MockPullResourcesSyncProtocol: PullResourcesSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
+
+    public func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullSelfLegalholdInfoSyncProtocol: PullSelfLegalholdInfoSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pullSelfTeamID_Invocations: [UUID] = []
+    var pullSelfTeamID_MockError: Error?
+    var pullSelfTeamID_MockMethod: ((UUID) async throws -> Void)?
+
+    func pull(selfTeamID: UUID) async throws {
+        pullSelfTeamID_Invocations.append(selfTeamID)
+
+        if let error = pullSelfTeamID_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamID_MockMethod else {
+            fatalError("no mock for `pullSelfTeamID`")
+        }
+
+        try await mock(selfTeamID)
+    }
+
+}
+
+class MockPullSelfTeamMembersSyncProtocol: PullSelfTeamMembersSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pullSelfTeamID_Invocations: [UUID] = []
+    var pullSelfTeamID_MockError: Error?
+    var pullSelfTeamID_MockMethod: ((UUID) async throws -> Void)?
+
+    func pull(selfTeamID: UUID) async throws {
+        pullSelfTeamID_Invocations.append(selfTeamID)
+
+        if let error = pullSelfTeamID_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamID_MockMethod else {
+            fatalError("no mock for `pullSelfTeamID`")
+        }
+
+        try await mock(selfTeamID)
+    }
+
+}
+
+class MockPullSelfTeamRolesSyncProtocol: PullSelfTeamRolesSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pullSelfTeamID_Invocations: [UUID] = []
+    var pullSelfTeamID_MockError: Error?
+    var pullSelfTeamID_MockMethod: ((UUID) async throws -> Void)?
+
+    func pull(selfTeamID: UUID) async throws {
+        pullSelfTeamID_Invocations.append(selfTeamID)
+
+        if let error = pullSelfTeamID_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamID_MockMethod else {
+            fatalError("no mock for `pullSelfTeamID`")
+        }
+
+        try await mock(selfTeamID)
+    }
+
+}
+
+class MockPullSelfTeamSyncProtocol: PullSelfTeamSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pullSelfTeamID_Invocations: [UUID] = []
+    var pullSelfTeamID_MockError: Error?
+    var pullSelfTeamID_MockMethod: ((UUID) async throws -> Void)?
+
+    func pull(selfTeamID: UUID) async throws {
+        pullSelfTeamID_Invocations.append(selfTeamID)
+
+        if let error = pullSelfTeamID_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamID_MockMethod else {
+            fatalError("no mock for `pullSelfTeamID`")
+        }
+
+        try await mock(selfTeamID)
+    }
+
+}
+
 public class MockPullSelfUserClientsProtocol: PullSelfUserClientsProtocol {
 
     // MARK: - Life cycle
@@ -1592,6 +1873,123 @@ public class MockPullSelfUserClientsProtocol: PullSelfUserClientsProtocol {
         }
 
         try await mock()
+    }
+
+}
+
+class MockPullSelfUserSettingsSyncProtocol: PullSelfUserSettingsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullSelfUserSyncProtocol: PullSelfUserSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> (id: UUID, domain: String?, teamID: UUID?))?
+    var pull_MockValue: (id: UUID, domain: String?, teamID: UUID?)?
+
+    @discardableResult
+    func pull() async throws -> (id: UUID, domain: String?, teamID: UUID?) {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        if let mock = pull_MockMethod {
+            return try await mock()
+        } else if let mock = pull_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `pull`")
+        }
+    }
+
+}
+
+class MockPullUserConnectionsSyncProtocol: PullUserConnectionsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+public class MockPushSupportedProtocolsSyncProtocol: PushSupportedProtocolsSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - push
+
+    public var pushSupportedProtocols_Invocations: [Set<WireAPI.MessageProtocol>] = []
+    public var pushSupportedProtocols_MockError: Error?
+    public var pushSupportedProtocols_MockMethod: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
+
+    public func push(supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
+        pushSupportedProtocols_Invocations.append(supportedProtocols)
+
+        if let error = pushSupportedProtocols_MockError {
+            throw error
+        }
+
+        guard let mock = pushSupportedProtocols_MockMethod else {
+            fatalError("no mock for `pushSupportedProtocols`")
+        }
+
+        try await mock(supportedProtocols)
     }
 
 }
@@ -2795,6 +3193,21 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         await mock(isReadReceiptsEnabled, isReadReceiptsEnabledChangedRemotely)
     }
 
+    // MARK: - updateSelfUserSupportedProtocols
+
+    public var updateSelfUserSupportedProtocolsSupportedProtocols_Invocations: [Set<WireDataModel.MessageProtocol>] = []
+    public var updateSelfUserSupportedProtocolsSupportedProtocols_MockMethod: ((Set<WireDataModel.MessageProtocol>) async -> Void)?
+
+    public func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async {
+        updateSelfUserSupportedProtocolsSupportedProtocols_Invocations.append(supportedProtocols)
+
+        guard let mock = updateSelfUserSupportedProtocolsSupportedProtocols_MockMethod else {
+            fatalError("no mock for `updateSelfUserSupportedProtocolsSupportedProtocols`")
+        }
+
+        await mock(supportedProtocols)
+    }
+
     // MARK: - fetchUsersQualifiedIDs
 
     public var fetchUsersQualifiedIDs_Invocations: [Void] = []
@@ -3007,26 +3420,6 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         } else {
             fatalError("no mock for `fetchUserIdDomain`")
         }
-    }
-
-    // MARK: - pushSelfSupportedProtocols
-
-    public var pushSelfSupportedProtocols_Invocations: [Set<WireAPI.MessageProtocol>] = []
-    public var pushSelfSupportedProtocols_MockError: Error?
-    public var pushSelfSupportedProtocols_MockMethod: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
-
-    public func pushSelfSupportedProtocols(_ supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
-        pushSelfSupportedProtocols_Invocations.append(supportedProtocols)
-
-        if let error = pushSelfSupportedProtocols_MockError {
-            throw error
-        }
-
-        guard let mock = pushSelfSupportedProtocols_MockMethod else {
-            fatalError("no mock for `pushSelfSupportedProtocols`")
-        }
-
-        try await mock(supportedProtocols)
     }
 
     // MARK: - pullKnownUsers

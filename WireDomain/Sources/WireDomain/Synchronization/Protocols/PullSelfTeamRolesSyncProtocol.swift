@@ -18,7 +18,15 @@
 
 import Foundation
 
+// sourcery: AutoMockable
+/// An object to keep the local team roles up to date
+/// with the remote team roles.
 protocol PullSelfTeamRolesSyncProtocol {
+
+    /// Fetch the team roles from remote, then create or update
+    /// them locally.
+    ///
+    /// - Parameter selfTeamID: The id of the self user's team.
 
     func pull(selfTeamID: UUID) async throws
 

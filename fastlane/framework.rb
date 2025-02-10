@@ -40,15 +40,18 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["WireFoundation"])
         frameworks["wire-ios"].add_dependency(frameworks["WireLogging"])
         frameworks["wire-ios"].add_dependency(frameworks["WireAuthentication"])
+        frameworks["wire-ios"].add_dependency(frameworks["wire-ios-testing"]) # included in WireiOSTests
 
         frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
         frameworks["wire-ios-notification-engine"].add_dependency(frameworks["WireLogging"])
+        
 
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireAPI"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireAnalytics"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireDomain"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireLogging"])
+        frameworks["wire-ios-sync-engine"].add_dependency(frameworks["wire-ios-testing"]) # included in WireSyncEngineiOSTests
 
         frameworks["wire-ios-share-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
         frameworks["wire-ios-share-engine"].add_dependency(frameworks["WireLogging"])
@@ -64,6 +67,7 @@ class Framework
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-transport"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["WireFoundation"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["WireLogging"])
+        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-testing"]) # included in WireDataModelTests
 
         frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-testing"])
         frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-cryptobox"])
@@ -73,6 +77,7 @@ class Framework
 
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-utilities"])
         frameworks["wire-ios-transport"].add_dependency(frameworks["WireLogging"])
+        frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-testing"]) # included in WireTransportTests
 
         frameworks["wire-ios-link-preview"].add_dependency(frameworks["wire-ios-utilities"])
 
