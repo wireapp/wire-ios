@@ -18,22 +18,11 @@
 
 import SwiftUI
 
-public struct BackgroundView: View {
-    public init() {}
-
-    public var body: some View {
-        GeometryReader { geometry in
-            Image(ImageResource(name: "background", bundle: .module))
-                .resizable()
-                .scaledToFill()
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-                .background(.black)
+@main
+struct WireAuthenticationApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
         }
-        .ignoresSafeArea()
     }
-}
-
-#Preview {
-    BackgroundView()
 }

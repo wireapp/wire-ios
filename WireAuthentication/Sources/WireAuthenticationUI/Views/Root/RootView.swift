@@ -21,7 +21,7 @@ import WireAuthenticationAPI
 
 public struct RootView: View {
 
-    @ObservedObject var viewModel: RootViewModel
+    @StateObject var viewModel: RootViewModel
 
     let builder: any DetermineAuthMethodBuilder
 
@@ -29,7 +29,7 @@ public struct RootView: View {
         viewModel: RootViewModel,
         builder: any DetermineAuthMethodBuilder
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.builder = builder
     }
 
