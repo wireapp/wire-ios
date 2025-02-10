@@ -20,8 +20,8 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireSettingsUI
 import WireLogging
+import WireSettingsUI
 import WireSyncEngine
 
 extension ZMUser {

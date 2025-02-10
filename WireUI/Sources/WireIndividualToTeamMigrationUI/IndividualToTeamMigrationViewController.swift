@@ -19,9 +19,9 @@
 import SwiftUI
 import WireAnalytics
 import WireDesign
+import WireDomainPkg
 import WireFoundation
 import WireReusableUIComponents
-import WireDomainPkg
 
 public class IndividualToTeamMigrationViewController: UIViewController {
     public enum Action: Sendable {
