@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
 import WireTestingPackage
+import WireDomainPkg
 import XCTest
 
 @testable import WireSettingsUI
@@ -28,7 +30,7 @@ final class ImportBackupViewModelTest: XCTestCase {
     private var temporaryDirectory: URL!
     private var temporaryFile: URL!
     private var mockImportBackupUseCase: MockImportBackupUseCaseProtocol!
-    private var mockLogger: MockWireSettingsUILogger!
+    private var mockLogger: (any LoggerProtocol)!
     private var sut: ImportBackupViewModel!
 
     private var fileManager: FileManager { .default }
@@ -47,9 +49,7 @@ final class ImportBackupViewModelTest: XCTestCase {
 
         mockImportBackupUseCase = .init()
 
-        mockLogger = .init()
-        mockLogger.debug_MockMethod = { _ in }
-        mockLogger.warn_MockMethod = { _ in }
+        mockLogger = WireLogger(tag: "mock")
 
         sut = .init(
             importBackupUseCase: mockImportBackupUseCase,
