@@ -17,32 +17,15 @@
 //
 
 import Foundation
-import WireAPI
 
-struct PullSelfTeamRolesSync: PullSelfTeamRolesSyncProtocol {
+public extension WireLogger {
 
-    private let api: any TeamsAPI
-    private let store: any TeamLocalStoreProtocol
-
-    init(
-        api: any TeamsAPI,
-        store: any TeamLocalStoreProtocol
-    ) {
-        self.api = api
-        self.store = store
-    }
-
-    func pull(selfTeamID: UUID) async throws {
-        let remoteTeamRoles = try await api.getTeamRoles(for: selfTeamID)
-
-        let teamRolesInfo = remoteTeamRoles.map {
-            $0.toDomainModel()
-        }
-
-        try await store.storeTeamRoles(
-            selfTeamID: selfTeamID,
-            teamRolesInfo: teamRolesInfo
-        )
+    func measureTime(label: String, block: () async throws -> Void) async throws {
+        debug("starting \(label)")
+        let start = Date.now
+        try await block()
+        let durationInSeconds = start.timeIntervalSinceNow.magnitude
+        debug("completed \(label) in \(String(format: "%.2f", durationInSeconds)) seconds")
     }
 
 }
