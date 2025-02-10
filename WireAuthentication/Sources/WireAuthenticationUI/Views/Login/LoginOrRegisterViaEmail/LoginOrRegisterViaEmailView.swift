@@ -75,7 +75,6 @@ public struct LoginOrRegisterViaEmailView: View {
                     .fixedSize(horizontal: false, vertical: true)
             })
             .wireButtonStyle(.link)
-
             VStack(spacing: 4) {
                 Text(L10n.CreatePersonalAccount.title)
                     .multilineTextAlignment(.center)
