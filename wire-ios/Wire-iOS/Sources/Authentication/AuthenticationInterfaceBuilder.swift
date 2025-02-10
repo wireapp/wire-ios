@@ -72,7 +72,7 @@ final class AuthenticationInterfaceBuilder {
             let rootView = assembly.assemble(onFlowCompletion: {
                 authenticationCoordinator.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
             })
-            return AuthenticationCoordinatedHostingController(rootView: rootView)
+            return AuthenticationHostingController(rootView: rootView)
 
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)

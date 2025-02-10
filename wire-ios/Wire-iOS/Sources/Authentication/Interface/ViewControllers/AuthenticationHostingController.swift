@@ -21,7 +21,8 @@ import SwiftUI
 
 // A temporary bridging object to allow the new WireAuthentication flow inside
 // the existing AuthenticationController flow.
-final class AuthenticationCoordinatedHostingController<Content: View>: UIHostingController<Content>, AuthenticationCoordinatedViewController {
+final class AuthenticationHostingController<Content: View>: UIHostingController<Content>,
+    AuthenticationCoordinatedViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
 
