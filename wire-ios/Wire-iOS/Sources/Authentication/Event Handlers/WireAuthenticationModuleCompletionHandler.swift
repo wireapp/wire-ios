@@ -30,7 +30,7 @@ final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandle
     ) -> [AuthenticationCoordinatorAction]? {
         switch currentStep {
         case .wireAuthenticationModule:
-            // Return the appropriate step action here.
+            // TODO: [WPB-16044] Return the appropriate step action here.
             return nil
 
         default:
