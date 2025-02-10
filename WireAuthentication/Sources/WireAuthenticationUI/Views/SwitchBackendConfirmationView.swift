@@ -185,19 +185,19 @@ package struct SwitchBackendConfirmationView: View {
                 SwitchBackendConfirmationPreview()
                     .padding()
             }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         )
 }
 
 #Preview("Large fonts") {
-    VStack{
+    VStack {
         BackgroundView()
             .overlay(
                 ZStack {
                     SwitchBackendConfirmationPreview()
                         .padding()
                 }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             )
     }
     .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
