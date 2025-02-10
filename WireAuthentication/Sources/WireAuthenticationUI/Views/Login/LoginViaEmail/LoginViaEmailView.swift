@@ -20,19 +20,26 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-package struct LoginViaEmailView: View {
-    private let viewModel: LoginViaEmailViewModel
+public protocol LoginViaEmailBuilder {
+
+    @MainActor
+    func loginViaEmailView(email: String) -> LoginViaEmailView
+
+}
+
+public struct LoginViaEmailView: View {
+    @ObservedObject var viewModel: LoginViaEmailViewModel
 
     @State var password: String = ""
     @State var isPasswordValid = true
 
-    package init(
+    public init(
         viewModel: LoginViaEmailViewModel
     ) {
         self.viewModel = viewModel
     }
 
-    package var body: some View {
+    public var body: some View {
         VStack(alignment: .center, spacing: 14) {
             LabeledTextField(
                 placeholder: nil,
@@ -67,43 +74,9 @@ package struct LoginViaEmailView: View {
                     .fixedSize(horizontal: false, vertical: true)
             })
             .wireButtonStyle(.link)
-
-//            if viewModel.showCreateAccount {
-//                VStack(spacing: 4) {
-//                    Text(L10n.CreatePersonalAccount.title)
-//                        .multilineTextAlignment(.center)
-//                        .wireTextStyle(.body1)
-//                        .lineLimit(nil)
-//                        .fixedSize(horizontal: false, vertical: true)
-//
-//                    Button(action: {
-//                        viewModel.onCreateAccount()
-//                    }, label: {
-//                        Text(L10n.CreatePersonalAccount.button)
-//                            .multilineTextAlignment(.center)
-//                            .lineLimit(nil)
-//                            .minimumScaleFactor(0.5)
-//                            .fixedSize(horizontal: false, vertical: true)
-//                    })
-//                    .wireButtonStyle(.link)
-//                }
-//                .frame(maxWidth: .infinity)
-//                .padding()
-//                .background {
-//                    if #available(iOS 17.0, *) {
-//                        RoundedRectangle(cornerRadius: 10)
-//                            .fill(ColorTheme.Backgrounds.backgroundVariant.color)
-//                            .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-//                    } else {
-//                        RoundedRectangle(cornerRadius: 10)
-//                            .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-//                            .background(ColorTheme.Backgrounds.backgroundVariant.color)
-//                            .cornerRadius(12)
-//                    }
-//                }
-//            }
         }
         .navigationTitle(L10n.CloudUserLogin.title)
+        .navigationBarTitleDisplayMode(.inline)
         .padding(32)
         .background(ColorTheme.Backgrounds.surface.color)
         .cornerRadius(16)
@@ -114,34 +87,38 @@ package struct LoginViaEmailView: View {
     }
 }
 
-//#Preview("Regular fonts") {
-//    BackgroundView()
-//        .overlay {
-//            VStack(spacing: 0) {
-//                Spacer()
-//                    .frame(maxHeight: .infinity)
-//                LoginViaEmailPreview()
-//            }
-//        }
-//}
-//
-//#Preview("Large fonts") {
-//    BackgroundView()
-//        .overlay {
-//            VStack(spacing: 0) {
-//                Spacer()
-//                    .frame(maxHeight: .infinity)
-//                if #available(iOS 16.4, *) {
-//                    ScrollView(.vertical) {
-//                        LoginViaEmailPreview()
-//                    }
-//                    .scrollBounceBehavior(.basedOnSize)
-//                } else {
-//                    ScrollView(.vertical) {
-//                        LoginViaEmailPreview()
-//                    }
-//                }
-//            }
-//        }
-//        .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
-//}
+#Preview {
+    MockDependencies().loginViaEmailView(email: "foo@bar.com")
+}
+
+#Preview("Regular fonts") {
+    BackgroundView()
+        .overlay {
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(maxHeight: .infinity)
+                MockDependencies().loginViaEmailView(email: "foo@bar.com")
+            }
+        }
+}
+
+#Preview("Large fonts") {
+    BackgroundView()
+        .overlay {
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(maxHeight: .infinity)
+                if #available(iOS 16.4, *) {
+                    ScrollView(.vertical) {
+                        MockDependencies().loginViaEmailView(email: "foo@bar.com")
+                    }
+                    .scrollBounceBehavior(.basedOnSize)
+                } else {
+                    ScrollView(.vertical) {
+                        MockDependencies().loginViaEmailView(email: "foo@bar.com")
+                    }
+                }
+            }
+        }
+        .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+}

@@ -17,26 +17,26 @@
 //
 
 import SwiftUI
-import WireFoundation
 import WireReusableUIComponents
+import WireAuthenticationAPI
 
 //package struct LoginViaEmailPreview: View {
 //    private let viewModel: LoginViaEmailViewModel
 //
 //    package init(
+//        loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
 //        email: String = "email@wire.com",
 //        forgotPasswordURL: URL = URL(string: "https://example.com")!,
-//        passwordValidator: any PasswordValidator = MockPasswordValidator(validationCallback: { _ in false }),
-//        showCreateAccount: Bool = false,
-//        onCreateAccount: @escaping (@Sendable () -> Void) = {}
+//        passwordValidator: any PasswordValidator = MockPasswordValidator(validationCallback: { _ in false })
 //    ) {
-//        self.viewModel = LoginViaEmailViewModel(
-//            email: email,
-//            forgotPasswordURL: forgotPasswordURL,
-//            passwordValidator: passwordValidator,
-//            showCreateAccount: showCreateAccount,
-//            onCreateAccount: onCreateAccount
-//        )
+//        self.viewModel = MockDependencies().logi
+////        LoginViaEmailViewModel(
+////            router: <#T##any Router#>,
+////            loginViaEmailUseCase: loginViaEmailUseCase,
+////            email: email,
+////            forgotPasswordURL: forgotPasswordURL,
+////            passwordValidator: passwordValidator
+////        )
 //    }
 //
 //    package var body: some View {

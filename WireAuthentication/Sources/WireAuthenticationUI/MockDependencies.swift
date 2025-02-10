@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireReusableUIComponents
 
 @MainActor
 final class MockDependencies {
@@ -78,7 +79,9 @@ extension MockDependencies: LoginViaEmailBuilder {
         LoginViaEmailViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
-            email: email
+            email: email,
+            accountsURL: URL(string: "https://example.com")!,
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true })
         )
     }
 
@@ -89,3 +92,22 @@ extension MockDependencies: LoginViaEmailBuilder {
     }
 
 }
+
+private struct MockPasswordValidator: PasswordValidator {
+
+    let validationCallback: @Sendable (String) -> Bool
+
+    package init(validationCallback: @Sendable @escaping (String) -> Bool) {
+        self.validationCallback = validationCallback
+    }
+
+    package func validate(_ password: String) -> Bool {
+        validationCallback(password)
+    }
+
+    package var localizedRulesDescription: String? {
+        "Password rules"
+    }
+
+}
+

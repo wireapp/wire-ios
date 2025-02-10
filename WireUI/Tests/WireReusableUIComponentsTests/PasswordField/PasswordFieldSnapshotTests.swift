@@ -56,6 +56,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             title: L10n.Passwordtextfield.Preview.title
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
+        .padding(.horizontal)
         snapshotHelper.verify(matching: view)
     }
 
@@ -71,6 +72,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             title: L10n.Passwordtextfield.Preview.title
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
+        .padding(.horizontal)
         snapshotHelper.verify(matching: view)
     }
 
@@ -86,6 +88,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             title: L10n.Passwordtextfield.Preview.title
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
+        .padding(.horizontal)
         snapshotHelper.verify(matching: view)
     }
 
@@ -101,6 +104,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             title: L10n.Passwordtextfield.Preview.title
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
+        .padding(.horizontal)
         snapshotHelper.verify(matching: view)
     }
 
@@ -117,6 +121,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             title: L10n.Passwordtextfield.Preview.title
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
+        .padding(.horizontal)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -138,6 +143,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             title: L10n.Passwordtextfield.Preview.title
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
+        .padding(.horizontal)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

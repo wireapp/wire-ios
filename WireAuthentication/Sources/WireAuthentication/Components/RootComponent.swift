@@ -18,12 +18,29 @@
 
 import NeedleFoundation
 import SwiftUI
+import WireReusableUIComponents
 internal import WireAuthenticationUI
 
 class RootComponent: BootstrapComponent {
+    
+    private let _accountsURL: URL
+    private let _passwordValidator: any PasswordValidator
+
+    init(accountsURL: URL, passwordValidator: any PasswordValidator) {
+        self._accountsURL = accountsURL
+        self._passwordValidator = passwordValidator
+    }
 
     @MainActor public var router: any Router {
         rootViewModel
+    }
+
+    @MainActor public var accountsURL: URL {
+        _accountsURL
+    }
+
+    @MainActor public var passwordValidator: any PasswordValidator {
+        _passwordValidator
     }
 
     @MainActor private var rootViewModel: RootViewModel {

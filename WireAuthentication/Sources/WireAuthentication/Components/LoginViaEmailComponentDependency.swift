@@ -18,13 +18,17 @@
 
 import NeedleFoundation
 import SwiftUI
+import WireReusableUIComponents
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
 protocol LoginViaEmailComponentDependency: Dependency {
 
+
     @MainActor var router: any Router { get }
+    @MainActor var accountsURL: URL { get }
+    @MainActor var passwordValidator: any PasswordValidator { get }
 
 }
 
@@ -39,7 +43,9 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, Login
         LoginViaEmailViewModel(
             router: dependency.router,
             loginViaEmailUseCase: loginViaEmailUseCase,
-            email: email
+            email: email,
+            accountsURL: dependency.accountsURL,
+            passwordValidator: dependency.passwordValidator
         )
     }
 

@@ -25,7 +25,6 @@ public final class LoginViaEmailViewModel: ObservableObject {
 
     let router: any Router
     let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
-
     let email: String
     let forgotPasswordURL: URL
     let passwordValidator: any PasswordValidator
@@ -36,13 +35,13 @@ public final class LoginViaEmailViewModel: ObservableObject {
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         email: String,
-        forgotPasswordURL: URL,
+        accountsURL: URL,
         passwordValidator: any PasswordValidator
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.email = email
-        self.forgotPasswordURL = forgotPasswordURL
+        self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
     }
 
