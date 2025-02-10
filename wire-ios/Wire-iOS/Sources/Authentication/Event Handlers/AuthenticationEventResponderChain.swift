@@ -192,8 +192,8 @@ final class AuthenticationEventResponderChain {
         }
 
         switch eventType {
-        case .authFlowFinished:
-            handleEvent(with: authFlowHandlers, context: ())
+        case .wireAuthenticationModuleComplete:
+            handleEvent(with: wireAuthenticationModuleHandlers, context: ())
         case let .flowStart(error, numberOfAccounts):
             handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
         case let .backupReady(existingAccount):
