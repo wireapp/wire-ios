@@ -18,14 +18,18 @@
 
 import SwiftUI
 
-struct VerificationCodeView_Previews: View {
+public struct VerificationCodeView_Previews: View {
 
     var code: [String]
 
-    var body: some View {
+    public init(code: [String]) {
+        self.code = code
+    }
+
+    public var body: some View {
         VerificationCodeView(
             initialCode: code,
-            receiver: "name@name.com",
+            receiver: "name.name@mail.com",
             onConfirm: { _ in },
             onResend: {}
         )

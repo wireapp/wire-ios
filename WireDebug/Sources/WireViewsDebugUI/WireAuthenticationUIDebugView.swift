@@ -87,11 +87,7 @@ public struct WireAuthenticationUIDebugView: View {
                             VStack(spacing: 0) {
                                 Spacer()
                                     .frame(maxHeight: .infinity)
-                                VerificationCodeView(
-                                    receiver: "name.name@mail.com",
-                                    onConfirm: { _ in },
-                                    onResend: {}
-                                )
+                                VerificationCodeView_Previews(code: [])
                             }
                         }
                 })

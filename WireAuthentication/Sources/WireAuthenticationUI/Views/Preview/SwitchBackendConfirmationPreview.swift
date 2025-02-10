@@ -18,10 +18,10 @@
 
 import SwiftUI
 
-package struct SwitchBackendConfirmationPreview: View {
-    package init() {}
+public struct SwitchBackendConfirmationViewPreview: View {
+    public init() {}
 
-    package var body: some View {
+    public var body: some View {
         VStack {
             SwitchBackendConfirmationView(
                 viewModel: SwitchBackendConfirmationViewModel(

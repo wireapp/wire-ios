@@ -59,6 +59,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"HotFix";
                          [ZMHotFixDirectory removeSharingExtension];
                      }],
                     [ZMHotFixPatch
+                     patchWithVersion:@"41.43"
+                     patchCode:^(NSManagedObjectContext *context){
+                         [ZMHotFixDirectory moveOrUpdateSignalingKeysInContext:context];
+                     }],
+                    [ZMHotFixPatch
                      patchWithVersion:@"42.11"
                      patchCode:^(NSManagedObjectContext *context){
                          [ZMHotFixDirectory updateUploadedStateForNotUploadedFileMessages:context];
