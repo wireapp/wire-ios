@@ -24,22 +24,23 @@ struct ImportBackupView: View {
 
     @State private var isFileImporterPresented = false
 
-    private typealias Strings = L10n.Localizable
+    private typealias BackupStrings = L10n.Localizable.Backup
+    private typealias ImportBackupAlertStrings = L10n.Localizable.ImportBackup.Alert
+    private typealias OverwriteConfirmationStrings = L10n.Localizable.ImportBackup.OverwriteConfirmation
 
     var body: some View {
-        Section(footer: Text(Strings.Backup.Import.description)) {
+        Section(footer: Text(BackupStrings.Import.description)) {
 
-            Button(Strings.Backup.Import.action) {
+            Button(BackupStrings.Import.action) {
                 isFileImporterPresented = true
             }
             .font(.callout.weight(.semibold))
             .foregroundStyle(Color.primaryText)
             .fileImporter(
                 isPresented: $isFileImporterPresented,
-                allowedContentTypes: WireBackupUTIs
-            ) { result in
-                viewModel.pickedBackupFile(result: result)
-            }
+                allowedContentTypes: WireBackupUTIs,
+                onCompletion: viewModel.pickedBackupFile
+            )
 
             .sheet(isPresented: $viewModel.isImportProgressPresented) {
 
@@ -66,21 +67,15 @@ struct ImportBackupView: View {
                 }
 
                 .alert(viewModel.alertContent.title, isPresented: $viewModel.isImportConfirmationPresented) {
-                    Button(Strings.ImportBackup.OverwriteConfirmation.cancel, role: .cancel) {
-                        viewModel.reset()
-                    }
-                    Button(Strings.ImportBackup.OverwriteConfirmation.proceed, role: .destructive) {
-                        viewModel.confirmOverwrite()
-                    }
+                    Button(OverwriteConfirmationStrings.cancel, role: .cancel, action: viewModel.reset)
+                    Button(OverwriteConfirmationStrings.proceed, role: .destructive, action: viewModel.confirmOverwrite)
                 } message: {
                     Text(viewModel.alertContent.message)
                 }
             }
 
             .alert(viewModel.alertContent.title, isPresented: $viewModel.isAlertPresented) {
-                Button(Strings.ImportBackup.Alert.ok) {
-                    viewModel.reset()
-                }
+                Button(ImportBackupAlertStrings.ok, action: viewModel.reset)
             } message: {
                 Text(viewModel.alertContent.message)
             }
