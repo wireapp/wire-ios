@@ -27,35 +27,63 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
     let router: any Router
     let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
 
+    @Published var emailOrSSOCode: String = ""
+    @Published private(set) var isLoading = false
+    @Published private(set) var errorMessage: String?
+
+    var isNextButtonEnabled: Bool {
+        !isValidEmailOrSSOCode()
+    }
+
     public init(
         router: any Router,
-        determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+        determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
+        emailOrSSOCode: String = "",
+        isLoading: Bool = false,
+        errorMessage: String? = nil
     ) {
         self.router = router
         self.determineAuthMethod = determineAuthMethod
+        self.emailOrSSOCode = emailOrSSOCode
+        self.isLoading = isLoading
+        self.errorMessage = errorMessage
     }
 
-    func isValidEmailOrSSOCode(_ emailOrSSOCode: String) -> Bool {
-        !emailOrSSOCode.isEmpty
-    }
+    func submitEmailOrSSOCode() {
+        isLoading = true
 
-    func submitEmailOrSSOCode(_ emailOrSSOCode: String) {
-        Task { [router] in
-            let method = await self.determineAuthMethod.invoke(
+        Task { [self] in
+            // TODO: [WPB-15920] Handle errors
+            let method = try! await determineAuthMethod.invoke(
                 emailOrSSOCode: emailOrSSOCode
             )
 
             switch method {
-            case let .login(email):
+            case let .loginViaEmail(email):
                 router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
 
-            case let .loginOrRegister(email):
+            case let .loginOrRegisterViaEmail(email):
                 router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
-            default:
+            case let .loginViaSSO(code):
+                // TODO: [WPB-15920] Handle login via SSO
+                break
+
+            case let .onPremLogin(email, backendConfig):
+                // TODO: [WPB-15920] Handle on-prem login
                 break
             }
+
+            Task { @MainActor in
+                isLoading = false
+            }
         }
+    }
+
+    // MARK: - Private
+
+    private func isValidEmailOrSSOCode() -> Bool {
+        !emailOrSSOCode.isEmpty
     }
 
 }
