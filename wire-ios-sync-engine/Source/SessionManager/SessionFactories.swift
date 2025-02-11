@@ -63,39 +63,38 @@ open class AuthenticatedSessionFactory {
     ) -> ZMUserSession? {
 
         let apiServiceFactory: APIServiceFactory = { [weak self, environment, minTLSVersion] clientID, userID in
-            fatalError()
-//            let wireAssembly = WireAPI.Assembly(
-//                userID: userID,
-//                clientID: clientID,
-//                backendEnvironment: BackendEnvironment(
-//                    url: environment.backendURL,
-//                    webSocketURL: environment.backendWSURL,
-//                    pinnedKeys: environment.trustData.map { trustData in
-//                        PinnedKey(
-//                            key: trustData.certificateKey,
-//                            hosts: trustData.hosts.map { host in
-//                                switch host.rule {
-//                                case .equals:
-//                                    .equals(host.value)
-//                                case .endsWith:
-//                                    .endsWith(host.value)
-//                                }
-//                            }
-//                        )
-//                    },
-//                    proxySettings: self?.proxySettings
-//                ),
-//                minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
-//                cookieEncryptionKey: UserDefaults.cookiesKey()
-//            )
-//
-//            let authenticationManager = wireAssembly.authenticationManager
-//            let networkService = wireAssembly.apiNetworkService
-//
-//            return APIService(
-//                networkService: networkService,
-//                authenticationManager: authenticationManager
-//            )
+            let wireAssembly = WireAPI.Assembly(
+                userID: userID,
+                clientID: clientID,
+                backendEnvironment: BackendEnvironment(
+                    url: environment.backendURL,
+                    webSocketURL: environment.backendWSURL,
+                    pinnedKeys: environment.trustData.map { trustData in
+                        PinnedKey(
+                            key: trustData.certificateKey,
+                            hosts: trustData.hosts.map { host in
+                                switch host.rule {
+                                case .equals:
+                                    .equals(host.value)
+                                case .endsWith:
+                                    .endsWith(host.value)
+                                }
+                            }
+                        )
+                    },
+                    proxySettings: self?.proxySettings
+                ),
+                minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
+                cookieEncryptionKey: UserDefaults.cookiesKey()
+            )
+
+            let authenticationManager = wireAssembly.authenticationManager
+            let networkService = wireAssembly.apiNetworkService
+
+            return APIService(
+                networkService: networkService,
+                authenticationManager: authenticationManager
+            )
         }
         let transportSession = ZMTransportSession(
             environment: environment,

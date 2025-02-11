@@ -24,7 +24,7 @@ public final class ZMSDispatchGroup: NSObject {
     let label: String
 
     private let group: DispatchGroup
-    private var count = 0
+
     public convenience init(label: String) {
         self.init(dispatchGroup: .init(), label: label)
     }
@@ -35,15 +35,10 @@ public final class ZMSDispatchGroup: NSObject {
     }
 
     public func enter() {
-        count += 1
-        print("🤓 \(label) enter \(count)")
         group.enter()
-        
     }
 
     public func leave() {
-        count -= 1
-        print("🤓 \(label) leave \(count)")
         group.leave()
     }
 

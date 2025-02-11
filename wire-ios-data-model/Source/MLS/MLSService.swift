@@ -1723,13 +1723,13 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func commitPendingProposalsIfNeeded() {
-//        guard let context else {
-//            return
-//        }
-//
-//        WaitingGroupTask(context: context) { [self] in
-//            await commitPendingProposals()
-//        }
+        guard let context else {
+            return
+        }
+
+        WaitingGroupTask(context: context) { [self] in
+            await commitPendingProposals()
+        }
     }
 
     func commitPendingProposals() async {
