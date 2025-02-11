@@ -1314,6 +1314,10 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("repairing out of sync conversation... (\(groupID.safeForLoggingDescription))")
 
+            // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
+            // This ensures we're on the latest state.
+            await syncStatus.performQuickSync()
+
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
                 in: context
