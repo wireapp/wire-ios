@@ -58,17 +58,17 @@ final class SyncAgent: NSObject {
     /// If no last event id is known, then the initial sync will be performed,
     /// otherwise the incremental sync will be performed.
 
-    func performSyncIfNeeded() async {
+    func performSyncIfNeeded() async throws {
         if !hasPerformedInitialSync {
-            await performInitialSync()
+            try await performInitialSync()
         }
 
-        await performIncrementalSync()
+        try await performIncrementalSync()
     }
 
     /// Perform an initial sync.
 
-    func performInitialSync() async {
+    func performInitialSync() async throws {
         if DeveloperFlag.newInitialSync.isOn {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
@@ -78,6 +78,7 @@ final class SyncAgent: NSObject {
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
                 WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
+                throw error
             }
         } else {
             legacySyncStatus.forceSlowSync()
@@ -86,7 +87,7 @@ final class SyncAgent: NSObject {
 
     /// Perform a resource sync.
 
-    func performResourceSync() async {
+    func performResourceSync() async throws {
         if DeveloperFlag.newInitialSync.isOn {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
@@ -96,6 +97,7 @@ final class SyncAgent: NSObject {
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
                 WireLogger.sync.error("failed to perform new resource sync: \(String(describing: error))")
+                throw error
             }
         } else {
             legacySyncStatus.resyncResources()
@@ -104,7 +106,7 @@ final class SyncAgent: NSObject {
 
     /// Perform an incremental sync.
 
-    func performIncrementalSync() async {
+    func performIncrementalSync() async throws {
         await legacySyncStatus.performQuickSync()
     }
 
