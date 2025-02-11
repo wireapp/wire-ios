@@ -15,3 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+"authentication.identity.input.body" = "Просто введите свой адрес электронной почты, чтобы начать!";
+"authentication.identity.input.field.placeholder" = "Email или код SSO";
+"authentication.identity.input.field.title" = "Email или код SSO";
+"authentication.identity.input.submit" = "Вперед";
+"authentication.identity.input.terms" = "Нажимая на кнопку \"Далее\", вы принимаете [Условия использования](%@) Wire";
+
+"switch_backend_confirmation.title" = "Перенаправить на локальный бэкэнд?";
+"switch_backend_confirmation.message" = "При продолжении вы будете перенаправлены на следующий локальный бэкэнд для авторизации:";
+"switch_backend_confirmation.backend_name" = "Название бэкэнда";
+"switch_backend_confirmation.backend_url" = "URL бэкэнда:";
+"switch_backend_confirmation.backend_wsurl" = "URL веб-сокета внутреннего сервера:";
+"switch_backend_confirmation.blacklist_url" = "URL черного списка:";
+"switch_backend_confirmation.teams_url" = "URL команды:";
+"switch_backend_confirmation.accounts_url" = "URL аккаунта:";
+"switch_backend_confirmation.website_url" = "URL веб-сайта:";
+"switch_backend_confirmation.proceed" = "Продолжить";
+"switch_backend_confirmation.cancel" = "Отмена";
+"switch_backend_confirmation.show_details" = "Подробнее";
+
+"verification_code.title" = "Вам письмо";
+"verification_code.message" = "Введите код подтверждения, который мы отправили на %@.";
+"verification_code.confirm" = "Подтвердить";
+"verification_code.resend_code" = "Отправить код еще раз";
