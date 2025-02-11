@@ -92,12 +92,14 @@ final class SyncAgentTests: XCTestCase {
 
         // Mock
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
+        legacySyncStatus.performQuickSync_MockMethod = {}
 
         // When
         try await sut.performInitialSync()
 
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations, [false])
+        XCTAssertEqual(legacySyncStatus.performQuickSync_Invocations.count, 1)
     }
 
     func testPerformInitialSync_Legacy() async throws {
@@ -122,12 +124,14 @@ final class SyncAgentTests: XCTestCase {
 
         // Mock
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
+        legacySyncStatus.performQuickSync_MockMethod = {}
 
         // When
         try await sut.performResourceSync()
 
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations, [true])
+        XCTAssertEqual(legacySyncStatus.performQuickSync_Invocations.count, 1)
     }
 
     func testPerformResourceSync_Legacy() async throws {

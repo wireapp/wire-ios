@@ -61,9 +61,9 @@ final class SyncAgent: NSObject {
     func performSyncIfNeeded() async throws {
         if !hasPerformedInitialSync {
             try await performInitialSync()
+        } else {
+            try await performIncrementalSync()
         }
-
-        try await performIncrementalSync()
     }
 
     /// Perform an initial sync.
@@ -80,7 +80,10 @@ final class SyncAgent: NSObject {
                 WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
                 throw error
             }
+
+            try await performIncrementalSync()
         } else {
+            // Incremental sync automatically follows the slow sync.
             legacySyncStatus.forceSlowSync()
         }
     }
@@ -99,7 +102,10 @@ final class SyncAgent: NSObject {
                 WireLogger.sync.error("failed to perform new resource sync: \(String(describing: error))")
                 throw error
             }
+
+            try await performIncrementalSync()
         } else {
+            // Incremental sync automatically follows the resource sync.
             legacySyncStatus.resyncResources()
         }
     }
