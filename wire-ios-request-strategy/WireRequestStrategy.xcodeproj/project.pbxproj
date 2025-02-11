@@ -2934,6 +2934,7 @@
 			baseConfigurationReference = 166901961D7075D7000FE4AF /* WireRequestStrategy.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = Resources/Info.plist;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
 				SKIP_INSTALL = YES;
 			};
@@ -2944,6 +2945,7 @@
 			baseConfigurationReference = 166901961D7075D7000FE4AF /* WireRequestStrategy.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = Resources/Info.plist;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
 				SKIP_INSTALL = YES;
 			};

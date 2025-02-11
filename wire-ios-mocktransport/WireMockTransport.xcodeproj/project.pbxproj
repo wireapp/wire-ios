@@ -316,6 +316,7 @@
 			baseConfigurationReferenceRelativePath = Configurations/WireMockTransport.xcconfig;
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
@@ -328,6 +329,7 @@
 			baseConfigurationReferenceRelativePath = Configurations/WireMockTransport.xcconfig;
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;

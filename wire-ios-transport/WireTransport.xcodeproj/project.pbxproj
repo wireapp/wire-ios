@@ -547,6 +547,7 @@
 			baseConfigurationReferenceRelativePath = Configurations/WireTransport.xcconfig;
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
@@ -559,6 +560,7 @@
 			baseConfigurationReferenceRelativePath = Configurations/WireTransport.xcconfig;
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
