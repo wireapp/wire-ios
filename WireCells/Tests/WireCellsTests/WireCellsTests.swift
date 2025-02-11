@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import API
+import WireCellsAPI
 import XCTest
-@testable @preconcurrency import Implementation
+@testable @preconcurrency import WireCellsImplementation
 
 /// These tests are intended for locally testing the service, not for CI.
 final class WireCellsTests: XCTestCase {

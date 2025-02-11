@@ -17,14 +17,15 @@
 //
 
 import SwiftUI
-import WireAuthenticationUI
+import WireCellsUI
 
 public struct WireCellsUIDebugView: View {
 
     enum PresentationItem: String, Identifiable {
         var id: String { rawValue }
 
-        case none
+        case uploadImagePreview
+        case uploadVideoPreview
     }
 
     @State private var presentedItem: PresentationItem?
@@ -33,10 +34,32 @@ public struct WireCellsUIDebugView: View {
 
     public var body: some View {
         List {
-            EmptyView()
+            Section(header: Text("Upload")) {
+                Button(
+                    action: { presentedItem = .uploadImagePreview },
+                    label: { Text("Image Upload Preview") }
+                )
+                Button(
+                    action: { presentedItem = .uploadVideoPreview },
+                    label: { Text("Video Upload Preview") }
+                )
+            }
         }
         .fullScreenCover(item: $presentedItem, content: { _ in
-            EmptyView()
+            switch presentedItem {
+            case .uploadImagePreview:
+                fullscreenCover(content: { EmptyView() })
+                    .overlay {
+                        UploadImagePreview_Preview(demoImageName: "demo-image")
+                    }
+            case .uploadVideoPreview:
+                fullscreenCover(content: { EmptyView() })
+                    .overlay {
+                        UploadVideoPreview_Preview(demoThumbnailName: "demo-image")
+                    }
+            case nil:
+                EmptyView()
+            }
         })
     }
 

@@ -13,6 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "WireAuthentication", path: "../WireAuthentication"),
+        .package(name: "WireCells", path: "../WireCells"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WireUI")
