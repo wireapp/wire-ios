@@ -524,7 +524,7 @@
 			baseConfigurationReferenceRelativePath = Configurations/WireUtilities.xcconfig;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};
@@ -536,7 +536,7 @@
 			baseConfigurationReferenceRelativePath = Configurations/WireUtilities.xcconfig;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};
