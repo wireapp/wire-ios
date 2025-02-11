@@ -65,7 +65,7 @@ final class PullMLSStatusSyncTests: XCTestCase {
     // like the same error.
     func testPull_EndpointUnavailable() async throws {
         // Mock
-        api.getBackendMLSPublicKeys_MockError = WireAPI.BackendInfoAPIError.unsupportedEndpointForAPIVersion
+        api.getBackendMLSPublicKeys_MockError = BackendInfoAPIError.unsupportedEndpointForAPIVersion
         store.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
@@ -108,7 +108,6 @@ private enum Scaffolding {
         p256: "BM036midcNiOMgny9m7N",
         p384: "BPSlomkR8K4BcFLGTDOJx",
         p512: "BAC3OmJi7rAPFAIXjU"
-    )
-    )
+    ))
 
 }
