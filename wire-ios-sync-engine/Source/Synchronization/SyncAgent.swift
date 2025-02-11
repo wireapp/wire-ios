@@ -32,6 +32,7 @@ final class SyncAgent: NSObject {
     weak var delegate: SyncAgentDelegate?
     private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
     private let initialSyncBuilder: InitialSyncBuilder
+    private let legacySyncStatus: SyncStatus
 
     private var hasPerformedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -41,10 +42,12 @@ final class SyncAgent: NSObject {
 
     init(
         lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
-        initialSyncBuilder: InitialSyncBuilder
+        initialSyncBuilder: InitialSyncBuilder,
+        legacySyncStatus: SyncStatus
     ) {
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
         self.initialSyncBuilder = initialSyncBuilder
+        self.legacySyncStatus = legacySyncStatus
         super.init()
     }
 
@@ -77,7 +80,7 @@ final class SyncAgent: NSObject {
                 WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
             }
         } else {
-            // TODO: perform legacy slow sync
+            legacySyncStatus.forceSlowSync()
         }
     }
 
@@ -95,14 +98,14 @@ final class SyncAgent: NSObject {
                 WireLogger.sync.error("failed to perform new resource sync: \(String(describing: error))")
             }
         } else {
-            // TODO: perform legacy resource sync
+            legacySyncStatus.resyncResources()
         }
     }
 
     /// Perform an incremental sync.
 
     func performIncrementalSync() async {
-        // TODO: perform legacy quick sync
+        await legacySyncStatus.performQuickSync()
     }
 
 }
