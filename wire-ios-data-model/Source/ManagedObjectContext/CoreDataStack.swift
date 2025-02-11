@@ -21,6 +21,7 @@ import Foundation
 import WireLogging
 import WireSystem
 import WireUtilities
+import WireFoundation
 
 enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
@@ -129,9 +130,11 @@ public class CoreDataStack: NSObject, ContextProvider {
     private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
 
+    private let logger: LoggerProtocol = WireLogger.localStorage
+
     // MARK: - Initialization
 
-    public static var stacks = [CoreDataStack]()
+    public static var stacks = [WeakReference<CoreDataStack>]()
 
     public required init(
         account: Account,
@@ -142,8 +145,8 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         precondition(Thread.isMainThread)
         defer {
-            WireLogger.backupExportImport.debug("stacks.count is \(Self.stacks.count), going to add \(self)")
-            Self.stacks += [self]
+            logger.debug("stacks.count is \(Self.stacks.count), going to add \(self)")
+            Self.stacks += [.init(self)]
         }
 
         ExtendedSecureUnarchiveFromData.register()
@@ -210,8 +213,8 @@ public class CoreDataStack: NSObject, ContextProvider {
         close()
 
         for s in Self.stacks.indices.reversed() {
-            if Self.stacks[s] === self {
-                WireLogger.backupExportImport.debug("[lskdjf] stacks.count is \(Self.stacks.count), going to remove \(self)")
+            if Self.stacks[s].reference === self {
+                logger.debug("[lskdjf] stacks.count is \(Self.stacks.count), going to remove \(self)")
                 Self.stacks.remove(at: s)
             }
         }

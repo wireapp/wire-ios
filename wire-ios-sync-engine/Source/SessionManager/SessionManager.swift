@@ -1010,17 +1010,17 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// The active user session will be torn down and the app goes into migration state.
     public func prepareForRestoreWithMigration(completion: @escaping () -> Void) {
         guard let delegate else {
-            WireLogger.backupExportImport.error("SessionManager.delegate is nil, aborting")
+            WireLogger.sessionManager.error("SessionManager.delegate is nil, aborting")
             return completion()
         }
 
-        WireLogger.backupExportImport.error("SessionManager.delegate.sessionManagerWillMigrateAccount(...)")
+        WireLogger.sessionManager.error("SessionManager.delegate.sessionManagerWillMigrateAccount(...)")
         delegate.sessionManagerWillMigrateAccount { [self] in
-            WireLogger.backupExportImport.error("userSessionCanBeTornDown { ... }")
+            WireLogger.sessionManager.error("userSessionCanBeTornDown { ... }")
             tearDownActiveSession { [self] in
-                WireLogger.backupExportImport.error("calling tearDownAllBackgroundSessions()")
+                WireLogger.sessionManager.error("calling tearDownAllBackgroundSessions()")
                 tearDownAllBackgroundSessions()
-                WireLogger.backupExportImport.error("deleting observers accountTokens.removeAll()")
+                WireLogger.sessionManager.error("deleting observers accountTokens.removeAll()")
                 accountTokens.removeAll()
                 completion()
             }

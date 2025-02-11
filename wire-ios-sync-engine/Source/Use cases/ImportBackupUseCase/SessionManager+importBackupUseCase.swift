@@ -53,8 +53,8 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
         var maxWaitIterations = 10
         while !CoreDataStack.stacks.isEmpty, maxWaitIterations > 0 {
             maxWaitIterations -= 1
-            WireLogger.backupExportImport.debug("Waiting for CoreDataStack.stacks to be empty")
-            WireLogger.backupExportImport.debug("sessionManager.backgroundUserSessions: \(sessionManager.backgroundUserSessions)")
+            WireLogger.sessionManager.debug("Waiting for CoreDataStack.stacks to be empty")
+            WireLogger.sessionManager.debug("sessionManager.backgroundUserSessions: \(sessionManager.backgroundUserSessions)")
             try! await Task.sleep(for: .milliseconds(600))
         }
     }
