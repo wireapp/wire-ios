@@ -24,7 +24,6 @@ import Foundation
 /// initialaztion operations) which should happen after login.
 public protocol InitialSyncProtocol {
 
-
     /// Perform the initial sync.
     ///
     /// - Parameter skipPullingLastUpdateEventID: If `true`, the last update event id will not be fetched.
