@@ -475,6 +475,7 @@
 		EEDDB6A42BCFC5E7009ECF97 /* WireSyncEngine.docc in Sources */ = {isa = PBXBuildFile; fileRef = EEDDB6A32BCFC5E4009ECF97 /* WireSyncEngine.docc */; };
 		EEE186B4259CC92D008707CA /* ZMUserSession+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE186B3259CC92D008707CA /* ZMUserSession+AppLock.swift */; };
 		EEE186B6259CCA14008707CA /* SessionManager+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE186B5259CCA14008707CA /* SessionManager+AppLock.swift */; };
+		EEE351E22D5B437300683BE5 /* SyncAgentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE351E12D5B437300683BE5 /* SyncAgentTests.swift */; };
 		EEE6D3FA2D4A32F500F0E687 /* ZMSyncStateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE6D3F92D4A32F500F0E687 /* ZMSyncStateDelegate.swift */; };
 		EEE95CF62A442A0100E136CB /* WireCallCenterV3+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE95CF52A442A0100E136CB /* WireCallCenterV3+MLS.swift */; };
 		EEEA75FA1F8A6142006D1070 /* ZMLocalNotification+ExpiredMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEA75F51F8A613F006D1070 /* ZMLocalNotification+ExpiredMessages.swift */; };
@@ -1118,6 +1119,7 @@
 		EEDDB6A32BCFC5E4009ECF97 /* WireSyncEngine.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireSyncEngine.docc; sourceTree = "<group>"; };
 		EEE186B3259CC92D008707CA /* ZMUserSession+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+AppLock.swift"; sourceTree = "<group>"; };
 		EEE186B5259CCA14008707CA /* SessionManager+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+AppLock.swift"; sourceTree = "<group>"; };
+		EEE351E12D5B437300683BE5 /* SyncAgentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAgentTests.swift; sourceTree = "<group>"; };
 		EEE6D3F92D4A32F500F0E687 /* ZMSyncStateDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMSyncStateDelegate.swift; sourceTree = "<group>"; };
 		EEE95CF52A442A0100E136CB /* WireCallCenterV3+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireCallCenterV3+MLS.swift"; sourceTree = "<group>"; };
 		EEEA75F51F8A613F006D1070 /* ZMLocalNotification+ExpiredMessages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMLocalNotification+ExpiredMessages.swift"; sourceTree = "<group>"; };
@@ -2145,6 +2147,7 @@
 				3D6B0837E10BD4D5E88805E3 /* ZMSyncStrategyTests.swift */,
 				EBD7B55754FDA4E74F1006FD /* ZMOperationLoopTests.h */,
 				C3BF3961360B7EB12679AF27 /* ZMOperationLoopTests.swift */,
+				EEE351E12D5B437300683BE5 /* SyncAgentTests.swift */,
 			);
 			path = Synchronization;
 			sourceTree = "<group>";
@@ -2940,6 +2943,7 @@
 				872C99601DB6722C006A3BDE /* CallKitDelegateTests+Mocking.m in Sources */,
 				061F791C2B767B3D00E8827B /* SelfClientCertificateProviderTests.swift in Sources */,
 				164C29A51ECF47D80026562A /* SearchDirectoryTests.swift in Sources */,
+				EEE351E22D5B437300683BE5 /* SyncAgentTests.swift in Sources */,
 				06CDC6F82A2DFB4400EB518D /* RecurringActionServiceTests.swift in Sources */,
 				D55272EA2062732100F542BE /* AssetDeletionStatusTests.swift in Sources */,
 				A913C02423A7F1C00048CE74 /* TeamRolesDownloadRequestStrategyTests.swift in Sources */,
