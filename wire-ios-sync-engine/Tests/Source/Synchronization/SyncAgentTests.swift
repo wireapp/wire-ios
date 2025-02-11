@@ -40,7 +40,6 @@ final class SyncAgentTests: XCTestCase {
             legacySyncStatus: legacySyncStatus
         )
         initialSyncBuilder.build_MockValue = initialSync
-        DeveloperFlag.storage = .temporary()
     }
 
     override func tearDown() {
@@ -52,8 +51,7 @@ final class SyncAgentTests: XCTestCase {
 
     func testPerformSyncIfNeeded_InitialSync() async throws {
         // Given
-        var flag = DeveloperFlag.newInitialSync
-        flag.isOn = true
+        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
 
         // Mock
         lastUpdateEventIDRepository.fetchLastEventID_MockValue = .some(nil)
@@ -70,8 +68,7 @@ final class SyncAgentTests: XCTestCase {
 
     func testPerformSyncIfNeeded_IncrementalSync() async throws {
         // Given
-        var flag = DeveloperFlag.newInitialSync
-        flag.isOn = true
+        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
 
         // Mock
         lastUpdateEventIDRepository.fetchLastEventID_MockValue = .some(UUID())
@@ -87,8 +84,7 @@ final class SyncAgentTests: XCTestCase {
 
     func testPerformInitialSync() async throws {
         // Given
-        var flag = DeveloperFlag.newInitialSync
-        flag.isOn = true
+        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
 
         // Mock
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
@@ -104,8 +100,7 @@ final class SyncAgentTests: XCTestCase {
 
     func testPerformInitialSync_Legacy() async throws {
         // Given
-        var flag = DeveloperFlag.newInitialSync
-        flag.isOn = false
+        DeveloperFlag.newInitialSync.enable(false, storage: .temporary())
 
         // Mock
         legacySyncStatus.forceSlowSync_MockMethod = {}
@@ -119,8 +114,7 @@ final class SyncAgentTests: XCTestCase {
 
     func testPerformResourceSync() async throws {
         // Given
-        var flag = DeveloperFlag.newInitialSync
-        flag.isOn = true
+        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
 
         // Mock
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
@@ -136,8 +130,7 @@ final class SyncAgentTests: XCTestCase {
 
     func testPerformResourceSync_Legacy() async throws {
         // Given
-        var flag = DeveloperFlag.newInitialSync
-        flag.isOn = false
+        DeveloperFlag.newInitialSync.enable(false, storage: .temporary())
 
         // Mock
         legacySyncStatus.resyncResources_MockMethod = {}
