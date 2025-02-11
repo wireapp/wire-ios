@@ -55,8 +55,7 @@ final class MockDependencies {
 
 extension MockDependencies: ValidateEmailOrSSOCodeUseCaseProtocol {
 
-    @MainActor
-    func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+    nonisolated func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
         if input.contains("@") {
             return .email(input)
         } else if input.hasSuffix("wire") {

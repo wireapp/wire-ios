@@ -20,7 +20,6 @@ import Foundation
 
 package protocol ValidateEmailOrSSOCodeUseCaseProtocol: Sendable {
 
-    @MainActor
     func invoke(input: String) throws -> ValidatedEmailOrSSOCode
 
 }
