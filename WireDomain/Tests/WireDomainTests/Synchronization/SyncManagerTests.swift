@@ -33,14 +33,6 @@ final class SyncManagerTests: XCTestCase {
     private var modelHelper: ModelHelper!
     private var updateEventsRepository: MockUpdateEventsRepositoryProtocol!
     private var updateEventProcessor: MockUpdateEventProcessorProtocol!
-    private var teamRepository: MockTeamRepositoryProtocol!
-    private var connectionsRepository: MockConnectionsRepositoryProtocol!
-    private var conversationsRepository: MockConversationRepositoryProtocol!
-    private var userRepository: MockUserRepositoryProtocol!
-    private var conversationLabelsRepository: MockConversationLabelsRepositoryProtocol!
-    private var featureConfigsRepository: MockFeatureConfigRepositoryProtocol!
-    private var backendConfigRepository: MockBackendConfigRepositoryProtocol!
-    private var pushSupportedProtocolsUseCase: MockPushSupportedProtocolsUseCaseProtocol!
     private var mlsService: MockMLSServiceInterface!
 
     var context: NSManagedObjectContext {
@@ -54,26 +46,10 @@ final class SyncManagerTests: XCTestCase {
         modelHelper = ModelHelper()
         updateEventsRepository = MockUpdateEventsRepositoryProtocol()
         updateEventProcessor = MockUpdateEventProcessorProtocol()
-        teamRepository = MockTeamRepositoryProtocol()
-        connectionsRepository = MockConnectionsRepositoryProtocol()
-        conversationsRepository = MockConversationRepositoryProtocol()
-        userRepository = MockUserRepositoryProtocol()
-        conversationLabelsRepository = MockConversationLabelsRepositoryProtocol()
-        featureConfigsRepository = MockFeatureConfigRepositoryProtocol()
-        backendConfigRepository = MockBackendConfigRepositoryProtocol()
-        pushSupportedProtocolsUseCase = MockPushSupportedProtocolsUseCaseProtocol()
 
         sut = SyncManager(
             updateEventsRepository: updateEventsRepository,
-            teamRepository: teamRepository,
-            connectionsRepository: connectionsRepository,
-            conversationsRepository: conversationsRepository,
-            userRepository: userRepository,
-            conversationLabelsRepository: conversationLabelsRepository,
-            featureConfigsRepository: featureConfigsRepository,
-            backendConfigRepository: backendConfigRepository,
             updateEventProcessor: updateEventProcessor,
-            pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
             mlsProvider: MLSProvider(service: mlsService, isMLSEnabled: true),
             context: context
         )
@@ -97,13 +73,6 @@ final class SyncManagerTests: XCTestCase {
         mlsService = nil
         updateEventsRepository = nil
         updateEventProcessor = nil
-        teamRepository = nil
-        connectionsRepository = nil
-        conversationsRepository = nil
-        userRepository = nil
-        conversationLabelsRepository = nil
-        featureConfigsRepository = nil
-        pushSupportedProtocolsUseCase = nil
     }
 
     // MARK: - Tests
@@ -331,115 +300,6 @@ final class SyncManagerTests: XCTestCase {
         }
 
         XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 0)
-    }
-
-    func testPerformSlowSync_Success() async throws {
-        // Mock
-
-        let user = await context.perform { [self] in
-            modelHelper.createUser(in: context)
-        }
-
-        let selfUser = await context.perform { [self] in
-            modelHelper.createSelfUser(in: context)
-        }
-
-        let conversation = await context.perform { [self] in
-            modelHelper.createGroupConversation(in: context)
-        }
-
-        updateEventsRepository.pullLastEventID_MockMethod = {}
-        teamRepository.pullSelfTeam_MockMethod = {}
-        teamRepository.pullSelfTeamRoles_MockMethod = {}
-        teamRepository.pullSelfTeamMembers_MockMethod = {}
-        connectionsRepository.pullConnections_MockMethod = {}
-        conversationsRepository.pullConversations_MockMethod = {}
-        conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = UUID().uuidString
-        conversationsRepository.fetchMLSConversationGroupID_MockValue = conversation
-        userRepository.pullKnownUsers_MockMethod = {}
-        conversationLabelsRepository.pullConversationLabels_MockMethod = {}
-        featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
-        backendConfigRepository.pullMLSBackendStatus_MockMethod = {}
-        userRepository.pullSelfUser_MockMethod = {}
-        teamRepository.pullSelfLegalholdInfo_MockMethod = {}
-        pushSupportedProtocolsUseCase.invoke_MockMethod = {}
-        userRepository.fetchAllUserIDsWithOneOnOneConversation_MockMethod = { [] }
-        userRepository.fetchUserIdDomain_MockValue = user
-        userRepository.fetchSelfUser_MockValue = selfUser
-        mlsService.conversationExistsGroupID_MockValue = true
-        mlsService.establishGroupForWithRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
-        mlsService.joinGroupWith_MockMethod = { _ in }
-
-        // When
-
-        try await sut.performSlowSync()
-
-        // Then
-
-        XCTAssertEqual(updateEventsRepository.pullLastEventID_Invocations.count, 1)
-        XCTAssertEqual(teamRepository.pullSelfTeam_Invocations.count, 1)
-        XCTAssertEqual(teamRepository.pullSelfTeamRoles_Invocations.count, 1)
-        XCTAssertEqual(teamRepository.pullSelfTeamMembers_Invocations.count, 1)
-        XCTAssertEqual(connectionsRepository.pullConnections_Invocations.count, 1)
-        XCTAssertEqual(conversationsRepository.pullConversations_Invocations.count, 1)
-        XCTAssertEqual(userRepository.pullKnownUsers_Invocations.count, 1)
-        XCTAssertEqual(conversationLabelsRepository.pullConversationLabels_Invocations.count, 1)
-        XCTAssertEqual(featureConfigsRepository.pullFeatureConfigs_Invocations.count, 1)
-        XCTAssertEqual(userRepository.pullSelfUser_Invocations.count, 1)
-        XCTAssertEqual(teamRepository.pullSelfLegalholdInfo_Invocations.count, 1)
-        XCTAssertEqual(pushSupportedProtocolsUseCase.invoke_Invocations.count, 1)
-    }
-
-    func testPerformSlowSync_Failure() async throws {
-        // Mock
-
-        let user = await context.perform { [self] in
-            modelHelper.createUser(in: context)
-        }
-
-        let (selfUser, selfUserID) = await context.perform { [self] in
-            let selfUser = modelHelper.createSelfUser(in: context)
-            let selfUserID: UUID = selfUser.remoteIdentifier
-
-            return (selfUser, selfUserID)
-        }
-
-        let conversation = await context.perform { [self] in
-            modelHelper.createGroupConversation(in: context)
-        }
-
-        updateEventsRepository.pullLastEventID_MockMethod = {}
-        teamRepository.pullSelfTeam_MockMethod = {}
-        teamRepository.pullSelfTeamRoles_MockMethod = {}
-        teamRepository.pullSelfTeamMembers_MockMethod = {}
-        connectionsRepository.pullConnections_MockMethod = {}
-        conversationsRepository.pullConversations_MockMethod = {}
-        conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = UUID().uuidString
-        conversationsRepository.fetchMLSConversationGroupID_MockValue = conversation
-        userRepository.pullKnownUsers_MockMethod = {}
-        conversationLabelsRepository.pullConversationLabels_MockMethod = {}
-        featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
-        userRepository.pullSelfUser_MockError = UserRepositoryError.failedToFetchUser(selfUserID) /// throws error
-        teamRepository.pullSelfLegalholdInfo_MockMethod = {}
-        pushSupportedProtocolsUseCase.invoke_MockMethod = {}
-        userRepository.fetchAllUserIDsWithOneOnOneConversation_MockMethod = { [] }
-        userRepository.fetchUserIdDomain_MockValue = user
-        userRepository.fetchSelfUser_MockValue = selfUser
-        mlsService.conversationExistsGroupID_MockValue = true
-        mlsService.establishGroupForWithRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
-        mlsService.joinGroupWith_MockMethod = { _ in }
-
-        do {
-            try await sut.performSlowSync()
-            XCTFail("this test should raise an error")
-        } catch {
-            let syncError = try XCTUnwrap(error as? SyncManager.Failure)
-
-            switch syncError {
-            case let .failedToPerformSlowSync(error):
-                XCTAssertTrue(error is UserRepositoryError)
-            }
-        }
     }
 
     private enum Scaffolding {
