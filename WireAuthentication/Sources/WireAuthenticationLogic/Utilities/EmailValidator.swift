@@ -16,24 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+enum EmailValidator {
 
-public struct BackgroundView: View {
-    public init() {}
+    /// Returns `true` if `email` is a valid email otherwise`false`.
+    ///
+    /// - note: Currently we don't try to support every email, only the typical cases.
 
-    public var body: some View {
-        GeometryReader { geometry in
-            Image(ImageResource(name: "background", bundle: .module))
-                .resizable()
-                .scaledToFill()
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-                .background(.black)
-        }
-        .ignoresSafeArea()
+    static func isValid(email: String) -> Bool {
+        let regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/.ignoresCase()
+
+        guard let match = try? regex.wholeMatch(in: email) else { return false }
+        return !match.isEmpty
     }
-}
-
-#Preview {
-    BackgroundView()
 }
