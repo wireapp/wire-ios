@@ -212,10 +212,14 @@ public class CoreDataStack: NSObject, ContextProvider {
     deinit {
         close()
 
-        for s in Self.stacks.indices.reversed() {
-            if Self.stacks[s].reference === self {
-                logger.debug("[lskdjf] stacks.count is \(Self.stacks.count), going to remove \(self)")
-                Self.stacks.remove(at: s)
+        let logger = logger
+        DispatchQueue.main.async {
+            for s in Self.stacks.indices.reversed() {
+                var removedCount = 0
+                if Self.stacks[s].reference == nil {
+                    Self.stacks.remove(at: s)
+                }
+                logger.debug("removed \(removedCount) items from CoreDataStack.stacks. count is now \(Self.stacks.count)")
             }
         }
     }
