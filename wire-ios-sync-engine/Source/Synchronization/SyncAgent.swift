@@ -126,23 +126,23 @@ final class SyncAgent: NSObject {
 extension SyncAgent: ZMSyncStateDelegate {
 
     func didStartSlowSync() {
-        WireLogger.sync.debug("did start legacy slow sync")
-        delegate?.syncAgentDidStartLegacySlowSync(self)
+        WireLogger.sync.debug("did start legacy initial sync")
+        delegate?.syncAgentDidStartLegacyInitialSync(self)
     }
 
     func didFinishSlowSync() {
-        WireLogger.sync.debug("did finish legacy slow sync")
-        delegate?.syncAgentDidFinishLegacySlowSync(self)
+        WireLogger.sync.debug("did finish legacy initial sync")
+        delegate?.syncAgentDidFinishLegacyInitialSync(self)
     }
 
     func didStartQuickSync() {
-        WireLogger.sync.debug("did start legacy quick sync")
-        delegate?.syncAgentDidStartLegacyQuickSync(self)
+        WireLogger.sync.debug("did start legacy incremental sync")
+        delegate?.syncAgentDidStartLegacyIncrementalSync(self)
     }
 
     func didFinishQuickSync() {
-        WireLogger.sync.debug("did start finish quick sync")
-        delegate?.syncAgentDidFinishLegacyQuickSync(self)
+        WireLogger.sync.debug("did start finish incremental sync")
+        delegate?.syncAgentDidFinishLegacyIncrementalSync(self)
     }
 
 }
