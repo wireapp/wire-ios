@@ -587,7 +587,12 @@ public final class ZMUserSession: NSObject {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
+            pullSelfUserClientsFactory: { [weak self] context in
+                guard let self else {
+                    fatal("userSession not reachable")
+                }
+                return pullSelfUserClientsFactory(context: context)
+            },
             searchUsersCache: dependencies.caches.searchUsers
         )
     }

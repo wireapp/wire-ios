@@ -327,6 +327,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = "foo"
         let error = MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch
         mockDecryptionService.decryptMessageForSubconversationType_MockError = error
+        mockSyncStatus.mockPerformQuickSync = {}
 
         let expectation = XCTestExpectation(description: "repaired conversation")
         await uiMOC.perform {
@@ -1477,6 +1478,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
+        mockSyncStatus.mockPerformQuickSync = {}
 
         let expectation = XCTestExpectation(description: "rejoined conversation")
 
@@ -1508,6 +1510,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return
         }
 
+        mockSyncStatus.mockPerformQuickSync = {}
+
         let expectation = XCTestExpectation(description: "didn't rejoin conversation")
         expectation.isInverted = true
 
@@ -1535,6 +1539,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
+        mockSyncStatus.mockPerformQuickSync = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
@@ -1575,6 +1580,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
+        mockSyncStatus.mockPerformQuickSync = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
