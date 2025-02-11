@@ -18,7 +18,7 @@
 
 import Foundation
 
-// sourcer: AutoMockable
+// sourcery: AutoMockable
 /// An object that performs the initial sync (i.e fetching
 /// last event id, pulls metadata from remote, performs various
 /// initialaztion operations) which should happen after login.
