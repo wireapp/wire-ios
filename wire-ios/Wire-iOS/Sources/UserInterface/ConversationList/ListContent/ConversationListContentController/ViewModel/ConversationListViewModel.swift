@@ -242,9 +242,9 @@ final class ConversationListViewModel: NSObject {
             .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak userSession] _ in
-                guard let userSession else { return }
+                guard let userSession, !userSession.tornDown else { return }
 
-                //userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
+                userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
             }.store(in: &tokens)
     }
 
