@@ -75,6 +75,7 @@ for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         // TODO: [WPB-15967] Enable `ExistentialAny` upcoming feature
         .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+        .enableExperimentalFeature("StrictConcurrency"),
+        .unsafeFlags(["-enable-bare-slash-regex"]) // For regex literals
     ]
 }
