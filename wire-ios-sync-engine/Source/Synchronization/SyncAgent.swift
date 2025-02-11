@@ -31,7 +31,7 @@ final class SyncAgent: NSObject {
 
     weak var delegate: SyncAgentDelegate?
     private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
-    private let initialSyncBuilder: InitialSyncBuilder
+    private let initialSyncBuilder: any InitialSyncBuilderProtocol
     private let legacySyncStatus: SyncStatus
 
     private var hasPerformedInitialSync: Bool {
@@ -42,7 +42,7 @@ final class SyncAgent: NSObject {
 
     init(
         lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
-        initialSyncBuilder: InitialSyncBuilder,
+        initialSyncBuilder: any InitialSyncBuilderProtocol,
         legacySyncStatus: SyncStatus
     ) {
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository

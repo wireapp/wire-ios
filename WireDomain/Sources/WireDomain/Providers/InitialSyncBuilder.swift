@@ -21,7 +21,7 @@ import WireAPI
 import WireDataModel
 import WireFoundation
 
-public struct InitialSyncBuilder {
+public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
 
     public enum Failure: Error {
 
@@ -56,7 +56,7 @@ public struct InitialSyncBuilder {
         self.minTLSVersion = minTLSVersion
     }
 
-    public func build() throws -> InitialSync {
+    public func build() throws -> any InitialSyncProtocol {
         guard let localDomain = BackendInfo.domain else {
             throw Failure.missingLocalDomain
         }
