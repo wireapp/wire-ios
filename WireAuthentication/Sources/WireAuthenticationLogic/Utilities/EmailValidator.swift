@@ -16,31 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireAuthenticationAPI
+enum EmailValidator {
 
-package struct RootView: View {
+    /// Returns `true` if `email` is a valid email otherwise`false`.
+    ///
+    /// - note: Currently we don't try to support every email, only the typical cases.
 
-    @StateObject var viewModel: RootViewModel
+    static func isValid(email: String) -> Bool {
+        let regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/.ignoresCase()
 
-    let builder: any DetermineAuthMethodBuilder
-
-    package init(
-        viewModel: RootViewModel,
-        builder: any DetermineAuthMethodBuilder
-    ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.builder = builder
+        guard let match = try? regex.wholeMatch(in: email) else { return false }
+        return !match.isEmpty
     }
-
-    package var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            builder.determineAuthMethodView
-        }
-    }
-
-}
-
-#Preview {
-    MockDependencies().rootView
 }
