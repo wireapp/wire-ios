@@ -78,8 +78,8 @@ package struct LoginOrRegisterViaEmailView: View {
 
     @ViewBuilder private var passwordField: some View {
         PasswordField(
-            passwordRules: viewModel.localizedPasswordRules,
             password: $password,
+            passwordRules: viewModel.localizedPasswordRules,
             arePasswordRulesVisible: $showPasswordRules,
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
             title: L10n.CloudUserLogin.InputPassword.title,
