@@ -26,7 +26,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pydio/cells-sdk-swift.git", branch: "v5-dev"),
         .package(url: "https://github.com/awslabs/aws-sdk-swift.git", from: "1.0.0"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(name: "WireUI", path: "../WireUI")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -46,7 +47,12 @@ let package = Package(
                 .product(name: "CellsSDK", package: "cells-sdk-swift")
             ]
         ),
-        .target(name: "WireCellsUI"),
+        .target(
+            name: "WireCellsUI",
+            dependencies: [
+                .product(name: "WireDesign", package: "WireUI")
+            ]
+        ),
         .testTarget(
             name: "WireCellsTests",
             dependencies: [

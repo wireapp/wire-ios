@@ -17,8 +17,16 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct DeleteItemButtonViewModifier: ViewModifier {
+    private enum Constants {
+        static let iconFontSize: CGFloat = 24
+        static let padding: CGFloat = 2
+        static let buttonSize: CGFloat = 35
+        static let offset: CGFloat = 17.5
+    }
+
     let onRemove: @Sendable () -> Void
 
     init(onRemove: @escaping @Sendable () -> Void) {
@@ -32,12 +40,17 @@ struct DeleteItemButtonViewModifier: ViewModifier {
                     onRemove()
                 }, label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 24))
-                        .somethingButtonStyle(padding: 2)
+                        .font(.system(size: Constants.iconFontSize))
                 })
-                .foregroundStyle(.white)
-                .frame(width: 35, height: 35)
-                .offset(x: 17.5, y: -17.5)
+                .buttonStyle(CircularIconButtonStyle(padding: Constants.padding))
+                .frame(
+                    width: Constants.buttonSize,
+                    height: Constants.buttonSize
+                )
+                .offset(
+                    x: Constants.offset,
+                    y: -Constants.offset
+                )
             }
     }
 }
@@ -46,4 +59,11 @@ extension View {
     func deleteItemButton(onRemove: @escaping @Sendable () -> Void) -> some View {
         modifier(DeleteItemButtonViewModifier(onRemove: onRemove))
     }
+}
+
+#Preview {
+    RoundedRectangle(cornerRadius: 10)
+        .fill(.gray)
+        .deleteItemButton(onRemove: {})
+        .frame(width: 200, height: 200)
 }

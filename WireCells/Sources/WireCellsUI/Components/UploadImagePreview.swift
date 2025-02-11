@@ -50,7 +50,7 @@ public struct UploadImagePreview_Preview: View {
 
 #Preview {
     VStack {
-        UploadImagePreview_Preview(demoImageName: "demo-image")
+        UploadImagePreview_Preview(demoImageName: "rectangular-placeholder")
             .frame(width: 200, height: 200)
             .background(.white)
     }

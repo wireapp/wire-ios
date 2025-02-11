@@ -21,7 +21,14 @@ import SwiftUI
 class BundleClass {}
 
 struct UploadVideoPreview: View {
-    let duration: Duration
+    private enum Constants {
+        static let playButtonFontSize: CGFloat = 48
+        static let playButtonPadding: CGFloat = 3
+        static let durationLabelTrailingPadding: CGFloat = 9
+        static let durationLabelBottomPadding: CGFloat = 6
+    }
+
+    let duration: String
     let thumbnail: Image
     let onPlay: @Sendable () -> Void
     let onRemove: @Sendable () -> Void
@@ -32,10 +39,13 @@ struct UploadVideoPreview: View {
         onPlay: @escaping @Sendable () -> Void,
         onRemove: @escaping @Sendable () -> Void
     ) {
-        self.duration = duration
         self.thumbnail = thumbnail
         self.onPlay = onPlay
         self.onRemove = onRemove
+
+        self.duration = duration.components.seconds > 3600
+            ? duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2)))
+            : duration.formatted(.time(pattern: .minuteSecond(padMinuteToLength: 2)))
     }
 
     var body: some View {
@@ -46,16 +56,16 @@ struct UploadVideoPreview: View {
                     onPlay()
                 }, label: {
                     Image(systemName: "play.circle.fill")
-                        .font(.system(size: 48))
-                        .somethingButtonStyle(padding: 3)
+                        .font(.system(size: Constants.playButtonFontSize))
                 })
                 .foregroundStyle(.white)
+                .buttonStyle(CircularIconButtonStyle(padding: Constants.playButtonPadding))
             }
             .overlay(alignment: .bottomTrailing) {
-                Text(duration.formatted())
+                Text(duration)
                     .foregroundStyle(.white)
-                    .padding(.trailing, 9)
-                    .padding(.bottom, 6)
+                    .padding(.trailing, Constants.durationLabelTrailingPadding)
+                    .padding(.bottom, Constants.durationLabelBottomPadding)
             }
     }
 }
@@ -84,7 +94,7 @@ public struct UploadVideoPreview_Preview: View {
 
 #Preview {
     VStack {
-        UploadVideoPreview_Preview(demoThumbnailName: "demo-image")
+        UploadVideoPreview_Preview(demoThumbnailName: "rectangular-placeholder")
             .frame(width: 200, height: 200)
             .background(.white)
     }

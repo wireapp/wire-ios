@@ -37,7 +37,7 @@ class UploadImagePreviewTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
-        let view = UploadImagePreview_Preview(demoImageName: "demo-image")
+        let view = UploadImagePreview_Preview(demoImageName: "rectangular-placeholder")
             .frame(width: 200, height: 200)
 
         snapshotHelper
@@ -50,7 +50,7 @@ class UploadImagePreviewTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = UploadImagePreview_Preview(demoImageName: "demo-image")
+        let view = UploadImagePreview_Preview(demoImageName: "rectangular-placeholder")
             .frame(width: 200, height: 200)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

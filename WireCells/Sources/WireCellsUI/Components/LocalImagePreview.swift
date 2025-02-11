@@ -19,6 +19,10 @@
 import SwiftUI
 
 struct LocalImagePreview: View {
+    private enum Constants {
+        static let cornerRadius: CGFloat = 10
+    }
+
     let image: Image
 
     var body: some View {
@@ -28,14 +32,14 @@ struct LocalImagePreview: View {
                 .scaledToFill()
                 // Image won't clip to the container's frame.
                 .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .circular))
+                .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .circular))
         }
     }
 }
 
 #Preview {
     VStack {
-        LocalImagePreview(image: Image("demo-image", bundle: .module))
+        LocalImagePreview(image: Image("square-placeholder", bundle: .module))
             .foregroundStyle(.black)
             .frame(width: 200, height: 200)
             .background(.white)
