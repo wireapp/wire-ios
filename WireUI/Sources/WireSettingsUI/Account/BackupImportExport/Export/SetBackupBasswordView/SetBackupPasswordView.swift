@@ -96,6 +96,8 @@ struct SetBackupPasswordView: View {
         .padding()
     }
 
+    // TODO: [WPB-16061] the following code is almost identical to the one in EnterPasswordView.swift, try to reuse
+
     private var passwordFieldTitleColor: Color {
         if !viewModel.isPasswordValid {
             ColorTheme.Base.error.color

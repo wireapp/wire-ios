@@ -104,11 +104,11 @@ public struct BackupImportExportBuilder {
     @MainActor @ViewBuilder
     func buildImportBackupView() -> some View {
 
-        let importBackupViewModel = ImportBackupViewModel(
+        let viewModel = ImportBackupViewModel(
             importBackupUseCase: importBackupUseCase,
             logger: importBackupLogger
         )
-        ImportBackupView(viewModel: importBackupViewModel)
+        ImportBackupView(viewModel: viewModel)
 
     }
 }
