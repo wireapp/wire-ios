@@ -747,7 +747,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                 account,
                 from: selectedAccount,
                 userSessionCanBeTornDown: { [weak self] in
-                    self?.tearDownActiveSession(completion: tearDownCompletion)
+                    self?.activeUserSession = nil
+                    tearDownCompletion?()
                     guard let self else {
                         completion?(nil)
                         return
@@ -1010,18 +1011,23 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// The active user session will be torn down and the app goes into migration state.
     public func prepareForRestoreWithMigration(completion: @escaping () -> Void) {
         guard let delegate else {
-            WireLogger.sessionManager.error("SessionManager.delegate is nil, aborting")
+            WireLogger.sessionManager.debug("SessionManager.delegate is nil, aborting migration preparation")
             return completion()
         }
 
-        WireLogger.sessionManager.error("SessionManager.delegate.sessionManagerWillMigrateAccount(...)")
+        WireLogger.sessionManager.debug("SessionManager.delegate.sessionManagerWillMigrateAccount ...")
         delegate.sessionManagerWillMigrateAccount { [self] in
-            WireLogger.sessionManager.error("userSessionCanBeTornDown { ... }")
-            tearDownActiveSession { [self] in
-                WireLogger.sessionManager.error("calling tearDownAllBackgroundSessions()")
-                tearDownAllBackgroundSessions()
-                WireLogger.sessionManager.error("deleting observers accountTokens.removeAll()")
-                accountTokens.removeAll()
+
+            WireLogger.sessionManager.debug("... userSessionCanBeTornDown { ... }")
+
+            if let accountID = activeUserSession?.account.userIdentifier {
+                tearDownBackgroundSession(for: accountID) { [self] in
+                    activeUserSession = nil
+                    accountTokens.removeValue(forKey: accountID)
+                    completion()
+                }
+            } else {
+                activeUserSession = nil
                 completion()
             }
         }
@@ -1199,17 +1205,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             } catch {
                 WireLogger.sessionManager.error("Failed to delete messages older than the retention limit")
             }
-        }
-    }
-
-    private func tearDownActiveSession(completion: (() -> Void)?) {
-        if let accountID = activeUserSession?.account.userIdentifier {
-            tearDownBackgroundSession(for: accountID) {
-                self.activeUserSession = nil
-                completion?()
-            }
-        } else {
-            completion?()
         }
     }
 

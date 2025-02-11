@@ -17,7 +17,6 @@
 //
 
 import WireDomainPkg
-import WireLogging
 
 public extension SessionManager {
 
