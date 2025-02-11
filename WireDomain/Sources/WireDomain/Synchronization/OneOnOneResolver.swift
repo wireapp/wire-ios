@@ -21,7 +21,7 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-struct OneOnOneResolver: OneOnOneResolverProtocol {
+public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     private enum Error: Swift.Error {
         case failedToActivateConversation
@@ -39,7 +39,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     // MARK: - Object lifecycle
 
-    init(
+    public init(
         context: NSManagedObjectContext,
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
@@ -53,7 +53,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         self.mlsProvider = mlsProvider
     }
 
-    func resolveAllOneOnOneConversations() async throws {
+    public func resolveAllOneOnOneConversations() async throws {
         let usersIDs = try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
 
         await withTaskGroup(of: Void.self) { group in
@@ -72,7 +72,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         }
     }
 
-    func resolveOneOnOneConversation(
+    public func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws {
         let user = try await userLocalStore.fetchUser(
