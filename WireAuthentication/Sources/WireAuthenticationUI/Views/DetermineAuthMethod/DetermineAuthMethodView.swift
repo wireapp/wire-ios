@@ -20,19 +20,19 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-public protocol DetermineAuthMethodBuilder {
+package protocol DetermineAuthMethodBuilder {
 
     @MainActor var determineAuthMethodView: DetermineAuthMethodView { get }
 
 }
 
-public struct DetermineAuthMethodView: View {
+package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
     let builder: any LoginViaEmailBuilder
 
-    public init(
+    package init(
         viewModel: DetermineAuthMethodViewModel,
         builder: any LoginViaEmailBuilder
     ) {
@@ -40,7 +40,7 @@ public struct DetermineAuthMethodView: View {
         self.builder = builder
     }
 
-    public var body: some View {
+    package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 16) {
                 HStack {
