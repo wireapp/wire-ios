@@ -6,6 +6,7 @@ class Framework
             "WireAPI",
             "WireAnalytics",
             "WireAuthentication",
+            "WireCells",
             "WireDomain",
             "WireFoundation",
             "WireLogging",

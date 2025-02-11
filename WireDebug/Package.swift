@@ -25,6 +25,7 @@ let package = Package(
             name: "WireViewsDebugUI",
             dependencies: [
                 .product(name: "WireAuthenticationUI", package: "WireAuthentication"),
+                .product(name: "WireCellsUI", package: "WireCells"),
                 .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
                 .product(name: "WireReusableUIComponents", package: "WireUI")

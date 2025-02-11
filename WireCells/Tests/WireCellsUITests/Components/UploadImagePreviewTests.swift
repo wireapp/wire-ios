@@ -20,7 +20,7 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import UI
+@testable import WireCellsUI
 
 class UploadImagePreviewTests: XCTestCase {
 
