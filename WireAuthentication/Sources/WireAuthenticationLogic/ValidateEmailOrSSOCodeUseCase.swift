@@ -16,24 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import WireAuthenticationAPI
 
-public struct BackgroundView: View {
-    public init() {}
+package struct ValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
 
-    public var body: some View {
-        GeometryReader { geometry in
-            Image(ImageResource(name: "background", bundle: .module))
-                .resizable()
-                .scaledToFill()
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-                .background(.black)
+    package init() {}
+
+    package func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        if EmailValidator.isValid(email: input) {
+            return .email(input)
         }
-        .ignoresSafeArea()
-    }
-}
 
-#Preview {
-    BackgroundView()
+        if SSOCodeValidator.isValid(ssoCode: input) {
+            return .ssoCode(input)
+        }
+
+        throw ValidatedEmailOrSSOCodeFailure.invalidInput
+    }
+
 }

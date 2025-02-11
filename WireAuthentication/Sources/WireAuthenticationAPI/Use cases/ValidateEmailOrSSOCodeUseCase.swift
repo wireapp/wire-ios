@@ -16,24 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-public struct BackgroundView: View {
-    public init() {}
+package protocol ValidateEmailOrSSOCodeUseCaseProtocol: Sendable {
 
-    public var body: some View {
-        GeometryReader { geometry in
-            Image(ImageResource(name: "background", bundle: .module))
-                .resizable()
-                .scaledToFill()
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-                .background(.black)
-        }
-        .ignoresSafeArea()
-    }
+    func invoke(input: String) throws -> ValidatedEmailOrSSOCode
+
 }
 
-#Preview {
-    BackgroundView()
+package enum ValidatedEmailOrSSOCode: Equatable {
+
+    case email(String)
+    case ssoCode(String)
+
+}
+
+package enum ValidatedEmailOrSSOCodeFailure: Error {
+
+    case invalidInput
+
 }

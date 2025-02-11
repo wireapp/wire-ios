@@ -34,12 +34,46 @@ final class MockDependencies {
         )
     }
 
+    func makeDetermineAuthMethodView(
+        emailOrSSOCode: String,
+        isLoading: Bool,
+        errorMessage: String?
+    ) -> DetermineAuthMethodView {
+        DetermineAuthMethodView(
+            viewModel: DetermineAuthMethodViewModel(
+                router: rootViewModel,
+                validateEmailOrSSOCode: self,
+                determineAuthMethod: self,
+                emailOrSSOCode: emailOrSSOCode,
+                isLoading: isLoading,
+                errorMessage: errorMessage
+            ),
+            builder: self
+        )
+    }
+
+}
+
+extension MockDependencies: ValidateEmailOrSSOCodeUseCaseProtocol {
+
+    nonisolated func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        if input.contains("@") {
+            return .email(input)
+        } else if input.hasSuffix("wire") {
+            return .ssoCode(input)
+        } else {
+            throw ValidatedEmailOrSSOCodeFailure.invalidInput
+        }
+    }
+
 }
 
 extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
 
-    func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .login(email: emailOrSSOCode)
+    func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod {
+        try await Task.sleep(for: .seconds(3))
+
+        return .loginViaEmail(email: emailOrSSOCode)
     }
 
 }
@@ -60,6 +94,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
+            validateEmailOrSSOCode: self,
             determineAuthMethod: self
         )
     }

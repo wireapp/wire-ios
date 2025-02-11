@@ -1652,19 +1652,20 @@ class MockPullKnownUsersSyncProtocol: PullKnownUsersSyncProtocol {
 
 }
 
-class MockPullLastUpdateEventIDSyncProtocol: PullLastUpdateEventIDSyncProtocol {
+public class MockPullLastUpdateEventIDSyncProtocol: PullLastUpdateEventIDSyncProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - pull
 
-    var pull_Invocations: [Void] = []
-    var pull_MockError: Error?
-    var pull_MockMethod: (() async throws -> Void)?
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
 
-    func pull() async throws {
+    public func pull() async throws {
         pull_Invocations.append(())
 
         if let error = pull_MockError {
@@ -1676,6 +1677,38 @@ class MockPullLastUpdateEventIDSyncProtocol: PullLastUpdateEventIDSyncProtocol {
         }
 
         try await mock()
+    }
+
+}
+
+public class MockPullMLSOneOnOneSyncProtocol: PullMLSOneOnOneSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pullUserIDUserDomain_Invocations: [(userID: UUID, userDomain: String)] = []
+    public var pullUserIDUserDomain_MockError: Error?
+    public var pullUserIDUserDomain_MockMethod: ((UUID, String) async throws -> MLSGroupID)?
+    public var pullUserIDUserDomain_MockValue: MLSGroupID?
+
+    public func pull(userID: UUID, userDomain: String) async throws -> MLSGroupID {
+        pullUserIDUserDomain_Invocations.append((userID: userID, userDomain: userDomain))
+
+        if let error = pullUserIDUserDomain_MockError {
+            throw error
+        }
+
+        if let mock = pullUserIDUserDomain_MockMethod {
+            return try await mock(userID, userDomain)
+        } else if let mock = pullUserIDUserDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `pullUserIDUserDomain`")
+        }
     }
 
 }
