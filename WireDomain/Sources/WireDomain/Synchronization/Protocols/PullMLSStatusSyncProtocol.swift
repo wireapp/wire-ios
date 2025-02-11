@@ -16,13 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 // sourcery: AutoMockable
-public protocol BackendConfigLocalStoreProtocol {
+/// An object to fetch the MLS status from remote and store it locally.
+public protocol PullMLSStatusSyncProtocol {
 
-    /// Stores isMLSEnabled value
-    /// - parameter newValue: New value to store
-    func storeIsMLSEnabledStatus(newValue: Bool)
+    /// Fetch the MLS status from remote and store it locally.
 
-    var isMLSEnabled: Bool { get }
+    func pull() async throws
 
 }
