@@ -17,9 +17,9 @@
 //
 
 import XCTest
-@testable import WireSyncEngine
 @testable import WireDataModelSupport
 @testable import WireDomainSupport
+@testable import WireSyncEngine
 
 final class SyncAgentTests: XCTestCase {
 
