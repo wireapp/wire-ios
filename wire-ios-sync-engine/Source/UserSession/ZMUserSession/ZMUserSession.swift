@@ -648,11 +648,11 @@ public final class ZMUserSession: NSObject {
     }
 
     private func configureRecurringActions() {
-        recurringActionService.registerAction(refreshUsersMissingMetadataAction)
-        recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
-        recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
-        recurringActionService.registerAction(refreshTeamMetadataAction)
-        recurringActionService.registerAction(refreshFederationCertificatesAction)
+//        recurringActionService.registerAction(refreshUsersMissingMetadataAction)
+//        recurringActionService.registerAction(refreshConversationsMissingMetadataAction)
+//        recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
+//        recurringActionService.registerAction(refreshTeamMetadataAction)
+//        recurringActionService.registerAction(refreshFederationCertificatesAction)
     }
 
     func startRequestLoopTracker() {
@@ -959,36 +959,36 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: notificationContext
         ).post()
 
-        WaitingGroupTask(context: syncContext) { [self] in
-            await fetchBackendMLSPublicKeys()
-            await fetchAndStoreFeatureConfig()
+//        WaitingGroupTask(context: syncContext) { [self] in
+//            await fetchBackendMLSPublicKeys()
+//            await fetchAndStoreFeatureConfig()
+//
+//            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
+//                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+//                let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
+//                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
+//            }
+//
+//            if let qualifiedSelfClientID {
+//                await mlsClientManager.initializeMLSClientIfNeeded(
+//                    for: qualifiedSelfClientID,
+//                    hasRegisteredMLSClient: hasRegisteredMLSClient,
+//                    mlsFeature: mlsFeature
+//                )
+//            } else {
+//                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
+//            }
+//
+//            if mlsFeature.isEnabled {
+//                mlsService.commitPendingProposalsIfNeeded()
+//            }
+//
+//            await calculateSelfSupportedProtocolsIfNeeded()
+//            await resolveOneOnOneConversationsIfNeeded()
+//        }
 
-            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
-                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
-                let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
-                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
-            }
-
-            if let qualifiedSelfClientID {
-                await mlsClientManager.initializeMLSClientIfNeeded(
-                    for: qualifiedSelfClientID,
-                    hasRegisteredMLSClient: hasRegisteredMLSClient,
-                    mlsFeature: mlsFeature
-                )
-            } else {
-                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
-            }
-
-            if mlsFeature.isEnabled {
-                mlsService.commitPendingProposalsIfNeeded()
-            }
-
-            await calculateSelfSupportedProtocolsIfNeeded()
-            await resolveOneOnOneConversationsIfNeeded()
-        }
-
-        recurringActionService.performActionsIfNeeded()
-        performPostQuickSyncE2EIActions()
+//        recurringActionService.performActionsIfNeeded()
+//        performPostQuickSyncE2EIActions()
     }
 
     /// Calculate supported protocols for self user in case they are empty
