@@ -27,7 +27,8 @@ final class EmailValidatorTests: XCTestCase {
         let testCases: [String] = [
             "MARIA@EXAMPLE.COM",
             "maria@example.com",
-            "maria@sub-team22.example.com"
+            "maria@sub-team22.example.com",
+            "firstName.secondName@example.com"
         ]
 
         for email in testCases {
