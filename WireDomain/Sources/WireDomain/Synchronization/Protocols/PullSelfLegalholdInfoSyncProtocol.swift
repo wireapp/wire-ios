@@ -18,7 +18,16 @@
 
 import Foundation
 
+// sourcery: AutoMockable
+/// An object to keep the local self legal hold info
+/// up to date with the remote self legal hold info.
 protocol PullSelfLegalholdInfoSyncProtocol {
+
+    /// Fetch the self user from remote, then create or update
+    /// it locally.
+    ///
+    /// - Parameters:
+    ///   - selfTeamID: The id of the self user's team.
 
     func pull(selfTeamID: UUID) async throws
 
