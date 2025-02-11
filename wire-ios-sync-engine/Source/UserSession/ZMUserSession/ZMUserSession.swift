@@ -552,7 +552,7 @@ public final class ZMUserSession: NSObject {
         callCenter?.tearDown()
         coreDataStack.close()
         contextStorage.clear()
-
+        
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.addTag(.selfClientId, value: nil)
 
@@ -587,7 +587,12 @@ public final class ZMUserSession: NSObject {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
+            pullSelfUserClientsFactory: { [weak self] context in
+                guard let self else {
+                    fatal("userSession not reachable")
+                }
+                return self.pullSelfUserClientsFactory(context: context)
+            },
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
