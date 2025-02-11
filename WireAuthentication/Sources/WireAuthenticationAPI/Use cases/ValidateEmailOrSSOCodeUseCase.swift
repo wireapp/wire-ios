@@ -16,13 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol BackendConfigLocalStoreProtocol {
+import Foundation
 
-    /// Stores isMLSEnabled value
-    /// - parameter newValue: New value to store
-    func storeIsMLSEnabledStatus(newValue: Bool)
+package protocol ValidateEmailOrSSOCodeUseCaseProtocol: Sendable {
 
-    var isMLSEnabled: Bool { get }
+    func invoke(input: String) throws -> ValidatedEmailOrSSOCode
+
+}
+
+package enum ValidatedEmailOrSSOCode: Equatable {
+
+    case email(String)
+    case ssoCode(String)
+
+}
+
+package enum ValidatedEmailOrSSOCodeFailure: Error {
+
+    case invalidInput
 
 }

@@ -51,27 +51,28 @@ import WireDomainPkg
 
 
 
-class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
+public class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
     // MARK: - isMLSEnabled
 
-    var isMLSEnabled: Bool {
+    public var isMLSEnabled: Bool {
         get { return underlyingIsMLSEnabled }
         set(value) { underlyingIsMLSEnabled = value }
     }
 
-    var underlyingIsMLSEnabled: Bool!
+    public var underlyingIsMLSEnabled: Bool!
 
 
     // MARK: - storeIsMLSEnabledStatus
 
-    var storeIsMLSEnabledStatusNewValue_Invocations: [Bool] = []
-    var storeIsMLSEnabledStatusNewValue_MockMethod: ((Bool) -> Void)?
+    public var storeIsMLSEnabledStatusNewValue_Invocations: [Bool] = []
+    public var storeIsMLSEnabledStatusNewValue_MockMethod: ((Bool) -> Void)?
 
-    func storeIsMLSEnabledStatus(newValue: Bool) {
+    public func storeIsMLSEnabledStatus(newValue: Bool) {
         storeIsMLSEnabledStatusNewValue_Invocations.append(newValue)
 
         guard let mock = storeIsMLSEnabledStatusNewValue_MockMethod else {
@@ -1652,19 +1653,20 @@ class MockPullKnownUsersSyncProtocol: PullKnownUsersSyncProtocol {
 
 }
 
-class MockPullLastUpdateEventIDSyncProtocol: PullLastUpdateEventIDSyncProtocol {
+public class MockPullLastUpdateEventIDSyncProtocol: PullLastUpdateEventIDSyncProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - pull
 
-    var pull_Invocations: [Void] = []
-    var pull_MockError: Error?
-    var pull_MockMethod: (() async throws -> Void)?
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
 
-    func pull() async throws {
+    public func pull() async throws {
         pull_Invocations.append(())
 
         if let error = pull_MockError {
@@ -1708,6 +1710,35 @@ public class MockPullMLSOneOnOneSyncProtocol: PullMLSOneOnOneSyncProtocol {
         } else {
             fatalError("no mock for `pullUserIDUserDomain`")
         }
+    }
+
+}
+
+public class MockPullMLSStatusSyncProtocol: PullMLSStatusSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
+
+    public func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
     }
 
 }
