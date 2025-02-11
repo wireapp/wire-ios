@@ -18,8 +18,6 @@
 
 import SwiftUI
 
-class BundleClass {}
-
 struct UploadVideoPreview: View {
     private enum Constants {
         static let playButtonFontSize: CGFloat = 48
