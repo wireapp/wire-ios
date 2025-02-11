@@ -25,15 +25,15 @@ final class SetBackupPasswordViewModel: ObservableObject {
         didSet { validatePassword() }
     }
 
-    @Published private(set) var isPasswordValid = true
+    @Published /*private(set)*/ var isPasswordValid = true
 
     var localizedPasswordRules: String {
         passwordValidator.localizedRulesDescription
     }
 
     private let passwordValidator: any BackupPasswordValidatorProtocol
-    private let setPasswordAction: (_ password: String) -> Void
-    private let cancelAction: () -> Void
+    /*private*/ let setPasswordAction: (_ password: String) -> Void
+    /*private*/ let cancelAction: () -> Void
 
     init(
         passwordValidator: any BackupPasswordValidatorProtocol,

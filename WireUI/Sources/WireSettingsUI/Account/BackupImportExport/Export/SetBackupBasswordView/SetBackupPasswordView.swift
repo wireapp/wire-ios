@@ -19,6 +19,13 @@
 import SwiftUI
 import WireDesign
 
+private extension Bool {
+    var inverted: Self {
+        get { !self }
+        set { self = !newValue }
+    }
+}
+
 struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
@@ -27,6 +34,14 @@ struct SetBackupPasswordView: View {
     private typealias Labels = L10n.Accessibility.SetBackupPassword
 
     var body: some View {
+        EnterPasswordView(
+            password: $viewModel.password,
+            passwordIsWrong: $viewModel.isPasswordValid.inverted,
+            continueAction: viewModel.setPasswordAction,
+            cancelAction: viewModel.cancelAction
+        )
+
+        /*
         NavigationStack {
             setBackupPasswordView
                 .background(Color.viewBackground)
@@ -42,6 +57,7 @@ struct SetBackupPasswordView: View {
                     }
                 }
         }
+         */
     }
 
     @ViewBuilder private var setBackupPasswordView: some View {
