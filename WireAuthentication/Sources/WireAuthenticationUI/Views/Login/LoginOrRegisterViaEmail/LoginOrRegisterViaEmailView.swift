@@ -65,7 +65,7 @@ public struct LoginOrRegisterViaEmailView: View {
             .disabled(!viewModel.isValidPassword(password))
 
             Button(action: {
-                UIApplication.shared.open(viewModel.forgotPasswordURL)
+                viewModel.recoverPassword()
             }, label: {
                 Text(L10n.CloudUserLogin.forgotPassword)
                     .multilineTextAlignment(.center)

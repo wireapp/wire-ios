@@ -19,14 +19,16 @@
 import Foundation
 import WireAuthenticationAPI
 import WireReusableUIComponents
+import UIKit
 
 @MainActor
 public final class LoginOrRegisterViaEmailViewModel: ObservableObject {
 
-    let router: any Router
-    let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
+    private let router: any Router
+    private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
+    private let forgotPasswordURL: URL
+
     let email: String
-    let forgotPasswordURL: URL
     let passwordValidator: any PasswordValidator
 
     // MARK: - Life cycle
@@ -61,6 +63,10 @@ public final class LoginOrRegisterViaEmailViewModel: ObservableObject {
                 print("error: \(error)")
             }
         }
+    }
+
+    func recoverPassword() {
+        UIApplication.shared.open(forgotPasswordURL)
     }
 
     func createAccount() {}

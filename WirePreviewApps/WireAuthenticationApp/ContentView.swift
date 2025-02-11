@@ -19,13 +19,16 @@
 import SwiftUI
 import WireAuthentication
 import WireAuthenticationUI
+import WireReusableUIComponents
 
 struct ContentView: View {
 
     var body: some View {
         BackgroundView()
             .sheet(isPresented: .constant(true)) {
-                WireAuthenticationAssembly().assemble()
+                WireAuthenticationAssembly().assemble(
+                    accountsURL: URL(string: "https://example.com")!,
+                    passwordValidator: LoginPasswordValidator())
             }
     }
 
@@ -33,4 +36,16 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+}
+
+private struct LoginPasswordValidator: PasswordValidator {
+
+    func validate(_ password: String) -> Bool {
+        !password.isEmpty
+    }
+
+    var localizedRulesDescription: String? {
+        "Password rules"
+    }
+
 }
