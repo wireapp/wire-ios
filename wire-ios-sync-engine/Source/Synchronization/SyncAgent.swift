@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireDomain
 import WireLogging
 import WireUtilities
 
@@ -30,6 +31,7 @@ final class SyncAgent: NSObject {
 
     weak var delegate: SyncAgentDelegate?
     private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
+    private let initialSyncBuilder: InitialSyncBuilder
 
     private var hasPerformedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -37,8 +39,12 @@ final class SyncAgent: NSObject {
 
     // MARK: - Life cycle
 
-    init(lastUpdateEventIDRepository: any LastEventIDRepositoryInterface) {
+    init(
+        lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
+        initialSyncBuilder: InitialSyncBuilder
+    ) {
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
+        self.initialSyncBuilder = initialSyncBuilder
         super.init()
     }
 
@@ -64,7 +70,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new initial sync")
-                // build initial sync and perform
+                try await initialSyncBuilder.build().perform(skipPullingLastUpdateEventID: false)
                 WireLogger.sync.debug("did finish new initial sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
@@ -82,7 +88,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new resource sync")
-                // build initial sync and perform, skipping last event it
+                try await initialSyncBuilder.build().perform(skipPullingLastUpdateEventID: true)
                 WireLogger.sync.debug("did finish new resource sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
