@@ -16,20 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireAuthenticationLogic
+import Foundation
 
-final class WireAuthenticationLogicTests: XCTestCase {
+enum SSOCodeValidator {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
+    /// Returns `true` if `ssoCode` is a valid SSO code otherwise `false`.
+    ///
+    /// A valid SSO code is a UUID prefixed by `wire-`.
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        XCTAssert(true, "Tests are running")
+    static func isValid(ssoCode: String) -> Bool {
+        let code = ssoCode.lowercased()
+        let prefix = "wire-"
+        let uuidComponent = String(code.dropFirst(prefix.count))
+        return code.hasPrefix(prefix) && UUID(uuidString: uuidComponent) != nil
     }
 }

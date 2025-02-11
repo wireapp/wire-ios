@@ -22,10 +22,11 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class DetermineAuthMethodViewModel: ObservableObject {
+package final class DetermineAuthMethodViewModel: ObservableObject {
 
-    let router: any Router
-    let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+    private let router: any Router
+    private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
+    private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -35,14 +36,16 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
         !isValidEmailOrSSOCode()
     }
 
-    public init(
+    package init(
         router: any Router,
+        validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
         determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
         errorMessage: String? = nil
     ) {
         self.router = router
+        self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.determineAuthMethod = determineAuthMethod
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
@@ -83,7 +86,12 @@ public final class DetermineAuthMethodViewModel: ObservableObject {
     // MARK: - Private
 
     private func isValidEmailOrSSOCode() -> Bool {
-        !emailOrSSOCode.isEmpty
+        do {
+            _ = try validateEmailOrSSOCode.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
+            return true
+        } catch {
+            return false
+        }
     }
 
 }
