@@ -28,7 +28,8 @@ struct ContentView: View {
             .sheet(isPresented: .constant(true)) {
                 WireAuthenticationAssembly().assemble(
                     accountsURL: URL(string: "https://example.com")!,
-                    passwordValidator: LoginPasswordValidator())
+                    passwordValidator: LoginPasswordValidator()
+                )
             }
     }
 
