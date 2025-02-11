@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol BackendConfigLocalStoreProtocol {
+enum EmailValidator {
 
-    /// Stores isMLSEnabled value
-    /// - parameter newValue: New value to store
-    func storeIsMLSEnabledStatus(newValue: Bool)
+    /// Returns `true` if `email` is a valid email otherwise`false`.
+    ///
+    /// - note: Currently we don't try to support every email, only the typical cases.
 
-    var isMLSEnabled: Bool { get }
+    static func isValid(email: String) -> Bool {
+        let regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/.ignoresCase()
 
+        guard let match = try? regex.wholeMatch(in: email) else { return false }
+        return !match.isEmpty
+    }
 }
