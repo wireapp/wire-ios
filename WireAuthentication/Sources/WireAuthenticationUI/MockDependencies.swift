@@ -41,6 +41,7 @@ final class MockDependencies {
         DetermineAuthMethodView(
             viewModel: DetermineAuthMethodViewModel(
                 router: rootViewModel,
+                validateEmailOrSSOCode: self,
                 determineAuthMethod: self,
                 emailOrSSOCode: emailOrSSOCode,
                 isLoading: isLoading,
@@ -48,6 +49,20 @@ final class MockDependencies {
             ),
             builder: self
         )
+    }
+
+}
+
+extension MockDependencies: ValidateEmailOrSSOCodeUseCaseProtocol {
+
+    nonisolated func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        if input.contains("@") {
+            return .email(input)
+        } else if input.hasSuffix("wire") {
+            return .ssoCode(input)
+        } else {
+            throw ValidatedEmailOrSSOCodeFailure.invalidInput
+        }
     }
 
 }
@@ -78,6 +93,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
+            validateEmailOrSSOCode: self,
             determineAuthMethod: self
         )
     }
