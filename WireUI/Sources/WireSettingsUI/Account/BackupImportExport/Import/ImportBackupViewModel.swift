@@ -71,7 +71,7 @@ final class ImportBackupViewModel: ObservableObject {
 
             case let .success(url):
                 let gotAccess = url.startAccessingSecurityScopedResource()
-                // let the file manager call throw the error in case `gotAccess` is `false`.
+                // let the file manager throw the error in case `gotAccess` is `false`.
 
                 let tmpDirectory = try fileManager.url(
                     for: .itemReplacementDirectory,
