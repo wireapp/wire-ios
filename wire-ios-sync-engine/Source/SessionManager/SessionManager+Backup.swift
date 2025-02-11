@@ -20,6 +20,7 @@ import Foundation
 import WireAnalytics
 import WireCrypto
 import WireDataModel
+import WireDomainPkg
 import WireLogging
 import WireUtilities
 import ZipArchive
@@ -30,46 +31,40 @@ extension SessionManager {
 
     // MARK: - Export
 
-    public enum BackupError: Error {
-        case notAuthenticated
-        case noActiveAccount
-        case compressionError
-        case invalidFileExtension
-        case keyCreationFailed
-        case decryptionError
-        case unknown
-    }
-
-    public func backupActiveAccount(password: String) throws -> URL {
+    public func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) {
         guard
             let userId = accountManager.selectedAccount?.userIdentifier,
             let clientId = activeUserSession?.selfUserClient?.remoteIdentifier,
             let handle = activeUserSession.flatMap(ZMUser.selfUser)?.handle,
             let activeUserSession
         else {
-            throw BackupError.noActiveAccount
+            return completion(.failure(CreateLegacyBackupError.noActiveAccountForExport))
         }
 
-        do {
-            let backupInfo = try CoreDataStack.backupLocalStorage(
-                accountIdentifier: userId,
-                clientIdentifier: clientId,
-                applicationContainer: sharedContainerURL,
-                dispatchGroup: dispatchGroup,
-                databaseKey: activeUserSession.managedObjectContext.databaseKey
-            )
+        CoreDataStack.backupLocalStorage(
+            accountIdentifier: userId,
+            clientIdentifier: clientId,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup,
+            databaseKey: activeUserSession.managedObjectContext.databaseKey,
+            completion: { [dispatchGroup] result in
+                switch result {
+                case .success:
+                    break
+                case .failure:
+                    activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)
+                }
 
-            return try SessionManager.handle(
-                result: .success(backupInfo),
-                password: password,
-                accountId: userId,
-                dispatchGroup: dispatchGroup,
-                handle: handle
-            )
-        } catch {
-            activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)
-            throw error
-        }
+                SessionManager.handle(
+                    result: result,
+                    password: password,
+                    accountId: userId,
+                    dispatchGroup: dispatchGroup,
+                    completion: completion,
+                    handle: handle
+                )
+            }
+        )
     }
 
     private static func handle(
@@ -77,11 +72,11 @@ extension SessionManager {
         password: String,
         accountId: UUID,
         dispatchGroup: ZMSDispatchGroup,
+        completion: @escaping (Result<URL, Error>) -> Void,
         handle: String
-    ) throws -> URL {
-        try workerQueue.sync {
-            switch result {
-            case let .success(info):
+    ) {
+        workerQueue.async(group: dispatchGroup) {
+            let encrypted = result.flatMap { info in
                 do {
                     // 1. Compress the backup
                     let compressed = try compress(backup: info)
@@ -89,12 +84,14 @@ extension SessionManager {
                     // 2. Encrypt the backup
                     let url = targetBackupURL(for: info, handle: handle)
                     try encrypt(from: compressed, to: url, password: password, accountId: accountId)
-                    return url
+                    return .success(url)
                 } catch {
-                    throw error
+                    return .failure(error)
                 }
-            case let .failure(error):
-                throw error
+            }
+
+            DispatchQueue.main.async(group: dispatchGroup) {
+                completion(encrypted)
             }
         }
     }
@@ -121,14 +118,14 @@ extension SessionManager {
             let status = unauthenticatedSession?.authenticationStatus,
             let userId = status.authenticatedUserIdentifier
         else {
-            return completion(.failure(BackupError.notAuthenticated))
+            return completion(.failure(ImportBackupError.notAuthenticated))
         }
 
         // Verify the imported file has the correct file extension.
         guard BackupFileExtensions.allCases.contains(where: {
             $0.rawValue == location.pathExtension
         }) else {
-            return completion(.failure(BackupError.invalidFileExtension))
+            return completion(.failure(ImportBackupError.invalidFileExtension))
         }
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
@@ -152,10 +149,10 @@ extension SessionManager {
                     accountId: userId
                 )
             } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
-                return complete(.failure(BackupError.decryptionError))
+                return complete(.failure(ImportBackupError.decryptionError))
 
             } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
-                return complete(.failure(BackupError.keyCreationFailed))
+                return complete(.failure(ImportBackupError.keyCreationFailed))
 
             } catch {
                 return complete(.failure(error))
@@ -164,7 +161,7 @@ extension SessionManager {
             let url = SessionManager.unzippedBackupURL(for: location)
 
             guard decryptedURL.unzip(to: url) else {
-                return complete(.failure(BackupError.compressionError))
+                return complete(.failure(CreateLegacyBackupError.compressionError))
             }
 
             CoreDataStack.importLocalStorage(
@@ -181,15 +178,19 @@ extension SessionManager {
     // MARK: - Encryption & Decryption
 
     static func encrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
-        guard let inputStream = InputStream(url: input) else { throw BackupError.unknown }
-        guard let outputStream = OutputStream(url: output, append: false) else { throw BackupError.unknown }
+        guard let inputStream = InputStream(url: input)
+        else { throw CreateLegacyBackupError.failedToCreateStreamsForEncryption }
+        guard let outputStream = OutputStream(url: output, append: false)
+        else { throw CreateLegacyBackupError.failedToCreateStreamsForEncryption }
         let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountId)
         try ChaCha20Poly1305.StreamEncryption.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
     }
 
     static func decrypt(from input: URL, to output: URL, password: String, accountId: UUID) throws {
-        guard let inputStream = InputStream(url: input) else { throw BackupError.unknown }
-        guard let outputStream = OutputStream(url: output, append: false) else { throw BackupError.unknown }
+        guard let inputStream = InputStream(url: input)
+        else { throw ImportBackupError.failedToCreateStreamForDecryption }
+        guard let outputStream = OutputStream(url: output, append: false)
+        else { throw ImportBackupError.failedToCreateStreamForDecryption }
         let passphrase = ChaCha20Poly1305.StreamEncryption.Passphrase(password: password, uuid: accountId)
         try ChaCha20Poly1305.StreamEncryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
     }
@@ -210,7 +211,7 @@ extension SessionManager {
 
     private static func compress(backup: CoreDataStack.BackupInfo) throws -> URL {
         let url = temporaryURL(for: backup.url)
-        guard backup.url.zipDirectory(to: url) else { throw BackupError.compressionError }
+        guard backup.url.zipDirectory(to: url) else { throw CreateLegacyBackupError.compressionError }
         return url
     }
 

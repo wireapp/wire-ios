@@ -17,4 +17,7 @@
 //
 
 "setBackupPassword.close.label" = "Close setup backup password";
-"restoreBackup.close.label" = "Close restore backup";
+
+"exportBackup.cancel.label" = "Cancel creating backup";
+
+"importBackup.cancel.label" = "Close restore backup";

@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireSettingsUI
 import WireSyncEngine
 
@@ -367,6 +368,22 @@ extension SettingsCellDescriptorFactory {
         SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.encryptMessagesAtRest))
     }
 
+    private var backupImportExportBuilder: BackupImportExportBuilder {
+
+        // force-unwrapping should be fine, since we should have a session manager and an active user session here
+        let sessionManager = SessionManager.shared!
+        let importBackupUseCase = sessionManager.importBackupUseCase!
+
+        return BackupImportExportBuilder(
+            backupPasswordValidator: BackupPasswordValidator(),
+            createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
+            importBackupUseCase: importBackupUseCase,
+            cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
+            exportBackupLogger: WireLogger.backupExport,
+            importBackupLogger: WireLogger.backupImport
+        )
+    }
+
     @MainActor
     func backUpElement() -> any SettingsCellDescriptorType {
         SettingsExternalScreenCellDescriptor(
@@ -379,23 +396,9 @@ extension SettingsCellDescriptorFactory {
                     return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-                    let viewModel = BackupActionsViewModel(
-                        backupSource: BackupSource(),
-                        restoreSource: RestoreSource(),
-                        backupResultHandler: BackupResultHandler(
-                            onSuccess: presentShareSheet,
-                            onFailure: presentExportBackupErrorAlert
-                        ),
-                        restoreBackupResultHandler: RestoreBackupResultHandler(
-                            onSuccess: presentOnSuccessAlert,
-                            onConfirmation: presentConfirmationAlert,
-                            onFailure: presentRestoreBackupErrorAlert
-                        ),
-                        passwordValidator: BackupPasswordValidator()
-                    )
-                    let backupActionsController = BackupActionsHostingController(viewModel: viewModel)
-                    backupActionsController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
-                    return backupActionsController
+                    let backupRestoreController = backupImportExportBuilder.build()
+                    backupRestoreController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
+                    return backupRestoreController
                 } else {
                     let alert = UIAlertController(
                         title: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.title,
@@ -461,96 +464,6 @@ extension SettingsCellDescriptorFactory {
 
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
-    }
-
-}
-
-// MARK: - Backup action handler
-
-extension SettingsCellDescriptorFactory {
-
-    private func presentErrorAlert(errorMessage: String) {
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
-            return
-        }
-
-        let alert = UIAlertController(
-            title: L10n.Localizable.General.failure,
-            message: errorMessage,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.General.ok,
-            style: .cancel
-        ))
-
-        controller.present(alert, animated: true)
-    }
-
-    private func presentExportBackupErrorAlert() {
-        presentErrorAlert(errorMessage: L10n.Localizable.ExportBackup.Failed.message)
-    }
-
-    private func presentRestoreBackupErrorAlert() {
-        presentErrorAlert(errorMessage: L10n.Localizable.RestoreBackup.Failed.message)
-    }
-
-    private func presentShareSheet(with url: URL, completion: @escaping Completion) {
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
-            return
-        }
-
-        let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        activityController.completionWithItemsHandler = { _, _, _, _ in
-            completion()
-        }
-        controller.present(activityController, animated: true)
-    }
-
-    private func presentConfirmationAlert(completion: @escaping Completion) {
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
-            return
-        }
-
-        let alert = UIAlertController(
-            title: L10n.Localizable.RestoreBackup.Confirmation.title,
-            message: L10n.Localizable.RestoreBackup.Confirmation.description,
-            preferredStyle: .alert
-        )
-
-        alert.addAction(
-            UIAlertAction(
-                title: L10n.Localizable.RestoreBackup.Confirmation.cancelButton,
-                style: .cancel
-            )
-        )
-        alert.addAction(
-            UIAlertAction(
-                title: L10n.Localizable.RestoreBackup.Confirmation.overrideButton,
-                style: .default,
-                handler: { _ in completion() }
-            )
-        )
-
-        controller.present(alert, animated: true)
-    }
-
-    private func presentOnSuccessAlert() {
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
-            return
-        }
-
-        let alert = UIAlertController(
-            title: L10n.Localizable.RestoreBackup.SuccessAlert.title,
-            message: L10n.Localizable.RestoreBackup.SuccessAlert.description,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.General.ok,
-            style: .cancel
-        ))
-
-        controller.present(alert, animated: true)
     }
 
 }

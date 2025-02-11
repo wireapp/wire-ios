@@ -928,7 +928,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         activateSession(for: account, completion: completion)
     }
 
-    func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
+    fileprivate func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
             WireLogger.sessionManager

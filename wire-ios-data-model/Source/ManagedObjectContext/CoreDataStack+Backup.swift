@@ -81,35 +81,41 @@ public extension CoreDataStack {
     }
 
     /// Will make a copy of account storage and place in a unique directory
+    ///
     /// - Parameters:
     ///   - accountIdentifier: identifier of account being backed up
-    ///   - clientIdentifier: client ID
     ///   - applicationContainer: shared application container
     ///   - dispatchGroup: group for testing
     ///   - databaseKey: EAR database key
-    /// - Returns: contains the folder where all data was written to
+    ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
     static func backupLocalStorage(
         accountIdentifier: UUID,
         clientIdentifier: String,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup,
-        databaseKey: VolatileData? = nil
-    ) throws -> BackupInfo {
+        databaseKey: VolatileData? = nil,
+        completion: @escaping (Result<BackupInfo, Error>) -> Void
+    ) {
+        func fail(_ error: BackupError) {
+            log.debug("error backing up local store: \(error)")
+            DispatchQueue.main.async(group: dispatchGroup) {
+                completion(.failure(error))
+            }
+        }
+
         let accountDirectory = Self.accountDataFolder(
             accountIdentifier: accountIdentifier,
             applicationContainer: applicationContainer
         )
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
-        guard fileManager.fileExists(atPath: accountDirectory.path) else {
-            throw BackupError.failedToRead
-        }
+        guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.failedToRead) }
 
         let backupDirectory = backupsDirectory.appendingPathComponent(UUID().uuidString)
         let databaseDirectory = backupDirectory.appendingPathComponent(databaseDirectoryName)
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
 
-        return try workQueue.sync {
+        workQueue.async(group: dispatchGroup) {
             do {
                 let model = CoreDataStack.loadMessagingModel()
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
@@ -147,9 +153,11 @@ public extension CoreDataStack {
                 try metadata.write(to: metadataURL)
                 log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
 
-                return BackupInfo(url: backupDirectory, metadata: metadata)
+                DispatchQueue.main.async(group: dispatchGroup) {
+                    completion(.success(.init(url: backupDirectory, metadata: metadata)))
+                }
             } catch {
-                throw BackupError.failedToWrite(error)
+                fail(.failedToWrite(error))
             }
         }
     }
@@ -311,9 +319,7 @@ public extension CoreDataStack {
 
         try context.performGroupedAndWait {
             if context.encryptMessagesAtRest {
-                guard let databaseKey else {
-                    throw BackupError.missingEAREncryptionKey
-                }
+                guard let databaseKey else { throw BackupError.missingEAREncryptionKey }
                 try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
                 context.encryptMessagesAtRest = false
                 _ = context.makeMetadataPersistent()
