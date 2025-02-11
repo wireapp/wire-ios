@@ -61,15 +61,51 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             throw Failure.missingLocalDomain
         }
 
-        guard
-            let rawAPIVersion = BackendInfo.apiVersion?.rawValue,
-            let apiVersion = WireAPI.APIVersion(rawValue: UInt(rawAPIVersion))
-        else {
-            throw Failure.missingAPIVersion
-        }
+        let apiService = buildAPIService()
+        let apis = try buildAPIS(apiService: apiService)
+        let stores = buildStores()
+        let syncs = buildSyncs(
+            localDomain: localDomain,
+            apis: apis,
+            stores: stores
+        )
 
+        let pullResourcesSync = buildPullResourceSync(syncs: syncs)
+
+        let featureConfigRepository = FeatureConfigRepository(
+            featureConfigsAPI: apis.featureConfigsAPI,
+            featureConfigLocalStore: stores.featureConfigsLocalStore
+        )
+
+        let pushSupportedProtocolsUseCase = PushSupportedProtocolsUseCase(
+            featureConfigRepository: featureConfigRepository,
+            pushSupportedProtocolsSync: syncs.pushSupportedProtocolsSync,
+            userClientsLocalStore: stores.userClientsLocalStore
+        )
+
+        let mlsProvider = MLSProvider(
+            service: mlsService,
+            isMLSEnabled: BackendInfo.isMLSEnabled
+        )
+
+        let oneOnOneResolver = OneOnOneResolver(
+            context: syncContext,
+            userLocalStore: stores.userLocalStore,
+            conversationLocalStore: stores.conversationsLocalStore,
+            pullMLSOneOnOneSync: syncs.pullMLSOneOnOneSync,
+            mlsProvider: mlsProvider
+        )
+
+        return InitialSync(
+            pullLastUpdateEventIDSync: syncs.pullLastUpdateEventIDSync,
+            pullResourcesSync: pullResourcesSync,
+            pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
+            oneOnOneResolver: oneOnOneResolver
+        )
+    }
+
+    private func buildAPIService() -> APIService {
         let keychain = WireFoundation.Keychain()
-
         let serverTrustValidator = ServerTrustValidator(pinnedKeys: backendEnvironment.pinnedKeys)
 
         let networkService = NetworkService(
@@ -104,20 +140,33 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             networkService: networkService
         )
 
-        let apiService = APIService(
+        return APIService(
             networkService: networkService,
             authenticationManager: authenticationManager
         )
+    }
 
-        let updateEventsAPI = UpdateEventsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        let selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        let teamsAPI = TeamsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        let userConnectionsAPI = ConnectionsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        let conversationsAPI = ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        let usersAPI = UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        let userPropertiesAPI = UserPropertiesBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        let featureConfigsAPI = FeatureConfigsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+    private func buildAPIS(apiService: APIService) throws -> APIS {
+        guard
+            let rawAPIVersion = BackendInfo.apiVersion?.rawValue,
+            let apiVersion = WireAPI.APIVersion(rawValue: UInt(rawAPIVersion))
+        else {
+            throw Failure.missingAPIVersion
+        }
 
+        return APIS(
+            updateEventsAPI: UpdateEventsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            selfUserAPI: SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            teamsAPI: TeamsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            userConnectionsAPI: ConnectionsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            userPropertiesAPI: UserPropertiesBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            featureConfigsAPI: FeatureConfigsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+        )
+    }
+
+    private func buildStores() -> Stores {
         let updateEventsLocalStore = UpdateEventsLocalStore(
             context: syncContext,
             userID: selfUserID,
@@ -149,77 +198,108 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
 
         let conversationLabelsLocalStore = ConversationLabelsLocalStore(context: syncContext)
         let featureConfigsLocalStore = FeatureConfigLocalStore(context: syncContext)
+
         let userClientsLocalStore = UserClientsLocalStore(
             context: syncContext,
             userLocalStore: userLocalStore
         )
 
-        let pullLastUpdateEventIDSync = PullLastUpdateEventIDSync(
-            selfClientID: selfClientID,
-            api: updateEventsAPI,
-            store: updateEventsLocalStore
+        return Stores(
+            updateEventsLocalStore: updateEventsLocalStore,
+            userLocalStore: userLocalStore,
+            teamLocalStore: teamLocalStore,
+            userConnectionsStore: userConnectionsStore,
+            messageLocalStore: messageLocalStore,
+            conversationsLocalStore: conversationsLocalStore,
+            conversationLabelsLocalStore: conversationLabelsLocalStore,
+            featureConfigsLocalStore: featureConfigsLocalStore,
+            userClientsLocalStore: userClientsLocalStore
         )
+    }
 
+    private func buildSyncs(
+        localDomain: String,
+        apis: APIS,
+        stores: Stores
+    ) -> Syncs {
         let pullSelfUserSync = PullSelfUserSync(
-            api: selfUserAPI,
-            store: userLocalStore
+            api: apis.selfUserAPI,
+            store: stores.userLocalStore
         )
 
         let pullSelfUserSettingsSync = PullSelfUserSettingsSync(
-            api: userPropertiesAPI,
-            store: userLocalStore
+            api: apis.userPropertiesAPI,
+            store: stores.userLocalStore
         )
 
         let pullSelfTeamSync = PullSelfTeamSync(
-            api: teamsAPI,
-            store: teamLocalStore
+            api: apis.teamsAPI,
+            store: stores.teamLocalStore
         )
 
         let pullSelfTeamRolesSync = PullSelfTeamRolesSync(
-            api: teamsAPI,
-            store: teamLocalStore
+            api: apis.teamsAPI,
+            store: stores.teamLocalStore
         )
 
         let pullSelfTeamMembersSync = PullSelfTeamMembersSync(
-            api: teamsAPI,
-            store: teamLocalStore
+            api: apis.teamsAPI,
+            store: stores.teamLocalStore
         )
 
         let pullSelfLegalholdInfoSync = PullSelfLegalholdInfoSync(
             selfUserID: selfUserID,
-            api: teamsAPI,
-            store: userLocalStore
+            api: apis.teamsAPI,
+            store: stores.userLocalStore
         )
 
         let pullUserConnectionsSync = PullUserConnectionsSync(
-            api: userConnectionsAPI,
-            store: userConnectionsStore
+            api: apis.userConnectionsAPI,
+            store: stores.userConnectionsStore
         )
 
         let pullAllConversationsSync = PullAllConversationsSync(
             localDomain: localDomain,
             isFederationEnabled: BackendInfo.isFederationEnabled,
             isMLSEnabled: BackendInfo.isMLSEnabled,
-            api: conversationsAPI,
-            store: conversationsLocalStore
+            api: apis.conversationsAPI,
+            store: stores.conversationsLocalStore
         )
 
         let pullKnownUsersSync = PullKnownUsersSync(
-            api: usersAPI,
-            store: userLocalStore
+            api: apis.usersAPI,
+            store: stores.userLocalStore
         )
 
         let pullConversationLabelsSync = PullConversationLabelsSync(
-            api: userPropertiesAPI,
-            store: conversationLabelsLocalStore
+            api: apis.userPropertiesAPI,
+            store: stores.conversationLabelsLocalStore
         )
 
         let pullAllFeatureConfigsSync = PullAllFeatureConfigsSync(
-            api: featureConfigsAPI,
-            store: featureConfigsLocalStore
+            api: apis.featureConfigsAPI,
+            store: stores.featureConfigsLocalStore
         )
 
-        let pullResourcesSync = PullResourcesSync(
+        let pushSupportedProtocolsSync = PushSupportedProtocolsSync(
+            api: apis.selfUserAPI,
+            store: stores.userLocalStore
+        )
+
+        let pullMLSOneOnOneSync = PullMLSOneOnOneSync(
+            api: apis.conversationsAPI,
+            store: stores.conversationsLocalStore,
+            isFederationEnabled: BackendInfo.isFederationEnabled,
+            isMLSEnabled: BackendInfo.isMLSEnabled
+        )
+
+        let pullLastUpdateEventIDSync = PullLastUpdateEventIDSync(
+            selfClientID: selfClientID,
+            api: apis.updateEventsAPI,
+            store: stores.updateEventsLocalStore
+        )
+
+        return Syncs(
             pullSelfUserSync: pullSelfUserSync,
             pullSelfUserSettingsSync: pullSelfUserSettingsSync,
             pullSelfTeamSync: pullSelfTeamSync,
@@ -230,51 +310,73 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             pullAllConversationsSync: pullAllConversationsSync,
             pullKnownUsersSync: pullKnownUsersSync,
             pullConversationLabelsSync: pullConversationLabelsSync,
-            pullAllFeatureConfigsSync: pullAllFeatureConfigsSync
-        )
-
-        let pushSupportedProtocolsSync = PushSupportedProtocolsSync(
-            api: selfUserAPI,
-            store: userLocalStore
-        )
-
-        let featureConfigRepository = FeatureConfigRepository(
-            featureConfigsAPI: featureConfigsAPI,
-            featureConfigLocalStore: featureConfigsLocalStore
-        )
-
-        let pushSupportedProtocolsUseCase = PushSupportedProtocolsUseCase(
-            featureConfigRepository: featureConfigRepository,
+            pullAllFeatureConfigsSync: pullAllFeatureConfigsSync,
             pushSupportedProtocolsSync: pushSupportedProtocolsSync,
-            userClientsLocalStore: userClientsLocalStore
-        )
-
-        let pullMLSOneOnOneSync = PullMLSOneOnOneSync(
-            api: conversationsAPI,
-            store: conversationsLocalStore,
-            isFederationEnabled: BackendInfo.isFederationEnabled,
-            isMLSEnabled: BackendInfo.isMLSEnabled
-        )
-
-        let mlsProvider = MLSProvider(
-            service: mlsService,
-            isMLSEnabled: BackendInfo.isMLSEnabled
-        )
-
-        let oneOnOneResolver = OneOnOneResolver(
-            context: syncContext,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationsLocalStore,
             pullMLSOneOnOneSync: pullMLSOneOnOneSync,
-            mlsProvider: mlsProvider
+            pullLastUpdateEventIDSync: pullLastUpdateEventIDSync
         )
+    }
 
-        return InitialSync(
-            pullLastUpdateEventIDSync: pullLastUpdateEventIDSync,
-            pullResourcesSync: pullResourcesSync,
-            pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
-            oneOnOneResolver: oneOnOneResolver
+    private func buildPullResourceSync(syncs: Syncs) -> PullResourcesSync {
+        PullResourcesSync(
+            pullSelfUserSync: syncs.pullSelfUserSync,
+            pullSelfUserSettingsSync: syncs.pullSelfUserSettingsSync,
+            pullSelfTeamSync: syncs.pullSelfTeamSync,
+            pullSelfTeamRolesSync: syncs.pullSelfTeamRolesSync,
+            pullSelfTeamMembersSync: syncs.pullSelfTeamMembersSync,
+            pullSelfLegalholdInfoSync: syncs.pullSelfLegalholdInfoSync,
+            pullUserConnectionsSync: syncs.pullUserConnectionsSync,
+            pullAllConversationsSync: syncs.pullAllConversationsSync,
+            pullKnownUsersSync: syncs.pullKnownUsersSync,
+            pullConversationLabelsSync: syncs.pullConversationLabelsSync,
+            pullAllFeatureConfigsSync: syncs.pullAllFeatureConfigsSync
         )
+    }
+
+    private struct APIS {
+
+        let updateEventsAPI: UpdateEventsAPI
+        let selfUserAPI: SelfUserAPI
+        let teamsAPI: TeamsAPI
+        let userConnectionsAPI: ConnectionsAPI
+        let conversationsAPI: ConversationsAPI
+        let usersAPI: UsersAPI
+        let userPropertiesAPI: UserPropertiesAPI
+        let featureConfigsAPI: FeatureConfigsAPI
+
+    }
+
+    private struct Stores {
+
+        let updateEventsLocalStore: UpdateEventsLocalStore
+        let userLocalStore: UserLocalStore
+        let teamLocalStore: TeamLocalStore
+        let userConnectionsStore: ConnectionsLocalStore
+        let messageLocalStore: MessageLocalStore
+        let conversationsLocalStore: ConversationLocalStore
+        let conversationLabelsLocalStore: ConversationLabelsLocalStore
+        let featureConfigsLocalStore: FeatureConfigLocalStore
+        let userClientsLocalStore: UserClientsLocalStore
+
+    }
+
+    private struct Syncs {
+
+        let pullSelfUserSync: PullSelfUserSync
+        let pullSelfUserSettingsSync: PullSelfUserSettingsSync
+        let pullSelfTeamSync: PullSelfTeamSync
+        let pullSelfTeamRolesSync: PullSelfTeamRolesSync
+        let pullSelfTeamMembersSync: PullSelfTeamMembersSync
+        let pullSelfLegalholdInfoSync: PullSelfLegalholdInfoSync
+        let pullUserConnectionsSync: PullUserConnectionsSync
+        let pullAllConversationsSync: PullAllConversationsSync
+        let pullKnownUsersSync: PullKnownUsersSync
+        let pullConversationLabelsSync: PullConversationLabelsSync
+        let pullAllFeatureConfigsSync: PullAllFeatureConfigsSync
+        let pushSupportedProtocolsSync: PushSupportedProtocolsSync
+        let pullMLSOneOnOneSync: PullMLSOneOnOneSync
+        let pullLastUpdateEventIDSync: PullLastUpdateEventIDSync
+
     }
 
 }
