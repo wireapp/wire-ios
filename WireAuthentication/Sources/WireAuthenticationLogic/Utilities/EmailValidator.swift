@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct EmailValidator {
-
-    private let regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/.ignoresCase()
+enum EmailValidator {
 
     /// Returns `true` if `email` is a valid email otherwise`false`.
     ///
     /// - note: Currently we don't try to support every email, only the typical cases.
 
-    func isValid(email: String) -> Bool {
+    static func isValid(email: String) -> Bool {
+        let regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/.ignoresCase()
+
         guard let match = try? regex.wholeMatch(in: email) else { return false }
         return !match.isEmpty
     }

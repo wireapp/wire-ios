@@ -24,11 +24,11 @@ package struct ValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProto
     package init() {}
 
     package func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
-        if EmailValidator().isValid(email: input) {
+        if EmailValidator.isValid(email: input) {
             return .email(input)
         }
 
-        if SSOCodeValidator().isValid(ssoCode: input) {
+        if SSOCodeValidator.isValid(ssoCode: input) {
             return .ssoCode(input)
         }
 

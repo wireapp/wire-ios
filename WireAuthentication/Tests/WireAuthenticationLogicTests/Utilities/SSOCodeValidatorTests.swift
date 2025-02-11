@@ -22,16 +22,6 @@ import XCTest
 
 final class SSOCodeValidatorTests: XCTestCase {
 
-    private var sut: SSOCodeValidator!
-
-    override func setUp() {
-        sut = SSOCodeValidator()
-    }
-
-    override func tearDown() {
-        sut = nil
-    }
-
     func testIsValid_withValidSSOCodes() {
         // given
         let testCases: [String] = [
@@ -41,7 +31,7 @@ final class SSOCodeValidatorTests: XCTestCase {
 
         for ssoCode in testCases {
             // when, then
-            XCTAssertTrue(sut.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
+            XCTAssertTrue(SSOCodeValidator.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
         }
     }
 
@@ -56,7 +46,7 @@ final class SSOCodeValidatorTests: XCTestCase {
 
         for ssoCode in testCases {
             // when, then
-            XCTAssertFalse(sut.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
+            XCTAssertFalse(SSOCodeValidator.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
         }
     }
 }

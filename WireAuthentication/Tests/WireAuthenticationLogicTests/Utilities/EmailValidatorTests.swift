@@ -22,16 +22,6 @@ import XCTest
 
 final class EmailValidatorTests: XCTestCase {
 
-    private var sut: EmailValidator!
-
-    override func setUp() {
-        sut = EmailValidator()
-    }
-
-    override func tearDown() {
-        sut = nil
-    }
-
     func testIsValid_withValidEmails() {
         // given
         let testCases: [String] = [
@@ -42,7 +32,7 @@ final class EmailValidatorTests: XCTestCase {
 
         for email in testCases {
             // when, then
-            XCTAssertTrue(sut.isValid(email: email), "Email \(email) should be valid")
+            XCTAssertTrue(EmailValidator.isValid(email: email), "Email \(email) should be valid")
         }
     }
 
@@ -60,7 +50,7 @@ final class EmailValidatorTests: XCTestCase {
 
         for email in testCases {
             // when, then
-            XCTAssertFalse(sut.isValid(email: email), "Email \(email) should be invalid")
+            XCTAssertFalse(EmailValidator.isValid(email: email), "Email \(email) should be invalid")
         }
     }
 }
