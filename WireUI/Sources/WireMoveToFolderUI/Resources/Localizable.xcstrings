@@ -10,36 +10,6 @@
             "value" : "إنشاء"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vytvořit"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -50,12 +20,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Erstellen"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Δημιουργία"
           }
         },
         "en" : {
@@ -76,18 +40,6 @@
             "value" : "Loo"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ایجاد"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -98,36 +50,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Créer"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stvori"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Létrehozás"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buat"
-          }
-        },
-        "is" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stofna"
           }
         },
         "it" : {
@@ -142,52 +64,16 @@
             "value" : "新規作成"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "만들기"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kurti"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Izveidot"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aanmaken"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opprett"
           }
         },
         "pl" : {
@@ -202,64 +88,16 @@
             "value" : "Criar"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criar"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Creează"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Создать"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "සාදන්න"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vytvoriť"
-          }
-        },
         "sl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ustvari"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Направи"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
           }
         },
         "tr" : {
@@ -272,18 +110,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Створити"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tạo"
           }
         },
         "zh-Hans" : {
@@ -309,36 +135,6 @@
             "value" : "Maximum 64 characters"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maximálně 64 znaků"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -349,12 +145,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Maximal 64 Zeichen"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
           }
         },
         "en" : {
@@ -375,18 +165,6 @@
             "value" : "Maximum 64 characters"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -397,36 +175,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "64 caractères maximum"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maximum 64 karakter"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "is" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
           }
         },
         "it" : {
@@ -441,49 +189,13 @@
             "value" : "最大64文字"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Iki 64 simbolių"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
         "nl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Maximum 64 characters"
@@ -501,61 +213,13 @@
             "value" : "Máximo: 64 caracteres"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не более 64 символов"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "උපරිම අකුරු 64 කි"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
         "sl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Maximum 64 characters"
@@ -571,18 +235,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Максимум 64 символи"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Maximum 64 characters"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tối đa 64 kí tự"
           }
         },
         "zh-Hans" : {
@@ -608,36 +260,6 @@
             "value" : "Move the conversation %@ to a new folder"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -648,12 +270,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unterhaltung %@ in einen neuen Ordner verschieben"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
           }
         },
         "en" : {
@@ -674,18 +290,6 @@
             "value" : "Move the conversation %@ to a new folder"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -693,36 +297,6 @@
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
@@ -740,49 +314,13 @@
             "value" : "Move the conversation %@ to a new folder"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
         "nl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
@@ -800,61 +338,13 @@
             "value" : "Move the conversation %@ to a new folder"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переместить беседу с %@ в новую папку."
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
         "sl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
@@ -867,18 +357,6 @@
           }
         },
         "uk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
-          }
-        },
-        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
@@ -907,36 +385,6 @@
             "value" : "Create new folder"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vytvořit novou složku"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -947,12 +395,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Neuen Ordner anlegen"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
           }
         },
         "en" : {
@@ -973,18 +415,6 @@
             "value" : "Create new folder"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ایجاد پوشه جدید"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -995,36 +425,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Créer un nouveau dossier"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Új mappa létrehozása"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "is" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
           }
         },
         "it" : {
@@ -1039,52 +439,16 @@
             "value" : "新規フォルダを作成"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sukurti naują aplanką"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
         "nl" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Create new folder"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opprett ny mappe"
           }
         },
         "pl" : {
@@ -1099,61 +463,13 @@
             "value" : "Criar nova pasta"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Создание новой папки"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
         "sl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Креирајте нову фасциклу"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa ny mapp"
-          }
-        },
-        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Create new folder"
@@ -1169,18 +485,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Створити нову теку"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create new folder"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tạo thư mục mới"
           }
         },
         "zh-Hans" : {
@@ -1206,36 +510,6 @@
             "value" : "انشئ مجلدا جديدا بالضغط على زر +"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea una carpeta prement el botó +"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vytvořit novou složku stisknutím tlačítka +"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -1246,12 +520,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Neuen Ordner durch Drücken der + Taste anlegen"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
           }
         },
         "en" : {
@@ -1272,18 +540,6 @@
             "value" : "Loo uus kaust, vajutades + nuppu"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -1294,36 +550,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Créer un nouveau dossier en cliquant sur the bouton +"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hozz létre új mappát a + gomb megnyomásával"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "is" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
           }
         },
         "it" : {
@@ -1338,49 +564,13 @@
             "value" : "＋ボタンを押して、新しいフォルダを作成します。"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Naują aplanką sukursite paspaudę + mygtuką"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
         "nl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Create a new folder by pressing the + button"
@@ -1398,61 +588,13 @@
             "value" : "Criar uma nova pasta pressionando o botão +"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Создайте новую папку кнопкой +"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
         "sl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Креирајте нову фасциклу притиском на дугме +"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa en ny mapp genom att trycka på +-knappen"
-          }
-        },
-        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Create a new folder by pressing the + button"
@@ -1468,18 +610,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Створити нову теку за допомогою кнопки +"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Create a new folder by pressing the + button"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tạo một thư mục mới bằng cách ấn phím +"
           }
         },
         "zh-Hans" : {
@@ -1505,36 +635,6 @@
             "value" : "Move To"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -1545,12 +645,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verschieben nach"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
           }
         },
         "en" : {
@@ -1571,18 +665,6 @@
             "value" : "Move To"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -1590,36 +672,6 @@
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
@@ -1637,49 +689,13 @@
             "value" : "Move To"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
         "nl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
@@ -1697,61 +713,13 @@
             "value" : "Move To"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переместить в…"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
         "sl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flytta till"
-          }
-        },
-        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
@@ -1764,18 +732,6 @@
           }
         },
         "uk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
-          }
-        },
-        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
