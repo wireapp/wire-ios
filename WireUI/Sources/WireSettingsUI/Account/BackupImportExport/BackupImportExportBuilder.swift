@@ -104,27 +104,11 @@ public struct BackupImportExportBuilder {
     @MainActor @ViewBuilder
     func buildImportBackupView() -> some View {
 
-        let viewModel = ImportBackupViewModel(
+        let importBackupViewModel = ImportBackupViewModel(
             importBackupUseCase: importBackupUseCase,
             logger: importBackupLogger
         )
-        ImportBackupView(
-            viewModel: viewModel,
-            enterPasswordView: {
-                EnterPasswordView(
-                    password: $viewModel.backupPassword,
-                    passwordIsWrong: $viewModel.isBackupPasswordWrong,
-                    continueAction: { viewModel.enterPassword($0) },
-                    cancelAction: viewModel.reset
-                )
-            },
-            importProgressView: {
-                ImportProgressView(
-                    progressValue: viewModel.importProgress,
-                    cancelAction: viewModel.reset
-                )
-            }
-        )
+        ImportBackupView(viewModel: importBackupViewModel)
 
     }
 }

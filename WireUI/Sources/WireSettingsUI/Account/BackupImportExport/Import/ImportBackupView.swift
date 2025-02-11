@@ -18,14 +18,11 @@
 
 import SwiftUI
 
-struct ImportBackupView<PasswordView: View, ProgressView: View>: View {
+struct ImportBackupView: View {
 
     @StateObject var viewModel: ImportBackupViewModel
 
     @State private var isFileImporterPresented = false
-
-    private(set) var enterPasswordView: () -> PasswordView
-    private(set) var importProgressView: () -> ProgressView
 
     private typealias BackupStrings = L10n.Localizable.Backup
     private typealias ImportBackupAlertStrings = L10n.Localizable.ImportBackup.Alert
@@ -44,27 +41,37 @@ struct ImportBackupView<PasswordView: View, ProgressView: View>: View {
                 allowedContentTypes: WireBackupUTIs,
                 onCompletion: viewModel.pickedBackupFile
             )
-            .sheet(isPresented: $viewModel.isImportProgressPresented) {
-                importProgressView()
-                    .interactiveDismissDisabled()
-                    .presentationDetents([.medium])
-                    .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
-                        enterPasswordView()
-                            .interactiveDismissDisabled()
-                            .presentationDetents([.large])
-                            .onChange(of: viewModel.backupPassword) { _ in
-                                if viewModel.isBackupPasswordWrong {
-                                    viewModel.isBackupPasswordWrong = false
-                                }
-                            }
-                    }
 
-                    .alert(viewModel.alertContent.title, isPresented: $viewModel.isImportConfirmationPresented) {
-                        Button(OverwriteConfirmationStrings.cancel, role: .cancel, action: viewModel.reset)
-                        Button(OverwriteConfirmationStrings.proceed, role: .destructive, action: viewModel.confirmOverwrite)
-                    } message: {
-                        Text(viewModel.alertContent.message)
+            .sheet(isPresented: $viewModel.isImportProgressPresented) {
+
+                ImportProgressView(
+                    progressValue: viewModel.importProgress,
+                    cancelAction: viewModel.reset
+                )
+                .interactiveDismissDisabled()
+                .presentationDetents([.medium])
+                .sheet(isPresented: $viewModel.isEnterBackupPasswordPresented) {
+                    EnterPasswordView(
+                        password: $viewModel.backupPassword,
+                        passwordIsWrong: $viewModel.isBackupPasswordWrong,
+                        continueAction: { viewModel.enterPassword($0) },
+                        cancelAction: viewModel.reset
+                    )
+                    .interactiveDismissDisabled()
+                    .presentationDetents([.large])
+                    .onChange(of: viewModel.backupPassword) { _ in
+                        if viewModel.isBackupPasswordWrong {
+                            viewModel.isBackupPasswordWrong = false
+                        }
                     }
+                }
+
+                .alert(viewModel.alertContent.title, isPresented: $viewModel.isImportConfirmationPresented) {
+                    Button(OverwriteConfirmationStrings.cancel, role: .cancel, action: viewModel.reset)
+                    Button(OverwriteConfirmationStrings.proceed, role: .destructive, action: viewModel.confirmOverwrite)
+                } message: {
+                    Text(viewModel.alertContent.message)
+                }
             }
 
             .alert(viewModel.alertContent.title, isPresented: $viewModel.isAlertPresented) {
