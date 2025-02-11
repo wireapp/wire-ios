@@ -16,31 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 import WireAuthenticationAPI
 
-package struct RootView: View {
+package struct ValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
 
-    @StateObject var viewModel: RootViewModel
+    package init() {}
 
-    let builder: any DetermineAuthMethodBuilder
-
-    package init(
-        viewModel: RootViewModel,
-        builder: any DetermineAuthMethodBuilder
-    ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.builder = builder
-    }
-
-    package var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            builder.determineAuthMethodView
+    package func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        if EmailValidator.isValid(email: input) {
+            return .email(input)
         }
+
+        if SSOCodeValidator.isValid(ssoCode: input) {
+            return .ssoCode(input)
+        }
+
+        throw ValidatedEmailOrSSOCodeFailure.invalidInput
     }
 
-}
-
-#Preview {
-    MockDependencies().rootView
 }
