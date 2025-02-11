@@ -17,12 +17,12 @@
 //
 
 import Foundation
+import UIKit
 import WireAuthenticationAPI
 import WireReusableUIComponents
-import UIKit
 
 @MainActor
-public final class LoginViaEmailViewModel: ObservableObject {
+package final class LoginViaEmailViewModel: ObservableObject {
 
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
@@ -33,7 +33,7 @@ public final class LoginViaEmailViewModel: ObservableObject {
 
     // MARK: - Life cycle
 
-    public init(
+    package init(
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         email: String,
@@ -52,10 +52,10 @@ public final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func submitPassword(_ password: String) {
-        Task {
+        Task.detached {
             do {
-                try await loginViaEmailUseCase.invoke(
-                    email: email,
+                try await self.loginViaEmailUseCase.invoke(
+                    email: self.email,
                     password: password
                 )
             } catch {

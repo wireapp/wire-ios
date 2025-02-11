@@ -20,59 +20,31 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-public protocol LoginViaEmailBuilder {
+package protocol LoginViaEmailBuilder {
 
     @MainActor
     func loginViaEmailView(email: String) -> LoginViaEmailView
 
 }
 
-public struct LoginViaEmailView: View {
+package struct LoginViaEmailView: View {
     @ObservedObject var viewModel: LoginViaEmailViewModel
 
-    @State var password: String = ""
+    @State private var password: String = ""
 
-    public init(
+    package init(
         viewModel: LoginViaEmailViewModel
     ) {
         self.viewModel = viewModel
     }
 
-    public var body: some View {
+    package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
-                LabeledTextField(
-                    placeholder: nil,
-                    title: L10n.CloudUserLogin.InputEmail.title,
-                    string: .constant(viewModel.email)
-                )
-                .disabled(true)
-
-                PasswordField(
-                    password: $password,
-                    passwordValidator: viewModel.passwordValidator,
-                    placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
-                    title: L10n.CloudUserLogin.InputPassword.title
-                )
-
-                Button(action: {
-                    viewModel.submitPassword(password)
-                }, label: {
-                    Text(L10n.CloudUserLogin.submit)
-                        .lineLimit(nil)
-                })
-                .wireButtonStyle(.primary)
-                .disabled(!viewModel.isValidPassword(password))
-
-                Button(action: {
-                   viewModel.recoverPassword()
-                }, label: {
-                    Text(L10n.CloudUserLogin.forgotPassword)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: true)
-                })
-                .wireButtonStyle(.link)
+                emailField
+                passwordField
+                submitButton
+                forgotPasswordButton
             }
             .navigationTitle(L10n.CloudUserLogin.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -87,6 +59,51 @@ public struct LoginViaEmailView: View {
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+    }
+
+    @ViewBuilder
+    private var emailField: some View {
+        LabeledTextField(
+            placeholder: nil,
+            title: L10n.CloudUserLogin.InputEmail.title,
+            string: .constant(viewModel.email)
+        )
+        .disabled(true)
+    }
+
+    @ViewBuilder
+    private var passwordField: some View {
+        PasswordField(
+            password: $password,
+            passwordValidator: viewModel.passwordValidator,
+            placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
+            title: L10n.CloudUserLogin.InputPassword.title
+        )
+    }
+
+    @ViewBuilder
+    private var submitButton: some View {
+        Button(action: {
+            viewModel.submitPassword(password)
+        }, label: {
+            Text(L10n.CloudUserLogin.submit)
+                .lineLimit(nil)
+        })
+        .wireButtonStyle(.primary)
+        .disabled(!viewModel.isValidPassword(password))
+    }
+
+    @ViewBuilder
+    private var forgotPasswordButton: some View {
+        Button(action: {
+            viewModel.recoverPassword()
+        }, label: {
+            Text(L10n.CloudUserLogin.forgotPassword)
+                .multilineTextAlignment(.center)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+        })
+        .wireButtonStyle(.link)
     }
 }
 

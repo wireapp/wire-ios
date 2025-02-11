@@ -26,8 +26,8 @@ import WireReusableUIComponents
 protocol LoginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    @MainActor var accountsURL: URL { get }
-    @MainActor var passwordValidator: any PasswordValidator { get }
+    var accountsURL: URL { get }
+    var passwordValidator: any PasswordValidator { get }
 
 }
 
