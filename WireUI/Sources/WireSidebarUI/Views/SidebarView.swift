@@ -37,6 +37,9 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
     @State private var iconSize: CGSize?
 
+    private typealias Strings = L10n.Localizable.Sidebar
+    private typealias Labels = L10n.Accessibility.Sidebar
+
     public init(
         accountInfo: SidebarAccountInfo,
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
@@ -118,7 +121,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
     @ViewBuilder private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
-            menuItemHeader(L10n.Localizable.Sidebar.ConversationFilter.title, addTopPadding: false)
+            menuItemHeader(Strings.ConversationFilter.title, addTopPadding: false)
             let conversationFilters: [SidebarSelectableMenuItem] = [
                 .all,
                 .favorites,
@@ -131,7 +134,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 selectableMenuItem(conversationFilter)
             }
 
-            menuItemHeader(L10n.Localizable.Sidebar.Contacts.title)
+            menuItemHeader(Strings.Contacts.title)
             nonselectableMenuItem(.connect)
         }
         .padding(.horizontal, 16)
@@ -160,15 +163,15 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         let action: () -> Void
         switch menuItem {
         case .connect:
-            text = Text(L10n.Localizable.Sidebar.Contacts.Connect.title)
+            text = Text(Strings.Contacts.Connect.title)
             accessibilityLabel = Text("sidebar.contacts.connect.title", bundle: .module)
             icon = "person.badge.plus"
             isLink = false
             action = connectAction
 
         case .support:
-            text = Text(L10n.Localizable.Sidebar.Support.title)
-            accessibilityLabel = Text(L10n.Accessibility.Sidebar.Support.description)
+            text = Text(Strings.Support.title)
+            accessibilityLabel = Text(Labels.Support.description)
             icon = "questionmark.circle"
             isLink = true
             action = supportAction
@@ -204,39 +207,39 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         let accessibilityLabel: Text
         switch menuItem {
         case .all:
-            text = Text(L10n.Localizable.Sidebar.ConversationFilter.All.title)
+            text = Text(Strings.ConversationFilter.All.title)
             icon = "text.bubble"
-            accessibilityLabel = Text(L10n.Localizable.Sidebar.ConversationFilter.All.title)
+            accessibilityLabel = Text(Strings.ConversationFilter.All.title)
 
         case .favorites:
-            text = Text(L10n.Localizable.Sidebar.ConversationFilter.Favorites.title)
+            text = Text(Strings.ConversationFilter.Favorites.title)
             icon = "star"
-            accessibilityLabel = Text(L10n.Localizable.Sidebar.ConversationFilter.Favorites.title)
+            accessibilityLabel = Text(Strings.ConversationFilter.Favorites.title)
 
         case .groups:
-            text = Text(L10n.Localizable.Sidebar.ConversationFilter.Groups.title)
+            text = Text(Strings.ConversationFilter.Groups.title)
             icon = "person.3"
-            accessibilityLabel = Text(L10n.Localizable.Sidebar.ConversationFilter.Groups.title)
+            accessibilityLabel = Text(Strings.ConversationFilter.Groups.title)
 
         case .oneOnOne:
-            text = Text(L10n.Localizable.Sidebar.ConversationFilter.OneOnOneConversations.title)
+            text = Text(Strings.ConversationFilter.OneOnOneConversations.title)
             icon = "person"
-            accessibilityLabel = Text(L10n.Accessibility.Sidebar.ConversationFilter.OneOnOneConversations.description)
+            accessibilityLabel = Text(Labels.ConversationFilter.OneOnOneConversations.description)
 
         case .folders:
-            text = Text(L10n.Localizable.Sidebar.ConversationFilter.Folders.title)
+            text = Text(Strings.ConversationFilter.Folders.title)
             icon = "folder"
-            accessibilityLabel = Text(L10n.Localizable.Sidebar.ConversationFilter.Folders.title)
+            accessibilityLabel = Text(Strings.ConversationFilter.Folders.title)
 
         case .archive:
-            text = Text(L10n.Localizable.Sidebar.ConversationFilter.Archived.title)
+            text = Text(Strings.ConversationFilter.Archived.title)
             icon = "archivebox"
-            accessibilityLabel = Text(L10n.Localizable.Sidebar.ConversationFilter.Archived.title)
+            accessibilityLabel = Text(Strings.ConversationFilter.Archived.title)
 
         case .settings:
-            text = Text(L10n.Localizable.Sidebar.Settings.title)
+            text = Text(Strings.Settings.title)
             icon = "gearshape"
-            accessibilityLabel = Text(L10n.Accessibility.Sidebar.Settings.description)
+            accessibilityLabel = Text(Labels.Settings.description)
         }
 
         return SidebarMenuItemView(
