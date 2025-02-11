@@ -28,28 +28,32 @@ public struct PasswordField: View {
     // But we also want their height to change with dynamic font sizes. Hence @ScaledMetric.
     @ScaledMetric private var fieldHeight: CGFloat = 48
 
-    @State public private(set) var arePasswordRulesVisible: Bool
-    @State public fileprivate(set) var isPasswordVisible: Bool
-    @Binding public fileprivate(set) var password: String
+    @State private var isPasswordVisible = false
+    @Binding private var password: String
+    @Binding private var arePasswordRulesVisible: Bool
 
-    private let passwordValidator: any PasswordValidator
+    private let passwordRules: String?
     private let placeholder: String
     private let title: String
+    private let titleColor: Color
+    private let borderColor: Color
 
     public init(
-        arePasswordRulesVisible: Bool = false,
-        isPasswordVisible: Bool = false,
         password: Binding<String>,
-        passwordValidator: any PasswordValidator,
+        passwordRules: String?,
+        arePasswordRulesVisible: Binding<Bool>,
         placeholder: String,
-        title: String
+        title: String,
+        titleColor: Color,
+        borderColor: Color
     ) {
-        self.arePasswordRulesVisible = arePasswordRulesVisible
-        self.isPasswordVisible = isPasswordVisible
         self._password = password
-        self.passwordValidator = passwordValidator
+        self.passwordRules = passwordRules
+        self._arePasswordRulesVisible = arePasswordRulesVisible
         self.placeholder = placeholder
         self.title = title
+        self.titleColor = titleColor
+        self.borderColor = borderColor
     }
 
     public var body: some View {
@@ -89,8 +93,7 @@ public struct PasswordField: View {
                     )
             )
 
-            if let passwordRules = passwordValidator.localizedRulesDescription,
-               arePasswordRulesVisible {
+            if let passwordRules, arePasswordRulesVisible {
                 Text(passwordRules)
                     .font(.caption)
                     .foregroundColor(titleColor)
@@ -100,28 +103,6 @@ public struct PasswordField: View {
 
     // MARK: - Helper
 
-    private var titleColor: Color {
-        switch (password.isEmpty, passwordValidator.validate(password)) {
-        case (_, false):
-            ColorTheme.Base.error.color
-        case (true, _):
-            ColorTheme.Base.labelTitle.color
-        case (false, true):
-            ColorTheme.Base.primary.color
-        }
-    }
-
-    private var borderColor: Color {
-        switch (password.isEmpty, passwordValidator.validate(password)) {
-        case (_, false):
-            ColorTheme.Base.error.color
-        case (true, _):
-            ColorTheme.Strokes.outline.color
-        case (false, true):
-            ColorTheme.Base.primary.color
-        }
-    }
-
     private var iconColor: Color {
         password.isEmpty ? ColorTheme.Strokes.disabledOutline.color : ColorTheme.Buttons.Secondary.onEnabled.color
     }
@@ -130,66 +111,28 @@ public struct PasswordField: View {
 
 // MARK: - Previews
 
-package struct MockPasswordValidator: PasswordValidator {
-    let validationCallback: @Sendable (String) -> Bool
-
-    package init(validationCallback: @Sendable @escaping (String) -> Bool) {
-        self.validationCallback = validationCallback
-    }
-
-    package func validate(_ password: String) -> Bool {
-        validationCallback(password)
-    }
-
-    package var localizedRulesDescription: String? {
-        "Password rules"
-    }
-}
-
-@available(iOS 17, *)
-#Preview("Invalid Password - Hidden") {
+#Preview("Invalid Password") {
     PasswordField(
-        isPasswordVisible: false,
         password: .constant("Invalid password"),
-        passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
+        passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+        arePasswordRulesVisible: .constant(true),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
-        title: L10n.Passwordtextfield.Preview.title
+        title: L10n.Passwordtextfield.Preview.title,
+        titleColor: ColorTheme.Base.error.color,
+        borderColor: ColorTheme.Base.error.color
     )
     .padding()
 }
 
-@available(iOS 17, *)
-#Preview("Invalid Password - Visible") {
+#Preview("Valid Password") {
     PasswordField(
-        isPasswordVisible: true,
-        password: .constant("Invalid password"),
-        passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
-        placeholder: L10n.Passwordtextfield.Preview.placeholder,
-        title: L10n.Passwordtextfield.Preview.title
-    )
-    .padding()
-}
-
-@available(iOS 17, *)
-#Preview("Valid Password - Hidden") {
-    PasswordField(
-        isPasswordVisible: false,
         password: .constant("Valid password!"),
-        passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+        passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+        arePasswordRulesVisible: .constant(false),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
-        title: L10n.Passwordtextfield.Preview.title
-    )
-    .padding()
-}
-
-@available(iOS 17, *)
-#Preview("Valid Password - Visible") {
-    PasswordField(
-        isPasswordVisible: true,
-        password: .constant("Valid password!"),
-        passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-        placeholder: L10n.Passwordtextfield.Preview.placeholder,
-        title: L10n.Passwordtextfield.Preview.title
+        title: L10n.Passwordtextfield.Preview.title,
+        titleColor: ColorTheme.Base.primary.color,
+        borderColor: ColorTheme.Base.primary.color
     )
     .padding()
 }

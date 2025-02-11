@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireTestingPackage
 import XCTest
 
@@ -48,56 +49,13 @@ final class PasswordFieldSnapshotTests: XCTestCase {
     func testInvalidHidden() {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
-            isPasswordVisible: false,
             password: .constant("Invalid password"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
+            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+            arePasswordRulesVisible: .constant(true),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-        .padding(.horizontal)
-        snapshotHelper.verify(matching: view)
-    }
-
-    @MainActor
-    func testInvalidVisible() {
-        let screenBounds = UIScreen.main.bounds
-        let view = PasswordField(
-            isPasswordVisible: true,
-            password: .constant("Invalid password"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
-            placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-        .padding(.horizontal)
-        snapshotHelper.verify(matching: view)
-    }
-
-    @MainActor
-    func testValidHidden() {
-        let screenBounds = UIScreen.main.bounds
-        let view = PasswordField(
-            isPasswordVisible: false,
-            password: .constant("Valid password!"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-        .padding(.horizontal)
-        snapshotHelper.verify(matching: view)
-    }
-
-    @MainActor
-    func testValidVisible() {
-        let screenBounds = UIScreen.main.bounds
-        let view = PasswordField(
-            isPasswordVisible: true,
-            password: .constant("Valid password!"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
+            title: L10n.Passwordtextfield.Preview.title,
+            titleColor: ColorTheme.Base.error.color,
+            borderColor: ColorTheme.Base.error.color
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
         .padding(.horizontal)
@@ -109,11 +67,13 @@ final class PasswordFieldSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = PasswordField(
-            isPasswordVisible: false,
             password: .constant("Valid password!"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+            arePasswordRulesVisible: .constant(false),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
+            title: L10n.Passwordtextfield.Preview.title,
+            titleColor: ColorTheme.Base.primary.color,
+            borderColor: ColorTheme.Base.primary.color
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
         .padding(.horizontal)
@@ -130,11 +90,13 @@ final class PasswordFieldSnapshotTests: XCTestCase {
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
-            isPasswordVisible: false,
             password: .constant("Valid password!"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+            arePasswordRulesVisible: .constant(false),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
+            title: L10n.Passwordtextfield.Preview.title,
+            titleColor: ColorTheme.Base.primary.color,
+            borderColor: ColorTheme.Base.primary.color
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
         .padding(.horizontal)

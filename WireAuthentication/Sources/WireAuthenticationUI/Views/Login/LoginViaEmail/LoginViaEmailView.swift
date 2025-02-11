@@ -31,6 +31,7 @@ package struct LoginViaEmailView: View {
     @ObservedObject var viewModel: LoginViaEmailViewModel
 
     @State private var password: String = ""
+    @State private var showPasswordRules: Bool = false
 
     package init(
         viewModel: LoginViaEmailViewModel
@@ -59,6 +60,9 @@ package struct LoginViaEmailView: View {
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+        .onChange(of: password) { newPassword in
+            showPasswordRules = !viewModel.isValidPassword(newPassword)
+        }
     }
 
     @ViewBuilder private var emailField: some View {
@@ -72,10 +76,13 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var passwordField: some View {
         PasswordField(
+            passwordRules: viewModel.localizedPasswordRules,
             password: $password,
-            passwordValidator: viewModel.passwordValidator,
+            arePasswordRulesVisible: $showPasswordRules,
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
-            title: L10n.CloudUserLogin.InputPassword.title
+            title: L10n.CloudUserLogin.InputPassword.title,
+            titleColor: titleColor,
+            borderColor: borderColor
         )
     }
 
@@ -102,6 +109,31 @@ package struct LoginViaEmailView: View {
         })
         .wireButtonStyle(.link)
     }
+
+    // MARK: - Helper
+
+    private var titleColor: Color {
+        switch (password.isEmpty, viewModel.isValidPassword(password)) {
+        case (_, false):
+            ColorTheme.Base.error.color
+        case (true, _):
+            ColorTheme.Base.labelTitle.color
+        case (false, true):
+            ColorTheme.Base.primary.color
+        }
+    }
+
+    private var borderColor: Color {
+        switch (password.isEmpty, viewModel.isValidPassword(password)) {
+        case (_, false):
+            ColorTheme.Base.error.color
+        case (true, _):
+            ColorTheme.Strokes.outline.color
+        case (false, true):
+            ColorTheme.Base.primary.color
+        }
+    }
+
 }
 
 #Preview() {

@@ -27,9 +27,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let forgotPasswordURL: URL
+    private let passwordValidator: any PasswordValidator
 
     let email: String
-    let passwordValidator: any PasswordValidator
 
     // MARK: - Life cycle
 
@@ -47,8 +47,12 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.passwordValidator = passwordValidator
     }
 
+    var localizedPasswordRules: String? {
+        passwordValidator.localizedRulesDescription
+    }
+
     func isValidPassword(_ password: String) -> Bool {
-        passwordValidator.validate(password)
+        !password.isEmpty && passwordValidator.validate(password)
     }
 
     func submitPassword(_ password: String) {
