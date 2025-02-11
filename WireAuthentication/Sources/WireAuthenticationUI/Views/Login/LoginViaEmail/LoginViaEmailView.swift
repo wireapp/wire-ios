@@ -61,8 +61,7 @@ package struct LoginViaEmailView: View {
         .presentationDragIndicator(.hidden)
     }
 
-    @ViewBuilder
-    private var emailField: some View {
+    @ViewBuilder private var emailField: some View {
         LabeledTextField(
             placeholder: nil,
             title: L10n.CloudUserLogin.InputEmail.title,
@@ -71,8 +70,7 @@ package struct LoginViaEmailView: View {
         .disabled(true)
     }
 
-    @ViewBuilder
-    private var passwordField: some View {
+    @ViewBuilder private var passwordField: some View {
         PasswordField(
             password: $password,
             passwordValidator: viewModel.passwordValidator,
@@ -81,8 +79,7 @@ package struct LoginViaEmailView: View {
         )
     }
 
-    @ViewBuilder
-    private var submitButton: some View {
+    @ViewBuilder private var submitButton: some View {
         Button(action: {
             viewModel.submitPassword(password)
         }, label: {
@@ -90,11 +87,11 @@ package struct LoginViaEmailView: View {
                 .lineLimit(nil)
         })
         .wireButtonStyle(.primary)
+        .bold()
         .disabled(!viewModel.isValidPassword(password))
     }
 
-    @ViewBuilder
-    private var forgotPasswordButton: some View {
+    @ViewBuilder private var forgotPasswordButton: some View {
         Button(action: {
             viewModel.recoverPassword()
         }, label: {

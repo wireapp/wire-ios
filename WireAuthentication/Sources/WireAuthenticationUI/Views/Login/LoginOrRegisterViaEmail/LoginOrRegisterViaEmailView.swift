@@ -63,8 +63,7 @@ package struct LoginOrRegisterViaEmailView: View {
         .presentationDragIndicator(.hidden)
     }
 
-    @ViewBuilder
-    private var emailField: some View {
+    @ViewBuilder private var emailField: some View {
         LabeledTextField(
             placeholder: nil,
             title: L10n.CloudUserLogin.InputEmail.title,
@@ -73,8 +72,7 @@ package struct LoginOrRegisterViaEmailView: View {
         .disabled(true)
     }
 
-    @ViewBuilder
-    private var passwordField: some View {
+    @ViewBuilder private var passwordField: some View {
         PasswordField(
             password: $password,
             passwordValidator: viewModel.passwordValidator,
@@ -83,8 +81,7 @@ package struct LoginOrRegisterViaEmailView: View {
         )
     }
 
-    @ViewBuilder
-    private var submitButton: some View {
+    @ViewBuilder private var submitButton: some View {
         Button(action: {
             viewModel.submitPassword(password)
         }, label: {
@@ -92,11 +89,11 @@ package struct LoginOrRegisterViaEmailView: View {
                 .lineLimit(nil)
         })
         .wireButtonStyle(.primary)
+        .bold()
         .disabled(!viewModel.isValidPassword(password))
     }
 
-    @ViewBuilder
-    private var forgotPasswordButton: some View {
+    @ViewBuilder private var forgotPasswordButton: some View {
         Button(action: {
             viewModel.recoverPassword()
         }, label: {
@@ -108,8 +105,7 @@ package struct LoginOrRegisterViaEmailView: View {
         .wireButtonStyle(.link)
     }
 
-    @ViewBuilder
-    private var createAccount: some View {
+    @ViewBuilder private var createAccount: some View {
         VStack(spacing: 4) {
             Text(L10n.CreatePersonalAccount.title)
                 .multilineTextAlignment(.center)
