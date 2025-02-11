@@ -16,24 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import WireDataModel
 
-public struct BackgroundView: View {
-    public init() {}
+// sourcery: AutoMockable
+/// An object to fetch an MLS one on one conversation
+/// from remote and store it locally.
+public protocol PullMLSOneOnOneSyncProtocol {
 
-    public var body: some View {
-        GeometryReader { geometry in
-            Image(ImageResource(name: "background", bundle: .module))
-                .resizable()
-                .scaledToFill()
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-                .background(.black)
-        }
-        .ignoresSafeArea()
-    }
-}
+    /// Fetch an MLS one on one conversation from remote
+    /// and store it locally.
+    ///
+    /// - Parameters:
+    ///   - userID: The id of the other user.
+    ///   - userDomain: The domain of the other user.
+    ///
+    /// - Returns: The base-64-encoded MLS group id.
 
-#Preview {
-    BackgroundView()
+    func pull(
+        userID: UUID,
+        userDomain: String
+    ) async throws -> MLSGroupID
+
 }

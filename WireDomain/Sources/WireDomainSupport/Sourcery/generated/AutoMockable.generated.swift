@@ -1681,6 +1681,38 @@ public class MockPullLastUpdateEventIDSyncProtocol: PullLastUpdateEventIDSyncPro
 
 }
 
+public class MockPullMLSOneOnOneSyncProtocol: PullMLSOneOnOneSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pullUserIDUserDomain_Invocations: [(userID: UUID, userDomain: String)] = []
+    public var pullUserIDUserDomain_MockError: Error?
+    public var pullUserIDUserDomain_MockMethod: ((UUID, String) async throws -> MLSGroupID)?
+    public var pullUserIDUserDomain_MockValue: MLSGroupID?
+
+    public func pull(userID: UUID, userDomain: String) async throws -> MLSGroupID {
+        pullUserIDUserDomain_Invocations.append((userID: userID, userDomain: userDomain))
+
+        if let error = pullUserIDUserDomain_MockError {
+            throw error
+        }
+
+        if let mock = pullUserIDUserDomain_MockMethod {
+            return try await mock(userID, userDomain)
+        } else if let mock = pullUserIDUserDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `pullUserIDUserDomain`")
+        }
+    }
+
+}
+
 public class MockPullResourcesSyncProtocol: PullResourcesSyncProtocol {
 
     // MARK: - Life cycle

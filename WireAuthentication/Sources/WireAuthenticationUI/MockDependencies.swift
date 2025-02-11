@@ -33,12 +33,31 @@ final class MockDependencies {
         )
     }
 
+    func makeDetermineAuthMethodView(
+        emailOrSSOCode: String,
+        isLoading: Bool,
+        errorMessage: String?
+    ) -> DetermineAuthMethodView {
+        DetermineAuthMethodView(
+            viewModel: DetermineAuthMethodViewModel(
+                router: rootViewModel,
+                determineAuthMethod: self,
+                emailOrSSOCode: emailOrSSOCode,
+                isLoading: isLoading,
+                errorMessage: errorMessage
+            ),
+            builder: self
+        )
+    }
+
 }
 
 extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
 
-    func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .login(email: emailOrSSOCode)
+    func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod {
+        try await Task.sleep(for: .seconds(3))
+
+        return .loginViaEmail(email: emailOrSSOCode)
     }
 
 }

@@ -16,24 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-public struct BackgroundView: View {
-    public init() {}
+/// Errors originating from `PullMLSOneOnOneSync`.
 
-    public var body: some View {
-        GeometryReader { geometry in
-            Image(ImageResource(name: "background", bundle: .module))
-                .resizable()
-                .scaledToFill()
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-                .background(.black)
-        }
-        .ignoresSafeArea()
-    }
-}
+public enum PullMLSOneOnOneSyncError: Error {
 
-#Preview {
-    BackgroundView()
+    /// The conversation fetched from the backend is missing
+    /// an MLS group id.
+
+    case mlsConversationMissingGroupID
+
 }
