@@ -196,7 +196,8 @@ struct ZMUserSessionBuilder {
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            syncStatus: applicationStatusDirectory.syncStatus, // TODO: need to pass in a closue or something here.
+            // TODO: [WPB-15440] when integrating new quick sync, we'll need to pass the sync agent here.
+            syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
         let initialSyncBuilder = InitialSyncBuilder(
