@@ -116,7 +116,7 @@ struct AuthenticationProxyCredentialsInput {
 extension AuthenticationCoordinatorAction {
 
     static var presentCustomBackendAlert: Self {
-        typealias Alert = L10n.Localizable.Landing.CustomBackend.Alert
+        typealias Alert = L10n.Localizable.Landing.CustomBackend.Alert//
 
         let env = BackendEnvironment.shared
         let info = [
