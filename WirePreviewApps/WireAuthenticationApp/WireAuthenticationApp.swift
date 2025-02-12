@@ -22,7 +22,7 @@ import SwiftUI
 struct WireAuthenticationApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(authenticationAPI: makeAuthenticationAPI())
         }
     }
 }

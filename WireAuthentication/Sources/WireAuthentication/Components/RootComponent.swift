@@ -19,14 +19,21 @@
 import NeedleFoundation
 import SwiftUI
 import WireReusableUIComponents
+import WireAPI
 internal import WireAuthenticationUI
 
 class RootComponent: BootstrapComponent {
 
+    public let authenticationAPI: AuthenticationAPI
     public let accountsURL: URL
     public let passwordValidator: any PasswordValidator
 
-    init(accountsURL: URL, passwordValidator: any PasswordValidator) {
+    init(
+        authenticationAPI: AuthenticationAPI,
+        accountsURL: URL,
+        passwordValidator: any PasswordValidator
+    ) {
+        self.authenticationAPI = authenticationAPI
         self.accountsURL = accountsURL
         self.passwordValidator = passwordValidator
     }
