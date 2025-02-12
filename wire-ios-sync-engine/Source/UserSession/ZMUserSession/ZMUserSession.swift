@@ -489,7 +489,6 @@ public final class ZMUserSession: NSObject {
             syncManagedObjectContext.mlsService = mlsService
 
             applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
-            applicationStatusDirectory.syncStatus.determineInitialSyncPhase()
             applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             hasCompletedInitialSync = syncAgent.hasPerformedInitialSync
