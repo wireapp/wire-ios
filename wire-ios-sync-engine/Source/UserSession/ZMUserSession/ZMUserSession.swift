@@ -995,14 +995,17 @@ extension ZMUserSession: SyncAgentDelegate {
             ).post()
         }
 
-        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
+        syncContext.perform { [weak self] in
+            guard let self else { return }
+            let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
 
-        if selfClient?.hasRegisteredMLSClient == true {
-            Task {
-                do {
-                    try await mlsService.repairOutOfSyncConversations()
-                } catch {
-                    WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
+            if selfClient?.hasRegisteredMLSClient == true {
+                Task {
+                    do {
+                        try await self.mlsService.repairOutOfSyncConversations()
+                    } catch {
+                        WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
+                    }
                 }
             }
         }
@@ -1017,44 +1020,47 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func didFinishIncrementalSync() {
-        WireLogger.sync.debug("did finish incremental sync")
-        processEvents()
+        syncContext.perform { [weak self] in
+            guard let self else { return }
+            WireLogger.sync.debug("did finish incremental sync")
+            processEvents()
 
-        NotificationInContext(
-            name: .quickSyncCompletedNotification,
-            context: notificationContext
-        ).post()
+            NotificationInContext(
+                name: .quickSyncCompletedNotification,
+                context: notificationContext
+            ).post()
 
-        WaitingGroupTask(context: syncContext) { [self] in
-            await fetchBackendMLSPublicKeys()
-            await fetchAndStoreFeatureConfig()
+            WaitingGroupTask(context: syncContext) { [self] in
+                await self.fetchBackendMLSPublicKeys()
+                await self.fetchAndStoreFeatureConfig()
 
-            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
-                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
-                let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
-                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
+                let (qualifiedSelfClientID, hasRegisteredMLSClient) = await self.syncContext.perform {
+                    let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+                    let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
+                    return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
+                }
+
+                if let qualifiedSelfClientID {
+                    await self.mlsClientManager.initializeMLSClientIfNeeded(
+                        for: qualifiedSelfClientID,
+                        hasRegisteredMLSClient: hasRegisteredMLSClient,
+                        mlsFeature: self.mlsFeature
+                    )
+                } else {
+                    WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
+                }
+
+                if self.mlsFeature.isEnabled {
+                    self.mlsService.commitPendingProposalsIfNeeded()
+                }
+
+                await self.calculateSelfSupportedProtocolsIfNeeded()
+                await self.resolveOneOnOneConversationsIfNeeded()
             }
 
-            if let qualifiedSelfClientID {
-                await mlsClientManager.initializeMLSClientIfNeeded(
-                    for: qualifiedSelfClientID,
-                    hasRegisteredMLSClient: hasRegisteredMLSClient,
-                    mlsFeature: mlsFeature
-                )
-            } else {
-                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
-            }
-
-            if mlsFeature.isEnabled {
-                mlsService.commitPendingProposalsIfNeeded()
-            }
-
-            await calculateSelfSupportedProtocolsIfNeeded()
-            await resolveOneOnOneConversationsIfNeeded()
+            recurringActionService.performActionsIfNeeded()
+            performPostQuickSyncE2EIActions()
         }
-
-        recurringActionService.performActionsIfNeeded()
-        performPostQuickSyncE2EIActions()
     }
 
     /// Calculate supported protocols for self user in case they are empty
