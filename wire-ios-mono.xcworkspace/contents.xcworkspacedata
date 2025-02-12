@@ -171,7 +171,13 @@
       location = "group:wire-ios-data-model/WireDataModel.xcodeproj">
    </FileRef>
    <FileRef
+      location = "container:WireDebug">
+   </FileRef>
+   <FileRef
       location = "group:wire-ios-mocktransport/WireMockTransport.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-protos/WireProtos.xcodeproj">
@@ -205,6 +211,9 @@
    </FileRef>
    <FileRef
       location = "group:WireAuthentication">
+   </FileRef>
+   <FileRef
+      location = "group:WireCells">
    </FileRef>
    <FileRef
       location = "group:WireFoundation">

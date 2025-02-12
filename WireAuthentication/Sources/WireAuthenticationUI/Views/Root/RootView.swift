@@ -19,21 +19,21 @@
 import SwiftUI
 import WireAuthenticationAPI
 
-public struct RootView: View {
+package struct RootView: View {
 
-    @ObservedObject var viewModel: RootViewModel
+    @StateObject var viewModel: RootViewModel
 
     let builder: any DetermineAuthMethodBuilder
 
-    public init(
+    package init(
         viewModel: RootViewModel,
         builder: any DetermineAuthMethodBuilder
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.builder = builder
     }
 
-    public var body: some View {
+    package var body: some View {
         NavigationStack(path: $viewModel.path) {
             builder.determineAuthMethodView
         }

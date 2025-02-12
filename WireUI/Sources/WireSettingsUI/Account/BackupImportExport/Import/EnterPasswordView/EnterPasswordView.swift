@@ -81,12 +81,12 @@ struct EnterPasswordView: View {
             Text(Strings.EnterPassword.TextField.title)
                 .foregroundStyle(passwordFieldTitleColor)
                 .font(.subheadline)
-                .foregroundStyle(BaseColorPalette.Grays.gray80.color)
                 .padding(.bottom, 2)
 
             ToggleablePasswordField(
                 password: $password,
-                titleColor: passwordFieldTitleColor,
+                placeholder: Strings.EnterPassword.TextField.placeholder,
+                placeholderColor: passwordFieldPlaceholderColor,
                 borderColor: passwordFieldBorderColor,
                 focusOnAppear: true
             )
@@ -96,7 +96,6 @@ struct EnterPasswordView: View {
                 Text(Strings.EnterPassword.wrongPassword)
                     .foregroundStyle(passwordFieldTitleColor)
                     .font(.caption)
-                    .foregroundStyle(BaseColorPalette.Grays.gray80.color)
             }
 
             Spacer()
@@ -108,7 +107,23 @@ struct EnterPasswordView: View {
         if passwordIsWrong {
             ColorTheme.Base.error.color
         } else if password.isEmpty {
-            BaseColorPalette.Grays.gray70.color
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray80
+                : BaseColorPalette.Grays.gray40
+            }.color
+        } else {
+            ColorTheme.Base.primary.color
+        }
+    }
+
+    private var passwordFieldPlaceholderColor: Color {
+        if passwordIsWrong {
+            ColorTheme.Base.error.color
+        } else if password.isEmpty {
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray70
+                : BaseColorPalette.Grays.gray60
+            }.color
         } else {
             ColorTheme.Base.primary.color
         }
@@ -118,11 +133,26 @@ struct EnterPasswordView: View {
         if passwordIsWrong {
             ColorTheme.Base.error.color
         } else if password.isEmpty {
-            BaseColorPalette.Grays.gray40.color // TODO: [WPB-15211] support dark mode
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray40
+                : BaseColorPalette.Grays.gray80
+            }.color
         } else {
             ColorTheme.Base.primary.color
         }
     }
+
+    private var passwordFooterColor: Color {
+        if passwordIsWrong {
+            ColorTheme.Base.error.color
+        } else {
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray70
+                : BaseColorPalette.Grays.gray40
+            }.color
+        }
+    }
+
 }
 
 #Preview("empty") {

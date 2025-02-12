@@ -19,11 +19,12 @@
 import SwiftUI
 import WireDesign
 
+// TODO: [WPB-15571] Add accessibility strings to the mask / unmask buttons
 struct ToggleablePasswordField: View {
 
     @Binding var password: String
-
-    var titleColor: Color
+    var placeholder: String
+    var placeholderColor: Color
     var borderColor: Color
     var focusOnAppear = true
 
@@ -31,25 +32,25 @@ struct ToggleablePasswordField: View {
 
     @FocusState private var isFocused: Bool
 
-    private typealias Strings = L10n.Localizable.ImportBackup
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         HStack {
 
             if isPasswordVisible {
                 TextField(text: $password) {
-                    Text(Strings.EnterPassword.TextField.placeholder)
+                    Text(placeholder)
                         .font(.body)
-                        .foregroundStyle(titleColor)
+                        .foregroundStyle(placeholderColor)
                 }
                 .focused($isFocused)
                 .textContentType(.password)
                 .autocapitalization(.none)
             } else {
                 SecureField(text: $password) {
-                    Text(Strings.EnterPassword.TextField.placeholder)
+                    Text(placeholder)
                         .font(.body)
-                        .foregroundStyle(titleColor)
+                        .foregroundStyle(placeholderColor)
                 }
                 .focused($isFocused)
                 .textContentType(.password)
@@ -59,12 +60,12 @@ struct ToggleablePasswordField: View {
                 isPasswordVisible.toggle()
             } label: {
                 Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
-                    .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
+                    .foregroundColor(toggleVisibilityButtonColor)
             }
 
         }
         .padding()
-        .background(ColorTheme.Backgrounds.surface.color)
+        .background(textFieldBackground)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
@@ -76,12 +77,29 @@ struct ToggleablePasswordField: View {
             }
         }
     }
+
+    private var textFieldBackground: Color {
+        if colorScheme != .dark {
+            BaseColorPalette.Neutrals.white.color
+        } else {
+            ColorTheme.Backgrounds.background.color
+        }
+    }
+
+    private var toggleVisibilityButtonColor: Color {
+        UIColor { $0.userInterfaceStyle != .dark
+            ? BaseColorPalette.Neutrals.black
+            : BaseColorPalette.Grays.gray70
+        }.color
+    }
+
 }
 
 #Preview {
     ToggleablePasswordField(
         password: .constant(""),
-        titleColor: BaseColorPalette.Neutrals.black.color,
+        placeholder: "Placeholder Text",
+        placeholderColor: BaseColorPalette.Neutrals.black.color,
         borderColor: BaseColorPalette.Neutrals.black.color
     )
     .padding()

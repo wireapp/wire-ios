@@ -35,7 +35,7 @@ struct SetBackupPasswordView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button(Strings.ExportBackup.Cancel.title) { viewModel.cancel() }
+                        Button(Strings.ExportBackup.Cancel.title, action: viewModel.cancel)
                             .foregroundStyle(ColorTheme.Base.primary.color)
                             .accessibilityLabel(Labels.Close.label)
                             .accessibilityIdentifier("cancel")
@@ -46,28 +46,12 @@ struct SetBackupPasswordView: View {
 
     @ViewBuilder private var setBackupPasswordView: some View {
         VStack {
-            let scrollView = ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text(Strings.ExportBackup.description)
-                        .font(.body)
-                        .foregroundStyle(Color.primaryText)
-                        .multilineTextAlignment(.leading)
-                        .padding(.horizontal)
 
-                    PasswordFieldView(
-                        passwordRules: Text(viewModel.localizedPasswordRules),
-                        password: $viewModel.password,
-                        isPasswordVisible: false,
-                        isPasswordValid: viewModel.isPasswordValid
-                    )
-                    .padding(.horizontal)
-                }
-            }
             if #available(iOS 16.4, *) {
-                scrollView
+                ScrollView(content: scrollViewContent)
                     .scrollBounceBehavior(.basedOnSize)
             } else {
-                scrollView
+                ScrollView(content: scrollViewContent)
             }
 
             Spacer()
@@ -77,6 +61,90 @@ struct SetBackupPasswordView: View {
                 .disabled(!viewModel.isPasswordValid)
                 .wireButtonStyle(.primary)
                 .padding()
+        }
+    }
+
+    @ViewBuilder
+    private func scrollViewContent() -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Spacer()
+
+            Text(Strings.ExportBackup.description)
+                .font(.body)
+                .padding(.bottom, 28)
+
+            Text(Strings.ExportBackup.SetBackupPassword.title)
+                .foregroundStyle(passwordFieldTitleColor)
+                .font(.subheadline)
+                .padding(.bottom, 2)
+
+            ToggleablePasswordField(
+                password: $viewModel.password,
+                placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
+                placeholderColor: passwordFieldPlaceholderColor,
+                borderColor: passwordFieldBorderColor,
+                focusOnAppear: true
+            )
+            .padding(.bottom, 8)
+
+            Text(viewModel.localizedPasswordRules)
+                .foregroundStyle(passwordFooterColor)
+                .font(.caption)
+
+            Spacer()
+        }
+        .padding()
+    }
+
+    // TODO: [WPB-16061] the following code is almost identical to the one in EnterPasswordView.swift, try to reuse
+
+    private var passwordFieldTitleColor: Color {
+        if !viewModel.isPasswordValid {
+            ColorTheme.Base.error.color
+        } else if viewModel.password.isEmpty {
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray80
+                : BaseColorPalette.Grays.gray40
+            }.color
+        } else {
+            ColorTheme.Base.primary.color
+        }
+    }
+
+    private var passwordFieldPlaceholderColor: Color {
+        if !viewModel.isPasswordValid {
+            ColorTheme.Base.error.color
+        } else if viewModel.password.isEmpty {
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray70
+                : BaseColorPalette.Grays.gray60
+            }.color
+        } else {
+            ColorTheme.Base.primary.color
+        }
+    }
+
+    private var passwordFieldBorderColor: Color {
+        if !viewModel.isPasswordValid {
+            ColorTheme.Base.error.color
+        } else if viewModel.password.isEmpty {
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray40
+                : BaseColorPalette.Grays.gray80
+            }.color
+        } else {
+            ColorTheme.Base.primary.color
+        }
+    }
+
+    private var passwordFooterColor: Color {
+        if !viewModel.isPasswordValid {
+            ColorTheme.Base.error.color
+        } else {
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray70
+                : BaseColorPalette.Grays.gray40
+            }.color
         }
     }
 

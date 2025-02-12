@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 @MainActor
 final class ExportBackupViewModel: ObservableObject {
@@ -38,12 +39,12 @@ final class ExportBackupViewModel: ObservableObject {
 
     private var backupTask: Task<Void, Never>?
 
-    private let logger: any WireSettingsUILogger
+    private let logger: any LoggerProtocol
 
     init(
         createBackupUseCase: any CreateBackupUseCaseProtocol,
         cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
-        logger: any WireSettingsUILogger
+        logger: any LoggerProtocol
     ) {
         self.createBackupUseCase = createBackupUseCase
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase

@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireSettingsUI
 import WireSyncEngine
 
@@ -60,9 +61,7 @@ extension SettingsCellDescriptorFactory {
             sections.append(personalInformationSection(isPublicDomain: isPublicDomain))
         #endif
 
-        if SecurityFlags.backup.isEnabled {
-            sections.append(conversationsSection())
-        }
+        sections.append(conversationsSection())
 
         if let user = ZMUser.selfUser(), !user.usesCompanyLogin {
             sections.append(actionsSection())
@@ -379,7 +378,9 @@ extension SettingsCellDescriptorFactory {
             backupPasswordValidator: BackupPasswordValidator(),
             createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
             importBackupUseCase: importBackupUseCase,
-            cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager)
+            cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
+            exportBackupLogger: WireLogger.backupExport,
+            importBackupLogger: WireLogger.backupImport
         )
     }
 

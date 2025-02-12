@@ -3802,7 +3802,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		590336872D4BB28F00BB2139 /* WPB-15347-Workaround */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "WPB-15347-Workaround"; sourceTree = "<group>"; };
 		595C04172CDE85E800DF6C57 /* MainController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MainController; sourceTree = "<group>"; };
 		597FD9192D0C55810023B520 /* AnalyticsTrackingManager */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AnalyticsTrackingManager; sourceTree = "<group>"; };
 		597FD93A2D0C5AAE0023B520 /* SelfProfile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SelfProfile; sourceTree = "<group>"; };
@@ -6170,7 +6169,6 @@
 		8FC850D8199245760008B66B /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				590336872D4BB28F00BB2139 /* WPB-15347-Workaround */,
 				EE5F54CF259B777B00F11F3C /* Viper */,
 				5EC16B6520EB782900955156 /* Vendor */,
 				871BC3181D34F94200DF0793 /* Components */,
@@ -8384,7 +8382,6 @@
 				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				590336872D4BB28F00BB2139 /* WPB-15347-Workaround */,
 				597FD9192D0C55810023B520 /* AnalyticsTrackingManager */,
 				597FD93A2D0C5AAE0023B520 /* SelfProfile */,
 				59C4D4202D119FC300F3047B /* Analytics */,

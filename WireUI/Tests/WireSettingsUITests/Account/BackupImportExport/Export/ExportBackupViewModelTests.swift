@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
 import WireTestingPackage
 import XCTest
 
@@ -27,7 +28,7 @@ final class ExportBackupViewModelTests: XCTestCase {
 
     private var mockCreateBackupUseCase: MockCreateBackupUseCaseProtocol!
     private var mockCleanUpBackupsUseCase: MockCleanUpBackupsUseCaseProtocol!
-    private var mockLogger: MockWireSettingsUILogger!
+    private var mockLogger: (any LoggerProtocol)!
     private var sut: ExportBackupViewModel!
 
     override func setUp() async throws {
@@ -36,8 +37,7 @@ final class ExportBackupViewModelTests: XCTestCase {
         mockCleanUpBackupsUseCase = .init()
         mockCleanUpBackupsUseCase.invoke_MockMethod = {}
 
-        mockLogger = .init()
-        mockLogger.error_MockMethod = { _ in }
+        mockLogger = WireLogger(tag: "mock")
 
         sut = .init(
             createBackupUseCase: mockCreateBackupUseCase,

@@ -54,12 +54,11 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         _ password: String
     ) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            Task<Void, Never> { @MainActor in
+            let task = Task<Void, Never> { @MainActor in
                 do {
 
                     // to start with we need an active user session, later the session will be torn down
-                    weak var userSession = userSession()
-                    guard let account = userSession?.contextProvider.account else {
+                    guard let account = userSession()?.contextProvider.account else {
                         throw ImportBackupError.noActiveAccountForImport
                     }
 
@@ -74,12 +73,14 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
                     continuation.yield(.progress(0.5))
 
+                    logger.debug("creating backup of user client")
+
                     // backup the self user and the self client
                     let selfUserQualifiedID: QualifiedID?
                     let selfClientBackup: [String: Any]
                     // we want to avoid keeping a strong reference to the user
                     // session, the managed object context and the user client
-                    if let userSession,
+                    if let userSession = userSession(),
                        let (qualifiedID, backup) = await userSession.contextProvider.viewContext.perform({
                            userSession.selfUserClient.map { ($0.user?.qualifiedID, $0.backup()) } }) {
                         selfUserQualifiedID = qualifiedID
@@ -88,8 +89,12 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         throw ImportBackupError.faildToBackUpUserClient
                     }
 
+                    logger.debug("reporting migration required")
+
                     // user session needs to be torn down
                     await appStateUpdater.reportMigrationNeeded()
+
+                    logger.debug("replacing persistent store")
 
                     // the imported file replaces the existing persistent store
                     try await entityStorage.replacePersistentStore(
@@ -99,6 +104,8 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         dispatchGroup: dispatchGroup
                     )
 
+                    logger.debug("opening a temporary context")
+
                     // import the self client from the backup and set the correct self user relation
                     // TODO: [WPB-15714] causes warning: we should try to initialize the model only once
                     let temporaryStack = try await entityStorage
@@ -107,6 +114,9 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                             applicationContainer: sharedContainerURL,
                             dispatchGroup: dispatchGroup
                         )
+
+                    logger.debug("restoring backup of userclient")
+
                     try await temporaryStack.viewContext.perform {
                         let context = temporaryStack.viewContext
                         let userID = selfUserQualifiedID?.uuid
@@ -123,7 +133,11 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         try context.save()
                     }
 
+                    logger.debug("select account and start the main UI again")
+
                     await appStateUpdater.selectAccountAndTriggerSlowSync(account)
+
+                    logger.debug("done")
 
                     continuation.yield(.done)
                     continuation.finish()
@@ -131,6 +145,9 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                 } catch {
                     continuation.finish(throwing: error)
                 }
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
             }
         }
     }

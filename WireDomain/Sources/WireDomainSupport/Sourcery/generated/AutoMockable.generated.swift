@@ -51,27 +51,28 @@ import WireDomainPkg
 
 
 
-class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
+public class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
     // MARK: - isMLSEnabled
 
-    var isMLSEnabled: Bool {
+    public var isMLSEnabled: Bool {
         get { return underlyingIsMLSEnabled }
         set(value) { underlyingIsMLSEnabled = value }
     }
 
-    var underlyingIsMLSEnabled: Bool!
+    public var underlyingIsMLSEnabled: Bool!
 
 
     // MARK: - storeIsMLSEnabledStatus
 
-    var storeIsMLSEnabledStatusNewValue_Invocations: [Bool] = []
-    var storeIsMLSEnabledStatusNewValue_MockMethod: ((Bool) -> Void)?
+    public var storeIsMLSEnabledStatusNewValue_Invocations: [Bool] = []
+    public var storeIsMLSEnabledStatusNewValue_MockMethod: ((Bool) -> Void)?
 
-    func storeIsMLSEnabledStatus(newValue: Bool) {
+    public func storeIsMLSEnabledStatus(newValue: Bool) {
         storeIsMLSEnabledStatusNewValue_Invocations.append(newValue)
 
         guard let mock = storeIsMLSEnabledStatusNewValue_MockMethod else {
@@ -1567,6 +1568,34 @@ class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
 
 }
 
+class MockPullAllConversationsSyncProtocol: PullAllConversationsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
 class MockPullAllFeatureConfigsSyncProtocol: PullAllFeatureConfigsSyncProtocol {
 
     // MARK: - Life cycle
@@ -1591,6 +1620,293 @@ class MockPullAllFeatureConfigsSyncProtocol: PullAllFeatureConfigsSyncProtocol {
         }
 
         try await mock()
+    }
+
+}
+
+class MockPullConversationLabelsSyncProtocol: PullConversationLabelsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullKnownUsersSyncProtocol: PullKnownUsersSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+public class MockPullLastUpdateEventIDSyncProtocol: PullLastUpdateEventIDSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
+
+    public func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+public class MockPullMLSOneOnOneSyncProtocol: PullMLSOneOnOneSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pullUserIDUserDomain_Invocations: [(userID: UUID, userDomain: String)] = []
+    public var pullUserIDUserDomain_MockError: Error?
+    public var pullUserIDUserDomain_MockMethod: ((UUID, String) async throws -> MLSGroupID)?
+    public var pullUserIDUserDomain_MockValue: MLSGroupID?
+
+    public func pull(userID: UUID, userDomain: String) async throws -> MLSGroupID {
+        pullUserIDUserDomain_Invocations.append((userID: userID, userDomain: userDomain))
+
+        if let error = pullUserIDUserDomain_MockError {
+            throw error
+        }
+
+        if let mock = pullUserIDUserDomain_MockMethod {
+            return try await mock(userID, userDomain)
+        } else if let mock = pullUserIDUserDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `pullUserIDUserDomain`")
+        }
+    }
+
+}
+
+public class MockPullMLSStatusSyncProtocol: PullMLSStatusSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
+
+    public func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+public class MockPullResourcesSyncProtocol: PullResourcesSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
+
+    public func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullSelfLegalholdInfoSyncProtocol: PullSelfLegalholdInfoSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pullSelfTeamID_Invocations: [UUID] = []
+    var pullSelfTeamID_MockError: Error?
+    var pullSelfTeamID_MockMethod: ((UUID) async throws -> Void)?
+
+    func pull(selfTeamID: UUID) async throws {
+        pullSelfTeamID_Invocations.append(selfTeamID)
+
+        if let error = pullSelfTeamID_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamID_MockMethod else {
+            fatalError("no mock for `pullSelfTeamID`")
+        }
+
+        try await mock(selfTeamID)
+    }
+
+}
+
+class MockPullSelfTeamMembersSyncProtocol: PullSelfTeamMembersSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pullSelfTeamID_Invocations: [UUID] = []
+    var pullSelfTeamID_MockError: Error?
+    var pullSelfTeamID_MockMethod: ((UUID) async throws -> Void)?
+
+    func pull(selfTeamID: UUID) async throws {
+        pullSelfTeamID_Invocations.append(selfTeamID)
+
+        if let error = pullSelfTeamID_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamID_MockMethod else {
+            fatalError("no mock for `pullSelfTeamID`")
+        }
+
+        try await mock(selfTeamID)
+    }
+
+}
+
+class MockPullSelfTeamRolesSyncProtocol: PullSelfTeamRolesSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pullSelfTeamID_Invocations: [UUID] = []
+    var pullSelfTeamID_MockError: Error?
+    var pullSelfTeamID_MockMethod: ((UUID) async throws -> Void)?
+
+    func pull(selfTeamID: UUID) async throws {
+        pullSelfTeamID_Invocations.append(selfTeamID)
+
+        if let error = pullSelfTeamID_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamID_MockMethod else {
+            fatalError("no mock for `pullSelfTeamID`")
+        }
+
+        try await mock(selfTeamID)
+    }
+
+}
+
+class MockPullSelfTeamSyncProtocol: PullSelfTeamSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pullSelfTeamID_Invocations: [UUID] = []
+    var pullSelfTeamID_MockError: Error?
+    var pullSelfTeamID_MockMethod: ((UUID) async throws -> Void)?
+
+    func pull(selfTeamID: UUID) async throws {
+        pullSelfTeamID_Invocations.append(selfTeamID)
+
+        if let error = pullSelfTeamID_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfTeamID_MockMethod else {
+            fatalError("no mock for `pullSelfTeamID`")
+        }
+
+        try await mock(selfTeamID)
     }
 
 }
@@ -1625,6 +1941,66 @@ public class MockPullSelfUserClientsProtocol: PullSelfUserClientsProtocol {
 }
 
 class MockPullSelfUserSettingsSyncProtocol: PullSelfUserSettingsSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> Void)?
+
+    func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
+class MockPullSelfUserSyncProtocol: PullSelfUserSyncProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pull
+
+    var pull_Invocations: [Void] = []
+    var pull_MockError: Error?
+    var pull_MockMethod: (() async throws -> (id: UUID, domain: String?, teamID: UUID?))?
+    var pull_MockValue: (id: UUID, domain: String?, teamID: UUID?)?
+
+    @discardableResult
+    func pull() async throws -> (id: UUID, domain: String?, teamID: UUID?) {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        if let mock = pull_MockMethod {
+            return try await mock()
+        } else if let mock = pull_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `pull`")
+        }
+    }
+
+}
+
+class MockPullUserConnectionsSyncProtocol: PullUserConnectionsSyncProtocol {
 
     // MARK: - Life cycle
 
