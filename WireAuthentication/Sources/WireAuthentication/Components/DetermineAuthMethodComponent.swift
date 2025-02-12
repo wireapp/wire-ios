@@ -18,6 +18,7 @@
 
 import NeedleFoundation
 import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
@@ -25,6 +26,7 @@ internal import WireAuthenticationLogic
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    var authenticationAPI: AuthenticationAPI { get }
 
 }
 
@@ -35,7 +37,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     }
 
     private var determineAuthMethodUseCase: some DetermineAuthMethodUseCaseProtocol {
-        DetermineAuthMethodUseCase(validateEmailOrSSOCode: validateEmailOrSSOCode)
+        DetermineAuthMethodUseCase(
+            validateEmailOrSSOCode: validateEmailOrSSOCode,
+            authenticationAPI: dependency.authenticationAPI
+        )
     }
 
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
