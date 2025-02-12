@@ -1213,6 +1213,67 @@ public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigra
 
 }
 
+public class MockInitialSyncBuilderProtocol: InitialSyncBuilderProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - build
+
+    public var build_Invocations: [Void] = []
+    public var build_MockError: Error?
+    public var build_MockMethod: (() throws -> Sync)?
+    public var build_MockValue: Sync?
+
+    public func build() throws -> Sync {
+        build_Invocations.append(())
+
+        if let error = build_MockError {
+            throw error
+        }
+
+        if let mock = build_MockMethod {
+            return try mock()
+        } else if let mock = build_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `build`")
+        }
+    }
+
+}
+
+public class MockInitialSyncProtocol: InitialSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - perform
+
+    public var performSkipPullingLastUpdateEventID_Invocations: [Bool] = []
+    public var performSkipPullingLastUpdateEventID_MockError: Error?
+    public var performSkipPullingLastUpdateEventID_MockMethod: ((Bool) async throws -> Void)?
+
+    public func perform(skipPullingLastUpdateEventID: Bool) async throws {
+        performSkipPullingLastUpdateEventID_Invocations.append(skipPullingLastUpdateEventID)
+
+        if let error = performSkipPullingLastUpdateEventID_MockError {
+            throw error
+        }
+
+        guard let mock = performSkipPullingLastUpdateEventID_MockMethod else {
+            fatalError("no mock for `performSkipPullingLastUpdateEventID`")
+        }
+
+        try await mock(skipPullingLastUpdateEventID)
+    }
+
+}
+
 class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
     // MARK: - Life cycle

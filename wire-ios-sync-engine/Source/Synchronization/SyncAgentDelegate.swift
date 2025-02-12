@@ -16,14 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol SyncManagerProtocol {
+import Foundation
 
-    /// Fetch events from the server and process all pending events.
+protocol SyncAgentDelegate: AnyObject {
 
-    func performQuickSync() async throws
-
-    /// Stop all syncing activities and prepare to idle.
-
-    func suspend() async throws
+    func syncAgentDidStartInitialSync(_ syncAgent: SyncAgent)
+    func syncAgentDidFinishInitialSync(_ syncAgent: SyncAgent)
+    func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent)
+    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: SyncAgent)
+    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: SyncAgent)
+    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent)
 
 }
