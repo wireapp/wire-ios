@@ -30,16 +30,20 @@ struct ToggleablePasswordField: View {
 
     @State private var isPasswordVisible = false
 
-    @FocusState private var isFocused: Bool
-
     @Environment(\.colorScheme) private var colorScheme
+
+    enum FocusedField: Hashable {
+        case secureField
+        case textField
+    }
+    @FocusState private var focusedField: FocusedField?
 
     private typealias Labels = L10n.Accessibility.Backup
 
     var body: some View {
         HStack {
 
-            ZStack {
+            if isPasswordVisible {
                 TextField(text: $password) {
                     Text(placeholder)
                         .font(.body)
@@ -47,42 +51,21 @@ struct ToggleablePasswordField: View {
                 }
                 .textContentType(.password)
                 .autocapitalization(.none)
-                .focused($isFocused)
-                .disabled(!isPasswordVisible)
-                .opacity(isPasswordVisible ? 1 : 0)
-
+                .focused($focusedField, equals: .textField)
+            } else {
                 SecureField(text: $password) {
                     Text(placeholder)
                         .font(.body)
                         .foregroundStyle(placeholderColor)
                 }
                 .textContentType(.password)
-                .focused($isFocused)
-                .disabled(isPasswordVisible)
-                .opacity(isPasswordVisible ? 0 : 1)
+                .focused($focusedField, equals: .secureField)
             }
-//            if isPasswordVisible {
-//                TextField(text: $password) {
-//                    Text(placeholder)
-//                        .font(.body)
-//                        .foregroundStyle(placeholderColor)
-//                }
-//                .textContentType(.password)
-//                .autocapitalization(.none)
-//                .focused($isFocused)
-//            } else {
-//                SecureField(text: $password) {
-//                    Text(placeholder)
-//                        .font(.body)
-//                        .foregroundStyle(placeholderColor)
-//                }
-//                .textContentType(.password)
-//                .focused($isFocused)
-//            }
 
             let accessibilityLabel = isPasswordVisible ? Labels.Password.Hide.label : Labels.Password.Show.label
             Button {
                 isPasswordVisible.toggle()
+                focusedField = isPasswordVisible ? .textField : .secureField
             } label: {
                 Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                     .foregroundColor(toggleVisibilityButtonColor)
@@ -99,7 +82,7 @@ struct ToggleablePasswordField: View {
         )
         .onAppear {
             if focusOnAppear {
-                isFocused = true
+                focusedField = .secureField
             }
         }
     }
