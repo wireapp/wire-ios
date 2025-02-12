@@ -17,20 +17,25 @@
 //
 
 import SwiftUI
+import WireAPI
 import WireAuthentication
 import WireAuthenticationUI
 
 struct ContentView: View {
 
+    let authenticationAPI: AuthenticationAPI
+
     var body: some View {
         BackgroundView()
             .sheet(isPresented: .constant(true)) {
-                WireAuthenticationAssembly().assemble()
+                WireAuthenticationAssembly().assemble(
+                    authenticationAPI: authenticationAPI
+                )
             }
     }
 
 }
 
 #Preview {
-    ContentView()
+    ContentView(authenticationAPI: makeAuthenticationAPI())
 }

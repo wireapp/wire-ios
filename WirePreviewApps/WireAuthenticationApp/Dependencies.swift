@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import WireAPI
+import WireAPISupport
 
-@main
-struct WireAuthenticationApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView(authenticationAPI: makeAuthenticationAPI())
-        }
-    }
+func makeAuthenticationAPI() -> AuthenticationAPI {
+    let mockAuthenticationAPI = MockAuthenticationAPI()
+    mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = DomainRegistrationConfiguration(
+        backendURLString: nil,
+        domainRedirect: .none,
+        isCloudAccountAlreadyRegistered: nil,
+        ssoCodeString: nil
+    )
+    return mockAuthenticationAPI
 }

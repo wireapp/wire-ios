@@ -26,8 +26,8 @@ package protocol ValidateEmailOrSSOCodeUseCaseProtocol: Sendable {
 
 package enum ValidatedEmailOrSSOCode: Equatable {
 
-    case email(String)
-    case ssoCode(String)
+    case email(email: String, domain: String)
+    case ssoCode(UUID)
 
 }
 
