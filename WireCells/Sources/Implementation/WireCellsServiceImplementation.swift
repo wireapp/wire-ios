@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import API
+import WireCellsAPI
 import AWSClientRuntime
 @preconcurrency import AWSS3
 import AWSSDKIdentity
