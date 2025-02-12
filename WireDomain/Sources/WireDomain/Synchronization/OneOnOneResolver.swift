@@ -21,7 +21,7 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-struct OneOnOneResolver: OneOnOneResolverProtocol {
+public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     private enum Error: Swift.Error {
         case failedToActivateConversation
@@ -32,26 +32,29 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let userRepository: any UserRepositoryProtocol
-    private let conversationsRepository: any ConversationRepositoryProtocol
+    private let userLocalStore: any UserLocalStoreProtocol
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
+    private let pullMLSOneOnOneSync: any PullMLSOneOnOneSyncProtocol
     private let mlsProvider: MLSProvider
 
     // MARK: - Object lifecycle
 
-    init(
+    public init(
         context: NSManagedObjectContext,
-        userRepository: any UserRepositoryProtocol,
-        conversationsRepository: any ConversationRepositoryProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        pullMLSOneOnOneSync: any PullMLSOneOnOneSyncProtocol,
         mlsProvider: MLSProvider
     ) {
         self.context = context
-        self.userRepository = userRepository
-        self.conversationsRepository = conversationsRepository
+        self.userLocalStore = userLocalStore
+        self.conversationLocalStore = conversationLocalStore
+        self.pullMLSOneOnOneSync = pullMLSOneOnOneSync
         self.mlsProvider = mlsProvider
     }
 
-    func resolveAllOneOnOneConversations() async throws {
-        let usersIDs = try await userRepository.fetchAllUserIDsWithOneOnOneConversation()
+    public func resolveAllOneOnOneConversations() async throws {
+        let usersIDs = try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
 
         await withTaskGroup(of: Void.self) { group in
             for userID in usersIDs {
@@ -69,14 +72,14 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         }
     }
 
-    func resolveOneOnOneConversation(
+    public func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws {
-        let user = try await userRepository.fetchUser(
+        let user = try await userLocalStore.fetchUser(
             id: userID.uuid, domain: userID.domain
         )
 
-        let selfUser = await userRepository.fetchSelfUser()
+        let selfUser = await userLocalStore.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
 
         if mlsProvider.isMLSEnabled, commonProtocol == .mls {
@@ -110,14 +113,14 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
             throw Error.failedToActivateConversation
         }
 
-        /// Sync the user MLS conversation from backend.
-        let mlsGroupID = try await conversationsRepository.pullMLSOneToOneConversation(
-            userID: userID.uuid.uuidString,
+        // Sync the user MLS conversation from backend.
+        let mlsGroupID = try await pullMLSOneOnOneSync.pull(
+            userID: userID.uuid,
             userDomain: userID.domain
         )
 
-        /// Then, fetch the synced MLS conversation.
-        let mlsConversation = await conversationsRepository.fetchMLSConversation(groupID: mlsGroupID)
+        // Then, fetch the synced MLS conversation.
+        let mlsConversation = await conversationLocalStore.fetchMLSConversation(groupID: mlsGroupID)
 
         let groupID = await context.perform {
             mlsConversation?.mlsGroupID
@@ -129,7 +132,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         let mlsService = mlsProvider.service
 
-        /// If conversation already exists, there is no need to perform a migration.
+        // If conversation already exists, there is no need to perform a migration.
         let needsMLSMigration = try await mlsService.conversationExists(
             groupID: groupID
         ) == false

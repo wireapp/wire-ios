@@ -26,4 +26,4 @@ public let WireBackupUTIs = [
     UTType("com.wire.backup-universal"),
     UTType("com.wire.backup-ios-underscore"),
     UTType("com.wire.backup-ios-hyphen")
-].compactMap(\.self)
+].compactMap(\.self) // in Xcode previews UTType.init returns nil

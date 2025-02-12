@@ -40,7 +40,7 @@ public final class ZMUserSession: NSObject {
 
     private let appVersion: String
     private var tokens: [Any] = []
-    private var tornDown: Bool = false
+    public private(set) var isTornDown = false
 
     private(set) var isNetworkOnline = true
 
@@ -532,11 +532,11 @@ public final class ZMUserSession: NSObject {
     // MARK: - Deinitalize
 
     deinit {
-        require(tornDown, "tearDown must be called before the ZMUserSession is deallocated")
+        require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
     public func tearDown() {
-        guard !tornDown else { return }
+        guard !isTornDown else { return }
 
         tearDownMLSGroupVerification()
 
@@ -556,7 +556,7 @@ public final class ZMUserSession: NSObject {
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.addTag(.selfClientId, value: nil)
 
-        tornDown = true
+        isTornDown = true
     }
 
     // MARK: - Methods
@@ -587,7 +587,12 @@ public final class ZMUserSession: NSObject {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
+            pullSelfUserClientsFactory: { [weak self] context in
+                guard let self else {
+                    fatal("userSession not reachable")
+                }
+                return pullSelfUserClientsFactory(context: context)
+            },
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
