@@ -24,7 +24,7 @@ struct SetBackupPasswordView: View {
     @StateObject var viewModel: SetBackupPasswordViewModel
 
     private typealias Strings = L10n.Localizable
-    private typealias Labels = L10n.Accessibility.SetBackupPassword
+    private typealias Labels = L10n.Accessibility.ExportBackup
 
     var body: some View {
         NavigationStack {
@@ -37,7 +37,7 @@ struct SetBackupPasswordView: View {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(Strings.ExportBackup.Cancel.title, action: viewModel.cancel)
                             .foregroundStyle(ColorTheme.Base.primary.color)
-                            .accessibilityLabel(Labels.Close.label)
+                            .accessibilityLabel(Labels.Cancel.label)
                             .accessibilityIdentifier("cancel")
                     }
                 }
