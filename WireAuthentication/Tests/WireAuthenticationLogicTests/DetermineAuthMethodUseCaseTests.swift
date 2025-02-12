@@ -111,7 +111,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             (
                 config: .make(backendURLString: someBackendURL.absoluteString, domainRedirect: .backend),
                 expected: .onPremLogin(email: email, backendConfig: someBackendURL)
-            ),
+            )
         ]
 
         for testCase in testCases {
@@ -130,7 +130,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         // given
         let testCases: [DomainRegistrationConfiguration] = [
             .make(domainRedirect: .sso), // Response missing SSO code
-            .make(domainRedirect: .backend), // Response missing backend URL
+            .make(domainRedirect: .backend) // Response missing backend URL
         ]
 
         for config in testCases {
@@ -147,8 +147,8 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
     func testInvoke_withOnPremEmail_whenCloudAccountExists() async throws {
         // given
         mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = .make(
-                domainRedirect: .none,
-                isCloudAccountAlreadyRegistered: true
+            domainRedirect: .none,
+            isCloudAccountAlreadyRegistered: true
         )
 
         // when, then
@@ -168,7 +168,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         let testCases: [(underlyingError: any Error, expected: DetermineAuthMethodUseCaseFailure)] = [
             (underlyingError: AuthenticationAPIError.invalidResponse, expected: .invalidResponse),
             (underlyingError: noInternetError, expected: .urlError(noInternetError)),
-            (underlyingError: someError, expected: .unknown),
+            (underlyingError: someError, expected: .unknown)
         ]
 
         for testCase in testCases {
@@ -182,7 +182,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
     }
 
 }
-
 
 // MARK: Private Helpers
 
