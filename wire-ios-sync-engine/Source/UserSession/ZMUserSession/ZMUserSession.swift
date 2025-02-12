@@ -492,6 +492,7 @@ public final class ZMUserSession: NSObject {
             applicationStatusDirectory.syncStatus.determineInitialSyncPhase()
             applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
+            hasCompletedInitialSync = syncAgent.hasPerformedInitialSync
             Task {
                 do {
                     try await syncAgent.performSyncIfNeeded()
@@ -499,9 +500,6 @@ public final class ZMUserSession: NSObject {
                     WireLogger.sync.error("failed to perform sync on session setup: \(String(describing: error))")
                 }
             }
-
-            // TODO: ask sync agent about this.
-            hasCompletedInitialSync = applicationStatusDirectory.syncStatus.isSlowSyncing == false
         }
 
         setupMLSGroupVerification()
