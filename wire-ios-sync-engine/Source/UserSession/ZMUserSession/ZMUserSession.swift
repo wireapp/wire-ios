@@ -102,6 +102,7 @@ public final class ZMUserSession: NSObject {
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
+    let syncAgent: SyncAgent
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
@@ -398,7 +399,8 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory: ApplicationStatusDirectory,
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
-        dependencies: UserSessionDependencies
+        dependencies: UserSessionDependencies,
+        syncAgent: SyncAgent
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
@@ -433,7 +435,7 @@ public final class ZMUserSession: NSObject {
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
         self.analyiticsLogger = .analytics
-
+        self.syncAgent = syncAgent
         super.init()
     }
 

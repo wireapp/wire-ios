@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireDomain
 import WireRequestStrategy
 import WireUtilities
 
@@ -27,6 +28,8 @@ struct ZMUserSessionBuilder {
     // MARK: - Properties
 
     private var apiServiceFactory: APIServiceFactory?
+    private var backendEnvironment: WireTransport.BackendEnvironment?
+    private var wireAPIBackendEnvironment: WireAPI.BackendEnvironment?
     private var appVersion: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
@@ -48,6 +51,7 @@ struct ZMUserSessionBuilder {
     private var sharedUserDefaults: UserDefaults?
     private var transportSession: (any TransportSessionType)?
     private var userId: UUID?
+    private var syncAgent: SyncAgent?
 
     // MARK: - Initialize
 
@@ -58,6 +62,7 @@ struct ZMUserSessionBuilder {
     func build() -> ZMUserSession {
         guard
             let apiServiceFactory,
+            let backendEnvironment,
             let appVersion,
             let appLock,
             let application,
@@ -78,7 +83,8 @@ struct ZMUserSessionBuilder {
             let recurringActionService,
             let sharedUserDefaults,
             let transportSession,
-            let userId
+            let userId,
+            let syncAgent
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
@@ -105,7 +111,8 @@ struct ZMUserSessionBuilder {
             applicationStatusDirectory: applicationStatusDirectory,
             contextStorage: contextStorage,
             recurringActionService: recurringActionService,
-            dependencies: dependencies
+            dependencies: dependencies,
+            syncAgent: syncAgent
         )
     }
 
@@ -113,6 +120,8 @@ struct ZMUserSessionBuilder {
 
     mutating func withAllDependencies(
         apiServiceFactory: @escaping APIServiceFactory,
+        backendEnvironment: WireTransport.BackendEnvironment,
+        wireAPIBackendEnvironment: WireAPI.BackendEnvironment,
         appVersion: String,
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
@@ -127,7 +136,8 @@ struct ZMUserSessionBuilder {
         recurringActionService: (any RecurringActionServiceInterface)?,
         sharedUserDefaults: UserDefaults,
         transportSession: any TransportSessionType,
-        userId: UUID
+        userId: UUID,
+        minTLSVersion: String?
     ) {
         // reused dependencies
 
@@ -145,9 +155,11 @@ struct ZMUserSessionBuilder {
 
         // other dependencies
 
+        let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
+
         let appLock = AppLockController(
             userId: userId,
-            selfUser: .selfUser(in: coreDataStack.viewContext),
+            selfUser: selfUser,
             legacyConfig: configuration.appLockConfig,
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
@@ -185,10 +197,23 @@ struct ZMUserSessionBuilder {
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            syncStatus: applicationStatusDirectory.syncStatus,
+            syncStatus: applicationStatusDirectory.syncStatus, // TODO: need to pass in a closue or something here.
             userID: coreDataStack.account.userIdentifier
         )
-
+        let initialSyncBuilder = InitialSyncBuilder(
+            selfUserID: userId,
+            selfClientID: selfUser.selfClient()?.remoteIdentifier,
+            syncContext: coreDataStack.syncContext,
+            mlsService: mlsService,
+            sharedUserDefaults: sharedUserDefaults,
+            backendEnvironment: wireAPIBackendEnvironment,
+            minTLSVersion: .minVersionFrom(minTLSVersion)
+        )
+        let syncAgent = SyncAgent(
+            lastUpdateEventIDRepository: lastEventIDRepository,
+            initialSyncBuilder: initialSyncBuilder,
+            legacySyncStatus: applicationStatusDirectory.syncStatus
+        )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
             userID: userId
@@ -222,6 +247,7 @@ struct ZMUserSessionBuilder {
         self.sharedUserDefaults = sharedUserDefaults
         self.transportSession = transportSession
         self.userId = userId
+        self.syncAgent = syncAgent
     }
 
     // MARK: UserSesssionDependencies
