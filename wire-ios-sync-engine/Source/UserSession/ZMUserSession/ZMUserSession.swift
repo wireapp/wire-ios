@@ -964,9 +964,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent) {
-        didStartIncrementalSync()
+        didFinishIncrementalSync()
     }
-
 
     private func didStartInitialSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
