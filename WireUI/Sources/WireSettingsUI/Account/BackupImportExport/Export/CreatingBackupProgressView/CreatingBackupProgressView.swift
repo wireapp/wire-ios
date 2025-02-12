@@ -18,11 +18,14 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
 
 struct CreatingBackupProgressView: View {
 
     var progress: CreatingBackupProgressModel
     var cancelAction: () -> Void
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     private typealias Strings = L10n.Localizable.ExportBackup
     private typealias Labels = L10n.Accessibility.ExportBackup
@@ -36,7 +39,6 @@ struct CreatingBackupProgressView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(Strings.Cancel.title, action: cancelAction)
-                            .foregroundStyle(ColorTheme.Base.primary.color)
                             .accessibilityLabel(Labels.Cancel.label)
                             .accessibilityIdentifier("cancel")
                     }

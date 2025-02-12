@@ -36,7 +36,6 @@ struct SetBackupPasswordView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(Strings.ExportBackup.Cancel.title, action: viewModel.cancel)
-                            .foregroundStyle(ColorTheme.Base.primary.color)
                             .accessibilityLabel(Labels.Cancel.label)
                             .accessibilityIdentifier("cancel")
                     }

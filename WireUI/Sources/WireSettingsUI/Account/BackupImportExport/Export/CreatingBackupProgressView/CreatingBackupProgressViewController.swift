@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireFoundation
 
 /// This view controller was created because `UIActivityViewController` allows for assigning a
 /// `completionWithItemsHandler` closure, which SwiftUI's fileExporter doesn't.
@@ -46,6 +47,10 @@ final class CreatingBackupProgressViewController: UIViewController {
             exportButton.isEnabled = backupURL != nil
         }
     }
+
+    var wireAccentColor: WireAccentColor = .default
+
+    var wireAccentColorMapping: WireAccentColorMapping?
 
     var completedAction: (_ completed: Bool) -> Void = { _ in }
 
@@ -84,7 +89,7 @@ final class CreatingBackupProgressViewController: UIViewController {
 
     private lazy var progressView = {
         let progressView = UIProgressView()
-        progressView.progressTintColor = ColorTheme.Base.primary
+        progressView.progressTintColor = wireAccentColorMapping?.uiColor(for: wireAccentColor)
         progressView.accessibilityIdentifier = "progressView"
         return progressView
     }()
