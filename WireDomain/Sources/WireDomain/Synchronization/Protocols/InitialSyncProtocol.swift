@@ -16,14 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol SyncManagerProtocol {
+import Foundation
 
-    /// Fetch events from the server and process all pending events.
+// sourcery: AutoMockable
+/// An object that performs the initial sync (i.e fetching
+/// last event id, pulls metadata from remote, performs various
+/// initialaztion operations) which should happen after login.
+public protocol InitialSyncProtocol {
 
-    func performQuickSync() async throws
+    /// Perform the initial sync.
+    ///
+    /// - Parameter skipPullingLastUpdateEventID: If `true`, the last update event id will not be fetched.
 
-    /// Stop all syncing activities and prepare to idle.
-
-    func suspend() async throws
+    func perform(skipPullingLastUpdateEventID: Bool) async throws
 
 }
