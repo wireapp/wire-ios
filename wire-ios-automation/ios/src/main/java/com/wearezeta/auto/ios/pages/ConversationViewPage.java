@@ -660,6 +660,7 @@ public class ConversationViewPage extends IOSPage {
     }
 
     public void longTapFileTransferPlaceholder() {
+        waitUntilElementVisible(fileTransferBottomLabel);
         longTapWithScript(fileTransferBottomLabel);
     }
 
