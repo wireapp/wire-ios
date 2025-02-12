@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"setBackupPassword.close.label" = "Close setup backup password";
-
-"exportBackup.cancel.label" = "Cancel creating backup";
-
-"importBackup.cancel.label" = "Close restore backup";
+"exportBackup.cancel.label" = "Cancel backup";
+"importBackup.cancel.label" = "Cancel restore";
+"backup.password.show.label" = "Show password";
+"backup.password.hide.label" = "Hide password";

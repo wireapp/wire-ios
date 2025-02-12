@@ -34,6 +34,8 @@ struct ToggleablePasswordField: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
+    private typealias Labels = L10n.Accessibility.Backup
+
     var body: some View {
         HStack {
 
@@ -56,12 +58,14 @@ struct ToggleablePasswordField: View {
                 .textContentType(.password)
             }
 
+            let accessibilityLabel = isPasswordVisible ? Labels.Password.Hide.label : Labels.Password.Show.label
             Button {
                 isPasswordVisible.toggle()
             } label: {
                 Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                     .foregroundColor(toggleVisibilityButtonColor)
             }
+            .accessibilityLabel(accessibilityLabel)
 
         }
         .padding()
