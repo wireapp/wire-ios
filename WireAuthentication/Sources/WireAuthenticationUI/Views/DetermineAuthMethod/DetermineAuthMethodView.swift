@@ -61,7 +61,6 @@ package struct DetermineAuthMethodView: View {
                     .padding(.trailing)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    // TODO: [WPB-16045] Set error on `LabeledTextField` when supported.
                     LabeledTextField(
                         isMandatory: false,
                         placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
@@ -78,7 +77,6 @@ package struct DetermineAuthMethodView: View {
                     }
                 }, label: {
                     HStack {
-                        // TODO: [WPB-15725] Implement custom loading indicator
                         if viewModel.isLoading {
                             ProgressView()
                         }
