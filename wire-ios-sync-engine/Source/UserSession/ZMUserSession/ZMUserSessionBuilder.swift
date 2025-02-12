@@ -214,6 +214,8 @@ struct ZMUserSessionBuilder {
             initialSyncBuilder: initialSyncBuilder,
             legacySyncStatus: applicationStatusDirectory.syncStatus
         )
+        applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
+
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
             userID: userId
