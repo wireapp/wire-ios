@@ -40,18 +40,18 @@ public struct PasswordField: View {
 
     public init(
         password: Binding<String>,
-        passwordRules: String?,
-        arePasswordRulesVisible: Binding<Bool>,
         placeholder: String,
         title: String,
+        passwordRules: String?,
+        arePasswordRulesVisible: Binding<Bool>,
         titleColor: Color,
         borderColor: Color
     ) {
         self._password = password
-        self.passwordRules = passwordRules
-        self._arePasswordRulesVisible = arePasswordRulesVisible
         self.placeholder = placeholder
         self.title = title
+        self.passwordRules = passwordRules
+        self._arePasswordRulesVisible = arePasswordRulesVisible
         self.titleColor = titleColor
         self.borderColor = borderColor
     }
@@ -114,10 +114,10 @@ public struct PasswordField: View {
 #Preview("Invalid Password") {
     PasswordField(
         password: .constant("Invalid password"),
-        passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-        arePasswordRulesVisible: .constant(true),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title,
+        passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+        arePasswordRulesVisible: .constant(true),
         titleColor: ColorTheme.Base.error.color,
         borderColor: ColorTheme.Base.error.color
     )
@@ -127,10 +127,10 @@ public struct PasswordField: View {
 #Preview("Valid Password") {
     PasswordField(
         password: .constant("Valid password!"),
-        passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-        arePasswordRulesVisible: .constant(false),
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title,
+        passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+        arePasswordRulesVisible: .constant(false),
         titleColor: ColorTheme.Base.primary.color,
         borderColor: ColorTheme.Base.primary.color
     )

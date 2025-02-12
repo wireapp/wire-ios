@@ -50,10 +50,10 @@ final class PasswordFieldSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
             password: .constant("Invalid password"),
-            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-            arePasswordRulesVisible: .constant(true),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
             title: L10n.Passwordtextfield.Preview.title,
+            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+            arePasswordRulesVisible: .constant(true),
             titleColor: ColorTheme.Base.error.color,
             borderColor: ColorTheme.Base.error.color
         )
@@ -68,10 +68,10 @@ final class PasswordFieldSnapshotTests: XCTestCase {
 
         let view = PasswordField(
             password: .constant("Valid password!"),
-            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-            arePasswordRulesVisible: .constant(false),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
             title: L10n.Passwordtextfield.Preview.title,
+            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+            arePasswordRulesVisible: .constant(false),
             titleColor: ColorTheme.Base.primary.color,
             borderColor: ColorTheme.Base.primary.color
         )
@@ -91,10 +91,10 @@ final class PasswordFieldSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
             password: .constant("Valid password!"),
-            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-            arePasswordRulesVisible: .constant(false),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
             title: L10n.Passwordtextfield.Preview.title,
+            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+            arePasswordRulesVisible: .constant(false),
             titleColor: ColorTheme.Base.primary.color,
             borderColor: ColorTheme.Base.primary.color
         )

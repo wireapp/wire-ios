@@ -23,7 +23,10 @@ import WireReusableUIComponents
 package protocol LoginViaEmailBuilder {
 
     @MainActor
-    func loginViaEmailView(email: String) -> LoginViaEmailView
+    func loginViaEmailView(
+        email: String,
+        canCreateAccount: Bool
+    ) -> LoginViaEmailView
 
 }
 
@@ -46,6 +49,9 @@ package struct LoginViaEmailView: View {
                 passwordField
                 submitButton
                 forgotPasswordButton
+                if viewModel.canCreateAccount {
+                    createAccount
+                }
             }
             .navigationTitle(L10n.CloudUserLogin.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -77,12 +83,12 @@ package struct LoginViaEmailView: View {
     @ViewBuilder private var passwordField: some View {
         PasswordField(
             password: $password,
-            passwordRules: viewModel.localizedPasswordRules,
-            arePasswordRulesVisible: $showPasswordRules,
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
             title: L10n.CloudUserLogin.InputPassword.title,
-            titleColor: titleColor,
-            borderColor: borderColor
+            passwordRules: viewModel.localizedPasswordRules,
+            arePasswordRulesVisible: $showPasswordRules,
+            titleColor: passwordFieldTitleColor,
+            borderColor: passwordFieldBorderColor
         )
     }
 
@@ -110,9 +116,44 @@ package struct LoginViaEmailView: View {
         .wireButtonStyle(.link)
     }
 
+    @ViewBuilder private var createAccount: some View {
+        VStack(spacing: 4) {
+            Text(L10n.CreatePersonalAccount.title)
+                .multilineTextAlignment(.center)
+                .wireTextStyle(.body1)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button(action: {
+                viewModel.createAccount()
+            }, label: {
+                Text(L10n.CreatePersonalAccount.button)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .minimumScaleFactor(0.5)
+                    .fixedSize(horizontal: false, vertical: true)
+            })
+            .wireButtonStyle(.link)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background {
+            if #available(iOS 17.0, *) {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(ColorTheme.Backgrounds.backgroundVariant.color)
+                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
+            } else {
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
+                    .background(ColorTheme.Backgrounds.backgroundVariant.color)
+                    .cornerRadius(12)
+            }
+        }
+    }
+
     // MARK: - Helper
 
-    private var titleColor: Color {
+    private var passwordFieldTitleColor: Color {
         switch (password.isEmpty, viewModel.isValidPassword(password)) {
         case (_, false):
             ColorTheme.Base.error.color
@@ -123,7 +164,7 @@ package struct LoginViaEmailView: View {
         }
     }
 
-    private var borderColor: Color {
+    private var passwordFieldBorderColor: Color {
         switch (password.isEmpty, viewModel.isValidPassword(password)) {
         case (_, false):
             ColorTheme.Base.error.color
@@ -139,6 +180,6 @@ package struct LoginViaEmailView: View {
 #Preview() {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            MockDependencies().loginViaEmailView(email: "foo@bar.com")
+            MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: false)
         }
 }

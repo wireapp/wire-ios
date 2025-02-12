@@ -30,6 +30,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     private let passwordValidator: any PasswordValidator
 
     let email: String
+    let canCreateAccount: Bool
 
     // MARK: - Life cycle
 
@@ -38,13 +39,15 @@ package final class LoginViaEmailViewModel: ObservableObject {
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         email: String,
         accountsURL: URL,
-        passwordValidator: any PasswordValidator
+        passwordValidator: any PasswordValidator,
+        canCreateAccount: Bool
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.email = email
         self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
+        self.canCreateAccount = canCreateAccount
     }
 
     var localizedPasswordRules: String? {
@@ -52,7 +55,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func isValidPassword(_ password: String) -> Bool {
-        !password.isEmpty && passwordValidator.validate(password)
+        passwordValidator.validate(password)
     }
 
     func submitPassword(_ password: String) {
@@ -72,5 +75,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     func recoverPassword() {
         UIApplication.shared.open(forgotPasswordURL)
     }
+
+    func createAccount() {}
 
 }

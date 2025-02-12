@@ -84,7 +84,6 @@ package struct DetermineAuthMethodView: View {
                     viewModel.submitEmailOrSSOCode()
                 }, label: {
                     HStack {
-                        // TODO: [WPB-15725] Implement custom loading indicator
                         if viewModel.isLoading {
                             ProgressView()
                         }
@@ -100,7 +99,8 @@ package struct DetermineAuthMethodView: View {
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
-                builder.loginViaEmailView(email: email)
+                // TODO: [WPB-15940] Pass canCreateAccount from viewModel
+                builder.loginViaEmailView(email: email, canCreateAccount: true)
             case .loginOrRegister:
                 Color.red
             }

@@ -110,38 +110,21 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 extension MockDependencies: LoginViaEmailBuilder {
 
-    private func loginViewModel(email: String) -> LoginViaEmailViewModel {
+    private func loginViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
             email: email,
             accountsURL: URL(string: "https://example.com")!,
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true })
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            canCreateAccount: canCreateAccount
         )
     }
 
-    func loginViaEmailView(email: String) -> LoginViaEmailView {
+    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email)
+            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
         )
-    }
-
-}
-
-extension MockDependencies: LoginOrRegisterViaEmailBuilder {
-
-    private func loginViewModel(email: String) -> LoginOrRegisterViaEmailViewModel {
-        LoginOrRegisterViaEmailViewModel(
-            router: rootViewModel,
-            loginViaEmailUseCase: self,
-            email: email,
-            accountsURL: URL(string: "https://example.com")!,
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true })
-        )
-    }
-
-    func loginOrRegisterViaEmailView(email: String) -> LoginOrRegisterViaEmailView {
-        LoginOrRegisterViaEmailView(viewModel: loginViewModel(email: email))
     }
 
 }

@@ -22,7 +22,8 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class LoginOrRegisterViaEmailViewTests: XCTestCase {
+class LoginViaEmailViewTests: XCTestCase {
+
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
@@ -35,10 +36,10 @@ class LoginOrRegisterViaEmailViewTests: XCTestCase {
     }
 
     @MainActor
-    func testColorSchemeVariants() {
+    func testColorSchemeVariantsWithCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginOrRegisterViaEmailView(email: "foo@bar.com")
+        let view = MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: true)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -50,10 +51,10 @@ class LoginOrRegisterViaEmailViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDynamicTypeVariants() {
+    func testDynamicTypeVariantsWithCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginOrRegisterViaEmailView(email: "foo@bar.com")
+        let view = MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: true)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
@@ -64,4 +65,36 @@ class LoginOrRegisterViaEmailViewTests: XCTestCase {
                 )
         }
     }
+
+    @MainActor
+    func testColorSchemeVariantsWithoutCreateAccount() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: false)
+            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariantsWithoutCreateAccount() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: false)
+            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
 }
