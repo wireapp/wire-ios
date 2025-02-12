@@ -50,7 +50,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         }
     }
 
-    @MainActor
     func testInvoke_withSSOCode() async throws {
         // given, when
         let authMethod = try await sut.invoke(emailOrSSOCode: "wire-acd708f0-7fab-4b5f-9c1e-2e570bcf7372")
@@ -59,7 +58,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         XCTAssertEqual(authMethod, .loginViaSSO(code: UUID(uuidString: "acd708f0-7fab-4b5f-9c1e-2e570bcf7372")!))
     }
 
-    @MainActor
     func testInvoke_withOnPremEmailAndLegacyAPI() async throws {
         // given
         let backendURL = URL(string: "example.com")!
@@ -74,7 +72,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         XCTAssertEqual(authMethod, .onPremLogin(email: "user@example.com", backendConfig: backendURL))
     }
 
-    @MainActor
     func testInvoke_withNonOnPremEmailAndLegacyAPI() async throws {
         // given
         let testCases: [AuthenticationAPIError] = [.configNotFound, .domainNotFound]
@@ -92,7 +89,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         }
     }
 
-    @MainActor
     func testInvoke_withEmail_whenSuccess() async throws {
         // given
         let email = "user@example.com"
@@ -125,7 +121,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         }
     }
 
-    @MainActor
     func testInvoke_withEmail_whenInvalidResponse() async {
         // given
         let testCases: [DomainRegistrationConfiguration] = [
@@ -143,7 +138,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         }
     }
 
-    @MainActor
     func testInvoke_withOnPremEmail_whenCloudAccountExists() async throws {
         // given
         mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = .make(
@@ -159,7 +153,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         }
     }
 
-    @MainActor
     func testInvoke_mapsErrors() async throws {
         // given
         let noInternetError = URLError(.notConnectedToInternet)

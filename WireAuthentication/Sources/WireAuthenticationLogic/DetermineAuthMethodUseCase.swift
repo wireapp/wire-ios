@@ -30,7 +30,6 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
         self.authenticationAPI = authenticationAPI
     }
 
-    @MainActor
     package func invoke(
         emailOrSSOCode: String
     ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
