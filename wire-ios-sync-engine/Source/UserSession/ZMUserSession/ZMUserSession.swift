@@ -526,7 +526,10 @@ public final class ZMUserSession: NSObject {
         }
 
         if let selfUserClient {
-            WireLogger.authentication.addTag(.selfClientId, value: selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)
+            WireLogger.authentication.addTag(
+                .selfClientId,
+                value: selfUserClient.safeRemoteIdentifier.safeForLoggingDescription
+            )
 
             Task {
                 do {
@@ -1031,31 +1034,31 @@ extension ZMUserSession: SyncAgentDelegate {
             ).post()
 
             WaitingGroupTask(context: syncContext) { [self] in
-                await self.fetchBackendMLSPublicKeys()
-                await self.fetchAndStoreFeatureConfig()
+                await fetchBackendMLSPublicKeys()
+                await fetchAndStoreFeatureConfig()
 
-                let (qualifiedSelfClientID, hasRegisteredMLSClient) = await self.syncContext.perform {
+                let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
                     let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
                     let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
                     return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
                 }
 
                 if let qualifiedSelfClientID {
-                    await self.mlsClientManager.initializeMLSClientIfNeeded(
+                    await mlsClientManager.initializeMLSClientIfNeeded(
                         for: qualifiedSelfClientID,
                         hasRegisteredMLSClient: hasRegisteredMLSClient,
-                        mlsFeature: self.mlsFeature
+                        mlsFeature: mlsFeature
                     )
                 } else {
                     WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
                 }
 
-                if self.mlsFeature.isEnabled {
-                    self.mlsService.commitPendingProposalsIfNeeded()
+                if mlsFeature.isEnabled {
+                    mlsService.commitPendingProposalsIfNeeded()
                 }
 
-                await self.calculateSelfSupportedProtocolsIfNeeded()
-                await self.resolveOneOnOneConversationsIfNeeded()
+                await calculateSelfSupportedProtocolsIfNeeded()
+                await resolveOneOnOneConversationsIfNeeded()
             }
 
             recurringActionService.performActionsIfNeeded()

@@ -162,7 +162,8 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             userPropertiesAPI: UserPropertiesBuilder(apiService: apiService).makeAPI(for: apiVersion),
-            featureConfigsAPI: FeatureConfigsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+            featureConfigsAPI: FeatureConfigsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            backendInfoAPI: BackendInfoAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
         )
     }
 
@@ -204,6 +205,8 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             userLocalStore: userLocalStore
         )
 
+        let backendConfigLocalStore = BackendConfigLocalStore(sharedUserDefaults: sharedUserDefaults)
+
         return Stores(
             updateEventsLocalStore: updateEventsLocalStore,
             userLocalStore: userLocalStore,
@@ -213,7 +216,8 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             conversationsLocalStore: conversationsLocalStore,
             conversationLabelsLocalStore: conversationLabelsLocalStore,
             featureConfigsLocalStore: featureConfigsLocalStore,
-            userClientsLocalStore: userClientsLocalStore
+            userClientsLocalStore: userClientsLocalStore,
+            backendConfigLocalStore: backendConfigLocalStore
         )
     }
 
@@ -293,6 +297,11 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             isMLSEnabled: BackendInfo.isMLSEnabled
         )
 
+        let pullMLSStatusSync = PullMLSStatusSync(
+            api: apis.backendInfoAPI,
+            store: stores.backendConfigLocalStore
+        )
+
         let pullLastUpdateEventIDSync = PullLastUpdateEventIDSync(
             selfClientID: selfClientID,
             api: apis.updateEventsAPI,
@@ -313,6 +322,7 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             pullAllFeatureConfigsSync: pullAllFeatureConfigsSync,
             pushSupportedProtocolsSync: pushSupportedProtocolsSync,
             pullMLSOneOnOneSync: pullMLSOneOnOneSync,
+            pullMLSStatusSync: pullMLSStatusSync,
             pullLastUpdateEventIDSync: pullLastUpdateEventIDSync
         )
     }
@@ -329,7 +339,8 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             pullAllConversationsSync: syncs.pullAllConversationsSync,
             pullKnownUsersSync: syncs.pullKnownUsersSync,
             pullConversationLabelsSync: syncs.pullConversationLabelsSync,
-            pullAllFeatureConfigsSync: syncs.pullAllFeatureConfigsSync
+            pullAllFeatureConfigsSync: syncs.pullAllFeatureConfigsSync,
+            pullMLSStatusSync: syncs.pullMLSStatusSync
         )
     }
 
@@ -343,6 +354,7 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
         let usersAPI: UsersAPI
         let userPropertiesAPI: UserPropertiesAPI
         let featureConfigsAPI: FeatureConfigsAPI
+        let backendInfoAPI: BackendInfoAPI
 
     }
 
@@ -357,6 +369,7 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
         let conversationLabelsLocalStore: ConversationLabelsLocalStore
         let featureConfigsLocalStore: FeatureConfigLocalStore
         let userClientsLocalStore: UserClientsLocalStore
+        let backendConfigLocalStore: BackendConfigLocalStore
 
     }
 
@@ -375,6 +388,7 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
         let pullAllFeatureConfigsSync: PullAllFeatureConfigsSync
         let pushSupportedProtocolsSync: PushSupportedProtocolsSync
         let pullMLSOneOnOneSync: PullMLSOneOnOneSync
+        let pullMLSStatusSync: PullMLSStatusSync
         let pullLastUpdateEventIDSync: PullLastUpdateEventIDSync
 
     }
