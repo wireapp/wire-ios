@@ -17,7 +17,6 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "WireAPI", path: "../WireAPI"),
-        .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(name: "WireUI", path: "../WireUI"),
         .package(path: "../WirePlugins"),
