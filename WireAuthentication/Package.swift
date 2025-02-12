@@ -17,7 +17,6 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "WireAPI", path: "../WireAPI"),
-        .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(name: "WireUI", path: "../WireUI"),
         .package(path: "../WirePlugins"),
@@ -48,7 +47,10 @@ let package = Package(
         ),
         .testTarget(
             name: "WireAuthenticationLogicTests",
-            dependencies: ["WireAuthenticationLogic"]
+            dependencies: [
+                "WireAuthenticationLogic",
+                .product(name: "WireAPISupport", package: "WireAPI"),
+            ]
         ),
 
         .target(
@@ -75,6 +77,7 @@ for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         // TODO: [WPB-15967] Enable `ExistentialAny` upcoming feature
         .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+        .enableExperimentalFeature("StrictConcurrency"),
+        .unsafeFlags(["-enable-bare-slash-regex"]) // For regex literals
     ]
 }

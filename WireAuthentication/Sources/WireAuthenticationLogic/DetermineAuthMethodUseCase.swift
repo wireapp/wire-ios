@@ -17,17 +17,92 @@
 //
 
 import Foundation
+import WireAPI
 import WireAuthenticationAPI
 
-// If we were using a Swift package, we should use the `package` access modifier here.
+package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
-public struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
+    private let validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase
+    private let authenticationAPI: AuthenticationAPI
 
-    public init() {}
+    package init(validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase, authenticationAPI: AuthenticationAPI) {
+        self.validateEmailOrSSOCode = validateEmailOrSSOCode
+        self.authenticationAPI = authenticationAPI
+    }
+
+    package func invoke(
+        emailOrSSOCode: String
+    ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
+        let emailOrSSOCode = try validateEmailOrSSOCode(input: emailOrSSOCode)
+
+        switch emailOrSSOCode {
+        case let .email(email, domain):
+            do {
+                return try await determineAuthMethod(email: email, domain: domain)
+            } catch let error as DetermineAuthMethodUseCaseFailure {
+                throw error
+            } catch AuthenticationAPIError.invalidResponse {
+                throw .invalidResponse
+            } catch let error as URLError {
+                throw .urlError(error)
+            } catch {
+                throw .unknown
+            }
+        case let .ssoCode(ssoCode):
+            return .loginViaSSO(code: ssoCode)
+        }
+    }
+
+    // MARK: - Private
+
+    private func validateEmailOrSSOCode(
+        input: String
+    ) throws(DetermineAuthMethodUseCaseFailure) -> ValidatedEmailOrSSOCode {
+        do {
+            return try validateEmailOrSSOCode.invoke(input: input)
+        } catch {
+            throw .invalidEmailOrSSOCode
+        }
+    }
 
     @MainActor
-    public func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .login(email: emailOrSSOCode)
+    private func determineAuthMethod(email: String, domain: String) async throws -> AuthenticationMethod {
+        let configuration: DomainRegistrationConfiguration
+        do {
+            configuration = try await authenticationAPI.getDomainRegistration(forEmail: email)
+        } catch AuthenticationAPIError.unsupportedEndpointForAPIVersion {
+            // Fallback if the API doesn't support the getDomainRegistration endpoint
+
+            do {
+                let onPremConfig = try await authenticationAPI.getOnPremConfigURL(forDomain: domain)
+                return .onPremLogin(email: email, backendConfig: onPremConfig.configurationURL)
+            } catch AuthenticationAPIError.configNotFound, AuthenticationAPIError.domainNotFound {
+                return .loginOrRegisterViaEmail(email: email)
+            }
+        }
+
+        switch configuration.domainRedirect {
+        case .none where configuration.isCloudAccountAlreadyRegistered == true:
+            throw DetermineAuthMethodUseCaseFailure.onPremNotPossible(recovery: .loginViaEmail(email: email))
+
+        case .none, .locked, .preAuthorized:
+            return .loginOrRegisterViaEmail(email: email)
+
+        case .noRegistration:
+            return .loginViaEmail(email: email)
+
+        case .sso:
+            guard let ssoCode = configuration.ssoCode else {
+                throw DetermineAuthMethodUseCaseFailure.invalidResponse
+            }
+            return .loginViaSSO(code: ssoCode)
+
+        case .backend:
+            guard let backendURL = configuration.backendURL else {
+                throw DetermineAuthMethodUseCaseFailure.invalidResponse
+            }
+            return .onPremLogin(email: email, backendConfig: backendURL)
+        }
     }
 
 }

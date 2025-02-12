@@ -15,3 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+"authentication.identity.input.body" = "Simply enter your email address to start!";
+"authentication.identity.input.field.placeholder" = "Email or SSO code";
+"authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.submit" = "التالي";
+"authentication.identity.input.terms" = "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)";
+
+"switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"switch_backend_confirmation.backend_name" = "Backend name:";
+"switch_backend_confirmation.backend_url" = "Backend URL:";
+"switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"switch_backend_confirmation.teams_url" = "Teams URL:";
+"switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"switch_backend_confirmation.website_url" = "Website URL:";
+"switch_backend_confirmation.proceed" = "Proceed";
+"switch_backend_confirmation.cancel" = "إلغاء";
+"switch_backend_confirmation.show_details" = "Show details";
+
+"verification_code.title" = "وصلك بريد";
+"verification_code.message" = "أدخل رمز التحقق الذي أرسلناه إلى: %@.";
+"verification_code.confirm" = "تأكيد";
+"verification_code.resend_code" = "Resend Code";

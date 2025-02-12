@@ -22,11 +22,15 @@ public struct BackgroundView: View {
     public init() {}
 
     public var body: some View {
-        Image(ImageResource(name: "background", bundle: .module))
-            .resizable()
-            .scaledToFill()
-            .ignoresSafeArea()
-            .background(.black)
+        GeometryReader { geometry in
+            Image(ImageResource(name: "background", bundle: .module))
+                .resizable()
+                .scaledToFill()
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .clipped()
+                .background(.black)
+        }
+        .ignoresSafeArea()
     }
 }
 
