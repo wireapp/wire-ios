@@ -39,7 +39,7 @@ final class ValidateEmailOrSSOCodeUseCaseTests: XCTestCase {
         let result = try sut.invoke(input: "foo@example.com")
 
         // then
-        XCTAssertEqual(result, .email("foo@example.com"))
+        XCTAssertEqual(result, .email(email: "foo@example.com", domain: "example.com"))
     }
 
     @MainActor
@@ -48,7 +48,7 @@ final class ValidateEmailOrSSOCodeUseCaseTests: XCTestCase {
         let result = try sut.invoke(input: "wire-648e79cb-88b9-42a8-8ea7-dd93e97f4da1")
 
         // then
-        XCTAssertEqual(result, .ssoCode("wire-648e79cb-88b9-42a8-8ea7-dd93e97f4da1"))
+        XCTAssertEqual(result, .ssoCode(UUID(uuidString: "648e79cb-88b9-42a8-8ea7-dd93e97f4da1")!))
     }
 
     @MainActor
