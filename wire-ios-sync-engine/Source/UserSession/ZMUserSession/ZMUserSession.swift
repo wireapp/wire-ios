@@ -1244,17 +1244,12 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
         }
 
-        if userClient.hasRegisteredMLSClient {
-            // Before the client was registered as an MLS client,
-            // They wouldn't have been able to migrate any conversations from Proteus to MLS.
-            // So we perform a slow sync to sync the conversations. This will ensure that
-            // the message protocol of each conversation is up-to-date.
-            // The client will then join any MLS groups they haven't joined yet.
-            triggerInitialSync()
-        }
-
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
         WireLogger.authentication.addTag(.selfClientId, value: clientId)
+
+        // The client was just registered and still needs to perform the
+        // initial sync.
+        triggerInitialSync()
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
