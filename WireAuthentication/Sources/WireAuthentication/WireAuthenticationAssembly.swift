@@ -39,7 +39,7 @@ public struct WireAuthenticationAssembly {
     ) -> some View {
         RootComponent(
             authenticationAPI: authenticationAPI,
-            accountsURL: accountsURL, // this temp
+            accountsURL: accountsURL, // this is temp
             passwordValidator: passwordValidator
         ).rootView
     }

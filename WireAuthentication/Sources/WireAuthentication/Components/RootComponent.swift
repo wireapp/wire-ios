@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireReusableUIComponents
 import WireAPI
+import WireReusableUIComponents
 internal import WireAuthenticationUI
 
 class RootComponent: BootstrapComponent {
