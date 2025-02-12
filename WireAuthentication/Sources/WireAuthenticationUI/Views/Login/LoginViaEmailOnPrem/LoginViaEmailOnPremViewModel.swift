@@ -54,6 +54,20 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         backendEnvironment.accountsURL.appendingPathComponent("forgot")
     }
 
+    var backendName: String {
+        backendEnvironment.title
+    }
+
+    var backendInfo: String {
+        [
+            L10n.OnPremUserLogin.Alert.Message.backendName,
+            backendEnvironment.title,
+            "",
+            L10n.OnPremUserLogin.Alert.Message.backendUrl,
+            backendEnvironment.url.absoluteString
+        ].joined(separator: "\n")
+    }
+
     var localizedPasswordRules: String? {
         passwordValidator.localizedRulesDescription
     }

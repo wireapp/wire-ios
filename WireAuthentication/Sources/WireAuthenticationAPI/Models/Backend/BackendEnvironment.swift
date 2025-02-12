@@ -20,6 +20,18 @@ import Foundation
 
 public struct BackendEnvironment {
 
+    public init(
+        title: String,
+        url: URL,
+        accountsURL: URL,
+        proxySettings: ProxySettings? = nil
+    ) {
+        self.title = title
+        self.url = url
+        self.accountsURL = accountsURL
+        self.proxySettings = proxySettings
+    }
+
     /// The  name of the backend.
     ///
     public let title: String

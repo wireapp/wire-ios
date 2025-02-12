@@ -129,6 +129,32 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 }
 
+extension MockDependencies: LoginViaEmailOnPremViewBuilder {
+
+    private func loginViaEmailOnPremViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremViewModel {
+        let backendEnvironment = BackendEnvironment(
+            title: "<backend name>",
+            url: URL(string: "https://example.com")!,
+            accountsURL: URL(string: "https://example.com")!
+        )
+        return LoginViaEmailOnPremViewModel(
+            router: rootViewModel,
+            loginViaEmailUseCase: self,
+            email: email,
+            backendEnvironment: backendEnvironment,
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            canCreateAccount: canCreateAccount
+        )
+    }
+
+    func loginViaEmailOnPremView(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremView {
+        LoginViaEmailOnPremView(
+            viewModel: loginViaEmailOnPremViewModel(email: email, canCreateAccount: canCreateAccount)
+        )
+    }
+
+}
+
 private struct MockPasswordValidator: PasswordValidator {
 
     let validationCallback: @Sendable (String) -> Bool
