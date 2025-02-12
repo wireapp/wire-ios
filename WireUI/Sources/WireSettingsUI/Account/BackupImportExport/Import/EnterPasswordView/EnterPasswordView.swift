@@ -82,12 +82,14 @@ struct EnterPasswordView: View {
                 .font(.subheadline)
                 .padding(.bottom, 2)
 
+            // TODO: tint (for border color)
             ToggleablePasswordField(
                 password: $password,
                 placeholder: Strings.EnterPassword.TextField.placeholder,
                 placeholderColor: passwordFieldPlaceholderColor,
                 focusOnAppear: true
             )
+            .tint(Color.cyan)
             .padding(.bottom, 8)
 
             if passwordIsWrong {

@@ -165,3 +165,5 @@ struct SetBackupPasswordView: View {
     SetBackupPasswordPreview()
         .tint(.purple)
 }
+
+// TODO: test what can go wrong in case notifications keep arriving while restoring backup

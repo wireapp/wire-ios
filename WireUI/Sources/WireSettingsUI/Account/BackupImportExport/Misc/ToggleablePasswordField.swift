@@ -109,5 +109,6 @@ struct ToggleablePasswordField: View {
         placeholder: "Placeholder Text",
         placeholderColor: BaseColorPalette.Neutrals.black.color
     )
+    .tint(.purple)
     .padding()
 }
