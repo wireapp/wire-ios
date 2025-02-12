@@ -81,7 +81,9 @@ package struct DetermineAuthMethodView: View {
                 }
 
                 Button(action: {
-                    viewModel.submitEmailOrSSOCode()
+                    Task {
+                        await viewModel.submitEmailOrSSOCode()
+                    }
                 }, label: {
                     HStack {
                         // TODO: [WPB-15725] Implement custom loading indicator

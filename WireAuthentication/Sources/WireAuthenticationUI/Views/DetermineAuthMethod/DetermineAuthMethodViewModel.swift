@@ -52,35 +52,31 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.errorMessage = errorMessage
     }
 
-    func submitEmailOrSSOCode() {
+    func submitEmailOrSSOCode() async {
         isLoading = true
 
-        Task { [self] in
-            // TODO: [WPB-15920] Handle errors
-            let method = try! await determineAuthMethod.invoke(
-                emailOrSSOCode: emailOrSSOCode
-            )
+        // TODO: [WPB-15920] Handle errors
+        let method = try! await determineAuthMethod.invoke(
+            emailOrSSOCode: emailOrSSOCode
+        )
 
-            switch method {
-            case let .loginViaEmail(email):
-                router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
+        switch method {
+        case let .loginViaEmail(email):
+            router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
 
-            case let .loginOrRegisterViaEmail(email):
-                router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
+        case let .loginOrRegisterViaEmail(email):
+            router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
-            case let .loginViaSSO(code):
-                // TODO: [WPB-15920] Handle login via SSO
-                break
+        case let .loginViaSSO(code):
+            // TODO: [WPB-15920] Handle login via SSO
+            break
 
-            case let .onPremLogin(email, backendConfig):
-                // TODO: [WPB-15920] Handle on-prem login
-                break
-            }
-
-            Task { @MainActor in
-                isLoading = false
-            }
+        case let .onPremLogin(email, backendConfig):
+            // TODO: [WPB-15920] Handle on-prem login
+            break
         }
+
+        isLoading = false
     }
 
     // MARK: - Private
