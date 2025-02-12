@@ -24,12 +24,22 @@ import WireAuthenticationAPI
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
+    package enum Alert: Hashable, Identifiable {
+        package var id: Self { self }
+
+        case noInternet
+        case invalidResponse
+        case unknownError
+        case onPremLoginNotPossible(recovery: AuthenticationMethod)
+    }
+
     private let router: any Router
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
+    @Published var alert: Alert?
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
@@ -40,24 +50,58 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
         determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
         emailOrSSOCode: String = "",
-        isLoading: Bool = false
+        isLoading: Bool = false,
+        alert: Alert? = nil
     ) {
         self.router = router
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.determineAuthMethod = determineAuthMethod
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
-        self.errorMessage = errorMessage
+        self.alert = alert
     }
 
     func submitEmailOrSSOCode() async {
         isLoading = true
 
-        // TODO: [WPB-15920] Handle errors
-        let method = try! await determineAuthMethod.invoke(
-            emailOrSSOCode: emailOrSSOCode
-        )
+        do {
+            let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
+            handleAuthenticationMethod(method)
+        } catch {
+            switch error {
+            case .invalidEmailOrSSOCode:
+                break // TODO: Handle this? Or factor it out?
+            case let .onPremNotPossible(recovery):
+                alert = .onPremLoginNotPossible(recovery: recovery)
+            case .invalidResponse:
+                alert = .invalidResponse
+            case .urlError(let urlError):
+                switch urlError.code {
+                case .notConnectedToInternet, .networkConnectionLost:
+                    alert = .noInternet
+                default:
+                    alert = .unknownError
+                }
+            case .unknown:
+                alert = .unknownError
+            }
+        }
 
+        isLoading = false
+    }
+
+    func didDismissAlert(alert: Alert) {
+        switch alert {
+        case let .onPremLoginNotPossible(method):
+            handleAuthenticationMethod(method)
+        default:
+            break
+        }
+    }
+
+    // MARK: - Private
+
+    private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
         switch method {
         case let .loginViaEmail(email):
             router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
@@ -73,11 +117,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             // TODO: [WPB-15920] Handle on-prem login
             break
         }
-
-        isLoading = false
     }
-
-    // MARK: - Private
 
     private func isValidEmailOrSSOCode() -> Bool {
         do {

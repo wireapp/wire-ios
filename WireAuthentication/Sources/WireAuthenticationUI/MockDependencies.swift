@@ -35,7 +35,8 @@ final class MockDependencies {
 
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
-        isLoading: Bool
+        isLoading: Bool,
+        alert: DetermineAuthMethodViewModel.Alert?
     ) -> DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: DetermineAuthMethodViewModel(
@@ -43,7 +44,8 @@ final class MockDependencies {
                 validateEmailOrSSOCode: self,
                 determineAuthMethod: self,
                 emailOrSSOCode: emailOrSSOCode,
-                isLoading: isLoading
+                isLoading: isLoading,
+                alert: alert
             ),
             builder: self
         )

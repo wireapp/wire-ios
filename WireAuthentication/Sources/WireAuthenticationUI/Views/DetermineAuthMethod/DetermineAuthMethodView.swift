@@ -89,6 +89,16 @@ package struct DetermineAuthMethodView: View {
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }.padding()
         }
+        .alert(item: $viewModel.alert) { alert in
+            Alert(
+                title: titleForAlert(alert),
+                message: messageForAlert(alert),
+                dismissButton: .default(
+                    Text("OK"), // FIXME: Localize
+                    action: { viewModel.didDismissAlert(alert: alert) }
+                )
+            )
+        }
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
@@ -109,16 +119,48 @@ package struct DetermineAuthMethodView: View {
 
     }
 
+    // MARK: - Private helpers
+
+    private func titleForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
+        // TODO: Localize
+        switch alert {
+        case .noInternet:
+            Text("No internet")
+        case .invalidResponse:
+            Text("Error")
+        case .unknownError:
+            Text("Error")
+        case .onPremLoginNotPossible(recovery: let recovery):
+            Text("On prem not possible")
+        }
+    }
+
+    private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
+        // TODO: Localize
+        switch alert {
+        case .noInternet:
+            Text("You are not connected to the internet.")
+        case .invalidResponse:
+            Text("Something went wrong")
+        case .unknownError:
+            Text("Something went wrong")
+        case .onPremLoginNotPossible(recovery: let recovery):
+            Text("Email is already registered on Wire Cloud.")
+        }
+    }
+
 }
 
 @MainActor
-public func makeDetermineAuthMethodViewPreview(
+package func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
-    isLoading: Bool = false
+    isLoading: Bool = false,
+    alert: DetermineAuthMethodViewModel.Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
-        isLoading: isLoading
+        isLoading: isLoading,
+        alert: alert
     )
 }
 
@@ -126,8 +168,9 @@ public func makeDetermineAuthMethodViewPreview(
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
             makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: "sam@wire.com",
-                isLoading: false
+                emailOrSSOCode: "user@wire.com",
+                isLoading: false,
+                alert: .unknownError
             )
         }
 }
