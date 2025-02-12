@@ -16,4 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.119.0
+import Foundation
+
+// sourcery: AutoMockable
+/// An object that builds `InitialSync`.
+public protocol InitialSyncBuilderProtocol {
+
+    // Workaround for Sourcery unable to generate compilable mock
+    // due to `any InitialSyncProtocol?`
+    typealias Sync = any InitialSyncProtocol
+
+    func build() throws -> Sync
+
+}

@@ -16,4 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.119.0
+import Foundation
+
+// sourcery: AutoMockable
+/// An object that performs the initial sync (i.e fetching
+/// last event id, pulls metadata from remote, performs various
+/// initialaztion operations) which should happen after login.
+public protocol InitialSyncProtocol {
+
+    /// Perform the initial sync.
+    ///
+    /// - Parameter skipPullingLastUpdateEventID: If `true`, the last update event id will not be fetched.
+
+    func perform(skipPullingLastUpdateEventID: Bool) async throws
+
+}

@@ -16,4 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.119.0
+import Foundation
+
+protocol SyncAgentDelegate: AnyObject {
+
+    func syncAgentDidStartInitialSync(_ syncAgent: SyncAgent)
+    func syncAgentDidFinishInitialSync(_ syncAgent: SyncAgent)
+    func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent)
+    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: SyncAgent)
+    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: SyncAgent)
+    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent)
+
+}
