@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCellsAPI
 import AWSClientRuntime
 @preconcurrency import AWSS3
 import AWSSDKIdentity
@@ -24,6 +23,7 @@ import AWSSDKIdentity
 import ClientRuntime
 import Foundation
 import Smithy
+import WireCellsAPI
 
 package class WireCellsServiceImplementation: WireCellsService {
 
