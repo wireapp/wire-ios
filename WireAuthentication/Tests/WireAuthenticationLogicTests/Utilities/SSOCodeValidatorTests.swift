@@ -22,7 +22,7 @@ import XCTest
 
 final class SSOCodeValidatorTests: XCTestCase {
 
-    func testIsValid_withValidSSOCodes() {
+    func testValidate_withValidSSOCodes() {
         // given
         let testCases: [String] = [
             "WIRE-648E79CB-88B9-42A8-8EA7-DD93E97F4DA1",
@@ -31,11 +31,11 @@ final class SSOCodeValidatorTests: XCTestCase {
 
         for ssoCode in testCases {
             // when, then
-            XCTAssertNotNil(SSOCodeValidator.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
+            XCTAssertNotNil(SSOCodeValidator.validate(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
         }
     }
 
-    func testIsValid_withValidInvalidSSOCodes() {
+    func testValidate_withValidInvalidSSOCodes() {
         // given
         let testCases: [String] = [
             " wire-648e79cb-88b9-42a8-8ea7-dd93e97f4da1 ",
@@ -46,7 +46,7 @@ final class SSOCodeValidatorTests: XCTestCase {
 
         for ssoCode in testCases {
             // when, then
-            XCTAssertNil(SSOCodeValidator.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
+            XCTAssertNil(SSOCodeValidator.validate(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
         }
     }
 }

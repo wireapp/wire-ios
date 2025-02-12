@@ -24,7 +24,7 @@ enum SSOCodeValidator {
     ///
     /// A valid SSO code is a UUID prefixed by `wire-`.
 
-    static func isValid(ssoCode: String) -> UUID? {
+    static func validate(ssoCode: String) -> UUID? {
         let code = ssoCode.lowercased()
         let prefix = "wire-"
 

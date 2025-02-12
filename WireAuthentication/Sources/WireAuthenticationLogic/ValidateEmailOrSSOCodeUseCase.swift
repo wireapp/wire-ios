@@ -28,7 +28,7 @@ package struct ValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProto
             return .email(email: input, domain: domain)
         }
 
-        if let uuid = SSOCodeValidator.isValid(ssoCode: input) {
+        if let uuid = SSOCodeValidator.validate(ssoCode: input) {
             return .ssoCode(uuid)
         }
 
