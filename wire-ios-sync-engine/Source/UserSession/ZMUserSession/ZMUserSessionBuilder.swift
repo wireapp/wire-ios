@@ -62,7 +62,6 @@ struct ZMUserSessionBuilder {
     func build() -> ZMUserSession {
         guard
             let apiServiceFactory,
-            let backendEnvironment,
             let appVersion,
             let appLock,
             let application,
