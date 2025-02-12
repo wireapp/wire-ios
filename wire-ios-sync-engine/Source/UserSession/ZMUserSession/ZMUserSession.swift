@@ -1034,31 +1034,31 @@ extension ZMUserSession: SyncAgentDelegate {
             ).post()
 
             WaitingGroupTask(context: syncContext) { [self] in
-                await fetchBackendMLSPublicKeys()
-                await fetchAndStoreFeatureConfig()
+                await self.fetchBackendMLSPublicKeys()
+                await self.fetchAndStoreFeatureConfig()
 
-                let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
+                let (qualifiedSelfClientID, hasRegisteredMLSClient) = await self.syncContext.perform {
                     let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
                     let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
                     return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
                 }
 
                 if let qualifiedSelfClientID {
-                    await mlsClientManager.initializeMLSClientIfNeeded(
+                    await self.mlsClientManager.initializeMLSClientIfNeeded(
                         for: qualifiedSelfClientID,
                         hasRegisteredMLSClient: hasRegisteredMLSClient,
-                        mlsFeature: mlsFeature
+                        mlsFeature: self.mlsFeature
                     )
                 } else {
                     WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
                 }
 
-                if mlsFeature.isEnabled {
-                    mlsService.commitPendingProposalsIfNeeded()
+                if self.mlsFeature.isEnabled {
+                    self.mlsService.commitPendingProposalsIfNeeded()
                 }
 
-                await calculateSelfSupportedProtocolsIfNeeded()
-                await resolveOneOnOneConversationsIfNeeded()
+                await self.calculateSelfSupportedProtocolsIfNeeded()
+                await self.resolveOneOnOneConversationsIfNeeded()
             }
 
             recurringActionService.performActionsIfNeeded()
