@@ -67,7 +67,6 @@ final class CreatingBackupProgressViewController: UIViewController {
         descriptionLabel.textColor = BaseColorPalette.Grays.gray70
         descriptionLabel.adjustsFontForContentSizeCategory = true
         descriptionLabel.accessibilityIdentifier = "descriptionLabel"
-        descriptionLabel.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return descriptionLabel
     }()
 
@@ -80,7 +79,6 @@ final class CreatingBackupProgressViewController: UIViewController {
         progressLabel.textColor = BaseColorPalette.Grays.gray70
         progressLabel.textAlignment = .center
         progressLabel.accessibilityIdentifier = "progressLabel"
-        progressLabel.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return progressLabel
     }()
 
@@ -88,7 +86,6 @@ final class CreatingBackupProgressViewController: UIViewController {
         let progressView = UIProgressView()
         progressView.progressTintColor = ColorTheme.Base.primary
         progressView.accessibilityIdentifier = "progressView"
-        progressView.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return progressView
     }()
 
@@ -97,7 +94,6 @@ final class CreatingBackupProgressViewController: UIViewController {
         let exportButton = UIButton(configuration: .primary, primaryAction: .init(title: title) { _ in })
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
         exportButton.accessibilityIdentifier = "exportButton"
-        exportButton.accessibilityLabel = "" // TODO: [WPB-15466] fix accessibility
         return exportButton
     }()
 
