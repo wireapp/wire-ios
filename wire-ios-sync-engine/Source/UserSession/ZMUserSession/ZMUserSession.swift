@@ -489,16 +489,9 @@ public final class ZMUserSession: NSObject {
             syncManagedObjectContext.mlsService = mlsService
 
             applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
+            hasCompletedInitialSync = syncAgent.hasPerformedInitialSync
             applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
-            hasCompletedInitialSync = syncAgent.hasPerformedInitialSync
-            Task {
-                do {
-                    try await syncAgent.performSyncIfNeeded()
-                } catch {
-                    WireLogger.sync.error("failed to perform sync on session setup: \(String(describing: error))")
-                }
-            }
         }
 
         setupMLSGroupVerification()
@@ -532,8 +525,18 @@ public final class ZMUserSession: NSObject {
             }
         }
 
-        if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
-            WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        if let selfUserClient {
+            WireLogger.authentication.addTag(.selfClientId, value: selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)
+
+            Task {
+                do {
+                    // Only sync if there is a self client, otherwise we'll perform a initial sync
+                    // when the self client is registered.
+                    try await syncAgent.performSyncIfNeeded()
+                } catch {
+                    WireLogger.sync.error("failed to perform sync on session setup: \(String(describing: error))")
+                }
+            }
         }
     }
 
