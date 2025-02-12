@@ -70,14 +70,6 @@ package struct DetermineAuthMethodView: View {
                     )
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
-
-                    if let errorMessage = viewModel.errorMessage {
-                        Text(errorMessage)
-                            .wireTextStyle(.subline1)
-                            .foregroundColor(ColorTheme.Base.error.color)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .multilineTextAlignment(.leading)
-                    }
                 }
 
                 Button(action: {
@@ -124,13 +116,11 @@ package struct DetermineAuthMethodView: View {
 @MainActor
 public func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
-    isLoading: Bool = false,
-    errorMessage: String? = nil
+    isLoading: Bool = false
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
-        isLoading: isLoading,
-        errorMessage: errorMessage
+        isLoading: isLoading
     )
 }
 
@@ -139,8 +129,7 @@ public func makeDetermineAuthMethodViewPreview(
         .sheet(isPresented: .constant(true)) {
             makeDetermineAuthMethodViewPreview(
                 emailOrSSOCode: "sam@wire.com",
-                isLoading: false,
-                errorMessage: "Some error message that is too long to fit on a single line"
+                isLoading: false
             )
         }
 }
