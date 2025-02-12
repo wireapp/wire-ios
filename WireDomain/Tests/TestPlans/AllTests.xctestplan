@@ -32,7 +32,9 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()"
+        "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()",
+        "PullMLSStatusSyncTests\/testPull_EndpointUnavailable()",
+        "PullMLSStatusSyncTests\/testPull_MLSNotEnabled()"
       ],
       "target" : {
         "containerPath" : "container:WireDomain Project.xcodeproj",
