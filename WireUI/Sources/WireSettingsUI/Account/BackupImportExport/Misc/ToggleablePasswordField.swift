@@ -39,24 +39,46 @@ struct ToggleablePasswordField: View {
     var body: some View {
         HStack {
 
-            if isPasswordVisible {
+            ZStack {
                 TextField(text: $password) {
                     Text(placeholder)
                         .font(.body)
                         .foregroundStyle(placeholderColor)
                 }
-                .focused($isFocused)
                 .textContentType(.password)
                 .autocapitalization(.none)
-            } else {
+                .focused($isFocused)
+                .disabled(!isPasswordVisible)
+                .opacity(isPasswordVisible ? 1 : 0)
+
                 SecureField(text: $password) {
                     Text(placeholder)
                         .font(.body)
                         .foregroundStyle(placeholderColor)
                 }
-                .focused($isFocused)
                 .textContentType(.password)
+                .focused($isFocused)
+                .disabled(isPasswordVisible)
+                .opacity(isPasswordVisible ? 0 : 1)
             }
+//            if isPasswordVisible {
+//                TextField(text: $password) {
+//                    Text(placeholder)
+//                        .font(.body)
+//                        .foregroundStyle(placeholderColor)
+//                }
+//                .textContentType(.password)
+//                .autocapitalization(.none)
+//                .focused($isFocused)
+//            } else {
+//                SecureField(text: $password) {
+//                    Text(placeholder)
+//                        .font(.body)
+//                        .foregroundStyle(placeholderColor)
+//                }
+//                .textContentType(.password)
+//                .focused($isFocused)
+//            }
 
             let accessibilityLabel = isPasswordVisible ? Labels.Password.Hide.label : Labels.Password.Show.label
             Button {
