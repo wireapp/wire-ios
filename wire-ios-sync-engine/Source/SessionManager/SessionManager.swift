@@ -1073,9 +1073,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         let context = userSession.syncContext
         context.perform {
             if context.readMigrationNeedsSlowSyncFlag() {
-                userSession.syncStatus.forceSlowSync()
+                userSession.triggerInitialSync()
             } else if context.readMigrationNeedsSyncResourcesFlag() {
-                userSession.syncStatus.resyncResources()
+                userSession.triggerResourceSync()
             }
         }
     }

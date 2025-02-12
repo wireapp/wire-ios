@@ -492,6 +492,15 @@ public final class ZMUserSession: NSObject {
             applicationStatusDirectory.syncStatus.determineInitialSyncPhase()
             applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
+            Task {
+                do {
+                    try await syncAgent.performSyncIfNeeded()
+                } catch {
+                    WireLogger.sync.error("failed to perform sync on session setup: \(String(describing: error))")
+                }
+            }
+
+            // TODO: ask sync agent about this.
             hasCompletedInitialSync = applicationStatusDirectory.syncStatus.isSlowSyncing == false
         }
 
@@ -746,6 +755,38 @@ public final class ZMUserSession: NSObject {
     private func notifyUserAboutChangesInAvailabilityBehaviourIfNeeded() {
         syncManagedObjectContext.performGroupedBlock {
             self.localNotificationDispatcher?.notifyAvailabilityBehaviourChangedIfNeeded()
+        }
+    }
+
+    // MARK: - Trigger syncing
+
+    public func triggerInitialSync() {
+        Task {
+            do {
+                try await syncAgent.performInitialSync()
+            } catch {
+                WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
+            }
+        }
+    }
+
+    public func triggerResourceSync() {
+        Task {
+            do {
+                try await syncAgent.performResourceSync()
+            } catch {
+                WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")
+            }
+        }
+    }
+
+    public func triggerIncrementalSync() {
+        Task {
+            do {
+                try await syncAgent.performIncrementalSync()
+            } catch {
+                WireLogger.sync.error("failed to perform incremental sync: \(String(describing: error))")
+            }
         }
     }
 
@@ -1216,7 +1257,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             // So we perform a slow sync to sync the conversations. This will ensure that
             // the message protocol of each conversation is up-to-date.
             // The client will then join any MLS groups they haven't joined yet.
-            syncStatus.forceSlowSync()
+            triggerInitialSync()
         }
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription

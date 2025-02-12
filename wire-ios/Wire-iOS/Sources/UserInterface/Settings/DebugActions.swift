@@ -147,13 +147,13 @@ enum DebugActions {
 
     static func triggerResyncResources() {
         ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
-            ZMUserSession.shared()?.requestResyncResources()
+            ZMUserSession.shared()?.triggerResourceSync()
         }
     }
 
     static func triggerSlowSync(_ type: any SettingsCellDescriptorType) {
         ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
-            ZMUserSession.shared()?.syncStatus.forceSlowSync()
+            ZMUserSession.shared()?.triggerInitialSync()
         }
     }
 
