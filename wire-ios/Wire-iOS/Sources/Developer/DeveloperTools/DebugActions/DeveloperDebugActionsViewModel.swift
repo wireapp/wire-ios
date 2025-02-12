@@ -44,7 +44,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Send debug logs", action: sendDebugLogs),
             .init(title: "Trigger incremental sync", action: triggerIncrementalSync),
             .init(title: "Trigger resource sync", action: triggerResourceSync),
-            .init(title: "Break next quick sync", action: breakNextIncrementalSync),
+            .init(title: "Break next incremental sync", action: breakNextIncrementalSync),
             .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
