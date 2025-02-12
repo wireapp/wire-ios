@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol SyncManagerProtocol {
+import Foundation
 
-    /// Fetch events from the server and process all pending events.
+// sourcery: AutoMockable
+/// An object that builds `InitialSync`.
+public protocol InitialSyncBuilderProtocol {
 
-    func performQuickSync() async throws
+    // Workaround for Sourcery unable to generate compilable mock
+    // due to `any InitialSyncProtocol?`
+    typealias Sync = any InitialSyncProtocol
 
-    /// Stop all syncing activities and prepare to idle.
-
-    func suspend() async throws
+    func build() throws -> Sync
 
 }
