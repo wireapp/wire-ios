@@ -57,9 +57,9 @@ extension MockDependencies: ValidateEmailOrSSOCodeUseCaseProtocol {
 
     nonisolated func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
         if input.contains("@") {
-            return .email(input)
+            return .email(email: input, domain: input.components(separatedBy: "@").last!)
         } else if input.hasSuffix("wire") {
-            return .ssoCode(input)
+            return .ssoCode(UUID())
         } else {
             throw ValidatedEmailOrSSOCodeFailure.invalidInput
         }
@@ -68,13 +68,13 @@ extension MockDependencies: ValidateEmailOrSSOCodeUseCaseProtocol {
 }
 
 extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
-
-    func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod {
-        try await Task.sleep(for: .seconds(3))
+    func invoke(
+        emailOrSSOCode: String
+    ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
+        try! await Task.sleep(for: .seconds(3))
 
         return .loginViaEmail(email: emailOrSSOCode)
     }
-
 }
 
 extension MockDependencies: LoginViaEmailUseCaseProtocol {

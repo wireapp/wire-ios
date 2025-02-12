@@ -31,7 +31,7 @@ final class SSOCodeValidatorTests: XCTestCase {
 
         for ssoCode in testCases {
             // when, then
-            XCTAssertTrue(SSOCodeValidator.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
+            XCTAssertNotNil(SSOCodeValidator.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
         }
     }
 
@@ -46,7 +46,7 @@ final class SSOCodeValidatorTests: XCTestCase {
 
         for ssoCode in testCases {
             // when, then
-            XCTAssertFalse(SSOCodeValidator.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
+            XCTAssertNil(SSOCodeValidator.isValid(ssoCode: ssoCode), "ssoCode \(ssoCode) should be valid")
         }
     }
 }

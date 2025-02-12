@@ -20,14 +20,15 @@ import Foundation
 
 enum SSOCodeValidator {
 
-    /// Returns `true` if `ssoCode` is a valid SSO code otherwise `false`.
+    /// Returns an SSO `UUID` if `ssoCode` is a valid SSO code otherwise `nil`.
     ///
     /// A valid SSO code is a UUID prefixed by `wire-`.
 
-    static func isValid(ssoCode: String) -> Bool {
+    static func isValid(ssoCode: String) -> UUID? {
         let code = ssoCode.lowercased()
         let prefix = "wire-"
-        let uuidComponent = String(code.dropFirst(prefix.count))
-        return code.hasPrefix(prefix) && UUID(uuidString: uuidComponent) != nil
+
+        guard code.hasPrefix(prefix) else { return nil }
+        return UUID(uuidString: String(code.dropFirst(prefix.count)))
     }
 }
