@@ -458,7 +458,7 @@ public final class ZMUserSession: NSObject {
         earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
         earService.delegate = self
         appLockController.delegate = self
-        applicationStatusDirectory.syncStatus.syncStateDelegate = self
+        syncAgent.delegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
         syncManagedObjectContext.performGroupedAndWait { [self] in
@@ -907,11 +907,36 @@ extension ZMUserSession: UpdateEventProcessor {
     }
 }
 
-// MARK: - ZMSyncStateDelegate
+// MARK: - SyncAgent delegate
 
-extension ZMUserSession: ZMSyncStateDelegate {
+extension ZMUserSession: SyncAgentDelegate {
 
-    public func didStartSlowSync() {
+    func syncAgentDidStartInitialSync(_ syncAgent: SyncAgent) {
+        didStartInitialSync()
+    }
+
+    func syncAgentDidFinishInitialSync(_ syncAgent: SyncAgent) {
+        didFinishInitialSync()
+    }
+
+    func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent) {
+        didStartInitialSync()
+    }
+
+    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: SyncAgent) {
+        didFinishInitialSync()
+    }
+
+    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: SyncAgent) {
+        didStartIncrementalSync()
+    }
+
+    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent) {
+        didStartIncrementalSync()
+    }
+
+
+    private func didStartInitialSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.notificationDispatcher.isEnabled = false
@@ -919,7 +944,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    public func didFinishSlowSync() {
+    private func didFinishInitialSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
 
@@ -949,16 +974,16 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    public func didStartQuickSync() {
-        WireLogger.sync.debug("did start quick sync")
+    private func didStartIncrementalSync() {
+        WireLogger.sync.debug("did start incremental sync")
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
         }
     }
 
-    public func didFinishQuickSync() {
-        WireLogger.sync.debug("did finish quick sync")
+    private func didFinishIncrementalSync() {
+        WireLogger.sync.debug("did finish incremental sync")
         processEvents()
 
         NotificationInContext(
