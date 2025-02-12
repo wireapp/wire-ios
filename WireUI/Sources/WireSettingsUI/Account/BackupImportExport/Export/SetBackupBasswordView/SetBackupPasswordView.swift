@@ -72,96 +72,90 @@ struct SetBackupPasswordView: View {
                 .font(.body)
                 .padding(.bottom, 28)
 
-            passwordFieldTitle
-                .padding(.bottom, 2)
-
             passwordField
                 .padding(.bottom, 8)
 
-            Text(viewModel.localizedPasswordRules)
-                .foregroundStyle(passwordFooterColor)
-                .font(.caption)
+            footer
 
             Spacer()
         }
         .padding()
     }
 
-    // TODO: [WPB-16061] the following code is almost identical to the one in EnterPasswordView.swift, try to reuse
-
-    @ViewBuilder
-    private var passwordFieldTitle: some View {
-
-        let text = Text(Strings.ExportBackup.SetBackupPassword.title)
-                .font(.subheadline)
-
-        if !viewModel.isPasswordValid {
-            // show title in red for errors
-            text.foregroundStyle(ColorTheme.Base.error.color)
-        } else if viewModel.password.isEmpty {
-            // show title in some gray when the field is empty
-            let color = UIColor { $0.userInterfaceStyle != .dark
-                ? BaseColorPalette.Grays.gray80
-                : BaseColorPalette.Grays.gray40
-            }.color
-
-            text.foregroundStyle(color)
-        } else {
-            // use the tint color (user's accent color) when non-empty
-            text.foregroundStyle(.tint)
-        }
-    }
+    // TODO: [WPB-16061] the following code is similar to the one in EnterPasswordView.swift, try to reuse
 
     @ViewBuilder
     private var passwordField: some View {
 
+        let title = Text(Strings.ExportBackup.SetBackupPassword.title)
+                .font(.subheadline)
+                .padding(.bottom, 2)
+
+        let placeholderColor = UIColor { $0.userInterfaceStyle != .dark
+            ? BaseColorPalette.Grays.gray70
+            : BaseColorPalette.Grays.gray60
+        }
         let passwordField = ToggleablePasswordField(
             password: $viewModel.password,
             placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
-            placeholderColor: passwordFieldPlaceholderColor,
+            placeholderColor: placeholderColor.color,
             focusOnAppear: true
         )
 
         if !viewModel.isPasswordValid {
-            // show border in red for errors
+
+            // use red for errors
+            title
+                .foregroundStyle(ColorTheme.Base.error.color)
             passwordField
                 .tint(ColorTheme.Base.error.color)
-        } else if viewModel.password.isEmpty {
-            // show border in some gray when the field is empty
-            let color = UIColor { $0.userInterfaceStyle != .dark
-                ? BaseColorPalette.Grays.gray40
-                : BaseColorPalette.Grays.gray80
-            }.color
 
+        } else if viewModel.password.isEmpty {
+
+            // use some gray when the field is empty
+            let titleColor = UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray80
+                : BaseColorPalette.Grays.gray40
+            }
+            let fieldBorder = UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray80
+                : BaseColorPalette.Grays.gray40
+            }
+            title
+                .foregroundStyle(titleColor.color)
             passwordField
-                .tint(color)
+                .tint(fieldBorder.color)
+
         } else {
-            // use the tint color as border (user's accent color) when non-empty
+
+            // use the tint color (user's accent color) when non-empty
+            title
+                .foregroundStyle(.tint)
             passwordField
+
         }
     }
 
-    private var passwordFieldPlaceholderColor: Color {
-        if !viewModel.isPasswordValid {
-            ColorTheme.Base.error.color
-        } else if viewModel.password.isEmpty {
-            UIColor { $0.userInterfaceStyle != .dark
-                ? BaseColorPalette.Grays.gray70
-                : BaseColorPalette.Grays.gray60
-            }.color
-        } else {
-            ColorTheme.Base.primary.color
-        }
-    }
+    @ViewBuilder
+    private var footer: some View {
 
-    private var passwordFooterColor: Color {
+        let footer = Text(viewModel.localizedPasswordRules)
+            .font(.caption)
+
         if !viewModel.isPasswordValid {
-            ColorTheme.Base.error.color
+
+            footer
+                .foregroundStyle(ColorTheme.Base.error.color)
+
         } else {
-            UIColor { $0.userInterfaceStyle != .dark
+
+            let footerColor = UIColor { $0.userInterfaceStyle != .dark
                 ? BaseColorPalette.Grays.gray70
                 : BaseColorPalette.Grays.gray40
-            }.color
+            }
+            footer
+                .foregroundStyle(footerColor.color)
+
         }
     }
 
