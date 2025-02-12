@@ -25,7 +25,6 @@ struct ToggleablePasswordField: View {
     @Binding var password: String
     var placeholder: String
     var placeholderColor: Color
-    var borderColor: Color
     var focusOnAppear = true
 
     @State private var isPasswordVisible = false
@@ -78,7 +77,7 @@ struct ToggleablePasswordField: View {
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(borderColor, lineWidth: 1)
+                .stroke(.tint, lineWidth: 1)
         )
         .onAppear {
             if focusOnAppear {
@@ -108,8 +107,7 @@ struct ToggleablePasswordField: View {
     ToggleablePasswordField(
         password: .constant(""),
         placeholder: "Placeholder Text",
-        placeholderColor: BaseColorPalette.Neutrals.black.color,
-        borderColor: BaseColorPalette.Neutrals.black.color
+        placeholderColor: BaseColorPalette.Neutrals.black.color
     )
     .padding()
 }

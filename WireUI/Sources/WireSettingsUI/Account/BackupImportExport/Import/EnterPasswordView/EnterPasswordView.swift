@@ -86,7 +86,6 @@ struct EnterPasswordView: View {
                 password: $password,
                 placeholder: Strings.EnterPassword.TextField.placeholder,
                 placeholderColor: passwordFieldPlaceholderColor,
-                borderColor: passwordFieldBorderColor,
                 focusOnAppear: true
             )
             .padding(.bottom, 8)

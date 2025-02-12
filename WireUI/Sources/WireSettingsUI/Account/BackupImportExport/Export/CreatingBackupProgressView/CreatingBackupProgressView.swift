@@ -18,14 +18,11 @@
 
 import SwiftUI
 import WireDesign
-import WireFoundation
 
 struct CreatingBackupProgressView: View {
 
     var progress: CreatingBackupProgressModel
     var cancelAction: () -> Void
-
-    @Environment(\.wireAccentColor) private var wireAccentColor
 
     private typealias Strings = L10n.Localizable.ExportBackup
     private typealias Labels = L10n.Accessibility.ExportBackup
@@ -76,8 +73,10 @@ struct CreatingBackupProgressView: View {
 
 #Preview("in progress") {
     CreatingBackupProgressPreview(.ongoing(0.25))
+        .tint(Color.purple)
 }
 
 #Preview("ready") {
     CreatingBackupProgressPreview(.finished(.init(fileURLWithPath: "/")))
+        .tint(Color.purple)
 }

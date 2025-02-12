@@ -72,19 +72,11 @@ struct SetBackupPasswordView: View {
                 .font(.body)
                 .padding(.bottom, 28)
 
-            Text(Strings.ExportBackup.SetBackupPassword.title)
-                .foregroundStyle(passwordFieldTitleColor)
-                .font(.subheadline)
+            passwordFieldTitle
                 .padding(.bottom, 2)
 
-            ToggleablePasswordField(
-                password: $viewModel.password,
-                placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
-                placeholderColor: passwordFieldPlaceholderColor,
-                borderColor: passwordFieldBorderColor,
-                focusOnAppear: true
-            )
-            .padding(.bottom, 8)
+            passwordField
+                .padding(.bottom, 8)
 
             Text(viewModel.localizedPasswordRules)
                 .foregroundStyle(passwordFooterColor)
@@ -97,16 +89,55 @@ struct SetBackupPasswordView: View {
 
     // TODO: [WPB-16061] the following code is almost identical to the one in EnterPasswordView.swift, try to reuse
 
-    private var passwordFieldTitleColor: Color {
+    @ViewBuilder
+    private var passwordFieldTitle: some View {
+
+        let text = Text(Strings.ExportBackup.SetBackupPassword.title)
+                .font(.subheadline)
+
         if !viewModel.isPasswordValid {
-            ColorTheme.Base.error.color
+            // show title in red for errors
+            text.foregroundStyle(ColorTheme.Base.error.color)
         } else if viewModel.password.isEmpty {
-            UIColor { $0.userInterfaceStyle != .dark
+            // show title in some gray when the field is empty
+            let color = UIColor { $0.userInterfaceStyle != .dark
                 ? BaseColorPalette.Grays.gray80
                 : BaseColorPalette.Grays.gray40
             }.color
+
+            text.foregroundStyle(color)
         } else {
-            ColorTheme.Base.primary.color
+            // use the tint color (user's accent color) when non-empty
+            text.foregroundStyle(.tint)
+        }
+    }
+
+    @ViewBuilder
+    private var passwordField: some View {
+
+        let passwordField = ToggleablePasswordField(
+            password: $viewModel.password,
+            placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
+            placeholderColor: passwordFieldPlaceholderColor,
+            focusOnAppear: true
+        )
+
+        if !viewModel.isPasswordValid {
+            // show border in red for errors
+            passwordField
+                .tint(ColorTheme.Base.error.color)
+        } else if viewModel.password.isEmpty {
+            // show border in some gray when the field is empty
+            let color = UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray40
+                : BaseColorPalette.Grays.gray80
+            }.color
+
+            passwordField
+                .tint(color)
+        } else {
+            // use the tint color as border (user's accent color) when non-empty
+            passwordField
         }
     }
 
@@ -117,19 +148,6 @@ struct SetBackupPasswordView: View {
             UIColor { $0.userInterfaceStyle != .dark
                 ? BaseColorPalette.Grays.gray70
                 : BaseColorPalette.Grays.gray60
-            }.color
-        } else {
-            ColorTheme.Base.primary.color
-        }
-    }
-
-    private var passwordFieldBorderColor: Color {
-        if !viewModel.isPasswordValid {
-            ColorTheme.Base.error.color
-        } else if viewModel.password.isEmpty {
-            UIColor { $0.userInterfaceStyle != .dark
-                ? BaseColorPalette.Grays.gray40
-                : BaseColorPalette.Grays.gray80
             }.color
         } else {
             ColorTheme.Base.primary.color
@@ -151,4 +169,5 @@ struct SetBackupPasswordView: View {
 
 #Preview {
     SetBackupPasswordPreview()
+        .tint(.purple)
 }
