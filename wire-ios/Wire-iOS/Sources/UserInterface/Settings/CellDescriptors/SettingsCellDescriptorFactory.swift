@@ -115,6 +115,7 @@ struct SettingsCellDescriptorFactory {
         )
     }
 
+    @MainActor
     func settingsGroup(
         isPublicDomain: Bool,
         userSession: UserSession,
