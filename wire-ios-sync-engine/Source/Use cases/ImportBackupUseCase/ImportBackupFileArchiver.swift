@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDomainPkg
 import ZipArchive
 
 struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
@@ -28,7 +29,7 @@ struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
         )
 
         guard success else {
-            throw BackupRestoreError.compressionError
+            throw ImportBackupError.compressionError
         }
 
     }

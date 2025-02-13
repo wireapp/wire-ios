@@ -1181,6 +1181,33 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
 }
 
+public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUrlPassword_Invocations: [(url: URL, password: String)] = []
+    public var invokeUrlPassword_MockMethod: ((URL, String) -> AsyncThrowingStream<ImportBackupProgress, any Error>)?
+    public var invokeUrlPassword_MockValue: AsyncThrowingStream<ImportBackupProgress, any Error>?
+
+    public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
+        invokeUrlPassword_Invocations.append((url: url, password: password))
+
+        if let mock = invokeUrlPassword_MockMethod {
+            return mock(url, password)
+        } else if let mock = invokeUrlPassword_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUrlPassword`")
+        }
+    }
+
+}
+
 public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigrationUseCaseProtocol {
 
     // MARK: - Life cycle

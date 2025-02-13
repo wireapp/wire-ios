@@ -267,6 +267,15 @@ public class MockUserSession: UserSession {
 
     public var underlyingUserProfile: UserProfile!
 
+    // MARK: - isTornDown
+
+    public var isTornDown: Bool {
+        get { return underlyingIsTornDown }
+        set(value) { underlyingIsTornDown = value }
+    }
+
+    public var underlyingIsTornDown: Bool!
+
     // MARK: - lock
 
     public var lock: SessionLock?

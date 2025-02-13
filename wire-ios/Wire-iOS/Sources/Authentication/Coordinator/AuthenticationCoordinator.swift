@@ -89,9 +89,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     /// The object to use to start and control the company login flow.
     let companyLoginController = CompanyLoginController(withDefaultEnvironment: ())
 
-    /// The object to use to restore backups.
-    let backupRestoreController: BackupRestoreController
-
     // MARK: - Internal State
 
     private var loginObservers: [Any] = []
@@ -128,13 +125,11 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         self.stateController = AuthenticationStateController()
         self.interfaceBuilder = AuthenticationInterfaceBuilder(featureProvider: featureProvider)
         self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
-        self.backupRestoreController = BackupRestoreController(target: presenter)
         super.init()
         updateLoginObservers()
         self.unauthenticatedSessionObserver = sessionManager
             .addUnauthenticatedSessionManagerCreatedSessionObserver(self)
         companyLoginController?.delegate = self
-        backupRestoreController.delegate = self
         presenter.delegate = self
         stateController.delegate = self
         eventResponderChain.configure(delegate: self)
@@ -371,9 +366,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case let .startLoginFlow(request, credentials):
                 startLoginFlow(request: request, proxyCredentials: credentials)
-
-            case .startBackupFlow:
-                backupRestoreController.startBackupFlow()
 
             case let .signOut(warn):
                 signOut(warn: warn)
