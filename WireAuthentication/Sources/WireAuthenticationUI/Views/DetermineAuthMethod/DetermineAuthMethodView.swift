@@ -122,30 +122,28 @@ package struct DetermineAuthMethodView: View {
     // MARK: - Private helpers
 
     private func titleForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        // TODO: Localize
         switch alert {
         case .noInternet:
-            Text("No internet")
+            Text(L10n.Authentication.Error.Title.noInternet)
         case .invalidResponse:
-            Text("Error")
+            Text(L10n.Authentication.Error.Title.general)
         case .unknownError:
-            Text("Error")
+            Text(L10n.Authentication.Error.Title.general)
         case .onPremLoginNotPossible:
-            Text("On prem not possible")
+            Text(L10n.Authentication.Error.Title.onPremNotPossible)
         }
     }
 
     private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        // TODO: Localize
         switch alert {
         case .noInternet:
-            Text("You are not connected to the internet.")
+            Text( L10n.Authentication.Error.Message.noInternet)
         case .invalidResponse:
-            Text("Something went wrong")
+            Text( L10n.Authentication.Error.Message.general)
         case .unknownError:
-            Text("Something went wrong")
+            Text( L10n.Authentication.Error.Message.general)
         case .onPremLoginNotPossible:
-            Text("Email is already registered on Wire Cloud.")
+            Text( L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
         }
     }
 
