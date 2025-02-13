@@ -99,8 +99,7 @@ package struct DetermineAuthMethodView: View {
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
-                // TODO: [WPB-15940] Pass canCreateAccount from viewModel
-                builder.loginViaEmailView(email: email, canCreateAccount: true)
+                builder.loginViaEmailView(email: email, canCreateAccount: false)
             case .loginOrRegister:
                 Color.red
             }

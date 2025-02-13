@@ -27,6 +27,7 @@ public class SinglePendingUserIncomingConnectionProfilePage extends IOSPage {
     }
 
     public void tapConnect() {
+        waitUntilElementClickable(connectButton);
         connectButton.click();
     }
 

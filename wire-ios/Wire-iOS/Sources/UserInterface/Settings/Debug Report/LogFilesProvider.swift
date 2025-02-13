@@ -144,7 +144,7 @@ struct LogFilesProvider: LogFilesProviding {
         return url
     }
 
-    private func createInfoFile(at url: URL) throws -> URL {
+    var info: String {
         let date = Date()
 
         var body = """
@@ -159,10 +159,13 @@ struct LogFilesProvider: LogFilesProviding {
             // display only when enabled
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
         }
+        return body
+    }
 
+    private func createInfoFile(at url: URL) throws -> URL {
         let infoFileURL = url.appendingPathComponent("info.txt")
 
-        try body.write(
+        try info.write(
             to: infoFileURL,
             atomically: true,
             encoding: .utf8

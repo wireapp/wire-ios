@@ -2,6 +2,7 @@
 
 import NeedleFoundation
 import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
 import WireReusableUIComponents
 internal import WireAuthenticationLogic
@@ -27,6 +28,9 @@ private func parent2(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
 private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider: DetermineAuthMethodComponentDependency {
     var router: any Router {
         return rootComponent.router
+    }
+    var authenticationAPI: AuthenticationAPI {
+        return rootComponent.authenticationAPI
     }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
@@ -61,6 +65,7 @@ private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: Needle
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-any Router"
+        keyPathToName[\DetermineAuthMethodComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
 
     }
 }
@@ -76,6 +81,7 @@ extension RootComponent: NeedleFoundation.Registration {
 
         localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
+        localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
 }

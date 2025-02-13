@@ -22,4 +22,6 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class NoHistoryViewModel: ObservableObject {}
+public final class NoHistoryViewModel: ObservableObject {
+    func confirm() {}
+}

@@ -16,4 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.119.0
+import WireAPI
+import WireAPISupport
+
+func makeAuthenticationAPI() -> AuthenticationAPI {
+    let mockAuthenticationAPI = MockAuthenticationAPI()
+    mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = DomainRegistrationConfiguration(
+        backendURLString: nil,
+        domainRedirect: .none,
+        isCloudAccountAlreadyRegistered: nil,
+        ssoCodeString: nil
+    )
+    return mockAuthenticationAPI
+}
