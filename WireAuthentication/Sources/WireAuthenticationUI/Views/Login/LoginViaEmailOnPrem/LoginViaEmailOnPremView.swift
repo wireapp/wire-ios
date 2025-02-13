@@ -92,8 +92,8 @@ package struct LoginViaEmailOnPremView: View {
             }, label: {
                 Text(L10n.OnPremUserLogin.title(viewModel.backendName))
                     .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
-                + Text(" ")
-                + Text(Image(systemName: "info.circle"))
+              + Text(" ")
+                 + Text(Image(systemName: "info.circle"))
                     .foregroundColor(.gray)
             })
             .multilineTextAlignment(.center)
