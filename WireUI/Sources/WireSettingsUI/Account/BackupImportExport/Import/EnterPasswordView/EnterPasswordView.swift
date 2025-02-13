@@ -82,7 +82,6 @@ struct EnterPasswordView: View {
                 .font(.subheadline)
                 .padding(.bottom, 2)
 
-            // TODO: tint (for border color)
             ToggleablePasswordField(
                 password: $password,
                 placeholder: Strings.EnterPassword.TextField.placeholder,
@@ -94,7 +93,7 @@ struct EnterPasswordView: View {
 
             if passwordIsWrong {
                 Text(Strings.EnterPassword.wrongPassword)
-                    .foregroundStyle(passwordFieldTitleColor)
+                    .foregroundStyle(passwordFooterColor)
                     .font(.caption)
             }
 
@@ -123,19 +122,6 @@ struct EnterPasswordView: View {
             UIColor { $0.userInterfaceStyle != .dark
                 ? BaseColorPalette.Grays.gray70
                 : BaseColorPalette.Grays.gray60
-            }.color
-        } else {
-            ColorTheme.Base.primary.color
-        }
-    }
-
-    private var passwordFieldBorderColor: Color {
-        if passwordIsWrong {
-            ColorTheme.Base.error.color
-        } else if password.isEmpty {
-            UIColor { $0.userInterfaceStyle != .dark
-                ? BaseColorPalette.Grays.gray40
-                : BaseColorPalette.Grays.gray80
             }.color
         } else {
             ColorTheme.Base.primary.color

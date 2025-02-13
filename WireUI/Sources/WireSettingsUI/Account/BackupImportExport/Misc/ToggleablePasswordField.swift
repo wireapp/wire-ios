@@ -19,7 +19,6 @@
 import SwiftUI
 import WireDesign
 
-// TODO: [WPB-15571] Add accessibility strings to the mask / unmask buttons
 struct ToggleablePasswordField: View {
 
     @Binding var password: String
@@ -43,25 +42,11 @@ struct ToggleablePasswordField: View {
         HStack {
 
             if isPasswordVisible {
-                TextField(text: $password) {
-                    Text(placeholder)
-                        .font(.body)
-                        .foregroundStyle(placeholderColor)
-                }
-                .textContentType(.password)
-                .autocapitalization(.none)
-                .focused($focusedField, equals: .textField)
+                textField
             } else {
-                SecureField(text: $password) {
-                    Text(placeholder)
-                        .font(.body)
-                        .foregroundStyle(placeholderColor)
-                }
-                .textContentType(.password)
-                .focused($focusedField, equals: .secureField)
+                secureField
             }
 
-            let accessibilityLabel = isPasswordVisible ? Labels.Password.Hide.label : Labels.Password.Show.label
             Button {
                 isPasswordVisible.toggle()
                 focusedField = isPasswordVisible ? .textField : .secureField
@@ -69,7 +54,7 @@ struct ToggleablePasswordField: View {
                 Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                     .foregroundColor(toggleVisibilityButtonColor)
             }
-            .accessibilityLabel(accessibilityLabel)
+            .accessibilityLabel(toggleButtonAccessibilityLabel)
 
         }
         .padding()
@@ -83,6 +68,37 @@ struct ToggleablePasswordField: View {
             if focusOnAppear {
                 focusedField = .secureField
             }
+        }
+    }
+
+    @ViewBuilder
+    private var textField: some View {
+        TextField(text: $password) {
+            Text(placeholder)
+                .font(.body)
+                .foregroundStyle(placeholderColor)
+        }
+        .textContentType(.password)
+        .autocapitalization(.none)
+        .focused($focusedField, equals: .textField)
+    }
+
+    @ViewBuilder
+    private var secureField: some View {
+        SecureField(text: $password) {
+            Text(placeholder)
+                .font(.body)
+                .foregroundStyle(placeholderColor)
+        }
+        .textContentType(.password)
+        .focused($focusedField, equals: .secureField)
+    }
+
+    private var toggleButtonAccessibilityLabel: String {
+        if isPasswordVisible {
+            Labels.Password.Hide.label
+        } else {
+            Labels.Password.Show.label
         }
     }
 
