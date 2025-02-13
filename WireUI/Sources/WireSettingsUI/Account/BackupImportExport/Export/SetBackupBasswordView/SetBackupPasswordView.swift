@@ -82,7 +82,6 @@ struct SetBackupPasswordView: View {
                 password: $viewModel.password,
                 placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
                 placeholderColor: passwordFieldPlaceholderColor,
-                borderColor: passwordFieldBorderColor,
                 focusOnAppear: true
             )
             .padding(.bottom, 8)
