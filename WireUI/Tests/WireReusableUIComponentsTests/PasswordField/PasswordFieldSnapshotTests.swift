@@ -54,8 +54,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             title: L10n.Passwordtextfield.Preview.title,
             passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
             arePasswordRulesVisible: .constant(true),
-            titleColor: ColorTheme.Base.error.color,
-            borderColor: ColorTheme.Base.error.color
+            isValidPassword: { _ in false}
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
         .padding(.horizontal)
@@ -72,8 +71,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             title: L10n.Passwordtextfield.Preview.title,
             passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
             arePasswordRulesVisible: .constant(false),
-            titleColor: ColorTheme.Base.primary.color,
-            borderColor: ColorTheme.Base.primary.color
+            isValidPassword: { _ in true}
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
         .padding(.horizontal)
@@ -95,8 +93,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             title: L10n.Passwordtextfield.Preview.title,
             passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
             arePasswordRulesVisible: .constant(false),
-            titleColor: ColorTheme.Base.primary.color,
-            borderColor: ColorTheme.Base.primary.color
+            isValidPassword: { _ in true}
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
         .padding(.horizontal)
