@@ -35,8 +35,7 @@ public struct PasswordField: View {
     private let passwordRules: String?
     private let placeholder: String
     private let title: String
-    private let titleColor: Color
-    private let borderColor: Color
+    private let isValidPassword: (String) -> Bool
 
     public init(
         password: Binding<String>,
@@ -44,16 +43,14 @@ public struct PasswordField: View {
         title: String,
         passwordRules: String?,
         arePasswordRulesVisible: Binding<Bool>,
-        titleColor: Color,
-        borderColor: Color
+        isValidPassword: @escaping (String) -> Bool
     ) {
         self._password = password
         self.placeholder = placeholder
         self.title = title
         self.passwordRules = passwordRules
         self._arePasswordRulesVisible = arePasswordRulesVisible
-        self.titleColor = titleColor
-        self.borderColor = borderColor
+        self.isValidPassword = isValidPassword
     }
 
     public var body: some View {
@@ -103,6 +100,28 @@ public struct PasswordField: View {
 
     // MARK: - Helper
 
+    private var titleColor: Color {
+        switch (password.isEmpty, isValidPassword(password)) {
+        case (_, false):
+            ColorTheme.Base.error.color
+        case (true, _):
+            ColorTheme.Base.labelTitle.color
+        case (false, true):
+            ColorTheme.Base.primary.color
+        }
+    }
+
+    private var borderColor: Color {
+        switch (password.isEmpty, isValidPassword(password)) {
+        case (_, false):
+            ColorTheme.Base.error.color
+        case (true, _):
+            ColorTheme.Strokes.outline.color
+        case (false, true):
+            ColorTheme.Base.primary.color
+        }
+    }
+
     private var iconColor: Color {
         password.isEmpty ? ColorTheme.Strokes.disabledOutline.color : ColorTheme.Buttons.Secondary.onEnabled.color
     }
@@ -118,8 +137,7 @@ public struct PasswordField: View {
         title: L10n.Passwordtextfield.Preview.title,
         passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
         arePasswordRulesVisible: .constant(true),
-        titleColor: ColorTheme.Base.error.color,
-        borderColor: ColorTheme.Base.error.color
+        isValidPassword: { _ in false }
     )
     .padding()
 }
@@ -131,8 +149,7 @@ public struct PasswordField: View {
         title: L10n.Passwordtextfield.Preview.title,
         passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
         arePasswordRulesVisible: .constant(false),
-        titleColor: ColorTheme.Base.primary.color,
-        borderColor: ColorTheme.Base.primary.color
+        isValidPassword: { _ in true }
     )
     .padding()
 }
