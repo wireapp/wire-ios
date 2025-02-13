@@ -130,7 +130,7 @@ package struct DetermineAuthMethodView: View {
             Text("Error")
         case .unknownError:
             Text("Error")
-        case .onPremLoginNotPossible(recovery: let recovery):
+        case .onPremLoginNotPossible:
             Text("On prem not possible")
         }
     }
@@ -144,7 +144,7 @@ package struct DetermineAuthMethodView: View {
             Text("Something went wrong")
         case .unknownError:
             Text("Something went wrong")
-        case .onPremLoginNotPossible(recovery: let recovery):
+        case .onPremLoginNotPossible:
             Text("Email is already registered on Wire Cloud.")
         }
     }

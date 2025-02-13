@@ -65,12 +65,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         isLoading = true
 
         do {
+            // TODO: Fix concurrency issue
             let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
             handleAuthenticationMethod(method)
         } catch {
             switch error {
             case .invalidEmailOrSSOCode:
-                break // TODO: Handle this? Or factor it out?
+                // No need to do anything here. In general this shouldn't happen. It is probably worth restructuring
+                // things a little to make this error impossible to happen.
+                break
             case let .onPremNotPossible(recovery):
                 alert = .onPremLoginNotPossible(recovery: recovery)
             case .invalidResponse:
@@ -110,11 +113,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
         case let .loginViaSSO(code):
-            // TODO: [WPB-15920] Handle login via SSO
+            // TODO: Handle login via SSO
             break
 
         case let .onPremLogin(email, backendConfig):
-            // TODO: [WPB-15920] Handle on-prem login
+            // TODO: Handle on-prem login
             break
         }
     }
