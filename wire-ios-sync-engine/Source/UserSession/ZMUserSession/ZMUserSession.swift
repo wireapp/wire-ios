@@ -533,8 +533,8 @@ public final class ZMUserSession: NSObject {
 
             Task {
                 do {
-                    // Only sync if there is a self client, otherwise we'll perform a initial sync
-                    // when the self client is registered.
+                    // Only sync if there is a self client, otherwise we'll perform an
+                    // initial sync when the self client is registered.
                     try await syncAgent.performSyncIfNeeded()
                 } catch {
                     WireLogger.sync.error("failed to perform sync on session setup: \(String(describing: error))")
