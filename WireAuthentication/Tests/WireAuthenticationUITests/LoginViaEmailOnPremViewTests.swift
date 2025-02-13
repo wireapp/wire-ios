@@ -20,8 +20,8 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import WireAuthenticationUI
 @testable import WireAuthenticationAPI
+@testable import WireAuthenticationUI
 
 class LoginViaEmailOnPremViewTests: XCTestCase {
 
