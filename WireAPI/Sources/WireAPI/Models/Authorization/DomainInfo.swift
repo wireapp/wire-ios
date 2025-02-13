@@ -26,4 +26,8 @@ public struct DomainInfo: Equatable, Sendable {
 
     public let configurationURL: URL
 
+    public init(configurationURL: URL) {
+        self.configurationURL = configurationURL
+    }
+
 }
