@@ -77,7 +77,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     }
 
     var proxyServer: String {
-        "backendEnvironment.proxySettings.host"
+        backendEnvironment.url.absoluteString
     }
 
     func isValidPassword(_ password: String) -> Bool {

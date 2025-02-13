@@ -34,8 +34,11 @@ package struct LoginViaEmailOnPremView: View {
     @ObservedObject var viewModel: LoginViaEmailOnPremViewModel
 
     @State private var password: String = ""
+    @State private var proxyPassword: String = ""
     @State private var showPasswordRules: Bool = false
     @State private var showCustomBackendAlert = false
+
+    private let proxyEmail: String = ""
 
     package init(
         viewModel: LoginViaEmailOnPremViewModel
@@ -46,23 +49,23 @@ package struct LoginViaEmailOnPremView: View {
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
-//                if viewModel.hasProxySupport {
+                if viewModel.hasProxySupport {
                     welcomeMessage
                     emailField
                     passwordField
                     forgotPasswordButton
                     proxyCredentials
                     submitButton
-//                } else {
-//                    welcomeMessage
-//                    emailField
-//                    passwordField
-//                    submitButton
-//                    forgotPasswordButton
-//                    if viewModel.canCreateAccount {
-//                        createAccount
-//                    }
-//                }
+                } else {
+                    welcomeMessage
+                    emailField
+                    passwordField
+                    submitButton
+                    forgotPasswordButton
+                    if viewModel.canCreateAccount {
+                        createAccount
+                    }
+                }
             }
             .navigationTitle(L10n.CloudUserLogin.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -74,7 +77,7 @@ package struct LoginViaEmailOnPremView: View {
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
         .onChange(of: password) { newPassword in
@@ -191,18 +194,36 @@ package struct LoginViaEmailOnPremView: View {
     }
 
     @ViewBuilder private var proxyCredentials: some View {
-        VStack(spacing: 4) {
+        Spacer()
+        VStack(spacing: 14) {
             Text(L10n.ProxyCredentials.title)
                 .multilineTextAlignment(.center)
                 .font(.textStyle(.h2))
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(L10n.ProxyCredentials.message("ffffff"))
+            Text(L10n.ProxyCredentials.message(viewModel.proxyServer))
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
+
+            LabeledTextField(
+                placeholder: "jane@example.com",
+                title: L10n.ProxyCredentials.InputEmail.title,
+                string: .constant(proxyEmail)
+            )
+
+            PasswordField(
+                password: $proxyPassword,
+                placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
+                title: L10n.CloudUserLogin.InputPassword.title,
+                passwordRules: viewModel.localizedPasswordRules,
+                arePasswordRulesVisible: $showPasswordRules,
+                titleColor: passwordFieldTitleColor,
+                borderColor: passwordFieldBorderColor
+            )
+            Spacer()
         }
     }
 
