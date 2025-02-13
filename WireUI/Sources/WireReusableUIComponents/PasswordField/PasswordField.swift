@@ -30,7 +30,6 @@ public struct PasswordField: View {
 
     @State private var isPasswordVisible = false
     @Binding private var password: String
-    @Binding private var arePasswordRulesVisible: Bool
 
     private let passwordRules: String?
     private let placeholder: String
@@ -42,14 +41,12 @@ public struct PasswordField: View {
         placeholder: String,
         title: String,
         passwordRules: String?,
-        arePasswordRulesVisible: Binding<Bool>,
         isValidPassword: @escaping (String) -> Bool
     ) {
         self._password = password
         self.placeholder = placeholder
         self.title = title
         self.passwordRules = passwordRules
-        self._arePasswordRulesVisible = arePasswordRulesVisible
         self.isValidPassword = isValidPassword
     }
 
@@ -90,7 +87,7 @@ public struct PasswordField: View {
                     )
             )
 
-            if let passwordRules, arePasswordRulesVisible {
+            if let passwordRules, shouldShowPasswordRules {
                 Text(passwordRules)
                     .font(.caption)
                     .foregroundColor(titleColor)
@@ -99,6 +96,10 @@ public struct PasswordField: View {
     }
 
     // MARK: - Helper
+
+    private var shouldShowPasswordRules: Bool {
+        !isValidPassword(password)
+    }
 
     private var titleColor: Color {
         switch (password.isEmpty, isValidPassword(password)) {
@@ -136,7 +137,6 @@ public struct PasswordField: View {
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title,
         passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-        arePasswordRulesVisible: .constant(true),
         isValidPassword: { _ in false }
     )
     .padding()
@@ -148,7 +148,6 @@ public struct PasswordField: View {
         placeholder: L10n.Passwordtextfield.Preview.placeholder,
         title: L10n.Passwordtextfield.Preview.title,
         passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-        arePasswordRulesVisible: .constant(false),
         isValidPassword: { _ in true }
     )
     .padding()

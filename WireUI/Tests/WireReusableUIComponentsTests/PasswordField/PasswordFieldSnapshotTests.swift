@@ -53,8 +53,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
             title: L10n.Passwordtextfield.Preview.title,
             passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-            arePasswordRulesVisible: .constant(true),
-            isValidPassword: { _ in false}
+            isValidPassword: { _ in false }
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
         .padding(.horizontal)
@@ -70,8 +69,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
             title: L10n.Passwordtextfield.Preview.title,
             passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-            arePasswordRulesVisible: .constant(false),
-            isValidPassword: { _ in true}
+            isValidPassword: { _ in true }
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
         .padding(.horizontal)
@@ -92,8 +90,7 @@ final class PasswordFieldSnapshotTests: XCTestCase {
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
             title: L10n.Passwordtextfield.Preview.title,
             passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
-            arePasswordRulesVisible: .constant(false),
-            isValidPassword: { _ in true}
+            isValidPassword: { _ in true }
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
         .padding(.horizontal)
