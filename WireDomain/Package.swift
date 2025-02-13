@@ -16,7 +16,7 @@ let package = Package(
         .target(
             name: "WireDomainPkg",
             path: "./Sources/WireDomain",
-            sources: ["./UseCases/Protocols/IndividualToTeamMigrationUseCaseProtocol.swift"]
+            sources: ["./UseCases/Protocols"]
         )
     ]
 )
