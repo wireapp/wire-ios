@@ -36,7 +36,6 @@ struct SetBackupPasswordView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(Strings.ExportBackup.Cancel.title, action: viewModel.cancel)
-                            .foregroundStyle(ColorTheme.Base.primary.color)
                             .accessibilityLabel(Labels.Cancel.label)
                             .accessibilityIdentifier("cancel")
                     }
@@ -95,7 +94,7 @@ struct SetBackupPasswordView: View {
         .padding()
     }
 
-    // TODO: [WPB-16061] the following code is almost identical to the one in EnterPasswordView.swift, try to reuse
+    // TODO: [WPB-16061] the following code is similar to the one in EnterPasswordView.swift, try to reuse
 
     private var passwordFieldTitleColor: Color {
         if !viewModel.isPasswordValid {
@@ -151,4 +150,7 @@ struct SetBackupPasswordView: View {
 
 #Preview {
     SetBackupPasswordPreview()
+        .tint(.purple)
 }
+
+// TODO: test what can go wrong in case notifications keep arriving while restoring backup
