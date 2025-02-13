@@ -1392,8 +1392,6 @@
 		E9C0B3632B55940500BC80E8 /* ConversationMessageTimerSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3622B55940500BC80E8 /* ConversationMessageTimerSystemMessageCellDescription.swift */; };
 		E9C0B3652B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3642B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift */; };
 		E9C0B3672B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3662B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift */; };
-		E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; };
-		E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9D141622AC704DF005EE75D /* CreateSecureConversationGuestLinkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D141612AC704DF005EE75D /* CreateSecureConversationGuestLinkViewModel.swift */; };
 		E9D141652AC71719005EE75D /* CreateSecureGuestLinkViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D141642AC71719005EE75D /* CreateSecureGuestLinkViewModelTests.swift */; };
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
@@ -1921,7 +1919,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				5996E8A72C19D090007A52F0 /* WireSyncEngine.framework in Embed Frameworks */,
-				E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */,
 				EEE25B4E29719D0B0008B894 /* ZipArchive.xcframework in Embed Frameworks */,
 				591B6E182C8B095B009F8A7B /* WireNotificationEngine.framework in Embed Frameworks */,
 				EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */,
@@ -3861,7 +3858,6 @@
 				EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */,
 				59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */,
 				59B99FAC2C89DF2100201827 /* WireAPI in Frameworks */,
-				E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */,
 				EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */,
 				407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */,
