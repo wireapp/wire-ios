@@ -90,11 +90,13 @@ package struct LoginViaEmailOnPremView: View {
             Button(action: {
                 showCustomBackendAlert.toggle()
             }, label: {
-                Text(L10n.OnPremUserLogin.title(viewModel.backendName))
-                    .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
-              + Text(" ")
-              + Text(Image(systemName: "info.circle"))
-                    .foregroundColor(.gray)
+                (
+                    Text(L10n.OnPremUserLogin.title(viewModel.backendName))
+                        .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
+                    + Text(" ")
+                    + Text(Image(systemName: "info.circle"))
+                        .foregroundColor(.gray)
+                )
             })
             .multilineTextAlignment(.center)
             .font(.textStyle(.h2))
