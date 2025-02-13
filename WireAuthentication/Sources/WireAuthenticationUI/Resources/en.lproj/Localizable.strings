@@ -39,3 +39,7 @@
 "verification_code.message" = "Enter the verification code we sent to %@.";
 "verification_code.confirm" = "Confirm";
 "verification_code.resend_code" = "Resend Code";
+
+"authentication.no_history.title" = "It’s the first time you’re using Wire on this device.";
+"authentication.no_history.message" = "For privacy reasons, your conversation history will not appear here.";
+"authentication.no_history.confirm" = "OK";
