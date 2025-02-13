@@ -78,7 +78,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 alert = .onPremLoginNotPossible(recovery: recovery)
             case .invalidResponse:
                 alert = .invalidResponse
-            case .urlError(let urlError):
+            case let .urlError(urlError):
                 switch urlError.code {
                 case .notConnectedToInternet, .networkConnectionLost:
                     alert = .noInternet
@@ -113,11 +113,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
         case let .loginViaSSO(code):
-            // TODO: Handle login via SSO
+            // TODO: [WPB-15943] Handle login via SSO
             break
 
         case let .onPremLogin(email, backendConfig):
-            // TODO: Handle on-prem login
+            // TODO: [WPB-15944] Handle on-prem login
             break
         }
     }

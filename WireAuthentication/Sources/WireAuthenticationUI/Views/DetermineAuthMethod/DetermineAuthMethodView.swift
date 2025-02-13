@@ -94,7 +94,7 @@ package struct DetermineAuthMethodView: View {
                 title: titleForAlert(alert),
                 message: messageForAlert(alert),
                 dismissButton: .default(
-                    Text("OK"), // FIXME: Localize
+                    Text(L10n.Authentication.Error.confirm),
                     action: { viewModel.didDismissAlert(alert: alert) }
                 )
             )
@@ -137,13 +137,13 @@ package struct DetermineAuthMethodView: View {
     private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
         switch alert {
         case .noInternet:
-            Text( L10n.Authentication.Error.Message.noInternet)
+            Text(L10n.Authentication.Error.Message.noInternet)
         case .invalidResponse:
-            Text( L10n.Authentication.Error.Message.general)
+            Text(L10n.Authentication.Error.Message.general)
         case .unknownError:
-            Text( L10n.Authentication.Error.Message.general)
+            Text(L10n.Authentication.Error.Message.general)
         case .onPremLoginNotPossible:
-            Text( L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
+            Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
         }
     }
 
