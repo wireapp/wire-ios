@@ -84,6 +84,7 @@ final class CreatingBackupProgressViewController: UIViewController {
 
     private lazy var progressView = {
         let progressView = UIProgressView()
+        progressView.progressTintColor = ColorTheme.Base.primary
         progressView.accessibilityIdentifier = "progressView"
         return progressView
     }()

@@ -36,6 +36,7 @@ struct SetBackupPasswordView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(Strings.ExportBackup.Cancel.title, action: viewModel.cancel)
+                            .foregroundStyle(ColorTheme.Base.primary.color)
                             .accessibilityLabel(Labels.Cancel.label)
                             .accessibilityIdentifier("cancel")
                     }
@@ -72,90 +73,78 @@ struct SetBackupPasswordView: View {
                 .font(.body)
                 .padding(.bottom, 28)
 
-            passwordField
-                .padding(.bottom, 8)
+            Text(Strings.ExportBackup.SetBackupPassword.title)
+                .foregroundStyle(passwordFieldTitleColor)
+                .font(.subheadline)
+                .padding(.bottom, 2)
 
-            footer
+            ToggleablePasswordField(
+                password: $viewModel.password,
+                placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
+                placeholderColor: passwordFieldPlaceholderColor,
+                borderColor: passwordFieldBorderColor,
+                focusOnAppear: true
+            )
+            .padding(.bottom, 8)
+
+            Text(viewModel.localizedPasswordRules)
+                .foregroundStyle(passwordFooterColor)
+                .font(.caption)
 
             Spacer()
         }
         .padding()
     }
 
-    // TODO: [WPB-16061] the following code is similar to the one in EnterPasswordView.swift, try to reuse
+    // TODO: [WPB-16061] the following code is almost identical to the one in EnterPasswordView.swift, try to reuse
 
-    @ViewBuilder
-    private var passwordField: some View {
-
-        let title = Text(Strings.ExportBackup.SetBackupPassword.title)
-                .font(.subheadline)
-                .padding(.bottom, 2)
-
-        let placeholderColor = UIColor { $0.userInterfaceStyle != .dark
-            ? BaseColorPalette.Grays.gray70
-            : BaseColorPalette.Grays.gray60
-        }
-        let passwordField = ToggleablePasswordField(
-            password: $viewModel.password,
-            placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
-            placeholderColor: placeholderColor.color,
-            focusOnAppear: true
-        )
-
+    private var passwordFieldTitleColor: Color {
         if !viewModel.isPasswordValid {
-
-            // use red for errors
-            title
-                .foregroundStyle(ColorTheme.Base.error.color)
-            passwordField
-                .tint(ColorTheme.Base.error.color)
-
+            ColorTheme.Base.error.color
         } else if viewModel.password.isEmpty {
-
-            // use some gray when the field is empty
-            let titleColor = UIColor { $0.userInterfaceStyle != .dark
+            UIColor { $0.userInterfaceStyle != .dark
                 ? BaseColorPalette.Grays.gray80
                 : BaseColorPalette.Grays.gray40
-            }
-            let fieldBorder = UIColor { $0.userInterfaceStyle != .dark
-                ? BaseColorPalette.Grays.gray80
-                : BaseColorPalette.Grays.gray40
-            }
-            title
-                .foregroundStyle(titleColor.color)
-            passwordField
-                .tint(fieldBorder.color)
-
+            }.color
         } else {
-
-            // use the tint color (user's accent color) when non-empty
-            title
-                .foregroundStyle(.tint)
-            passwordField
-
+            ColorTheme.Base.primary.color
         }
     }
 
-    @ViewBuilder
-    private var footer: some View {
-
-        let footer = Text(viewModel.localizedPasswordRules)
-            .font(.caption)
-
+    private var passwordFieldPlaceholderColor: Color {
         if !viewModel.isPasswordValid {
-
-            footer
-                .foregroundStyle(ColorTheme.Base.error.color)
-
+            ColorTheme.Base.error.color
+        } else if viewModel.password.isEmpty {
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray70
+                : BaseColorPalette.Grays.gray60
+            }.color
         } else {
+            ColorTheme.Base.primary.color
+        }
+    }
 
-            let footerColor = UIColor { $0.userInterfaceStyle != .dark
+    private var passwordFieldBorderColor: Color {
+        if !viewModel.isPasswordValid {
+            ColorTheme.Base.error.color
+        } else if viewModel.password.isEmpty {
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray40
+                : BaseColorPalette.Grays.gray80
+            }.color
+        } else {
+            ColorTheme.Base.primary.color
+        }
+    }
+
+    private var passwordFooterColor: Color {
+        if !viewModel.isPasswordValid {
+            ColorTheme.Base.error.color
+        } else {
+            UIColor { $0.userInterfaceStyle != .dark
                 ? BaseColorPalette.Grays.gray70
                 : BaseColorPalette.Grays.gray40
-            }
-            footer
-                .foregroundStyle(footerColor.color)
-
+            }.color
         }
     }
 
@@ -163,7 +152,4 @@ struct SetBackupPasswordView: View {
 
 #Preview {
     SetBackupPasswordPreview()
-        .tint(.purple)
 }
-
-// TODO: test what can go wrong in case notifications keep arriving while restoring backup

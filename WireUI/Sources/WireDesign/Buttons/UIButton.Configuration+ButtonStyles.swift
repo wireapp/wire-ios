@@ -23,6 +23,14 @@ public extension UIButton.Configuration {
 
     static var primary: Self {
 
+        var configuration = shared
+        configuration.baseBackgroundColor = ColorTheme.Buttons.Primary.enabled
+        return configuration
+
+    }
+
+    private static var shared: Self {
+
         var configuration = UIButton.Configuration.filled()
         configuration.buttonSize = .large
         configuration.titleTextAttributesTransformer = .init { attributeContainer in

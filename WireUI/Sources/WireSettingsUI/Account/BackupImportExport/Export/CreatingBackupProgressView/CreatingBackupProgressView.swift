@@ -36,6 +36,7 @@ struct CreatingBackupProgressView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(Strings.Cancel.title, action: cancelAction)
+                            .foregroundStyle(ColorTheme.Base.primary.color)
                             .accessibilityLabel(Labels.Cancel.label)
                             .accessibilityIdentifier("cancel")
                     }
@@ -73,10 +74,8 @@ struct CreatingBackupProgressView: View {
 
 #Preview("in progress") {
     CreatingBackupProgressPreview(.ongoing(0.25))
-        .tint(Color.purple)
 }
 
 #Preview("ready") {
     CreatingBackupProgressPreview(.finished(.init(fileURLWithPath: "/")))
-        .tint(Color.purple)
 }

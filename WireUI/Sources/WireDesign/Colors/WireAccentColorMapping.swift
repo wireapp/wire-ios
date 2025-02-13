@@ -62,7 +62,7 @@ func WireAccentColorMappingPreview() -> some View {
         VStack {
             ForEach(WireAccentColor.allCases, id: \.self) { accentColor in
                 MappingTestView()
-                    .environment(\.wireAccentColor, accentColor)
+                    .wireAccentColor(accentColor)
                 if accentColor != WireAccentColor.allCases.last {
                     Divider()
                 }

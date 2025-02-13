@@ -38,6 +38,7 @@ struct ImportProgressView: View {
                         Button(action: cancelAction) {
                             Text(Strings.Cancel.title)
                         }
+                        .foregroundStyle(ColorTheme.Base.primary.color)
                         .accessibilityLabel(Labels.Cancel.label)
                         .accessibilityIdentifier("cancel")
                     }
