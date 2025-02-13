@@ -53,7 +53,7 @@ final class CallGridViewController: UIViewController {
         PinchToZoomRule(isOneToOneCall: configuration.callHasTwoParticipants)
     }
 
-    private var visibleClientsSharingVideo: Set<AVSClientVideoStream> = []
+    private var visibleClientsSharingVideo: [AVSClient] = []
     private var dataSource: [Stream] = []
     private let gridView = GridView(maxItemsPerPage: maxItemsPerPage)
     private let thumbnailViewController = PinnableThumbnailViewController()
@@ -158,7 +158,7 @@ final class CallGridViewController: UIViewController {
         networkConditionView.accessibilityIdentifier = "network-conditions-indicator"
     }
 
-    func reloadGridData() {
+    func releadGridData() {
         gridView.reloadData()
     }
 
@@ -220,7 +220,6 @@ final class CallGridViewController: UIViewController {
         maximizedView = shouldMaximize ? view : nil
         view.isMaximized = shouldMaximize
         updateGrid(with: streams)
-        requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
         updateHint(for: .maximizationChanged(stream: view.stream, maximized: view.isMaximized))
     }
 
@@ -419,23 +418,14 @@ final class CallGridViewController: UIViewController {
               endIndex > startIndex
         else { return }
 
-        let clientsWithVideo = dataSource[startIndex ..< endIndex]
+        let clients = dataSource[startIndex ..< endIndex]
             .filter(\.isSharingVideo)
+            .map(\.streamId)
 
-        let oneStreamDisplayedExcludingSelf = clientsWithVideo.count == 1
-        let clientStreams = clientsWithVideo
-            .map { client in
-                AVSClientVideoStream(
-                    client: client.streamId,
-                    quality: oneStreamDisplayedExcludingSelf ? .high : .low
-                )
-            }
+        guard Set(clients) != Set(visibleClientsSharingVideo) else { return }
 
-        let newVisibleClientsSharingVideo = Set(clientStreams)
-
-        guard newVisibleClientsSharingVideo != visibleClientsSharingVideo else { return }
-        delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clientStreams))
-        visibleClientsSharingVideo = newVisibleClientsSharingVideo
+        delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clients))
+        visibleClientsSharingVideo = clients
     }
 
     // MARK: - Grid View Axis
