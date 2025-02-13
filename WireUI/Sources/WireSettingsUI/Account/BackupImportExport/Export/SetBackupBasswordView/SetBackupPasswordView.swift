@@ -72,18 +72,8 @@ struct SetBackupPasswordView: View {
                 .font(.body)
                 .padding(.bottom, 28)
 
-            Text(Strings.ExportBackup.SetBackupPassword.title)
-                .foregroundStyle(passwordFieldTitleColor)
-                .font(.subheadline)
-                .padding(.bottom, 2)
-
-            ToggleablePasswordField(
-                password: $viewModel.password,
-                placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
-                placeholderColor: passwordFieldPlaceholderColor,
-                focusOnAppear: true
-            )
-            .padding(.bottom, 8)
+            passwordField
+                .padding(.bottom, 8)
 
             footer
 
@@ -93,6 +83,22 @@ struct SetBackupPasswordView: View {
     }
 
     // TODO: [WPB-16061] the following code is similar to the one in EnterPasswordView.swift, try to reuse
+
+    @ViewBuilder
+    private var passwordField: some View {
+
+        Text(Strings.ExportBackup.SetBackupPassword.title)
+            .foregroundStyle(passwordFieldTitleColor)
+            .font(.subheadline)
+            .padding(.bottom, 2)
+
+        ToggleablePasswordField(
+            password: $viewModel.password,
+            placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
+            placeholderColor: passwordFieldPlaceholderColor,
+            focusOnAppear: true
+        )
+    }
 
     private var passwordFieldTitleColor: Color {
         if !viewModel.isPasswordValid {
