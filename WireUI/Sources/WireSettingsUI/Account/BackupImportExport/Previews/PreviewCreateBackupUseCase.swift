@@ -61,3 +61,7 @@ struct PreviewCreateBackupUseCase: CreateBackupUseCaseProtocol {
     struct PreviewExportBackupError: Error {}
 
 }
+
+public func PreviewCreateBackupUseCase_() -> any CreateBackupUseCaseProtocol {
+    PreviewCreateBackupUseCase()
+}
