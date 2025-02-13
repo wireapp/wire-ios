@@ -128,7 +128,6 @@ package struct LoginViaEmailOnPremView: View {
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
             title: L10n.CloudUserLogin.InputPassword.title,
             passwordRules: viewModel.localizedPasswordRules,
-            arePasswordRulesVisible: $showPasswordRules,
             isValidPassword: viewModel.isValidPassword
         )
     }
@@ -218,7 +217,6 @@ package struct LoginViaEmailOnPremView: View {
                 placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
                 title: L10n.CloudUserLogin.InputPassword.title,
                 passwordRules: viewModel.localizedPasswordRules,
-                arePasswordRulesVisible: $showPasswordRules,
                 isValidPassword: viewModel.isValidPassword
             )
             Spacer()
