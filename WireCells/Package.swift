@@ -24,7 +24,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/pydio/cells-sdk-swift.git", branch: "v5-dev"),
+        .package(url: "https://github.com/pydio/cells-sdk-swift.git", branch: "v0.1.1-alpha02"),
         .package(url: "https://github.com/awslabs/aws-sdk-swift.git", from: "1.0.0"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(name: "WireUI", path: "../WireUI")

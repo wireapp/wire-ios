@@ -32,8 +32,8 @@
         "package": "CellsSDK",
         "repositoryURL": "https://github.com/pydio/cells-sdk-swift.git",
         "state": {
-          "branch": "v5-dev",
-          "revision": "04297886acc07d15862f6b94e61e4318dc25f3b7",
+          "branch": "v0.1.1-alpha02",
+          "revision": "88654ec1adf7395a3aaa841f1f313bc110665fb9",
           "version": null
         }
       },
