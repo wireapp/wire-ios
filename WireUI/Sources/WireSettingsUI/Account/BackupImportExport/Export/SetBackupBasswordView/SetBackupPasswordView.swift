@@ -98,6 +98,7 @@ struct SetBackupPasswordView: View {
             placeholderColor: passwordFieldPlaceholderColor,
             focusOnAppear: true
         )
+        .tint(passwordFieldBorderColor)
     }
 
     private var passwordFieldTitleColor: Color {
