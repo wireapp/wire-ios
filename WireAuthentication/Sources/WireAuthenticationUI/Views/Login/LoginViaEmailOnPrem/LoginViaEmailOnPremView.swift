@@ -46,23 +46,23 @@ package struct LoginViaEmailOnPremView: View {
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
-                if viewModel.hasProxySupport {
+//                if viewModel.hasProxySupport {
                     welcomeMessage
                     emailField
                     passwordField
                     forgotPasswordButton
-                    // proxy
+                    proxyCredentials
                     submitButton
-                } else {
-                    welcomeMessage
-                    emailField
-                    passwordField
-                    submitButton
-                    forgotPasswordButton
-                    if viewModel.canCreateAccount {
-                        createAccount
-                    }
-                }
+//                } else {
+//                    welcomeMessage
+//                    emailField
+//                    passwordField
+//                    submitButton
+//                    forgotPasswordButton
+//                    if viewModel.canCreateAccount {
+//                        createAccount
+//                    }
+//                }
             }
             .navigationTitle(L10n.CloudUserLogin.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -84,25 +84,23 @@ package struct LoginViaEmailOnPremView: View {
 
     @ViewBuilder private var welcomeMessage: some View {
         VStack(spacing: 14) {
-            HStack(alignment: .lastTextBaseline) {
+            Button(action: {
+                showCustomBackendAlert.toggle()
+            }) {
                 Text(L10n.OnPremUserLogin.title(viewModel.backendName))
-                    .multilineTextAlignment(.center)
-                    .font(.textStyle(.h2))
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Button(action: {
-                    showCustomBackendAlert = true
-                }) {
-                    Image(systemName: "info.circle")
-                        .foregroundColor(.gray)
-                        .font(.title3)
-                }
-                .alert(L10n.OnPremUserLogin.Alert.title, isPresented: $showCustomBackendAlert) {
-                    Button(L10n.OnPremUserLogin.Alert.button, role: .cancel) {}
-                } message: {
-                    Text(viewModel.backendInfo)
-                }
+                    .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
+                + Text(" ")
+                + Text(Image(systemName: "info.circle"))
+                    .foregroundColor(.gray)
+            }
+            .multilineTextAlignment(.center)
+            .font(.textStyle(.h2))
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
+            .alert(L10n.OnPremUserLogin.Alert.title, isPresented: $showCustomBackendAlert) {
+                Button(L10n.OnPremUserLogin.Alert.button, role: .cancel) {}
+            } message: {
+                Text(viewModel.backendInfo)
             }
             Text(L10n.OnPremUserLogin.message)
                 .multilineTextAlignment(.center)
@@ -189,6 +187,22 @@ package struct LoginViaEmailOnPremView: View {
                     .background(ColorTheme.Backgrounds.backgroundVariant.color)
                     .cornerRadius(12)
             }
+        }
+    }
+
+    @ViewBuilder private var proxyCredentials: some View {
+        VStack(spacing: 4) {
+            Text(L10n.ProxyCredentials.title)
+                .multilineTextAlignment(.center)
+                .font(.textStyle(.h2))
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(L10n.ProxyCredentials.message("ffffff"))
+                .multilineTextAlignment(.center)
+                .wireTextStyle(.body1)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
