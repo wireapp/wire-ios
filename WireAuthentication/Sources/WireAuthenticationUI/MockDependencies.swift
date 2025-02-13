@@ -27,6 +27,16 @@ final class MockDependencies {
         RootViewModel()
     }
 
+    private var backendEnvironment: BackendEnvironment {
+        _backendEnvironment
+    }
+
+    var _backendEnvironment: BackendEnvironment = BackendEnvironment(
+        title: "<backend name>",
+        url: URL(string: "https://example.com")!,
+        accountsURL: URL(string: "https://example.com")!
+    )
+
     var rootView: RootView {
         RootView(
             viewModel: rootViewModel,
@@ -132,11 +142,6 @@ extension MockDependencies: LoginViaEmailBuilder {
 extension MockDependencies: LoginViaEmailOnPremViewBuilder {
 
     private func loginViaEmailOnPremViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremViewModel {
-        let backendEnvironment = BackendEnvironment(
-            title: "<backend name>",
-            url: URL(string: "https://example.com")!,
-            accountsURL: URL(string: "https://example.com")!
-        )
         return LoginViaEmailOnPremViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,

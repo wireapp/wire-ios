@@ -38,7 +38,7 @@ package struct LoginViaEmailOnPremView: View {
     @State private var showPasswordRules: Bool = false
     @State private var showCustomBackendAlert = false
 
-    private let proxyEmail: String = ""
+    private var proxyEmail: String = ""
 
     package init(
         viewModel: LoginViaEmailOnPremViewModel
@@ -129,8 +129,7 @@ package struct LoginViaEmailOnPremView: View {
             title: L10n.CloudUserLogin.InputPassword.title,
             passwordRules: viewModel.localizedPasswordRules,
             arePasswordRulesVisible: $showPasswordRules,
-            titleColor: passwordFieldTitleColor,
-            borderColor: passwordFieldBorderColor
+            isValidPassword: viewModel.isValidPassword
         )
     }
 
@@ -220,37 +219,11 @@ package struct LoginViaEmailOnPremView: View {
                 title: L10n.CloudUserLogin.InputPassword.title,
                 passwordRules: viewModel.localizedPasswordRules,
                 arePasswordRulesVisible: $showPasswordRules,
-                titleColor: passwordFieldTitleColor,
-                borderColor: passwordFieldBorderColor
+                isValidPassword: viewModel.isValidPassword
             )
             Spacer()
         }
     }
-
-    // MARK: - Helper
-
-    private var passwordFieldTitleColor: Color {
-        switch (password.isEmpty, viewModel.isValidPassword(password)) {
-        case (_, false):
-            ColorTheme.Base.error.color
-        case (true, _):
-            ColorTheme.Base.labelTitle.color
-        case (false, true):
-            ColorTheme.Base.primary.color
-        }
-    }
-
-    private var passwordFieldBorderColor: Color {
-        switch (password.isEmpty, viewModel.isValidPassword(password)) {
-        case (_, false):
-            ColorTheme.Base.error.color
-        case (true, _):
-            ColorTheme.Strokes.outline.color
-        case (false, true):
-            ColorTheme.Base.primary.color
-        }
-    }
-
 }
 
 #Preview() {
