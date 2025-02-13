@@ -1014,7 +1014,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    private func didStartIncrementalSync() {
+    func didStartIncrementalSync() {
         WireLogger.sync.debug("did start incremental sync")
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
@@ -1022,7 +1022,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    private func didFinishIncrementalSync() {
+    func didFinishIncrementalSync() {
         syncContext.perform { [weak self] in
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync")

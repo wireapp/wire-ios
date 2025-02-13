@@ -118,7 +118,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     }
 
     public func forceSlowSync() {
-        managedObjectContext.perform { [weak self] in
+        managedObjectContext.performAndWait { [weak self] in
             guard let self else { return }
             // Refetch user settings.
             ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
@@ -132,7 +132,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     /// Sync the resources: Teams, Users, Conversations...
     public func resyncResources() {
-        managedObjectContext.perform { [weak self] in
+        managedObjectContext.performAndWait { [weak self] in
             guard let self else { return }
             // Refetch user settings.
             ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
