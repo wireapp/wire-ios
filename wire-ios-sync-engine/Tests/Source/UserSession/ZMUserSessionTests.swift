@@ -21,8 +21,8 @@ import WireDataModelSupport
 import WireTesting
 import WireTestingPackage
 
-@testable import WireSyncEngineSupport
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
