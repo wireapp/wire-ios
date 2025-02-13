@@ -85,9 +85,7 @@ struct SetBackupPasswordView: View {
             )
             .padding(.bottom, 8)
 
-            Text(viewModel.localizedPasswordRules)
-                .foregroundStyle(passwordFooterColor)
-                .font(.caption)
+            footer
 
             Spacer()
         }
@@ -135,14 +133,28 @@ struct SetBackupPasswordView: View {
         }
     }
 
-    private var passwordFooterColor: Color {
+    //
+
+    @ViewBuilder
+    private var footer: some View {
+
+        let footer = Text(viewModel.localizedPasswordRules)
+            .font(.caption)
+
         if !viewModel.isPasswordValid {
-            ColorTheme.Base.error.color
+
+            footer
+                .foregroundStyle(ColorTheme.Base.error.color)
+
         } else {
-            UIColor { $0.userInterfaceStyle != .dark
+
+            let footerColor = UIColor { $0.userInterfaceStyle != .dark
                 ? BaseColorPalette.Grays.gray70
                 : BaseColorPalette.Grays.gray40
-            }.color
+            }
+            footer
+                .foregroundStyle(footerColor.color)
+
         }
     }
 
