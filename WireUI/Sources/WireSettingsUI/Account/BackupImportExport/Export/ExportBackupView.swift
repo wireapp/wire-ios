@@ -22,8 +22,6 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
 
     @StateObject var viewModel: ExportBackupViewModel
 
-    @State private var setBackupPasswordViewHeight: CGFloat = 100
-
     private(set) var setBackupPasswordView: () -> PasswordView
     private(set) var creatingBackupProgressView: () -> ProgressView
 
@@ -42,12 +40,8 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                         .presentationDetents([.medium])
                         .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
                             setBackupPasswordView()
-                                .onPreferenceChange(SetBackupPasswordView.ViewHeightKey.self) { [$setBackupPasswordViewHeight] height in
-                                    $setBackupPasswordViewHeight.wrappedValue = height
-                                    print("set new height x: \(height)")
-                                }
                                 .interactiveDismissDisabled()
-                                .presentationDetents([.height(setBackupPasswordViewHeight)])
+                                .presentationDetents([.medium])
                         }
                 }
 
