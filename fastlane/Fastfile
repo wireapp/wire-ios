@@ -180,7 +180,8 @@ platform :ios do
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         save_app_name('Edge')
         build_and_upload_app(options)
-        `export TEMP='BUILD_INSTALL_LINK=#{ENV['EDGE_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
+        # TODO: uncomment when we go with testflight and also edit env variable
+        # `export TEMP='BUILD_INSTALL_LINK=#{ENV['EDGE_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Testflight Playground build"
