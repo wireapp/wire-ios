@@ -18,10 +18,6 @@
 
 protocol SyncManagerProtocol {
 
-    /// Pulls and stores all required objects for the database to be initially up-to-date.
-
-    func performSlowSync() async throws
-
     /// Fetch events from the server and process all pending events.
 
     func performQuickSync() async throws

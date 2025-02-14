@@ -16,8 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
+// sourcery: AutoMockable
+/// An object to keep the local self user up to date
+/// with the remote self user.
 protocol PullSelfUserSyncProtocol {
 
-    func pull() async throws
+    /// Fetch the self user from remote, then create or update
+    /// it locally.
+
+    @discardableResult
+    func pull() async throws -> (id: UUID, domain: String?, teamID: UUID?)
 
 }

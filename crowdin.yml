@@ -49,6 +49,16 @@ files: [
     "translation" : "/WireUI/Sources/WireSidebarUI/Resources/%osx_code%/%original_file_name%",
   },
   {
+    "source" : "/WireAuthentication/Sources/WireAuthenticationUI/Resources/en.lproj/Accessibility.strings",
+    "dest" : "/App/WireAuthenticationUI/Resources/Accessibility.strings",
+    "translation" : "/WireAuthentication/Sources/WireAuthenticationUI/Resources/%osx_code%/%original_file_name%",
+  },
+  {
+    "source" : "/WireAuthentication/Sources/WireAuthenticationUI/Resources/en.lproj/Localizable.strings",
+    "dest" : "/App/WireAuthenticationUI/Resources/Localizable.strings",
+    "translation" : "/WireAuthentication/Sources/WireAuthenticationUI/Resources/%osx_code%/%original_file_name%",
+  },
+  {
     "source" : "/WireUI/Sources/WireMainNavigationUI/Resources/Localizable.xcstrings",
     "dest" : "/App/WireMainNavigationUI/Resources/Localizable.xcstrings",
     "translation" : "%original_path%/%original_file_name%",

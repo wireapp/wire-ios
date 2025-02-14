@@ -19,7 +19,6 @@
 @import WireSystem;
 
 #import <WireTransport/ZMTransportSession.h>
-#import "ZMPushChannelConnection.h"
 #import "ZMTransportRequestScheduler.h"
 #import "ZMAccessTokenHandler.h"
 #import "ZMURLSession.h"

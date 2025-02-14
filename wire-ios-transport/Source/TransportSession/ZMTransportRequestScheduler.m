@@ -21,7 +21,6 @@
 #import "ZMTransportRequestScheduler.h"
 #import "ZMExponentialBackoff.h"
 #import "ZMTLogging.h"
-#import "ZMWebSocket.h"
 #import <WireTransport/WireTransport-Swift.h>
 
 NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited = NSIntegerMax;
@@ -276,19 +275,6 @@ ZM_EMPTY_ASSERTING_INIT();
 {
     NSHTTPURLResponse * const response = (id) task.response;
     [self processCompletedURLResponse:response URLError:task.error];
-}
-
-- (void)processWebSocketError:(NSError *)error
-{
-    NSInteger const errorCode = error.code;
-    ZMLogDebug(@"%@: errorCode %ld", NSStringFromSelector(_cmd), (long) errorCode);
-    
-    CheckString((error == nil) || [error.domain isEqualToString:ZMWebSocketErrorDomain], "Invalid error domain.");
-    
-    if (errorCode == ZMWebSocketErrorCodeLostConnection && !self.reachability.mayBeReachable) {
-        ZMLogDebug(@"Scheduler is Offline");
-        self.schedulerState = ZMTransportRequestSchedulerStateOffline;
-    }
 }
 
 - (void)processCompletedURLResponse:(NSHTTPURLResponse *)response URLError:(NSError *)error;

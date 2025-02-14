@@ -562,6 +562,8 @@ public final class MLSService: MLSServiceInterface {
 
     private static let epochChangeBufferSize: Int = 1000
 
+    private let maxRetryAttempts = 3
+
     weak var delegate: MLSServiceDelegate?
 
     // MARK: - Life cycle
@@ -1312,6 +1314,10 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("repairing out of sync conversation... (\(groupID.safeForLoggingDescription))")
 
+            // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
+            // This ensures we're on the latest state.
+            await syncStatus.performQuickSync()
+
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
                 in: context
@@ -1871,7 +1877,8 @@ public final class MLSService: MLSServiceInterface {
 
     private func retryOnCommitFailure(
         for groupID: MLSGroupID,
-        operation: @escaping () async throws -> Void
+        operation: @escaping () async throws -> Void,
+        retryCount: Int = 0
     ) async throws {
 
         do {
@@ -1883,11 +1890,19 @@ public final class MLSService: MLSServiceInterface {
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
-        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, _) {
+        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: let error) {
             logger.warn("failed to send commit, syncing then retrying operation...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, retying operation...")
-            try await retryOnCommitFailure(for: groupID, operation: operation)
+
+            guard retryCount <= maxRetryAttempts else {
+                throw error
+            }
+
+            var currentRetryCount = retryCount
+            currentRetryCount += 1
+
+            try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
 
         } catch CommitError.failedToSendCommit(recovery: .retryAfterRepairingGroup, _) {
             logger.warn("failed to send commit, repairing group then retrying operation...")
@@ -1899,9 +1914,17 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("failed to send commit, giving up...")
             throw error
 
-        } catch ExternalCommitError.failedToSendCommit(recovery: .retry, _) {
+        } catch ExternalCommitError.failedToSendCommit(recovery: .retry, cause: let error) {
             logger.warn("failed to send external commit, retrying operation...")
-            try await retryOnCommitFailure(for: groupID, operation: operation)
+
+            guard retryCount <= maxRetryAttempts else {
+                throw error
+            }
+
+            var currentRetryCount = retryCount
+            currentRetryCount += 1
+
+            try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
 
         } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
             logger.warn("failed to send external commit, giving up...")
