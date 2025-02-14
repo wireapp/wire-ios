@@ -53,6 +53,7 @@
 		3E88BD381B1F3EA300232589 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BD431B1F3EA300232589 /* WireUtilities-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireUtilities-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C92FBC392D5CC77400D45DD4 /* WireUtilities-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "WireUtilities-Info.plist"; sourceTree = "<group>"; };
 		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0AD296EFBE60055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC872BD158BC00F7853F /* WireUtilities.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireUtilities.docc; sourceTree = "<group>"; };
@@ -150,6 +151,7 @@
 		3E88BD291B1F3E8400232589 = {
 			isa = PBXGroup;
 			children = (
+				C92FBC392D5CC77400D45DD4 /* WireUtilities-Info.plist */,
 				EE9AEC872BD158BC00F7853F /* WireUtilities.docc */,
 				595F72812D43CE6900E5ECBE /* Resources */,
 				59AB60532D43D269005D2D17 /* Source */,
@@ -525,6 +527,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WireUtilities-Info.plist";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
@@ -538,6 +541,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WireUtilities-Info.plist";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
