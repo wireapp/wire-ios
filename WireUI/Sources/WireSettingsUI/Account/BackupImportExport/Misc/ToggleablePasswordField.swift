@@ -34,6 +34,7 @@ struct ToggleablePasswordField: View {
         case secureField
         case textField
     }
+
     @FocusState private var focusedField: FocusedField?
 
     private typealias Labels = L10n.Accessibility.Backup
@@ -71,8 +72,7 @@ struct ToggleablePasswordField: View {
         }
     }
 
-    @ViewBuilder
-    private var textField: some View {
+    @ViewBuilder private var textField: some View {
         TextField(text: $password) {
             Text(placeholder)
                 .font(.body)
@@ -83,8 +83,7 @@ struct ToggleablePasswordField: View {
         .focused($focusedField, equals: .textField)
     }
 
-    @ViewBuilder
-    private var secureField: some View {
+    @ViewBuilder private var secureField: some View {
         SecureField(text: $password) {
             Text(placeholder)
                 .font(.body)

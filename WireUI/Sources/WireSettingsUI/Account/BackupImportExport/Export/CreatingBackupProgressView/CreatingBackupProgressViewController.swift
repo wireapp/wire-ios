@@ -95,7 +95,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         exportButton.accessibilityIdentifier = "exportButton"
         return exportButton
     }()
-    
+
     /// A view which is placed with the optimal bottom spacing.
     /// It's used for calculations of the optimal sheet presentation detent.
     private lazy var bottomSpacer = UIView()

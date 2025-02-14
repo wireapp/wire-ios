@@ -82,8 +82,7 @@ struct SetBackupPasswordView: View {
 
     // TODO: [WPB-16061] the following code is similar to the one in EnterPasswordView.swift, try to reuse
 
-    @ViewBuilder
-    private var passwordField: some View {
+    @ViewBuilder private var passwordField: some View {
 
         Text(Strings.ExportBackup.SetBackupPassword.title)
             .foregroundStyle(passwordFieldTitleColor)
@@ -138,8 +137,7 @@ struct SetBackupPasswordView: View {
         }
     }
 
-    @ViewBuilder
-    private var footer: some View {
+    @ViewBuilder private var footer: some View {
 
         let footer = Text(viewModel.localizedPasswordRules)
             .font(.caption)
