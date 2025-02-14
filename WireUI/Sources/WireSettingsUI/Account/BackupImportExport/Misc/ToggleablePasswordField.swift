@@ -44,8 +44,25 @@ struct ToggleablePasswordField: View {
 
             if isPasswordVisible {
                 textField
+                TextField(text: $password) {
+                    Text(placeholder)
+                        .font(.body)
+                        .foregroundStyle(placeholderColor)
+                }
+                .focused($isFocused)
+                .textContentType(.password)
+                .autocapitalization(.none)
+                .accessibilityIdentifier("password input")
             } else {
                 secureField
+                SecureField(text: $password) {
+                    Text(placeholder)
+                        .font(.body)
+                        .foregroundStyle(placeholderColor)
+                }
+                .focused($isFocused)
+                .textContentType(.password)
+                .accessibilityIdentifier("password input")
             }
 
             Button {
