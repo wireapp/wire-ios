@@ -65,7 +65,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         isLoading = true
 
         do {
-            // TODO: Fix concurrency issue
             let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
             handleAuthenticationMethod(method)
         } catch {

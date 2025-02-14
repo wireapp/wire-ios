@@ -20,6 +20,7 @@ import Foundation
 
 public protocol DetermineAuthMethodUseCaseProtocol {
 
+    @MainActor
     func invoke(emailOrSSOCode: String) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod
 
 }
