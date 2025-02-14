@@ -96,7 +96,8 @@ final class CreatingBackupProgressViewController: UIViewController {
         return exportButton
     }()
     
-    /// A view which marks the optimal bottom padding. It will be used for determining the presentation sheets height.
+    /// A view which fills the content of the sheet. Based on it's determined size and
+    /// the diff of the stack view content, the sheet presenation is adjusted.
     private lazy var bottomSpacer = UIView()
 
     // MARK: - Methods
@@ -144,10 +145,14 @@ final class CreatingBackupProgressViewController: UIViewController {
             svLayoutGuide.trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 3),
             svLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
 
-            bottomSpacer.heightAnchor.constraint(equalToConstant: 10),
-            bottomSpacer.widthAnchor.constraint(equalToConstant: 10),
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 0),
+            bottomSpacer.widthAnchor.constraint(equalToConstant: 0),
             bottomSpacer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             view.bottomAnchor.constraint(equalToSystemSpacingBelow: bottomSpacer.bottomAnchor, multiplier: 3)
+//            bottomSpacer.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+//            bottomSpacer.topAnchor.constraint(equalTo: stackView.topAnchor),
+//            stackView.trailingAnchor.constraint(equalTo: bottomSpacer.trailingAnchor),
+//            view.bottomAnchor.constraint(equalToSystemSpacingBelow: bottomSpacer.bottomAnchor, multiplier: 3)
 
         ])
 
@@ -158,9 +163,16 @@ final class CreatingBackupProgressViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        let stackViewHeight = stackView.frame.maxY + (navigationController?.navigationBar.frame.height ?? 0) + 100
-        if let sheetPresentationController = navigationController?.sheetPresentationController {
-            sheetPresentationController.detents = [.custom { _ in stackViewHeight }]
+        guard let navigationController else { return }
+
+        let topSpace = navigationController.view.convert(stackView.bounds, from: stackView).minY
+        let stackViewHeight = stackView.frame.height
+        let bottomSpace = view.bounds.maxY - bottomSpacer.frame.maxY
+        let bottomInset = view.safeAreaInsets.bottom
+        print("\(bottomSpace) vs \(bottomInset)")
+        let detent = topSpace + stackViewHeight + bottomSpace // bottomInset
+        if let sheetPresentationController = navigationController.sheetPresentationController {
+            sheetPresentationController.detents = [.custom { _ in detent }]
         }
     }
 
