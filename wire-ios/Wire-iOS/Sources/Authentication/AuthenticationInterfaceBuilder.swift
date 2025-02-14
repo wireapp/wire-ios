@@ -113,7 +113,7 @@ final class AuthenticationInterfaceBuilder {
             return RemoveClientStepViewController(clients: clients)
 
         case let .noHistory(_, context):
-            let backupStep = BackupRestoreStepDescription(context: context)
+            let backupStep = NoHistoryHintStepDescription(context: context)
             return makeViewController(for: backupStep)
 
         case let .enterEmailVerificationCode(email, _, _):
