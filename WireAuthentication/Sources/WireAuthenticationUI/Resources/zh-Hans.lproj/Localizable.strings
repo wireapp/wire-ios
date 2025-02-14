@@ -20,7 +20,15 @@
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
 "authentication.identity.input.submit" = "继续";
-"authentication.identity.input.terms" = "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)";
+
+"cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.input_email.title" = "电邮箱地址";
+"cloud_user_login.input_password.title" = "密码";
+"cloud_user_login.input_password.placeholder" = "Enter password";
+"cloud_user_login.submit" = "继续";
+"cloud_user_login.forgot_password" = "忘记密码？";
+"create_personal_account.title" = "Don’t have a Wire account?";
+"create_personal_account.button" = "Create Personal Account";
 
 "switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -39,3 +47,7 @@
 "verification_code.message" = "输入我们发送到 %@ 的验证码";
 "verification_code.confirm" = "确认";
 "verification_code.resend_code" = "Resend Code";
+
+"authentication.no_history.title" = "这是您第一次在此设备使用Wire。";
+"authentication.no_history.message" = "基于隐私考虑，您的历史聊天记录将不会被显示。";
+"authentication.no_history.confirm" = "好";

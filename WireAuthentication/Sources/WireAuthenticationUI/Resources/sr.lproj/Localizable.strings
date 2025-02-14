@@ -20,7 +20,15 @@
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
 "authentication.identity.input.submit" = "Следећи";
-"authentication.identity.input.terms" = "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)";
+
+"cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.input_email.title" = "E-пошта";
+"cloud_user_login.input_password.title" = "Лозинка";
+"cloud_user_login.input_password.placeholder" = "Enter password";
+"cloud_user_login.submit" = "Следећи";
+"cloud_user_login.forgot_password" = "Заборавили сте лозинку?";
+"create_personal_account.title" = "Don’t have a Wire account?";
+"create_personal_account.button" = "Create Personal Account";
 
 "switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -39,3 +47,7 @@
 "verification_code.message" = "Enter the verification code we sent to %@.";
 "verification_code.confirm" = "Потврди";
 "verification_code.resend_code" = "Resend Code";
+
+"authentication.no_history.title" = "Ово је први пут да Вајер користите на овом уређају.";
+"authentication.no_history.message" = "Ради приватности, историјат разговора неће се приказивати овде.";
+"authentication.no_history.confirm" = "У реду";

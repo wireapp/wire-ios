@@ -1356,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "History";
-"self.settings.history_backup.title" = "Back Up Conversations";
-"self.settings.history_backup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.\n\nChoose a strong password to protect the backup file.";
-"self.settings.history_backup.action" = "Back Up Now";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Error";
-
 "self.settings.history_backup.set_email.title" = "Set an email and password.";
 "self.settings.history_backup.set_email.message" = "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Set Password";
-"self.settings.history_backup.password.cancel" = "Cancel";
-"self.settings.history_backup.password.next" = "Next";
-"self.settings.history_backup.password.placeholder" = "Password";
-"self.settings.history_backup.password.description" = "The backup will be compressed and encrypted with the password you set here.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1502,32 +1491,11 @@
 "registration.no_history.hero" = "It’s the first time you’re using Wire on this device.";
 "registration.no_history.subtitle" = "For privacy reasons, your conversation history will not appear here.";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "Restore from backup";
 
 "registration.alert.account_exists.title" = "Account Exists";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
 "registration.alert.change_signin_action" = "Log In";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Restore history";
-"registration.no_history.restore_backup_warning.message" = "The backup contents will replace the conversation history on this device.\nYou can only restore history from a backup of the same platform.";
-"registration.no_history.restore_backup_warning.proceed" = "Choose Backup File";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Try again";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Something went wrong";
-"registration.no_history.restore_backup_failed.message" = "Your history could not be restored.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Incompatible backup";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "You cannot restore history from a different account.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Incompatible backup";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Enterprise Login";
@@ -1553,17 +1521,6 @@
 "login.sso.backend_switch.title" = "Redirecting...";
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
-
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Restoring…";
-"registration.no_history.restore_backup.completed" = "Completed";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "This backup is password protected.";
-"registration.no_history.restore_backup.password.message" = "The password is required to restore this backup.";
-"registration.no_history.restore_backup.password.placeholder" = "Password";
-"registration.no_history.restore_backup.password_error.title" = "Wrong Password";
 
 "registration.no_history.logged_out.hero" = "You’ve used Wire on this device before.";
 "registration.no_history.logged_out.subtitle" = "Messages sent in the meantime will not appear.";

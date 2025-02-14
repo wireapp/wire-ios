@@ -20,7 +20,15 @@
 "authentication.identity.input.field.placeholder" = "E-Mail-Adresse oder SSO-Code";
 "authentication.identity.input.field.title" = "E-Mail-Adresse oder SSO-Code";
 "authentication.identity.input.submit" = "Weiter";
-"authentication.identity.input.terms" = "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)";
+
+"cloud_user_login.title" = "Geben Sie Ihr Passwort ein, um sich anzumelden ";
+"cloud_user_login.input_email.title" = "E-Mail";
+"cloud_user_login.input_password.title" = "Passwort";
+"cloud_user_login.input_password.placeholder" = "Passwort eingeben";
+"cloud_user_login.submit" = "Weiter";
+"cloud_user_login.forgot_password" = "Passwort vergessen?";
+"create_personal_account.title" = "Sie haben kein Benutzerkonto? ";
+"create_personal_account.button" = "Privates Benutzerkonto erstellen";
 
 "switch_backend_confirmation.title" = "Umleitung auf ein lokales Backend?";
 "switch_backend_confirmation.message" = "Wenn Sie fortfahren, werden Sie zum folgenden lokalen Backend weitergeleitet, um sich anzumelden:";
@@ -39,3 +47,7 @@
 "verification_code.message" = "Geben Sie den Code ein, den wir an %@ gesendet haben.";
 "verification_code.confirm" = "Bestätigen";
 "verification_code.resend_code" = "Code erneut senden";
+
+"authentication.no_history.title" = "Sie nutzen Wire zum ersten Mal auf diesem Gerät.";
+"authentication.no_history.message" = "Aus Datenschutzgründen wird der bisherige Gesprächsverlauf nicht angezeigt.";
+"authentication.no_history.confirm" = "OK";

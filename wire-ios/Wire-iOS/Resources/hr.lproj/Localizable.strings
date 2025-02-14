@@ -1356,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Povijest";
-"self.settings.history_backup.title" = "Stvorite sigurnosnu kopiju razgovora";
-"self.settings.history_backup.description" = "Stvorite sigurnosnu kopiju kako biste sačuvali povijest razgovora. Ovu opciju možete koristiti za vraćanje povijesti u slučaju da izgubite uređaj ili prijeđete na novi.\n\nOdaberite snažnu lozinku kako bi ste zaštitili datoteku sigurnosne kopije.";
-"self.settings.history_backup.action" = "Izradi sigurnosnu kopiju sada";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Pogreška";
-
 "self.settings.history_backup.set_email.title" = "Postavite adresu e-pošte i lozinku.";
 "self.settings.history_backup.set_email.message" = "Trebate adresu e-pošte i lozinku kako biste mogli stvoriti sigurnosnu kopiju Vaše povijesti razgovora. Možete to učiniti iz stranice Račun u Postavkama.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Postavi lozinku";
-"self.settings.history_backup.password.cancel" = "Odustani";
-"self.settings.history_backup.password.next" = "Sljedeće";
-"self.settings.history_backup.password.placeholder" = "Lozinka";
-"self.settings.history_backup.password.description" = "Sigurnosna kopija će biti komprimirana i enkriptirana s lozinkom koju ste zadali.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1502,32 +1491,11 @@
 "registration.no_history.hero" = "Ovo je prvi put da koristite Wire na ovom uređaju.";
 "registration.no_history.subtitle" = "Iz sigurnosnih razloga, povijest razgovora se neće pojaviti ovdje.";
 "registration.no_history.got_it" = "U redu";
-"registration.no_history.restore_backup" = "Vratiti podatke iz sigurnosne kopije";
 
 "registration.alert.account_exists.title" = "Račun postoji";
 "registration.alert.account_exists.message_email" = "Adresa e-pošte koju ste upotrijebili za registraciju već je povezana s računom.\n\n Koristite neku drugu adresu e-pošte ili se prijavite ako ste vlasnik ovog računa.";
 "registration.alert.change_email_action" = "Register with Another Email";
 "registration.alert.change_signin_action" = "Prijavi se";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Vraćanje povijesti";
-"registration.no_history.restore_backup_warning.message" = "Sadržaj sigurnosne kopije će zamjeniti povijest razgovora na ovom uređaju.\nMoguće je vraćanje povijesti samo s sigurnosne kopije na istoj platformi.";
-"registration.no_history.restore_backup_warning.proceed" = "Odaberite datoteku sigurnosne kopije";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Pokušaj ponovno";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Nešto je pošlo po zlu";
-"registration.no_history.restore_backup_failed.message" = "Vašu povijest nije moguće vratiti.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Ne kompatibilna sigurnosna kopija";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "Ne možete vratiti povijest s drugog računa.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Ne kompatibilna sigurnosna kopija";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "Ova sigurnosna kopija je izrađena od novije ili starije verzije Wirea i kao takva nemože se vratiti ovdje.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Enterprise Login";
@@ -1553,17 +1521,6 @@
 "login.sso.backend_switch.title" = "Redirecting...";
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
-
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Vraćanje…";
-"registration.no_history.restore_backup.completed" = "Dovršeno";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "Sig. kopija je zaštićena lozinkom.";
-"registration.no_history.restore_backup.password.message" = "Lozinka je potrebna za vraćanje sigurnosne kopije.";
-"registration.no_history.restore_backup.password.placeholder" = "Lozinka";
-"registration.no_history.restore_backup.password_error.title" = "Pogrešna lozinka";
 
 "registration.no_history.logged_out.hero" = "Već ste upotrebljavali Wire na ovom uređaju.";
 "registration.no_history.logged_out.subtitle" = "Poruke poslane u međuvremenu neće se pojaviti.";
