@@ -98,7 +98,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(persistInvocactions[2].index, Scaffolding.indexOfLastEventEnvelope + 3)
         XCTAssertEqual(persistInvocactions[3].index, Scaffolding.indexOfLastEventEnvelope + 4)
 
-        // Then the last event id was updated for non transient events.
+        // Then the last event id was updated for all envelopes that aren't transient (envelope 2)
         let storeLastEventIDInvocations = store.storeLastEventIDId_Invocations
         try XCTAssertCount(storeLastEventIDInvocations, count: 3)
         XCTAssertEqual(storeLastEventIDInvocations[0], Scaffolding.envelope1.id)
