@@ -66,7 +66,6 @@ struct SetBackupPasswordView: View {
     @ViewBuilder
     private func scrollViewContent() -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Spacer()
 
             Text(Strings.ExportBackup.description)
                 .font(.body)
@@ -77,7 +76,6 @@ struct SetBackupPasswordView: View {
 
             footer
 
-            Spacer()
         }
         .padding()
     }
@@ -139,8 +137,6 @@ struct SetBackupPasswordView: View {
             ColorTheme.Base.primary.color
         }
     }
-
-    //
 
     @ViewBuilder
     private var footer: some View {
