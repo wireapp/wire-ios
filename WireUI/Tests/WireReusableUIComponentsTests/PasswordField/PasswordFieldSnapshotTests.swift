@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireTestingPackage
 import XCTest
 
@@ -48,59 +49,14 @@ final class PasswordFieldSnapshotTests: XCTestCase {
     func testInvalidHidden() {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
-            isPasswordVisible: false,
-            isPasswordValid: .constant(false),
             password: .constant("Invalid password"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
+            title: L10n.Passwordtextfield.Preview.title,
+            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+            isValidPassword: { _ in false }
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
-        snapshotHelper.verify(matching: view)
-    }
-
-    @MainActor
-    func testInvalidVisible() {
-        let screenBounds = UIScreen.main.bounds
-        let view = PasswordField(
-            isPasswordVisible: true,
-            isPasswordValid: .constant(false),
-            password: .constant("Invalid password"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in false }),
-            placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-        snapshotHelper.verify(matching: view)
-    }
-
-    @MainActor
-    func testValidHidden() {
-        let screenBounds = UIScreen.main.bounds
-        let view = PasswordField(
-            isPasswordVisible: false,
-            isPasswordValid: .constant(true),
-            password: .constant("Valid password!"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-        snapshotHelper.verify(matching: view)
-    }
-
-    @MainActor
-    func testValidVisible() {
-        let screenBounds = UIScreen.main.bounds
-        let view = PasswordField(
-            isPasswordVisible: true,
-            isPasswordValid: .constant(true),
-            password: .constant("Valid password!"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
+        .padding(.horizontal)
         snapshotHelper.verify(matching: view)
     }
 
@@ -109,14 +65,14 @@ final class PasswordFieldSnapshotTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = PasswordField(
-            isPasswordVisible: false,
-            isPasswordValid: .constant(true),
             password: .constant("Valid password!"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
+            title: L10n.Passwordtextfield.Preview.title,
+            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+            isValidPassword: { _ in true }
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
+        .padding(.horizontal)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -130,14 +86,14 @@ final class PasswordFieldSnapshotTests: XCTestCase {
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
         let view = PasswordField(
-            isPasswordVisible: false,
-            isPasswordValid: .constant(true),
             password: .constant("Valid password!"),
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             placeholder: L10n.Passwordtextfield.Preview.placeholder,
-            title: L10n.Passwordtextfield.Preview.title
+            title: L10n.Passwordtextfield.Preview.title,
+            passwordRules: L10n.Passwordtextfield.Preview.passwordrules,
+            isValidPassword: { _ in true }
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
+        .padding(.horizontal)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

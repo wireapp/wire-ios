@@ -16,18 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-struct LoginOrRegisterViaEmailView: View {
+// sourcery: AutoMockable
+/// A sync to pull pending update events from the remote, decrypts,
+/// and stores them locally.
+public protocol PullPendingUpdateEventsSyncProtocol {
 
-    @ObservedObject var viewModel: LoginOrRegisterViaEmailViewModel
+    /// Pull pending update events from the remote, decrypt (if needed),
+    /// and store them locally.
 
-    var body: some View {
-        Color.red
-    }
+    func pull() async throws
 
-}
-
-#Preview {
-    LoginOrRegisterViaEmailView(viewModel: LoginOrRegisterViaEmailViewModel())
 }

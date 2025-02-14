@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-public struct SwitchBackendConfirmationViewPreview: View {
+public struct SwitchBackendConfirmationPreview: View {
     public init() {}
 
     public var body: some View {

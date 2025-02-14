@@ -16,10 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
-import WireAuthenticationAPI
 
-@MainActor
-public final class LoginOrRegisterViaEmailViewModel: ObservableObject {}
+/// Errors originating from `PullPendingUpdateEventsSync`.
+
+public enum PullPendingUpdateEventsSyncError: Error {
+
+    /// There is no known last event id from which to pull
+    /// new events.
+
+    case noLastEventID
+
+}
