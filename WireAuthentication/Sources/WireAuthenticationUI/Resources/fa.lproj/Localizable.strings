@@ -20,7 +20,15 @@
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
 "authentication.identity.input.submit" = "بعدی";
-"authentication.identity.input.terms" = "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)";
+
+"cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.input_email.title" = "ایمیل";
+"cloud_user_login.input_password.title" = "پسورد";
+"cloud_user_login.input_password.placeholder" = "Enter password";
+"cloud_user_login.submit" = "بعدی";
+"cloud_user_login.forgot_password" = "گذرواژه را فراموش کرده‌اید؟";
+"create_personal_account.title" = "Don’t have a Wire account?";
+"create_personal_account.button" = "Create Personal Account";
 
 "switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -39,3 +47,7 @@
 "verification_code.message" = "Enter the verification code we sent to %@.";
 "verification_code.confirm" = "تایید";
 "verification_code.resend_code" = "Resend Code";
+
+"authentication.no_history.title" = "این برای بار اول است که شما از Wire روی این دستگاه استفاده می‌کنید.";
+"authentication.no_history.message" = "بدلیل حفظ حریم خصوصی، تاریخچه گفتگو‌ی شما اینجا نمایش داده نخواهد شد.";
+"authentication.no_history.confirm" = "تایید";
