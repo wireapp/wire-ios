@@ -20,15 +20,7 @@
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
 "authentication.identity.input.submit" = "Next";
-
-"cloud_user_login.title" = "Enter your password to log in";
-"cloud_user_login.input_email.title" = "E-pošta";
-"cloud_user_login.input_password.title" = "Geslo";
-"cloud_user_login.input_password.placeholder" = "Enter password";
-"cloud_user_login.submit" = "Next";
-"cloud_user_login.forgot_password" = "Pozabljeno geslo?";
-"create_personal_account.title" = "Don’t have a Wire account?";
-"create_personal_account.button" = "Create Personal Account";
+"authentication.identity.input.terms" = "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)";
 
 "switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -47,7 +39,3 @@
 "verification_code.message" = "Vnesite verifikacijsko kodo, ki smo jo poslali na %@.";
 "verification_code.confirm" = "Confirm";
 "verification_code.resend_code" = "Resend Code";
-
-"authentication.no_history.title" = "Prvič uporabljate Wire na tej napravi.";
-"authentication.no_history.message" = "Zaradi zasebnosti se vaša zgodovina pogovorov ne bo pojavila tukaj.";
-"authentication.no_history.confirm" = "V redu";

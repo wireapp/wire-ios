@@ -20,15 +20,7 @@
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
 "authentication.identity.input.submit" = "Tiếp theo";
-
-"cloud_user_login.title" = "Enter your password to log in";
-"cloud_user_login.input_email.title" = "Email";
-"cloud_user_login.input_password.title" = "Mật khẩu";
-"cloud_user_login.input_password.placeholder" = "Enter password";
-"cloud_user_login.submit" = "Tiếp theo";
-"cloud_user_login.forgot_password" = "Quên mật khẩu?";
-"create_personal_account.title" = "Don’t have a Wire account?";
-"create_personal_account.button" = "Create Personal Account";
+"authentication.identity.input.terms" = "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)";
 
 "switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -47,7 +39,3 @@
 "verification_code.message" = "Nhập mã xác minh chúng tôi gửi cho %@.";
 "verification_code.confirm" = "Confirm";
 "verification_code.resend_code" = "Resend Code";
-
-"authentication.no_history.title" = "Đây là lần đầu bạn sử dụng Wire trên thiết bị này.";
-"authentication.no_history.message" = "Vì lý do riêng tư, lịch sử hội thoại của bạn sẽ không xuất hiện ở đây.";
-"authentication.no_history.confirm" = "OK";
