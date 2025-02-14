@@ -95,6 +95,9 @@ final class CreatingBackupProgressViewController: UIViewController {
         exportButton.accessibilityIdentifier = "exportButton"
         return exportButton
     }()
+    
+    /// A view which marks the optimal bottom padding. It will be used for determining the presentation sheets height.
+    private lazy var bottomSpacer = UIView()
 
     // MARK: - Methods
 
@@ -122,6 +125,9 @@ final class CreatingBackupProgressViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(stackView)
 
+        bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
+        view.insertSubview(bottomSpacer, at: 0)
+
         // constraints
         let svLayoutGuide = scrollView.contentLayoutGuide
         NSLayoutConstraint.activate([
@@ -136,16 +142,23 @@ final class CreatingBackupProgressViewController: UIViewController {
             stackView.leadingAnchor.constraint(equalToSystemSpacingAfter: svLayoutGuide.leadingAnchor, multiplier: 3),
             stackView.topAnchor.constraint(equalToSystemSpacingBelow: svLayoutGuide.topAnchor, multiplier: 1),
             svLayoutGuide.trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 3),
-            svLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
+            svLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 10),
+            bottomSpacer.widthAnchor.constraint(equalToConstant: 10),
+            bottomSpacer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            view.bottomAnchor.constraint(equalToSystemSpacingBelow: bottomSpacer.bottomAnchor, multiplier: 3)
 
         ])
+
+        bottomSpacer.backgroundColor = .red
 
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        let stackViewHeight = stackView.frame.maxY + (navigationController?.navigationBar.frame.height ?? 0)
+        let stackViewHeight = stackView.frame.maxY + (navigationController?.navigationBar.frame.height ?? 0) + 100
         if let sheetPresentationController = navigationController?.sheetPresentationController {
             sheetPresentationController.detents = [.custom { _ in stackViewHeight }]
         }
