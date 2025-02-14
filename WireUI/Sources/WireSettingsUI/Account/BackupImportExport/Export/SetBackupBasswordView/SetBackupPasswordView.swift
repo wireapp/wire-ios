@@ -66,7 +66,6 @@ struct SetBackupPasswordView: View {
     @ViewBuilder
     private func scrollViewContent() -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Spacer()
 
             Text(Strings.ExportBackup.description)
                 .font(.body)
@@ -77,9 +76,14 @@ struct SetBackupPasswordView: View {
 
             footer
 
-            Spacer()
         }
         .padding()
+        .background(
+            GeometryReader { proxy in
+                Color.clear
+                    .preference(key: ViewHeightKey.self, value: proxy.size.height)
+            }
+        )
     }
 
     // TODO: [WPB-16061] the following code is similar to the one in EnterPasswordView.swift, try to reuse
@@ -162,6 +166,15 @@ struct SetBackupPasswordView: View {
             footer
                 .foregroundStyle(footerColor.color)
 
+        }
+    }
+
+    // MARK: - ViewHeightKey
+
+    struct ViewHeightKey: PreferenceKey {
+        static let defaultValue: CGFloat = 0
+        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+            value = max(value, nextValue())
         }
     }
 
