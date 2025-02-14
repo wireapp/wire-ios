@@ -1356,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Historial";
-"self.settings.history_backup.title" = "Còpia de seguretat de les converses";
-"self.settings.history_backup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.\n\nChoose a strong password to protect the backup file.";
-"self.settings.history_backup.action" = "Fes la còpia ara";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Error";
-
 "self.settings.history_backup.set_email.title" = "Estableix un correu electrònic i una contrasenya.";
 "self.settings.history_backup.set_email.message" = "Necessiteu una adreça electrònica i una contrasenya per a fer còpies de seguretat de l'historial de converses. Podeu introduir-les des de l'àrea del compte a Configuració.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Estableix una contrasenya";
-"self.settings.history_backup.password.cancel" = "Cancel·la";
-"self.settings.history_backup.password.next" = "Següent";
-"self.settings.history_backup.password.placeholder" = "Contrasenya";
-"self.settings.history_backup.password.description" = "The backup will be compressed and encrypted with the password you set here.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1502,32 +1491,11 @@
 "registration.no_history.hero" = "It’s the first time you’re using Wire on this device.";
 "registration.no_history.subtitle" = "Per tal de garantir la privadesa, no es mostrarà l'historial de converses.";
 "registration.no_history.got_it" = "D'ACORD";
-"registration.no_history.restore_backup" = "Restore from backup";
 
 "registration.alert.account_exists.title" = "Account Exists";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
 "registration.alert.change_signin_action" = "Inicia la sessió";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Restaura l'historial";
-"registration.no_history.restore_backup_warning.message" = "The backup contents will replace the conversation history on this device.\nYou can only restore history from a backup of the same platform.";
-"registration.no_history.restore_backup_warning.proceed" = "Trieu un fitxer de còpia de seguretat";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Torneu a provar-ho";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Alguna cosa ha anat malament";
-"registration.no_history.restore_backup_failed.message" = "No s'ha pogut restaurar l'historial.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "La còpia no és compatible";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "No es pot restaurar l'historial d'un compte diferent.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "La còpia no és compatible";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "Aquesta còpia de seguretat s'ha fet des d'una versió més actualitzada o antiga de Wire i no es pot restaurar aquí.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Accés Empresarial";
@@ -1553,17 +1521,6 @@
 "login.sso.backend_switch.title" = "Redirecting...";
 "login.sso.backend_switch.subtitle" = "Està sent redirigit al seu servei corporatiu dedicat.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
-
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Restoring…";
-"registration.no_history.restore_backup.completed" = "Completed";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "Aquesta còpia de seguretat està protegida amb contrasenya.";
-"registration.no_history.restore_backup.password.message" = "The password is required to restore this backup.";
-"registration.no_history.restore_backup.password.placeholder" = "Contrasenya";
-"registration.no_history.restore_backup.password_error.title" = "Wrong Password";
 
 "registration.no_history.logged_out.hero" = "You’ve used Wire on this device before.";
 "registration.no_history.logged_out.subtitle" = "Messages sent in the meantime will not appear.";
