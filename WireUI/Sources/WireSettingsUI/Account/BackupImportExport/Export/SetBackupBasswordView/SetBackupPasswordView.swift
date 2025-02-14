@@ -61,6 +61,7 @@ struct SetBackupPasswordView: View {
                 .disabled(!viewModel.isPasswordValid)
                 .wireButtonStyle(.primary)
                 .padding()
+                .accessibilityIdentifier("back up now")
         }
     }
 
