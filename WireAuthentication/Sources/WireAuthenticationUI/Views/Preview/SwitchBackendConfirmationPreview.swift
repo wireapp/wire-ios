@@ -16,10 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
-import Foundation
 import SwiftUI
-import WireAuthenticationAPI
 
-@MainActor
-public final class LoginOrRegisterViaEmailViewModel: ObservableObject {}
+public struct SwitchBackendConfirmationPreview: View {
+    public init() {}
+
+    public var body: some View {
+        VStack {
+            SwitchBackendConfirmationView(
+                viewModel: SwitchBackendConfirmationViewModel(
+                    backendName: "Staging",
+                    backendURL: "www.staging.com",
+                    backendWSURL: "www.ws.staging.com",
+                    blacklistURL: "www.blacklist.staging.com",
+                    teamsURL: "www.teams.staging.com",
+                    accountsURL: "www.accounts.staging.com",
+                    websiteURL: "www.wire.com",
+                    action: { _ in }
+                )
+            )
+        }
+    }
+
+}

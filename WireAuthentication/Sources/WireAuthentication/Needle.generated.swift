@@ -4,6 +4,7 @@ import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
+import WireReusableUIComponents
 internal import WireAuthenticationLogic
 internal import WireAuthenticationUI
 
@@ -44,6 +45,12 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var router: any Router {
         return rootComponent.router
     }
+    var accountsURL: URL {
+        return rootComponent.accountsURL
+    }
+    var passwordValidator: any PasswordValidator {
+        return rootComponent.passwordValidator
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -65,11 +72,15 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
+        keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
+        keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
+        localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
+        localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
