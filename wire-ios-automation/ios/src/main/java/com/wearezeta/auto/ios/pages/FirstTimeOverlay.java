@@ -32,6 +32,7 @@ public class FirstTimeOverlay extends IOSPage {
     }
 
     public void accept() {
+        waitUntilElementClickable(oKButton);
         oKButton.click();
     }
 
