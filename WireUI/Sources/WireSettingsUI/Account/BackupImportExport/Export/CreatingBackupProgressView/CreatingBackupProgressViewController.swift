@@ -96,8 +96,8 @@ final class CreatingBackupProgressViewController: UIViewController {
         return exportButton
     }()
     
-    /// A view which fills the content of the sheet. Based on it's determined size and
-    /// the diff of the stack view content, the sheet presenation is adjusted.
+    /// A view which is placed with the optimal bottom spacing.
+    /// It's used for calculations of the optimal sheet presentation detent.
     private lazy var bottomSpacer = UIView()
 
     // MARK: - Methods
@@ -129,7 +129,6 @@ final class CreatingBackupProgressViewController: UIViewController {
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
         view.insertSubview(bottomSpacer, at: 0)
 
-        // constraints
         let svLayoutGuide = scrollView.contentLayoutGuide
         NSLayoutConstraint.activate([
 
@@ -149,10 +148,6 @@ final class CreatingBackupProgressViewController: UIViewController {
             bottomSpacer.widthAnchor.constraint(equalToConstant: 0),
             bottomSpacer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             view.bottomAnchor.constraint(equalToSystemSpacingBelow: bottomSpacer.bottomAnchor, multiplier: 3)
-//            bottomSpacer.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
-//            bottomSpacer.topAnchor.constraint(equalTo: stackView.topAnchor),
-//            stackView.trailingAnchor.constraint(equalTo: bottomSpacer.trailingAnchor),
-//            view.bottomAnchor.constraint(equalToSystemSpacingBelow: bottomSpacer.bottomAnchor, multiplier: 3)
 
         ])
 
@@ -168,9 +163,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         let topSpace = navigationController.view.convert(stackView.bounds, from: stackView).minY
         let stackViewHeight = stackView.frame.height
         let bottomSpace = view.bounds.maxY - bottomSpacer.frame.maxY
-        let bottomInset = view.safeAreaInsets.bottom
-        print("\(bottomSpace) vs \(bottomInset)")
-        let detent = topSpace + stackViewHeight + bottomSpace // bottomInset
+        let detent = topSpace + stackViewHeight + bottomSpace
         if let sheetPresentationController = navigationController.sheetPresentationController {
             sheetPresentationController.detents = [.custom { _ in detent }]
         }
