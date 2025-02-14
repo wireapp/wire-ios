@@ -102,9 +102,3 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
     }
 
 }
-
-public enum PullPendingUpdateEventsSyncError: Error {
-
-    case noLastEventID
-
-}
