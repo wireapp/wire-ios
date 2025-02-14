@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireDomainPkg
 import XCTest
 
 @testable import WireSyncEngine
@@ -72,7 +73,6 @@ final class ImportBackupUseCaseTests: XCTestCase {
             }
 
         mockAppStateUpdater = .init()
-        mockAppStateUpdater.reportImportProgressProgress_MockMethod = { _ in }
         mockAppStateUpdater.reportMigrationNeeded_MockMethod = {
             // This closure is called when the user session should be torn down and the core data stack closed.
             self.coreDataStack = nil
@@ -136,15 +136,16 @@ final class ImportBackupUseCaseTests: XCTestCase {
     func testFileExtensionsAreAccepted() async throws {
         // Given
         let extensions = ["ios_Wbu", "ioS-wbu"]
-        mockUserSession = nil // expect `BackupRestoreError.noActiveAccount`
+        // produce another error which is thrown after the file extension check
+        mockUserSession = nil // expect `BackupRestoreError.noActiveAccount` (but not `.invalidFileExtension`)
 
         for extensions in extensions {
             do {
                 // When
                 let filePath = "/path/to/file.\(extensions)"
-                try await sut.invoke(url: URL(fileURLWithPath: filePath), password: "")
+                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
                 XCTFail("Unexpected success")
-            } catch BackupRestoreError.noActiveAccount {
+            } catch ImportBackupError.noActiveAccountForImport {
                 // Then
             }
         }
@@ -159,9 +160,9 @@ final class ImportBackupUseCaseTests: XCTestCase {
             do {
                 // When
                 let filePath = "/path/to/file.\(extensions)"
-                try await sut.invoke(url: URL(fileURLWithPath: filePath), password: "")
+                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
                 XCTFail("Unexpected success")
-            } catch BackupRestoreError.invalidFileExtension {
+            } catch ImportBackupError.invalidFileExtension {
                 // Then
             }
         }
@@ -173,10 +174,11 @@ final class ImportBackupUseCaseTests: XCTestCase {
         let accountID = coreDataStack.account.userIdentifier
 
         // When
-        try await sut.invoke(url: url, password: "c<%I2f41\"6!'")
+        let sequence = try await sut.invoke(url: url, password: "c<%I2f41\"6!'")
+            .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
 
         // Then
-        XCTAssertFalse(mockAppStateUpdater.reportImportProgressProgress_Invocations.isEmpty)
+        XCTAssertEqual(sequence, [.progress(0.25), .progress(0.5), .done])
         XCTAssertEqual(mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.accountID, accountID)
         XCTAssertEqual(
             mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.password,

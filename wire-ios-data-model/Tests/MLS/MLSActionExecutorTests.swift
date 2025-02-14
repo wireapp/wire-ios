@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireTestingPackage
 import XCTest
 
 @testable import WireDataModel
