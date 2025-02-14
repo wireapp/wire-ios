@@ -16,17 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import Foundation
 
-// sourcery: AutoMockable
-/// Decrypt the E2EE content within update events.
-public protocol UpdateEventDecryptorProtocol {
+/// Errors originating from `PullPendingUpdateEventsSync`.
 
-    /// Decrypt events in the given event envelope.
-    ///
-    /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
-    /// - Returns: A list of decrypted update events.
+public enum PullPendingUpdateEventsSyncError: Error {
 
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
+    /// There is no known last event id from which to pull
+    /// new events.
+
+    case noLastEventID
 
 }
