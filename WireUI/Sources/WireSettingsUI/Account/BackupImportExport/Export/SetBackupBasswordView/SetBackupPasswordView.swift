@@ -23,6 +23,13 @@ struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
 
+    @State private var totalHeight: CGFloat = 0
+    @State private var scrollViewHeight: CGFloat = 0
+    @State private var scrollableContentHeight: CGFloat = 0
+    private var optimalHeight: CGFloat {
+        totalHeight - scrollViewHeight + scrollableContentHeight
+    }
+
     private typealias Strings = L10n.Localizable
     private typealias Labels = L10n.Accessibility.ExportBackup
 
@@ -41,6 +48,14 @@ struct SetBackupPasswordView: View {
                     }
                 }
         }
+        .background(
+            GeometryReader { proxy in
+                Color.clear
+                    .onAppear { totalHeight = proxy.size.height }
+                    .onChange(of: proxy.size.height) { totalHeight = $0 }
+            }
+        )
+        .preference(key: ViewHeightKey.self, value: optimalHeight)
     }
 
     @ViewBuilder private var setBackupPasswordView: some View {
@@ -49,8 +64,22 @@ struct SetBackupPasswordView: View {
             if #available(iOS 16.4, *) {
                 ScrollView(content: scrollViewContent)
                     .scrollBounceBehavior(.basedOnSize)
+                    .background(
+                        GeometryReader { proxy in
+                            Color.clear
+                                .onAppear { scrollViewHeight = proxy.size.height }
+                                .onChange(of: proxy.size.height) { scrollViewHeight = $0 }
+                        }
+                    )
             } else {
                 ScrollView(content: scrollViewContent)
+                    .background(
+                        GeometryReader { proxy in
+                            Color.clear
+                                .onAppear { scrollViewHeight = proxy.size.height }
+                                .onChange(of: proxy.size.height) { scrollViewHeight = $0 }
+                        }
+                    )
             }
 
             Spacer()
@@ -81,7 +110,8 @@ struct SetBackupPasswordView: View {
         .background(
             GeometryReader { proxy in
                 Color.clear
-                    .preference(key: ViewHeightKey.self, value: proxy.size.height)
+                    .onAppear { scrollableContentHeight = proxy.size.height }
+                    .onChange(of: proxy.size.height) { scrollableContentHeight = $0 }
             }
         )
     }
@@ -144,8 +174,6 @@ struct SetBackupPasswordView: View {
         }
     }
 
-    //
-
     @ViewBuilder
     private var footer: some View {
 
@@ -169,10 +197,10 @@ struct SetBackupPasswordView: View {
         }
     }
 
-    // MARK: - ViewHeightKey
+    // MARK: - ViewHeight
 
     struct ViewHeightKey: PreferenceKey {
-        static let defaultValue: CGFloat = 0
+        static let defaultValue: CGFloat = 100
         static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
             value = max(value, nextValue())
         }
