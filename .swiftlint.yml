@@ -80,6 +80,7 @@ custom_rules:
 excluded:
   - "**/.build"
   - "**/AutoMockable.generated.swift"
+  - "**/Needle.generated.swift"
   - "**/DerivedData"
   - "**/Package.swift"
   - "**/Package@swift-*.swift"

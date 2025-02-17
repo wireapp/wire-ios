@@ -11,6 +11,33 @@
         }
       },
       {
+        "package": "aws-crt-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-crt-swift",
+        "state": {
+          "branch": null,
+          "revision": "5a65eb60edbd080a8a79af813a5bb6e5ff387550",
+          "version": "0.43.0"
+        }
+      },
+      {
+        "package": "aws-sdk-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-sdk-swift",
+        "state": {
+          "branch": null,
+          "revision": "e587d4f4dd0290f188023a393f3a78f4d9522be2",
+          "version": "1.2.5"
+        }
+      },
+      {
+        "package": "CellsSDK",
+        "repositoryURL": "https://github.com/pydio/cells-sdk-swift.git",
+        "state": {
+          "branch": "v5-dev",
+          "revision": "04297886acc07d15862f6b94e61e4318dc25f3b7",
+          "version": null
+        }
+      },
+      {
         "package": "CocoaLumberjack",
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
@@ -74,6 +101,15 @@
         }
       },
       {
+        "package": "NeedleFoundation",
+        "repositoryURL": "https://github.com/uber/needle.git",
+        "state": {
+          "branch": null,
+          "revision": "69f7a889d2736f2621c6083ac29e0a75d158f249",
+          "version": "0.25.1"
+        }
+      },
+      {
         "package": "opentelemetry-swift",
         "repositoryURL": "https://github.com/DataDog/opentelemetry-swift-packages.git",
         "state": {
@@ -107,6 +143,15 @@
           "branch": null,
           "revision": "6752f71de206f6a53fa6a758c3660fd9a7fe7527",
           "version": "1.11.2"
+        }
+      },
+      {
+        "package": "smithy-swift",
+        "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
+        "state": {
+          "branch": null,
+          "revision": "0eda9f03e78dac2fbe516e09ca0ae96d72879c56",
+          "version": "0.111.0"
         }
       },
       {

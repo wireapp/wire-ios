@@ -37,18 +37,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol
     ) {
         self.context = context
-        self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
     }
 
@@ -59,10 +56,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async {
-        guard let conversation = await conversationLocalStore.fetchConversation(
-            id: conversationID,
-            domain: conversationDomain
-        ) else { return }
+        guard let conversation = (await context.perform { [context] in
+            ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            )
+        }) else {
+            return
+        }
 
         let systemMessages = await createSystemMessages(
             from: messageType,

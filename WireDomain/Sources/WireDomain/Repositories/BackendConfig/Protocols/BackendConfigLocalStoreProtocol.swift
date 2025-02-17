@@ -17,7 +17,7 @@
 //
 
 // sourcery: AutoMockable
-protocol BackendConfigLocalStoreProtocol {
+public protocol BackendConfigLocalStoreProtocol {
 
     /// Stores isMLSEnabled value
     /// - parameter newValue: New value to store

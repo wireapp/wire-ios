@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol ImportBackupStreamDecryptorProtocol {
+public protocol ImportBackupStreamDecryptorProtocol: Sendable {
 
     func decrypt(
         input: InputStream,

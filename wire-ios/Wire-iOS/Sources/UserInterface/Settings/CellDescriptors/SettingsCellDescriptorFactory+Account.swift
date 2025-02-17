@@ -20,6 +20,8 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
+import WireSettingsUI
 import WireSyncEngine
 
 extension ZMUser {
@@ -34,6 +36,7 @@ extension ZMUser {
 
 extension SettingsCellDescriptorFactory {
 
+    @MainActor
     func accountGroup(
         isPublicDomain: Bool,
         userSession: UserSession,
@@ -58,9 +61,7 @@ extension SettingsCellDescriptorFactory {
             sections.append(personalInformationSection(isPublicDomain: isPublicDomain))
         #endif
 
-        if SecurityFlags.backup.isEnabled {
-            sections.append(conversationsSection())
-        }
+        sections.append(conversationsSection())
 
         if let user = ZMUser.selfUser(), !user.usesCompanyLogin {
             sections.append(actionsSection())
@@ -160,6 +161,7 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
+    @MainActor
     func conversationsSection() -> SettingsSectionDescriptorType {
         SettingsSectionDescriptor(
             cellDescriptors: [backUpElement()],
@@ -366,6 +368,23 @@ extension SettingsCellDescriptorFactory {
         SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.encryptMessagesAtRest))
     }
 
+    private var backupImportExportBuilder: BackupImportExportBuilder {
+
+        // force-unwrapping should be fine, since we should have a session manager and an active user session here
+        let sessionManager = SessionManager.shared!
+        let importBackupUseCase = sessionManager.importBackupUseCase!
+
+        return BackupImportExportBuilder(
+            backupPasswordValidator: BackupPasswordValidator(),
+            createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
+            importBackupUseCase: importBackupUseCase,
+            cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
+            exportBackupLogger: WireLogger.backupExport,
+            importBackupLogger: WireLogger.backupImport
+        )
+    }
+
+    @MainActor
     func backUpElement() -> any SettingsCellDescriptorType {
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.HistoryBackup.title,
@@ -377,7 +396,9 @@ extension SettingsCellDescriptorFactory {
                     return .none
                 }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
-                    return BackupViewController(backupSource: SessionManager.shared!)
+                    let backupRestoreController = backupImportExportBuilder.build()
+                    backupRestoreController.setupNavigationBarTitle(L10n.Localizable.Self.Settings.HistoryBackup.title)
+                    return backupRestoreController
                 } else {
                     let alert = UIAlertController(
                         title: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.title,

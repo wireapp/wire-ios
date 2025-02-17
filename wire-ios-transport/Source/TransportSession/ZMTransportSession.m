@@ -27,7 +27,6 @@
 #import "ZMTransportCodec.h"
 #import "ZMTransportRequest+Internal.h"
 #import "ZMPersistentCookieStorage.h"
-#import "ZMPushChannelConnection.h"
 #import "ZMTaskIdentifierMap.h"
 #import "ZMReachability.h"
 #import "Collections+ZMTSafeTypes.h"
