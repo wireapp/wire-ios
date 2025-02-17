@@ -260,10 +260,11 @@ final class AuthenticationAPITests: XCTestCase {
             callbackScheme: "wire"
         )
         let ssoURL: String = response.absoluteString.removingPercentEncoding!
-        let successRedirectString = "success_redirect=wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(ssoCode.transportString())"
-        let errorRedirectString = "error_redirect=wire://login/failure?label=$label&validation_token=\(ssoCode.transportString())"
+        let ssoCodeString = ssoCode.transportString()
+        let success = "success_redirect=wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(ssoCodeString)"
+        let error = "error_redirect=wire://login/failure?label=$label&validation_token=\(ssoCodeString)"
         let expectedURL = URL(
-            string: "https://localhost/sso/initiate-login/\(userID.uuidString)?\(successRedirectString)&\(errorRedirectString)"
+            string: "https://localhost/sso/initiate-login/\(userID.uuidString)?\(success)&\(error)"
         )!
 
         // Then
