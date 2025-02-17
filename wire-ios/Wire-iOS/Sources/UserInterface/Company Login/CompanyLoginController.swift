@@ -229,12 +229,12 @@ extension CompanyLoginController {
     /// Attemts to login with a SSO login code.
     ///
     /// - Parameter code: The SSO team code that was extracted from the link.
-    func attemptLoginWithSSOCode(_ code: UUID) {
+    func attemptLoginWithSSOCode(_ code: UUID) {//
         guard !presentOfflineAlertIfNeeded() else { return }
 
         delegate?.controller(self, showLoadingView: true)
 
-        let host = BackendEnvironment.shared.backendURL.host!
+        let host = BackendEnvironment.shared.backendURL.host!//
         requester.validate(host: host, token: code) {
             self.delegate?.controller(self, showLoadingView: false)
             guard !self.handleValidationErrorIfNeeded($0) else { return }

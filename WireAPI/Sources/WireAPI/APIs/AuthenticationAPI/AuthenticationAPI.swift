@@ -46,4 +46,18 @@ public protocol AuthenticationAPI {
 
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration
 
+    /// Generate the link to the SSO authentication screen
+    ///
+    /// - Parameters:
+    ///   - baseURL: backend URL
+    ///   - ssoCode: SSO code
+    ///   - callbackScheme: the URL scheme that where the callback will be provided
+    /// - Returns: URL to the SSO authentication screen
+
+    func buildSSOLink(baseURL: URL, ssoCode: UUID, callbackScheme: String) async throws -> URL
+
+    /// Get the default SSO code associated with the backend
+
+    func getSSOCode() async throws -> UUID?
+
 }

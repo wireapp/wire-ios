@@ -17,6 +17,7 @@
 //
 
 import Foundation
+//import WireCommonComponents
 
 class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
     let apiService: any APIServiceProtocol
@@ -138,5 +139,97 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    func buildSSOLink(baseURL: URL, ssoCode: UUID, callbackScheme: String) async throws -> URL {
+        let path = "/sso/initiate-login/\(ssoCode.uuidString)"
+        let requestBuilder = try URLRequestBuilder(path: path)
+            .withMethod(.head)
+            .resolvingAgainst(baseURL: baseURL)
+
+        let request = requestBuilder.build()
+        do {
+            try await validateLoginToken(request: request)
+
+            let successCallback = makeSuccessCallbackString(using: ssoCode, callbackScheme: callbackScheme)
+            let errorCallback = makeFailureCallbackString(using: ssoCode, callbackScheme: callbackScheme)
+
+            let url = requestBuilder
+                .withQueryItem(name: URLQueryItem.Key.successRedirect, value: successCallback)
+                .withQueryItem(name: URLQueryItem.Key.errorRedirect, value: errorCallback)
+                .build().url
+
+            guard let url else {
+                throw AuthenticationAPIError.SSOLoginError.invalidSSOCode
+            }
+
+            return url
+        } catch {
+            throw error
+        }
+    }
+
+    // Try the request to test validity.
+    private func validateLoginToken(request: URLRequest) async throws {
+        do {
+            let (_, response) = try await URLSession(configuration: .ephemeral).data(for: request)
+            guard let response = response as? HTTPURLResponse else {
+                throw AuthenticationAPIError.SSOLoginError.unknown
+            }
+
+            if let validationError = AuthenticationAPIError.SSOLoginError(response: response) {
+                throw validationError
+            }
+        } catch {
+            throw error
+        }
+    }
+
+    private func makeSuccessCallbackString(using token: UUID, callbackScheme: String) -> String {
+        var components = URLComponents()
+        components.scheme = callbackScheme
+        components.host = URL.Host.login
+        components.path = "/" + URL.Path.success
+
+        components.queryItems = [
+            URLQueryItem(name: URLQueryItem.Key.cookie, value: URLQueryItem.Template.cookie),
+            URLQueryItem(name: URLQueryItem.Key.userIdentifier, value: URLQueryItem.Template.userIdentifier),
+            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.transportString())
+        ]
+
+        return components.url!.absoluteString
+    }
+
+    private func makeFailureCallbackString(using token: UUID, callbackScheme: String) -> String {
+        var components = URLComponents()
+        components.scheme = callbackScheme
+        components.host = URL.Host.login
+        components.path = "/" + URL.Path.failure
+
+        components.queryItems = [
+            URLQueryItem(name: URLQueryItem.Key.errorLabel, value: URLQueryItem.Template.errorLabel),
+            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.transportString())
+        ]
+
+        return components.url!.absoluteString
+    }
+
+    func getSSOCode() async throws -> UUID? {
+        let path = "/sso/settings"
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .withAcceptType(.json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: false
+        )
+
+        let payload = try ResponseParser()
+            .success(code: .ok, type: SSOSettingsResponseV0.self)
+            .parse(code: response.statusCode, data: data)
+
+        return payload.defaultSSOCode
     }
 }

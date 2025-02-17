@@ -43,3 +43,40 @@ public enum AuthenticationAPIError: Error {
     case invalidCredentials
 
 }
+
+extension AuthenticationAPIError {
+
+    typealias StatusCode = Int
+
+//    enum SSOLogin: Error {
+//
+//        case invalidSSOCode
+//
+//        case invalidStatus(StatusCode)
+//
+//        case unknown
+//
+//    }
+
+    enum SSOLoginError: Equatable, Error {
+
+        case invalidSSOCode
+
+        case invalidStatus(StatusCode)
+
+        case unknown
+
+
+        init?(response: HTTPURLResponse) {
+            switch (response.statusCode) {
+            case 404:
+                self = .invalidSSOCode
+            case (400 ... 599):
+                self = .invalidStatus(response.statusCode)
+            default:
+                return nil
+            }
+        }
+    }
+
+}
