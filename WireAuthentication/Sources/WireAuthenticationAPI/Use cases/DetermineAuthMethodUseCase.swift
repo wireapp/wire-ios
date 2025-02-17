@@ -20,11 +20,12 @@ import Foundation
 
 public protocol DetermineAuthMethodUseCaseProtocol {
 
+    @MainActor
     func invoke(emailOrSSOCode: String) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod
 
 }
 
-public enum AuthenticationMethod: Sendable, Equatable {
+public enum AuthenticationMethod: Sendable, Hashable {
 
     /// Cloud login only
 
