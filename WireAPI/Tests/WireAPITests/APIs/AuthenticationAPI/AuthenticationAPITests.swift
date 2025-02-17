@@ -89,6 +89,12 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    func testGetSSOCode() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.getSSOCode()
+        }
+    }
+
     // MARK: - Response handling
 
     func testGetDomainRegistration_Response_Handling_V8_Success() async throws {
@@ -234,6 +240,50 @@ final class AuthenticationAPITests: XCTestCase {
                 verificationCode: nil,
                 label: nil
             )
+        }
+    }
+
+    func testBuildSSOLink_Handling_Success() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "")
+        ])
+
+        let sut = AuthenticationAPIV8(apiService: apiService)
+        let ssoCode = UUID()
+        let userID = ssoCode
+
+        // When
+        let response = try await sut.buildSSOLink(
+            baseURL: URL(string: "https://localhost")!,
+            ssoCode: ssoCode,
+            callbackScheme: "wire")
+        let ssoURL: String = response.absoluteString.removingPercentEncoding!
+        let expectedURL =
+        URL(
+            string: "https://localhost/sso/initiate-login/\(userID.uuidString)?success_redirect=wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(ssoCode.transportString())&error_redirect=wire://login/failure?label=$label&validation_token=\(ssoCode.transportString())"
+        )!
+
+        // Then
+        XCTAssertEqual(ssoURL, expectedURL.absoluteString)
+    }
+
+    func testValidateLoginToken_Response_Handling_InvalidSSOCode() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.notFound, "")
+        ])
+
+        let sut = AuthenticationAPIV8(apiService: apiService)
+        let ssoCode = UUID()
+        let baseURL = URL(string: "https://localhost")!
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.SSOLoginError.invalidSSOCode) {
+            // When
+            try await sut.validateLoginToken(
+                baseURL: baseURL,
+                ssoCode: ssoCode)
         }
     }
 

@@ -147,42 +147,19 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withMethod(.head)
             .resolvingAgainst(baseURL: baseURL)
 
-        let request = requestBuilder.build()
-        do {
-            try await validateLoginToken(request: request)
+        let successCallback = makeSuccessCallbackString(using: ssoCode, callbackScheme: callbackScheme)
+        let errorCallback = makeFailureCallbackString(using: ssoCode, callbackScheme: callbackScheme)
 
-            let successCallback = makeSuccessCallbackString(using: ssoCode, callbackScheme: callbackScheme)
-            let errorCallback = makeFailureCallbackString(using: ssoCode, callbackScheme: callbackScheme)
+        let url = requestBuilder
+            .withQueryItem(name: URLQueryItem.Key.successRedirect, value: successCallback)
+            .withQueryItem(name: URLQueryItem.Key.errorRedirect, value: errorCallback)
+            .build().url
 
-            let url = requestBuilder
-                .withQueryItem(name: URLQueryItem.Key.successRedirect, value: successCallback)
-                .withQueryItem(name: URLQueryItem.Key.errorRedirect, value: errorCallback)
-                .build().url
-
-            guard let url else {
-                throw AuthenticationAPIError.SSOLoginError.invalidSSOCode
-            }
-
-            return url
-        } catch {
-            throw error
+        guard let url else {
+            throw AuthenticationAPIError.SSOLoginError.invalidSSOCode
         }
-    }
 
-    // Try the request to test validity.
-    private func validateLoginToken(request: URLRequest) async throws {
-        do {
-            let (_, response) = try await URLSession(configuration: .ephemeral).data(for: request)
-            guard let response = response as? HTTPURLResponse else {
-                throw AuthenticationAPIError.SSOLoginError.unknown
-            }
-
-            if let validationError = AuthenticationAPIError.SSOLoginError(response: response) {
-                throw validationError
-            }
-        } catch {
-            throw error
-        }
+        return url
     }
 
     private func makeSuccessCallbackString(using token: UUID, callbackScheme: String) -> String {
@@ -212,6 +189,45 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         ]
 
         return components.url!.absoluteString
+    }
+//
+//    func validateLoginToken(baseURL: URL, ssoCode: UUID) async throws {
+//        let path = "/sso/initiate-login/\(ssoCode.uuidString)"
+//        let requestBuilder = try URLRequestBuilder(path: path)
+//            .withMethod(.head)
+//            .resolvingAgainst(baseURL: baseURL)
+//
+//        let request = requestBuilder.build()
+//        do {
+//            let (_, response) = try await URLSession(configuration: .ephemeral).data(for: request)
+//            guard let response = response as? HTTPURLResponse else {
+//                throw AuthenticationAPIError.SSOLoginError.unknown
+//            }
+//
+//            if let validationError = AuthenticationAPIError.SSOLoginError(response: response) {
+//                throw validationError
+//            }
+//        } catch {
+//            throw error
+//        }
+//    }
+
+    func validateLoginToken(baseURL: URL, ssoCode: UUID) async throws {
+        let path = "/sso/initiate-login/\(ssoCode.uuidString)"
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.head)
+            .resolvingAgainst(baseURL: baseURL)
+            .build()
+
+        let (_, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: false
+        )
+
+        return try ResponseParser()
+            .success(code: 200)
+            .failureSSOError()
+            .parse(code: response.statusCode, data: nil)
     }
 
     func getSSOCode() async throws -> UUID? {

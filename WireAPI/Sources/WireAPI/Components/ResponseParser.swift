@@ -115,3 +115,19 @@ struct ResponseParser<Success> {
     }
 
 }
+
+extension ResponseParser {
+
+    func failureSSOError() -> ResponseParser<Success> {
+        var copy = self
+        copy.parseBlocks.append { code, _ in
+            if let error = AuthenticationAPIError.SSOLoginError(responseCode: code) {
+                throw error
+            }
+            return nil
+        }
+        return copy
+    }
+
+}
+

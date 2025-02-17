@@ -49,12 +49,21 @@ public protocol AuthenticationAPI {
     /// Generate the link to the SSO authentication screen
     ///
     /// - Parameters:
-    ///   - baseURL: backend URL
+    ///   - baseURL: Backend URL.
     ///   - ssoCode: SSO code
-    ///   - callbackScheme: the URL scheme that where the callback will be provided
+    ///   - callbackScheme: The URL scheme that where the callback will be provided.
     /// - Returns: URL to the SSO authentication screen
 
     func buildSSOLink(baseURL: URL, ssoCode: UUID, callbackScheme: String) async throws -> URL
+
+    /// Validated a company login token (SSO code).
+    /// This method will verify a company login token with the backend.
+    ///
+    /// - Parameters:
+    ///   - baseURL: The backend to validate SSO code against.
+    ///   - ssoCode: Company login token (SSO code).
+
+    func validateLoginToken(baseURL: URL, ssoCode: UUID) async throws
 
     /// Get the default SSO code associated with the backend
 

@@ -46,33 +46,18 @@ public enum AuthenticationAPIError: Error {
 
 extension AuthenticationAPIError {
 
-    typealias StatusCode = Int
-
-//    enum SSOLogin: Error {
-//
-//        case invalidSSOCode
-//
-//        case invalidStatus(StatusCode)
-//
-//        case unknown
-//
-//    }
-
     enum SSOLoginError: Equatable, Error {
 
         case invalidSSOCode
 
-        case invalidStatus(StatusCode)
+        case invalidStatus(Int)
 
-        case unknown
-
-
-        init?(response: HTTPURLResponse) {
-            switch (response.statusCode) {
-            case 404:
+        init?(responseCode: Int) {
+            switch responseCode {
+            case HTTPStatusCode.notFound.rawValue:
                 self = .invalidSSOCode
             case (400 ... 599):
-                self = .invalidStatus(response.statusCode)
+                self = .invalidStatus(responseCode)
             default:
                 return nil
             }
