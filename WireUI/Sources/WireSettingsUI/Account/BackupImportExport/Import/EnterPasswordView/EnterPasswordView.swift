@@ -27,6 +27,9 @@ struct EnterPasswordView: View {
     let continueAction: (_ password: String) -> Void
     let cancelAction: () -> Void
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
+
     private typealias Strings = L10n.Localizable.ImportBackup
     private typealias Labels = L10n.Accessibility.ImportBackup
 
@@ -88,7 +91,7 @@ struct EnterPasswordView: View {
                 placeholderColor: passwordFieldPlaceholderColor,
                 focusOnAppear: true
             )
-            .tint(Color.cyan)
+            .tint(passwordFieldBorderColor)
             .padding(.bottom, 8)
 
             if passwordIsWrong {
@@ -111,7 +114,7 @@ struct EnterPasswordView: View {
                 : BaseColorPalette.Grays.gray40
             }.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
@@ -124,7 +127,20 @@ struct EnterPasswordView: View {
                 : BaseColorPalette.Grays.gray60
             }.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+        }
+    }
+
+    private var passwordFieldBorderColor: Color {
+        if passwordIsWrong {
+            ColorTheme.Base.error.color
+        } else if password.isEmpty {
+            UIColor { $0.userInterfaceStyle != .dark
+                ? BaseColorPalette.Grays.gray40
+                : BaseColorPalette.Grays.gray80
+            }.color
+        } else {
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
