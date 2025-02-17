@@ -190,27 +190,6 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 
         return components.url!.absoluteString
     }
-//
-//    func validateLoginToken(baseURL: URL, ssoCode: UUID) async throws {
-//        let path = "/sso/initiate-login/\(ssoCode.uuidString)"
-//        let requestBuilder = try URLRequestBuilder(path: path)
-//            .withMethod(.head)
-//            .resolvingAgainst(baseURL: baseURL)
-//
-//        let request = requestBuilder.build()
-//        do {
-//            let (_, response) = try await URLSession(configuration: .ephemeral).data(for: request)
-//            guard let response = response as? HTTPURLResponse else {
-//                throw AuthenticationAPIError.SSOLoginError.unknown
-//            }
-//
-//            if let validationError = AuthenticationAPIError.SSOLoginError(response: response) {
-//                throw validationError
-//            }
-//        } catch {
-//            throw error
-//        }
-//    }
 
     func validateLoginToken(baseURL: URL, ssoCode: UUID) async throws {
         let path = "/sso/initiate-login/\(ssoCode.uuidString)"
