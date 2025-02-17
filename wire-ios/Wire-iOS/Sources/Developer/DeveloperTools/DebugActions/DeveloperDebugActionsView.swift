@@ -19,14 +19,81 @@
 import SwiftUI
 
 struct DeveloperDebugActionsView: View {
-
+    
     @ObservedObject var viewModel: DeveloperDebugActionsViewModel
-
+    @State var userInput: String = ""
+    
     var body: some View {
         List(viewModel.buttons) { button in
             Button(action: button.action) {
                 Text(button.title)
             }
+        }
+        .sheet(item: $viewModel.mlsGroupSearchItem,content: mlsGroupSearchView)
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
+    }
+    
+    @ViewBuilder
+    func mlsGroupSearchView(_ item: MLSGroupSearchItem) -> some View {
+        List {
+            Section("Conversations with MLS Group ID") {
+                HStack {
+                    TextField("Enter MLS Group ID", text: $userInput)
+                    Button("Search") {
+                        Task {
+                            await viewModel.findConversations(with: userInput.trim())
+                        }
+                    }
+                    .disabled(userInput.isEmpty)
+                }
+            }
+            switch item {
+            case .result(let results):
+                if results.isEmpty && !userInput.isEmpty {
+                    Section {
+                        Text("Nothing found")
+                    }
+                } else {
+                    ForEach(results, id: \.id) { result in
+                        Section {
+                            TextItemCell(title: "Name:", value: result.name) {
+                                UIPasteboard.general.string = result.name
+                            }
+                            TextItemCell(title: "Conversation id:", value: result.id) {
+                                UIPasteboard.general.string = result.id
+                            }
+                            TextItemCell(title: "MLS Group id:", value: result.groupID?.description ?? "-") {
+                                UIPasteboard.general.string = result.groupID?.description ?? "-"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+struct ResultView: View {
+    var result: ConversationResult
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Name:")
+                .bold()
+            Text(result.name)
+            
+            Text("Conversation id:")
+                .bold()
+            Text(result.id)
+            
+            Text("MLS Group id:")
+                .bold()
+            Text(result.groupID?.description ?? "-")
+        }
+        .onTapGesture {
+            UIPasteboard.general.string = result.id
         }
     }
 }

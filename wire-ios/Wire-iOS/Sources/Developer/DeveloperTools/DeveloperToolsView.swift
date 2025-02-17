@@ -57,18 +57,9 @@ struct DeveloperToolsView: View {
             }
 
         case let .text(textItem):
-            TextItemCell(title: textItem.title, value: textItem.value)
-                .contextMenu {
-                    Button(
-                        hapticFeedbackStyle: .success,
-                        action: {
-                            viewModel.handleEvent(.itemCopyRequested(item))
-                        },
-                        label: {
-                            Label("Copy", systemImage: "doc.on.doc")
-                        }
-                    )
-                }
+            TextItemCell(title: textItem.title, value: textItem.value) {
+                viewModel.handleEvent(.itemCopyRequested(item))
+            }
 
         case let .destination(destinationItem):
             NavigationLink(destinationItem.title, destination: destinationItem.makeView)
@@ -86,10 +77,11 @@ struct DeveloperToolsView: View {
 
 // MARK: - Subviews
 
-private struct TextItemCell: View {
+struct TextItemCell: View {
 
     let title: String
     let value: String
+    let onCopy: () -> Void
 
     var body: some View {
         HStack {
@@ -102,6 +94,18 @@ private struct TextItemCell: View {
                 .truncationMode(.middle)
                 .foregroundColor(.secondary)
         }
+        .contextMenu {
+            Button(
+                hapticFeedbackStyle: .success,
+                action: {
+                    onCopy()
+                },
+                label: {
+                    Label("Copy", systemImage: "doc.on.doc")
+                }
+            )
+        }
+
     }
 }
 
