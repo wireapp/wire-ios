@@ -257,12 +257,11 @@ final class AuthenticationAPITests: XCTestCase {
         let response = try await sut.buildSSOLink(
             baseURL: URL(string: "https://localhost")!,
             ssoCode: ssoCode,
-            callbackScheme: "wire")
+            callbackScheme: "wire"
+        )
         let ssoURL: String = response.absoluteString.removingPercentEncoding!
         let expectedURL =
-        URL(
-            string: "https://localhost/sso/initiate-login/\(userID.uuidString)?success_redirect=wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(ssoCode.transportString())&error_redirect=wire://login/failure?label=$label&validation_token=\(ssoCode.transportString())"
-        )!
+        URL(string: "https://localhost/sso/initiate-login/\(userID.uuidString)?success_redirect=wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(ssoCode.transportString())&error_redirect=wire://login/failure?label=$label&validation_token=\(ssoCode.transportString())")!
 
         // Then
         XCTAssertEqual(ssoURL, expectedURL.absoluteString)
@@ -283,7 +282,8 @@ final class AuthenticationAPITests: XCTestCase {
             // When
             try await sut.validateLoginToken(
                 baseURL: baseURL,
-                ssoCode: ssoCode)
+                ssoCode: ssoCode
+            )
         }
     }
 

@@ -130,4 +130,3 @@ extension ResponseParser {
     }
 
 }
-

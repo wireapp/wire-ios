@@ -49,9 +49,3 @@ extension URLQueryItem {
     }
 
 }
-
-//public extension Bundle {
-//    static var ssoURLScheme: String? {
-//        Bundle.appMainBundle.infoForKey("Wire SSO URL Scheme")
-//    }
-//}

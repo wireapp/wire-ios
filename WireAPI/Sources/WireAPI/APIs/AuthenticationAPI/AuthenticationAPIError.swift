@@ -56,7 +56,7 @@ extension AuthenticationAPIError {
             switch responseCode {
             case HTTPStatusCode.notFound.rawValue:
                 self = .invalidSSOCode
-            case (400 ... 599):
+            case 400 ... 599:
                 self = .invalidStatus(responseCode)
             default:
                 return nil

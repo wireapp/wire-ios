@@ -17,7 +17,6 @@
 //
 
 import Foundation
-//import WireCommonComponents
 
 class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
     let apiService: any APIServiceProtocol
