@@ -15,3 +15,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+"authentication.identity.input.body" = "Simply enter your email address to start!";
+"authentication.identity.input.field.placeholder" = "Email or SSO code";
+"authentication.identity.input.field.title" = "Email or SSO code";
+"authentication.identity.input.submit" = "次へ";
+
+"cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.input_email.title" = "メール";
+"cloud_user_login.input_password.title" = "パスワード";
+"cloud_user_login.input_password.placeholder" = "Enter password";
+"cloud_user_login.submit" = "次へ";
+"cloud_user_login.forgot_password" = "パスワードをお忘れですか？";
+"create_personal_account.title" = "Don’t have a Wire account?";
+"create_personal_account.button" = "Create Personal Account";
+
+"switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
+"switch_backend_confirmation.backend_name" = "バックエンド名:";
+"switch_backend_confirmation.backend_url" = "バックエンドURL:";
+"switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"switch_backend_confirmation.teams_url" = "Teams URL:";
+"switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"switch_backend_confirmation.website_url" = "Website URL:";
+"switch_backend_confirmation.proceed" = "Proceed";
+"switch_backend_confirmation.cancel" = "キャンセル";
+"switch_backend_confirmation.show_details" = "Show details";
+
+"verification_code.title" = "メール受信しました。";
+"verification_code.message" = "%@ に送信した認証コードを入力してください";
+"verification_code.confirm" = "確認";
+"verification_code.resend_code" = "Resend Code";
+
+"authentication.no_history.title" = "このデバイスで Wire を使用するのは初めてです。";
+"authentication.no_history.message" = "プライバシー上の理由から、会話の履歴はここに表示されません。";
+"authentication.no_history.confirm" = "OK";

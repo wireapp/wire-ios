@@ -5480,6 +5480,60 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
 
 }
 
+public class MockSyncStatusProtocol: SyncStatusProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - performQuickSync
+
+    public var performQuickSync_Invocations: [Void] = []
+    public var performQuickSync_MockMethod: (() async -> Void)?
+
+    public func performQuickSync() async {
+        performQuickSync_Invocations.append(())
+
+        guard let mock = performQuickSync_MockMethod else {
+            fatalError("no mock for `performQuickSync`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - resyncResources
+
+    public var resyncResources_Invocations: [Void] = []
+    public var resyncResources_MockMethod: (() -> Void)?
+
+    public func resyncResources() {
+        resyncResources_Invocations.append(())
+
+        guard let mock = resyncResources_MockMethod else {
+            fatalError("no mock for `resyncResources`")
+        }
+
+        mock()
+    }
+
+    // MARK: - forceSlowSync
+
+    public var forceSlowSync_Invocations: [Void] = []
+    public var forceSlowSync_MockMethod: (() -> Void)?
+
+    public func forceSlowSync() {
+        forceSlowSync_Invocations.append(())
+
+        guard let mock = forceSlowSync_MockMethod else {
+            fatalError("no mock for `forceSlowSync`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockUpdateMLSGroupVerificationStatusUseCaseProtocol: UpdateMLSGroupVerificationStatusUseCaseProtocol {
 
     // MARK: - Life cycle

@@ -19,7 +19,9 @@
 import Foundation
 import NeedleFoundation
 import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
+import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
@@ -30,8 +32,16 @@ public struct WireAuthenticationAssembly {
     }
 
     @MainActor
-    public func assemble() -> some View {
-        RootComponent().rootView
+    public func assemble(
+        authenticationAPI: AuthenticationAPI,
+        accountsURL: URL,
+        passwordValidator: any PasswordValidator
+    ) -> some View {
+        RootComponent(
+            authenticationAPI: authenticationAPI,
+            accountsURL: accountsURL, // this is temp
+            passwordValidator: passwordValidator
+        ).rootView
     }
 
 }

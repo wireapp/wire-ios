@@ -1356,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Gesprächsverlauf";
-"self.settings.history_backup.title" = "Unterhaltungen sichern";
-"self.settings.history_backup.description" = "Erstellen Sie ein Backup, um den Gesprächsverlauf zu sichern. Damit können Unterhaltungen wiederhergestellt werden, falls Sie Ihr Gerät verlieren oder ein neues nutzen möchten.\n\nWählen Sie ein sicheres Passwort, um die Backup-Datei zu schützen.";
-"self.settings.history_backup.action" = "Jetzt sichern";
+"self.settings.history_backup.title" = "Sichern oder Wiederherstellen";
 "self.settings.history_backup.error.title" = "Fehler";
-
 "self.settings.history_backup.set_email.title" = "Fügen Sie E-Mail-Adresse und Passwort hinzu.";
 "self.settings.history_backup.set_email.message" = "Fügen Sie in den Einstellungen eine E-Mail-Adresse und ein Passwort hinzu, um den Gesprächsverlauf zu sichern.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Passwort festlegen";
-"self.settings.history_backup.password.cancel" = "Abbrechen";
-"self.settings.history_backup.password.next" = "Weiter";
-"self.settings.history_backup.password.placeholder" = "Passwort";
-"self.settings.history_backup.password.description" = "Die Backup-Datei wird mit dem hier festgelegten Passwort komprimiert und verschlüsselt.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1502,32 +1491,11 @@
 "registration.no_history.hero" = "Sie nutzen Wire zum ersten Mal auf diesem Gerät.";
 "registration.no_history.subtitle" = "Aus Datenschutzgründen wird der bisherige Gesprächsverlauf nicht angezeigt.";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "Backup wiederherstellen";
 
 "registration.alert.account_exists.title" = "Konto Vorhanden";
 "registration.alert.account_exists.message_email" = "Die für die Registrierung verwendete E-Mail-Adresse ist bereits mit einem Konto verknüpft.\n\nBitte andere E-Mail-Adresse nutzen oder versuchen, sich mit dieser E-Mail-Adresse anzumelden.";
 "registration.alert.change_email_action" = "Mit einer andern E-Mail registrieren";
 "registration.alert.change_signin_action" = "Anmelden";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Gesprächsverlauf wiederherstellen";
-"registration.no_history.restore_backup_warning.message" = "Der Inhalt der Backup-Datei ersetzt den Gesprächsverlauf auf diesem Gerät. Es können nur Backup-Dateien derselben Plattform wiederhergestellt werden.";
-"registration.no_history.restore_backup_warning.proceed" = "Backup-Datei auswählen";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Erneut versuchen";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Ein Fehler ist aufgetreten";
-"registration.no_history.restore_backup_failed.message" = "Der Gesprächsverlauf konnte nicht wiederhergestellt werden.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Inkompatibles Backup";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "Der Gesprächsverlauf eines anderen Kontos kann nicht wiederhergestellt werden.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Inkompatibles Backup";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "Diese Backup-Datei wurde von einer anderen Version von Wire erstellt und kann deshalb nicht wiederhergestellt werden.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Anmeldung für Unternehmen";
@@ -1553,17 +1521,6 @@
 "login.sso.backend_switch.title" = "Weiterleitung...";
 "login.sso.backend_switch.subtitle" = "Sie werden zu Ihrem speziellen Unternehmensservice weitergeleitet.";
 "login.sso.backend_switch.information" = "Geben Sie Ihre Zugangsdaten nur dann an, wenn Sie sicher sind, dass dies das Login Ihrer Organisation ist.";
-
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Wiederherstellen…";
-"registration.no_history.restore_backup.completed" = "Wiederhergestellt";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "Dieses Backup ist passwortgeschützt.";
-"registration.no_history.restore_backup.password.message" = "Das Passwort wird benötigt, um dieses Backup wiederherzustellen.";
-"registration.no_history.restore_backup.password.placeholder" = "Passwort";
-"registration.no_history.restore_backup.password_error.title" = "Falsches Passwort";
 
 "registration.no_history.logged_out.hero" = "Sie haben Wire auf diesem Gerät bereits verwendet.";
 "registration.no_history.logged_out.subtitle" = "Nachrichten, die in der Zwischenzeit gesendet wurden, werden nicht angezeigt.";

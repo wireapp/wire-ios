@@ -25,24 +25,12 @@ import WireSystem
 extension MFMailComposeViewController {
 
     func prefilledBody(withMessage message: String = "") -> String {
-        let date = Date()
-        let device = UIDevice.current.zm_model()
-
         var body = """
         --DO NOT EDIT--
-        App Version: \(Bundle.main.appInfo.fullVersion)
-        Bundle id: \(Bundle.main.bundleIdentifier ?? "-")
-        Device: \(device)
-        iOS version: \(UIDevice.current.systemVersion)
-        Date: \(date.transportString())
+        \(LogFilesProvider().info)
+        ---------------\n
         """
 
-        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
-            // display only when enabled
-            body.append("\nDatadog ID: \(datadogUserIdentifier)")
-        }
-
-        body.append("\n---------------\n")
         typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
         let details = """
         \(l10n.firstline)

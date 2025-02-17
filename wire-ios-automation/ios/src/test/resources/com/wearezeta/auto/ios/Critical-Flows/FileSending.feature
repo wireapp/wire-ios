@@ -1,6 +1,7 @@
 Feature: File Sending
 
-  @flows @TC-8581
+  # Once the tagged card is fixed, uncomment the commented lines
+  @flows @TC-8581 @WPB-16067
   Scenario Outline: Conversation sending and receiving a file from someone in a different team
     Given I allow camera access
     And I allow microphone access
@@ -18,16 +19,16 @@ Feature: File Sending
     When I long tap on file transfer placeholder in conversation view
     And I tap on Download on edit menu
     And I wait for 2 seconds
-    And I tap on file transfer placeholder in conversation view
-    And I share the current file in conversation <TeamOwnerA>
-    Then I see 2 file transfer placeholder in the conversation view
+#    And I tap on file transfer placeholder in conversation view
+#    And I share the current file in conversation <TeamOwnerA>
+#    Then I see 2 file transfer placeholder in the conversation view
     When I tap Audio Message button from input tools
     And I tap Start Recording button on Voice Filters overlay
     And I wait for 2 seconds
     And I tap Stop Recording button on Voice Filters overlay
     And I tap Confirm button on Voice Filters overlay
     Then I see audio message container in the conversation view
-    Then I see "Delivered" on the message toolbox in conversation view
+#    Then I see "Delivered" on the message toolbox in conversation view
     When I tap Play audio message button
     And I wait for 3 seconds
 

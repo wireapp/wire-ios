@@ -21,15 +21,44 @@ import Foundation
 public protocol DetermineAuthMethodUseCaseProtocol {
 
     @MainActor
-    func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod
+    func invoke(emailOrSSOCode: String) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod
 
 }
 
-public enum AuthenticationMethod {
+public enum AuthenticationMethod: Sendable, Hashable {
+
+    /// Cloud login only
 
     case loginViaEmail(email: String)
+
+    ///  Cloud login or registration.
+
     case loginOrRegisterViaEmail(email: String)
-    case loginViaSSO(code: String)
+
+    /// Cloud SSO login
+
+    case loginViaSSO(code: UUID)
+
+    /// On-prem login, either via email or SSO
+
     case onPremLogin(email: String, backendConfig: URL)
 
+}
+
+public enum DetermineAuthMethodUseCaseFailure: Error, Equatable {
+
+    case invalidEmailOrSSOCode
+
+    /// The email domain has been claimed by an on-prem backend but there's already an existing cloud account registered
+    /// - note: To proceed, alert the use then continue to login using the `recovery` method.
+
+    case onPremNotPossible(recovery: AuthenticationMethod)
+
+    /// Indicates that the domain registration response was invalid.
+
+    case invalidResponse
+
+    case urlError(URLError)
+
+    case unknown
 }

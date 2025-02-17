@@ -27,6 +27,8 @@ public protocol UserSession: AnyObject {
 
     // MARK: - Mixed properties and methods
 
+    var isTornDown: Bool { get }
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
 

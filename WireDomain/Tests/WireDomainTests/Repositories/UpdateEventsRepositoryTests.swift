@@ -96,7 +96,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             // When
             try await sut.pullPendingEvents()
             XCTFail("expected an error, but none was thrown")
-        } catch UpdateEventsRepositoryError.lastEventIDMissing {
+        } catch PullPendingUpdateEventsSyncError.noLastEventID {
             // Then it threw the right error.
         } catch {
             XCTFail("unexpected error: \(error)")

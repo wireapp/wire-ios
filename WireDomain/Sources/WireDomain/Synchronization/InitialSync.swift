@@ -19,7 +19,7 @@
 import Foundation
 import WireLogging
 
-public struct InitialSync {
+public struct InitialSync: InitialSyncProtocol {
 
     private let pullLastUpdateEventIDSync: any PullLastUpdateEventIDSyncProtocol
     private let pullResourcesSync: any PullResourcesSyncProtocol

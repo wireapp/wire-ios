@@ -2,7 +2,9 @@
 
 import NeedleFoundation
 import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
+import WireReusableUIComponents
 internal import WireAuthenticationLogic
 internal import WireAuthenticationUI
 
@@ -27,6 +29,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var router: any Router {
         return rootComponent.router
     }
+    var authenticationAPI: AuthenticationAPI {
+        return rootComponent.authenticationAPI
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -39,6 +44,12 @@ private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: Needle
 private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: LoginViaEmailComponentDependency {
     var router: any Router {
         return rootComponent.router
+    }
+    var accountsURL: URL {
+        return rootComponent.accountsURL
+    }
+    var passwordValidator: any PasswordValidator {
+        return rootComponent.passwordValidator
     }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
@@ -54,17 +65,23 @@ private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: Needle
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-any Router"
+        keyPathToName[\DetermineAuthMethodComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
 
     }
 }
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
+        keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
+        keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
+        localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
+        localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
+        localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
 }
