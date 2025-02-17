@@ -162,7 +162,7 @@ final class OneOnOneSourceTests: XCTestCase {
             .init(.oneOnOne, .mls, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 MLS with UserA
             .init(.group, .proteus, team: team, users: [selfUser, userA], name: nil), // <- 1:1 proteus fake with UserA
             .init(.oneOnOne, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 proteus with UserA
-            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil), // <- 1:1 prot. pending UserA
+            .init(.connection, .proteus, team: nil, users: [selfUser, userA], name: nil) // <- 1:1 prot. pending UserA
         ])
 
         try await context.perform { [self] in
