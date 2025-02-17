@@ -17,7 +17,9 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireDomainPkg
+import WireFoundation
 import WireLogging
 
 public struct BackupImportExportBuilder {
@@ -28,6 +30,8 @@ public struct BackupImportExportBuilder {
     let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
     let exportBackupLogger: any LoggerProtocol
     let importBackupLogger: any LoggerProtocol
+    let wireAccentColor: WireAccentColor
+    let wireAccentColorMapping: WireAccentColorMapping
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
@@ -35,7 +39,9 @@ public struct BackupImportExportBuilder {
         importBackupUseCase: any ImportBackupUseCaseProtocol,
         cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
         exportBackupLogger: any LoggerProtocol,
-        importBackupLogger: any LoggerProtocol
+        importBackupLogger: any LoggerProtocol,
+        wireAccentColorMapping: WireAccentColorMapping,
+        wireAccentColor: WireAccentColor
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase
@@ -43,6 +49,8 @@ public struct BackupImportExportBuilder {
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
         self.exportBackupLogger = exportBackupLogger
         self.importBackupLogger = importBackupLogger
+        self.wireAccentColorMapping = wireAccentColorMapping
+        self.wireAccentColor = wireAccentColor
     }
 
     @MainActor
@@ -56,6 +64,8 @@ public struct BackupImportExportBuilder {
             buildExportBackupView()
             buildImportBackupView()
         }
+        .environment(\.wireAccentColorMapping, wireAccentColorMapping)
+        .environment(\.wireAccentColor, wireAccentColor)
     }
 
     @MainActor @ViewBuilder
@@ -124,7 +134,9 @@ extension BackupImportExportBuilder {
             importBackupUseCase: PreviewImportBackupUseCase(),
             cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase(),
             exportBackupLogger: PreviewLogger(),
-            importBackupLogger: PreviewLogger()
+            importBackupLogger: PreviewLogger(),
+            wireAccentColorMapping: WireAccentColorMapping(),
+            wireAccentColor: .purple
         )
     }
 }
