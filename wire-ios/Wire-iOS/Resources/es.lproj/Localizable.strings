@@ -1356,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Historia";
-"self.settings.history_backup.title" = "Copia de seguridad de conversaciones";
-"self.settings.history_backup.description" = "Cree una copia de seguridad para preservar su historial de conversación. Puede utilizarlo para restaurar su historial en caso de pérdida o cambio de dispositivo.";
-"self.settings.history_backup.action" = "Haga una copia de seguridad ahora";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Error";
-
 "self.settings.history_backup.set_email.title" = "Establezca un correo electrónico y una contraseña.";
 "self.settings.history_backup.set_email.message" = "Necesitas un correo electrónico y una contraseña para hacer una copia de seguridad de tu historial de conversaciones. Puede hacerlo desde la página de la cuenta en Configuración.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Establecer contraseña";
-"self.settings.history_backup.password.cancel" = "Cancelar";
-"self.settings.history_backup.password.next" = "Siguiente";
-"self.settings.history_backup.password.placeholder" = "Contraseña";
-"self.settings.history_backup.password.description" = "La copia de seguridad se comprimirá y cifrará con la contraseña que ha establecido";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1502,32 +1491,11 @@
 "registration.no_history.hero" = "Es la primera vez que usas Wire en este dispositivo.";
 "registration.no_history.subtitle" = "Por motivos de privacidad, tu historial de chat no aparecerá aquí.";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "Restaurar desde la copia de seguridad";
 
 "registration.alert.account_exists.title" = "Esta cuenta ya existe";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
 "registration.alert.change_signin_action" = "Iniciar sesión";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Restaurar historia";
-"registration.no_history.restore_backup_warning.message" = "The backup contents will replace the conversation history on this device.\nYou can only restore history from a backup of the same platform.";
-"registration.no_history.restore_backup_warning.proceed" = "Seleccione Archivo de copia de seguridad";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Vuelve a intentarlo";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Algo salió mal";
-"registration.no_history.restore_backup_failed.message" = "Su historia no pudo ser restaurada.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Copia de seguridad incompatible";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "No se puede restaurar el historial desde una cuenta diferente.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Copia de seguridad incompatible";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "Esta copia de seguridad fue creada por una versión antigua o más reciente de Wire y no se puede restaurar aquí.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Enterprise Login";
@@ -1553,17 +1521,6 @@
 "login.sso.backend_switch.title" = "Redirecting...";
 "login.sso.backend_switch.subtitle" = "Está siendo redirigido al servidor de su organización.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
-
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Restoring…";
-"registration.no_history.restore_backup.completed" = "Completed";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "Esta copia de seguridad está protegida por contraseña";
-"registration.no_history.restore_backup.password.message" = "The password is required to restore this backup.";
-"registration.no_history.restore_backup.password.placeholder" = "Contraseña";
-"registration.no_history.restore_backup.password_error.title" = "Wrong Password";
 
 "registration.no_history.logged_out.hero" = "Ya has utilizado Wire en este dispositivo antes.";
 "registration.no_history.logged_out.subtitle" = "Los mensajes enviados durante el intervalo de inactividad no aparecerán.";

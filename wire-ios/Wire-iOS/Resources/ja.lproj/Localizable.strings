@@ -1356,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "履歴";
-"self.settings.history_backup.title" = "会話をバックアップする";
-"self.settings.history_backup.description" = "あなたの会話履歴をバックアップして保存します。 これにより、もしデバイスをなくしたり、新しいデバイスに切り替えた場合でも、会話記録をリストアすることができます。\n\nバックアップファイルを守るため、強力なパスワードを選択してください。";
-"self.settings.history_backup.action" = "今すぐバックアップする";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "エラー";
-
 "self.settings.history_backup.set_email.title" = "メールアドレスとパスワードを設定します。";
 "self.settings.history_backup.set_email.message" = "会話履歴をバックアップするために、Eメールアドレスとパスワードが必要です。[設定] - [アカウント] から入力してください。";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "パスワードを設定";
-"self.settings.history_backup.password.cancel" = "キャンセル";
-"self.settings.history_backup.password.next" = "次へ";
-"self.settings.history_backup.password.placeholder" = "パスワード";
-"self.settings.history_backup.password.description" = "バックアップは圧縮され、ここで設定したパスワードで暗号化されます。";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1502,32 +1491,11 @@
 "registration.no_history.hero" = "このデバイスで Wire を使用するのは初めてです。";
 "registration.no_history.subtitle" = "プライバシー上の理由から、会話の履歴はここに表示されません。";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "バックアップからリストアする";
 
 "registration.alert.account_exists.title" = "アカウントが存在します";
 "registration.alert.account_exists.message_email" = "登録に使用したメールアドレスは既にアカウントにリンクされています。\n\n別のメールアドレスを登録するか、このアカウントを持っている場合はログインしてみてください。";
 "registration.alert.change_email_action" = "別のメールアドレスで登録します。";
 "registration.alert.change_signin_action" = "ログイン";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "リストア履歴";
-"registration.no_history.restore_backup_warning.message" = "リストアするとバックアップされた内容で、デバイスの会話履歴を上書きします。また、同じプラットフォームで作成されたバックアップデータからのみリストア可能です。";
-"registration.no_history.restore_backup_warning.proceed" = "バックアップファイルを選択します。";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "もう一度試す";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "何か問題があります";
-"registration.no_history.restore_backup_failed.message" = "あなたの履歴はリストアできませんでした。";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "互換性のないバックアップ";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "別のアカウントからの履歴はリストアできません。";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "互換性のないバックアップ";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "このバックアップデータは、新しいまたは古すぎる Wire で作成されたため、リストアできません。";
 
 // SSO – Company Login
 "login.sso.alert.title" = "組織アカウントログイン";
@@ -1553,17 +1521,6 @@
 "login.sso.backend_switch.title" = "リダイレクト中...";
 "login.sso.backend_switch.subtitle" = "専用のエンタープライズサービスへリダイレクトされます。";
 "login.sso.backend_switch.information" = "あなたの組織へのログインであると確信できる場合に限り、認証情報を提供してください。";
-
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "復元中…";
-"registration.no_history.restore_backup.completed" = "完了";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "このバックアップはパスワード保護されています。";
-"registration.no_history.restore_backup.password.message" = "このバックアップをリストアするにはパスワードが必要です。";
-"registration.no_history.restore_backup.password.placeholder" = "パスワード";
-"registration.no_history.restore_backup.password_error.title" = "パスワードが間違っています";
 
 "registration.no_history.logged_out.hero" = "以前にこのデバイスでワイヤーを使用しました。";
 "registration.no_history.logged_out.subtitle" = "同時に送信されたメッセージは表示されません。";
