@@ -18,11 +18,12 @@
 
 import Foundation
 
-public protocol LoginViaEmailUseCaseProtocol: Sendable {
+public protocol LoginViaEmailUseCaseProtocol {
 
     func invoke(
         email: String,
-        password: String
+        password: String,
+        verificationCode: String?
     ) async throws(LoginViaEmailUseCaseFailure)
 
 }
@@ -30,9 +31,11 @@ public protocol LoginViaEmailUseCaseProtocol: Sendable {
 public enum LoginViaEmailUseCaseFailure: Error {
 
     case invalidCredentials
-    case verificationCodeRequired
+    case twoFactorAuthenticationRequired
+    case twoFactorAuthenticationFailed
     case accountPendingActivation
     case accountSuspended
-    case other(message: String)
+    case noInternet
+    case other
 
 }

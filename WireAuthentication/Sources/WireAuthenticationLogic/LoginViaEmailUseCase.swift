@@ -17,17 +17,54 @@
 //
 
 import Foundation
+import WireAPI
 import WireAuthenticationAPI
 
 public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
 
-    typealias Failure = LoginViaEmailUseCaseFailure
+    private let authenticationAPI: AuthenticationAPI
 
-    public init() {}
+    public init(authenticationAPI: AuthenticationAPI) {
+        self.authenticationAPI = authenticationAPI
+    }
 
     public func invoke(
         email: String,
-        password: String
-    ) async throws(LoginViaEmailUseCaseFailure) {}
+        password: String,
+        verificationCode: String?
+    ) async throws(LoginViaEmailUseCaseFailure) {
+        do {
+            let result = try await authenticationAPI.login(
+                email: email,
+                password: password,
+                verificationCode: verificationCode,
+                label: nil
+            )
+        } catch let error as AuthenticationAPIError {
+            switch error {
+            case .twoFactorAuthenticationRequired:
+                throw .twoFactorAuthenticationRequired
+            case .twoFactorAuthenticationFailed:
+                throw .twoFactorAuthenticationFailed
+            case .accountPendingActivation:
+                throw .accountPendingActivation
+            case .accountSuspended:
+                throw .accountSuspended
+            case .invalidCredentials:
+                throw .invalidCredentials
+            default:
+                throw .other
+            }
+        } catch let error as URLError {
+            switch error.code {
+            case .notConnectedToInternet, .networkConnectionLost:
+                throw .noInternet
+            default:
+                throw .other
+            }
+        } catch {
+            throw .other
+        }
+    }
 
 }
