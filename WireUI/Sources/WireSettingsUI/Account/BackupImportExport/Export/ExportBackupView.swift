@@ -39,19 +39,9 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                         .interactiveDismissDisabled()
                         .presentationDetents([.medium])
                         .sheet(isPresented: $viewModel.isSetBackupPasswordPresented) {
-                            let setBackupPasswordView = setBackupPasswordView()
+                            setBackupPasswordView()
                                 .interactiveDismissDisabled()
-                            if #available(iOS 18.0, *) {
-                                setBackupPasswordView
-                                    .presentationSizing(
-                                        .page
-                                            .fitted(horizontal: false, vertical: true)
-                                            .sticky(horizontal: false, vertical: true)
-                                    )
-                            } else {
-                                setBackupPasswordView
-                                    .presentationDetents([.medium])
-                            }
+                                .presentationDetents([.medium])
                         }
                 }
 
