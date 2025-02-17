@@ -105,5 +105,20 @@ files: [
     "dest" : "/App/WireMoveToFolderUI/Resources/Accessibility.xcstrings",
     "translation" : "%original_path%/%original_file_name%",
     "multilingual": true,
+  },
+  {
+    "source" : "/WireUI/Sources/WireReusableUIComponents/Resources/en.lproj/Localizable.strings",
+    "dest" : "/App/WireReusableUIComponents/Resources/Localizable.strings",
+    "translation" : "/WireUI/Sources/WireReusableUIComponents/Resources/%osx_code%/%original_file_name%",
+  },
+  {
+    "source" : "/WireUI/Sources/WireSettingsUI/Resources/en.lproj/Accessibility.strings",
+    "dest" : "/App/WireSettingsUI/Resources/Accessibility.strings",
+    "translation" : "/WireUI/Sources/WireSettingsUI/Resources/%osx_code%/%original_file_name%",
+  },
+  {
+    "source" : "/WireUI/Sources/WireSettingsUI/Resources/en.lproj/Localizable.strings",
+    "dest" : "/App/WireSettingsUI/Resources/Localizable.strings",
+    "translation" : "/WireUI/Sources/WireSettingsUI/Resources/%osx_code%/%original_file_name%",
   }
 ]
