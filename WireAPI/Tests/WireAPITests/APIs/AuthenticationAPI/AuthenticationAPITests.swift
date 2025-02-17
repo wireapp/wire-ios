@@ -261,7 +261,9 @@ final class AuthenticationAPITests: XCTestCase {
         )
         let ssoURL: String = response.absoluteString.removingPercentEncoding!
         let ssoCodeString = ssoCode.transportString()
-        let success = "success_redirect=wire://login/success?cookie=$cookie&userid=$userid&validation_token=\(ssoCodeString)"
+        let successPart1 = "success_redirect=wire://login/success?"
+        let successPart2 = "cookie=$cookie&userid=$userid&validation_token=\(ssoCodeString)"
+        let success = successPart1 + successPart2
         let error = "error_redirect=wire://login/failure?label=$label&validation_token=\(ssoCodeString)"
         let expectedURL = URL(
             string: "https://localhost/sso/initiate-login/\(userID.uuidString)?\(success)&\(error)"
