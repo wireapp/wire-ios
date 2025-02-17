@@ -18,10 +18,14 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
 
 struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     private typealias Strings = L10n.Localizable
     private typealias Labels = L10n.Accessibility.ExportBackup
@@ -107,7 +111,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray40
             }.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
@@ -120,7 +124,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray60
             }.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
@@ -133,7 +137,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray80
             }.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
