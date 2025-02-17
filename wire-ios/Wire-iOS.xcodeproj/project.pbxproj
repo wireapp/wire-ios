@@ -36,6 +36,7 @@
 		016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		017ABBBB299542BA0004C243 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C521ADA3F000E037A1 /* Images.xcassets */; };
 		01874DD72C18581C00208716 /* DeveloperToolsContextItemsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01874DD62C18581C00208716 /* DeveloperToolsContextItemsProvider.swift */; };
+		018E0CD82D635D7300B5E184 /* WireCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 018E0CD72D635D7300B5E184 /* WireCoreCrypto */; };
 		01BC68512CE3AF9E00445243 /* EmptyConversationSearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC68502CE3AF9E00445243 /* EmptyConversationSearchResultsView.swift */; };
 		01BC68652CE496A500445243 /* EmptyPlaceholderContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC68642CE496A500445243 /* EmptyPlaceholderContainerView.swift */; };
 		01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 01C1A7C62A54C45A0058D578 /* SnapshotTesting */; };
@@ -3344,7 +3345,6 @@
 		E9C0B3622B55940500BC80E8 /* ConversationMessageTimerSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageTimerSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9C0B3642B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9C0B3662B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationVerifiedSystemMessageSectionDescription.swift; sourceTree = "<group>"; };
-		E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		E9D141612AC704DF005EE75D /* CreateSecureConversationGuestLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureConversationGuestLinkViewModel.swift; sourceTree = "<group>"; };
 		E9D141642AC71719005EE75D /* CreateSecureGuestLinkViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkViewModelTests.swift; sourceTree = "<group>"; };
 		E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandlerTests.swift; sourceTree = "<group>"; };
@@ -3839,6 +3839,7 @@
 				EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */,
 				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
 				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
+				018E0CD82D635D7300B5E184 /* WireCoreCrypto in Frameworks */,
 				A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */,
 				592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */,
 				EE67F741296F0EBC001D7C88 /* WireCanvas.framework in Frameworks */,
@@ -5374,7 +5375,6 @@
 				EEE25B2729719A730008B894 /* cryptobox.xcframework */,
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
 				EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */,
-				E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */,
 				EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */,
 			);
 			name = Frameworks;
@@ -8407,6 +8407,7 @@
 				594341D62D08611700A6C0B5 /* WireCountly */,
 				0619A95B2D3FE78700876BDE /* WireAuthenticationUI */,
 				76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */,
+				018E0CD72D635D7300B5E184 /* WireCoreCrypto */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11339,6 +11340,10 @@
 		016A141C2CE6BFC4006A7EF5 /* WireDatadog */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDatadog;
+		};
+		018E0CD72D635D7300B5E184 /* WireCoreCrypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCoreCrypto;
 		};
 		01C1A7C62A54C45A0058D578 /* SnapshotTesting */ = {
 			isa = XCSwiftPackageProductDependency;
