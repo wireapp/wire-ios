@@ -25,7 +25,6 @@ public struct WireAuthenticationUIDebugView: View {
         var id: String { rawValue }
 
         case background
-        case identificationView
         case switchBackend
         case verificationCode
 
@@ -42,10 +41,6 @@ public struct WireAuthenticationUIDebugView: View {
                 label: { Text("Background") }
             )
             Button(
-                action: { presentedItem = .identificationView },
-                label: { Text("Identification View") }
-            )
-            Button(
                 action: { presentedItem = .switchBackend },
                 label: { Text("Switch backend confirmation") }
             )
@@ -58,12 +53,6 @@ public struct WireAuthenticationUIDebugView: View {
             switch item {
             case .background:
                 fullscreenCover(content: { BackgroundView() })
-            case .identificationView:
-                fullscreenCover(content: { BackgroundView()
-                        .sheet(isPresented: .constant(true)) {
-                            makeDetermineAuthMethodViewPreview()
-                        }
-                })
             case .switchBackend:
                 fullscreenCover(content: {
                     BackgroundView()

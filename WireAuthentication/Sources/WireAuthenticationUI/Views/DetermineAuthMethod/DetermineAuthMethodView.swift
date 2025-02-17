@@ -61,7 +61,6 @@ package struct DetermineAuthMethodView: View {
                     .padding(.trailing)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    // TODO: [WPB-16045] Set error on `LabeledTextField` when supported.
                     LabeledTextField(
                         isMandatory: false,
                         placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
@@ -70,18 +69,12 @@ package struct DetermineAuthMethodView: View {
                     )
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
-
-                    if let errorMessage = viewModel.errorMessage {
-                        Text(errorMessage)
-                            .wireTextStyle(.subline1)
-                            .foregroundColor(ColorTheme.Base.error.color)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .multilineTextAlignment(.leading)
-                    }
                 }
 
                 Button(action: {
-                    viewModel.submitEmailOrSSOCode()
+                    Task {
+                        await viewModel.submitEmailOrSSOCode()
+                    }
                 }, label: {
                     HStack {
                         if viewModel.isLoading {
@@ -95,6 +88,16 @@ package struct DetermineAuthMethodView: View {
                 .wireButtonStyle(.primary)
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }.padding()
+        }
+        .alert(item: $viewModel.alert) { alert in
+            Alert(
+                title: titleForAlert(alert),
+                message: messageForAlert(alert),
+                dismissButton: .default(
+                    Text(L10n.Authentication.Error.confirm),
+                    action: { viewModel.didDismissAlert(alert: alert) }
+                )
+            )
         }
         .navigationDestination(for: Destination.self) {
             switch $0 {
@@ -116,18 +119,46 @@ package struct DetermineAuthMethodView: View {
 
     }
 
+    // MARK: - Private helpers
+
+    private func titleForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
+        switch alert {
+        case .noInternet:
+            Text(L10n.Authentication.Error.Title.noInternet)
+        case .invalidResponse:
+            Text(L10n.Authentication.Error.Title.general)
+        case .unknownError:
+            Text(L10n.Authentication.Error.Title.general)
+        case .onPremLoginNotPossible:
+            Text(L10n.Authentication.Error.Title.onPremNotPossible)
+        }
+    }
+
+    private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
+        switch alert {
+        case .noInternet:
+            Text(L10n.Authentication.Error.Message.noInternet)
+        case .invalidResponse:
+            Text(L10n.Authentication.Error.Message.general)
+        case .unknownError:
+            Text(L10n.Authentication.Error.Message.general)
+        case .onPremLoginNotPossible:
+            Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
+        }
+    }
+
 }
 
 @MainActor
-public func makeDetermineAuthMethodViewPreview(
+package func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
     isLoading: Bool = false,
-    errorMessage: String? = nil
+    alert: DetermineAuthMethodViewModel.Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
         isLoading: isLoading,
-        errorMessage: errorMessage
+        alert: alert
     )
 }
 
@@ -135,9 +166,9 @@ public func makeDetermineAuthMethodViewPreview(
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
             makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: "sam@wire.com",
+                emailOrSSOCode: "user@wire.com",
                 isLoading: false,
-                errorMessage: "Some error message that is too long to fit on a single line"
+                alert: .unknownError
             )
         }
 }
