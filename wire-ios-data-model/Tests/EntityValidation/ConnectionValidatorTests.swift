@@ -79,7 +79,7 @@ final class ConnectionValidatorTests: XCTestCase {
 
         let conversations = await context.perform { [self] in
             product(connectionStatuses, conversationTypes).map { status, conversationType in
-                makeConnection(status: status, type: conversationType)
+                makeConversationWithConnection(status: status, type: conversationType)
             }
         }
 
@@ -113,7 +113,7 @@ final class ConnectionValidatorTests: XCTestCase {
 
         let conversations = await context.perform { [self] in
             variations.map { status, conversationType in
-                makeConnection(status: status, type: conversationType)
+                makeConversationWithConnection(status: status, type: conversationType)
             }
         }
         let conversationSnapshots = await context.perform { conversations.map(ConversationSnapshot.init) }
@@ -134,7 +134,10 @@ final class ConnectionValidatorTests: XCTestCase {
 
     // MARK: Helpers
 
-    private func makeConnection(status: ZMConnectionStatus, type: ZMConversationType) -> ZMConversation {
+    private func makeConversationWithConnection(
+        status: ZMConnectionStatus,
+        type: ZMConversationType
+    ) -> ZMConversation {
         let conversation = ZMConversation.fetchOrCreate(with: .init(), domain: nil, in: context)
         conversation.conversationType = type
 
