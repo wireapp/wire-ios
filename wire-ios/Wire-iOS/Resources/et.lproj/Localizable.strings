@@ -1356,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Ajalugu";
-"self.settings.history_backup.title" = "Varunda vestlused";
-"self.settings.history_backup.description" = "Loo varukoopia, et säilitada oma vestluste ajalugu. Saad seda kasutada ajaloo taastamiseks, juhul kui kaotad või vahetad oma seadme.";
-"self.settings.history_backup.action" = "Varunda kohe";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Viga";
-
 "self.settings.history_backup.set_email.title" = "Määra e-posti aadress ja parool.";
 "self.settings.history_backup.set_email.message" = "Vajad e-posti aadressi ja parooli, et oma vestluste ajalugu varundada. Saad seda teha konto seadete lehel.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Määra salasõna";
-"self.settings.history_backup.password.cancel" = "Tühista";
-"self.settings.history_backup.password.next" = "Järgmine";
-"self.settings.history_backup.password.placeholder" = "Parool";
-"self.settings.history_backup.password.description" = "Varukoopia pakitakse ja krüpteeritakse sinu seatud parooliga.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1502,32 +1491,11 @@
 "registration.no_history.hero" = "Kasutad sellel seadmel Wire’t esimest korda.";
 "registration.no_history.subtitle" = "Privaatuse tagamiseks ei ilmu siia sinu varasemad vestlused.";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "Taasta varundusest";
 
 "registration.alert.account_exists.title" = "Account Exists";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
 "registration.alert.change_signin_action" = "Logi sisse";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Taasta ajalugu";
-"registration.no_history.restore_backup_warning.message" = "Varukoopia sisu asendab selles seadmes vestlusajaloo.\nSa saad taastada ajalugu ainult sama platvormi varukoopiast.";
-"registration.no_history.restore_backup_warning.proceed" = "Vali varundusfail";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Proovi uuesti";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Midagi läks valesti";
-"registration.no_history.restore_backup_failed.message" = "Sinu ajalugu ei saanud taastada.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Ühildumatu varundus";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "Sa ei saa taastada teise konto ajalugu.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Ühildumatu varundus";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "See varundus loodi uuema või aegunud Wire'i versiooni kaudu ja seda ei saa siin taastada.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Ettevõtte sisselogimine";
@@ -1553,17 +1521,6 @@
 "login.sso.backend_switch.title" = "Redirecting...";
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
-
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Taastan…";
-"registration.no_history.restore_backup.completed" = "Lõpetatud";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "See varukoopia on parooliga kaitstud.";
-"registration.no_history.restore_backup.password.message" = "Sellest varukoopiast ajaloo taastamiseks on vaja sisestada parool.";
-"registration.no_history.restore_backup.password.placeholder" = "Parool";
-"registration.no_history.restore_backup.password_error.title" = "Vale parool";
 
 "registration.no_history.logged_out.hero" = "Oled sellel seadmel juba varem Wire’t kasutanud.";
 "registration.no_history.logged_out.subtitle" = "Vahepeal saadetud sõnumid ei ilmu siia.";

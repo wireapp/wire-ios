@@ -48,6 +48,7 @@ struct ToggleablePasswordField: View {
                 .focused($isFocused)
                 .textContentType(.password)
                 .autocapitalization(.none)
+                .accessibilityIdentifier("password input")
             } else {
                 SecureField(text: $password) {
                     Text(placeholder)
@@ -56,6 +57,7 @@ struct ToggleablePasswordField: View {
                 }
                 .focused($isFocused)
                 .textContentType(.password)
+                .accessibilityIdentifier("password input")
             }
 
             let accessibilityLabel = isPasswordVisible ? Labels.Password.Hide.label : Labels.Password.Show.label

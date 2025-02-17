@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireReusableUIComponents
 
 @MainActor
 final class MockDependencies {
@@ -109,18 +110,39 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 extension MockDependencies: LoginViaEmailBuilder {
 
-    private func loginViewModel(email: String) -> LoginViaEmailViewModel {
+    private func loginViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
-            email: email
+            email: email,
+            accountsURL: URL(string: "https://example.com")!,
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            canCreateAccount: canCreateAccount
         )
     }
 
-    func loginViaEmailView(email: String) -> LoginViaEmailView {
+    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email)
+            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
         )
+    }
+
+}
+
+private struct MockPasswordValidator: PasswordValidator {
+
+    let validationCallback: @Sendable (String) -> Bool
+
+    init(validationCallback: @Sendable @escaping (String) -> Bool) {
+        self.validationCallback = validationCallback
+    }
+
+    func validate(_ password: String) -> Bool {
+        validationCallback(password)
+    }
+
+    var localizedRulesDescription: String? {
+        "Password rules"
     }
 
 }
