@@ -1356,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Historie";
-"self.settings.history_backup.title" = "Zálohovat konverzace";
-"self.settings.history_backup.description" = "Vytvořením zálohy zachováte historii konverzací. Můžete jí použít k obnovení historie, pokud ztratíte zařízení nebo přejdete na jiné. \n\nPro ochranu zálohy zvolte silné heslo.";
-"self.settings.history_backup.action" = "Zálohovat nyní";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Chyba";
-
 "self.settings.history_backup.set_email.title" = "Nastavte e-mail a heslo.";
 "self.settings.history_backup.set_email.message" = "Pro zálohování historie konverzace potřebujete e-mail a heslo. Můžete tak učinit v Nastavení účtu.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Nastavit heslo";
-"self.settings.history_backup.password.cancel" = "Zrušit";
-"self.settings.history_backup.password.next" = "Další";
-"self.settings.history_backup.password.placeholder" = "Heslo";
-"self.settings.history_backup.password.description" = "The backup will be compressed and encrypted with the password you set here.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1502,32 +1491,11 @@
 "registration.no_history.hero" = "Toto je poprvé kdy používáte Wire na tomto přístroji.";
 "registration.no_history.subtitle" = "Z důvodů ochrany soukromí se zde nezobrazí historie vaší konverzace.";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "Restore from backup";
 
 "registration.alert.account_exists.title" = "Account Exists";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
 "registration.alert.change_signin_action" = "Přihlásit se";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Historie obnovení";
-"registration.no_history.restore_backup_warning.message" = "The backup contents will replace the conversation history on this device.\nYou can only restore history from a backup of the same platform.";
-"registration.no_history.restore_backup_warning.proceed" = "Zvolte soubor zálohy";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Zkusit znovu";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Něco se pokazilo";
-"registration.no_history.restore_backup_failed.message" = "Vaše historie nemohla být obnovena.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Nekompatibilní záloha";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "Nelze obnovit historii z jiného účtu.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Nekompatibilní záloha";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "Tato záloha byla vytvořeno novější nebo zastaralou verzí Wire a nelze ji obnovit.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Enterprise Login";
@@ -1553,17 +1521,6 @@
 "login.sso.backend_switch.title" = "Redirecting...";
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
-
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Obnovuji…";
-"registration.no_history.restore_backup.completed" = "Dokončeno";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "Tato záloha je chráněna heslem.";
-"registration.no_history.restore_backup.password.message" = "Pro obnovení této zálohy je vyžadováno heslo.";
-"registration.no_history.restore_backup.password.placeholder" = "Heslo";
-"registration.no_history.restore_backup.password_error.title" = "Špatné heslo";
 
 "registration.no_history.logged_out.hero" = "Již jste dříve použili Wire na tomto zařízení.";
 "registration.no_history.logged_out.subtitle" = "Zprávy odeslané v mezičase se zde nezobrazí.";
