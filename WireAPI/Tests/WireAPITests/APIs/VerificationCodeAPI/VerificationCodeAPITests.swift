@@ -90,10 +90,15 @@ final class VerificationCodeAPITests: XCTestCase {
 
         let sut = VerificationCodeAPIV8(apiService: apiService)
 
-        // Then
-        await XCTAssertThrowsErrorAsync(VerificationCodeAPIError.invalidEmail) {
+        do {
             // When
             try await sut.requestVerificationCode(for: Scaffolding.email)
+        } catch let error as FailureResponse {
+            // Then
+            XCTAssertEqual(error.code, 404)
+            XCTAssertEqual(error.label, "unsupported-version")
+        } catch {
+            XCTFail("expected error: " + String(reflecting: error))
         }
     }
 
