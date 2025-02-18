@@ -19,20 +19,23 @@
 import SwiftUI
 import WireDesign
 
-// TODO: [WPB-15571] Add accessibility strings to the mask / unmask buttons
 struct ToggleablePasswordField: View {
 
     @Binding var password: String
     var placeholder: String
     var placeholderColor: Color
-    var borderColor: Color
     var focusOnAppear = true
 
     @State private var isPasswordVisible = false
 
-    @FocusState private var isFocused: Bool
-
     @Environment(\.colorScheme) private var colorScheme
+
+    enum FocusedField: Hashable {
+        case secureField
+        case textField
+    }
+
+    @FocusState private var focusedField: FocusedField?
 
     private typealias Labels = L10n.Accessibility.Backup
 
@@ -40,32 +43,19 @@ struct ToggleablePasswordField: View {
         HStack {
 
             if isPasswordVisible {
-                TextField(text: $password) {
-                    Text(placeholder)
-                        .font(.body)
-                        .foregroundStyle(placeholderColor)
-                }
-                .focused($isFocused)
-                .textContentType(.password)
-                .autocapitalization(.none)
+                textField
             } else {
-                SecureField(text: $password) {
-                    Text(placeholder)
-                        .font(.body)
-                        .foregroundStyle(placeholderColor)
-                }
-                .focused($isFocused)
-                .textContentType(.password)
+                secureField
             }
 
-            let accessibilityLabel = isPasswordVisible ? Labels.Password.Hide.label : Labels.Password.Show.label
             Button {
                 isPasswordVisible.toggle()
+                focusedField = isPasswordVisible ? .textField : .secureField
             } label: {
                 Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                     .foregroundColor(toggleVisibilityButtonColor)
             }
-            .accessibilityLabel(accessibilityLabel)
+            .accessibilityLabel(toggleButtonAccessibilityLabel)
 
         }
         .padding()
@@ -73,12 +63,41 @@ struct ToggleablePasswordField: View {
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(borderColor, lineWidth: 1)
+                .stroke(.tint, lineWidth: 1)
         )
         .onAppear {
             if focusOnAppear {
-                isFocused = true
+                focusedField = .secureField
             }
+        }
+    }
+
+    @ViewBuilder private var textField: some View {
+        TextField(text: $password) {
+            Text(placeholder)
+                .font(.body)
+                .foregroundStyle(placeholderColor)
+        }
+        .textContentType(.password)
+        .autocapitalization(.none)
+        .focused($focusedField, equals: .textField)
+    }
+
+    @ViewBuilder private var secureField: some View {
+        SecureField(text: $password) {
+            Text(placeholder)
+                .font(.body)
+                .foregroundStyle(placeholderColor)
+        }
+        .textContentType(.password)
+        .focused($focusedField, equals: .secureField)
+    }
+
+    private var toggleButtonAccessibilityLabel: String {
+        if isPasswordVisible {
+            Labels.Password.Hide.label
+        } else {
+            Labels.Password.Show.label
         }
     }
 
@@ -103,8 +122,8 @@ struct ToggleablePasswordField: View {
     ToggleablePasswordField(
         password: .constant(""),
         placeholder: "Placeholder Text",
-        placeholderColor: BaseColorPalette.Neutrals.black.color,
-        borderColor: BaseColorPalette.Neutrals.black.color
+        placeholderColor: BaseColorPalette.Neutrals.black.color
     )
+    .tint(.purple)
     .padding()
 }
