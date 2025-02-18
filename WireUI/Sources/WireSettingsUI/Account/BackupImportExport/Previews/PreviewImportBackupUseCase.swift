@@ -59,3 +59,7 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
     }
 
 }
+
+public func PreviewImportBackupUseCase_() -> any ImportBackupUseCaseProtocol {
+    PreviewImportBackupUseCase()
+}
