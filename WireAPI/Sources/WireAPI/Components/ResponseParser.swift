@@ -66,7 +66,7 @@ struct ResponseParser<Success> {
         copy.parseBlocks.append { actualCode, data in
             guard
                 actualCode == code.rawValue,
-                (data == nil || data?.isEmpty == true)
+                data == nil || data?.isEmpty == true
             else { return nil }
             return ()
         }
