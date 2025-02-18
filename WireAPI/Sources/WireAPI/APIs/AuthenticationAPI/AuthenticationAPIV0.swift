@@ -19,10 +19,10 @@
 import Foundation
 
 class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
-    let apiService: any APIServiceProtocol
+    let networkService: any NetworkServiceProtocol
 
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    init(networkService: any NetworkServiceProtocol) {
+        self.networkService = networkService
     }
 
     var apiVersion: APIVersion {
@@ -56,10 +56,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withMethod(.post)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         guard
             let responseURL = response.url,
@@ -124,10 +121,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: DomainInfoV0.self)

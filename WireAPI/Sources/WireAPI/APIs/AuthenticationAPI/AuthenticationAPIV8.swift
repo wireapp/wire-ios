@@ -41,10 +41,7 @@ final class AuthenticationAPIV8: AuthenticationAPIV7 {
             .withMethod(.post)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: DomainRegistrationConfigurationV8.self)
