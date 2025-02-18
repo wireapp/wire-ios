@@ -119,6 +119,7 @@ final class ImportBackupViewModel: ObservableObject {
         importTask?.cancel()
         importTask = Task {
             do {
+                backupPassword = password
                 state = .importingBackup(progress: 0)
                 for try await update in importBackupUseCase.invoke(url: url, password: password) {
                     switch update {

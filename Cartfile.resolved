@@ -1,4 +1,4 @@
-binary "wire-avs.json" "10.0.4"
+binary "wire-avs.json" "9.10.16"
 github "wireapp/ZipArchive" "v2.4.2"
 github "wireapp/cryptobox-ios" "v1.1.0_xcframework_arm64simulator"
 github "wireapp/generic-message-proto" "v1.51.0"
