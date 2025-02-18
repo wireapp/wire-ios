@@ -1,0 +1,131 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+class VerificationCodeAPIV8: VerificationCodeAPIV7 {
+
+    override var apiVersion: APIVersion {
+        .v8
+    }
+
+    override func requestVerificationCode(for email: String) async throws -> VerificationCode {
+        fatalError()
+    }
+
+//    func getUser(for userID: UserID) async throws -> User {
+//        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())"
+//
+//        let request = try URLRequestBuilder(path: path)
+//            .withMethod(.get)
+//            .build()
+//
+//        let (data, response) = try await apiService.executeRequest(
+//            request,
+//            requiringAccessToken: true
+//        )
+//
+//        return try ResponseParser()
+//            .success(code: .ok, type: UserResponseV4.self)
+//            .failure(code: .notFound, label: "not-found", error: UsersAPIError.userNotFound)
+//            .parse(code: response.statusCode, data: data)
+//    }
+//
+//    override func getUsers(userIDs: [UserID]) async throws -> UserList {
+//        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
+//        let path = "\(pathPrefix)/list-users"
+//
+//        let request = try URLRequestBuilder(path: path)
+//            .withMethod(.post)
+//            .withBody(body, contentType: .json)
+//            .build()
+//
+//        let (data, response) = try await apiService.executeRequest(
+//            request,
+//            requiringAccessToken: true
+//        )
+//
+//        return try ResponseParser()
+//            .success(code: .ok, type: UserListResponseV4.self)
+//            .parse(code: response.statusCode, data: data)
+//    }
+
+}
+
+//struct UserListResponseV4: Decodable, ToAPIModelConvertible {
+//
+//    /// List of users which were found and succesfully retrieved.
+//
+//    let found: [UserResponseV4]
+//
+//    /// List of user IDs for which a user couldn't be retrieved.
+//    ///
+//    let failed: [UserID]?
+//
+//    func toAPIModel() -> UserList {
+//        UserList(found: found.map { $0.toAPIModel() }, failed: failed ?? [])
+//    }
+//}
+
+//struct UserResponseV4: Decodable, ToAPIModelConvertible {
+//
+//    let id: UserID
+//    let name: String
+//    let handle: String?
+//    let teamID: UUID?
+//    let accentID: Int
+//    let assets: [UserAsset]
+//    let deleted: Bool?
+//    let email: String?
+//    let expiresAt: UTCTimeMillis?
+//    let service: ServiceResponseV0?
+//    let supportedProtocols: Set<MessageProtocol>?
+//    let legalholdStatus: LegalholdStatusV0
+//
+//    enum CodingKeys: String, CodingKey {
+//
+//        case id = "qualified_id"
+//        case name
+//        case handle
+//        case teamID = "team"
+//        case accentID = "accent_id"
+//        case assets
+//        case deleted
+//        case email
+//        case expiresAt = "expires_at"
+//        case service
+//        case supportedProtocols = "supported_protocols"
+//        case legalholdStatus = "legalhold_status"
+//
+//    }
+//
+//    func toAPIModel() -> User {
+//        User(
+//            id: id,
+//            name: name,
+//            handle: handle,
+//            teamID: teamID,
+//            accentID: accentID,
+//            assets: assets,
+//            deleted: deleted,
+//            email: email,
+//            expiresAt: expiresAt?.date,
+//            service: service?.toAPIModel(),
+//            supportedProtocols: supportedProtocols,
+//            legalholdStatus: legalholdStatus.toAPIModel()
+//        )
+//    }
+//}

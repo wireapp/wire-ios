@@ -16,21 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol VersionedAPI {
+class VerificationCodeAPIV5: VerificationCodeAPIV4 {
 
-    var apiVersion: APIVersion { get }
-
-}
-
-extension VersionedAPI {
-
-    var pathPrefix: String {
-        switch apiVersion {
-        case .v0:
-            ""
-        default:
-            "/v\(apiVersion.rawValue)"
-        }
+    override var apiVersion: APIVersion {
+        .v5
     }
 
 }

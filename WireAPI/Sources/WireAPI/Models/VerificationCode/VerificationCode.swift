@@ -16,21 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol VersionedAPI {
+/// A verification code for SSO login.
 
-    var apiVersion: APIVersion { get }
-
-}
-
-extension VersionedAPI {
-
-    var pathPrefix: String {
-        switch apiVersion {
-        case .v0:
-            ""
-        default:
-            "/v\(apiVersion.rawValue)"
-        }
-    }
-
-}
+public struct VerificationCode: Equatable, Sendable {}

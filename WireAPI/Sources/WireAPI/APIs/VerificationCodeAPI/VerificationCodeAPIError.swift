@@ -16,21 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol VersionedAPI {
+/// Errors originating from `VerificationCodeAPI`.
 
-    var apiVersion: APIVersion { get }
+public enum VerificationCodeAPIError: Error {
 
-}
-
-extension VersionedAPI {
-
-    var pathPrefix: String {
-        switch apiVersion {
-        case .v0:
-            ""
-        default:
-            "/v\(apiVersion.rawValue)"
-        }
-    }
+    /// Unsupported endpoint for API version
+    case unsupportedEndpointForAPIVersion
 
 }

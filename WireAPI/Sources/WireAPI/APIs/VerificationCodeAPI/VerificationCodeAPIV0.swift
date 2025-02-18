@@ -16,21 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol VersionedAPI {
+class VerificationCodeAPIV0: VerificationCodeAPI, VersionedAPI {
 
-    var apiVersion: APIVersion { get }
+    let apiService: any APIServiceProtocol
 
-}
-
-extension VersionedAPI {
-
-    var pathPrefix: String {
-        switch apiVersion {
-        case .v0:
-            ""
-        default:
-            "/v\(apiVersion.rawValue)"
-        }
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
+    var apiVersion: APIVersion {
+        .v0
+    }
+
+    func requestVerificationCode(for email: String) async throws -> VerificationCode {
+        throw VerificationCodeAPIError.unsupportedEndpointForAPIVersion
+    }
 }

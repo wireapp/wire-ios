@@ -16,21 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol VersionedAPI {
+import Foundation
 
-    var apiVersion: APIVersion { get }
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning verification codes.
+public protocol VerificationCodeAPI {
 
-}
+    /// Request a verification code for a provided email address.
+    ///
+    /// - Parameter email: Email address of the account
+    /// - Returns: The user details.
 
-extension VersionedAPI {
-
-    var pathPrefix: String {
-        switch apiVersion {
-        case .v0:
-            ""
-        default:
-            "/v\(apiVersion.rawValue)"
-        }
-    }
+    func requestVerificationCode(for email: String) async throws -> VerificationCode
 
 }
