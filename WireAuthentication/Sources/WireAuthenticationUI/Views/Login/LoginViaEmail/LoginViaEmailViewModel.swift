@@ -61,6 +61,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     func submitPassword(_ password: String) {
         Task.detached {
             do {
+                // TODO: [WPB-15924] Handle happy path
                 _ = try await self.loginViaEmailUseCase.invoke(
                     email: self.email,
                     password: password,
