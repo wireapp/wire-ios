@@ -75,40 +75,6 @@ struct DeveloperToolsView: View {
 
 }
 
-// MARK: - Subviews
-
-struct TextItemCell: View {
-
-    let title: String
-    let value: String
-    let onCopy: () -> Void
-
-    var body: some View {
-        HStack {
-            Text(title)
-
-            Spacer()
-
-            Text(value)
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .foregroundColor(.secondary)
-        }
-        .contextMenu {
-            Button(
-                hapticFeedbackStyle: .success,
-                action: {
-                    onCopy()
-                },
-                label: {
-                    Label("Copy", systemImage: "doc.on.doc")
-                }
-            )
-        }
-
-    }
-}
-
 // MARK: - Previews
 
 struct DeveloperToolsView_Previews: PreviewProvider {

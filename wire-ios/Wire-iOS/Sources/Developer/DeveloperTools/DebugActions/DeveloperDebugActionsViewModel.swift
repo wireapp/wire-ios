@@ -25,7 +25,7 @@ struct ConversationResult {
     var id: String
     var groupID: MLSGroupID?
     var name: String
-    
+
     var description: String {
         id
     }
@@ -35,18 +35,18 @@ enum MLSGroupSearchItem: Identifiable {
     var id: String {
         switch self {
         case .result:
-            return "result"
+            "result"
         }
     }
+
     case result([ConversationResult])
 }
-
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
 
     @Published var buttons: [DeveloperDebugActionsDisplayModel.ButtonItem] = []
     @Published var mlsGroupSearchItem: MLSGroupSearchItem?
-    
+
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
 
     private let selfClient: UserClient?
@@ -228,18 +228,18 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     // MARK: Find conversation
- 
+
     private func showSearchMLSConversations() {
         mlsGroupSearchItem = .result([])
     }
-    
+
     @MainActor
     func findConversations(with mlsGroupID: String?) async {
         guard let strippedMLSGroupID = mlsGroupID?.replacingOccurrences(of: "*", with: "") else {
             showConversationInfo(results: [])
             return
         }
-        
+
         guard let syncContext = userSession?.syncContext else {
             showConversationInfo(results: [])
             return
@@ -248,23 +248,26 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         let results = try? await syncContext.perform {
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
             let conversations = try syncContext.fetch(fetchRequest)
-            
+
             var matchedConversationInfos = [ConversationResult]()
-            for conversation in conversations where conversation.mlsGroupID?.description.starts(with: strippedMLSGroupID) == true {
+            for conversation in conversations
+                where conversation.mlsGroupID?.description.starts(with: strippedMLSGroupID) == true {
                 matchedConversationInfos.append(
-                    ConversationResult(id: conversation.remoteIdentifier.uuidString,
-                                   groupID: conversation.mlsGroupID,
-                                   name: conversation.name ?? "-")
+                    ConversationResult(
+                        id: conversation.remoteIdentifier.uuidString,
+                        groupID: conversation.mlsGroupID,
+                        name: conversation.name ?? "-"
+                    )
                 )
             }
             return matchedConversationInfos
         }
         showConversationInfo(results: results ?? [])
     }
-    
+
     @MainActor
     private func showConversationInfo(results: [ConversationResult]) {
         mlsGroupSearchItem = .result(results)
     }
-    
+
 }
