@@ -150,10 +150,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withBody(body, contentType: .json)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok)

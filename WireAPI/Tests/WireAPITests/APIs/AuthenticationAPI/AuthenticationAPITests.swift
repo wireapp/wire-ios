@@ -250,11 +250,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testRequestVerificationCode_Response_Handling_V8_Success() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, nil)
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
 
         // When, Then no error thrown
         try await sut.requestVerificationCode(for: Scaffolding.email)
@@ -262,11 +262,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testUpgradeToTeam_Response_Handling_V8_BadRequest() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.notFound, "RequestVerificationCodeResponse_BadRequest")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
 
         do {
             // When
