@@ -26,6 +26,6 @@ public enum VerificationCodeAPIError: Error {
 
     /// Provided email is invalid
 
-    case invalidEmail
+    case badRequest
 
 }

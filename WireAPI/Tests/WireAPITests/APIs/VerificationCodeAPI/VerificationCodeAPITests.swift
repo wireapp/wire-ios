@@ -73,7 +73,7 @@ final class VerificationCodeAPITests: XCTestCase {
     func testRequestVerificationCode_Response_Handling_V8_Success() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "RequestVerificationCodeResponse_Success")
+            (.ok, nil)
         ])
 
         let sut = VerificationCodeAPIV8(apiService: apiService)
@@ -82,21 +82,21 @@ final class VerificationCodeAPITests: XCTestCase {
         try await sut.requestVerificationCode(for: Scaffolding.email)
     }
 
-    func testUpgradeToTeam_Response_Handling_V8_UnsupportedVersion() async throws {
+    func testUpgradeToTeam_Response_Handling_V8_BadRequest() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
-            (.notFound, "RequestVerificationCodeResponse_UnsupportedVersion")
+            (.notFound, "RequestVerificationCodeResponse_BadRequest")
         ])
 
         let sut = VerificationCodeAPIV8(apiService: apiService)
 
         do {
             // When
-            try await sut.requestVerificationCode(for: Scaffolding.email)
+            try await sut.requestVerificationCode(for: Scaffolding.wrongAddress)
         } catch let error as FailureResponse {
             // Then
-            XCTAssertEqual(error.code, 404)
-            XCTAssertEqual(error.label, "unsupported-version")
+            XCTAssertEqual(error.code, 400)
+            XCTAssertEqual(error.label, "bad-request")
         } catch {
             XCTFail("expected error: " + String(reflecting: error))
         }
@@ -107,5 +107,6 @@ final class VerificationCodeAPITests: XCTestCase {
 private enum Scaffolding {
 
     static let email = "john.smith@example.com"
+    static let wrongAddress = "john.smith-example.com"
 
 }

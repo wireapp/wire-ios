@@ -25,9 +25,6 @@ class VerificationCodeAPIV8: VerificationCodeAPIV7 {
     }
 
     override func requestVerificationCode(for email: String) async throws {
-        guard !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw VerificationCodeAPIError.invalidEmail
-        }
 
         let path = "\(pathPrefix)/verification-code/send"
 
