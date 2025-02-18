@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning verification codes.
 public protocol VerificationCodeAPI {
@@ -27,6 +25,6 @@ public protocol VerificationCodeAPI {
     /// - Parameter email: Email address of the account
     /// - Returns: The user details.
 
-    func requestVerificationCode(for email: String) async throws -> VerificationCode
+    func requestVerificationCode(for email: String) async throws
 
 }

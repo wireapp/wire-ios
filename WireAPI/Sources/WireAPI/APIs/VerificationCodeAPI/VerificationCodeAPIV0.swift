@@ -28,7 +28,8 @@ class VerificationCodeAPIV0: VerificationCodeAPI, VersionedAPI {
         .v0
     }
 
-    func requestVerificationCode(for email: String) async throws -> VerificationCode {
+    func requestVerificationCode(for email: String) async throws {
         throw VerificationCodeAPIError.unsupportedEndpointForAPIVersion
     }
+
 }

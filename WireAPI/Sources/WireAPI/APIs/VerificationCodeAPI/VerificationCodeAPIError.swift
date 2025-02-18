@@ -21,6 +21,11 @@
 public enum VerificationCodeAPIError: Error {
 
     /// Unsupported endpoint for API version
+
     case unsupportedEndpointForAPIVersion
+
+    /// Provided email is invalid
+
+    case invalidEmail
 
 }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A verification code for SSO login.
-
-public struct VerificationCode: Equatable, Sendable {}
+struct RequestVerificationCodeRequestBodyV8: Encodable {
+    var action: String
+    var email: String
+}
