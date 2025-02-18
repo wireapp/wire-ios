@@ -247,6 +247,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
         let results = try? await syncContext.perform {
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+            fetchRequest.fetchBatchSize = 50
+            // as we have a string and MLSGroupID is data we can't fetch with a predicate
             let conversations = try syncContext.fetch(fetchRequest)
 
             var matchedConversationInfos = [ConversationResult]()
