@@ -32,9 +32,9 @@ public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) {
+    ) async throws(LoginViaEmailUseCaseFailure)  -> ([HTTPCookie], AccessToken) {
         do {
-            let result = try await authenticationAPI.login(
+            return try await authenticationAPI.login(
                 email: email,
                 password: password,
                 verificationCode: verificationCode,

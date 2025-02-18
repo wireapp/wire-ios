@@ -20,11 +20,13 @@ import Foundation
 
 public protocol LoginViaEmailUseCaseProtocol {
 
+    associatedtype AccessToken
+
     func invoke(
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure)
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken)
 
 }
 
