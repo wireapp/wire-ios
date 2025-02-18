@@ -36,6 +36,7 @@ class VerificationCodeAPIV8: VerificationCodeAPIV7 {
         )
 
         let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
 
