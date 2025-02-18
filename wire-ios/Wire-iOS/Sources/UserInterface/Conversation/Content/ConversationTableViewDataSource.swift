@@ -19,6 +19,7 @@
 import DifferenceKit
 import WireDataModel
 import WireSyncEngine
+import WireLogging
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -181,8 +182,38 @@ final class ConversationTableViewDataSource: NSObject {
         super.init()
 
         tableView.dataSource = self
+        
+        setupObservers()
     }
 
+    
+    private func setupObservers() {
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+    
+    @objc
+    private func willEnterForeground(_ notification: NSNotification) {
+        fetchController?.delegate = self
+    }
+    
+    @objc
+    private func didEnterBackground(_ notification: NSNotification) {
+        fetchController?.delegate = nil
+    }
+    
     func section(for message: ZMConversationMessage) -> Int? {
         currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
     }
@@ -292,7 +323,11 @@ final class ConversationTableViewDataSource: NSObject {
         )
 
         fetchController?.delegate = self
-        try! fetchController?.performFetch()
+        do {
+            try fetchController?.performFetch()
+        } catch {
+            WireLogger.conversation.error("error fetching messages: \(error.localizedDescription)")
+        }
 
         lastFetchedObjectCount = fetchController?.fetchedObjects?.count ?? 0
         hasOlderMessagesToLoad = messages.count == fetchRequest.fetchLimit
