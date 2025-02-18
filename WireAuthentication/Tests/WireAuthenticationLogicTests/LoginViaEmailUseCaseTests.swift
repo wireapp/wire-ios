@@ -89,7 +89,7 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
             (underlyingError: AuthenticationAPIError.invalidResponse, expected: .other),
             (underlyingError: AuthenticationAPIError.configNotFound, expected: .other),
             (underlyingError: AuthenticationAPIError.domainNotFound, expected: .other),
-            (underlyingError: URLError(.badServerResponse), expected: .other),
+            (underlyingError: URLError(.badServerResponse), expected: .other)
         ]
 
         for testCase in testCases {
