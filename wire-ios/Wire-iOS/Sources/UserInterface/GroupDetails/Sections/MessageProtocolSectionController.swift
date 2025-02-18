@@ -93,7 +93,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
             cell.allowMultilineStatus = true
 
         case (.mls, 2) where Bundle.developerModeEnabled:
-            cell.title = "Group ID (hashed)"
+            cell.title = "Group ID (redacted)"
             cell.status = groupID?.safeForLoggingDescription
 
         default:

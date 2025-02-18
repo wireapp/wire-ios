@@ -46,8 +46,8 @@ struct DeveloperDebugActionsView: View {
                 }
             }
             switch item {
-            case let .result(results):
-                if results.isEmpty || userInput.isEmpty {
+            case let .result(results, term):
+                if results.isEmpty && !term.isEmpty {
                     Section {
                         Text("Nothing found")
                     }

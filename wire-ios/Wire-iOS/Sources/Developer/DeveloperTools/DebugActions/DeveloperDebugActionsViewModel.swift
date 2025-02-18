@@ -39,7 +39,7 @@ enum MLSGroupSearchItem: Identifiable {
         }
     }
 
-    case result([ConversationResult])
+    case result([ConversationResult], String)
 }
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
@@ -230,18 +230,18 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: Find conversation
 
     private func showSearchMLSConversations() {
-        mlsGroupSearchItem = .result([])
+        mlsGroupSearchItem = .result([], "")
     }
 
     @MainActor
     func findConversations(with mlsGroupID: String?) async {
         guard let strippedMLSGroupID = mlsGroupID?.replacingOccurrences(of: "*", with: "") else {
-            showConversationInfo(results: [])
+            showConversationInfo(results: [], term: "")
             return
         }
 
         guard let syncContext = userSession?.syncContext else {
-            showConversationInfo(results: [])
+            showConversationInfo(results: [], term: strippedMLSGroupID)
             return
         }
 
@@ -264,12 +264,12 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             }
             return matchedConversationInfos
         }
-        showConversationInfo(results: results ?? [])
+        showConversationInfo(results: results ?? [], term: strippedMLSGroupID)
     }
 
     @MainActor
-    private func showConversationInfo(results: [ConversationResult]) {
-        mlsGroupSearchItem = .result(results)
+    private func showConversationInfo(results: [ConversationResult], term: String) {
+        mlsGroupSearchItem = .result(results, term)
     }
 
 }
