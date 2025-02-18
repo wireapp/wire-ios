@@ -1,0 +1,4 @@
+curl \
+	--header "Content-Type: application/json" \
+	--data "{\"action\":\"login\",\"email\":\"john.smith@example.com\"}" \
+	"/v8/verification-code/send"
