@@ -70,56 +70,37 @@ final class VerificationCodeAPITests: XCTestCase {
 
     // MARK: - Response handling
 
-//    func testUpgradeToTeam_Response_Handling_V7_Success() async throws {
-//        // Given
-//        let apiService = MockAPIServiceProtocol.withResponses([
-//            (.ok, "UpgradeToTeamSuccessResponse")
-//        ])
-//
-//        let sut = AccountsAPIV7(apiService: apiService)
-//
-//        // When
-//        let response = try await sut.upgradeToTeam(teamName: Scaffolding.teamName)
-//
-//        // Then
-//        XCTAssertEqual(response, UpgradedAccountTeam(teamId: Scaffolding.teamID, teamName: Scaffolding.teamName))
-//    }
-//
-//    func testUpgradeToTeam_Response_Handling_V7_User_Already_In_A_Team() async throws {
-//        // Given
-//        let apiService = MockAPIServiceProtocol.withResponses([
-//            (.forbidden, "UpgradeToTeamErrorResponse_UserAlreadyInATeam")
-//        ])
-//
-//        let sut = AccountsAPIV7(apiService: apiService)
-//
-//        // Then
-//        await XCTAssertThrowsErrorAsync(AccountsAPIError.userAlreadyInATeam) {
-//            // When
-//            try await sut.upgradeToTeam(teamName: Scaffolding.teamName)
-//        }
-//    }
-//
-//    func testUpgradeToTeam_Response_Handling_V7_User_Not_Found() async throws {
-//        // Given
-//        let apiService = MockAPIServiceProtocol.withResponses([
-//            (.notFound, "UpgradeToTeamErrorResponse_UserNotFound")
-//        ])
-//
-//        let sut = AccountsAPIV7(apiService: apiService)
-//
-//        // Then
-//        await XCTAssertThrowsErrorAsync(AccountsAPIError.userNotFound) {
-//            // When
-//            try await sut.upgradeToTeam(teamName: Scaffolding.teamName)
-//        }
-//    }
+    func testRequestVerificationCode_Response_Handling_V8_Success() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "RequestVerificationCodeResponse_Success")
+        ])
+
+        let sut = VerificationCodeAPIV8(apiService: apiService)
+
+        // When, Then no error thrown
+        try await sut.requestVerificationCode(for: Scaffolding.email)
+    }
+
+    func testUpgradeToTeam_Response_Handling_V8_UnsupportedVersion() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.notFound, "RequestVerificationCodeResponse_UnsupportedVersion")
+        ])
+
+        let sut = VerificationCodeAPIV8(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(VerificationCodeAPIError.invalidEmail) {
+            // When
+            try await sut.requestVerificationCode(for: Scaffolding.email)
+        }
+    }
 
 }
 
 private enum Scaffolding {
 
     static let email = "john.smith@example.com"
-//    static let teamID = UUID(uuidString: "66dc3593-4c3a-49e8-b5c3-d3d908bd7403")!
 
 }
