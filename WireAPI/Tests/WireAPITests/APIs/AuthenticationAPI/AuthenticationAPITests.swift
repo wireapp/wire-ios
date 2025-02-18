@@ -89,6 +89,33 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    func testRequestVerificationCode_V0_To_V7() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol()
+        let builder = AuthenticationAPIBuilder(apiService: apiService)
+        let apiVersions = APIVersion.allCasesUpTo(.v8)
+
+        for apiVersion in apiVersions {
+            let sut = builder.makeAPI(for: apiVersion)
+
+            // Then
+            await XCTAssertThrowsErrorAsync(AuthenticationAPIError.unsupportedEndpointForAPIVersion) {
+                try await sut.requestVerificationCode(for: Scaffolding.email)
+            }
+        }
+    }
+
+    func testRequestVerificationCode_Request_Generation_V8_Onwards() async throws {
+        // Given
+        let apiVersions = APIVersion.v8.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
+            _ = try await sut.requestVerificationCode(for: Scaffolding.email)
+        }
+    }
+
     // MARK: - Response handling
 
     func testGetDomainRegistration_Response_Handling_V8_Success() async throws {
@@ -236,5 +263,43 @@ final class AuthenticationAPITests: XCTestCase {
             )
         }
     }
+
+    func testRequestVerificationCode_Response_Handling_V8_Success() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, nil)
+        ])
+
+        let sut = AuthenticationAPIV8(apiService: apiService)
+
+        // When, Then no error thrown
+        try await sut.requestVerificationCode(for: Scaffolding.email)
+    }
+
+    func testUpgradeToTeam_Response_Handling_V8_BadRequest() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.notFound, "RequestVerificationCodeResponse_BadRequest")
+        ])
+
+        let sut = AuthenticationAPIV8(apiService: apiService)
+
+        do {
+            // When
+            try await sut.requestVerificationCode(for: Scaffolding.wrongAddress)
+            XCTFail("Unexpected success")
+        } catch AuthenticationAPIError.invalidEmail {
+            // Then
+        } catch {
+            XCTFail("unexpected error: " + String(reflecting: error))
+        }
+    }
+
+}
+
+private enum Scaffolding {
+
+    static let email = "john.smith@example.com"
+    static let wrongAddress = "john.smith-example.com"
 
 }

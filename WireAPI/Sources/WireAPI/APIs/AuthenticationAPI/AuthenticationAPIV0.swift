@@ -139,4 +139,9 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
+
+    func requestVerificationCode(for email: String) async throws {
+        throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
+    }
+
 }
