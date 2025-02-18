@@ -18,8 +18,8 @@
 
 import DifferenceKit
 import WireDataModel
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -182,13 +182,12 @@ final class ConversationTableViewDataSource: NSObject {
         super.init()
 
         tableView.dataSource = self
-        
+
         setupObservers()
     }
 
-    
     private func setupObservers() {
-        
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(willEnterForeground),
@@ -203,17 +202,17 @@ final class ConversationTableViewDataSource: NSObject {
             object: nil
         )
     }
-    
+
     @objc
     private func willEnterForeground(_ notification: NSNotification) {
         fetchController?.delegate = self
     }
-    
+
     @objc
     private func didEnterBackground(_ notification: NSNotification) {
         fetchController?.delegate = nil
     }
-    
+
     func section(for message: ZMConversationMessage) -> Int? {
         currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
     }
