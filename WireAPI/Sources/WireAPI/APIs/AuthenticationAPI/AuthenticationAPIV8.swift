@@ -19,6 +19,7 @@
 import Foundation
 
 final class AuthenticationAPIV8: AuthenticationAPIV7 {
+
     override var apiVersion: APIVersion {
         .v8
     }
@@ -52,42 +53,10 @@ final class AuthenticationAPIV8: AuthenticationAPIV7 {
             .parse(code: response.statusCode, data: data)
     }
 
-    override func requestVerificationCode(for email: String) async throws {
-
-        let path = "\(pathPrefix)/verification-code/send"
-
-        let body = try JSONEncoder.defaultEncoder.encode(
-            RequestVerificationCodeRequestBodyV8(
-                action: "login",
-                email: email
-            )
-        )
-
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.post)
-            .withBody(body, contentType: .json)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
-
-        return try ResponseParser()
-            .success(code: .ok)
-            .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
-            .parse(code: response.statusCode, data: data)
-    }
-
 }
 
 // MARK: Encodables
 
 struct GetDomainRegistrationParametersV8: Encodable {
     let email: String
-}
-
-private struct RequestVerificationCodeRequestBodyV8: Encodable {
-    var action: String
-    var email: String
 }

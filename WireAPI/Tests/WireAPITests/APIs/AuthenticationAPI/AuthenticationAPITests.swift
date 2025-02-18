@@ -89,25 +89,9 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
-    func testRequestVerificationCode_V0_To_V7() async throws {
+    func testRequestVerificationCode_Request_Generation_V0_Onwards() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol()
-        let builder = AuthenticationAPIBuilder(apiService: apiService)
-        let apiVersions = APIVersion.allCasesUpTo(.v8)
-
-        for apiVersion in apiVersions {
-            let sut = builder.makeAPI(for: apiVersion)
-
-            // Then
-            await XCTAssertThrowsErrorAsync(AuthenticationAPIError.unsupportedEndpointForAPIVersion) {
-                try await sut.requestVerificationCode(for: Scaffolding.email)
-            }
-        }
-    }
-
-    func testRequestVerificationCode_Request_Generation_V8_Onwards() async throws {
-        // Given
-        let apiVersions = APIVersion.v8.andNextVersions
+        let apiVersions = APIVersion.v0.andNextVersions
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
