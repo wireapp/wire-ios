@@ -30,7 +30,7 @@ public protocol LoginViaEmailUseCaseProtocol {
 
 }
 
-public enum LoginViaEmailUseCaseFailure: Error {
+public enum LoginViaEmailUseCaseFailure: Error, Equatable {
 
     case invalidCredentials
     case twoFactorAuthenticationRequired
