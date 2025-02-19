@@ -28,6 +28,13 @@
     {
       "target" : {
         "containerPath" : "container:WireFoundation",
+        "identifier" : "WireSystemTests",
+        "name" : "WireSystemTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireFoundation",
         "identifier" : "WireCryptoTests",
         "name" : "WireCryptoTests"
       }

@@ -52,7 +52,18 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"
-        )
+        ),
+
+            .target(name: "WireSystem"),
+            .testTarget(
+                name: "WireSystemTests",
+                dependencies: ["WireSystem", "WireSystemSupport", "WireTestingPackage"]
+            ),
+            .target(
+                name: "WireSystemSupport",
+                dependencies: ["WireSystem"],
+                plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            )
     ],
     swiftLanguageModes: [.v6]
 )
@@ -60,7 +71,6 @@ let package = Package(
 for target in package.targets where target.name != "Clibsodium" {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("FullTypedThrows"),
         .enableUpcomingFeature("ExistentialAny")
     ]
 }
