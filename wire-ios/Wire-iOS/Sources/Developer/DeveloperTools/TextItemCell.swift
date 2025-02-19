@@ -16,23 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import SwiftUI
 
-final class DeveloperDebugActionsViewModelTests: XCTestCase {
+struct TextItemCell: View {
 
-    func testButtonsCount() throws {
-        // given
-        let viewModel = makeViewModel()
+    let title: String
+    let value: String
+    let onCopy: () -> Void
 
-        // when
-        // then
-        XCTAssertEqual(viewModel.buttons.count, 9)
-    }
+    var body: some View {
+        HStack {
+            Text(title)
 
-    // MARK: - Helpers
+            Spacer()
 
-    private func makeViewModel() -> DeveloperDebugActionsViewModel {
-        DeveloperDebugActionsViewModel(selfClient: nil)
+            Text(value)
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .foregroundColor(.secondary)
+        }
+        .contextMenu {
+            Button(
+                hapticFeedbackStyle: .success,
+                action: {
+                    onCopy()
+                },
+                label: {
+                    Label("Copy", systemImage: "doc.on.doc")
+                }
+            )
+        }
     }
 }
