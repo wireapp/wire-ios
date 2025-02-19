@@ -16,16 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireAPI
-import WireAPISupport
 
-func makeAuthenticationAPI() -> AuthenticationAPI {
-    let mockAuthenticationAPI = MockAuthenticationAPI()
-    mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = DomainRegistrationConfiguration(
-        backendURLString: nil,
-        domainRedirect: .none,
-        isCloudAccountAlreadyRegistered: nil,
-        ssoCodeString: nil
-    )
-    return mockAuthenticationAPI
+extension NetworkService {
+
+    static func make(backendEnvironment: BackendEnvironment, minTLSVersion: TLSVersion) -> NetworkService {
+        let service = NetworkService(
+            baseURL: backendEnvironment.url,
+            serverTrustValidator: ServerTrustValidator(pinnedKeys: backendEnvironment.pinnedKeys)
+        )
+
+        let config = URLSessionConfigurationFactory(
+            minTLSVersion: minTLSVersion,
+            proxySettings: backendEnvironment.proxySettings
+        ).makeRESTAPISessionConfiguration()
+
+        let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
+        service.configure(with: session)
+
+        return service
+    }
+
 }
