@@ -23,13 +23,13 @@ import XCTest
 
 final class AuthenticationAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APIServiceSnapshotHelper<any AuthenticationAPI>!
+    private var apiSnapshotHelper: NetworkServiceSnapshotHelper<any AuthenticationAPI>!
 
     // MARK: - Setup
 
     override func setUp() {
-        apiSnapshotHelper = APIServiceSnapshotHelper<any AuthenticationAPI> { apiService, apiVersion in
-            AuthenticationAPIBuilder(apiService: apiService)
+        apiSnapshotHelper = NetworkServiceSnapshotHelper<any AuthenticationAPI> { networkService, apiVersion in
+            AuthenticationAPIBuilder(networkService: networkService)
                 .makeAPI(for: apiVersion)
         }
     }
@@ -42,8 +42,8 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetDomainRegistration_V0_To_V7() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol()
-        let builder = AuthenticationAPIBuilder(apiService: apiService)
+        let networkService = MockNetworkServiceProtocol()
+        let builder = AuthenticationAPIBuilder(networkService: networkService)
 
         for apiVersion in [APIVersion.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7] {
             let sut = builder.makeAPI(for: apiVersion)
@@ -99,11 +99,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetDomainRegistration_Response_Handling_V8_Success() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetDomainRegistrationSuccessResponseV8")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
 
         // When
         let response = try await sut.getDomainRegistration(forEmail: "email@example.com")
@@ -122,11 +122,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetDomainRegistration_ResponseWithNullValues_Handling_V8_Success() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetDomainRegistrationSuccessResponse_WithNullValuesV8")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
 
         // When
         let response = try await sut.getDomainRegistration(forEmail: "email@example.com")
@@ -145,11 +145,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetDomainRegistration_Response_Handling_V8_Invalid_Domain() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.badRequest, "GetDomainRegistrationErrorResponse_InvalidDomainV8")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
 
         // Then
         await XCTAssertThrowsErrorAsync(AuthenticationAPIError.invalidDomain) {
@@ -160,11 +160,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetOnPremConfigURL_Response_Handling_Success() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetOnPremConfigURLSuccessResponseV0")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
 
         // When
         let response = try await sut.getOnPremConfigURL(forDomain: "example.com")
@@ -178,11 +178,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetOnPremConfigURL_Response_Handling_Custom_Backend_Not_Found() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.notFound, "GetOnPremConfigURLErrorResponse_CustomBackendNotFound_V0")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
 
         // Then
         await XCTAssertThrowsErrorAsync(AuthenticationAPIError.configNotFound) {
@@ -193,11 +193,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testLoginViaEmail_Response_Handling_Success() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "LoginViaEmailSuccessResponseV0")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
 
         // When
         let response = try await sut.login(
@@ -225,11 +225,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testLoginViaEmail_Response_Handling_Custom_Backend_Not_Found() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.notFound, "LoginViaEmailErrorResponse_CodeAuthenticationRequired_V0")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
 
         // Then
         await XCTAssertThrowsErrorAsync(AuthenticationAPIError.twoFactorAuthenticationRequired) {

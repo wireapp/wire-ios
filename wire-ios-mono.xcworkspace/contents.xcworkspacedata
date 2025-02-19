@@ -99,6 +99,9 @@
       location = "group:Gemfile.lock">
    </FileRef>
    <FileRef
+      location = "group:WireCoreCrypto">
+   </FileRef>
+   <FileRef
       location = "group:setup.sh">
    </FileRef>
    <Group
