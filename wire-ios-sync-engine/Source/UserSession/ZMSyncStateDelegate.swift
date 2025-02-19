@@ -30,6 +30,6 @@ protocol ZMSyncStateDelegate: AnyObject {
     func didStartQuickSync()
 
     /// The session did finish the quick sync
-    func didFinishQuickSync()
+    func didFinishQuickSync(isRecovering: Bool)
 
 }

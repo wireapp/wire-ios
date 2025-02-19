@@ -154,7 +154,7 @@ final class ApplicationStatusDirectory: ApplicationStatus {
 /// Required by `MLSService` initializer.
 /// No need to fill in the methods as we don't sync resources in the share engine.
 struct SyncStatus: SyncStatusProtocol {
-    func performQuickSync() async {}
+    func performQuickSync(isRecovering: Bool) async {}
     func resyncResources() {}
     func forceSlowSync() {}
 }

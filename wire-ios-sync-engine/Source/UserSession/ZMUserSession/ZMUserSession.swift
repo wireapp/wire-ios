@@ -955,7 +955,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    public func didFinishQuickSync() {
+    public func didFinishQuickSync(isRecovering: Bool) {
         WireLogger.sync.debug("did finish quick sync")
         processEvents()
 
@@ -984,8 +984,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
             }
 
-            if mlsFeature.isEnabled {
-                mlsService.commitPendingProposalsIfNeeded()
+            if !isRecovering, mlsFeature.isEnabled {
+                Task {
+                    mlsService.commitPendingProposalsIfNeeded()
+                }
             }
 
             await calculateSelfSupportedProtocolsIfNeeded()

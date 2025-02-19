@@ -63,6 +63,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     }
 
     private var isForceQuickSync = false
+    private var isRecovering = false
 
     public var isSyncing: Bool {
         currentSyncPhase.isSyncing || !isPushChannelOpen
@@ -140,7 +141,9 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         syncStateDelegate?.didStartSlowSync()
     }
 
-    public func performQuickSync() async {
+    public func performQuickSync(isRecovering: Bool) async {
+        self.isRecovering = isRecovering
+
         await withCheckedContinuation { [weak self] continuation in
             guard let self else {
                 continuation.resume()
@@ -155,9 +158,10 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     }
 
     func notifyQuickSyncDidFinish() {
-        syncStateDelegate?.didFinishQuickSync()
+        syncStateDelegate?.didFinishQuickSync(isRecovering: isRecovering)
         quickSyncContinuation?.resume()
         quickSyncContinuation = nil
+        isRecovering = false
     }
 
     public func forceQuickSync() {
