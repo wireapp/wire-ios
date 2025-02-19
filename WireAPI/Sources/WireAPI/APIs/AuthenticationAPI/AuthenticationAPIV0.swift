@@ -133,4 +133,36 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
+
+    func requestVerificationCode(for email: String) async throws {
+
+        let path = "\(pathPrefix)/verification-code/send"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            RequestVerificationCodeRequestBodyV0(
+                action: "login",
+                email: email
+            )
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
+            .parse(code: response.statusCode, data: data)
+    }
+
+}
+
+// MARK: Encodables
+
+private struct RequestVerificationCodeRequestBodyV0: Encodable {
+    var action: String
+    var email: String
 }
