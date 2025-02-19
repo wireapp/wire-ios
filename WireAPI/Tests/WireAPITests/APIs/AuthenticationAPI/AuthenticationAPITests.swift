@@ -243,36 +243,6 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
-    func testBuildSSOLink_Handling_Success() async throws {
-        // Given
-        let networkService = MockNetworkServiceProtocol.withResponses([
-            (.ok, "")
-        ])
-
-        let sut = AuthenticationAPIV8(networkService: networkService)
-        let ssoCode = UUID()
-        let userID = ssoCode
-
-        // When
-        let response = try await sut.buildSSOLink(
-            baseURL: URL(string: "https://localhost")!,
-            ssoCode: ssoCode,
-            callbackScheme: "wire"
-        )
-        let ssoURL: String = response.absoluteString.removingPercentEncoding!
-        let ssoCodeString = ssoCode.transportString()
-        let successPart1 = "success_redirect=wire://login/success?"
-        let successPart2 = "cookie=$cookie&userid=$userid&validation_token=\(ssoCodeString)"
-        let success = successPart1 + successPart2
-        let error = "error_redirect=wire://login/failure?label=$label&validation_token=\(ssoCodeString)"
-        let expectedURL = URL(
-            string: "https://localhost/sso/initiate-login/\(userID.uuidString)?\(success)&\(error)"
-        )!
-
-        // Then
-        XCTAssertEqual(ssoURL, expectedURL.absoluteString)
-    }
-
     func testValidateLoginToken_Response_Handling_InvalidSSOCode() async throws {
         // Given
         let networkService = MockNetworkServiceProtocol.withResponses([

@@ -134,56 +134,6 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
 
-    func buildSSOLink(baseURL: URL, ssoCode: UUID, callbackScheme: String) async throws -> URL {
-        let path = "/sso/initiate-login/\(ssoCode.uuidString)"
-        let requestBuilder = try URLRequestBuilder(path: path)
-            .withMethod(.head)
-            .resolvingAgainst(baseURL: baseURL)
-
-        let successCallback = makeSuccessCallbackString(using: ssoCode, callbackScheme: callbackScheme)
-        let errorCallback = makeFailureCallbackString(using: ssoCode, callbackScheme: callbackScheme)
-
-        let url = requestBuilder
-            .withQueryItem(name: URLQueryItem.Key.successRedirect, value: successCallback)
-            .withQueryItem(name: URLQueryItem.Key.errorRedirect, value: errorCallback)
-            .build().url
-
-        guard let url else {
-            throw AuthenticationAPIError.SSOLoginError.invalidSSOCode
-        }
-
-        return url
-    }
-
-    private func makeSuccessCallbackString(using token: UUID, callbackScheme: String) -> String {
-        var components = URLComponents()
-        components.scheme = callbackScheme
-        components.host = URL.Host.login
-        components.path = "/" + URL.Path.success
-
-        components.queryItems = [
-            URLQueryItem(name: URLQueryItem.Key.cookie, value: URLQueryItem.Template.cookie),
-            URLQueryItem(name: URLQueryItem.Key.userIdentifier, value: URLQueryItem.Template.userIdentifier),
-            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.transportString())
-        ]
-
-        return components.url!.absoluteString
-    }
-
-    private func makeFailureCallbackString(using token: UUID, callbackScheme: String) -> String {
-        var components = URLComponents()
-        components.scheme = callbackScheme
-        components.host = URL.Host.login
-        components.path = "/" + URL.Path.failure
-
-        components.queryItems = [
-            URLQueryItem(name: URLQueryItem.Key.errorLabel, value: URLQueryItem.Template.errorLabel),
-            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.transportString())
-        ]
-
-        return components.url!.absoluteString
-    }
-
     func validateLoginToken(baseURL: URL, ssoCode: UUID) async throws {
         let path = "/sso/initiate-login/\(ssoCode.uuidString)"
         let request = try URLRequestBuilder(path: path)
@@ -227,38 +177,6 @@ private extension ResponseParser {
             return nil
         }
         return copy
-    }
-
-}
-
-private extension URL {
-
-    enum Host {
-        static let login = "login"
-    }
-
-    enum Path {
-        static let success = "success"
-        static let failure = "failure"
-    }
-
-}
-
-private extension URLQueryItem {
-
-    enum Key {
-        static let successRedirect = "success_redirect"
-        static let errorRedirect = "error_redirect"
-        static let cookie = "cookie"
-        static let userIdentifier = "userid"
-        static let errorLabel = "label"
-        static let validationToken = "validation_token"
-    }
-
-    enum Template {
-        static let cookie = "$cookie"
-        static let userIdentifier = "$userid"
-        static let errorLabel = "$label"
     }
 
 }
