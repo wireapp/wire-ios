@@ -89,7 +89,8 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             do {
                 try await self.loginViaEmailUseCase.invoke(
                     email: self.email,
-                    password: password
+                    password: password,
+                    verificationCode: ""
                 )
             } catch {
                 // TODO: [WPB-15944] Error handling
