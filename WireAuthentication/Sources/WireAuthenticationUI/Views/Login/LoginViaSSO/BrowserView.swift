@@ -16,29 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
-import Foundation
 import SwiftUI
-import WireAuthenticationAPI
 
-@MainActor
-public final class RootViewModel: ObservableObject, Router {
+package struct BrowserView: UIViewControllerRepresentable {
 
-    @Published var path = NavigationPath()
-    @Published var modalDestination: ModalDestination?
+    private let url: URL
 
-    public init() {}
-
-    public func popToRoot() {
-        path.removeLast(path.count)
+    package init(url: URL) {
+        self.url = url
     }
 
-    public func navigate(to destination: some Hashable) {
-        path.append(destination)
+    package func makeUIViewController(context: Context) -> BrowserViewController {
+        return BrowserViewController(url: url)
     }
 
-    public func present(modal: ModalDestination) {
-        modalDestination = modal
-    }
+    package func updateUIViewController(_ viewController: BrowserViewController, context: Context) {}
 
 }

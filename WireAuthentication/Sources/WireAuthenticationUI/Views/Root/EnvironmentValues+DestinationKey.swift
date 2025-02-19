@@ -18,36 +18,26 @@
 
 import SwiftUI
 
-package protocol LoginViaSSOBuilder {
+/// Custom `EnvironmentKey` to store a binding for the currently presented modal destination.
+///
+/// This allows SwiftUI views to access and modify the active modal (`modalDestination`)
+/// without requiring direct dependency injection.
+/// It provides a default value of `nil` to prevent crashes if accessed before being set.
+
+private struct ModalDestinationKey: @preconcurrency EnvironmentKey {
 
     @MainActor
-    func loginViaSSOView(ssoCode: UUID) -> LoginViaSSOView
+    static let defaultValue: Binding<ModalDestination?> = .constant(nil)
 
 }
 
-package struct LoginViaSSOView: View {
+extension EnvironmentValues {
 
-    @ObservedObject var viewModel: LoginViaSSOViewModel
+    /// Environment value for managing modal presentations dynamically.
 
-    package init(
-        viewModel: LoginViaSSOViewModel
-    ) {
-        self.viewModel = viewModel
-    }
-
-    package var body: some View {
-        if let ssoURL = viewModel.ssoURL {
-            BrowserView(url: ssoURL)
-        }
+    var modalDestination: Binding<ModalDestination?> {
+        get { self[ModalDestinationKey.self] }
+        set { self[ModalDestinationKey.self] = newValue }
     }
 
 }
-
-#Preview {
-    LoginViaSSOView(viewModel: {
-        let viewModel = LoginViaSSOViewModel(ssoCode: UUID())
-        viewModel.ssoURL = URL(string: "https://www.google.com")!
-        return viewModel
-    }())
-}
-

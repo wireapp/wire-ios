@@ -35,7 +35,7 @@ package struct RootView: View {
 
     package var body: some View {
         NavigationStack(path: $viewModel.path) {
-            builder.determineAuthMethodView
+            builder.determineAuthMethodView.environment(\.modalDestination, $viewModel.modalDestination)
         }
     }
 

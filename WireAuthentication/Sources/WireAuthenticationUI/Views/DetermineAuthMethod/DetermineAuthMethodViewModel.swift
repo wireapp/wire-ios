@@ -112,8 +112,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
         case let .loginViaSSO(code):
-            // TODO: [WPB-15943] Handle login via SSO
-            break
+            router.present(modal: ModalDestination.ssoLogin(code: code))
 
         case let .onPremLogin(email, backendConfig):
             // TODO: [WPB-15944] Handle on-prem login

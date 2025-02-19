@@ -16,29 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
-import WireAuthenticationAPI
+internal import WireAuthenticationUI
 
-@MainActor
-public final class RootViewModel: ObservableObject, Router {
+class LoginViaSSOComponent: LoginViaSSOBuilder {
 
-    @Published var path = NavigationPath()
-    @Published var modalDestination: ModalDestination?
-
-    public init() {}
-
-    public func popToRoot() {
-        path.removeLast(path.count)
+    @MainActor
+    private func loginViewModel(ssoCode: UUID) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoCode: ssoCode)
     }
 
-    public func navigate(to destination: some Hashable) {
-        path.append(destination)
-    }
-
-    public func present(modal: ModalDestination) {
-        modalDestination = modal
+    @MainActor
+    func loginViaSSOView(ssoCode: UUID) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoCode: ssoCode))
     }
 
 }

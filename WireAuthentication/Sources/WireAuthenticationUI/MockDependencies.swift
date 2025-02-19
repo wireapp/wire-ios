@@ -48,7 +48,8 @@ final class MockDependencies {
                 isLoading: isLoading,
                 alert: alert
             ),
-            builder: self
+            builder: self,
+            loginViaSSOBuilder: self
         )
     }
 
@@ -102,7 +103,8 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     var determineAuthMethodView: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
-            builder: self
+            builder: self,
+            loginViaSSOBuilder: self
         )
     }
 
@@ -125,6 +127,18 @@ extension MockDependencies: LoginViaEmailBuilder {
         LoginViaEmailView(
             viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
         )
+    }
+
+}
+
+extension MockDependencies: LoginViaSSOBuilder {
+
+    private func loginViewModel(ssoCode: UUID) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoCode: ssoCode)
+    }
+
+    func loginViaSSOView(ssoCode: UUID) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoCode: ssoCode))
     }
 
 }

@@ -29,15 +29,19 @@ package protocol DetermineAuthMethodBuilder {
 package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
+    @Environment(\.modalDestination) private var modalDestination
 
     let builder: any LoginViaEmailBuilder
+    let loginViaSSOBuilder: any LoginViaSSOBuilder
 
     package init(
         viewModel: DetermineAuthMethodViewModel,
-        builder: any LoginViaEmailBuilder
+        builder: any LoginViaEmailBuilder,
+        loginViaSSOBuilder: any LoginViaSSOBuilder
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.builder = builder
+        self.loginViaSSOBuilder = loginViaSSOBuilder
     }
 
     package var body: some View {
@@ -105,6 +109,14 @@ package struct DetermineAuthMethodView: View {
                 builder.loginViaEmailView(email: email, canCreateAccount: false)
             case .loginOrRegister:
                 Color.red
+            }
+        }
+        .sheet(item: modalDestination, onDismiss: {
+            modalDestination.wrappedValue = nil
+        }) { destination in
+            switch destination {
+            case let .ssoLogin(code: ssoCode):
+                loginViaSSOBuilder.loginViaSSOView(ssoCode: ssoCode)
             }
         }
         .presentationDetents([.medium, .large])
