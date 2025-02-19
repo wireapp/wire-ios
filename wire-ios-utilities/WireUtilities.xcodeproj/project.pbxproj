@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		591B6E7A2C8B0A1B009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; };
 		591B6E7C2C8B0A1E009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		591B6E7E2C8B0A23009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; };
 		591B6E812C8B0A27009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
@@ -54,7 +53,6 @@
 		3E88BD431B1F3EA300232589 /* WireUtilities-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireUtilities-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C92FBC392D5CC77400D45DD4 /* WireUtilities-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "WireUtilities-Info.plist"; sourceTree = "<group>"; };
-		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0AD296EFBE60055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC872BD158BC00F7853F /* WireUtilities.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireUtilities.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -123,7 +121,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				591B6E7A2C8B0A1B009F8A7B /* WireSystem.framework in Frameworks */,
 				59537CD72CFF7E1400920B59 /* WireLogging in Frameworks */,
 				59B48C5A2C89CB1F00EA7999 /* WireFoundation in Frameworks */,
 			);
@@ -181,7 +178,6 @@
 		3E88BE5E1B1F496600232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EE712FC7295487A8006EA7B3 /* WireSystem.framework */,
 				EE98A0AD296EFBE60055E981 /* WireTesting.framework */,
 			);
 			name = Frameworks;

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6AE296F0510001D7C88 /* OCMock.xcframework */; };
 		591B6E872C8B0A2F009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */; };
-		EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE49A5562954850800406C4F /* WireSystem.framework */; };
 		EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC852BD1589E00F7853F /* WireTesting.docc */; };
 /* End PBXBuildFile section */
 
@@ -26,7 +25,6 @@
 /* Begin PBXFileReference section */
 		096AD7BB1B68D41D00E007A8 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		096AD7C61B68D41D00E007A8 /* WireTesting-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTesting-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE49A5562954850800406C4F /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6AE296F0510001D7C88 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = ../Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 		EE9AEC852BD1589E00F7853F /* WireTesting.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTesting.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -85,7 +83,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */,
 				591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -129,7 +126,6 @@
 		096AD7EC1B68D8DF00E007A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EE49A5562954850800406C4F /* WireSystem.framework */,
 				EE67F6AE296F0510001D7C88 /* OCMock.xcframework */,
 			);
 			name = Frameworks;
