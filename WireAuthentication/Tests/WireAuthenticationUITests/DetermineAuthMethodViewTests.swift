@@ -37,17 +37,15 @@ class DetermineAuthMethodViewTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariants() {
-        let variants: [(emailOrSSOCode: String, errorMessage: String?)] = [
-            ("", nil),
-            ("sam@example.com", "Short error message"),
-            ("sam@example.com", "Long error message that might wrap multiple lines depending on device and font size")
+        let variants: [String] = [
+            "",
+            "sam@example.com"
         ]
 
         let screenBounds = UIScreen.main.bounds
-        for (index, variant) in variants.enumerated() {
+        for (index, emailOrSSOCode) in variants.enumerated() {
             let view = makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: variant.emailOrSSOCode,
-                errorMessage: variant.errorMessage
+                emailOrSSOCode: emailOrSSOCode
             )
             .frame(width: screenBounds.width, height: screenBounds.height)
             .environment(\.wireTextStyleMapping, WireTextStyleMapping())

@@ -47,7 +47,7 @@ final class MockDependencies {
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
         isLoading: Bool,
-        errorMessage: String?
+        alert: DetermineAuthMethodViewModel.Alert?
     ) -> DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: DetermineAuthMethodViewModel(
@@ -56,7 +56,7 @@ final class MockDependencies {
                 determineAuthMethod: self,
                 emailOrSSOCode: emailOrSSOCode,
                 isLoading: isLoading,
-                errorMessage: errorMessage
+                alert: alert
             ),
             builder: self
         )
@@ -92,9 +92,10 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
     func invoke(
         email: String,
-        password: String
-    ) async throws(LoginViaEmailUseCaseFailure) {
-        // Success
+        password: String,
+        verificationCode: String?
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], String) {
+        ([], "")
     }
 
 }

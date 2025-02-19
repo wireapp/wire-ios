@@ -121,7 +121,7 @@ extension ZMUserSession {
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
 
-        var errorCode: UserSessionErrorCode = switch response.result {
+        let errorCode: UserSessionErrorCode = switch response.result {
         case .permanentError:
             switch response.payload?.asDictionary()?["label"] as? String {
             case "client-not-found":

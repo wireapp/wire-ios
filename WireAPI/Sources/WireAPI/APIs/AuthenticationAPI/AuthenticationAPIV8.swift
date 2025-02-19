@@ -19,6 +19,7 @@
 import Foundation
 
 final class AuthenticationAPIV8: AuthenticationAPIV7 {
+
     override var apiVersion: APIVersion {
         .v8
     }
@@ -40,10 +41,7 @@ final class AuthenticationAPIV8: AuthenticationAPIV7 {
             .withMethod(.post)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: DomainRegistrationConfigurationV8.self)
@@ -51,6 +49,7 @@ final class AuthenticationAPIV8: AuthenticationAPIV7 {
             .failure(code: .badRequest, error: AuthenticationAPIError.invalidRequestBody)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 // MARK: Encodables

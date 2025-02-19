@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireSettingsUI
 import WireSyncEngine
@@ -380,7 +381,9 @@ extension SettingsCellDescriptorFactory {
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
-            importBackupLogger: WireLogger.backupImport
+            importBackupLogger: WireLogger.backupImport,
+            wireAccentColorMapping: WireAccentColorMapping(),
+            wireAccentColor: ZMUser.selfUser()?.accentColor ?? .default
         )
     }
 
