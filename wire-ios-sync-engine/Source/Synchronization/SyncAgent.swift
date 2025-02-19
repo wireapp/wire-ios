@@ -112,7 +112,7 @@ final class SyncAgent: NSObject {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        await legacySyncStatus.performQuickSync()
+        await legacySyncStatus.performQuickSync(isRecovering: false)
     }
 
 }
@@ -140,7 +140,7 @@ extension SyncAgent: ZMSyncStateDelegate {
         delegate?.syncAgentDidStartLegacyIncrementalSync(self)
     }
 
-    func didFinishQuickSync() {
+    func didFinishQuickSync(isRecovering: Bool) {
         WireLogger.sync.debug("did start finish incremental sync")
         delegate?.syncAgentDidFinishLegacyIncrementalSync(self)
     }
