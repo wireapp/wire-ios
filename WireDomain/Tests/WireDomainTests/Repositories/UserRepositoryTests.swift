@@ -257,7 +257,7 @@ final class UserRepositoryTests: XCTestCase {
         userLocalStore.isSelfUserIdDomain_MockValue = (user, false)
         userLocalStore.markAccountAsDeletedFor_MockMethod = { _ in }
 
-        // swiftlint:disable:next line_length
+        // swiftformat:disable:next wrap
         conversationsLocalStore.removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainDate_MockMethod = { _, _, _ in
             }
 
