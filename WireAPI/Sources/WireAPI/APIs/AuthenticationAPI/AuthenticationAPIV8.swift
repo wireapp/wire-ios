@@ -19,6 +19,7 @@
 import Foundation
 
 final class AuthenticationAPIV8: AuthenticationAPIV7 {
+
     override var apiVersion: APIVersion {
         .v8
     }
@@ -48,6 +49,7 @@ final class AuthenticationAPIV8: AuthenticationAPIV7 {
             .failure(code: .badRequest, error: AuthenticationAPIError.invalidRequestBody)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 // MARK: Encodables
