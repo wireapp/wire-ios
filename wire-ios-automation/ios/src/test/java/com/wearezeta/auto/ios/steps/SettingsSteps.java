@@ -1,5 +1,6 @@
 package com.wearezeta.auto.ios.steps;
 
+import com.wearezeta.auto.common.misc.Timedelta;
 import com.wearezeta.auto.common.usrmgmt.ClientUsersManager;
 import com.wearezeta.auto.ios.common.IOSTestContext;
 import io.cucumber.java.en.When;
@@ -24,14 +25,12 @@ public class SettingsSteps extends IOSSteps {
 
   @When("I restore my backup with \"(.*)\"")
   public void iRestoreMyBackup(String backupPassword) {
-    getCommonPage().tapAlertButton("Choose Backup File");
-    getFileChooseDialogPage().tapBrowseFoldersButton();
-    getFileChooseDialogPage().tapBrowseFoldersButton();
-    getFileChooseDialogPage().tapOnMyIPhone();
+    getBackupRestorePage().startRestore();
 
     String usernameAlias = context.getUsersManager().getSelfUser().get().getUniqueUsername();
     getFileChooseDialogPage().tapFileContaining(usernameAlias);
 
-    getCommonPage().typeAlertText(backupPassword);
+    getBackupRestorePage().restoreProceed();
+    getBackupRestorePage().inputRestorePassword(backupPassword);
   }
 }

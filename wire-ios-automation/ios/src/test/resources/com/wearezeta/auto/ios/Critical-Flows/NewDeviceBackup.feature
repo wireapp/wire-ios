@@ -27,9 +27,7 @@ Feature: New Device with Backup
     And I select settings item Account
     And I open the backup or restore options
     And I restore my backup with "<BackupPassword>"
-    And I accept alert
     And I wait for 5 seconds
-    And I accept alert if visible
     And I open conversation "<Member2>" in conversation list
     And I see last message in the conversation view is expected message <Text>
     And I tap on text input
