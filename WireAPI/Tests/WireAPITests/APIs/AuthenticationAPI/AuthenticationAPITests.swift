@@ -277,7 +277,7 @@ final class AuthenticationAPITests: XCTestCase {
         ])
 
         let sut = AuthenticationAPIV8(networkService: networkService)
-        
+
         // When, Then no error thrown
         try await sut.requestVerificationCode(for: Scaffolding.email)
     }
