@@ -95,6 +95,17 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    func testRequestVerificationCode_Request_Generation_V0_Onwards() async throws {
+        // Given
+        let apiVersions = APIVersion.v0.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
+            _ = try await sut.requestVerificationCode(for: Scaffolding.email)
+        }
+    }
+
     // MARK: - Response handling
 
     func testGetDomainRegistration_Response_Handling_V8_Success() async throws {
@@ -258,5 +269,43 @@ final class AuthenticationAPITests: XCTestCase {
             try await sut.validateLoginToken(ssoCode: ssoCode)
         }
     }
+
+    func testRequestVerificationCode_Response_Handling_V8_Success() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.ok, nil)
+        ])
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+        
+        // When, Then no error thrown
+        try await sut.requestVerificationCode(for: Scaffolding.email)
+    }
+
+    func testUpgradeToTeam_Response_Handling_V8_BadRequest() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.notFound, "RequestVerificationCodeResponse_BadRequest")
+        ])
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+
+        do {
+            // When
+            try await sut.requestVerificationCode(for: Scaffolding.wrongAddress)
+            XCTFail("Unexpected success")
+        } catch AuthenticationAPIError.invalidEmail {
+            // Then
+        } catch {
+            XCTFail("unexpected error: " + String(reflecting: error))
+        }
+    }
+
+}
+
+private enum Scaffolding {
+
+    static let email = "john.smith@example.com"
+    static let wrongAddress = "john.smith-example.com"
 
 }

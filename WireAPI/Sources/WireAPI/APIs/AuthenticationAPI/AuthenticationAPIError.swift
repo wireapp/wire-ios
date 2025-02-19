@@ -42,6 +42,10 @@ public enum AuthenticationAPIError: Error {
 
     case invalidCredentials
 
+    /// Thrown by `requestVerificationCode(for:)`.
+
+    case invalidEmail
+
 }
 
 extension AuthenticationAPIError {

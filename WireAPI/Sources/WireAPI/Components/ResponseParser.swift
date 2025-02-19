@@ -30,10 +30,10 @@ struct ResponseParser<Success> {
         case noParseResult
     }
 
-    typealias ParseBlock = (Int, Data?) throws -> Success?
+    private typealias ParseBlock = (Int, Data?) throws -> Success?
 
     private let decoder: JSONDecoder
-    var parseBlocks: [ParseBlock]
+    private var parseBlocks: [ParseBlock]
 
     init(decoder: JSONDecoder = .init()) {
         self.decoder = decoder
@@ -64,7 +64,10 @@ struct ResponseParser<Success> {
 
         var copy = self
         copy.parseBlocks.append { actualCode, data in
-            guard actualCode == code.rawValue, data == nil else { return nil }
+            guard
+                actualCode == code.rawValue,
+                data == nil || data?.isEmpty == true
+            else { return nil }
             return ()
         }
         return copy

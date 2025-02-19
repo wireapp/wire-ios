@@ -141,10 +141,12 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .build()
 
         let (_, response) = try await networkService.executeRequest(request)
+        if let error = AuthenticationAPIError.SSOLoginError(responseCode: response.statusCode) {
+          throw error
+        }
 
         return try ResponseParser()
             .success(code: .ok)
-            .failureSSOError()
             .parse(code: response.statusCode, data: nil)
     }
 
@@ -156,26 +158,39 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .build()
 
         let (data, response) = try await networkService.executeRequest(request)
-
         let payload = try ResponseParser()
             .success(code: .ok, type: SSOSettingsResponseV0.self)
             .parse(code: response.statusCode, data: data)
 
         return payload.defaultSSOCode
     }
+
+    func requestVerificationCode(for email: String) async throws {
+        let path = "\(pathPrefix)/verification-code/send"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            RequestVerificationCodeRequestBodyV0(
+                action: "login",
+                email: email
+            )
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+        return try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
+            .parse(code: response.statusCode, data: data)
+    }
 }
 
-private extension ResponseParser {
+// MARK: Encodables
 
-    func failureSSOError() -> ResponseParser<Success> {
-        var copy = self
-        copy.parseBlocks.append { code, _ in
-            if let error = AuthenticationAPIError.SSOLoginError(responseCode: code) {
-                throw error
-            }
-            return nil
-        }
-        return copy
-    }
-
+private struct RequestVerificationCodeRequestBodyV0: Encodable {
+    var action: String
+    var email: String
 }

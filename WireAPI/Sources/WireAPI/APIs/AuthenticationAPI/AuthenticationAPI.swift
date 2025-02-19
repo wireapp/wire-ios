@@ -58,4 +58,11 @@ public protocol AuthenticationAPI {
 
     func getSSOCode() async throws -> UUID?
 
+    /// Request a verification code for a provided email address.
+    ///
+    /// - Parameter email: Email address of the account
+    /// - Returns: The user details.
+
+    func requestVerificationCode(for email: String) async throws
+
 }
