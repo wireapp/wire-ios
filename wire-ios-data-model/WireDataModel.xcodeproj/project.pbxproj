@@ -39,7 +39,6 @@
 		017B55792CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017B55782CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift */; };
 		017B557D2CFFBCF5005FFBD4 /* DatabaseMigrationTests+ForceSyncResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017B557C2CFFBCF5005FFBD4 /* DatabaseMigrationTests+ForceSyncResources.swift */; };
 		017B55A92CFFC310005FFBD4 /* store2-120-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 017B55A82CFFC310005FFBD4 /* store2-120-0.wiredatabase */; };
-		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
 		01B6A8A02B16268300E409A0 /* store2-111-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */; };
 		01B7A5752B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B7A5742B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift */; };
@@ -48,6 +47,7 @@
 		01BDA3192C59210400675DCB /* CoreDataEventsMigrationVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDA3142C59210300675DCB /* CoreDataEventsMigrationVersion.swift */; };
 		01BDA31A2C59210400675DCB /* CoreDataMigrationVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDA3152C59210300675DCB /* CoreDataMigrationVersion.swift */; };
 		01BDA31B2C59210400675DCB /* CoreDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDA3162C59210300675DCB /* CoreDataMigrator.swift */; };
+		01D2B7A32D64A8F50030D28D /* WireCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 01D2B7A22D64A8F50030D28D /* WireCoreCrypto */; };
 		01E3C8552B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E3C8542B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift */; };
 		01F5AECE2CAC20BE00B01069 /* DatabaseMigrationTests+FixDuplicateOneOnOneConversations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5AECD2CAC20BE00B01069 /* DatabaseMigrationTests+FixDuplicateOneOnOneConversations.swift */; };
 		06034B6D26A8D36E003624B4 /* Feature.FileSharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */; };
@@ -960,7 +960,6 @@
 		017B55782CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SyncResources.swift"; sourceTree = "<group>"; };
 		017B557C2CFFBCF5005FFBD4 /* DatabaseMigrationTests+ForceSyncResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+ForceSyncResources.swift"; sourceTree = "<group>"; };
 		017B55A82CFFC310005FFBD4 /* store2-120-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-120-0.wiredatabase"; sourceTree = "<group>"; };
-		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		017F67952C207EDB00B6E02D /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		017F67962C207EDB00B6E02D /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
@@ -1905,7 +1904,7 @@
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
-				017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */,
+				01D2B7A32D64A8F50030D28D /* WireCoreCrypto in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3611,7 +3610,6 @@
 				CB7979172C747652006FBA58 /* WireTransportSupport.framework */,
 				5996E8C62C1A0000007A52F0 /* OCMock.xcframework */,
 				EE67F6C2296F05FD001D7C88 /* PINCache.xcframework */,
-				017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -3874,6 +3872,7 @@
 				59537CDA2CFF8F2B00920B59 /* WireLogging */,
 				CBD35F2B2D09EBB20080DA37 /* WireCrypto */,
 				59D0583F2D15939800B687F2 /* WireAnalytics */,
+				01D2B7A22D64A8F50030D28D /* WireCoreCrypto */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -5242,6 +5241,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		01D2B7A22D64A8F50030D28D /* WireCoreCrypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCoreCrypto;
+		};
 		59537CDA2CFF8F2B00920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
