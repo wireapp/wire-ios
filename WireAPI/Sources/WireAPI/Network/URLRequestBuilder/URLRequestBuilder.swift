@@ -109,20 +109,6 @@ struct URLRequestBuilder {
         }
     }
 
-    func resolvingAgainst(baseURL: URL) -> Self {
-        withCopy {
-            guard let relativePath = request.url?.relativeString else { return }
-
-            var components = URLComponents()
-            components.scheme = "https"
-            components.host = baseURL.host
-            components.path = relativePath
-
-            guard let resolvedURL = components.url else { return }
-            $0.request.url = resolvedURL
-        }
-    }
-
     private func withCopy(_ mutation: (inout Self) -> Void) -> Self {
         var copy = self
         mutation(&copy)
