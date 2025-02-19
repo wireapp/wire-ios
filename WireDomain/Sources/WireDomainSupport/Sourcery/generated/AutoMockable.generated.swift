@@ -2246,6 +2246,24 @@ public class MockTeamLocalStoreProtocol: TeamLocalStoreProtocol {
         }
     }
 
+    // MARK: - selfTeamID
+
+    public var selfTeamID_Invocations: [Void] = []
+    public var selfTeamID_MockMethod: (() async -> UUID?)?
+    public var selfTeamID_MockValue: UUID??
+
+    public func selfTeamID() async -> UUID? {
+        selfTeamID_Invocations.append(())
+
+        if let mock = selfTeamID_MockMethod {
+            return await mock()
+        } else if let mock = selfTeamID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `selfTeamID`")
+        }
+    }
+
     // MARK: - userMembership
 
     public var userMembershipUser_Invocations: [ZMUser] = []
