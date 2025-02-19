@@ -156,7 +156,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             "sending request for asset",
             attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
         )
-        var request: ZMTransportRequest? = if shouldUseBackgroundSession {
+        let request: ZMTransportRequest? = if shouldUseBackgroundSession {
             requestFactory.backgroundUpstreamRequestForAsset(
                 message: message,
                 withData: data,

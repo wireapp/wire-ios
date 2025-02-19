@@ -412,7 +412,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         removedUsers: Set<UserID>,
         reason: ConversationMemberLeaveReason
     ) async {
-        var systemMessageType: SystemMessageType = switch reason {
+        let systemMessageType: SystemMessageType = switch reason {
         case .userDeleted, .userLeft:
             .teamMemberRemoved(
                 member: (senderID, senderDomain),
