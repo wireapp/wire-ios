@@ -3,11 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 71;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		01E944642D01805B006921E4 /* WireCanvas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 165EA0C31DB67C3B008ECC60 /* WireCanvas.framework */; };
+		165EA0DE1DB67C6C008ECC60 /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165EA0DD1DB67C6C008ECC60 /* Canvas.swift */; };
+		1660DC661DBF8516009E360D /* UIImage+Trimmed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */; };
+		16CB8A311DBA5B7300B5BC47 /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8A301DBA5B7300B5BC47 /* Stroke.swift */; };
+		16CB8A331DBA5BB800B5BC47 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8A321DBA5BB800B5BC47 /* Image.swift */; };
 		EE9AEC9C2BD15A0C00F7853F /* WireCanvas.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */; };
 /* End PBXBuildFile section */
 
@@ -24,13 +28,26 @@
 /* Begin PBXFileReference section */
 		01E944602D01805B006921E4 /* WireCanvasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCanvasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		165EA0C31DB67C3B008ECC60 /* WireCanvas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCanvas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		165EA0C71DB67C3B008ECC60 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		165EA0DD1DB67C6C008ECC60 /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
+		1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Trimmed.swift"; sourceTree = "<group>"; };
+		16CB8A301DBA5B7300B5BC47 /* Stroke.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
+		16CB8A321DBA5BB800B5BC47 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WireCanvas.xcconfig; sourceTree = "<group>"; };
+		16CB8A381DBA73B900B5BC47 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
+		16CB8A3A1DBA73B900B5BC47 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
+		16CB8A3B1DBA73B900B5BC47 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
+		16CB8A3C1DBA73B900B5BC47 /* ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		16CB8A3F1DBA73B900B5BC47 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		16CB8A411DBA73B900B5BC47 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		16CB8A441DBA73B900B5BC47 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
+		16CB8A461DBA73B900B5BC47 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireCanvas.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		01E944612D01805B006921E4 /* WireCanvasTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCanvasTests; sourceTree = "<group>"; };
-		59AB7F952D43D893005D2D17 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
-		59AB7F9B2D43D897005D2D17 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Sources; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,8 +73,8 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */,
-				59AB7F952D43D893005D2D17 /* Resources */,
-				59AB7F9B2D43D897005D2D17 /* Sources */,
+				16CB8A341DBA73B900B5BC47 /* Resources */,
+				165EA0C51DB67C3B008ECC60 /* Sources */,
 				01E944612D01805B006921E4 /* WireCanvasTests */,
 				165EA0C41DB67C3B008ECC60 /* Products */,
 				166390D71DC8E5EF00D7BF1C /* Frameworks */,
@@ -77,11 +94,56 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		165EA0C51DB67C3B008ECC60 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				165EA0DD1DB67C6C008ECC60 /* Canvas.swift */,
+				16CB8A301DBA5B7300B5BC47 /* Stroke.swift */,
+				16CB8A321DBA5BB800B5BC47 /* Image.swift */,
+				1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */,
+				165EA0C71DB67C3B008ECC60 /* Info.plist */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
 		166390D71DC8E5EF00D7BF1C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		16CB8A341DBA73B900B5BC47 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				16CB8A351DBA73B900B5BC47 /* Configurations */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		16CB8A351DBA73B900B5BC47 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */,
+				16CB8A381DBA73B900B5BC47 /* version.xcconfig */,
+				16CB8A391DBA73B900B5BC47 /* zmc-config */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		16CB8A391DBA73B900B5BC47 /* zmc-config */ = {
+			isa = PBXGroup;
+			children = (
+				16CB8A3A1DBA73B900B5BC47 /* ios-test-host.xcconfig */,
+				16CB8A3B1DBA73B900B5BC47 /* ios-test-target.xcconfig */,
+				16CB8A3C1DBA73B900B5BC47 /* ios.xcconfig */,
+				16CB8A3F1DBA73B900B5BC47 /* project-common.xcconfig */,
+				16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */,
+				16CB8A411DBA73B900B5BC47 /* project.xcconfig */,
+				16CB8A441DBA73B900B5BC47 /* tests.xcconfig */,
+				16CB8A461DBA73B900B5BC47 /* warnings.xcconfig */,
+			);
+			path = "zmc-config";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -121,9 +183,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				59AB7F9B2D43D897005D2D17 /* Sources */,
 			);
 			name = WireCanvas;
 			productName = Canvas;
@@ -198,7 +257,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				165EA0DE1DB67C6C008ECC60 /* Canvas.swift in Sources */,
+				16CB8A331DBA5BB800B5BC47 /* Image.swift in Sources */,
 				EE9AEC9C2BD15A0C00F7853F /* WireCanvas.docc in Sources */,
+				1660DC661DBF8516009E360D /* UIImage+Trimmed.swift in Sources */,
+				16CB8A311DBA5B7300B5BC47 /* Stroke.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,8 +417,7 @@
 		};
 		165EA0D51DB67C3B008ECC60 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 59AB7F952D43D893005D2D17 /* Resources */;
-			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project-debug.xcconfig";
+			baseConfigurationReference = 16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */;
 			buildSettings = {
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -364,8 +426,7 @@
 		};
 		165EA0D61DB67C3B008ECC60 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 59AB7F952D43D893005D2D17 /* Resources */;
-			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project.xcconfig";
+			baseConfigurationReference = 16CB8A411DBA73B900B5BC47 /* project.xcconfig */;
 			buildSettings = {
 				SDKROOT = iphoneos;
 			};
@@ -373,8 +434,7 @@
 		};
 		165EA0D81DB67C3B008ECC60 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 59AB7F952D43D893005D2D17 /* Resources */;
-			baseConfigurationReferenceRelativePath = Configurations/WireCanvas.xcconfig;
+			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
@@ -384,8 +444,7 @@
 		};
 		165EA0D91DB67C3B008ECC60 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 59AB7F952D43D893005D2D17 /* Resources */;
-			baseConfigurationReferenceRelativePath = Configurations/WireCanvas.xcconfig;
+			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
