@@ -161,7 +161,7 @@ public struct InitialSyncBuilder: InitialSyncBuilderProtocol {
             userConnectionsAPI: ConnectionsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
-            userPropertiesAPI: UserPropertiesBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            userPropertiesAPI: UserPropertiesAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             featureConfigsAPI: FeatureConfigsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             backendInfoAPI: BackendInfoAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
         )
