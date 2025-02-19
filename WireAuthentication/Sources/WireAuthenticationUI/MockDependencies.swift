@@ -83,9 +83,10 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
     func invoke(
         email: String,
-        password: String
-    ) async throws(LoginViaEmailUseCaseFailure) {
-        // Success
+        password: String,
+        verificationCode: String?
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], String) {
+        ([], "")
     }
 
 }

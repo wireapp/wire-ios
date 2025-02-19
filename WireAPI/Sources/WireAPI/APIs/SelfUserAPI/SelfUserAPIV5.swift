@@ -41,7 +41,7 @@ class SelfUserAPIV5: SelfUserAPIV4 {
         )
 
         return try ResponseParser()
-            .success(code: 200)
+            .success(code: .ok)
             .parse(code: response.statusCode, data: nil)
     }
 

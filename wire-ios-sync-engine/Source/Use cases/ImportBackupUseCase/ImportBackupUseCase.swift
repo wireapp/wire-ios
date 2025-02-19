@@ -93,6 +93,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
                     // user session needs to be torn down
                     await appStateUpdater.reportMigrationNeeded()
+                    // TODO: [WPB-16136] ensure incoming notifications are not processed meanwhile
 
                     logger.debug("replacing persistent store")
 
