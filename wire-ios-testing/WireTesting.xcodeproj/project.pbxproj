@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6AE296F0510001D7C88 /* OCMock.xcframework */; };
 		591B6E872C8B0A2F009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */; };
+		5993B6C62D6620E900643314 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 5993B6C52D6620E900643314 /* WireSystem */; };
 		EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC852BD1589E00F7853F /* WireTesting.docc */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5993B6C62D6620E900643314 /* WireSystem in Frameworks */,
 				591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -379,6 +381,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5993B6C52D6620E900643314 /* WireSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystem;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 096AD7B21B68D41D00E007A8 /* Project object */;
 }
