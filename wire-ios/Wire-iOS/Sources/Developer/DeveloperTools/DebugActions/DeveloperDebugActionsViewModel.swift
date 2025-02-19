@@ -89,7 +89,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         guard let userSession else { return }
 
         Task {
-            await userSession.syncStatus.performQuickSync(isRecovering: false)
+            await userSession.syncStatus.performQuickSync()
         }
     }
 

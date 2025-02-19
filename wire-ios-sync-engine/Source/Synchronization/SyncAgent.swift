@@ -112,7 +112,7 @@ final class SyncAgent: NSObject {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        await legacySyncStatus.performQuickSync(isRecovering: false)
+        await legacySyncStatus.performQuickSync()
     }
 
 }

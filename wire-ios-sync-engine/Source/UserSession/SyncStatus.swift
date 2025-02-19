@@ -141,9 +141,16 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         syncStateDelegate?.didStartSlowSync()
     }
 
-    public func performQuickSync(isRecovering: Bool) async {
-        self.isRecovering = isRecovering
-
+    public func recoverWithQuickSync() async {
+        self.isRecovering = true
+        defer {
+            self.isRecovering = false
+        }
+        await performQuickSync()
+    }
+    
+    
+    public func performQuickSync() async {
         await withCheckedContinuation { [weak self] continuation in
             guard let self else {
                 continuation.resume()
@@ -161,7 +168,6 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         syncStateDelegate?.didFinishQuickSync(isRecovering: isRecovering)
         quickSyncContinuation?.resume()
         quickSyncContinuation = nil
-        isRecovering = false
     }
 
     public func forceQuickSync() {

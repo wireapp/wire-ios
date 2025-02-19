@@ -21,8 +21,9 @@ import Foundation
 // sourcery: AutoMockable
 public protocol SyncStatusProtocol {
 
-    func performQuickSync(isRecovering: Bool) async
+    func performQuickSync() async
     func resyncResources()
     func forceSlowSync()
+    func recoverWithQuickSync() async
 
 }

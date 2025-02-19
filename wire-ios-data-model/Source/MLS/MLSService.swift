@@ -1316,7 +1316,7 @@ public final class MLSService: MLSServiceInterface {
 
             // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
             // This ensures we're on the latest state.
-            await syncStatus.performQuickSync(isRecovering: true)
+            await syncStatus.recoverWithQuickSync()
 
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
@@ -1890,13 +1890,13 @@ public final class MLSService: MLSServiceInterface {
 
         } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync, _) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
-            await syncStatus.performQuickSync(isRecovering: true)
+            await syncStatus.recoverWithQuickSync()
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
         } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: let error) {
             logger.warn("failed to send commit, syncing then retrying operation...")
-            await syncStatus.performQuickSync(isRecovering: true)
+            await syncStatus.recoverWithQuickSync()
             logger.info("sync finished, retying operation...")
 
             guard retryCount <= maxRetryAttempts else {
