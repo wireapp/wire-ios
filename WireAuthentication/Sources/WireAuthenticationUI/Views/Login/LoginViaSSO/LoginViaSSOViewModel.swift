@@ -27,10 +27,10 @@ package final class LoginViaSSOViewModel: ObservableObject {
     private let ssoCode: UUID
 
     // TODO: [WPB-15943] Generate SSO URL
-    var ssoURL: URL? = nil
+    var ssoURL: URL?
 
     package init(ssoCode: UUID) {
         self.ssoCode = ssoCode
     }
-    
+
 }

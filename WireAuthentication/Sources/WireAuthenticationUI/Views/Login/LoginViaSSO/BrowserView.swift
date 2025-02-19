@@ -27,7 +27,7 @@ package struct BrowserView: UIViewControllerRepresentable {
     }
 
     package func makeUIViewController(context: Context) -> BrowserViewController {
-        return BrowserViewController(url: url)
+        BrowserViewController(url: url)
     }
 
     package func updateUIViewController(_ viewController: BrowserViewController, context: Context) {}

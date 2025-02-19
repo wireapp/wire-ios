@@ -26,8 +26,7 @@ import SwiftUI
 
 private struct ModalDestinationKey: @preconcurrency EnvironmentKey {
 
-    @MainActor
-    static let defaultValue: Binding<ModalDestination?> = .constant(nil)
+    @MainActor static let defaultValue: Binding<ModalDestination?> = .constant(nil)
 
 }
 

@@ -50,4 +50,3 @@ package struct LoginViaSSOView: View {
         return viewModel
     }())
 }
-

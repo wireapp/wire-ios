@@ -39,7 +39,7 @@ public enum AuthenticationMethod: Sendable, Hashable {
 
     case loginViaSSO(code: UUID)
 
-    /// On-prem login via email
+    /// On-prem login, either via email or SSO
 
     case onPremLogin(email: String, backendConfig: URL)
 

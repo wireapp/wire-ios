@@ -111,14 +111,16 @@ package struct DetermineAuthMethodView: View {
                 Color.red
             }
         }
-        .sheet(item: modalDestination, onDismiss: {
-            modalDestination.wrappedValue = nil
-        }) { destination in
-            switch destination {
-            case let .ssoLogin(code: ssoCode):
-                loginViaSSOBuilder.loginViaSSOView(ssoCode: ssoCode)
-            }
-        }
+        .sheet(
+            item: modalDestination,
+            onDismiss: {
+                modalDestination.wrappedValue = nil
+            }, content: { destination in
+                switch destination {
+                case let .ssoLogin(code: ssoCode):
+                    loginViaSSOBuilder.loginViaSSOView(ssoCode: ssoCode)
+                }
+            })
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)

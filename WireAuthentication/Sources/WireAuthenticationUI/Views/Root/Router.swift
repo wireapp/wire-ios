@@ -44,8 +44,8 @@ public enum ModalDestination: Hashable, Identifiable {
     public var id: String {
         switch self {
         case let .ssoLogin(code):
-            return "ssoLogin-\(code.uuidString)"
+            "ssoLogin-\(code.uuidString)"
         }
     }
-    
+
 }
