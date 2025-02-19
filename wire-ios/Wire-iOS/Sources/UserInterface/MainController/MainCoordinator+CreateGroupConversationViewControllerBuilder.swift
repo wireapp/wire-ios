@@ -28,7 +28,7 @@ extension MainCoordinator: ConversationCreationControllerDelegate
     ) {
         Task {
             await showConversationList(conversationFilter: .none)
-            await showConversation(conversation: conversation, message: nil)
+            showConversation(conversation: conversation, message: nil)
         }
     }
 }

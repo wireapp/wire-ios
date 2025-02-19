@@ -343,7 +343,7 @@ final class ConversationContentViewController: UIViewController {
             return nil
         }
 
-        let message = dataSource.messages[indexPath.section] as? ZMMessage
+        let message = dataSource.messages[indexPath.section]
 
         if message == dataSource.selectedMessage {
 
