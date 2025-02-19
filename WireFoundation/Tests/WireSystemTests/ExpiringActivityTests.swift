@@ -27,7 +27,7 @@ class ExpiringActivityTests: XCTestCase {
     func testThatTaskIsCancelled_WhenActivityExpires() async throws {
 
         // given
-        let api = MockExpiringActivityAPI()
+        nonisolated(unsafe) let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
 
         api.method = { _, block in
@@ -54,7 +54,7 @@ class ExpiringActivityTests: XCTestCase {
     func testThatTaskIsCancelled_WhenActivityIsNotAllowedToBegin() async throws {
 
         // given
-        let api = MockExpiringActivityAPI()
+        nonisolated(unsafe) let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
 
         api.method = { _, block in
@@ -78,7 +78,7 @@ class ExpiringActivityTests: XCTestCase {
     func testThatTaskEndsWithoutError_WhenActivityCompletes() async throws {
 
         // given
-        let api = MockExpiringActivityAPI()
+        nonisolated(unsafe) let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
 
         api.method = { _, block in

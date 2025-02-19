@@ -1,9 +1,0 @@
-sources:
-  - ../../Source
-templates:
-  - ./AutoMockable.stencil
-output:
-  ./generated
-args:
-  autoMockableImports: ["Foundation"]
-  autoMockableTestableImports: ["WireSystem"]
