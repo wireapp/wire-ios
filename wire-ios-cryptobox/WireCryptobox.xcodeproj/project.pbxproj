@@ -63,6 +63,7 @@
 				Info.plist,
 			);
 			publicHeaders = (
+				cbox.h,
 				WireCryptobox.h,
 			);
 			target = 0928E2331BA0777A0057232E /* WireCryptobox */;
