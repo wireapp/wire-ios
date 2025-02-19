@@ -120,7 +120,8 @@ package struct DetermineAuthMethodView: View {
                 case let .ssoLogin(code: ssoCode):
                     loginViaSSOBuilder.loginViaSSOView(ssoCode: ssoCode)
                 }
-            })
+            }
+        )
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
