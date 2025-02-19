@@ -20,7 +20,15 @@
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";
 "authentication.identity.input.submit" = "Avanti";
-"authentication.identity.input.terms" = "By pressing on “Next”, you accept Wire’s [Terms and Conditions](%@)";
+
+"cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.input_email.title" = "Email";
+"cloud_user_login.input_password.title" = "Password";
+"cloud_user_login.input_password.placeholder" = "Enter password";
+"cloud_user_login.submit" = "Avanti";
+"cloud_user_login.forgot_password" = "Hai dimenticato la password?";
+"create_personal_account.title" = "Don’t have a Wire account?";
+"create_personal_account.button" = "Create Personal Account";
 
 "switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
@@ -39,3 +47,7 @@
 "verification_code.message" = "Inserisci il codice di verifica che abbiamo inviato a %@.";
 "verification_code.confirm" = "Conferma";
 "verification_code.resend_code" = "Resend Code";
+
+"authentication.no_history.title" = "È la prima volta che utilizzi Wire questo dispositivo.";
+"authentication.no_history.message" = "Per motivi di privacy, la cronologia delle tue conversazioni non apparirà qui.";
+"authentication.no_history.confirm" = "OK";

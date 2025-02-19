@@ -1356,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Praeitis";
-"self.settings.history_backup.title" = "Kurti susirašinėjimų atsarginę kopiją";
-"self.settings.history_backup.description" = "Kurkite atsarginę kopiją, kad išsaugotumėte susirašinėjimo praeitį. Jei prarasite savo įrenginį arba pasikeisite nauju, tai galėsite panaudoti praeities atstatymui.\n\nPasirinkite stiprų slaptažodį, kad apsaugotumėte atsarginės kopijos failą.";
-"self.settings.history_backup.action" = "Kurti atsarginę kopiją dabar";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Klaida";
-
 "self.settings.history_backup.set_email.title" = "Nustatykite el. pašto adresą ir slaptažodį.";
 "self.settings.history_backup.set_email.message" = "Norėdami sukurti susirašinėjimo praeitis atsarginę kopiją, jums būtina naudoti el. pašto adresą ir slaptažodį. Sukurti galite paskyros puslapyje nustatymuose.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Nustatykite slaptažodį";
-"self.settings.history_backup.password.cancel" = "Atsisakyti";
-"self.settings.history_backup.password.next" = "Kitas";
-"self.settings.history_backup.password.placeholder" = "Slaptažodis";
-"self.settings.history_backup.password.description" = "Atsarginė kopija bus suspausta ir užkoduota naudojant slaptažodį, kurį čia įrašysite.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1502,32 +1491,11 @@
 "registration.no_history.hero" = "Pirmą kartą naudojate „Wire“ šiame įrenginyje.";
 "registration.no_history.subtitle" = "Privatumo sumetimais, jūsų pokalbio istorija čia nebus rodoma.";
 "registration.no_history.got_it" = "GERAI";
-"registration.no_history.restore_backup" = "Atkurti iš atsarginės kopijos";
 
 "registration.alert.account_exists.title" = "Paskyra jau yra";
 "registration.alert.account_exists.message_email" = "Šis el. pašto adresas jau yra susietas su paskyra.\n\nNaudokite kitą el. pašto adresą arba bandykite prisijungti jei tai jūsų paskyra.";
 "registration.alert.change_email_action" = "Registruokitės kitu el. pašto adresu";
 "registration.alert.change_signin_action" = "Prisijungti";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Atkurti praeitį";
-"registration.no_history.restore_backup_warning.message" = "Atsarginės kopijos turinys pakeis susirašinėjimo praeitį šiame įrenginyje. \nAtkurti atsarginėje kopijoje esančią praeitį galite tik toje pačioje platformoje, kur jis ir buvo sukurtas.";
-"registration.no_history.restore_backup_warning.proceed" = "Pasirinkite atsarginės kopijos failą";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Bandykite dar kartą";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Kažkas nutiko";
-"registration.no_history.restore_backup_failed.message" = "Praeities atkurti nepavyko.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Nesuderinama atsarginė kopija";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "Atkurti kitos paskyros atsarginės kopijos nepavyks.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Nesuderinama atsarginė kopija";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "Ši atsarginė kopija buvo sukurta naudojant arba naujesnę arba senesnę „Wire“ versiją, ir negali būti naudojama atkūrimui.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Įmonės prisijungimas";
@@ -1553,17 +1521,6 @@
 "login.sso.backend_switch.title" = "Peradresuojama...";
 "login.sso.backend_switch.subtitle" = "Esate peradresuojami į priskirtąją įmonės paslaugą.";
 "login.sso.backend_switch.information" = "Prisijungimo duomenis įrašykite tik jei esate tikri, kad tai jūsų įmonės prisijungimas.";
-
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Atkuriama…";
-"registration.no_history.restore_backup.completed" = "Baigta";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "Ši atsarginė kopija apsaugota slaptažodžiu.";
-"registration.no_history.restore_backup.password.message" = "Norint atkurti šią atsarginę kopiją būtinas slaptažodis.";
-"registration.no_history.restore_backup.password.placeholder" = "Slaptažodis";
-"registration.no_history.restore_backup.password_error.title" = "Neteisingas slaptažodis";
 
 "registration.no_history.logged_out.hero" = "Jūs jau esate naudoję Wire šiame įrenginyje.";
 "registration.no_history.logged_out.subtitle" = "Tuo laikotarpiu išsiųstos žinutės nebus rodomos.";
