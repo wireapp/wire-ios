@@ -218,7 +218,6 @@ final class ZClientViewController: UIViewController {
                 }
             }
 
-        setupAppearance()
         createLegalHoldDisclosureController()
     }
 
@@ -503,14 +502,6 @@ final class ZClientViewController: UIViewController {
             // selectListItemWhenNoPreviousItemSelected()
             return false
         }
-    }
-
-    private func setupAppearance() {
-
-        let labelColor: UIColor
-        labelColor = .label
-
-        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = labelColor
     }
 
     // MARK: - Setup methods

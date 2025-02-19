@@ -18,21 +18,26 @@
 
 import Foundation
 
-public protocol LoginViaEmailUseCaseProtocol: Sendable {
+public protocol LoginViaEmailUseCaseProtocol {
+
+    associatedtype AccessToken
 
     func invoke(
         email: String,
-        password: String
-    ) async throws(LoginViaEmailUseCaseFailure)
+        password: String,
+        verificationCode: String?
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken)
 
 }
 
-public enum LoginViaEmailUseCaseFailure: Error {
+public enum LoginViaEmailUseCaseFailure: Error, Equatable {
 
     case invalidCredentials
-    case verificationCodeRequired
+    case twoFactorAuthenticationRequired
+    case twoFactorAuthenticationFailed
     case accountPendingActivation
     case accountSuspended
-    case other(message: String)
+    case noInternet
+    case other
 
 }
