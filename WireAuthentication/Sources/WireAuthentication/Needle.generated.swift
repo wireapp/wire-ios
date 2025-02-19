@@ -29,8 +29,14 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var router: any Router {
         return rootComponent.router
     }
-    var authenticationAPI: AuthenticationAPI {
-        return rootComponent.authenticationAPI
+    var defaultBackendEnvironment: BackendEnvironment {
+        return rootComponent.defaultBackendEnvironment
+    }
+    var defaultAPIVersion: APIVersion {
+        return rootComponent.defaultAPIVersion
+    }
+    var minTLSVersion: TLSVersion {
+        return rootComponent.minTLSVersion
     }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
@@ -65,7 +71,9 @@ private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: Needle
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-any Router"
-        keyPathToName[\DetermineAuthMethodComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
+        keyPathToName[\DetermineAuthMethodComponentDependency.defaultBackendEnvironment] = "defaultBackendEnvironment-BackendEnvironment"
+        keyPathToName[\DetermineAuthMethodComponentDependency.defaultAPIVersion] = "defaultAPIVersion-APIVersion"
+        keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
 
     }
 }
@@ -79,9 +87,11 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
+        localTable["defaultBackendEnvironment-BackendEnvironment"] = { [unowned self] in self.defaultBackendEnvironment as Any }
+        localTable["defaultAPIVersion-APIVersion"] = { [unowned self] in self.defaultAPIVersion as Any }
+        localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
         localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
-        localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
 }

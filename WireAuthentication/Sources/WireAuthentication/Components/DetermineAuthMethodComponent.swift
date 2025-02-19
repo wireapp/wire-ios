@@ -26,7 +26,9 @@ internal import WireAuthenticationLogic
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var authenticationAPI: AuthenticationAPI { get }
+    var defaultBackendEnvironment: BackendEnvironment { get }
+    var defaultAPIVersion: APIVersion { get }
+    var minTLSVersion: TLSVersion { get }
 
 }
 
@@ -37,9 +39,16 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     }
 
     private var determineAuthMethodUseCase: some DetermineAuthMethodUseCaseProtocol {
-        DetermineAuthMethodUseCase(
+        let authenticationAPI = AuthenticationAPIBuilder(
+            networkService: NetworkService.make(
+                backendEnvironment: dependency.defaultBackendEnvironment,
+                minTLSVersion: dependency.minTLSVersion
+            )
+        ).makeAPI(for: dependency.defaultAPIVersion)
+
+        return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCode,
-            authenticationAPI: dependency.authenticationAPI
+            authenticationAPI: authenticationAPI
         )
     }
 
