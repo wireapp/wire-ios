@@ -62,10 +62,10 @@ public final class ZMSLog: NSObject, Sendable {
     fileprivate let tag: String
 
     /// FileHandle instance used for updating the log
-    fileprivate static var updatingHandle: FileHandle?
+    nonisolated(unsafe) fileprivate static var updatingHandle: FileHandle?
 
     /// Log observers
-    fileprivate static var logHooks: [UUID: LogEntryHook] = [:]
+    nonisolated(unsafe) fileprivate static var logHooks: [UUID: LogEntryHook] = [:]
 
     @objc
     public init(tag: String) {

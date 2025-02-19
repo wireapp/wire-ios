@@ -12,6 +12,8 @@ let package = Package(
         .library(name: "WireCrypto", targets: ["WireCrypto"]),
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
+        .library(name: "WireSystem", targets: ["WireSystem"]),
+        .library(name: "WireSystemSupport", targets: ["WireSystemSupport"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
@@ -55,7 +57,7 @@ let package = Package(
             path: "./Sources/WireTesting"
         ),
 
-            .target(name: "WireSystem", dependencies: ["WireLogging"]),
+            .target(name: "WireSystem", dependencies: ["WireLogging", "ZipArchive"]),
             .testTarget(
                 name: "WireSystemTests",
                 dependencies: ["WireSystem", "WireSystemSupport", "WireTestingPackage"]
@@ -64,12 +66,14 @@ let package = Package(
                 name: "WireSystemSupport",
                 dependencies: ["WireSystem"],
                 plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
-            )
+            ),
+
+            .binaryTarget(name: "ZipArchive", path: "../Carthage/Build/ZipArchive.xcframework")
     ],
     swiftLanguageModes: [.v6]
 )
 
-for target in package.targets where target.name != "Clibsodium" {
+for target in package.targets where (!["Clibsodium", "WireSystem"].contains(target.name) && target.type != .binary ) {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("ExistentialAny")
