@@ -477,9 +477,8 @@
 			baseConfigurationReferenceRelativePath = Configurations/WireLinkPreview.xcconfig;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
-				MARKETING_VERSION = 1.0;
+				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -494,9 +493,8 @@
 			baseConfigurationReferenceRelativePath = Configurations/WireLinkPreview.xcconfig;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
-				MARKETING_VERSION = 1.0;
+				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -510,8 +508,8 @@
 			baseConfigurationReferenceAnchor = 59AB6CFF2D43D458005D2D17 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/ios-test-target.xcconfig";
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
+				INFOPLIST_FILE = WireLinkPreviewTests/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireLinkPreviewTestsHost.app/WireLinkPreviewTestsHost";
@@ -524,8 +522,8 @@
 			baseConfigurationReferenceAnchor = 59AB6CFF2D43D458005D2D17 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/ios-test-target.xcconfig";
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
+				INFOPLIST_FILE = WireLinkPreviewTests/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireLinkPreviewTestsHost.app/WireLinkPreviewTestsHost";

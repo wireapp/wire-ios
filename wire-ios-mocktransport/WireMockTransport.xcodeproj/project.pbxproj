@@ -315,8 +315,7 @@
 			baseConfigurationReferenceAnchor = 59ABA4482D43EC11005D2D17 /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireMockTransport.xcconfig;
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
@@ -328,8 +327,7 @@
 			baseConfigurationReferenceAnchor = 59ABA4482D43EC11005D2D17 /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireMockTransport.xcconfig;
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
@@ -341,7 +339,7 @@
 			baseConfigurationReferenceAnchor = 59ABA4482D43EC11005D2D17 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/ios-test-target.xcconfig";
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tests/Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireMockTransportTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Bridging-Header.h";
@@ -354,7 +352,7 @@
 			baseConfigurationReferenceAnchor = 59ABA4482D43EC11005D2D17 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/ios-test-target.xcconfig";
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tests/Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireMockTransportTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Bridging-Header.h";
