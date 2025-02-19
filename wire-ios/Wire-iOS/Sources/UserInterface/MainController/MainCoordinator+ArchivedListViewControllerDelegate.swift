@@ -27,7 +27,7 @@ extension MainCoordinator: ArchivedListViewControllerDelegate where Dependencies
     ) {
         Task { @MainActor in
             await showConversationList(conversationFilter: .none)
-            await showConversation(conversation: conversation, message: nil)
+            showConversation(conversation: conversation, message: nil)
         }
     }
 }

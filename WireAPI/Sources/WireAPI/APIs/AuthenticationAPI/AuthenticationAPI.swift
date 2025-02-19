@@ -46,4 +46,11 @@ public protocol AuthenticationAPI {
 
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration
 
+    /// Request a verification code for a provided email address.
+    ///
+    /// - Parameter email: Email address of the account
+    /// - Returns: The user details.
+
+    func requestVerificationCode(for email: String) async throws
+
 }
