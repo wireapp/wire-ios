@@ -84,7 +84,6 @@ final class CreatingBackupProgressViewController: UIViewController {
 
     private lazy var progressView = {
         let progressView = UIProgressView()
-        progressView.progressTintColor = ColorTheme.Base.primary
         progressView.accessibilityIdentifier = "progressView"
         return progressView
     }()
@@ -96,6 +95,10 @@ final class CreatingBackupProgressViewController: UIViewController {
         exportButton.accessibilityIdentifier = "exportButton"
         return exportButton
     }()
+
+    /// A view which is placed with the optimal bottom spacing.
+    /// It's used for calculations of the optimal sheet presentation detent.
+    private lazy var bottomSpacer = UIView()
 
     // MARK: - Methods
 
@@ -123,7 +126,9 @@ final class CreatingBackupProgressViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(stackView)
 
-        // constraints
+        bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
+        view.insertSubview(bottomSpacer, at: 0)
+
         let svLayoutGuide = scrollView.contentLayoutGuide
         NSLayoutConstraint.activate([
 
@@ -137,18 +142,30 @@ final class CreatingBackupProgressViewController: UIViewController {
             stackView.leadingAnchor.constraint(equalToSystemSpacingAfter: svLayoutGuide.leadingAnchor, multiplier: 3),
             stackView.topAnchor.constraint(equalToSystemSpacingBelow: svLayoutGuide.topAnchor, multiplier: 1),
             svLayoutGuide.trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 3),
-            svLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
+            svLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 0),
+            bottomSpacer.widthAnchor.constraint(equalToConstant: 0),
+            bottomSpacer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            view.bottomAnchor.constraint(equalToSystemSpacingBelow: bottomSpacer.bottomAnchor, multiplier: 3)
 
         ])
+
+        bottomSpacer.backgroundColor = .red
 
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        let stackViewHeight = stackView.frame.maxY + (navigationController?.navigationBar.frame.height ?? 0)
-        if let sheetPresentationController = navigationController?.sheetPresentationController {
-            sheetPresentationController.detents = [.custom { _ in stackViewHeight }]
+        guard let navigationController else { return }
+
+        let topSpace = navigationController.view.convert(stackView.bounds, from: stackView).minY
+        let stackViewHeight = stackView.frame.height
+        let bottomSpace = view.bounds.maxY - bottomSpacer.frame.maxY
+        let detent = topSpace + stackViewHeight + bottomSpace
+        if let sheetPresentationController = navigationController.sheetPresentationController {
+            sheetPresentationController.detents = [.custom { _ in detent }]
         }
     }
 
