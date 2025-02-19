@@ -46,6 +46,18 @@ public protocol AuthenticationAPI {
 
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration
 
+    /// Validated a company login token (SSO code).
+    /// This method will verify a company login token with the backend.
+    ///
+    /// - Parameters:
+    ///   - ssoCode: Company login token (SSO code).
+
+    func validateLoginToken(ssoCode: UUID) async throws
+
+    /// Get the default SSO code associated with the backend
+
+    func getSSOCode() async throws -> UUID?
+
     /// Request a verification code for a provided email address.
     ///
     /// - Parameter email: Email address of the account
