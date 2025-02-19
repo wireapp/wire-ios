@@ -98,7 +98,13 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let message = Data.random().base64EncodedString()
 
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            throw CoreCryptoError.Mls(MlsError.Other("Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."))
+            throw CoreCryptoError
+                .Mls(
+                    MlsError
+                        .Other(
+                            "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
+                        )
+                )
         }
 
         // When
@@ -107,7 +113,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             for: groupID,
             subconversationType: nil
         )
-        
+
         // Then
         XCTAssertTrue(results.isEmpty)
     }
