@@ -191,13 +191,10 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .resolvingAgainst(baseURL: baseURL)
             .build()
 
-        let (_, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (_, response) = try await networkService.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200)
+            .success(code: .ok)
             .failureSSOError()
             .parse(code: response.statusCode, data: nil)
     }
@@ -209,10 +206,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withAcceptType(.json)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         let payload = try ResponseParser()
             .success(code: .ok, type: SSOSettingsResponseV0.self)

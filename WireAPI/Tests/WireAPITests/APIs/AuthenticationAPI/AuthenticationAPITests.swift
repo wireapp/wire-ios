@@ -245,11 +245,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testBuildSSOLink_Handling_Success() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
         let ssoCode = UUID()
         let userID = ssoCode
 
@@ -275,11 +275,11 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testValidateLoginToken_Response_Handling_InvalidSSOCode() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.notFound, "")
         ])
 
-        let sut = AuthenticationAPIV8(apiService: apiService)
+        let sut = AuthenticationAPIV8(networkService: networkService)
         let ssoCode = UUID()
         let baseURL = URL(string: "https://localhost")!
 
