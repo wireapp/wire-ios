@@ -463,11 +463,11 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             for removedUserID in removedUsersIDs {
                 taskGroup.addTask { [self] in
                     do {
-                        return try await userLocalStore.isSelfUser(
+                        let (_, isSelfUser) = try await userLocalStore.isSelfUser(
                             id: removedUserID.uuid,
                             domain: removedUserID.domain
-                        ).isSelfUser
-
+                        )
+                        return isSelfUser
                     } catch {
                         return false
                     }
