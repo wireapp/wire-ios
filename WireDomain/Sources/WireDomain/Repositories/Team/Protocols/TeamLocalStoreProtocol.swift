@@ -31,6 +31,11 @@ public protocol TeamLocalStoreProtocol {
 
     func selfUserID() async -> UUID
 
+    /// Fetches the self team ID, if it exist.
+    /// - returns: The id of the self user's team.
+
+    func selfTeamID() async -> UUID?
+
     /// Fetches the user membership.
     /// - parameter user: A given user.
     /// - returns: The user membership.
