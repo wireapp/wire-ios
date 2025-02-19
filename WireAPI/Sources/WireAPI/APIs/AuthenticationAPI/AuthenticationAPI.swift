@@ -50,10 +50,9 @@ public protocol AuthenticationAPI {
     /// This method will verify a company login token with the backend.
     ///
     /// - Parameters:
-    ///   - baseURL: The backend to validate SSO code against.
     ///   - ssoCode: Company login token (SSO code).
 
-    func validateLoginToken(baseURL: URL, ssoCode: UUID) async throws
+    func validateLoginToken(ssoCode: UUID) async throws
 
     /// Get the default SSO code associated with the backend
 

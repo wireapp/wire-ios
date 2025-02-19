@@ -134,11 +134,10 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
 
-    func validateLoginToken(baseURL: URL, ssoCode: UUID) async throws {
+    func validateLoginToken(ssoCode: UUID) async throws {
         let path = "/sso/initiate-login/\(ssoCode.uuidString)"
         let request = try URLRequestBuilder(path: path)
             .withMethod(.head)
-            .resolvingAgainst(baseURL: baseURL)
             .build()
 
         let (_, response) = try await networkService.executeRequest(request)

@@ -251,15 +251,11 @@ final class AuthenticationAPITests: XCTestCase {
 
         let sut = AuthenticationAPIV8(networkService: networkService)
         let ssoCode = UUID()
-        let baseURL = URL(string: "https://localhost")!
 
         // Then
         await XCTAssertThrowsErrorAsync(AuthenticationAPIError.SSOLoginError.invalidSSOCode) {
             // When
-            try await sut.validateLoginToken(
-                baseURL: baseURL,
-                ssoCode: ssoCode
-            )
+            try await sut.validateLoginToken(ssoCode: ssoCode)
         }
     }
 
