@@ -39,7 +39,14 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     }
 
     private var determineAuthMethodUseCase: some DetermineAuthMethodUseCaseProtocol {
-        DetermineAuthMethodUseCase(
+        let authenticationAPI = AuthenticationAPIBuilder(
+            networkService: NetworkService.make(
+                backendEnvironment: dependency.defaultBackendEnvironment,
+                minTLSVersion: dependency.minTLSVersion
+            )
+        ).makeAPI(for: dependency.defaultAPIVersion)
+
+        return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCode,
             authenticationAPI: authenticationAPI
         )
