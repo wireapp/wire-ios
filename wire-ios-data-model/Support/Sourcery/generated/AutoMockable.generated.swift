@@ -5489,17 +5489,17 @@ public class MockSyncStatusProtocol: SyncStatusProtocol {
 
     // MARK: - performQuickSync
 
-    public var performQuickSync_Invocations: [Void] = []
-    public var performQuickSync_MockMethod: (() async -> Void)?
+    public var performQuickSyncIsRecovering_Invocations: [Bool] = []
+    public var performQuickSyncIsRecovering_MockMethod: ((Bool) async -> Void)?
 
-    public func performQuickSync() async {
-        performQuickSync_Invocations.append(())
+    public func performQuickSync(isRecovering: Bool) async {
+        performQuickSyncIsRecovering_Invocations.append(isRecovering)
 
-        guard let mock = performQuickSync_MockMethod else {
-            fatalError("no mock for `performQuickSync`")
+        guard let mock = performQuickSyncIsRecovering_MockMethod else {
+            fatalError("no mock for `performQuickSyncIsRecovering`")
         }
 
-        await mock()
+        await mock(isRecovering)
     }
 
     // MARK: - resyncResources
