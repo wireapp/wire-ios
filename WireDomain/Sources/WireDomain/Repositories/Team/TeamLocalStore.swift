@@ -64,6 +64,14 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
         }
     }
 
+    public func selfTeamID() async -> UUID? {
+        let selfUser = await userLocalStore.fetchSelfUser()
+
+        return await context.perform {
+            selfUser.teamIdentifier
+        }
+    }
+
     public func userMembership(
         user: ZMUser
     ) async -> Member? {
