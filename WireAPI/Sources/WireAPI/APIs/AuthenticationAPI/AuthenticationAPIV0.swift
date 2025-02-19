@@ -142,7 +142,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 
         let (_, response) = try await networkService.executeRequest(request)
         if let error = AuthenticationAPIError.SSOLoginError(responseCode: response.statusCode) {
-          throw error
+            throw error
         }
 
         return try ResponseParser()
