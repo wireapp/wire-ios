@@ -18,26 +18,16 @@
 
 import Foundation
 
-public protocol LoginViaEmailUseCaseProtocol {
+struct SSOSettingsResponseV0: Decodable, ToAPIModelConvertible {
 
-    associatedtype AccessToken
+    let defaultSSOCode: UUID?
 
-    func invoke(
-        email: String,
-        password: String,
-        verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken)
+    private enum CodingKeys: String, CodingKey {
+        case defaultSSOCode = "default_sso_code"
+    }
 
-}
-
-public enum LoginViaEmailUseCaseFailure: Error, Equatable {
-
-    case invalidCredentials
-    case twoFactorAuthenticationRequired
-    case twoFactorAuthenticationFailed
-    case accountPendingActivation
-    case accountSuspended
-    case noInternet
-    case other
+    func toAPIModel() -> SSOSettings {
+        .init(defaultSSOCode: defaultSSOCode)
+    }
 
 }

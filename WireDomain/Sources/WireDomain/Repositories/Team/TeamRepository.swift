@@ -24,7 +24,6 @@ public class TeamRepository: TeamRepositoryProtocol {
 
     // MARK: - Properties
 
-    private let selfTeamID: UUID
     private let userRepository: any UserRepositoryProtocol
     private let teamsAPI: any TeamsAPI
     private let teamLocalStore: any TeamLocalStoreProtocol
@@ -36,12 +35,10 @@ public class TeamRepository: TeamRepositoryProtocol {
     // MARK: - Object lifecycle
 
     public init(
-        selfTeamID: UUID,
         userRepository: any UserRepositoryProtocol,
         teamLocalStore: any TeamLocalStoreProtocol,
         teamsAPI: any TeamsAPI
     ) {
-        self.selfTeamID = selfTeamID
         self.userRepository = userRepository
         self.teamLocalStore = teamLocalStore
         self.teamsAPI = teamsAPI
@@ -62,18 +59,22 @@ public class TeamRepository: TeamRepositoryProtocol {
     // MARK: - Public
 
     public func pullSelfTeam() async throws {
+        let selfTeamID = try await getSelfTeamID()
         try await pullSelfTeamSync.pull(selfTeamID: selfTeamID)
     }
 
     public func pullSelfTeamRoles() async throws {
+        let selfTeamID = try await getSelfTeamID()
         try await pullSelfTeamRolesSync.pull(selfTeamID: selfTeamID)
     }
 
     public func pullSelfTeamMembers() async throws {
+        let selfTeamID = try await getSelfTeamID()
         try await pullSelfTeamMembersSync.pull(selfTeamID: selfTeamID)
     }
 
     public func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
+        let selfTeamID = try await getSelfTeamID()
         let selfUserID = await teamLocalStore.selfUserID()
 
         return try await teamsAPI.getLegalholdInfo(
@@ -150,12 +151,20 @@ public class TeamRepository: TeamRepositoryProtocol {
     }
 
     public func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo {
+        let selfTeamID = try await getSelfTeamID()
         let (selfUserID, _) = await teamLocalStore.selfUserInfo()
 
         return try await teamsAPI.getLegalholdInfo(
             for: selfTeamID,
             userID: selfUserID
         )
+    }
+
+    private func getSelfTeamID() async throws -> UUID {
+        guard let selfTeamID = await teamLocalStore.selfTeamID() else {
+            throw TeamRepositoryError.selfUserIsNotATeamMember
+        }
+        return selfTeamID
     }
 
 }
