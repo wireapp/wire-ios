@@ -20,7 +20,6 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
-import WireAPI
 
 @MainActor
 package final class LoginViaSSOViewModel: ObservableObject {
@@ -93,8 +92,8 @@ package enum LoginViaSSOViewModelFailure: Error, Equatable {
     case invalidSSOURL
 
     case unknown
-}
 
+}
 
 private extension URL {
 
