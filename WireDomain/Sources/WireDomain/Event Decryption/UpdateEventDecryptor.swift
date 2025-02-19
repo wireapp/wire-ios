@@ -34,13 +34,13 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         messageRepository: any MessageRepositoryProtocol,
-        userRepository: any UserRepositoryProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsLocalStore: userClientsLocalStore,
-            userRepository: userRepository
+            userLocalStore: userLocalStore
         )
 
         self.mlsMessageDecryptor = MLSMessageDecryptor(
