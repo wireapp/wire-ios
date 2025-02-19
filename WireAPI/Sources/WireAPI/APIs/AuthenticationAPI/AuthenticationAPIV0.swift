@@ -215,3 +215,50 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         return payload.defaultSSOCode
     }
 }
+
+private extension ResponseParser {
+
+    func failureSSOError() -> ResponseParser<Success> {
+        var copy = self
+        copy.parseBlocks.append { code, _ in
+            if let error = AuthenticationAPIError.SSOLoginError(responseCode: code) {
+                throw error
+            }
+            return nil
+        }
+        return copy
+    }
+
+}
+
+private extension URL {
+
+    enum Host {
+        static let login = "login"
+    }
+
+    enum Path {
+        static let success = "success"
+        static let failure = "failure"
+    }
+
+}
+
+private extension URLQueryItem {
+
+    enum Key {
+        static let successRedirect = "success_redirect"
+        static let errorRedirect = "error_redirect"
+        static let cookie = "cookie"
+        static let userIdentifier = "userid"
+        static let errorLabel = "label"
+        static let validationToken = "validation_token"
+    }
+
+    enum Template {
+        static let cookie = "$cookie"
+        static let userIdentifier = "$userid"
+        static let errorLabel = "$label"
+    }
+
+}

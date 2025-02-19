@@ -30,10 +30,10 @@ struct ResponseParser<Success> {
         case noParseResult
     }
 
-    private typealias ParseBlock = (Int, Data?) throws -> Success?
+    typealias ParseBlock = (Int, Data?) throws -> Success?
 
     private let decoder: JSONDecoder
-    private var parseBlocks: [ParseBlock]
+    var parseBlocks: [ParseBlock]
 
     init(decoder: JSONDecoder = .init()) {
         self.decoder = decoder
@@ -112,21 +112,6 @@ struct ResponseParser<Success> {
         } else {
             throw ParsingError.noParseResult
         }
-    }
-
-}
-
-extension ResponseParser {
-
-    func failureSSOError() -> ResponseParser<Success> {
-        var copy = self
-        copy.parseBlocks.append { code, _ in
-            if let error = AuthenticationAPIError.SSOLoginError(responseCode: code) {
-                throw error
-            }
-            return nil
-        }
-        return copy
     }
 
 }
