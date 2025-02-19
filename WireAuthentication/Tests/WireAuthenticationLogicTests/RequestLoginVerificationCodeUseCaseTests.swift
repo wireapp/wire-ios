@@ -18,9 +18,9 @@
 
 import Testing
 import WireAPI
-import WireAuthenticationUI
 import WireAPISupport
 import WireAuthenticationAPI
+import WireAuthenticationUI
 
 @testable import WireAuthenticationLogic
 
@@ -32,7 +32,7 @@ struct RequestLoginVerificationCodeUseCaseTests {
         let mockAuthenticationAPI = MockAuthenticationAPI()
         let sut = RequestLoginVerificationCodeUseCase(authenticationAPI: mockAuthenticationAPI)
 
-        try await confirmation() { confirmation in
+        try await confirmation { confirmation in
 
             // Then
             mockAuthenticationAPI.requestVerificationCodeFor_MockMethod = { email in
