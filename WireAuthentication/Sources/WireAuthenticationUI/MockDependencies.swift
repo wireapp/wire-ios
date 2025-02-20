@@ -138,7 +138,7 @@ private struct MockPasswordValidator: PasswordValidator {
         self.validationCallback = validationCallback
     }
 
-    func validate(_ password: String) -> Bool {
+    func isPasswordValid(_ password: String) -> Bool {
         validationCallback(password)
     }
 

@@ -41,7 +41,7 @@ struct Configuration {
 
 private struct LoginPasswordValidator: PasswordValidator {
 
-    func validate(_ password: String) -> Bool {
+    func isPasswordValid(_ password: String) -> Bool {
         !password.isEmpty
     }
 

@@ -34,9 +34,12 @@ package struct RootView: View {
     }
 
     package var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            builder.determineAuthMethodView
-        }
+        BackgroundView()
+            .sheet(isPresented: .constant(true)) {
+                NavigationStack(path: $viewModel.path) {
+                    builder.determineAuthMethodView
+                }
+            }
     }
 
 }

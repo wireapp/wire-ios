@@ -80,6 +80,7 @@
 		0679DEE12C49729500044FC7 /* URLsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0679DEE02C49729500044FC7 /* URLsTests.swift */; };
 		067EF352288FCAB700B2659A /* Accessibility.strings in Resources */ = {isa = PBXBuildFile; fileRef = 067EF350288FCAB600B2659A /* Accessibility.strings */; };
 		067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067F605C28B8EC8000FCC334 /* DebugCommand.swift */; };
+		06816F432D676A54004051BA /* AuthenticationPasswordValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06816F422D676A54004051BA /* AuthenticationPasswordValidator.swift */; };
 		0685008126B35E7A00721F80 /* AudioMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008026B35E7A00721F80 /* AudioMessageRestrictionView.swift */; };
 		0685008526B36BBC00721F80 /* VideoMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008426B36BBC00721F80 /* VideoMessageRestrictionView.swift */; };
 		0685008926B3705100721F80 /* ImageMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008826B3705100721F80 /* ImageMessageRestrictionView.swift */; };
@@ -2022,6 +2023,7 @@
 		067EF364288FCAEA00B2659A /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067EF365288FCAEB00B2659A /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067F605C28B8EC8000FCC334 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
+		06816F422D676A54004051BA /* AuthenticationPasswordValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationPasswordValidator.swift; sourceTree = "<group>"; };
 		0685008026B35E7A00721F80 /* AudioMessageRestrictionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMessageRestrictionView.swift; sourceTree = "<group>"; };
 		0685008426B36BBC00721F80 /* VideoMessageRestrictionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMessageRestrictionView.swift; sourceTree = "<group>"; };
 		0685008826B3705100721F80 /* ImageMessageRestrictionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMessageRestrictionView.swift; sourceTree = "<group>"; };
@@ -7881,6 +7883,7 @@
 				5E766D9A211472C0005242B4 /* AuthenticationFlowStep.swift */,
 				5E53B0DB211AB7AC009C7124 /* AuthenticationInterfaceBuilder.swift */,
 				5E8FFC0221ECC5CF0052DF03 /* AuthenticationFeatureProvider.swift */,
+				06816F422D676A54004051BA /* AuthenticationPasswordValidator.swift */,
 				5E9E8AA2216284320058D6E1 /* Landing */,
 				5E8DA763211B2CF000360979 /* Coordinator */,
 				EF2126B51FB9DFE300625A9B /* Interface */,
@@ -9278,6 +9281,7 @@
 				E9C0B35B2B558D8600BC80E8 /* ConversationParticipantsSystemMessageCell.swift in Sources */,
 				5EA73D7920D900830001D106 /* GroupOptionsSectionController.swift in Sources */,
 				BF79B10220AB236A001BF4FE /* SectionFooter.swift in Sources */,
+				06816F432D676A54004051BA /* AuthenticationPasswordValidator.swift in Sources */,
 				8710673F1C0DC5570035603B /* SettingsPropertySelectValueCellDescriptor.swift in Sources */,
 				D525426F209363DC001C04C1 /* CallActionAppearance.swift in Sources */,
 				D3A74DC7294CAFEF00DD272F /* AccessibilityActionView.swift in Sources */,

@@ -17,7 +17,9 @@
 //
 
 import UIKit
+import WireAPI
 import WireAuthentication
+import WireCommonComponents
 import WireDataModel
 
 /// A type of view controller that can be managed by an authentication coordinator.
@@ -35,6 +37,10 @@ final class AuthenticationInterfaceBuilder {
 
     var backendEnvironment: BackendEnvironmentProvider {
         backendEnvironmentProvider()
+    }
+
+    private var environment: WireTransport.BackendEnvironment {
+        BackendEnvironment.shared
     }
 
     // MARK: - Initialization
@@ -69,9 +75,32 @@ final class AuthenticationInterfaceBuilder {
         switch step {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
-            let rootView = assembly.assemble(onFlowCompletion: {
-                authenticationCoordinator.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
-            })
+            let rootView = assembly.assemble(
+                defaultBackendEnvironment: BackendEnvironment(
+                    url: environment.backendURL,
+                    webSocketURL: environment.backendWSURL,
+                    pinnedKeys: environment.trustData.map { trustData in
+                        PinnedKey(
+                            key: trustData.certificateKey,
+                            hosts: trustData.hosts.map { host in
+                                switch host.rule {
+                                case .equals:
+                                    .equals(host.value)
+                                case .endsWith:
+                                    .endsWith(host.value)
+                                }
+                            }
+                        )
+                    },
+                    proxySettings: nil
+                ),
+                minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
+                defaultAPIVersion: .v8,
+                accountsURL: environment.accountsURL,
+                passwordValidator: AuthenticationPasswordValidator()) {
+                    authenticationCoordinator.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
+                }
+
             return AuthenticationHostingController(rootView: rootView)
 
         case .landingScreen:

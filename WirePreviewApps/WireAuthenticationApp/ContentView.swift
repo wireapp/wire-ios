@@ -34,7 +34,8 @@ struct ContentView: View {
                     minTLSVersion: configuration.minTLSVersion,
                     defaultAPIVersion: configuration.defaultAPIVersion,
                     accountsURL: configuration.accountsURL,
-                    passwordValidator: configuration.passwordValidator
+                    passwordValidator: configuration.passwordValidator,
+                    onFlowCompletion: {}
                 )
             }
     }
