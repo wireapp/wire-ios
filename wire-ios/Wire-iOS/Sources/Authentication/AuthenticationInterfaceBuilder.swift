@@ -97,9 +97,10 @@ final class AuthenticationInterfaceBuilder {
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 defaultAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
-                passwordValidator: AuthenticationPasswordValidator()) {
-                    authenticationCoordinator.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
-                }
+                passwordValidator: AuthenticationPasswordValidator()
+            ) {
+                authenticationCoordinator.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
+            }
 
             return AuthenticationHostingController(rootView: rootView)
 
