@@ -24,10 +24,18 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
+    package enum Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        case noInternet
+        case unknownError
+    }
+
     @Published var password: String = "" {
         didSet { showPasswordRules = !isPasswordValid }
     }
     @Published private(set) var showPasswordRules = false
+    @Published var alert: Alert?
 
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
@@ -63,38 +71,36 @@ package final class LoginViaEmailViewModel: ObservableObject {
         passwordValidator.isPasswordValid(password)
     }
 
-    func submitPassword() {
+    func submitPassword() async {
         let email = email
         let password = password
 
-        Task.detached { [router] in
-            do {
-                // TODO: [WPB-15924] Handle happy path
-                _ = try await self.loginViaEmailUseCase.invoke(
-                    email: email,
-                    password: password,
-                    verificationCode: ""
+        do {
+            // TODO: [WPB-15924] Handle happy path
+            _ = try await self.loginViaEmailUseCase.invoke(
+                email: email,
+                password: password,
+                verificationCode: ""
+            )
+            print(">>>> Login successful")
+        } catch {
+            switch error {
+            case .invalidCredentials:
+                break
+            case .twoFactorAuthenticationRequired:
+                router.navigate(
+                    to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
                 )
-                print(">>>> Login successful")
-            } catch let error as LoginViaEmailUseCaseFailure {
-                switch error {
-                case .invalidCredentials:
-                    break
-                case .twoFactorAuthenticationRequired:
-                    await router.navigate(
-                        to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
-                    )
-                case .twoFactorAuthenticationFailed:
-                    break // This shouldn't happen in this view
-                case .accountPendingActivation:
-                    break
-                case .accountSuspended:
-                    break
-                case .noInternet:
-                    break
-                case .other:
-                    break
-                }
+            case .twoFactorAuthenticationFailed:
+                break // This shouldn't happen in this view
+            case .accountPendingActivation:
+                break
+            case .accountSuspended:
+                break
+            case .noInternet:
+                alert = .noInternet
+            case .other:
+                alert = .unknownError
             }
         }
     }

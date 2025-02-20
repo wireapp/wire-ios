@@ -65,6 +65,14 @@ package struct LoginViaEmailView: View {
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
         }
+        .alert(
+            item: $viewModel.alert,
+            title: titleForAlert,
+            message: messageForAlert,
+            actions: { _ in
+                Button(L10n.Authentication.Error.confirm, action: {})
+            }
+        )
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
             case let .verifyLogin(email, password):
@@ -96,12 +104,13 @@ package struct LoginViaEmailView: View {
     }
 
     @ViewBuilder private var submitButton: some View {
-        Button(action: {
-            viewModel.submitPassword()
-        }, label: {
-            Text(L10n.CloudUserLogin.submit)
-                .lineLimit(nil)
-        })
+        Button(
+            action: { Task.detached { await viewModel.submitPassword() } },
+            label: {
+                Text(L10n.CloudUserLogin.submit)
+                    .lineLimit(nil)
+            }
+        )
         .wireButtonStyle(.primary)
         .bold()
         .disabled(!viewModel.isPasswordValid)
@@ -158,6 +167,24 @@ package struct LoginViaEmailView: View {
 
         case verifyLogin(email: String, password: String)
 
+    }
+
+    private func titleForAlert(_ alert: LoginViaEmailViewModel.Alert) -> Text {
+        switch alert {
+        case .noInternet:
+            Text(L10n.Authentication.Error.Title.noInternet)
+        case .unknownError:
+            Text(L10n.Authentication.Error.Title.general)
+        }
+    }
+
+    private func messageForAlert(_ alert: LoginViaEmailViewModel.Alert) -> Text {
+        switch alert {
+        case .noInternet:
+            Text(L10n.Authentication.Error.Message.noInternet)
+        case .unknownError:
+            Text(L10n.Authentication.Error.Message.general)
+        }
     }
 
 }
