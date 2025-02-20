@@ -17,29 +17,26 @@
 //
 
 import Foundation
-import WireUtilities
 
-/// Handles requests to add a new user account.
-final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandler {
+final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandler {
 
-    let featureProvider: AuthenticationFeatureProvider
-    weak var statusProvider: AuthenticationStatusProvider?
+    typealias Context = Any
 
-    init(featureProvider: AuthenticationFeatureProvider) {
-        self.featureProvider = featureProvider
-    }
+    var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: (NSError?, Int)
+        context: Context
     ) -> [AuthenticationCoordinatorAction]? {
-        if featureProvider.allowOnlyEmailLogin {
-            // Hide the landing screen if account creation is disabled.
-            [.transition(.provideCredentials(nil), mode: .reset)]
-        } else if DeveloperFlag.useWireAuthentication.isOn {
-            [.transition(.wireAuthenticationModule, mode: .reset)]
-        } else {
-            [.transition(.landingScreen, mode: .reset)]
+        switch currentStep {
+        case .wireAuthenticationModule:
+            // TODO: [WPB-16044] Return the appropriate step action here.
+            return nil
+
+        default:
+            assertionFailure("Got auth flow success but on wrong step: \(currentStep)")
+            return nil
         }
     }
+
 }
