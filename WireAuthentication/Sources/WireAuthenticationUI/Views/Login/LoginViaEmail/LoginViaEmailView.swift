@@ -63,6 +63,12 @@ package struct LoginViaEmailView: View {
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
         }
+        .navigationDestination(for: Destination.self) { destination in
+            switch destination {
+            case let .verifyLogin(email, password):
+                return Color.red
+            }
+        }
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -147,6 +153,12 @@ package struct LoginViaEmailView: View {
                     .cornerRadius(12)
             }
         }
+    }
+
+    enum Destination: Hashable {
+
+        case verifyLogin(email: String, password: String)
+
     }
 
 }

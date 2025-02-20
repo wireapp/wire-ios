@@ -59,17 +59,35 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func submitPassword(_ password: String) {
-        Task.detached {
+        let email = email
+        Task.detached { [router] in
             do {
                 // TODO: [WPB-15924] Handle happy path
                 _ = try await self.loginViaEmailUseCase.invoke(
-                    email: self.email,
+                    email: email,
                     password: password,
                     verificationCode: ""
                 )
-            } catch {
-                // TODO: [WPB-15924] Error handling
-                print("error: \(error)")
+                print(">>>> Login successful")
+            } catch let error as LoginViaEmailUseCaseFailure {
+                switch error  {
+                case .invalidCredentials:
+                    break
+                case .twoFactorAuthenticationRequired:
+                    await router.navigate(
+                        to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
+                    )
+                case .twoFactorAuthenticationFailed:
+                    break // Do we need to handle this?
+                case .accountPendingActivation:
+                    break
+                case .accountSuspended:
+                    break
+                case .noInternet:
+                    break
+                case .other:
+                    break
+                }
             }
         }
     }
