@@ -541,7 +541,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
         self.removeLocalConversation = removeLocalConversationUseCase
     }
 
-    func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? { // TODO: v8?
+    func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let converationID = identifiers.first.map({ $0.transportString() }) else { return nil }
 
         // GET /conversations/<UUID>
@@ -664,7 +664,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         self.removeLocalConversation = removeLocalConversationUseCase
     }
 
-    func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? { // TODO: ?
+    func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             let conversationID = identifiers.first.map({ $0.uuid.transportString() }),
             let domain = identifiers.first?.domain
