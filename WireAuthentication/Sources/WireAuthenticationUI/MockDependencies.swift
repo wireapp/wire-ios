@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireReusableUIComponents
 
 @MainActor
 final class MockDependencies {
@@ -33,23 +34,58 @@ final class MockDependencies {
         )
     }
 
+    func makeDetermineAuthMethodView(
+        emailOrSSOCode: String,
+        isLoading: Bool,
+        alert: DetermineAuthMethodViewModel.Alert?
+    ) -> DetermineAuthMethodView {
+        DetermineAuthMethodView(
+            viewModel: DetermineAuthMethodViewModel(
+                router: rootViewModel,
+                validateEmailOrSSOCode: self,
+                determineAuthMethod: self,
+                emailOrSSOCode: emailOrSSOCode,
+                isLoading: isLoading,
+                alert: alert
+            ),
+            builder: self
+        )
+    }
+
+}
+
+extension MockDependencies: ValidateEmailOrSSOCodeUseCaseProtocol {
+
+    nonisolated func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        if input.contains("@") {
+            return .email(email: input, domain: input.components(separatedBy: "@").last!)
+        } else if input.hasSuffix("wire") {
+            return .ssoCode(UUID())
+        } else {
+            throw ValidatedEmailOrSSOCodeFailure.invalidInput
+        }
+    }
+
 }
 
 extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
+    func invoke(
+        emailOrSSOCode: String
+    ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
+        try! await Task.sleep(for: .seconds(3))
 
-    func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .login(email: emailOrSSOCode)
+        return .loginViaEmail(email: emailOrSSOCode)
     }
-
 }
 
 extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
     func invoke(
         email: String,
-        password: String
-    ) async throws(LoginViaEmailUseCaseFailure) {
-        // Success
+        password: String,
+        verificationCode: String?
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], String) {
+        ([], "")
     }
 
 }
@@ -59,6 +95,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
+            validateEmailOrSSOCode: self,
             determineAuthMethod: self
         )
     }
@@ -74,18 +111,39 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 extension MockDependencies: LoginViaEmailBuilder {
 
-    private func loginViewModel(email: String) -> LoginViaEmailViewModel {
+    private func loginViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
-            email: email
+            email: email,
+            accountsURL: URL(string: "https://example.com")!,
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            canCreateAccount: canCreateAccount
         )
     }
 
-    func loginViaEmailView(email: String) -> LoginViaEmailView {
+    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email)
+            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
         )
+    }
+
+}
+
+private struct MockPasswordValidator: PasswordValidator {
+
+    let validationCallback: @Sendable (String) -> Bool
+
+    init(validationCallback: @Sendable @escaping (String) -> Bool) {
+        self.validationCallback = validationCallback
+    }
+
+    func validate(_ password: String) -> Bool {
+        validationCallback(password)
+    }
+
+    var localizedRulesDescription: String? {
+        "Password rules"
     }
 
 }

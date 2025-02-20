@@ -18,35 +18,43 @@
 
 import NeedleFoundation
 import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
 protocol LoginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    var accountsURL: URL { get }
+    var passwordValidator: any PasswordValidator { get }
+    var authenticationAPI: AuthenticationAPI { get }
 
 }
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, LoginViaEmailBuilder {
 
     private var loginViaEmailUseCase: some LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase()
+        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
     }
 
     @MainActor
-    private func loginViewModel(email: String) -> LoginViaEmailViewModel {
+    private func loginViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
             loginViaEmailUseCase: loginViaEmailUseCase,
-            email: email
+            email: email,
+            accountsURL: dependency.accountsURL,
+            passwordValidator: dependency.passwordValidator,
+            canCreateAccount: canCreateAccount
         )
     }
 
     @MainActor
-    func loginViaEmailView(email: String) -> LoginViaEmailView {
+    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email)
+            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
         )
     }
 

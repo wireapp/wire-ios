@@ -82,7 +82,7 @@ struct ConversationEventProcessor {
             try await renameEventProcessor.processEvent(event)
 
         case let .typing(event):
-            try await typingEventProcessor.processEvent(event)
+            await typingEventProcessor.processEvent(event)
         }
     }
 

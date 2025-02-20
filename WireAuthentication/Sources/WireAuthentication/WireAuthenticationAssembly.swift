@@ -19,7 +19,9 @@
 import Foundation
 import NeedleFoundation
 import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
+import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
@@ -30,9 +32,23 @@ public struct WireAuthenticationAssembly {
     }
 
     @MainActor
-    public func assemble(onFlowCompletion: @escaping () -> Void) -> some View {
+    public func assemble(
+        defaultBackendEnvironment: BackendEnvironment,
+        minTLSVersion: TLSVersion,
+        defaultAPIVersion: APIVersion,
+        accountsURL: URL,
+        passwordValidator: any PasswordValidator,
+        onFlowCompletion: @escaping () -> Void
+    ) -> some View {
         let bridge = WireAuthenticationBridge(onFlowCompletion: onFlowCompletion)
-        let rootComponent = RootComponent(bridge: bridge)
+        let rootComponent = RootComponent(
+            bridge: bridge,
+            defaultBackendEnvironment: defaultBackendEnvironment,
+            defaultAPIVersion: defaultAPIVersion,
+            minTLSVersion: minTLSVersion,
+            accountsURL: accountsURL, // this is temp
+            passwordValidator: passwordValidator
+        )
         return rootComponent.rootView
     }
 

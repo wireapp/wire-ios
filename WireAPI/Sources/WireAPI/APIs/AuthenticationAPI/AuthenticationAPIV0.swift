@@ -19,10 +19,10 @@
 import Foundation
 
 class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
-    let apiService: any APIServiceProtocol
+    let networkService: any NetworkServiceProtocol
 
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    init(networkService: any NetworkServiceProtocol) {
+        self.networkService = networkService
     }
 
     var apiVersion: APIVersion {
@@ -56,10 +56,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withMethod(.post)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         guard
             let responseURL = response.url,
@@ -124,10 +121,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: DomainInfoV0.self)
@@ -139,4 +133,64 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
+
+    func validateLoginToken(ssoCode: UUID) async throws {
+        let path = "/sso/initiate-login/\(ssoCode.uuidString)"
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.head)
+            .build()
+
+        let (_, response) = try await networkService.executeRequest(request)
+        if let error = AuthenticationAPIError.SSOLoginError(responseCode: response.statusCode) {
+            throw error
+        }
+
+        return try ResponseParser()
+            .success(code: .ok)
+            .parse(code: response.statusCode, data: nil)
+    }
+
+    func getSSOCode() async throws -> UUID? {
+        let path = "/sso/settings"
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .withAcceptType(.json)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+        let payload = try ResponseParser()
+            .success(code: .ok, type: SSOSettingsResponseV0.self)
+            .parse(code: response.statusCode, data: data)
+
+        return payload.defaultSSOCode
+    }
+
+    func requestVerificationCode(for email: String) async throws {
+        let path = "\(pathPrefix)/verification-code/send"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            RequestVerificationCodeRequestBodyV0(
+                action: "login",
+                email: email
+            )
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+        return try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
+            .parse(code: response.statusCode, data: data)
+    }
+}
+
+// MARK: Encodables
+
+private struct RequestVerificationCodeRequestBodyV0: Encodable {
+    var action: String
+    var email: String
 }

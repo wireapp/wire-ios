@@ -76,8 +76,6 @@ public class GroupSteps extends IOSSteps {
 
   @When("I accept connection request from (.*)")
   public void iAcceptConnectionRequestFrom(String name) {
-    name = context.getUsersManager().replaceAliasesOccurrences(name, ClientUsersManager.FindBy.NAME_ALIAS);
-
     getConversationListPage().openConnectionRequest();
     getSinglePendingUserIncomingConnectionProfilePage().tapConnect();
   }

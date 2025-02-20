@@ -99,6 +99,9 @@
       location = "group:Gemfile.lock">
    </FileRef>
    <FileRef
+      location = "group:WireCoreCrypto">
+   </FileRef>
+   <FileRef
       location = "group:setup.sh">
    </FileRef>
    <Group
@@ -175,6 +178,9 @@
    </FileRef>
    <FileRef
       location = "group:wire-ios-mocktransport/WireMockTransport.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-protos/WireProtos.xcodeproj">

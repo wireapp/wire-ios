@@ -17,55 +17,99 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireReusableUIComponents
 
-public protocol DetermineAuthMethodBuilder {
+package protocol DetermineAuthMethodBuilder {
 
     @MainActor var determineAuthMethodView: DetermineAuthMethodView { get }
 
 }
 
-public struct DetermineAuthMethodView: View {
+package struct DetermineAuthMethodView: View {
 
-    @ObservedObject var viewModel: DetermineAuthMethodViewModel
+    @StateObject var viewModel: DetermineAuthMethodViewModel
 
     let builder: any LoginViaEmailBuilder
 
-    @State private var emailOrSSOCode = ""
-
-    public init(
+    package init(
         viewModel: DetermineAuthMethodViewModel,
         builder: any LoginViaEmailBuilder
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.builder = builder
     }
 
-    public var body: some View {
-        VStack(spacing: 20) {
-            Text("Wire").font(.largeTitle)
-            Text("Enter your email to start")
+    package var body: some View {
+        ScrollView {
+            VStack(alignment: .center, spacing: 16) {
+                HStack {
+                    Spacer()
+                        .frame(maxWidth: .infinity)
+                    Logo()
+                        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                        .frame(width: 164, height: 95)
+                    Spacer()
+                        .frame(maxWidth: .infinity)
+                }
 
-            TextField("Email or SSO Code", text: $emailOrSSOCode)
-                .textFieldStyle(.roundedBorder)
+                Text(L10n.Authentication.Identity.Input.body)
+                    .multilineTextAlignment(.leading)
+                    .wireTextStyle(.body1)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.trailing)
 
-            Button("Next") {
-                viewModel.submitEmailOrSSOCode(emailOrSSOCode)
-            }
-            .disabled(!viewModel.isValidEmailOrSSOCode(emailOrSSOCode))
+                VStack(alignment: .leading, spacing: 8) {
+                    LabeledTextField(
+                        isMandatory: false,
+                        placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
+                        title: L10n.Authentication.Identity.Input.Field.title,
+                        string: $viewModel.emailOrSSOCode
+                    )
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
 
-            Text("By pressing on “Next”, you accept Wire’s Terms and Conditions")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                Button(action: {
+                    Task {
+                        await viewModel.submitEmailOrSSOCode()
+                    }
+                }, label: {
+                    HStack {
+                        if viewModel.isLoading {
+                            ProgressView()
+                        }
+
+                        Text(L10n.Authentication.Identity.Input.submit)
+                            .lineLimit(nil)
+                    }
+                })
+                .wireButtonStyle(.primary)
+                .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
+            }.padding()
         }
-        .padding()
+        .alert(item: $viewModel.alert) { alert in
+            Alert(
+                title: titleForAlert(alert),
+                message: messageForAlert(alert),
+                dismissButton: .default(
+                    Text(L10n.Authentication.Error.confirm),
+                    action: { viewModel.didDismissAlert(alert: alert) }
+                )
+            )
+        }
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
-                builder.loginViaEmailView(email: email)
+                builder.loginViaEmailView(email: email, canCreateAccount: false)
             case .loginOrRegister:
                 Color.red
             }
         }
+        .presentationDetents([.medium, .large])
+        .interactiveDismissDisabled()
+        .presentationDragIndicator(.hidden)
     }
 
     enum Destination: Hashable {
@@ -75,8 +119,56 @@ public struct DetermineAuthMethodView: View {
 
     }
 
+    // MARK: - Private helpers
+
+    private func titleForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
+        switch alert {
+        case .noInternet:
+            Text(L10n.Authentication.Error.Title.noInternet)
+        case .invalidResponse:
+            Text(L10n.Authentication.Error.Title.general)
+        case .unknownError:
+            Text(L10n.Authentication.Error.Title.general)
+        case .onPremLoginNotPossible:
+            Text(L10n.Authentication.Error.Title.onPremNotPossible)
+        }
+    }
+
+    private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
+        switch alert {
+        case .noInternet:
+            Text(L10n.Authentication.Error.Message.noInternet)
+        case .invalidResponse:
+            Text(L10n.Authentication.Error.Message.general)
+        case .unknownError:
+            Text(L10n.Authentication.Error.Message.general)
+        case .onPremLoginNotPossible:
+            Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
+        }
+    }
+
+}
+
+@MainActor
+package func makeDetermineAuthMethodViewPreview(
+    emailOrSSOCode: String = "",
+    isLoading: Bool = false,
+    alert: DetermineAuthMethodViewModel.Alert? = nil
+) -> some View {
+    MockDependencies().makeDetermineAuthMethodView(
+        emailOrSSOCode: emailOrSSOCode,
+        isLoading: isLoading,
+        alert: alert
+    )
 }
 
 #Preview {
-    MockDependencies().determineAuthMethodView
+    BackgroundView()
+        .sheet(isPresented: .constant(true)) {
+            makeDetermineAuthMethodViewPreview(
+                emailOrSSOCode: "user@wire.com",
+                isLoading: false,
+                alert: .unknownError
+            )
+        }
 }

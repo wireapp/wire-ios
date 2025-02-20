@@ -114,6 +114,7 @@ public class ConversationsListPage extends IOSPage {
     }
 
     public void openConnectionRequest() {
+        waitUntilElementClickable(pendingRequest);
         pendingRequest.click();
     }
 

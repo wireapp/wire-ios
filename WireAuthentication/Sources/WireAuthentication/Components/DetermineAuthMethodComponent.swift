@@ -18,6 +18,7 @@
 
 import NeedleFoundation
 import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
@@ -25,18 +26,29 @@ internal import WireAuthenticationLogic
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    var defaultBackendEnvironment: BackendEnvironment { get }
+    var defaultAPIVersion: APIVersion { get }
+    var minTLSVersion: TLSVersion { get }
 
 }
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency>, DetermineAuthMethodBuilder {
 
+    private var validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase {
+        ValidateEmailOrSSOCodeUseCase()
+    }
+
     private var determineAuthMethodUseCase: some DetermineAuthMethodUseCaseProtocol {
-        DetermineAuthMethodUseCase()
+        DetermineAuthMethodUseCase(
+            validateEmailOrSSOCode: validateEmailOrSSOCode,
+            authenticationAPI: authenticationAPI
+        )
     }
 
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: dependency.router,
+            validateEmailOrSSOCode: validateEmailOrSSOCode,
             determineAuthMethod: determineAuthMethodUseCase
         )
     }
@@ -46,6 +58,15 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             viewModel: viewModel,
             builder: loginViaEmailComponent
         )
+    }
+
+    public var authenticationAPI: AuthenticationAPI {
+        AuthenticationAPIBuilder(
+            networkService: NetworkService.make(
+                backendEnvironment: dependency.defaultBackendEnvironment,
+                minTLSVersion: dependency.minTLSVersion
+            )
+        ).makeAPI(for: dependency.defaultAPIVersion)
     }
 
     // MARK: - Children

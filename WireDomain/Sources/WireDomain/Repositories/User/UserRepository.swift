@@ -29,7 +29,7 @@ public final class UserRepository: UserRepositoryProtocol {
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
     private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
-    private let conversationRepository: any ConversationRepositoryProtocol
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let userLocalStore: any UserLocalStoreProtocol
 
     private let pullSelfUserSync: PullSelfUserSync
@@ -41,13 +41,13 @@ public final class UserRepository: UserRepositoryProtocol {
         usersAPI: any UsersAPI,
         selfUserAPI: any SelfUserAPI,
         conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
-        conversationRepository: ConversationRepositoryProtocol,
+        conversationLocalStore: ConversationLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol
     ) {
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
         self.conversationLabelsRepository = conversationLabelsRepository
-        self.conversationRepository = conversationRepository
+        self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
         self.pullSelfUserSync = PullSelfUserSync(
             api: selfUserAPI,
@@ -197,10 +197,10 @@ public final class UserRepository: UserRepositoryProtocol {
         } else {
             await userLocalStore.markAccountAsDeleted(for: user)
 
-            try await conversationRepository.removeParticipantFromAllGroupConversations(
+            try await conversationLocalStore.removeParticipantFromAllGroupConversations(
                 participantID: id,
                 participantDomain: domain,
-                removedAt: date
+                date: date
             )
         }
     }

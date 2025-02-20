@@ -16,44 +16,68 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
+import UIKit
 import WireAuthenticationAPI
+import WireReusableUIComponents
 
 @MainActor
-public final class LoginViaEmailViewModel: ObservableObject {
+package final class LoginViaEmailViewModel: ObservableObject {
 
-    let router: any Router
-    let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
+    private let router: any Router
+    private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
+    private let forgotPasswordURL: URL
+    private let passwordValidator: any PasswordValidator
 
     let email: String
+    let canCreateAccount: Bool
 
-    public init(
+    // MARK: - Life cycle
+
+    package init(
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
-        email: String
+        email: String,
+        accountsURL: URL,
+        passwordValidator: any PasswordValidator,
+        canCreateAccount: Bool
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.email = email
+        self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
+        self.passwordValidator = passwordValidator
+        self.canCreateAccount = canCreateAccount
+    }
+
+    var localizedPasswordRules: String? {
+        passwordValidator.localizedRulesDescription
     }
 
     func isValidPassword(_ password: String) -> Bool {
-        !password.isEmpty
+        passwordValidator.validate(password)
     }
 
     func submitPassword(_ password: String) {
-        Task {
+        Task.detached {
             do {
-                try await loginViaEmailUseCase.invoke(
-                    email: email,
-                    password: password
+                // TODO: [WPB-15924] Handle happy path
+                _ = try await self.loginViaEmailUseCase.invoke(
+                    email: self.email,
+                    password: password,
+                    verificationCode: ""
                 )
             } catch {
+                // TODO: [WPB-15924] Error handling
                 print("error: \(error)")
             }
         }
     }
+
+    func recoverPassword() {
+        UIApplication.shared.open(forgotPasswordURL)
+    }
+
+    func createAccount() {}
 
 }

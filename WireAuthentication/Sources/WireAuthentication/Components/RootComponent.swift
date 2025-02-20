@@ -18,15 +18,34 @@
 
 import NeedleFoundation
 import SwiftUI
+import WireAPI
+import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
 
 class RootComponent: BootstrapComponent {
 
     public let bridge: WireAuthenticationBridge
+    public let defaultBackendEnvironment: BackendEnvironment
+    public let defaultAPIVersion: APIVersion
+    public let minTLSVersion: TLSVersion
+    public let accountsURL: URL
+    public let passwordValidator: any PasswordValidator
 
-    init(bridge: WireAuthenticationBridge) {
+    init(
+        bridge: WireAuthenticationBridge,
+        defaultBackendEnvironment: BackendEnvironment,
+        defaultAPIVersion: APIVersion,
+        minTLSVersion: TLSVersion,
+        accountsURL: URL,
+        passwordValidator: any PasswordValidator
+    ) {
         self.bridge = bridge
+        self.defaultBackendEnvironment = defaultBackendEnvironment
+        self.defaultAPIVersion = defaultAPIVersion
+        self.minTLSVersion = minTLSVersion
+        self.accountsURL = accountsURL
+        self.passwordValidator = passwordValidator
     }
 
     @MainActor public var router: any Router {
@@ -34,7 +53,7 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor private var rootViewModel: RootViewModel {
-        RootViewModel()
+        shared { RootViewModel() }
     }
 
     @MainActor var rootView: some View {

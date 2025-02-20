@@ -22,39 +22,111 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class DetermineAuthMethodViewModel: ObservableObject {
+package final class DetermineAuthMethodViewModel: ObservableObject {
 
-    let router: any Router
-    let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+    package enum Alert: Hashable, Identifiable {
+        package var id: Self { self }
 
-    public init(
+        case noInternet
+        case invalidResponse
+        case unknownError
+        case onPremLoginNotPossible(recovery: AuthenticationMethod)
+    }
+
+    private let router: any Router
+    private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
+    private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+
+    @Published var emailOrSSOCode: String = ""
+    @Published private(set) var isLoading = false
+    @Published var alert: Alert?
+
+    var isNextButtonEnabled: Bool {
+        !isValidEmailOrSSOCode()
+    }
+
+    package init(
         router: any Router,
-        determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+        validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
+        determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
+        emailOrSSOCode: String = "",
+        isLoading: Bool = false,
+        alert: Alert? = nil
     ) {
         self.router = router
+        self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.determineAuthMethod = determineAuthMethod
+        self.emailOrSSOCode = emailOrSSOCode
+        self.isLoading = isLoading
+        self.alert = alert
     }
 
-    func isValidEmailOrSSOCode(_ emailOrSSOCode: String) -> Bool {
-        !emailOrSSOCode.isEmpty
-    }
+    func submitEmailOrSSOCode() async {
+        isLoading = true
 
-    func submitEmailOrSSOCode(_ emailOrSSOCode: String) {
-        Task { [router] in
-            let method = await self.determineAuthMethod.invoke(
-                emailOrSSOCode: emailOrSSOCode
-            )
-
-            switch method {
-            case let .login(email):
-                router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
-
-            case let .loginOrRegister(email):
-                router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
-
-            default:
+        do {
+            let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
+            handleAuthenticationMethod(method)
+        } catch {
+            switch error {
+            case .invalidEmailOrSSOCode:
+                // No need to do anything here. In general this shouldn't happen. It is probably worth restructuring
+                // things a little to make this error impossible to happen.
                 break
+            case let .onPremNotPossible(recovery):
+                alert = .onPremLoginNotPossible(recovery: recovery)
+            case .invalidResponse:
+                alert = .invalidResponse
+            case let .urlError(urlError):
+                switch urlError.code {
+                case .notConnectedToInternet, .networkConnectionLost:
+                    alert = .noInternet
+                default:
+                    alert = .unknownError
+                }
+            case .unknown:
+                alert = .unknownError
             }
+        }
+
+        isLoading = false
+    }
+
+    func didDismissAlert(alert: Alert) {
+        switch alert {
+        case let .onPremLoginNotPossible(method):
+            handleAuthenticationMethod(method)
+        default:
+            break
+        }
+    }
+
+    // MARK: - Private
+
+    private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
+        switch method {
+        case let .loginViaEmail(email):
+            router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
+
+        case let .loginOrRegisterViaEmail(email):
+            router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
+
+        case let .loginViaSSO(code):
+            // TODO: [WPB-15943] Handle login via SSO
+            break
+
+        case let .onPremLogin(email, backendConfig):
+            // TODO: [WPB-15944] Handle on-prem login
+            break
+        }
+    }
+
+    private func isValidEmailOrSSOCode() -> Bool {
+        do {
+            _ = try validateEmailOrSSOCode.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
+            return true
+        } catch {
+            return false
         }
     }
 
