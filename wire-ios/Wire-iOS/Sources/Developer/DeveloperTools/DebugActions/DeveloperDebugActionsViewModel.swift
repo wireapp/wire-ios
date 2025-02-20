@@ -43,7 +43,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         buttons = [
             .init(title: "Send debug logs", action: sendDebugLogs),
             .init(title: "Trigger incremental sync", action: triggerIncrementalSync),
-            .init(title: "Trigger resource sync", action: triggerResourceSync),
+            .init(title: "Trigger resources sync", action: triggerResourcesSync),
             .init(title: "Break next incremental sync", action: breakNextIncrementalSync),
             .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
@@ -91,8 +91,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     // MARK: Resync resources
 
-    private func triggerResourceSync() {
-        userSession?.triggerResourceSync()
+    private func triggerResourcesSync() {
+        userSession?.triggerResourcesSync()
     }
 
     // MARK: Proteus to MLS migration

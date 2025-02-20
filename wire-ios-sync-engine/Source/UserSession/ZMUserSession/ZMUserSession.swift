@@ -805,7 +805,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    public func triggerResourceSync() {
+    public func triggerResourcesSync() {
         WaitingGroupTask(context: syncContext) { [syncAgent] in
             do {
                 try await syncAgent?.performResourceSync()

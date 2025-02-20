@@ -147,7 +147,7 @@ enum DebugActions {
 
     static func triggerResyncResources() {
         ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
-            ZMUserSession.shared()?.triggerResourceSync()
+            ZMUserSession.shared()?.triggerResourcesSync()
         }
     }
 

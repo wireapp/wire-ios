@@ -1075,7 +1075,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             if context.readMigrationNeedsSlowSyncFlag() {
                 userSession.triggerInitialSync()
             } else if context.readMigrationNeedsSyncResourcesFlag() {
-                userSession.triggerResourceSync()
+                userSession.triggerResourcesSync()
             }
         }
     }
