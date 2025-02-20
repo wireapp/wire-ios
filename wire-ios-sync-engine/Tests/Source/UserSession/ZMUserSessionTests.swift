@@ -122,21 +122,17 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
     }
 
-    func testItSlowSyncsAfterRegisteringClient() throws {
+    func testItSlowSyncsAfterRegisteringClient() async throws {
         // GIVEN
-        let userClient = syncMOC.performAndWait {
+        let userClient = await syncMOC.perform {
             self.createSelfClient()
         }
 
         // WHEN
-        syncMOC.performGroupedBlock { [self] in
-            sut.didRegisterSelfUserClient(userClient)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        await sut.didRegisterSelfUserClient(userClient)
 
         // THEN
-        try syncMOC.performAndWait {
+        try await syncMOC.perform {
             let syncStatus = try XCTUnwrap(self.sut.syncStatus as? SyncStatus)
             XCTAssertTrue(syncStatus.isSlowSyncing)
         }

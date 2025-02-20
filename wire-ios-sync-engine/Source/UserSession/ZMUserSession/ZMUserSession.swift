@@ -1267,33 +1267,48 @@ extension ZMUserSession: SyncAgentDelegate {
 extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
-        // If during registration user allowed notifications,
-        // The push token can only be registered after client registration
-        transportSession.pushChannel.clientID = userClient.remoteIdentifier
-        registerCurrentPushToken()
-        renewAccessTokenIfNeeded(for: userClient)
+        Task {
+            await didRegisterSelfUserClient(userClient)
+        }
+    }
 
-        WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)
+    func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) async {
+        let selfClientID: String? = await syncContext.perform { [weak self] in
+            guard let self else { return nil }
+            // If during registration user allowed notifications,
+            // The push token can only be registered after client registration
+            transportSession.pushChannel.clientID = userClient.remoteIdentifier
+            registerCurrentPushToken()
+            renewAccessTokenIfNeeded(for: userClient)
 
-        managedObjectContext.performGroupedBlock { [weak self] in
-            guard
-                let context = self?.managedObjectContext,
-                let accountId = ZMUser.selfUser(in: context).remoteIdentifier
-            else {
-                return
+            WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)
+
+            managedObjectContext.performGroupedBlock { [weak self] in
+                guard
+                    let context = self?.managedObjectContext,
+                    let accountId = ZMUser.selfUser(in: context).remoteIdentifier
+                else {
+                    return
+                }
+
+                self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
             }
 
-            self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
-        }
+            let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
+            WireLogger.authentication.addTag(.selfClientId, value: clientId)
 
-        let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
-        WireLogger.authentication.addTag(.selfClientId, value: clientId)
+            return userClient.remoteIdentifier
+        }
 
         // The client was just registered and still needs to perform the
         // initial sync.
-        if let selfClientID = userClient.remoteIdentifier {
+        if let selfClientID {
             setUpSyncAgent(clientID: selfClientID)
-            triggerInitialSync()
+            do {
+                try await syncAgent?.performInitialSync()
+            } catch {
+                WireLogger.sync.error("failed to perform initial sync after client registration: \(String(describing: error))")
+            }
         }
     }
 
