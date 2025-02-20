@@ -33,7 +33,7 @@ final class SyncAgent: NSObject {
     private let initialSyncBuilder: any InitialSyncBuilderProtocol
     private let legacySyncStatus: any SyncStatusProtocol
 
-    var hasPerformedInitialSync: Bool {
+    private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
     }
 
@@ -58,7 +58,7 @@ final class SyncAgent: NSObject {
     /// otherwise the incremental sync will be performed.
 
     func performSyncIfNeeded() async throws {
-        if !hasPerformedInitialSync {
+        if !hasCompletedInitialSync {
             try await performInitialSync()
         } else {
             try await performIncrementalSync()
