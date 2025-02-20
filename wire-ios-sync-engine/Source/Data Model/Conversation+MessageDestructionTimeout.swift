@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 private let log = ZMSLog(tag: "ConversationMessageDestructionTimeout")
 
@@ -97,7 +98,10 @@ private enum MessageDestructionTimeoutRequestFactory {
         if apiVersion < .v8 {
             path = "/conversations/\(identifier)/message-timer"
         } else {
-            guard let domain = conversation.domain else { fatal("conversation has no domain") } // TODO: unit test?
+            if conversation.domain == nil {
+                WireLogger.conversation.warn("MessageDestructionTimeoutRequestFactory: conversation.domain == nil")
+            }
+            let domain = conversation.domain ?? BackendInfo.domain ?? "None"
             path = "/conversations/\(domain)/\(identifier)/message-timer"
         }
 

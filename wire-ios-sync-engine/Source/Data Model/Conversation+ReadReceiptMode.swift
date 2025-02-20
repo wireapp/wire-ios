@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public enum ReadReceiptModeError: Error {
     case invalidOperation
@@ -51,8 +52,11 @@ public extension ZMConversation {
 
         let path: String
         if apiVersion >= .v8 {
-            guard let domain else { return completion(.failure(ReadReceiptModeError.noConversation)) }
-            path = "/conversations/\(domain)/\(conversationId)/receipt-mode" // TODO: unit test?
+            if domain == nil {
+                WireLogger.conversation.warn("ZMConversation.setEnableReadReceipts: conversation.domain == nil")
+            }
+            let domain = domain ?? BackendInfo.domain ?? "None"
+            path = "/conversations/\(domain)/\(conversationId)/receipt-mode"
         } else {
             path = "/conversations/\(conversationId)/receipt-mode"
         }
