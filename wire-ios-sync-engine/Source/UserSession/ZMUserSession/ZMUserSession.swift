@@ -796,7 +796,7 @@ public final class ZMUserSession: NSObject {
     // MARK: - Trigger syncing
 
     public func triggerInitialSync() {
-        Task {
+        WaitingGroupTask(context: syncContext) { [syncAgent] in
             do {
                 try await syncAgent?.performInitialSync()
             } catch {
@@ -806,7 +806,7 @@ public final class ZMUserSession: NSObject {
     }
 
     public func triggerResourceSync() {
-        Task {
+        WaitingGroupTask(context: syncContext) { [syncAgent] in
             do {
                 try await syncAgent?.performResourceSync()
             } catch {
@@ -816,7 +816,7 @@ public final class ZMUserSession: NSObject {
     }
 
     public func triggerIncrementalSync() {
-        Task {
+        WaitingGroupTask(context: syncContext) { [syncAgent] in
             do {
                 try await syncAgent?.performIncrementalSync()
             } catch {
@@ -1005,7 +1005,7 @@ extension ZMUserSession: SyncAgentDelegate {
         didFinishIncrementalSync()
     }
 
-    private func didStartInitialSync() {
+    func didStartInitialSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.notificationDispatcher.isEnabled = false
@@ -1013,7 +1013,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    private func didFinishInitialSync() {
+    func didFinishInitialSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
 
@@ -1055,7 +1055,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didFinishIncrementalSync() {
-        syncContext.perform { [weak self] in
+        syncContext.performGroupedBlock { [weak self] in
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync")
             processEvents()
