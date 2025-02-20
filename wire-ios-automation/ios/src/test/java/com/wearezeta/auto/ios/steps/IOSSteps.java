@@ -7,6 +7,7 @@ import com.wearezeta.auto.ios.pages.details_overlay.group.GroupConnectedParticip
 import com.wearezeta.auto.ios.pages.details_overlay.group.GroupDetailsPage;
 import com.wearezeta.auto.ios.pages.details_overlay.group.GuestOptionsPage;
 import com.wearezeta.auto.ios.pages.details_overlay.single.SinglePendingUserIncomingConnectionProfilePage;
+import com.wearezeta.auto.ios.pages.external_app.FileChooseDialogPage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.AddPeoplePage;
 import com.wearezeta.auto.ios.pages.linear_groupcreation.NewGroupPage;
 import com.wearezeta.auto.ios.pages.webview.WebViewPage;
@@ -18,6 +19,10 @@ public class IOSSteps {
     this.context = context;
   }
 
+  IOSPage getCommonPage() {
+    return context.getPagesCollection().getPage(IOSPage.class);
+  }
+
   NewGroupPage getNewGroupPage() {
     return context.getPagesCollection().getPage(NewGroupPage.class);
   }
@@ -27,8 +32,16 @@ public class IOSSteps {
         .getPage(SearchUIPage.class);
   }
 
+  FileChooseDialogPage getFileChooseDialogPage() {
+    return context.getPagesCollection().getPage(FileChooseDialogPage.class);
+  }
+
   GroupAddPeoplePage getGroupAddPeoplePage() {
     return context.getPagesCollection().getPage(GroupAddPeoplePage.class);
+  }
+
+  SettingsPage getSettingsPage() {
+    return context.getPagesCollection().getPage(SettingsPage.class);
   }
 
   GroupConnectedParticipantProfilePage getGroupParticipantProfilePage() {
@@ -73,5 +86,13 @@ public class IOSSteps {
 
   WebViewPage getWebView() {
     return context.getPagesCollection().getPage(WebViewPage.class);
+  }
+
+  protected BackupRestorePage getBackupRestorePage() {
+    return context.getPagesCollection().getPage(BackupRestorePage.class);
+  }
+
+  protected BackupPasswordOverlayPage getBackupPasswordOverlayPage() {
+    return context.getPagesCollection().getPage(BackupPasswordOverlayPage.class);
   }
 }
