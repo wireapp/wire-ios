@@ -124,7 +124,18 @@ extension MockDependencies: LoginViaEmailBuilder {
 
     func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
+            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
+            verificationCodeBuilder: self
+        )
+    }
+
+}
+
+extension MockDependencies: VerificationCodeBuilder {
+
+    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
+        VerificationCodeView(
+            viewModel: VerificationCodeViewModel(email: email, password: password)
         )
     }
 

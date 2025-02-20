@@ -16,34 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
-import Foundation
+import NeedleFoundation
 import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
+internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
-@MainActor
-public final class VerificationCodeViewModel: ObservableObject {
+protocol VerificationCodeComponentDependency: Dependency {}
 
-    @Published var code: [String]
-    let email: String
-    let password: String
+class VerificationCodeComponent: Component<VerificationCodeComponentDependency>, VerificationCodeBuilder {
 
-    package init(
-        email: String,
-        password: String,
-        code: [String] = ["", "", "", "", "", ""]
-    ) {
-        self.email = email
-        self.password = password
-        self.code = code
-    }
-
-    func confirm() async {
-        // TODO: Implement - not part of a current ticket
-    }
-
-    func resend() async {
-        // TODO: [WPB-15950] Implement
+    @MainActor
+    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
+        VerificationCodeView(
+            viewModel: VerificationCodeViewModel(
+                email: email,
+                password: password
+            )
+        )
     }
 
 }

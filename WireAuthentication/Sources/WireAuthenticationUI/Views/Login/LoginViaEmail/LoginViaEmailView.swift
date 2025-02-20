@@ -36,10 +36,14 @@ package struct LoginViaEmailView: View {
     @State private var password: String = ""
     @State private var showPasswordRules: Bool = false
 
+    let verificationCodeBuilder: any VerificationCodeBuilder
+
     package init(
-        viewModel: LoginViaEmailViewModel
+        viewModel: LoginViaEmailViewModel,
+        verificationCodeBuilder: any VerificationCodeBuilder
     ) {
         self.viewModel = viewModel
+        self.verificationCodeBuilder = verificationCodeBuilder
     }
 
     package var body: some View {
@@ -66,7 +70,7 @@ package struct LoginViaEmailView: View {
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
             case let .verifyLogin(email, password):
-                Color.red
+                verificationCodeBuilder.verificationCodeView(email: email, password: password)
             }
         }
         .presentationDetents([.medium, .large])

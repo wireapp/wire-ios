@@ -19,6 +19,16 @@
 import SwiftUI
 import WireDesign
 
+package protocol VerificationCodeBuilder {
+
+    @MainActor
+    func verificationCodeView(
+        email: String,
+        password: String
+    ) -> VerificationCodeView
+
+}
+
 package struct VerificationCodeView: View {
 
     // MARK: - Constants

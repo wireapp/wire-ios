@@ -54,8 +54,15 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, Login
     @MainActor
     func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
+            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
+            verificationCodeBuilder: verificationCodeComponent
         )
+    }
+
+    // MARK: - Children
+
+    var verificationCodeComponent: VerificationCodeComponent {
+        VerificationCodeComponent(parent: self)
     }
 
 }
