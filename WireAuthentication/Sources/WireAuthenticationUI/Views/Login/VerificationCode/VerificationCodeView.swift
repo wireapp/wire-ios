@@ -47,7 +47,7 @@ package struct VerificationCodeView: View {
                 .foregroundStyle(Color.primaryText)
                 .multilineTextAlignment(.center)
 
-            Text(L10n.VerificationCode.message(viewModel.recipient))
+            Text(L10n.VerificationCode.message(viewModel.email))
                 .wireTextStyle(.body1)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
@@ -130,14 +130,18 @@ package struct VerificationCodeView: View {
 
 #Preview("Empty code") {
     VerificationCodeView(
-        viewModel: VerificationCodeViewModel(recipient: "name.name@mail.com")
+        viewModel: VerificationCodeViewModel(
+            email: "name.name@mail.com",
+            password: "pasword"
+        )
     )
 }
 
 #Preview("Not empty code") {
     VerificationCodeView(
         viewModel: VerificationCodeViewModel(
-            recipient: "name.name@mail.com",
+            email: "name.name@mail.com",
+            password: "pasword",
             code: ["1", "2", "3", "4", "5", ""]
         )
     )
@@ -150,7 +154,10 @@ package struct VerificationCodeView: View {
                 Spacer()
                     .frame(maxHeight: .infinity)
                 VerificationCodeView(
-                    viewModel: VerificationCodeViewModel(recipient: "name.name@mail.com")
+                    viewModel: VerificationCodeViewModel(
+                        email: "name.name@mail.com",
+                        password: "pasword"
+                    )
                 )
             }
         }

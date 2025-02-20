@@ -25,13 +25,16 @@ import WireAuthenticationAPI
 public final class VerificationCodeViewModel: ObservableObject {
 
     @Published var code: [String]
-    let recipient: String
+    let email: String
+    let password: String
 
     init(
-        recipient: String,
+        email: String,
+        password: String,
         code: [String] = ["", "", "", "", "", ""]
     ) {
-        self.recipient = recipient
+        self.email = email
+        self.password = password
         self.code = code
     }
 
