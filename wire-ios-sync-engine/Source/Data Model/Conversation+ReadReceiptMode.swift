@@ -46,17 +46,20 @@ public extension ZMConversation {
             return completion(.failure(ReadReceiptModeError.unknown))
         }
         guard conversationType == .group else { return  completion(.failure(ReadReceiptModeError.invalidOperation)) }
-        guard var conversationId = remoteIdentifier?.transportString()
+        guard let conversationId = remoteIdentifier?.transportString()
         else { return completion(.failure(ReadReceiptModeError.noConversation)) }
 
+        let path: String
         if apiVersion >= .v8 {
             guard let domain else { return completion(.failure(ReadReceiptModeError.noConversation)) }
-            conversationId = "\(domain)/\(conversationId)"
+            path = "/conversations/\(domain)/\(conversationId)/receipt-mode" // TODO: unit test?
+        } else {
+            path = "/conversations/\(conversationId)/receipt-mode"
         }
 
         let payload = ["receipt_mode": enabled ? 1 : 0] as ZMTransportData
         let request = ZMTransportRequest(
-            path: "/conversations/\(conversationId)/receipt-mode",
+            path: path,
             method: .put,
             payload: payload,
             apiVersion: apiVersion.rawValue
