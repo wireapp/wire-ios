@@ -14,7 +14,7 @@ import java.time.Duration;
 
 public class BackupPasswordOverlayPage extends IOSPage {
 
-  @iOSXCUITFindBy(iOSClassChain = "**/XCUIElementTypeSecureTextField[`value == \"Enter password\"`]")
+  @iOSXCUITFindBy(accessibility = "password input")
   private WebElement passwordInput;
 
   @iOSXCUITFindBy(accessibility = "Next")
