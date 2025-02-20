@@ -17,8 +17,10 @@
 //
 
 import XCTest
+
 @testable import WireRequestStrategy
 
+// TODO: extend (ciphersuite)
 class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
     CountSelfMLSKeyPackagesAction,
     CountSelfMLSKeyPackagesActionHandler
@@ -31,7 +33,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
 
     override func setUp() {
         super.setUp()
-        action = CountSelfMLSKeyPackagesAction(clientID: clientID)
+        action = CountSelfMLSKeyPackagesAction(clientID: clientID, ciphersuite: nil)
         handler = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
     }
 
@@ -58,7 +60,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
 
         // When the client ID is invalid
         test_itDoesntGenerateARequest(
-            action: CountSelfMLSKeyPackagesAction(clientID: ""),
+            action: CountSelfMLSKeyPackagesAction(clientID: "", ciphersuite: nil),
             apiVersion: .v5,
             expectedError: .invalidClientID
         )
