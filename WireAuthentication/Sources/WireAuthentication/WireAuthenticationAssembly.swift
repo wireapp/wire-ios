@@ -33,12 +33,16 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        authenticationAPI: AuthenticationAPI,
+        defaultBackendEnvironment: BackendEnvironment,
+        minTLSVersion: TLSVersion,
+        defaultAPIVersion: APIVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator
     ) -> some View {
         RootComponent(
-            authenticationAPI: authenticationAPI,
+            defaultBackendEnvironment: defaultBackendEnvironment,
+            defaultAPIVersion: defaultAPIVersion,
+            minTLSVersion: minTLSVersion,
             accountsURL: accountsURL, // this is temp
             passwordValidator: passwordValidator
         ).rootView

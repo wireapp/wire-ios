@@ -89,6 +89,12 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    func testGetSSOCode() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.getSSOCode()
+        }
+    }
+
     func testRequestVerificationCode_Request_Generation_V0_Onwards() async throws {
         // Given
         let apiVersions = APIVersion.v0.andNextVersions
@@ -245,6 +251,22 @@ final class AuthenticationAPITests: XCTestCase {
                 verificationCode: nil,
                 label: nil
             )
+        }
+    }
+
+    func testValidateLoginToken_Response_Handling_InvalidSSOCode() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.notFound, "")
+        ])
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+        let ssoCode = UUID()
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.SSOLoginError.invalidSSOCode) {
+            // When
+            try await sut.validateLoginToken(ssoCode: ssoCode)
         }
     }
 

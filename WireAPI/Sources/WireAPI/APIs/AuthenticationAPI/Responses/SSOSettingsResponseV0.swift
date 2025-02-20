@@ -16,13 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-@main
-struct WireAuthenticationApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView(configuration: .live)
-        }
+struct SSOSettingsResponseV0: Decodable, ToAPIModelConvertible {
+
+    let defaultSSOCode: UUID?
+
+    private enum CodingKeys: String, CodingKey {
+        case defaultSSOCode = "default_sso_code"
     }
+
+    func toAPIModel() -> SSOSettings {
+        .init(defaultSSOCode: defaultSSOCode)
+    }
+
 }
