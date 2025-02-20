@@ -16,13 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-@main
-struct WireAuthenticationApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView(configuration: .live)
-        }
-    }
+public protocol RequestLoginVerificationCodeUseCaseProtocol: Sendable {
+
+    func invoke(
+        email: String
+    ) async throws(RequestLoginVerificationCodeUseCaseFailure)
+
+}
+
+public enum RequestLoginVerificationCodeUseCaseFailure: Error {
+
+    case invalidEmail
+    case unexpected(any Error)
+
 }
