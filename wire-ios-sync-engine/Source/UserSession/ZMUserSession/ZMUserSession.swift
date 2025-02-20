@@ -1307,7 +1307,9 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             do {
                 try await syncAgent?.performInitialSync()
             } catch {
-                WireLogger.sync.error("failed to perform initial sync after client registration: \(String(describing: error))")
+                WireLogger.sync.error(
+                    "failed to perform initial sync after client registration: \(String(describing: error))"
+                )
             }
         }
     }
