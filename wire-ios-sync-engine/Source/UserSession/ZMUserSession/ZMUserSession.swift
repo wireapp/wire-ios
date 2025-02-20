@@ -796,7 +796,7 @@ public final class ZMUserSession: NSObject {
     // MARK: - Trigger syncing
 
     public func triggerInitialSync() {
-        WaitingGroupTask(context: syncContext) { [syncAgent] in
+        Task {
             do {
                 try await syncAgent?.performInitialSync()
             } catch {
@@ -806,7 +806,7 @@ public final class ZMUserSession: NSObject {
     }
 
     public func triggerResourcesSync() {
-        WaitingGroupTask(context: syncContext) { [syncAgent] in
+        Task {
             do {
                 try await syncAgent?.performResourceSync()
             } catch {
@@ -816,7 +816,7 @@ public final class ZMUserSession: NSObject {
     }
 
     public func triggerIncrementalSync() {
-        WaitingGroupTask(context: syncContext) { [syncAgent] in
+        Task {
             do {
                 try await syncAgent?.performIncrementalSync()
             } catch {
