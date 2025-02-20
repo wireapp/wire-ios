@@ -1727,15 +1727,22 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private var task: Task<Void, Never>?
+    private var lastExecutionTime = Date.distantPast
+    private let throttleInterval: TimeInterval = 2.0 // 2 seconds throttle
 
     public func commitPendingProposalsIfNeeded() {
+        let now = Date()
+        
+        guard now.timeIntervalSince(lastExecutionTime) > throttleInterval else {
+            return // Ignore call if within the throttle period
+        }
+
+        lastExecutionTime = now
+
         task?.cancel()
-
+        
         task = Task { [self] in
-            guard !Task.isCancelled else {
-                return
-            }
-
+            guard !Task.isCancelled else { return }
             await commitPendingProposals()
         }
     }
@@ -1753,6 +1760,7 @@ public final class MLSService: MLSServiceInterface {
 
         // Committing proposals for each group is independent and should not wait for
         // each other.
+        logger.info("TEST10: Entering task group")
         await withTaskGroup(of: Void.self) { taskGroup in
             for (groupID, timestamp) in groupsWithPendingCommits {
                 taskGroup.addTask { [self] in
@@ -1761,18 +1769,18 @@ public final class MLSService: MLSServiceInterface {
                             logger.info("commit scheduled in the past, committing...")
                             try await commitPendingProposals(in: groupID)
                         } else {
-                            logger.info("commit scheduled in the future, waiting...")
+                            logger.info("TEST10: commit scheduled in the future, waiting...")
 
                             let timeIntervalSinceNow = timestamp.timeIntervalSinceNow
                             if timeIntervalSinceNow > 0 {
                                 try await Task.sleep(nanoseconds: timeIntervalSinceNow.nanoseconds)
                             }
-                            logger.info("scheduled commit is ready, committing...")
+                            logger.info("TEST10: scheduled commit is ready, committing...")
                             try await commitPendingProposals(in: groupID)
                         }
 
                     } catch {
-                        logger.error("failed to commit pending proposals: \(String(describing: error))")
+                        logger.error("TEST10: failed to commit pending proposals: \(String(describing: error))")
                     }
                 }
             }
