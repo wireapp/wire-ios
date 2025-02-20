@@ -60,7 +60,7 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
                 userInfoParser?.upgradeToAuthenticatedSession(with: $0)
             }
             registrationStatus.success()
-        } else { // TODO: handle new errors? 400: "invalid-domain" and 403: "condition-failed"
+        } else {
             let error = NSError.blacklistedEmail(with: response) ??
                 NSError.invalidActivationCode(with: response) ??
                 NSError.emailAddressInUse(with: response) ??
