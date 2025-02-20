@@ -26,13 +26,13 @@ public protocol InitialSyncBuilderProtocol {
     // due to `any InitialSyncProtocol?`
     typealias Sync = any InitialSyncProtocol
 
-    func build() throws -> Sync
+    func buildInitialSync() throws -> Sync
 
 }
 
 extension ClientSessionComponent: InitialSyncBuilderProtocol {
 
-    public func build() throws -> any InitialSyncProtocol {
+    public func buildInitialSync() throws -> any InitialSyncProtocol {
         initialSync
     }
 

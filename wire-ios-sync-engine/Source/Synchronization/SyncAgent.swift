@@ -72,7 +72,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new initial sync")
-                try await initialSyncBuilder.build().perform(skipPullingLastUpdateEventID: false)
+                try await initialSyncBuilder.buildInitialSync().perform(skipPullingLastUpdateEventID: false)
                 WireLogger.sync.debug("did finish new initial sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
@@ -94,7 +94,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new resource sync")
-                try await initialSyncBuilder.build().perform(skipPullingLastUpdateEventID: true)
+                try await initialSyncBuilder.buildInitialSync().perform(skipPullingLastUpdateEventID: true)
                 WireLogger.sync.debug("did finish new resource sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
