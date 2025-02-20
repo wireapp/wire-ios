@@ -90,12 +90,15 @@ public extension ZMConversation {
 private enum MessageDestructionTimeoutRequestFactory {
 
     static func set(timeout: Int, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
-        guard var identifier = conversation.remoteIdentifier?.transportString()
+        guard let identifier = conversation.remoteIdentifier?.transportString()
         else { fatal("conversation inserted on backend") }
 
-        if apiVersion >= .v8 {
-            guard let domain = conversation.domain else { fatal("conversation has no domain") }
-            identifier = "\(domain)/\(identifier)" // TODO: unit test?
+        let path: String
+        if apiVersion < .v8 {
+            path = "/conversations/\(identifier)/message-timer"
+        } else {
+            guard let domain = conversation.domain else { fatal("conversation has no domain") } // TODO: unit test?
+            path = "/conversations/\(domain)/\(identifier)/message-timer"
         }
 
         let payload: [AnyHashable: Any?]
@@ -107,7 +110,7 @@ private enum MessageDestructionTimeoutRequestFactory {
             payload = ["message_timer": timeoutInMS]
         }
         return .init(
-            path: "/conversations/\(identifier)/message-timer",
+            path: path,
             method: .put,
             payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
