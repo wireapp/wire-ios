@@ -86,45 +86,32 @@ public final class ClientSessionComponent {
         authenticationManager: authenticationManager
     )
 
-    private lazy var backendInfoAPI: any BackendInfoAPI = {
-        BackendInfoAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var backendInfoAPI: any BackendInfoAPI = BackendInfoAPIBuilder(apiService: apiService)
+        .makeAPI(for: apiVersion)
 
-    private lazy var conversationsAPI: any ConversationsAPI = {
-        ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var conversationsAPI: any ConversationsAPI = ConversationsAPIBuilder(apiService: apiService)
+        .makeAPI(for: apiVersion)
 
-    private lazy var featureConfigsAPI: any FeatureConfigsAPI = {
-        FeatureConfigsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var featureConfigsAPI: any FeatureConfigsAPI = FeatureConfigsAPIBuilder(apiService: apiService)
+        .makeAPI(for: apiVersion)
 
-    private lazy var selfUserAPI: any SelfUserAPI = {
-        SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var selfUserAPI: any SelfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
 
-    private lazy var teamsAPI: any TeamsAPI = {
-        TeamsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var teamsAPI: any TeamsAPI = TeamsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
 
-    private lazy var updateEventsAPI: any UpdateEventsAPI = {
-        UpdateEventsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var updateEventsAPI: any UpdateEventsAPI = UpdateEventsAPIBuilder(apiService: apiService)
+        .makeAPI(for: apiVersion)
 
-    private lazy var userClientsAPI: any UserClientsAPI = {
-        UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var userClientsAPI: any UserClientsAPI = UserClientsAPIBuilder(apiService: apiService)
+        .makeAPI(for: apiVersion)
 
-    private lazy var userConnectionsAPI: any ConnectionsAPI = {
-        ConnectionsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var userConnectionsAPI: any ConnectionsAPI = ConnectionsAPIBuilder(apiService: apiService)
+        .makeAPI(for: apiVersion)
 
-    private lazy var usersAPI: any UsersAPI = {
-        UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var usersAPI: any UsersAPI = UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
 
-    private lazy var userPropertiesAPI: any UserPropertiesAPI = {
-        UserPropertiesAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-    }()
+    private lazy var userPropertiesAPI: any UserPropertiesAPI = UserPropertiesAPIBuilder(apiService: apiService)
+        .makeAPI(for: apiVersion)
 
     // MARK: - Local storage
 

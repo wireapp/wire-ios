@@ -215,8 +215,7 @@ struct ZMUserSessionBuilder {
 
         if
             let wireTransportAPIVersion = WireTransport.BackendInfo.apiVersion,
-            let apiVersion = WireAPI.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue))
-        {
+            let apiVersion = WireAPI.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue)) {
             self.apiVersion = apiVersion
         }
 
