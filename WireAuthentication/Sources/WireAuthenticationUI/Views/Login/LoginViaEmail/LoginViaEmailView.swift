@@ -183,6 +183,10 @@ package struct LoginViaEmailView: View {
             Text(L10n.Authentication.Error.Title.general)
         case .invalidCredentials:
             Text(L10n.Authentication.Error.Title.invalidCredentials)
+        case .accountPendingActivation:
+            Text(L10n.Authentication.Error.Title.accountPendingActivation)
+        case .accountSuspended:
+            Text(L10n.Authentication.Error.Title.accountSuspended)
         }
     }
 
@@ -194,6 +198,10 @@ package struct LoginViaEmailView: View {
             Text(L10n.Authentication.Error.Message.general)
         case .invalidCredentials:
             Text(L10n.Authentication.Error.Message.invalidCredentials)
+        case .accountPendingActivation:
+            Text(L10n.Authentication.Error.Message.accountPendingActivation)
+        case .accountSuspended:
+            Text(L10n.Authentication.Error.Message.accountSuspended)
         }
     }
 

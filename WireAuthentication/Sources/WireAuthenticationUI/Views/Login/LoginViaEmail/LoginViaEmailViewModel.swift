@@ -31,6 +31,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
         case noInternet
         case unknownError
         case invalidCredentials
+        case accountPendingActivation
+        case accountSuspended
     }
 
     @Published var password: String = "" {
@@ -98,9 +100,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 WireLogger.authentication.critical("Two factor authentication failed in LoginViaEmailViewModel")
                 alert = .unknownError
             case .accountPendingActivation:
-                break
+                alert = .accountPendingActivation
             case .accountSuspended:
-                break
+                alert = .accountSuspended
             case .noInternet:
                 alert = .noInternet
             case .other:
