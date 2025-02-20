@@ -78,7 +78,7 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
             .publisher(for: .didStopDecryptingEventsNotification)
             .receive(on: decryptionQueue)
             .sink { [weak self] _ in
-                self?.decryptionState = .inProgress
+                self?.decryptionState = .done
             }
             .store(in: &cancellables)
     }
