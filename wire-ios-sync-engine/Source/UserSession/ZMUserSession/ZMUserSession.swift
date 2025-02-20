@@ -1267,8 +1267,33 @@ extension ZMUserSession: SyncAgentDelegate {
 extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
-        Task {
-            await didRegisterSelfUserClient(userClient)
+        // If during registration user allowed notifications,
+        // The push token can only be registered after client registration
+        transportSession.pushChannel.clientID = userClient.remoteIdentifier
+        registerCurrentPushToken()
+        renewAccessTokenIfNeeded(for: userClient)
+
+        WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            guard
+                let context = self?.managedObjectContext,
+                let accountId = ZMUser.selfUser(in: context).remoteIdentifier
+            else {
+                return
+            }
+
+            self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
+        }
+
+        let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
+        WireLogger.authentication.addTag(.selfClientId, value: clientId)
+
+        // The client was just registered and still needs to perform the
+        // initial sync.
+        if let selfClientID = userClient.remoteIdentifier {
+            setUpSyncAgent(clientID: selfClientID)
+            triggerInitialSync()
         }
     }
 
