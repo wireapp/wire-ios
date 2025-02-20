@@ -35,6 +35,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         didSet { showPasswordRules = !isPasswordValid }
     }
     @Published private(set) var showPasswordRules = false
+    @Published private(set) var isLoading = false
     @Published var alert: Alert?
 
     private let router: any Router
@@ -72,8 +73,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func submitPassword() async {
-        let email = email
-        let password = password
+        isLoading = true
 
         do {
             // TODO: [WPB-15924] Handle happy path
@@ -103,6 +103,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .unknownError
             }
         }
+
+        isLoading = false
     }
 
     func recoverPassword() {

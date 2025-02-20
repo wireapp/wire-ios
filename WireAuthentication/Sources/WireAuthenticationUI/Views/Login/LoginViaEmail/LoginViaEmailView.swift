@@ -107,13 +107,19 @@ package struct LoginViaEmailView: View {
         Button(
             action: { Task.detached { await viewModel.submitPassword() } },
             label: {
-                Text(L10n.CloudUserLogin.submit)
-                    .lineLimit(nil)
+                HStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+
+                    Text(L10n.CloudUserLogin.submit)
+                        .lineLimit(nil)
+                }
             }
         )
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isPasswordValid)
+        .disabled(!viewModel.isPasswordValid || viewModel.isLoading)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
