@@ -52,6 +52,8 @@ struct ZMUserSessionBuilder {
     private var transportSession: (any TransportSessionType)?
     private var userId: UUID?
     private var syncAgent: SyncAgent?
+    private var minTLSVersion: WireAPI.TLSVersion?
+    private var apiVersion: WireAPI.APIVersion?
 
     // MARK: - Initialize
 
@@ -83,7 +85,10 @@ struct ZMUserSessionBuilder {
             let sharedUserDefaults,
             let transportSession,
             let userId,
-            let syncAgent
+            let syncAgent,
+            let wireAPIBackendEnvironment,
+            let minTLSVersion,
+            let apiVersion
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
@@ -111,7 +116,10 @@ struct ZMUserSessionBuilder {
             contextStorage: contextStorage,
             recurringActionService: recurringActionService,
             dependencies: dependencies,
-            syncAgent: syncAgent
+            syncAgent: syncAgent,
+            backendEnvironment: wireAPIBackendEnvironment,
+            minTLSVersion: minTLSVersion,
+            apiVersion: apiVersion
         )
     }
 
@@ -225,6 +233,13 @@ struct ZMUserSessionBuilder {
             dateProvider: .system
         )
 
+        if
+            let wireTransportAPIVersion = WireTransport.BackendInfo.apiVersion,
+            let apiVersion = WireAPI.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue))
+        {
+            self.apiVersion = apiVersion
+        }
+
         // setup builder
 
         self.apiServiceFactory = apiServiceFactory
@@ -250,6 +265,7 @@ struct ZMUserSessionBuilder {
         self.transportSession = transportSession
         self.userId = userId
         self.syncAgent = syncAgent
+        self.minTLSVersion = .minVersionFrom(minTLSVersion)
     }
 
     // MARK: UserSesssionDependencies

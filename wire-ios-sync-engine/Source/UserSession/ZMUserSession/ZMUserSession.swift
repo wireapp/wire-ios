@@ -81,8 +81,7 @@ public final class ZMUserSession: NSObject {
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
     private(set) var userId: UUID
-    private(set) lazy var proteusService: ProteusServiceInterface =
-        ProteusService(coreCryptoProvider: coreCryptoProvider)
+    let proteusService: ProteusServiceInterface
     private(set) var mlsService: MLSServiceInterface
     private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
@@ -375,6 +374,8 @@ public final class ZMUserSession: NSObject {
 
     var callStateObserverToken: AnyObject?
 
+    private let userSessionComponent: UserSessionComponent
+
     // MARK: - Initialize
 
     init(
@@ -400,7 +401,10 @@ public final class ZMUserSession: NSObject {
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies,
-        syncAgent: SyncAgent
+        syncAgent: SyncAgent,
+        backendEnvironment: WireAPI.BackendEnvironment,
+        minTLSVersion: WireAPI.TLSVersion,
+        apiVersion: WireAPI.APIVersion
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
@@ -428,6 +432,7 @@ public final class ZMUserSession: NSObject {
         self.applicationStatusDirectory = applicationStatusDirectory
         self.earService = earService
         self.mlsService = mlsService
+        self.proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
@@ -436,6 +441,21 @@ public final class ZMUserSession: NSObject {
         self.dependencies = dependencies
         self.analyiticsLogger = .analytics
         self.syncAgent = syncAgent
+        self.userSessionComponent = UserSessionComponent(
+            selfUserID: userId,
+            backendEnvironment: backendEnvironment,
+            minTLSVersion: minTLSVersion,
+            apiVersion: apiVersion,
+            localDomain: WireTransport.BackendInfo.domain!,
+            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
+            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            sharedUserDefaults: sharedUserDefaults,
+            syncContext: coreDataStack.syncContext,
+            eventContext: coreDataStack.eventContext,
+            mlsService: mlsService,
+            mlsDecryptionService: mlsService,
+            proteusService: proteusService
+        )
         super.init()
     }
 
