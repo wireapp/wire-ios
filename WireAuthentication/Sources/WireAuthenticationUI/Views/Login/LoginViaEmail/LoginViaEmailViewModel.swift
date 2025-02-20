@@ -29,6 +29,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         case noInternet
         case unknownError
+        case invalidCredentials
     }
 
     @Published var password: String = "" {
@@ -86,7 +87,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         } catch {
             switch error {
             case .invalidCredentials:
-                break
+                alert = .invalidCredentials
             case .twoFactorAuthenticationRequired:
                 router.navigate(
                     to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)

@@ -181,6 +181,8 @@ package struct LoginViaEmailView: View {
             Text(L10n.Authentication.Error.Title.noInternet)
         case .unknownError:
             Text(L10n.Authentication.Error.Title.general)
+        case .invalidCredentials:
+            Text(L10n.Authentication.Error.Title.invalidCredentials)
         }
     }
 
@@ -190,6 +192,8 @@ package struct LoginViaEmailView: View {
             Text(L10n.Authentication.Error.Message.noInternet)
         case .unknownError:
             Text(L10n.Authentication.Error.Message.general)
+        case .invalidCredentials:
+            Text(L10n.Authentication.Error.Message.invalidCredentials)
         }
     }
 
