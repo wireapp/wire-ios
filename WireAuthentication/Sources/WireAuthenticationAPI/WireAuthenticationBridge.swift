@@ -16,10 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol PasswordValidator {
+import Foundation
 
-    func isPasswordValid(_ password: String) -> Bool
+/// A object that facilitates intermodule communication, both **inbound**
+/// (from outside into this module) and **outbound** (from inside this module
+/// to the external world).
 
-    var localizedRulesDescription: String? { get }
+public struct WireAuthenticationBridge {
+
+    private let onFlowCompletion: () -> Void
+
+    public init(onFlowCompletion: @escaping () -> Void) {
+        self.onFlowCompletion = onFlowCompletion
+    }
+
+    public func completeFlow() {
+        onFlowCompletion()
+    }
 
 }
