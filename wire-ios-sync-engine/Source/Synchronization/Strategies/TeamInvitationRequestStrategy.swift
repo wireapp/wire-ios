@@ -77,7 +77,7 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
         )
 
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
-            self?.processResponse(response, for: email)
+            self?.processResponse(response, for: email) // TODO: handle new error? 403 "condition-failed"
         }))
 
         return request

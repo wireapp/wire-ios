@@ -39,6 +39,7 @@ class CountSelfMLSKeyPackagesActionHandler: ActionHandler<CountSelfMLSKeyPackage
             return nil
         }
 
+        // TODO: .v8 requires ciphersuite or ciphersuites!
         return ZMTransportRequest(
             path: "/mls/key-packages/self/\(action.clientID)/count",
             method: .get,
