@@ -12,6 +12,7 @@ let package = Package(
     products: [
         .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
+        .library(name: "WireConversationUI", targets: ["WireConversationUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
         .library(name: "WireIndividualToTeamMigrationUI", targets: ["WireIndividualToTeamMigrationUI"]),
@@ -42,7 +43,10 @@ let package = Package(
         .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
 
         .target(name: "WireConversationListUI"),
-        .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI", "WireSettingsUI"]),
+        .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
+
+        .target(name: "WireConversationUI"),
+        .testTarget(name: "WireConversationUITests", dependencies: ["WireConversationUI"]),
 
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
