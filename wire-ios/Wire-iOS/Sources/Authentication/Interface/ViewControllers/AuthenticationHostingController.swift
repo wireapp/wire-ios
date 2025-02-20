@@ -16,10 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol PasswordValidator {
+import Foundation
+import SwiftUI
 
-    func isPasswordValid(_ password: String) -> Bool
+// A temporary bridging object to allow the new WireAuthentication flow inside
+// the existing AuthenticationController flow.
+final class AuthenticationHostingController<Content: View>: UIHostingController<Content>,
+    AuthenticationCoordinatedViewController {
 
-    var localizedRulesDescription: String? { get }
+    var authenticationCoordinator: AuthenticationCoordinator?
+
+    func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {
+        // no op
+    }
+
+    func displayError(_ error: any Error) {
+        // no op
+    }
 
 }

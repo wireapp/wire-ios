@@ -16,10 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol PasswordValidator {
+import Foundation
+import WireReusableUIComponents
 
-    func isPasswordValid(_ password: String) -> Bool
+struct AuthenticationPasswordValidator: PasswordValidator {
 
-    var localizedRulesDescription: String? { get }
+    func isPasswordValid(_ password: String) -> Bool {
+        guard !password.isEmpty else {
+            return false
+        }
+
+        switch PasswordRuleSet.shared.validatePassword(password) {
+        case .valid:
+            return true
+        case .invalid:
+            return false
+        }
+    }
+
+    var localizedRulesDescription: String? {
+        PasswordRuleSet.localizedErrorMessage
+    }
 
 }
