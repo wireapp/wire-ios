@@ -5,12 +5,16 @@ import PackageDescription
 
 let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
 
+let Foundation = Feature(name: "WireFoundation")
+let Design = Feature(name: "WireDesign", dependencies: [Foundation])
+let AccountImageUI = Feature(name: "WireAccountImageUI", dependencies: [Design, Foundation], testDependencies: [/*Foundation*/])
+
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
-        .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
+        AccountImageUI.library,
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
         .library(name: "WireConversationUI", targets: ["WireConversationUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
@@ -33,14 +37,8 @@ let package = Package(
         .package(path: "../WirePlugins")
     ],
     targets: [
-        .target(
-            name: "WireAccountImageUI",
-            dependencies: [
-                "WireDesign",
-                "WireFoundation"
-            ]
-        ),
-        .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
+        AccountImageUI.target,
+        AccountImageUI.testTarget,
 
         .target(name: "WireConversationListUI"),
         .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
@@ -112,6 +110,21 @@ let package = Package(
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
     ]
 )
+
+struct Feature {
+    var name: String
+    var dependencies: [Feature] = []
+    var testDependencies: [Feature] = []
+    var library: Product {
+        .library(name: name, targets: [name])
+    }
+    var target: Target {
+        .target(name: name, dependencies: dependencies.map { .init(stringLiteral: $0.name) })
+    }
+    var testTarget: Target {
+        .testTarget(name: name + "Tests", dependencies: ([self] + testDependencies).map { .init(stringLiteral: $0.name) })
+    }
+}
 
 for target in package.targets {
     if target.isTest {
