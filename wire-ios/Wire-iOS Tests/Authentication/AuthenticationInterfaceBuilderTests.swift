@@ -55,40 +55,40 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
 
     // MARK: - General
 
-    func testLandingScreen() {
+    @MainActor func testLandingScreen() {
         runSnapshotTest(for: .landingScreen)
     }
 
-    func testThatItDoesNotGenerateInterfaceForCompanyLoginFlow() {
+    @MainActor func testThatItDoesNotGenerateInterfaceForCompanyLoginFlow() {
         runSnapshotTest(for: .companyLogin)
     }
 
     // MARK: - User Registration
 
-    func testRegistrationScreen() {
+    @MainActor func testRegistrationScreen() {
         runSnapshotTest(for: .createCredentials(UnregisteredUser()))
     }
 
-    func testActivationScreen_Email() {
+    @MainActor func testActivationScreen_Email() {
         let unverifiedEmail = "test@example.com"
         runSnapshotTest(for: .enterActivationCode(unverifiedEmail: unverifiedEmail, user: UnregisteredUser()))
     }
 
-    func testSetNameScreen() {
+    @MainActor func testSetNameScreen() {
         runSnapshotTest(for: .incrementalUserCreation(UnregisteredUser(), .setName))
     }
 
-    func testSetPasswordScreen() {
+    @MainActor func testSetPasswordScreen() {
         runSnapshotTest(for: .incrementalUserCreation(UnregisteredUser(), .setPassword))
     }
 
     // MARK: - Login
 
-    func testLoginScreen_Email() {
+    @MainActor func testLoginScreen_Email() {
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
-    func testLoginScreen_Email_WithProxyAuthenticated() {
+    @MainActor func testLoginScreen_Email_WithProxyAuthenticated() {
         let backendEnvironmentProvider = MockEnvironment()
         backendEnvironmentProvider
             .environmentType =
@@ -109,7 +109,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         ) // setting higher value for scrollview content
     }
 
-    func testLoginScreen_Email_WithConfig() {
+    @MainActor func testLoginScreen_Email_WithConfig() {
         let backendEnvironmentProvider = MockEnvironment()
         backendEnvironmentProvider
             .environmentType =
@@ -123,7 +123,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
-    func testLoginScreen_Email_WithProxyNoAuthentication() {
+    @MainActor func testLoginScreen_Email_WithProxyNoAuthentication() {
         let backendEnvironmentProvider = MockEnvironment()
         backendEnvironmentProvider
             .environmentType =
@@ -142,57 +142,59 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
-    func testLoginScreen_Email_PhoneDisabled() {
+    @MainActor func testLoginScreen_Email_PhoneDisabled() {
         featureProvider.allowOnlyEmailLogin = true
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
-    func testBackupScreen_NewDevice() {
+    @MainActor func testBackupScreen_NewDevice() {
         runSnapshotTest(for: .noHistory(credentials: nil, context: .newDevice))
     }
 
-    func testBackupScreen_LoggedOut() {
+    @MainActor func testBackupScreen_LoggedOut() {
         runSnapshotTest(for: .noHistory(credentials: nil, context: .loggedOut))
     }
 
-    func testTooManyDevicesScreen() {
+    @MainActor func testTooManyDevicesScreen() {
         runSnapshotTest(for: .clientManagement(clients: []))
     }
 
-    func testClientRemovalScreen() {
+    @MainActor func testClientRemovalScreen() {
         runSnapshotTest(for: .deleteClient(clients: [mockUserClient()]))
     }
 
-    func testAddEmailPasswordScreen() {
+    @MainActor func testAddEmailPasswordScreen() {
         runSnapshotTest(for: .addEmailAndPassword)
     }
 
-    func testVerifyEmailLinkTests() {
+    @MainActor func testVerifyEmailLinkTests() {
         let credentials = UserEmailCredentials(email: "test@example.com", password: "12345678")
         runSnapshotTest(for: .pendingEmailLinkVerification(credentials))
     }
 
-    func testReauthenticate_Email_TokenExpired() {
+    @MainActor func testReauthenticate_Email_TokenExpired() {
         let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
-    func testReauthenticate_Email_DuringLogin() {
+    @MainActor func testReauthenticate_Email_DuringLogin() {
         let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
     }
 
-    func testReauthenticate_CompanyLogin() {
+    @MainActor func testReauthenticate_CompanyLogin() {
         let credentials = LoginCredentials(emailAddress: nil, hasPassword: false, usesCompanyLogin: true)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
+    @MainActor
     func testReauthenticate_NoCredentials() {
         runSnapshotTest(for: .reauthenticate(credentials: nil, numberOfAccounts: 1, isSignedOut: true))
     }
 
     // MARK: - Helpers
 
+    @MainActor
     private func runSnapshotTest(
         for step: AuthenticationFlowStep,
         file: StaticString = #filePath,
@@ -200,7 +202,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         line: UInt = #line,
         customSize: CGSize? = nil
     ) {
-        if let viewController = builder.makeViewController(for: step) {
+        if let viewController = builder.makeViewController(for: step, authenticationCoordinator: nil) {
             if !step.needsInterface {
                 return XCTFail("An interface was generated but we didn't expect one.", file: file, line: line)
             }

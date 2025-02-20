@@ -70,7 +70,7 @@ final class AuthenticationInterfaceBuilder {
     @MainActor
     func makeViewController(
         for step: AuthenticationFlowStep,
-        authenticationCoordinator: AuthenticationCoordinator
+        authenticationCoordinator: AuthenticationCoordinator?
     ) -> AuthenticationStepViewController? {
         switch step {
         case .wireAuthenticationModule:
@@ -99,7 +99,7 @@ final class AuthenticationInterfaceBuilder {
                 accountsURL: environment.accountsURL,
                 passwordValidator: AuthenticationPasswordValidator()
             ) {
-                authenticationCoordinator.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
+                authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
             }
 
             return AuthenticationHostingController(rootView: rootView)
