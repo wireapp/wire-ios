@@ -66,7 +66,7 @@ package struct LoginViaEmailView: View {
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
             case let .verifyLogin(email, password):
-                return Color.red
+                Color.red
             }
         }
         .presentationDetents([.medium, .large])

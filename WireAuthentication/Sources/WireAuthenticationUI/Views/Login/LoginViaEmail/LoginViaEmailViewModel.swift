@@ -70,7 +70,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 )
                 print(">>>> Login successful")
             } catch let error as LoginViaEmailUseCaseFailure {
-                switch error  {
+                switch error {
                 case .invalidCredentials:
                     break
                 case .twoFactorAuthenticationRequired:

@@ -16,17 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
+import Foundation
 import SwiftUI
+import WireAuthenticationAPI
 
-struct VerifyLoginView: View {
+@MainActor
+public final class VerificationCodeViewModel: ObservableObject {
 
-    @ObservedObject var viewModel: VerifyLoginViewModel
+    @Published var code: [String]
+    let recipient: String
 
-    var body: some View {
-        Color.red
+    init(
+        recipient: String,
+        code: [String] = ["", "", "", "", "", ""]
+    ) {
+        self.recipient = recipient
+        self.code = code
     }
-}
 
-#Preview {
-    VerifyLoginView(viewModel: VerifyLoginViewModel())
+    func confirm() async {
+        // TODO: Implement - not part of a current ticket
+    }
+
+    func resend() async {
+        // TODO: [WPB-15950] Implement
+    }
+
 }

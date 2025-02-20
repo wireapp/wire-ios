@@ -28,27 +28,16 @@ package struct VerificationCodeView: View {
         static let numberOfDigits = 6
     }
 
-    @State private var code: [String]
+    @StateObject private var viewModel: VerificationCodeViewModel
+
     @FocusState private var focusedIndex: Int?
 
-    private let receiver: String
-    private let onConfirm: ([String]) -> Void
-    private let onResend: () -> Void
-
     private var isConfirmButtonDisabled: Bool {
-        code.contains { $0.isEmpty }
+        viewModel.code.contains { $0.isEmpty }
     }
 
-    package init(
-        initialCode: [String] = Array(repeating: "", count: Constants.numberOfDigits),
-        receiver: String,
-        onConfirm: @escaping ([String]) -> Void,
-        onResend: @escaping () -> Void
-    ) {
-        self._code = State(initialValue: initialCode)
-        self.receiver = receiver
-        self.onConfirm = onConfirm
-        self.onResend = onResend
+    package init(viewModel: VerificationCodeViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     package var body: some View {
@@ -58,7 +47,7 @@ package struct VerificationCodeView: View {
                 .foregroundStyle(Color.primaryText)
                 .multilineTextAlignment(.center)
 
-            Text(L10n.VerificationCode.message(receiver))
+            Text(L10n.VerificationCode.message(viewModel.recipient))
                 .wireTextStyle(.body1)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
@@ -66,7 +55,7 @@ package struct VerificationCodeView: View {
             verificationCodeView
 
             Button(action: {
-                onConfirm(code)
+                Task.detached { await viewModel.confirm() }
             }, label: {
                 Text(L10n.VerificationCode.confirm)
             })
@@ -75,7 +64,7 @@ package struct VerificationCodeView: View {
             .disabled(isConfirmButtonDisabled)
 
             Button(action: {
-                onResend()
+                Task.detached { await viewModel.resend() }
             }, label: {
                 Text(L10n.VerificationCode.resendCode)
             })
@@ -94,7 +83,7 @@ package struct VerificationCodeView: View {
     private var verificationCodeView: some View {
         HStack(spacing: 10) {
             ForEach(0 ..< Constants.numberOfDigits, id: \.self) { index in
-                TextField("", text: $code[index])
+                TextField("", text: $viewModel.code[index])
                     .frame(width: 50, height: 50)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
@@ -108,7 +97,7 @@ package struct VerificationCodeView: View {
                     .keyboardType(.numberPad)
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
-                    .onChange(of: code[index]) { newValue in
+                    .onChange(of: viewModel.code[index]) { newValue in
                         handleInput(newValue, index: index)
                     }
             }
@@ -120,12 +109,12 @@ package struct VerificationCodeView: View {
 
     private func handleInput(_ newValue: String, index: Int) {
         if let intValue = Int(newValue.prefix(1)), (0 ... 9).contains(intValue) {
-            code[index] = String(intValue)
+            viewModel.code[index] = String(intValue)
         } else {
-            code[index] = ""
+            viewModel.code[index] = ""
         }
 
-        if !code[index].isEmpty {
+        if !viewModel.code[index].isEmpty {
             if index < Constants.numberOfDigits - 1 {
                 focusedIndex = index + 1
             } else {
@@ -141,18 +130,16 @@ package struct VerificationCodeView: View {
 
 #Preview("Empty code") {
     VerificationCodeView(
-        receiver: "name.name@mail.com",
-        onConfirm: { _ in },
-        onResend: {}
+        viewModel: VerificationCodeViewModel(recipient: "name.name@mail.com")
     )
 }
 
 #Preview("Not empty code") {
     VerificationCodeView(
-        initialCode: ["1", "2", "3", "4", "5", ""],
-        receiver: "name.name@mail.com",
-        onConfirm: { _ in },
-        onResend: {}
+        viewModel: VerificationCodeViewModel(
+            recipient: "name.name@mail.com",
+            code: ["1", "2", "3", "4", "5", ""]
+        )
     )
 }
 
@@ -163,9 +150,7 @@ package struct VerificationCodeView: View {
                 Spacer()
                     .frame(maxHeight: .infinity)
                 VerificationCodeView(
-                    receiver: "name.name@mail.com",
-                    onConfirm: { _ in },
-                    onResend: {}
+                    viewModel: VerificationCodeViewModel(recipient: "name.name@mail.com")
                 )
             }
         }
