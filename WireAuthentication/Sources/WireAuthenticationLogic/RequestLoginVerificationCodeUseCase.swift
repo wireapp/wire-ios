@@ -16,26 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
+import WireAuthenticationAPI
 
-/// Errors originating from `TeamRepository`.
+package struct RequestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCaseProtocol {
 
-enum TeamRepositoryError: Error {
+    private let authenticationAPI: AuthenticationAPI
 
-    /// The self user does not belong to any team.
+    package init(authenticationAPI: AuthenticationAPI) {
+        self.authenticationAPI = authenticationAPI
+    }
 
-    case selfUserIsNotATeamMember
-
-    /// Failed to fetch data from the server.
-
-    case failedToFetchRemotely(Error)
-
-    /// User is not a member of the team.
-
-    case userNotAMemberInTeam(user: UUID)
-
-    /// Failed to find team member locally.
-
-    case failedToFindTeamMember(_ membershipID: UUID)
+    package func invoke(
+        email: String
+    ) async throws(RequestLoginVerificationCodeUseCaseFailure) {
+        do {
+            try await authenticationAPI.requestVerificationCode(for: email)
+        } catch AuthenticationAPIError.invalidEmail {
+            throw .invalidEmail
+        } catch {
+            throw .unexpected(error)
+        }
+    }
 
 }

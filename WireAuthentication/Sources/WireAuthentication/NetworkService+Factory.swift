@@ -17,25 +17,25 @@
 //
 
 import Foundation
+import WireAPI
 
-/// Errors originating from `TeamRepository`.
+extension NetworkService {
 
-enum TeamRepositoryError: Error {
+    static func make(backendEnvironment: BackendEnvironment, minTLSVersion: TLSVersion) -> NetworkService {
+        let service = NetworkService(
+            baseURL: backendEnvironment.url,
+            serverTrustValidator: ServerTrustValidator(pinnedKeys: backendEnvironment.pinnedKeys)
+        )
 
-    /// The self user does not belong to any team.
+        let config = URLSessionConfigurationFactory(
+            minTLSVersion: minTLSVersion,
+            proxySettings: backendEnvironment.proxySettings
+        ).makeRESTAPISessionConfiguration()
 
-    case selfUserIsNotATeamMember
+        let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
+        service.configure(with: session)
 
-    /// Failed to fetch data from the server.
-
-    case failedToFetchRemotely(Error)
-
-    /// User is not a member of the team.
-
-    case userNotAMemberInTeam(user: UUID)
-
-    /// Failed to find team member locally.
-
-    case failedToFindTeamMember(_ membershipID: UUID)
+        return service
+    }
 
 }

@@ -18,24 +18,16 @@
 
 import Foundation
 
-/// Errors originating from `TeamRepository`.
+struct SSOSettingsResponseV0: Decodable, ToAPIModelConvertible {
 
-enum TeamRepositoryError: Error {
+    let defaultSSOCode: UUID?
 
-    /// The self user does not belong to any team.
+    private enum CodingKeys: String, CodingKey {
+        case defaultSSOCode = "default_sso_code"
+    }
 
-    case selfUserIsNotATeamMember
-
-    /// Failed to fetch data from the server.
-
-    case failedToFetchRemotely(Error)
-
-    /// User is not a member of the team.
-
-    case userNotAMemberInTeam(user: UUID)
-
-    /// Failed to find team member locally.
-
-    case failedToFindTeamMember(_ membershipID: UUID)
+    func toAPIModel() -> SSOSettings {
+        .init(defaultSSOCode: defaultSSOCode)
+    }
 
 }

@@ -18,24 +18,17 @@
 
 import Foundation
 
-/// Errors originating from `TeamRepository`.
+public protocol RequestLoginVerificationCodeUseCaseProtocol: Sendable {
 
-enum TeamRepositoryError: Error {
+    func invoke(
+        email: String
+    ) async throws(RequestLoginVerificationCodeUseCaseFailure)
 
-    /// The self user does not belong to any team.
+}
 
-    case selfUserIsNotATeamMember
+public enum RequestLoginVerificationCodeUseCaseFailure: Error {
 
-    /// Failed to fetch data from the server.
-
-    case failedToFetchRemotely(Error)
-
-    /// User is not a member of the team.
-
-    case userNotAMemberInTeam(user: UUID)
-
-    /// Failed to find team member locally.
-
-    case failedToFindTeamMember(_ membershipID: UUID)
+    case invalidEmail
+    case unexpected(any Error)
 
 }
