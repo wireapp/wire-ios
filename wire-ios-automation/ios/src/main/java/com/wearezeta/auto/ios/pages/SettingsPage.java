@@ -37,6 +37,9 @@ public class SettingsPage extends IOSPage {
     @iOSXCUITFindBy(iOSNsPredicate = "type == 'XCUIElementTypeStaticText' AND label == 'Back Up Conversations'")
     private WebElement backUpConversationsItem;
 
+    @iOSXCUITFindBy(iOSNsPredicate = "name == \"Back up or Restore\" AND label == \"Back up or Restore\" AND value == \"Back up or Restore\"")
+    private WebElement backupRestoreItem;
+
     @iOSXCUITFindBy(iOSNsPredicate = "type == 'XCUIElementTypeStaticText' AND label == 'Options'")
     private WebElement optionsItem;
 
@@ -478,6 +481,7 @@ public class SettingsPage extends IOSPage {
     }
 
     public void tapAccountBackButton() {
+        waitUntilElementClickable(accountBackButton);
         accountBackButton.click();
     }
     public void tapSettingsBackButton() {
@@ -490,5 +494,10 @@ public class SettingsPage extends IOSPage {
     }
     public void tapLockPasscodeButton() {
         lockPasscodeButton.click();
+    }
+
+    public void openBackupRestore() {
+        scrollToItem(backupRestoreItem);
+        backupRestoreItem.click();
     }
 }
