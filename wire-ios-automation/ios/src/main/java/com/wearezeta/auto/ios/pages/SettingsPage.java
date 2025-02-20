@@ -481,6 +481,7 @@ public class SettingsPage extends IOSPage {
     }
 
     public void tapAccountBackButton() {
+        waitUntilElementClickable(accountBackButton);
         accountBackButton.click();
     }
     public void tapSettingsBackButton() {
