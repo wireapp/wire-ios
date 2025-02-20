@@ -25,8 +25,8 @@ class LoginViaSSOViewModelTests: XCTestCase {
 
     var sut: LoginViaSSOViewModel!
 
-    override func setUp() {
-        sut = LoginViaSSOViewModel()
+    override func setUp() async throws {
+        sut = await LoginViaSSOViewModel(ssoCode: UUID())
     }
 
     override func tearDown() {
