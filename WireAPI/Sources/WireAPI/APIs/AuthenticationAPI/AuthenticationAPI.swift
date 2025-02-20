@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol AuthenticationAPI {
+public protocol AuthenticationAPI: Sendable {
 
     /// Login via email
     ///

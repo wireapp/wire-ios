@@ -24,16 +24,22 @@ internal import WireAuthenticationUI
 
 class RootComponent: BootstrapComponent {
 
-    public let authenticationAPI: AuthenticationAPI
+    public let defaultBackendEnvironment: BackendEnvironment
+    public let defaultAPIVersion: APIVersion
+    public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let passwordValidator: any PasswordValidator
 
     init(
-        authenticationAPI: AuthenticationAPI,
+        defaultBackendEnvironment: BackendEnvironment,
+        defaultAPIVersion: APIVersion,
+        minTLSVersion: TLSVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator
     ) {
-        self.authenticationAPI = authenticationAPI
+        self.defaultBackendEnvironment = defaultBackendEnvironment
+        self.defaultAPIVersion = defaultAPIVersion
+        self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.passwordValidator = passwordValidator
     }

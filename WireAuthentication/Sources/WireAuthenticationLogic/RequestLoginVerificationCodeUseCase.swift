@@ -17,15 +17,26 @@
 //
 
 import WireAPI
-import WireAPISupport
+import WireAuthenticationAPI
 
-func makeAuthenticationAPI() -> AuthenticationAPI {
-    let mockAuthenticationAPI = MockAuthenticationAPI()
-    mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = DomainRegistrationConfiguration(
-        backendURLString: nil,
-        domainRedirect: .none,
-        isCloudAccountAlreadyRegistered: nil,
-        ssoCodeString: nil
-    )
-    return mockAuthenticationAPI
+package struct RequestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCaseProtocol {
+
+    private let authenticationAPI: AuthenticationAPI
+
+    package init(authenticationAPI: AuthenticationAPI) {
+        self.authenticationAPI = authenticationAPI
+    }
+
+    package func invoke(
+        email: String
+    ) async throws(RequestLoginVerificationCodeUseCaseFailure) {
+        do {
+            try await authenticationAPI.requestVerificationCode(for: email)
+        } catch AuthenticationAPIError.invalidEmail {
+            throw .invalidEmail
+        } catch {
+            throw .unexpected(error)
+        }
+    }
+
 }
