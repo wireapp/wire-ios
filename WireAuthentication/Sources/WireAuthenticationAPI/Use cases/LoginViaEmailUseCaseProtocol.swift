@@ -18,7 +18,7 @@
 
 import Foundation
 
-public protocol LoginViaEmailUseCaseProtocol {
+public protocol LoginViaEmailUseCaseProtocol: Sendable {
 
     associatedtype AccessToken
 
