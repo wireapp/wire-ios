@@ -105,7 +105,7 @@ public final class UserSessionComponent {
 
     // MARK: - Children
 
-    func clientSessionComponent(clientID: String) -> ClientSessionComponent {
+    public func clientSessionComponent(clientID: String) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
             selfClientID: clientID,

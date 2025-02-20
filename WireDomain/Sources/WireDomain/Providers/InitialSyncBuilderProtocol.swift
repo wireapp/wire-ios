@@ -29,3 +29,11 @@ public protocol InitialSyncBuilderProtocol {
     func build() throws -> Sync
 
 }
+
+extension ClientSessionComponent: InitialSyncBuilderProtocol {
+
+    public func build() throws -> any InitialSyncProtocol {
+        initialSync
+    }
+
+}
