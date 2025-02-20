@@ -31,10 +31,8 @@ package protocol LoginViaEmailBuilder {
 }
 
 package struct LoginViaEmailView: View {
-    @ObservedObject var viewModel: LoginViaEmailViewModel
 
-    @State private var password: String = ""
-    @State private var showPasswordRules: Bool = false
+    @StateObject var viewModel: LoginViaEmailViewModel
 
     let verificationCodeBuilder: any VerificationCodeBuilder
 
@@ -42,7 +40,7 @@ package struct LoginViaEmailView: View {
         viewModel: LoginViaEmailViewModel,
         verificationCodeBuilder: any VerificationCodeBuilder
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.verificationCodeBuilder = verificationCodeBuilder
     }
 
@@ -76,9 +74,6 @@ package struct LoginViaEmailView: View {
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
-        .onChange(of: password) { newPassword in
-            showPasswordRules = !viewModel.isValidPassword(newPassword)
-        }
     }
 
     @ViewBuilder private var emailField: some View {
@@ -92,24 +87,24 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var passwordField: some View {
         PasswordField(
-            password: $password,
+            password: $viewModel.password,
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
             title: L10n.CloudUserLogin.InputPassword.title,
             passwordRules: viewModel.localizedPasswordRules,
-            isValidPassword: viewModel.isValidPassword
+            isValidPassword: { _ in viewModel.isPasswordValid }
         )
     }
 
     @ViewBuilder private var submitButton: some View {
         Button(action: {
-            viewModel.submitPassword(password)
+            viewModel.submitPassword()
         }, label: {
             Text(L10n.CloudUserLogin.submit)
                 .lineLimit(nil)
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isValidPassword(password))
+        .disabled(!viewModel.isPasswordValid)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {

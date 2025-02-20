@@ -24,6 +24,11 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
+    @Published var password: String = "" {
+        didSet { showPasswordRules = !isPasswordValid }
+    }
+    @Published private(set) var showPasswordRules = false
+
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let forgotPasswordURL: URL
@@ -58,8 +63,10 @@ package final class LoginViaEmailViewModel: ObservableObject {
         passwordValidator.isPasswordValid(password)
     }
 
-    func submitPassword(_ password: String) {
+    func submitPassword() {
         let email = email
+        let password = password
+
         Task.detached { [router] in
             do {
                 // TODO: [WPB-15924] Handle happy path
@@ -78,7 +85,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
                         to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
                     )
                 case .twoFactorAuthenticationFailed:
-                    break // Do we need to handle this?
+                    break // This shouldn't happen in this view
                 case .accountPendingActivation:
                     break
                 case .accountSuspended:
