@@ -7,7 +7,7 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 
 let Foundation = Feature(name: "WireFoundation")
 let Design = Feature(name: "WireDesign", dependencies: [Foundation])
-let AccountImageUI = Feature(name: "WireAccountImageUI", dependencies: [Design, Foundation], testDependencies: [/*Foundation*/])
+let AccountImageUI = Feature(name: "WireAccountImageUI", dependencies: [Design, Foundation])
 
 let package = Package(
     name: "WireUI",
@@ -114,7 +114,6 @@ let package = Package(
 struct Feature {
     var name: String
     var dependencies: [Feature] = []
-    var testDependencies: [Feature] = []
     var library: Product {
         .library(name: name, targets: [name])
     }
@@ -122,7 +121,7 @@ struct Feature {
         .target(name: name, dependencies: dependencies.map { .init(stringLiteral: $0.name) })
     }
     var testTarget: Target {
-        .testTarget(name: name + "Tests", dependencies: ([self] + testDependencies).map { .init(stringLiteral: $0.name) })
+        .testTarget(name: name + "Tests", dependencies: [self].map { .init(stringLiteral: $0.name) })
     }
 }
 
