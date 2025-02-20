@@ -126,8 +126,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     func testItSlowSyncsAfterRegisteringClient() async throws {
         // GIVEN
         let userClient = await syncMOC.perform {
-            let userClient = self.createSelfClient()
-            return userClient
+            self.createSelfClient()
         }
 
         // WHEN
