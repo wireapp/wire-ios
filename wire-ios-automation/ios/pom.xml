@@ -54,6 +54,13 @@
             <name>Maven Central Repository</name>
             <url>https://repo1.maven.org/maven2</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/zinfra/zautomation</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <dependencies>

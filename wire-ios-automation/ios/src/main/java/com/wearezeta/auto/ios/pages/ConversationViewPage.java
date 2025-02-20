@@ -660,6 +660,7 @@ public class ConversationViewPage extends IOSPage {
     }
 
     public void longTapFileTransferPlaceholder() {
+        waitUntilElementVisible(fileTransferBottomLabel);
         longTapWithScript(fileTransferBottomLabel);
     }
 
@@ -829,6 +830,11 @@ public class ConversationViewPage extends IOSPage {
 
     public void tapSendMessageButton() {
         sendButton.click();
+    }
+
+    public void sendMessage(String text) {
+        typeMessage(text);
+        tapSendMessageButton();
     }
 
     public void tapHourglassButton() {

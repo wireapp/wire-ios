@@ -151,20 +151,6 @@ final class UserClientsRepositoryTests: XCTestCase {
         XCTAssertEqual(userClientsLocalStore.deleteClientId_Invocations.count, 1)
     }
 
-    func testAllSelfUserClientsAreActiveMLSClients_It_Invokes_Local_Store_Method() async {
-        // Mock
-
-        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
-
-        // When
-
-        _ = await sut.allSelfUserClientsAreActiveMLSClients()
-
-        // Then
-
-        XCTAssertEqual(userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_Invocations.count, 1)
-    }
-
     private enum Scaffolding {
         static let userClientID = UUID.mockID1.uuidString
         static let otherUserClientID = UUID.mockID2.uuidString

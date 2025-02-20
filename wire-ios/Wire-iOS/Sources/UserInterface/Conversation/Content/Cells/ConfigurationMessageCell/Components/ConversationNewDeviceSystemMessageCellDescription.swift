@@ -155,7 +155,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         )
         let attributedText = attributedSenderNames
 
-        var linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
+        let linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
             .user(user)
         } else {
             .conversation(conversation)

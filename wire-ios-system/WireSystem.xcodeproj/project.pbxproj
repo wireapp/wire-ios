@@ -125,8 +125,8 @@
 				5953DD242CF0CA900069ABC8 /* Source */,
 				5939CB872CEBB2BA000F6FAD /* Support */,
 				5953DE452CF0CD2A0069ABC8 /* Tests */,
-				3ECC34E61AD433520089FD4B /* Products */,
 				E66EC68A2B21D179003052F7 /* Frameworks */,
+				3ECC34E61AD433520089FD4B /* Products */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -418,7 +418,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystem;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -433,7 +434,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystem;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";

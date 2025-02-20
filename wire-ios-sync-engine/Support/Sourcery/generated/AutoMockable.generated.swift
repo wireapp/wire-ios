@@ -386,21 +386,6 @@ public class MockImportBackupAppStateUpdaterProtocol: ImportBackupAppStateUpdate
     public init() {}
 
 
-    // MARK: - reportImportProgress
-
-    public var reportImportProgressProgress_Invocations: [Float] = []
-    public var reportImportProgressProgress_MockMethod: ((Float) -> Void)?
-
-    public func reportImportProgress(progress: Float) {
-        reportImportProgressProgress_Invocations.append(progress)
-
-        guard let mock = reportImportProgressProgress_MockMethod else {
-            fatalError("no mock for `reportImportProgressProgress`")
-        }
-
-        mock(progress)
-    }
-
     // MARK: - reportMigrationNeeded
 
     public var reportMigrationNeeded_Invocations: [Void] = []
@@ -551,35 +536,6 @@ public class MockImportBackupStreamDecryptorProtocol: ImportBackupStreamDecrypto
         }
 
         try mock(input, output, accountID, password)
-    }
-
-}
-
-public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeUrlPassword_Invocations: [(url: URL, password: String)] = []
-    public var invokeUrlPassword_MockError: Error?
-    public var invokeUrlPassword_MockMethod: ((URL, String) async throws -> Void)?
-
-    public func invoke(url: URL, password: String) async throws {
-        invokeUrlPassword_Invocations.append((url: url, password: password))
-
-        if let error = invokeUrlPassword_MockError {
-            throw error
-        }
-
-        guard let mock = invokeUrlPassword_MockMethod else {
-            fatalError("no mock for `invokeUrlPassword`")
-        }
-
-        try await mock(url, password)
     }
 
 }

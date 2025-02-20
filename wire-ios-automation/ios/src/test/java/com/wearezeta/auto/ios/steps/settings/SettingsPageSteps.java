@@ -143,6 +143,7 @@ public class SettingsPageSteps {
         getSettingsPage().clearUsername();
     }
 
+
     /**
      * Verify the current value of a setting
      *
@@ -432,4 +433,22 @@ public class SettingsPageSteps {
     public void iTapSettingsBackButton() {
         getSettingsPage().tapSettingsBackButton();
     }
+
+    @When("^I toggle on lock with passcode option$")
+    public void iOnLockWithPasscodeToggle() {
+        getSettingsPage().OnLockWithPasscodeToggle();
+    }
+
+    @When("^I enter passcode (.*) to lock the app$")
+    public void iInputLockPasscode(String passcode) {
+        passcode = context.getUsersManager()
+                .replaceAliasesOccurrences(passcode, ClientUsersManager.FindBy.PASSWORD_ALIAS);
+        getSettingsPage().inputLockPasscode(passcode);
+    }
+
+    @When("^I tap on lock passcode button$")
+    public void iTapLockPasscodeButton() {
+        getSettingsPage().tapLockPasscodeButton();
+    }
 }
+

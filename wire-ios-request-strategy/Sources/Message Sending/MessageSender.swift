@@ -173,7 +173,7 @@ public final class MessageSender: MessageSenderInterface {
                 .broadcastProteusMessage(message: messageData)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
-            let retryOperation: () async throws -> Void = { [weak self] in
+            let operation: () async throws -> Void = { [weak self] in
                 try await self?.broadcastMessage(message: message)
             }
 
@@ -181,7 +181,7 @@ public final class MessageSender: MessageSenderInterface {
                 networkError,
                 message: message,
                 apiVersion: apiVersion,
-                retryOperation: retryOperation
+                operation: operation
             )
         }
     }
@@ -239,7 +239,7 @@ public final class MessageSender: MessageSenderInterface {
                 )
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
-            let retryOperation: () async throws -> Void = { [weak self] in
+            let operation: () async throws -> Void = { [weak self] in
                 try await self?.sendMessage(message: message)
             }
 
@@ -247,7 +247,7 @@ public final class MessageSender: MessageSenderInterface {
                 networkError,
                 message: message,
                 apiVersion: apiVersion,
-                retryOperation: retryOperation
+                operation: operation
             )
         }
     }
@@ -256,11 +256,12 @@ public final class MessageSender: MessageSenderInterface {
         _ networkError: NetworkError,
         message: any ProteusMessage,
         apiVersion: APIVersion,
-        retryOperation: () async throws -> Void
+        operation: () async throws -> Void
     ) async throws {
         do {
             let missingClients = try await handleProteusFailure(message: message, networkError)
             try await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
+            try await operation()
         } catch let error as MessageSendError {
             guard retryCount < maxRetryAttempts else {
                 retryCount = 0
@@ -269,7 +270,7 @@ public final class MessageSender: MessageSenderInterface {
 
             retryCount += 1
 
-            try await retryOperation()
+            try await operation()
         } catch {
             throw error
         }

@@ -99,6 +99,9 @@
       location = "group:Gemfile.lock">
    </FileRef>
    <FileRef
+      location = "group:WireCoreCrypto">
+   </FileRef>
+   <FileRef
       location = "group:setup.sh">
    </FileRef>
    <Group
@@ -141,9 +144,6 @@
       location = "group:wire-ios/Wire-iOS.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireAuthentication/WireAuthentication.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:WireUI">
    </FileRef>
    <FileRef
@@ -174,7 +174,13 @@
       location = "group:wire-ios-data-model/WireDataModel.xcodeproj">
    </FileRef>
    <FileRef
+      location = "container:WireDebug">
+   </FileRef>
+   <FileRef
       location = "group:wire-ios-mocktransport/WireMockTransport.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-protos/WireProtos.xcodeproj">
@@ -205,6 +211,12 @@
    </FileRef>
    <FileRef
       location = "group:WireAPI">
+   </FileRef>
+   <FileRef
+      location = "group:WireAuthentication">
+   </FileRef>
+   <FileRef
+      location = "group:WireCells">
    </FileRef>
    <FileRef
       location = "group:WireFoundation">

@@ -33,7 +33,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     private let conversationsAPI: any ConversationsAPI
     private let conversationsLocalStore: any ConversationLocalStoreProtocol
-    private let userRepository: any UserRepositoryProtocol
+    private let userLocalStore: any UserLocalStoreProtocol
     private let teamRepository: any TeamRepositoryProtocol
     private let messageRepository: any MessageRepositoryProtocol
     private let backendInfo: BackendInfo
@@ -46,7 +46,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public init(
         conversationsAPI: any ConversationsAPI,
         conversationsLocalStore: any ConversationLocalStoreProtocol,
-        userRepository: any UserRepositoryProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
         teamRepository: any TeamRepositoryProtocol,
         messageRepository: any MessageRepositoryProtocol,
         backendInfo: BackendInfo,
@@ -54,7 +54,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     ) {
         self.conversationsAPI = conversationsAPI
         self.conversationsLocalStore = conversationsLocalStore
-        self.userRepository = userRepository
+        self.userLocalStore = userLocalStore
         self.teamRepository = teamRepository
         self.messageRepository = messageRepository
         self.backendInfo = backendInfo
@@ -268,7 +268,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async {
-        let participant = await userRepository.fetchOrCreateUser(
+        let participant = await userLocalStore.fetchOrCreateUser(
             id: participantID,
             domain: participantDomain
         )
@@ -337,7 +337,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             in: conversation
         )
 
-        let sender = try await userRepository.fetchUser(
+        let sender = try await userLocalStore.fetchUser(
             id: senderID,
             domain: senderDomain
         )
@@ -412,7 +412,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         removedUsers: Set<UserID>,
         reason: ConversationMemberLeaveReason
     ) async {
-        var systemMessageType: SystemMessageType = switch reason {
+        let systemMessageType: SystemMessageType = switch reason {
         case .userDeleted, .userLeft:
             .teamMemberRemoved(
                 member: (senderID, senderDomain),
@@ -439,7 +439,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await withTaskGroup(of: WireDataModel.ZMUser.self) { taskGroup in
             for userID in userIDs {
                 taskGroup.addTask { [self] in
-                    await userRepository.fetchOrCreateUser(
+                    await userLocalStore.fetchOrCreateUser(
                         id: userID.uuid,
                         domain: userID.domain
                     )
@@ -463,11 +463,11 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             for removedUserID in removedUsersIDs {
                 taskGroup.addTask { [self] in
                     do {
-                        return try await userRepository.isSelfUser(
+                        let (_, isSelfUser) = try await userLocalStore.isSelfUser(
                             id: removedUserID.uuid,
                             domain: removedUserID.domain
                         )
-
+                        return isSelfUser
                     } catch {
                         return false
                     }

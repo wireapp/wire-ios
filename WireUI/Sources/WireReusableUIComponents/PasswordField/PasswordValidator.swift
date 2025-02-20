@@ -18,7 +18,7 @@
 
 public protocol PasswordValidator {
 
-    func validate(_ password: String) -> Bool
+    func isPasswordValid(_ password: String) -> Bool
 
     var localizedRulesDescription: String? { get }
 
