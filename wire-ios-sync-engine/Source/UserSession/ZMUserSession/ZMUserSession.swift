@@ -551,14 +551,6 @@ public final class ZMUserSession: NSObject {
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
                 setUpSyncAgent(clientID: selfClientID)
-
-                Task {
-                    do {
-                        try await syncAgent?.performSyncIfNeeded()
-                    } catch {
-                        WireLogger.sync.error("failed to perform sync on session setup: \(String(describing: error))")
-                    }
-                }
             }
         }
     }
@@ -573,6 +565,14 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
         syncAgent.delegate = self
+
+        Task {
+            do {
+                try await syncAgent.performSyncIfNeeded()
+            } catch {
+                WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
+            }
+        }
     }
 
     // MARK: - Deinitalize
@@ -1293,7 +1293,6 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
             setUpSyncAgent(clientID: selfClientID)
-            triggerInitialSync()
         }
     }
 
