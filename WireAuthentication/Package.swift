@@ -18,6 +18,7 @@ let package = Package(
     dependencies: [
         .package(name: "WireAPI", path: "../WireAPI"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI"),
         .package(path: "../WirePlugins"),
         .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
@@ -60,6 +61,7 @@ let package = Package(
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation",
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
+                "WireLogging"
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),

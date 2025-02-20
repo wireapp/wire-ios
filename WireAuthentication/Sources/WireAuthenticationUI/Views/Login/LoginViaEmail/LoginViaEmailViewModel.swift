@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireAuthenticationAPI
+import WireLogging
 import WireReusableUIComponents
 
 @MainActor
@@ -93,7 +94,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
                     to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
                 )
             case .twoFactorAuthenticationFailed:
-                break // This shouldn't happen in this view
+                // This shouldn't happen in this view as we are not submitting a verification code
+                WireLogger.authentication.critical("Two factor authentication failed in LoginViaEmailViewModel")
+                alert = .unknownError
             case .accountPendingActivation:
                 break
             case .accountSuspended:
