@@ -205,11 +205,21 @@ final class ConversationTableViewDataSource: NSObject {
 
     @objc
     private func willEnterForeground(_ notification: NSNotification) {
+        // resume updates in that were stop in background
         fetchController?.delegate = self
+        let contentOffset = tableView.contentOffset
+          do {
+              try fetchController?.performFetch()
+              tableView.reloadData()
+              tableView.setContentOffset(contentOffset, animated: false)
+          } catch {
+              WireLogger.conversation.error("Failed to fetch: \(error)")
+          }
     }
 
     @objc
     private func didEnterBackground(_ notification: NSNotification) {
+        // stop to refresh UI from all updates. This avoids to crash when getting spammed and killed by OS.
         fetchController?.delegate = nil
     }
 
@@ -455,6 +465,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        WireLogger.conversation.debug("🤓 controllerDidChangeContent")
         reloadSections(newSections: calculateSections())
     }
 
