@@ -128,9 +128,9 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
     private func startTimer() {
         stopTimer()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             self?.reconfigure()
-        })
+        }
     }
 
     private func stopTimer() {

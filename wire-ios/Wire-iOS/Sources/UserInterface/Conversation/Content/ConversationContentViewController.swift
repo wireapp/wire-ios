@@ -172,6 +172,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     override func loadView() {
+        view = .init()
 
         view.addSubview(tableView)
 
