@@ -18,6 +18,19 @@
 			name = "Format & Lint Swift Code";
 			productName = "Format Swift Code";
 		};
+		5965AE3B2D687F4B007E3E5B /* Periphery */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5965AE3E2D687F4B007E3E5B /* Build configuration list for PBXAggregateTarget "Periphery" */;
+			buildPhases = (
+				5965AE3F2D687F52007E3E5B /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = Periphery;
+			packageProductDependencies = (
+			);
+			productName = Periphery;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -8531,6 +8544,9 @@
 					592996512C2EB98A008C334F = {
 						CreatedOnToolsVersion = 15.3;
 					};
+					5965AE3B2D687F4B007E3E5B = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					8F42C537199244A700288E4D = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1000;
@@ -8606,6 +8622,7 @@
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
 				592996512C2EB98A008C334F /* Format & Lint Swift Code */,
+				5965AE3B2D687F4B007E3E5B /* Periphery */,
 			);
 		};
 /* End PBXProject section */
@@ -8753,6 +8770,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Format\n\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n    \"$PROJECT_DIR/..\"\n\n# Lint\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --fix \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --strict \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n";
+		};
+		5965AE3F2D687F52007E3E5B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "(cd ..; /opt/homebrew/bin/periphery scan --clean-build --format xcode --config .periphery.yml)\n";
 		};
 		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10972,6 +11007,24 @@
 			};
 			name = Release;
 		};
+		5965AE3C2D687F4B007E3E5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5965AE3D2D687F4B007E3E5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		8F42C556199244A700288E4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11261,6 +11314,15 @@
 			buildConfigurations = (
 				592996522C2EB98A008C334F /* Debug */,
 				592996532C2EB98A008C334F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5965AE3E2D687F4B007E3E5B /* Build configuration list for PBXAggregateTarget "Periphery" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5965AE3C2D687F4B007E3E5B /* Debug */,
+				5965AE3D2D687F4B007E3E5B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
