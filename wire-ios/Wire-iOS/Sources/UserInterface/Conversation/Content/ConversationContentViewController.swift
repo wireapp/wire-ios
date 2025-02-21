@@ -520,9 +520,7 @@ extension ConversationContentViewController: UITableViewDelegate {
         }
 
         replyAction.image = upsideDownImage
-        let configuration = UISwipeActionsConfiguration(actions: [replyAction])
-        configuration.performsFirstActionWithFullSwipe = false
-        return configuration
+        return UISwipeActionsConfiguration(actions: [replyAction])
     }
 }
 
