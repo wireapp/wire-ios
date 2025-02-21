@@ -59,7 +59,7 @@ public final class ZMUserSession: NSObject {
     private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
-    private(set) var updateEventProcessor: UpdateEventProcessor?
+    private(set) var legacyUpdateEventProcessor: UpdateEventProcessor?
     private(set) var strategyDirectory: StrategyDirectoryProtocol?
     private(set) var syncStrategy: ZMSyncStrategy?
     private(set) var operationLoop: ZMOperationLoop?
@@ -491,7 +491,7 @@ public final class ZMUserSession: NSObject {
             self
                 .strategyDirectory = strategyDirectory ??
                 createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
-            updateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
+            legacyUpdateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? createSyncStrategy()
             self.operationLoop = operationLoop ?? createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
             urlActionProcessors = createURLActionProcessors()
@@ -658,7 +658,7 @@ public final class ZMUserSession: NSObject {
     private func createURLActionProcessors() -> [URLActionProcessor] {
         [
             ImportEventsURLActionProcessor(
-                eventProcessor: updateEventProcessor!
+                eventProcessor: legacyUpdateEventProcessor!
             ),
             DeepLinkURLActionProcessor(
                 contextProvider: coreDataStack,
@@ -689,7 +689,7 @@ public final class ZMUserSession: NSObject {
         ZMOperationLoop(
             transportSession: transportSession,
             requestStrategy: syncStrategy,
-            updateEventProcessor: updateEventProcessor!,
+            updateEventProcessor: legacyUpdateEventProcessor!,
             operationStatus: applicationStatusDirectory.operationStatus,
             syncStatus: applicationStatusDirectory.syncStatus,
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
@@ -832,7 +832,7 @@ public final class ZMUserSession: NSObject {
     // might be replaced by something more elegant
     public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
         WaitingGroupTask(context: syncContext) {
-            try? await self.updateEventProcessor?.processEvents(events)
+            try? await self.legacyUpdateEventProcessor?.processEvents(events)
         }
     }
 
@@ -966,15 +966,15 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 // TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
-        await updateEventProcessor?.bufferEvents(events)
+        await legacyUpdateEventProcessor?.bufferEvents(events)
     }
 
     public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async throws {
-        try await updateEventProcessor?.processEvents(events)
+        try await legacyUpdateEventProcessor?.processEvents(events)
     }
 
     public func processBufferedEvents() async throws {
-        try await updateEventProcessor?.processBufferedEvents()
+        try await legacyUpdateEventProcessor?.processBufferedEvents()
     }
 }
 
@@ -1067,7 +1067,7 @@ extension ZMUserSession: SyncAgentDelegate {
         syncContext.performGroupedBlock { [weak self] in
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync")
-            processEvents()
+            processLegacyEvents()
 
             NotificationInContext(
                 name: .quickSyncCompletedNotification,
@@ -1199,7 +1199,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    func processEvents() {
+    func processLegacyEvents() {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
@@ -1209,7 +1209,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             var processingInterrupted = false
             do {
-                try await updateEventProcessor?.processBufferedEvents()
+                try await legacyUpdateEventProcessor?.processBufferedEvents()
             } catch {
                 processingInterrupted = true
             }
@@ -1237,7 +1237,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             do {
                 // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
-                try await updateEventProcessor!.processBufferedEvents()
+                try await legacyUpdateEventProcessor!.processBufferedEvents()
                 await managedObjectContext.perform {
                     completionHandler()
                 }

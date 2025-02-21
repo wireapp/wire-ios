@@ -72,7 +72,7 @@ public extension ZMUserSession {
 
     internal func processPendingEvents() {
         syncContext.performGroupedBlock {
-            self.processEvents()
+            self.processLegacyEvents()
         }
     }
 
