@@ -26,6 +26,6 @@ public protocol InitialSyncBuilderProtocol {
     // due to `any InitialSyncProtocol?`
     typealias Sync = any InitialSyncProtocol
 
-    func build() throws -> Sync
+    func buildInitialSync() throws -> Sync
 
 }

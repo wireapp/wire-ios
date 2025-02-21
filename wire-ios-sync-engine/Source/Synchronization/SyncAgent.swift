@@ -33,7 +33,7 @@ final class SyncAgent: NSObject {
     private let initialSyncBuilder: any InitialSyncBuilderProtocol
     private let legacySyncStatus: any SyncStatusProtocol
 
-    private var hasPerformedInitialSync: Bool {
+    private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
     }
 
@@ -58,7 +58,7 @@ final class SyncAgent: NSObject {
     /// otherwise the incremental sync will be performed.
 
     func performSyncIfNeeded() async throws {
-        if !hasPerformedInitialSync {
+        if !hasCompletedInitialSync {
             try await performInitialSync()
         } else {
             try await performIncrementalSync()
@@ -72,7 +72,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new initial sync")
-                try await initialSyncBuilder.build().perform(skipPullingLastUpdateEventID: false)
+                try await initialSyncBuilder.buildInitialSync().perform(skipPullingLastUpdateEventID: false)
                 WireLogger.sync.debug("did finish new initial sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
@@ -94,7 +94,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new resource sync")
-                try await initialSyncBuilder.build().perform(skipPullingLastUpdateEventID: true)
+                try await initialSyncBuilder.buildInitialSync().perform(skipPullingLastUpdateEventID: true)
                 WireLogger.sync.debug("did finish new resource sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
@@ -141,7 +141,7 @@ extension SyncAgent: ZMSyncStateDelegate {
     }
 
     func didFinishQuickSync() {
-        WireLogger.sync.debug("did start finish incremental sync")
+        WireLogger.sync.debug("did finish legacy incremental sync")
         delegate?.syncAgentDidFinishLegacyIncrementalSync(self)
     }
 
