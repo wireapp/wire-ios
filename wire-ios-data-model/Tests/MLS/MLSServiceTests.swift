@@ -327,7 +327,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = "foo"
         let error = MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch
         mockDecryptionService.decryptMessageForSubconversationType_MockError = error
-        mockSyncStatus.mockPerformQuickSync = {}
+        mockSyncStatus.mockRecoverWithQuickSync = {}
 
         let expectation = XCTestExpectation(description: "repaired conversation")
         await uiMOC.perform {
@@ -1478,7 +1478,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
-        mockSyncStatus.mockPerformQuickSync = {}
+        mockSyncStatus.mockRecoverWithQuickSync = {}
 
         let expectation = XCTestExpectation(description: "rejoined conversation")
 
@@ -1510,7 +1510,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return
         }
 
-        mockSyncStatus.mockPerformQuickSync = {}
+        mockSyncStatus.mockRecoverWithQuickSync = {}
 
         let expectation = XCTestExpectation(description: "didn't rejoin conversation")
         expectation.isInverted = true
@@ -1974,9 +1974,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // When
@@ -1986,7 +1987,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 2)
 
         // Then it performed a quick sync once.
-        XCTAssertEqual(mockPerformQuickSyncCount, 1)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 1)
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
@@ -2014,9 +2015,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // When
@@ -2026,7 +2028,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
 
         // Then it performed a quick sync 3 times (for 3 failures).
-        XCTAssertEqual(mockPerformQuickSyncCount, 3)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 3)
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
@@ -2048,7 +2050,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        mockSyncStatus.mockPerformQuickSync = {}
+        mockSyncStatus.mockRecoverWithQuickSync = {}
 
         do {
             // When
@@ -2075,7 +2077,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        mockSyncStatus.mockPerformQuickSync = {}
+        mockSyncStatus.mockRecoverWithQuickSync = {}
 
         do {
             // When
@@ -2115,9 +2117,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // When
@@ -2130,7 +2133,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
 
         // Then it performed a quick sync 5 times (for 2 + 3 failures).
-        XCTAssertEqual(mockPerformQuickSyncCount, 5)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 5)
 
         // Then processed the results twice (1 for each success).
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[], []])
@@ -2166,9 +2169,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // When
@@ -2181,7 +2185,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
 
         // Then it performed a quick sync once.
-        XCTAssertEqual(mockPerformQuickSyncCount, 1)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 1)
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
@@ -2204,9 +2208,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // Then
@@ -2219,7 +2224,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
 
         // Then it didn't perform a quick sync.
-        XCTAssertEqual(mockPerformQuickSyncCount, 0)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 0)
 
         // Then it didn't process any result.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [])
