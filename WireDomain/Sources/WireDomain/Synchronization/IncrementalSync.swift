@@ -51,9 +51,7 @@ public struct IncrementalSync {
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
         logger.debug("opening push channel")
         let liveEventStream = try await pushChannel.open()
-        logger.debug("pulling pending events")
         try await updateEventsSync.pull()
-        logger.debug("processing storing events")
         try await processStoredEvents()
 
         return Task { @Sendable [logger, decryptor, store, processor] in
@@ -109,7 +107,6 @@ public struct IncrementalSync {
                 }
             }
 
-            logger.debug("deleting processed events")
             try await store.deleteNextPendingEvents(limit: batchSize)
         }
     }

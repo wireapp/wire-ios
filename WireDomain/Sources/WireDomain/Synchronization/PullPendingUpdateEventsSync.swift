@@ -59,7 +59,11 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             let batchCount = envelopes.count
             var count = 0
 
-            WireLogger.sync.debug("received batch of \(batchCount) envelopes")
+            if batchCount > 0 {
+                WireLogger.sync.debug("fetched \(batchCount) envelopes from remote")
+            } else {
+                WireLogger.sync.debug("no new events on remote")
+            }
 
             // If we need to abort, do it before processing the next page.
             try Task.checkCancellation()
