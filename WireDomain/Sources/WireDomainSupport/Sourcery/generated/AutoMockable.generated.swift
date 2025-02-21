@@ -1208,6 +1208,38 @@ public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
 
 }
 
+public class MockIncrementalSyncProvider: IncrementalSyncProvider {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - provideIncrementalSync
+
+    public var provideIncrementalSync_Invocations: [Void] = []
+    public var provideIncrementalSync_MockError: Error?
+    public var provideIncrementalSync_MockMethod: (() throws -> IncrementalSync)?
+    public var provideIncrementalSync_MockValue: IncrementalSync?
+
+    public func provideIncrementalSync() throws -> IncrementalSync {
+        provideIncrementalSync_Invocations.append(())
+
+        if let error = provideIncrementalSync_MockError {
+            throw error
+        }
+
+        if let mock = provideIncrementalSync_MockMethod {
+            return try mock()
+        } else if let mock = provideIncrementalSync_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `provideIncrementalSync`")
+        }
+    }
+
+}
+
 public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigrationUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -1240,38 +1272,6 @@ public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigra
 
 }
 
-public class MockInitialSyncBuilderProtocol: InitialSyncBuilderProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - buildInitialSync
-
-    public var buildInitialSync_Invocations: [Void] = []
-    public var buildInitialSync_MockError: Error?
-    public var buildInitialSync_MockMethod: (() throws -> Sync)?
-    public var buildInitialSync_MockValue: Sync?
-
-    public func buildInitialSync() throws -> Sync {
-        buildInitialSync_Invocations.append(())
-
-        if let error = buildInitialSync_MockError {
-            throw error
-        }
-
-        if let mock = buildInitialSync_MockMethod {
-            return try mock()
-        } else if let mock = buildInitialSync_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `buildInitialSync`")
-        }
-    }
-
-}
-
 public class MockInitialSyncProtocol: InitialSyncProtocol {
 
     // MARK: - Life cycle
@@ -1297,6 +1297,38 @@ public class MockInitialSyncProtocol: InitialSyncProtocol {
         }
 
         try await mock(skipPullingLastUpdateEventID)
+    }
+
+}
+
+public class MockInitialSyncProvider: InitialSyncProvider {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - provideInitialSync
+
+    public var provideInitialSync_Invocations: [Void] = []
+    public var provideInitialSync_MockError: Error?
+    public var provideInitialSync_MockMethod: (() throws -> AnyInitialSync)?
+    public var provideInitialSync_MockValue: AnyInitialSync?
+
+    public func provideInitialSync() throws -> AnyInitialSync {
+        provideInitialSync_Invocations.append(())
+
+        if let error = provideInitialSync_MockError {
+            throw error
+        }
+
+        if let mock = provideInitialSync_MockMethod {
+            return try mock()
+        } else if let mock = provideInitialSync_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `provideInitialSync`")
+        }
     }
 
 }
@@ -2683,12 +2715,12 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
 
     // MARK: - persistEventEnvelope
 
-    public var persistEventEnvelopeIndex_Invocations: [(data: Data, index: Int64)] = []
+    public var persistEventEnvelopeIndex_Invocations: [(eventEnvelope: UpdateEventEnvelope, index: Int64)] = []
     public var persistEventEnvelopeIndex_MockError: Error?
-    public var persistEventEnvelopeIndex_MockMethod: ((Data, Int64) async throws -> Void)?
+    public var persistEventEnvelopeIndex_MockMethod: ((UpdateEventEnvelope, Int64) async throws -> Void)?
 
-    public func persistEventEnvelope(_ data: Data, index: Int64) async throws {
-        persistEventEnvelopeIndex_Invocations.append((data: data, index: index))
+    public func persistEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64) async throws {
+        persistEventEnvelopeIndex_Invocations.append((eventEnvelope: eventEnvelope, index: index))
 
         if let error = persistEventEnvelopeIndex_MockError {
             throw error
@@ -2698,29 +2730,29 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
             fatalError("no mock for `persistEventEnvelopeIndex`")
         }
 
-        try await mock(data, index)
+        try await mock(eventEnvelope, index)
     }
 
-    // MARK: - fetchStoredEventEnvelopePayloads
+    // MARK: - fetchStoredEventEnvelopes
 
-    public var fetchStoredEventEnvelopePayloadsLimit_Invocations: [UInt] = []
-    public var fetchStoredEventEnvelopePayloadsLimit_MockError: Error?
-    public var fetchStoredEventEnvelopePayloadsLimit_MockMethod: ((UInt) async throws -> [Data])?
-    public var fetchStoredEventEnvelopePayloadsLimit_MockValue: [Data]?
+    public var fetchStoredEventEnvelopesLimit_Invocations: [UInt] = []
+    public var fetchStoredEventEnvelopesLimit_MockError: Error?
+    public var fetchStoredEventEnvelopesLimit_MockMethod: ((UInt) async throws -> [UpdateEventEnvelope])?
+    public var fetchStoredEventEnvelopesLimit_MockValue: [UpdateEventEnvelope]?
 
-    public func fetchStoredEventEnvelopePayloads(limit: UInt) async throws -> [Data] {
-        fetchStoredEventEnvelopePayloadsLimit_Invocations.append(limit)
+    public func fetchStoredEventEnvelopes(limit: UInt) async throws -> [UpdateEventEnvelope] {
+        fetchStoredEventEnvelopesLimit_Invocations.append(limit)
 
-        if let error = fetchStoredEventEnvelopePayloadsLimit_MockError {
+        if let error = fetchStoredEventEnvelopesLimit_MockError {
             throw error
         }
 
-        if let mock = fetchStoredEventEnvelopePayloadsLimit_MockMethod {
+        if let mock = fetchStoredEventEnvelopesLimit_MockMethod {
             return try await mock(limit)
-        } else if let mock = fetchStoredEventEnvelopePayloadsLimit_MockValue {
+        } else if let mock = fetchStoredEventEnvelopesLimit_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchStoredEventEnvelopePayloadsLimit`")
+            fatalError("no mock for `fetchStoredEventEnvelopesLimit`")
         }
     }
 

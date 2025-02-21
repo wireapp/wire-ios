@@ -70,8 +70,7 @@ public struct IncrementalSync {
                 // Store.
                 logger.debug("storing live event envelope")
                 let index = try await store.indexOfLastEventEnvelope() + 1
-                let data = try jsonEncoder.encode(envelope)
-                try await store.persistEventEnvelope(data, index: index)
+                try await store.persistEventEnvelope(envelope, index: index)
 
                 // Process.
                 for event in envelope.events {
@@ -94,11 +93,7 @@ public struct IncrementalSync {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            // TODO: perhaps the store can handle encoding and decoding
-            let jsonDecoder = JSONDecoder()
-            let envelopes = try await store.fetchStoredEventEnvelopePayloads(limit: batchSize).map {
-                try jsonDecoder.decode(UpdateEventEnvelope.self, from: $0)
-            }
+            let envelopes = try await store.fetchStoredEventEnvelopes(limit: batchSize)
 
             guard !envelopes.isEmpty else {
                 break

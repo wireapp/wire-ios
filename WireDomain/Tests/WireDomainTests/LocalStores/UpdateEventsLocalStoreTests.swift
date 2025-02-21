@@ -62,14 +62,10 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
     // MARK: - Tests
 
     func testPersistEventEnvelope_It_Stores_Envelope_Locally() async throws {
-        // Given
-
-        let envelopeData = try JSONEncoder().encode(Scaffolding.envelope1)
-
         // When
 
         try await sut.persistEventEnvelope(
-            envelopeData,
+            Scaffolding.envelope1,
             index: 1
         )
 
@@ -90,7 +86,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopePayloads(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
 
         // Then it returns no envelopes.
 
@@ -105,11 +101,11 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopePayloads(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
 
         // Then it returns the one and only envelope.
-
-        let fetchedEnvelope1 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[0])
+        try XCTAssertCount(fetchedEnvelopes, count: 1)
+        let fetchedEnvelope1 = fetchedEnvelopes[0]
 
         XCTAssertEqual(fetchedEnvelope1, Scaffolding.envelope3)
     }
@@ -127,26 +123,17 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopePayloads(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
 
         // Then the first 3 envelopes were returned.
+        try XCTAssertCount(fetchedEnvelopes, count: 3)
 
-        guard fetchedEnvelopes.count == 3 else {
-            XCTFail("expected 3 envelopes, got \(fetchedEnvelopes.count)")
-            return
-        }
-
-        let fetchedEnvelope1 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[0])
-        let fetchedEnvelope2 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[1])
-        let fetchedEnvelope3 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[2])
-
-        XCTAssertEqual(fetchedEnvelope1, Scaffolding.envelope3)
-        XCTAssertEqual(fetchedEnvelope2, Scaffolding.envelope4)
-        XCTAssertEqual(fetchedEnvelope3, Scaffolding.envelope1)
+        XCTAssertEqual(fetchedEnvelopes[0], Scaffolding.envelope3)
+        XCTAssertEqual(fetchedEnvelopes[1], Scaffolding.envelope4)
+        XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
     }
 
-    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total_Number_Of_Envelopes(
-    ) async throws {
+    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total_Number_Of_Envelopes() async throws {
         // Given there are stored envelopes.
 
         try await insertStoredEventEnvelopes([

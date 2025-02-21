@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAPI
 
 // sourcery: AutoMockable
 public protocol UpdateEventsLocalStoreProtocol {
@@ -38,21 +39,21 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     /// Persists an event envelope locally.
     /// - Parameters:
-    ///     - data: The event envelope payload data.
+    ///     - eventEnvelope: The event envelope to persist.
     ///     - index: The event envelope index.
 
     func persistEventEnvelope(
-        _ data: Data,
+        _ eventEnvelope: UpdateEventEnvelope,
         index: Int64
     ) async throws
 
-    /// Fetches stored event envelope payloads.
+    /// Fetches stored event envelopes.
     /// - parameter limit: A fetch limit.
-    /// - returns: A list of event payloads.
+    /// - returns: A list of event envelopes.
 
-    func fetchStoredEventEnvelopePayloads(
+    func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [Data]
+    ) async throws -> [UpdateEventEnvelope]
 
     /// Deletes next pending events locally.
     /// - parameter limit: A fetch limit.

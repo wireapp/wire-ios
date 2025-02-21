@@ -78,13 +78,9 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                 var decryptedEnvelope = envelope
                 decryptedEnvelope.events = try await decryptor.decryptEvents(in: envelope)
 
-                // We can only decrypt once so store the decrypted events for later retrieval.
-                log("encoding...", envelopeID: envelope.id)
-                let decryptedEnvelopeData = try jsonEncoder.encode(decryptedEnvelope)
-
                 log("storing...", envelopeID: envelope.id)
                 try await store.persistEventEnvelope(
-                    decryptedEnvelopeData,
+                    decryptedEnvelope,
                     index: currentIndex
                 )
 

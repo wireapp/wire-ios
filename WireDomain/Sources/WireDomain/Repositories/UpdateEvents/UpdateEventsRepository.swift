@@ -80,18 +80,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     // MARK: - Fetch pending events
 
     func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope] {
-        let payloads = try await updateEventsLocalStore.fetchStoredEventEnvelopePayloads(limit: limit)
-        return try decodeEventEnvelopes(payloads)
-    }
-
-    private func decodeEventEnvelopes(_ payloads: [Data]) throws -> [UpdateEventEnvelope] {
-        try payloads.map {
-            do {
-                return try decoder.decode(UpdateEventEnvelope.self, from: $0)
-            } catch {
-                throw UpdateEventsRepositoryError.failedToDecodeStoredEvent(error)
-            }
-        }
+        return try await updateEventsLocalStore.fetchStoredEventEnvelopes(limit: limit)
     }
 
     // MARK: - Delete pending events
