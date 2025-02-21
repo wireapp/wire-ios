@@ -39,6 +39,7 @@
 		01BC68512CE3AF9E00445243 /* EmptyConversationSearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC68502CE3AF9E00445243 /* EmptyConversationSearchResultsView.swift */; };
 		01BC68652CE496A500445243 /* EmptyPlaceholderContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC68642CE496A500445243 /* EmptyPlaceholderContainerView.swift */; };
 		01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 01C1A7C62A54C45A0058D578 /* SnapshotTesting */; };
+		01D2B13C2D63E8E90030D28D /* TextItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D2B13B2D63E8E90030D28D /* TextItemCell.swift */; };
 		01D2B7A52D64A9190030D28D /* WireCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 01D2B7A42D64A9190030D28D /* WireCoreCrypto */; };
 		01D2C78F2CECC41D00F05E5E /* QRCodeScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D2C78E2CECC41D00F05E5E /* QRCodeScannerViewController.swift */; };
 		01D8E71A2BA39CE900B71CB7 /* PrivacyWarningChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D8E7192BA39CE900B71CB7 /* PrivacyWarningChecker.swift */; };
@@ -1963,6 +1964,7 @@
 		01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = copyExtraAudioNotifications; sourceTree = "<group>"; };
 		01BC68502CE3AF9E00445243 /* EmptyConversationSearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyConversationSearchResultsView.swift; sourceTree = "<group>"; };
 		01BC68642CE496A500445243 /* EmptyPlaceholderContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPlaceholderContainerView.swift; sourceTree = "<group>"; };
+		01D2B13B2D63E8E90030D28D /* TextItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextItemCell.swift; sourceTree = "<group>"; };
 		01D2C78E2CECC41D00F05E5E /* QRCodeScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerViewController.swift; sourceTree = "<group>"; };
 		01D8E7192BA39CE900B71CB7 /* PrivacyWarningChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyWarningChecker.swift; sourceTree = "<group>"; };
 		01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFileDestination.swift; sourceTree = "<group>"; };
@@ -7743,6 +7745,7 @@
 			children = (
 				01874DD52C18579300208716 /* ContextItemsProviders */,
 				EE742AB5284DE57900A6B5F3 /* DeveloperToolsView.swift */,
+				01D2B13B2D63E8E90030D28D /* TextItemCell.swift */,
 				013638F32BF6A23200A68F89 /* DeveloperToolsPresenter.swift */,
 				EE742AB7284DE66400A6B5F3 /* DeveloperToolsViewModel.swift */,
 				63238C692B860DE300951467 /* DeveloperE2ei */,
@@ -9386,6 +9389,7 @@
 				06DF42D12757DA56009C8A99 /* GuestLinkInfoCell.swift in Sources */,
 				0665DF7328F01D3B0094482B /* ProfileImagePickerManager.swift in Sources */,
 				5E8FFC0321ECC5CF0052DF03 /* AuthenticationFeatureProvider.swift in Sources */,
+				01D2B13C2D63E8E90030D28D /* TextItemCell.swift in Sources */,
 				EF4C5D4E23391C7E0092CA38 /* ConversationListCell+ZMConversationObserver.swift in Sources */,
 				EF51C2BF211B2CAF0099A599 /* Data+HEIF.swift in Sources */,
 				BF2A74711CEB466A002608BF /* ConversationInputBarViewController+Audio.swift in Sources */,
