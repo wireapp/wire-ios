@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@ public struct SnapshotHelper {
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
     private var snapshotReferenceDirectory = ""
+
+    private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
+        let ci = ProcessInfo.processInfo.environment["CI"]
+        return (ci == nil || ci?.isEmpty == true) ? .missing : .never
+    }
 
     public init() {}
 
@@ -143,9 +148,7 @@ public struct SnapshotHelper {
 
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
                 as: .image(
@@ -190,9 +193,7 @@ public struct SnapshotHelper {
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let config = size.map { ViewImageConfig(safeArea: safeArea, size: $0, traits: traits) }
 
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
                 as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(
@@ -229,9 +230,7 @@ public struct SnapshotHelper {
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
                 as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
@@ -312,9 +311,7 @@ public struct SnapshotHelper {
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             for (config, name) in SnapshotHelper.phoneConfigs {
 
                 let failure = verifySnapshot(
@@ -352,9 +349,7 @@ public struct SnapshotHelper {
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
                 as: .image,
@@ -385,9 +380,7 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
-            .environment["CI"] == "true" ? .never : nil
-        withSnapshotTesting(record: recordEnabled) {
+        withSnapshotTesting(record: defaultRecordMode) {
 
             let snapshotDirectory = snapshotDirectory(file: file)
             setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)

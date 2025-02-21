@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -284,6 +284,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var environment: BackendEnvironment {
         didSet {
+            apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
             authenticatedSessionFactory.environment = environment
@@ -552,7 +553,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
             deviceModel: UIDevice.current.model,
-            deviceOS: UIDevice.current.systemVersion,
+            osVersion: UIDevice.current.systemVersion,
             countlyProvider: countlyProvider
         )
 
@@ -1005,6 +1006,31 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public func retryStart() {
         delegate?.sessionManagerAsksToRetryStart()
+    }
+
+    /// The active user session will be torn down and the app goes into migration state.
+    public func prepareForRestoreWithMigration(completion: @escaping () -> Void) {
+        guard let delegate else {
+            WireLogger.sessionManager.debug("SessionManager.delegate is nil, aborting migration preparation")
+            return completion()
+        }
+
+        WireLogger.sessionManager.debug("SessionManager.delegate.sessionManagerWillMigrateAccount ...")
+        delegate.sessionManagerWillMigrateAccount { [self] in
+
+            WireLogger.sessionManager.debug("... userSessionCanBeTornDown { ... }")
+
+            if let accountID = activeUserSession?.account.userIdentifier {
+                tearDownBackgroundSession(for: accountID) { [self] in
+                    activeUserSession = nil
+                    accountTokens.removeValue(forKey: accountID)
+                    completion()
+                }
+            } else {
+                activeUserSession = nil
+                completion()
+            }
+        }
     }
 
     private func setupUserSession(
@@ -1510,9 +1536,9 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
             switch session.backupImportDidSucceed {
             case true?:
-                userSession.trackAnalyticsEvent(.backupRestored)
+                userSession.trackAnalyticsEvent(.Backup.restored)
             case false?:
-                userSession.trackAnalyticsEvent(.backupRestoredFailed)
+                userSession.trackAnalyticsEvent(.Backup.restoredFailed)
             case nil:
                 break
             }

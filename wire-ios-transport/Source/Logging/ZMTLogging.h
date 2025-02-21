@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,4 @@
 //
 
 #define ZMT_LOG_TAG_NETWORK @"Network"
-#define ZMT_LOG_TAG_PUSHCHANNEL @"Push channel"
-#define ZMT_LOG_TAG_PUSHCHANNEL_LOW_LEVEL @"Push channel_low"
 #define ZMT_LOG_TAG_NETWORK_LOW_LEVEL @"Low level network (verbose!)"

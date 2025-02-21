@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol, ZMEventAsyncConsumer {
 
@@ -56,11 +57,27 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     // MARK: - Methods
 
-    func processPayload(_ payload: ZMTransportData) {
+    /// Process Conversation Rename event
+    /// - Parameter payload: payload containing the event
+    /// - Note: This method needs to be synchronous because it's used by a request Strategy
+    /// This can be removed once ConversationRequestStrategy is removed
+    func processConversationRenamePayload(_ payload: ZMTransportData) {
         // here's no uuid is needed since we process it directly it's just convenience to get the payload
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
-            Task {
-                await processConversationEvents([event])
+            do {
+                let payload = try eventPayloadDecoder.decode(
+                    Payload.ConversationEvent<Payload.UpdateConversationName>.self,
+                    from: event.payload
+                )
+
+                processor.processPayload(
+                    payload,
+                    originalEvent: event,
+                    in: context
+                )
+            } catch {
+                WireLogger.eventProcessing
+                    .error("error processing UpdateConversationName: \(error.localizedDescription)")
             }
         }
     }
@@ -78,8 +95,8 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
         await processConversationEvents(events)
-        _ = await context.perform {
-            self.context.saveOrRollback()
+        _ = await context.perform { [weak self] in
+            self?.context.saveOrRollback()
         }
     }
 

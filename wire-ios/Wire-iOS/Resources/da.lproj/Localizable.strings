@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Lær mere";
 "peoplepicker.no_matching_results.action.manage_services" = "Manage Services";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Ingen resultater.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Everyone’s here.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Den kan anvendes i 2 uger. Send en ny, hvis den udløber.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Invitér flere personer";
 "peoplepicker.invite_team_members" = "Inviter personer til holdet";
 "peoplepicker.quick-action.open-conversation" = "Åbn";
 "peoplepicker.quick-action.admin-services" = "Manage Services";
@@ -1358,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Historik";
-"self.settings.history_backup.title" = "Back Up Conversations";
-"self.settings.history_backup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.\n\nChoose a strong password to protect the backup file.";
-"self.settings.history_backup.action" = "Back Up Now";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Fejl";
-
 "self.settings.history_backup.set_email.title" = "Set an email and password.";
 "self.settings.history_backup.set_email.message" = "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Set Password";
-"self.settings.history_backup.password.cancel" = "Annuller";
-"self.settings.history_backup.password.next" = "Næste";
-"self.settings.history_backup.password.placeholder" = "Adgangskode";
-"self.settings.history_backup.password.description" = "The backup will be compressed and encrypted with the password you set here.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1504,32 +1491,11 @@
 "registration.no_history.hero" = "Det er første gang du bruger Wire på denne enhed.";
 "registration.no_history.subtitle" = "Af hensyn til fortrolighed, vil din samtalehistorik ikke vises her.";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "Gendan fra sikkerhedskopi";
 
 "registration.alert.account_exists.title" = "Account Exists";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
 "registration.alert.change_signin_action" = "Log ind";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Restore history";
-"registration.no_history.restore_backup_warning.message" = "The backup contents will replace the conversation history on this device.\nYou can only restore history from a backup of the same platform.";
-"registration.no_history.restore_backup_warning.proceed" = "Choose Backup File";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Prøv igen";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Noget gik galt";
-"registration.no_history.restore_backup_failed.message" = "Din historik kunne ikke gendannes.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Ukompatibel sikkerhedskopi";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "Du kan ikke gendanne historik fra en anden konto.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Ukompatibel sikkerhedskopi";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "Denne sikkerhedskopi er lavet på en nyere eller uddateret version af Wire og kan ikke blive gendannet her.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Enterprise Login";
@@ -1556,17 +1522,6 @@
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
 
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Restoring…";
-"registration.no_history.restore_backup.completed" = "Completed";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "This backup is password protected.";
-"registration.no_history.restore_backup.password.message" = "The password is required to restore this backup.";
-"registration.no_history.restore_backup.password.placeholder" = "Adgangskode";
-"registration.no_history.restore_backup.password_error.title" = "Wrong Password";
-
 "registration.no_history.logged_out.hero" = "Du har brugt Wire på denne enhed før.";
 "registration.no_history.logged_out.subtitle" = "Beskeder sendt i mellemtiden vises ikke.";
 "registration.no_history.logged_out.got_it" = "OK";
@@ -1589,17 +1544,6 @@
 "registration.email_flow.email_step.title" = "Rediger oplysninger";
 
 "registration.country_select.title" = "Land";
-
-"registration.share_contacts.hero.title" = "Find personer på Wire";
-"registration.share_contacts.hero.paragraph" = "Del dine kontakter så vi kan forbinde dig med andre. Vi anonymiserer alle informationer og deler dem ikke med andre.";
-"registration.share_contacts.find_friends_button.title" = "Del kontakter";
-"registration.share_contacts.skip_button.title" = "Ikke nu";
-
-"registration.address_book_access_denied.hero.title" = "Wire har ikke adgang til dine kontakter.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire hjælper med at finde dine venner, hvis du deler dine kontaktpersoner.";
-"registration.address_book_access_denied.hero.paragraph2" = "For at aktivere adgang tryk på Indstillinger og slå kontaktpersoner til.";
-"registration.address_book_access_denied.settings_button.title" = "Indstillinger";
-"registration.address_book_access_denied.maybe_later_button.title" = "Måske senere";
 
 "registration.push_access_denied.hero.title" = "Gå aldrig glip af et opkald eller en besked.";
 "registration.push_access_denied.hero.paragraph1" = "Aktiver Notifikationer i Indstillinger.";

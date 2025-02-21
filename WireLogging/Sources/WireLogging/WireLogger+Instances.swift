@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,9 +24,11 @@ public extension WireLogger {
     static let appLock = WireLogger(tag: "AppLock")
     static let assets = WireLogger(tag: "assets")
     static let authentication = WireLogger(tag: "authentication")
+    static let backend = WireLogger(tag: "backend")
+    static let backupExport = WireLogger(tag: "backup-export")
+    static let backupImport = WireLogger(tag: "backup-import")
     static let backgroundActivity = WireLogger(tag: "background-activity")
     static let badgeCount = WireLogger(tag: "badge-count")
-    static let backend = WireLogger(tag: "backend")
     static let calling = WireLogger(tag: "calling")
     static let conversation = WireLogger(tag: "conversation")
     static let coreCrypto = WireLogger(tag: "core-crypto")

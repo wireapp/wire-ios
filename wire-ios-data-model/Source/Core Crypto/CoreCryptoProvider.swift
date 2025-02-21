@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -171,7 +171,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     private func configureProteusClient(coreCrypto: SafeCoreCrypto) async throws {
-        try await coreCrypto.perform { try await $0.proteusInit() }
+        // here we don't need to lock the context or restoreFromDisk()
+        // it fixes `Mls(WireCoreCrypto.MlsError.Other("Proteus client hasn\'t been initialized"))`
+        // Empty transaction was committed, this could be an indication of a programming error - [core_crypto_context:
+        // {}]
+        try await coreCrypto.unsafePerform { try await $0.proteusInit() }
     }
 
     private func configureMLSClient(coreCrypto: SafeCoreCrypto) async throws {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import Foundation
 import WireDataModelSupport
 import WireSyncEngine
 import WireTesting
+import WireTestingPackage
 
 @testable import WireSyncEngineSupport
 
@@ -471,12 +472,18 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             result: .success(()),
             context: syncMOC.notificationContext
         )
+        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
+        let fetchBackendMLSPublicKeysActionHandler = MockActionHandler<FetchBackendMLSPublicKeysAction>(
+            result: .success(backendPublicKeys),
+            context: syncMOC.notificationContext
+        )
 
         // MLS client has been registered
         syncMOC.performAndWait {
             let selfUserClient = createSelfClient()
             selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
             selfUserClient.needsToUploadMLSPublicKeys = false
+            ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
             syncMOC.saveOrRollback()
 
             // WHEN
@@ -494,6 +501,52 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
 
         XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
+        XCTAssertEqual(fetchBackendMLSPublicKeysActionHandler.performedActions.count, 1)
+    }
+
+    func test_itCreatesMLSClientIfNeeded_AfterQuickSync() {
+        // GIVEN
+        syncMOC.performAndWait {
+            ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
+        }
+        let selfUserClient = syncMOC.performAndWait {
+            self.createSelfClient()
+        }
+
+        mockMLSService.performPendingJoins_MockMethod = {}
+        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
+        mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
+        mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
+
+        syncMOC.performAndWait {
+            XCTAssertTrue(selfUserClient.mlsPublicKeys.isEmpty)
+
+            XCTAssertFalse(BackendInfo.isMLSEnabled)
+            XCTAssertFalse(sut.featureRepository.fetchMLS().isEnabled)
+        }
+
+        // WHEN
+        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
+        let fetchBackendMLSPublicKeysActionHandler = MockActionHandler<FetchBackendMLSPublicKeysAction>(
+            result: .success(backendPublicKeys),
+            context: syncMOC.notificationContext
+        )
+        syncMOC.performAndWait {
+            let mls = Feature.MLS(status: .enabled, config: .init())
+            self.sut.featureRepository.storeMLS(mls)
+
+            sut.didFinishQuickSync()
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertFalse(selfUserClient.mlsPublicKeys.isEmpty)
+
+            XCTAssertTrue(BackendInfo.isMLSEnabled)
+            XCTAssertTrue(sut.featureRepository.fetchMLS().isEnabled)
+        }
     }
 
     func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 
 @objc
-public enum MLSCipherSuite: Int, Codable, CustomStringConvertible {
+public enum MLSCipherSuite: Int, Codable, Equatable, CustomStringConvertible {
 
     case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
     case MLS_128_DHKEMP256_AES128GCM_SHA256_P256 = 2

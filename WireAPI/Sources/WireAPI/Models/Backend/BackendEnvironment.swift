@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,19 +24,19 @@ public struct BackendEnvironment {
 
     /// The `URL` of the backend.
 
-    let url: URL
+    public let url: URL
 
     /// The `URL` of the WebSocket endpoint.
 
-    let webSocketURL: URL
+    public let webSocketURL: URL
 
     /// The pinned keys for the backend for use with certificate pinning.
 
-    let pinnedKeys: [PinnedKey]
+    public let pinnedKeys: [PinnedKey]
 
     /// The proxy settings for the backend if any.
 
-    let proxySettings: ProxySettings?
+    public let proxySettings: ProxySettings?
 
     /// Creates a new `BackendEnvironment`.
     ///
@@ -45,7 +45,12 @@ public struct BackendEnvironment {
     /// - Parameter pinnedKeys: The pinned keys for the backend for use with certificate pinning.
     /// - Parameter proxySettings: The proxy settings for the backend if any.
 
-    public init(url: URL, webSocketURL: URL, pinnedKeys: [PinnedKey], proxySettings: ProxySettings?) {
+    public init(
+        url: URL,
+        webSocketURL: URL,
+        pinnedKeys: [PinnedKey],
+        proxySettings: ProxySettings?
+    ) {
         self.url = url
         self.webSocketURL = webSocketURL
         self.pinnedKeys = pinnedKeys

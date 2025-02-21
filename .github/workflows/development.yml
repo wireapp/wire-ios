@@ -1,4 +1,4 @@
-name: Development
+name: Edge
 
 on:
   workflow_dispatch:

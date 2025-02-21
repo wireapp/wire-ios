@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Nauči se več";
 "peoplepicker.no_matching_results.action.manage_services" = "Manage Services";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Ni rezultatov.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Everyone’s here.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Lahko se uporabi v roku 2 tednov. Pošlji novo, ko se ta izteče.";
 "peoplepicker.send_invitation.dialog.ok" = "V redu";
 
-"peoplepicker.invite_more_people" = "Povabi več oseb";
 "peoplepicker.invite_team_members" = "Invite people to join the team";
 "peoplepicker.quick-action.open-conversation" = "Odpri";
 "peoplepicker.quick-action.admin-services" = "Manage Services";
@@ -1358,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "History";
-"self.settings.history_backup.title" = "Back Up Conversations";
-"self.settings.history_backup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.\n\nChoose a strong password to protect the backup file.";
-"self.settings.history_backup.action" = "Back Up Now";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Napaka";
-
 "self.settings.history_backup.set_email.title" = "Set an email and password.";
 "self.settings.history_backup.set_email.message" = "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Set Password";
-"self.settings.history_backup.password.cancel" = "Prekliči";
-"self.settings.history_backup.password.next" = "Next";
-"self.settings.history_backup.password.placeholder" = "Geslo";
-"self.settings.history_backup.password.description" = "The backup will be compressed and encrypted with the password you set here.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1504,32 +1491,11 @@
 "registration.no_history.hero" = "Prvič uporabljate Wire na tej napravi.";
 "registration.no_history.subtitle" = "Zaradi zasebnosti se vaša zgodovina pogovorov ne bo pojavila tukaj.";
 "registration.no_history.got_it" = "V redu";
-"registration.no_history.restore_backup" = "Restore from backup";
 
 "registration.alert.account_exists.title" = "Account Exists";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Register with Another Email";
 "registration.alert.change_signin_action" = "Prijava";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Restore history";
-"registration.no_history.restore_backup_warning.message" = "The backup contents will replace the conversation history on this device.\nYou can only restore history from a backup of the same platform.";
-"registration.no_history.restore_backup_warning.proceed" = "Choose Backup File";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Poskusite ponovno";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Nekaj je šlo narobe";
-"registration.no_history.restore_backup_failed.message" = "Your history could not be restored.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Incompatible backup";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "You cannot restore history from a different account.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Incompatible backup";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Enterprise Login";
@@ -1556,17 +1522,6 @@
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
 
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Restoring…";
-"registration.no_history.restore_backup.completed" = "Completed";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "This backup is password protected.";
-"registration.no_history.restore_backup.password.message" = "The password is required to restore this backup.";
-"registration.no_history.restore_backup.password.placeholder" = "Geslo";
-"registration.no_history.restore_backup.password_error.title" = "Wrong Password";
-
 "registration.no_history.logged_out.hero" = "Na tej napravi si že uporabljal(-a) Wire.";
 "registration.no_history.logged_out.subtitle" = "Sporočila poslana medtem ne bodo prikazana.";
 "registration.no_history.logged_out.got_it" = "V redu";
@@ -1589,17 +1544,6 @@
 "registration.email_flow.email_step.title" = "Uredi podrobnosti";
 
 "registration.country_select.title" = "Država";
-
-"registration.share_contacts.hero.title" = "Najdi osebe na Wire";
-"registration.share_contacts.hero.paragraph" = "Delite vaše stike, da vas lahko povežemo z drugimi. Vse informacije anonimiziramo in ne delimo z drugimi.";
-"registration.share_contacts.find_friends_button.title" = "Deli stike";
-"registration.share_contacts.skip_button.title" = "Ne zdaj";
-
-"registration.address_book_access_denied.hero.title" = "Wire nima dostopa do vaših stikov.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire vam pomaga najti vaše prijatelje, če delite vaše stike.";
-"registration.address_book_access_denied.hero.paragraph2" = "Za dostop tapnite Nastavitve in vklopite Stiki.";
-"registration.address_book_access_denied.settings_button.title" = "Nastavitve";
-"registration.address_book_access_denied.maybe_later_button.title" = "Morda kasneje";
 
 "registration.push_access_denied.hero.title" = "Nikoli ne zamudi klica ali sporočila.";
 "registration.push_access_denied.hero.paragraph1" = "Omogoči obvestila v nastavitvah.";

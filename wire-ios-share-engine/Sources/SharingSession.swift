@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,16 +97,20 @@ final class ApplicationStatusDirectory: ApplicationStatus {
 
     public let linkPreviewDetector: LinkPreviewDetectorType
 
+    public let syncStatus: SyncStatusProtocol
+
     public init(
         transportSession: ZMTransportSession,
         authenticationStatus: AuthenticationStatusProvider,
         clientRegistrationStatus: ClientRegistrationStatus,
-        linkPreviewDetector: LinkPreviewDetectorType
+        linkPreviewDetector: LinkPreviewDetectorType,
+        syncStatus: SyncStatusProtocol = SyncStatus()
     ) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.linkPreviewDetector = linkPreviewDetector
+        self.syncStatus = syncStatus
     }
 
     public convenience init(syncContext: NSManagedObjectContext, transportSession: ZMTransportSession) {
@@ -145,6 +149,14 @@ final class ApplicationStatusDirectory: ApplicationStatus {
         // we don't resync Resources in the share engine
     }
 
+}
+
+/// Required by `MLSService` initializer.
+/// No need to fill in the methods as we don't sync resources in the share engine.
+struct SyncStatus: SyncStatusProtocol {
+    func performQuickSync() async {}
+    func resyncResources() {}
+    func forceSlowSync() {}
 }
 
 /// A Wire session to share content from a share extension
@@ -320,6 +332,7 @@ public final class SharingSession {
         earService: EARServiceInterface,
         contextStorage: LAContextStorable,
         proteusService: ProteusServiceInterface,
+        mlsService: MLSServiceInterface,
         mlsDecryptionService: MLSDecryptionServiceInterface,
         sharedUserDefaults: UserDefaults
     ) throws {
@@ -357,8 +370,14 @@ public final class SharingSession {
             }
 
             let mlsFeature = FeatureRepository(context: coreDataStack.syncContext).fetchMLS()
-            if mlsFeature.isEnabled, coreDataStack.syncContext.mlsDecryptionService == nil {
-                coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
+            if mlsFeature.isEnabled {
+                if coreDataStack.syncContext.mlsDecryptionService == nil {
+                    coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
+                }
+
+                if coreDataStack.syncContext.mlsService == nil {
+                    coreDataStack.syncContext.mlsService = mlsService
+                }
             }
         }
 
@@ -440,6 +459,17 @@ public final class SharingSession {
             mlsActionExecutor: mlsActionExecutor
         )
 
+        let mlsService = MLSService(
+            context: coreDataStack.syncContext,
+            notificationContext: coreDataStack.syncContext.notificationContext,
+            coreCryptoProvider: coreCryptoProvider,
+            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
+            userDefaults: .standard,
+            syncStatus: applicationStatusDirectory.syncStatus,
+            userID: coreDataStack.account.userIdentifier
+        )
+
         try self.init(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
@@ -455,6 +485,7 @@ public final class SharingSession {
             earService: earService,
             contextStorage: contextStorage,
             proteusService: proteusService,
+            mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             sharedUserDefaults: sharedUserDefaults
         )

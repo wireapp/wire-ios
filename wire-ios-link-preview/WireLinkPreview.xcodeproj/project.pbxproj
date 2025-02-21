@@ -37,22 +37,26 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		590E575F2D08B20400E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		594E12582D660B2E00864BC1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = 5E2BEC50214BA4A600E65B53 /* WireLinkPreviewTestsHost */;
 		};
-		590E5D502D08B35000E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		594E12F52D660BE700864BC1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Info.plist,
 				TestPlans/AllTests.xctestplan,
 			);
 			target = BFF057931D25434E004A2C29 /* WireLinkPreviewTests */;
 		};
-		590E5D7E2D08B38C00E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		594E13192D660BF800864BC1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
 			publicHeaders = (
 				WireLinkPreview.h,
 			);
@@ -61,10 +65,10 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		590E57592D08B20400E5B498 /* WireLinkPreviewTestsHost */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E575F2D08B20400E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireLinkPreviewTestsHost; sourceTree = "<group>"; };
-		590E5D292D08B35000E5B498 /* WireLinkPreviewTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E5D502D08B35000E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireLinkPreviewTests; sourceTree = "<group>"; };
-		590E5D5C2D08B35500E5B498 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
-		590E5D6D2D08B38C00E5B498 /* WireLinkPreview */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E5D7E2D08B38C00E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireLinkPreview; sourceTree = "<group>"; };
+		594E12522D660B2E00864BC1 /* WireLinkPreviewTestsHost */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (594E12582D660B2E00864BC1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireLinkPreviewTestsHost; sourceTree = "<group>"; };
+		594E12CD2D660BE700864BC1 /* WireLinkPreviewTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (594E12F52D660BE700864BC1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireLinkPreviewTests; sourceTree = "<group>"; };
+		594E13072D660BF800864BC1 /* WireLinkPreview */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (594E13192D660BF800864BC1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireLinkPreview; sourceTree = "<group>"; };
+		594E13252D660BFC00864BC1 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,12 +109,12 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC8B2BD158EC00F7853F /* WireLinkPreview.docc */,
-				590E5D5C2D08B35500E5B498 /* Resources */,
-				590E5D6D2D08B38C00E5B498 /* WireLinkPreview */,
-				590E5D292D08B35000E5B498 /* WireLinkPreviewTests */,
-				590E57592D08B20400E5B498 /* WireLinkPreviewTestsHost */,
-				BFF0578B1D25434D004A2C29 /* Products */,
+				594E13252D660BFC00864BC1 /* Resources */,
+				594E13072D660BF800864BC1 /* WireLinkPreview */,
+				594E12CD2D660BE700864BC1 /* WireLinkPreviewTests */,
+				594E12522D660B2E00864BC1 /* WireLinkPreviewTestsHost */,
 				16A5FE0F215A868700AEEBBD /* Frameworks */,
+				BFF0578B1D25434D004A2C29 /* Products */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -154,7 +158,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				590E57592D08B20400E5B498 /* WireLinkPreviewTestsHost */,
+				594E12522D660B2E00864BC1 /* WireLinkPreviewTestsHost */,
 			);
 			name = WireLinkPreviewTestsHost;
 			productName = WireLinkPreviewTestsHost;
@@ -175,7 +179,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				590E5D6D2D08B38C00E5B498 /* WireLinkPreview */,
+				594E13072D660BF800864BC1 /* WireLinkPreview */,
 			);
 			name = WireLinkPreview;
 			packageProductDependencies = (
@@ -200,7 +204,7 @@
 				5E2BEC64214BA4AE00E65B53 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				590E5D292D08B35000E5B498 /* WireLinkPreviewTests */,
+				594E12CD2D660BE700864BC1 /* WireLinkPreviewTests */,
 			);
 			name = WireLinkPreviewTests;
 			productName = WireLinkPreviewTests;
@@ -379,10 +383,8 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wearezeta.WireLinkPreviewTestsHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -446,7 +448,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wearezeta.WireLinkPreviewTestsHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -457,31 +458,31 @@
 		};
 		BFF0579C1D25434E004A2C29 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E5D5C2D08B35500E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 594E13252D660BFC00864BC1 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project-debug.xcconfig";
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
 		BFF0579D1D25434E004A2C29 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E5D5C2D08B35500E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 594E13252D660BFC00864BC1 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project.xcconfig";
 			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
 		BFF0579F1D25434E004A2C29 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E5D5C2D08B35500E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 594E13252D660BFC00864BC1 /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireLinkPreview.xcconfig;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -492,7 +493,7 @@
 		};
 		BFF057A01D25434E004A2C29 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E5D5C2D08B35500E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 594E13252D660BFC00864BC1 /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireLinkPreview.xcconfig;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
@@ -508,10 +509,11 @@
 		};
 		BFF057A21D25434E004A2C29 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E5D5C2D08B35500E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 594E13252D660BFC00864BC1 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/ios-test-target.xcconfig";
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
+				INFOPLIST_FILE = WireLinkPreviewTests/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireLinkPreviewTestsHost.app/WireLinkPreviewTestsHost";
@@ -521,10 +523,11 @@
 		};
 		BFF057A31D25434E004A2C29 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E5D5C2D08B35500E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 594E13252D660BFC00864BC1 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/ios-test-target.xcconfig";
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
+				INFOPLIST_FILE = WireLinkPreviewTests/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireLinkPreviewTestsHost.app/WireLinkPreviewTestsHost";

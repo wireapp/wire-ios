@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ extension ZMUserSession {
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
 
-        var errorCode: UserSessionErrorCode = switch response.result {
+        let errorCode: UserSessionErrorCode = switch response.result {
         case .permanentError:
             switch response.payload?.asDictionary()?["label"] as? String {
             case "client-not-found":

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,11 +48,12 @@ final class TeamRepositoryTests: XCTestCase {
         teamLocalStore = MockTeamLocalStoreProtocol()
 
         sut = TeamRepository(
-            selfTeamID: Scaffolding.selfTeamID,
             userRepository: userRespository,
             teamLocalStore: teamLocalStore,
             teamsAPI: teamsAPI
         )
+
+        teamLocalStore.selfTeamID_MockValue = Scaffolding.selfTeamID
     }
 
     override func tearDown() async throws {
@@ -300,6 +301,7 @@ final class TeamRepositoryTests: XCTestCase {
 
         static let teamMemberLegalhold = TeamMemberLegalholdInfo(
             status: .pending,
+            clientID: "abc123",
             prekey: prekey
         )
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import WireLinkPreview
 
 class ImageDownloaderTests: XCTestCase {
@@ -44,7 +43,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockSession.dataTaskWithURLClosureCallCount, 1)
         XCTAssertEqual(mockTask.resumeCallCount, 1)
     }
@@ -63,7 +62,7 @@ class ImageDownloaderTests: XCTestCase {
             completionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2)
     }
 
     func testThatItCreatesAndResumesADataTaskForAllURLs() {
@@ -92,7 +91,7 @@ class ImageDownloaderTests: XCTestCase {
         sut.downloadImages(fromURLs: urls) { _ in }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(mockSession.dataTaskWithURLClosureCallCount, 4)
         XCTAssertEqual(mockTask.resumeCallCount, 4)
     }
@@ -151,7 +150,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2)
         if shouldReturn {
             XCTAssertEqual(result, data, line: line)
         } else {

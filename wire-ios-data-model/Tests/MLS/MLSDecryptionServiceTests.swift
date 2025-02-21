@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,6 +90,32 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 subconversationType: nil
             )
         }
+    }
+
+    func test_Decrypt_IgnoreOtherMissingCommitProposalError() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let message = Data.random().base64EncodedString()
+
+        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+            throw CoreCryptoError
+                .Mls(
+                    MlsError
+                        .Other(
+                            "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
+                        )
+                )
+        }
+
+        // When
+        let results = try await sut.decrypt(
+            message: message,
+            for: groupID,
+            subconversationType: nil
+        )
+
+        // Then
+        XCTAssertTrue(results.isEmpty)
     }
 
     func test_Decrypt_ReturnsEmptyResult_WhenCoreCryptoReturnsNil() async throws {

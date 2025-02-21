@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ enum EncryptionSessionError: Int {
     case decryptionFailed
 
     var userInfo: [String: AnyObject] {
-        var info = switch self {
+        let info = switch self {
         case .unknown:
             "Unknown EncryptionSessionError"
         case .encryptionFailed:

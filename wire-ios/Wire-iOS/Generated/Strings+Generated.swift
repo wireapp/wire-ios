@@ -1082,7 +1082,7 @@ internal enum L10n {
     /// Allow Wire to access your camera so you can place video calls and send photos.
     internal static let nsCameraUsageDescription = L10n.tr("InfoPlist", "NSCameraUsageDescription", fallback: "Allow Wire to access your camera so you can place video calls and send photos.")
     /// *  Wire
-    ///  *  Copyright (C) 2024 Wire Swiss GmbH
+    ///  *  Copyright (C) 2025 Wire Swiss GmbH
     ///  *
     ///  *  This program is free software: you can redistribute it and/or modify
     ///  *  it under the terms of the GNU General Public License as published by
@@ -4898,8 +4898,6 @@ internal enum L10n {
         internal static let gotIt = L10n.tr("Localizable", "registration.no_history.got_it", fallback: "OK")
         /// It’s the first time you’re using Wire on this device.
         internal static let hero = L10n.tr("Localizable", "registration.no_history.hero", fallback: "It’s the first time you’re using Wire on this device.")
-        /// Restore from backup
-        internal static let restoreBackup = L10n.tr("Localizable", "registration.no_history.restore_backup", fallback: "Restore from backup")
         /// For privacy reasons, your conversation history will not appear here.
         internal static let subtitle = L10n.tr("Localizable", "registration.no_history.subtitle", fallback: "For privacy reasons, your conversation history will not appear here.")
         internal enum LoggedOut {
@@ -4909,53 +4907,6 @@ internal enum L10n {
           internal static let hero = L10n.tr("Localizable", "registration.no_history.logged_out.hero", fallback: "You’ve used Wire on this device before.")
           /// Messages sent in the meantime will not appear.
           internal static let subtitle = L10n.tr("Localizable", "registration.no_history.logged_out.subtitle", fallback: "Messages sent in the meantime will not appear.")
-        }
-        internal enum RestoreBackup {
-          /// Completed
-          internal static let completed = L10n.tr("Localizable", "registration.no_history.restore_backup.completed", fallback: "Completed")
-          /// Restoring…
-          internal static let restoring = L10n.tr("Localizable", "registration.no_history.restore_backup.restoring", fallback: "Restoring…")
-          internal enum Password {
-            /// The password is required to restore this backup.
-            internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup.password.message", fallback: "The password is required to restore this backup.")
-            /// Password
-            internal static let placeholder = L10n.tr("Localizable", "registration.no_history.restore_backup.password.placeholder", fallback: "Password")
-            /// This backup is password protected.
-            internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup.password.title", fallback: "This backup is password protected.")
-          }
-          internal enum PasswordError {
-            /// Wrong Password
-            internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup.password_error.title", fallback: "Wrong Password")
-          }
-        }
-        internal enum RestoreBackupFailed {
-          /// Your history could not be restored.
-          internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.message", fallback: "Your history could not be restored.")
-          /// Something went wrong
-          internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.title", fallback: "Something went wrong")
-          /// Try again
-          internal static let tryAgain = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.try_again", fallback: "Try again")
-          internal enum WrongAccount {
-            /// You cannot restore history from a different account.
-            internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.wrong_account.message", fallback: "You cannot restore history from a different account.")
-            /// Incompatible backup
-            internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.wrong_account.title", fallback: "Incompatible backup")
-          }
-          internal enum WrongVersion {
-            /// This backup was created by a newer or outdated version of Wire and cannot be restored here.
-            internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.wrong_version.message", fallback: "This backup was created by a newer or outdated version of Wire and cannot be restored here.")
-            /// Incompatible backup
-            internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.wrong_version.title", fallback: "Incompatible backup")
-          }
-        }
-        internal enum RestoreBackupWarning {
-          /// The backup contents will replace the conversation history on this device.
-          /// You can only restore history from a backup of the same platform.
-          internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup_warning.message", fallback: "The backup contents will replace the conversation history on this device.\nYou can only restore history from a backup of the same platform.")
-          /// Choose Backup File
-          internal static let proceed = L10n.tr("Localizable", "registration.no_history.restore_backup_warning.proceed", fallback: "Choose Backup File")
-          /// Restore history
-          internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup_warning.title", fallback: "Restore history")
         }
       }
       internal enum Password {
@@ -5558,29 +5509,11 @@ internal enum L10n {
           internal static let header = L10n.tr("Localizable", "self.settings.external_apps.header", fallback: "Open With")
         }
         internal enum HistoryBackup {
-          /// Back Up Now
-          internal static let action = L10n.tr("Localizable", "self.settings.history_backup.action", fallback: "Back Up Now")
-          /// Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.
-          /// 
-          /// Choose a strong password to protect the backup file.
-          internal static let description = L10n.tr("Localizable", "self.settings.history_backup.description", fallback: "Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.\n\nChoose a strong password to protect the backup file.")
-          /// Back Up Conversations
-          internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back Up Conversations")
+          /// Back up or Restore
+          internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back up or Restore")
           internal enum Error {
             /// Error
             internal static let title = L10n.tr("Localizable", "self.settings.history_backup.error.title", fallback: "Error")
-          }
-          internal enum Password {
-            /// Cancel
-            internal static let cancel = L10n.tr("Localizable", "self.settings.history_backup.password.cancel", fallback: "Cancel")
-            /// The backup will be compressed and encrypted with the password you set here.
-            internal static let description = L10n.tr("Localizable", "self.settings.history_backup.password.description", fallback: "The backup will be compressed and encrypted with the password you set here.")
-            /// Next
-            internal static let next = L10n.tr("Localizable", "self.settings.history_backup.password.next", fallback: "Next")
-            /// Password
-            internal static let placeholder = L10n.tr("Localizable", "self.settings.history_backup.password.placeholder", fallback: "Password")
-            /// Set Password
-            internal static let title = L10n.tr("Localizable", "self.settings.history_backup.password.title", fallback: "Set Password")
           }
           internal enum SetEmail {
             /// You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.

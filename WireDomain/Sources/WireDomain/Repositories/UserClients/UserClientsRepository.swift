@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,72 +19,6 @@
 import Foundation
 import WireAPI
 import WireDataModel
-
-// sourcery: AutoMockable
-/// Facilitate access to user clients related domain objects.
-///
-/// A repository provides an abstraction for the access and storage
-/// of domain models, concealing how and where the models are stored
-/// as well as the possible source(s) of the models.
-public protocol UserClientsRepositoryProtocol {
-
-    /// Fetches self client locally.
-    /// - returns: The self client if any
-
-    func fetchSelfClient() async -> WireDataModel.UserClient?
-
-    /// Pulls and stores self user clients locally.
-    /// Deletes no longer relevant clients locally.
-    /// - returns : A self user clients list.
-
-    func pullSelfClients() async throws
-
-    /// Fetches or creates a client locally.
-    ///
-    /// - parameters:
-    ///     - id: The user client id to find or create locally.
-    /// - returns: The user client found or created locally and a flag indicating whether or not the user client is new.
-
-    func fetchOrCreateClient(
-        id: String
-    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool)
-
-    /// Updates the user client informations locally.
-    ///
-    /// - parameters:
-    ///     - id: The user client id.
-    ///     - remoteClient: The up-to-date remote user client.
-    ///     - isNewClient: A flag indicating whether the user client is new.
-
-    func updateClient(
-        id: String,
-        from remoteClient: WireAPI.SelfUserClient,
-        isNewClient: Bool
-    ) async throws
-
-    /// Deletes client locally.
-    /// - parameter id: The client id.
-
-    func deleteClient(id: String) async
-
-    /// Indicates whether self user clients are active MLS clients.
-    /// - returns: A flag indicating whether all self user clients are active MLS clients.
-
-    func allSelfUserClientsAreActiveMLSClients() async -> Bool
-
-    /// Fetches a client locally.
-    /// - Parameters:
-    ///     - id: The client id.
-    ///     - user: The user linked to the client.
-    ///     - createIfNeeded: Creates the client if not found locally.
-    /// - returns: The user client fetched or created locally
-
-    func fetchClient(
-        id: String,
-        forUser user: ZMUser,
-        createIfNeeded: Bool
-    ) async -> WireDataModel.UserClient?
-}
 
 public struct UserClientsRepository: UserClientsRepositoryProtocol {
 

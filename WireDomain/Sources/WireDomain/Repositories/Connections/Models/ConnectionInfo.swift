@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-public struct ConnectionInfo: Sendable {
+public struct ConnectionInfo: Equatable, Sendable {
     public let senderID: UUID?
     public let receiverID: UUID?
     public let receiverQualifiedID: WireDataModel.QualifiedID?

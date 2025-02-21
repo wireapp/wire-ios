@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,56 +59,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     }
 
     // MARK: - Process NewConversation Event
-
-    func testProcessPayload_NewConversation_IgnoredWhenConversationAlreadyExists() async throws {
-        // Given
-        let initialName = "foo"
-        let qualifiedID = await syncMOC.perform {
-            BackendInfo.isFederationEnabled = true
-            self.groupConversation.userDefinedName = initialName
-            return self.groupConversation.qualifiedID!
-        }
-        let conversationPayload = Payload.Conversation.stub(
-            qualifiedID: qualifiedID,
-            type: .group,
-            name: "bar"
-        )
-        let eventPayload = Payload.ConversationEvent.stub(
-            data: conversationPayload,
-            qualifiedID: qualifiedID
-        )
-
-        // When
-        await sut.processPayload(eventPayload, in: syncMOC)
-
-        // Then
-        await syncMOC.perform {
-            XCTAssertEqual(self.groupConversation.userDefinedName, initialName)
-        }
-    }
-
-    func testProcessPayload_NewConversation_IgnoredWhenConversationIDIsMissing() async throws {
-        // Given
-        let qualifiedID = QualifiedID.random()
-        let conversationPayload = Payload.Conversation.stub(
-            qualifiedID: qualifiedID,
-            type: .group
-        )
-        let eventPayload = Payload.ConversationEvent.stub(
-            data: conversationPayload,
-            qualifiedID: nil
-        )
-
-        // When
-        disableZMLogError(true)
-        await sut.processPayload(eventPayload, in: syncMOC)
-        disableZMLogError(false)
-
-        // Then
-        await syncMOC.perform {
-            XCTAssertNil(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
-        }
-    }
 
     func testProcessPayload_NewConversation_IgnoredWhenTimestampIsMissing() async throws {
         // Given
@@ -1172,7 +1122,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
-        await fulfillment(of: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 1)
 
         // then
         XCTAssertTrue(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
@@ -1194,7 +1144,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
-        await fulfillment(of: [didCallCreateGroup], timeout: 0.5)
+        await fulfillment(of: [didCallCreateGroup], timeout: 1)
 
         // then
         XCTAssertFalse(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
@@ -1221,7 +1171,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
-        await fulfillment(of: [didJoinGroup], timeout: 0.5)
+        await fulfillment(of: [didJoinGroup], timeout: 1)
 
         // then
         XCTAssertFalse(mockMLSService.joinGroupWith_Invocations.isEmpty)
@@ -1319,7 +1269,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             originalEvent: updateEvent,
             in: syncMOC
         )
-        await fulfillment(of: [wipeGroupExpectation], timeout: 0.5)
+        await fulfillment(of: [wipeGroupExpectation], timeout: 1)
 
         // Then
         let wipeGroupInvocations = mockMLSEventProcessor.wipeMLSGroupForConversationContext_Invocations

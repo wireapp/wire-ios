@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
                     )
                 }
 
-            case .v2, .v3, .v4, .v5, .v6, .v7:
+            case .v2, .v3, .v4, .v5, .v6, .v7, .v8:
                 // v2 assets are legacy and no longer supported in API v2
                 return nil
             }

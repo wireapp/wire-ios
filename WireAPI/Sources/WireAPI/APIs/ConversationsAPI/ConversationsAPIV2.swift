@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,14 +26,9 @@ class ConversationsAPIV2: ConversationsAPIV1 {
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
 
         // New change for v2
-        let components = URLComponents(string: "\(pathPrefix)\(basePath)/list")
+        let path = "\(pathPrefix)\(basePath)/list"
 
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw ConversationsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()

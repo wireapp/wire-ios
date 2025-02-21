@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 @import Foundation;
 
-@protocol ZMSyncStateDelegate;
 @protocol ZMApplication;
 @protocol FlowManagerType;
 @protocol TransportSessionType;
@@ -29,7 +28,6 @@
 @class OperationStatus;
 @class SyncStatus;
 @class PushNotificationStatus;
-@class CallEventStatus;
 @class ZMSyncStrategy;
 
 extern NSString * const ZMPushChannelIsOpenKey;
@@ -47,7 +45,6 @@ extern NSString * const ZMPushChannelIsOpenKey;
                          operationStatus:(OperationStatus *)operationStatus
                               syncStatus:(SyncStatus *)syncStatus
                   pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
-                         callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled;

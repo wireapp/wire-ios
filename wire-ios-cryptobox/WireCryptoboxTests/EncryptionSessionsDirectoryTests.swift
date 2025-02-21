@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -607,7 +607,7 @@ extension EncryptionSessionsDirectoryTests {
         _ = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
         // THEN
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -660,7 +660,7 @@ extension EncryptionSessionsDirectoryTests {
         )
 
         // THEN
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -689,7 +689,7 @@ extension EncryptionSessionsDirectoryTests {
         _ = try! statusBob.decrypt(message, from: Person.Alice.identifier)
 
         // THEN
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: 1)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -175,7 +175,7 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
 
                 path = "/assets/v4/\(domain)/\(key)"
 
-            case .v2, .v3, .v4, .v5, .v6, .v7:
+            case .v2, .v3, .v4, .v5, .v6, .v7, .v8:
                 let domain = requestedUserDomain[user]?.isEmpty == false ? requestedUserDomain[user]! : BackendInfo
                     .domain
                 guard let domain else { return nil }

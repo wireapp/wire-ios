@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireDomain
 
 final class MessageLocalStoreTests: XCTestCase {
 
     private var sut: MessageLocalStore!
-    private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -37,7 +37,6 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        conversationLocalStore = MockConversationLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
@@ -45,7 +44,6 @@ final class MessageLocalStoreTests: XCTestCase {
 
         sut = MessageLocalStore(
             context: context,
-            conversationLocalStore: conversationLocalStore,
             userLocalStore: userLocalStore
         )
     }
@@ -53,7 +51,6 @@ final class MessageLocalStoreTests: XCTestCase {
     override func tearDown() async throws {
         sut = nil
         stack = nil
-        conversationLocalStore = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
@@ -85,7 +82,6 @@ final class MessageLocalStoreTests: XCTestCase {
 
         userLocalStore.fetchSelfUser_MockValue = selfUser
         userLocalStore.fetchUserIdDomain_MockValue = user
-        conversationLocalStore.isConversationForcedReadOnly_MockValue = false
 
         // Given a regular message to add to a conversation
         let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
@@ -136,15 +132,20 @@ final class MessageLocalStoreTests: XCTestCase {
         userLocalStore.fetchOrCreateUsersUserIDs_MockValue = Set([user])
 
         for messageType in Scaffolding.allSystemMessageTypes {
-            let conversation = await makeConversation(creator: user)
-            conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+            let conversationID = UUID()
+            let conversationDomain = Scaffolding.domain1
+            let conversation = await makeConversation(
+                id: conversationID,
+                domain: conversationDomain,
+                creator: user
+            )
 
             // When
 
             await sut.addSystemMessage(
                 messageType: messageType,
-                conversationID: UUID(),
-                conversationDomain: Scaffolding.domain1
+                conversationID: conversationID,
+                conversationDomain: conversationDomain
             )
 
             // Then
@@ -173,9 +174,17 @@ final class MessageLocalStoreTests: XCTestCase {
         XCTAssertEqual(lastMessagesTypes, expectedResults.zmMessages)
     }
 
-    private func makeConversation(creator: ZMUser) async -> ZMConversation {
+    private func makeConversation(
+        id: UUID,
+        domain: String?,
+        creator: ZMUser
+    ) async -> ZMConversation {
         await context.perform { [self] in
-            let conversation = modelHelper.createGroupConversation(in: context)
+            let conversation = modelHelper.createGroupConversation(
+                id: id,
+                domain: domain,
+                in: context
+            )
             conversation.creator = creator
             conversation.hasReadReceiptsEnabled = true
 

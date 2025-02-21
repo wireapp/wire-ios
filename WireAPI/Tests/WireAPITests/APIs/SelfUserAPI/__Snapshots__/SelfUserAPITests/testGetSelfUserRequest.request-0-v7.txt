@@ -1,4 +1,2 @@
-- HTTPRequest
-  - path: "/v7/self"
-  - method: get
-  - body: none
+curl \
+	"/v7/self"

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,6 +67,7 @@ public protocol ConversationDirectoryType {
     /// NOTE that returned token must be retained for as long you want the observer to be active
     func addObserver(_ observer: ConversationDirectoryObserver) -> Any
 
+    func refetchAllLists(in managedObjectContext: NSManagedObjectContext)
 }
 
 extension ZMConversationListDirectory: ConversationDirectoryType {

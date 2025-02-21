@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,12 @@
 public import SwiftUI
 
 private struct WireAccentColorKey: EnvironmentKey {
-    static let defaultValue: AccentColor = .default
+    static var defaultValue: AccentColor { .default }
 }
 
 public extension EnvironmentValues {
     var wireAccentColor: WireAccentColor {
         get { self[WireAccentColorKey.self] }
         set { self[WireAccentColorKey.self] = newValue }
-    }
-}
-
-public extension View {
-    func wireAccentColor(_ accentColor: WireAccentColor) -> some View {
-        environment(\.wireAccentColor, accentColor)
     }
 }

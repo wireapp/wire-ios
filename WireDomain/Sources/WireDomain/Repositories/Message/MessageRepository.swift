@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,32 +18,16 @@
 
 import WireDataModel
 
-// sourcery: AutoMockable
-/// Facilitate access to message related domain objects.
-public protocol MessageRepositoryProtocol {
-
-    func addSystemMessage(
-        messageType: SystemMessageType,
-        conversationID: UUID,
-        conversationDomain: String?
-    ) async
-}
-
 public class MessageRepository: MessageRepositoryProtocol {
 
     // MARK: - Properties
 
     private let localStore: any MessageLocalStoreProtocol
-    private let conversationRepository: any ConversationRepositoryProtocol
 
     // MARK: - Object lifecycle
 
-    public init(
-        localStore: any MessageLocalStoreProtocol,
-        conversationRepository: any ConversationRepositoryProtocol
-    ) {
+    public init(localStore: any MessageLocalStoreProtocol) {
         self.localStore = localStore
-        self.conversationRepository = conversationRepository
     }
 
     public func addSystemMessage(

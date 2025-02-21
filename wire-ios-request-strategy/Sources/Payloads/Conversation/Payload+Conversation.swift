@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7:
+            case .v3, .v4, .v5, .v6, .v7, .v8:
 
                 // v3 replaces the field "access_role_v2" with "access_role".
                 // However, since the format of update events does not depend on versioning,
@@ -151,7 +151,7 @@ extension Payload {
             case .v0, .v1, .v2, .v3, .v4:
                 self.cipherSuite = nil
                 self.epochTimestamp = nil
-            case .v5, .v6, .v7:
+            case .v5, .v6, .v7, .v8:
                 self.cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
                 self.epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
             }
@@ -180,7 +180,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7:
+            case .v3, .v4, .v5, .v6, .v7, .v8:
                 if legacyAccessRole == nil {
                     try container.encodeIfPresent(accessRoles, forKey: .accessRole)
                 } else {

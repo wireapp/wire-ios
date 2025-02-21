@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         }
 
         paginationController.updatePagination(page2, filter: nil)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -99,7 +99,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         }
 
         paginationController.updatePagination(.failure(.noMorePages), filter: nil)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
 
@@ -137,7 +137,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         _ = paginationController.fetchNewPage()
 
         // THEN
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
     // MARK: - Utilities

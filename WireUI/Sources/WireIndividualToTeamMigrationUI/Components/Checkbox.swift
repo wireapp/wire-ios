@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,12 +41,9 @@ struct Checkbox: View {
             }, label: {
                 Image(systemName: isChecked ? "checkmark.square.fill" : "square")
                     .font(.system(size: 24))
-                    .backgroundStyle(Color(
-                        uiColor: isChecked ? ColorTheme.Checkbox.enabled : ColorTheme.Checkbox
-                            .disabled
-                    ))
             })
             .buttonStyle(.plain)
+            .foregroundStyle(isChecked ? ColorTheme.Checkbox.selected.color : ColorTheme.Checkbox.enabled.color)
             Text(title)
                 .wireTextStyle(.subline1)
         }

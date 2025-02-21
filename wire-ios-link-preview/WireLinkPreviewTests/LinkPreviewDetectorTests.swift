@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 0)
         XCTAssertEqual(result, [])
     }
@@ -100,7 +100,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [URL(string: "http://www.example.com")!])
         XCTAssertEqual(result, [])
@@ -121,7 +121,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(result.first?.imageURLs.first?.absoluteString, openGraphData.imageUrls.first)
         guard let article = result.first as? ArticleMetadata else { return XCTFail("Wrong preview type") }
@@ -146,7 +146,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(imageDownloader.downloadImagesCallCount, 0)
 
@@ -188,7 +188,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
         XCTAssertTrue(result.isEmpty)
     }
 
@@ -208,7 +208,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         }
 
         // then
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
 }

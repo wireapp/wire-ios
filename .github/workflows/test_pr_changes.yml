@@ -2,7 +2,7 @@ name: Test Pull Request Changes
 
 on: 
   pull_request:
-    types: [opened, synchronize, edited, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review]
   merge_group:
     types: [checks_requested]
 
@@ -16,24 +16,18 @@ jobs:
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
     name: Detect PR Changes
-    if: >
-      github.event.action != 'edited' || (
-        github.event.changes.title == null &&
-        github.event.changes.body == null &&
-        github.event.changes.assignees == null &&
-        github.event.changes.reviewers == null &&
-        github.event.changes.labels == null
-      ) && github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.draft != true }}
+    runs-on: ubuntu-24.04
     # Set job outputs to values from filter step
     outputs:
       folders: ${{ steps.filter.outputs.changes }}
 
     steps:
       - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'merge_group' }}
         with:
           lfs: 'false' # as long as we use lfs only for snapshotTesting it should not be useful here
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -58,6 +52,9 @@ jobs:
             WireAnalytics:
               - 'WireAnalytics/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAnalyticsAll.xcscheme'
+            WireAuthentication:
+              - 'WireAuthentication/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAuthenticationAll.xcscheme'
             WireDomain:
               - 'WireDomain/**'
             WireLogging:
@@ -97,6 +94,6 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
-      branch: ${{ github.head_ref }}
       notify_secret: WIRE_IOS_CI_WEBHOOK
+      test_dependencies: ${{ github.event_name != 'pull_request' }}
     secrets: inherit

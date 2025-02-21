@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         if isImage {
             let size = CGSize(width: 368, height: 520)
-            let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")!
+            let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")
             message.assets.first?.updateWithPreprocessedData(imageData, imageProperties: properties)
             XCTAssertEqual(message.mimeType, "image/jpg", line: line)
             XCTAssertEqual(message.size, 1024, line: line)

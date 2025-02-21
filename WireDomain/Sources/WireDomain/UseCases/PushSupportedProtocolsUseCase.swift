@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,14 +37,14 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
     }
 
     let featureConfigRepository: any FeatureConfigRepositoryProtocol
-    let userRepository: any UserRepositoryProtocol
-    let userClientsRepository: any UserClientsRepositoryProtocol
+    let pushSupportedProtocolsSync: any PushSupportedProtocolsSyncProtocol
+    let userClientsLocalStore: any UserClientsLocalStoreProtocol
 
     private let logger = WireLogger(tag: "supported-protocols")
 
     public func invoke() async throws {
         let supportedProtocols = await calculateSupportedProtocols()
-        try await userRepository.pushSelfSupportedProtocols(supportedProtocols)
+        try await pushSupportedProtocolsSync.push(supportedProtocols: supportedProtocols)
     }
 
     private func calculateSupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
@@ -52,7 +52,7 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
 
         let remoteProtocols = await remotelySupportedProtocols()
         let migrationState = await currentMigrationState()
-        let allClientsMLSReady = await allSelfUserClientsAreActiveMLSClients()
+        let allClientsMLSReady = await userClientsLocalStore.allSelfUserClientsAreActiveMLSClients()
 
         logger.debug(
             "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
@@ -156,10 +156,6 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
         }
 
         return .finalised
-    }
-
-    private func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        await userClientsRepository.allSelfUserClientsAreActiveMLSClients()
     }
 
 }

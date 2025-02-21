@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,20 +52,15 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         // As soon as APIVersion.v0 is removed, the legacy function can be deleted, making the code clean and easy to
         // understand.
 
-        let components = URLComponents(string: "\(basePath)/list-ids/")
+        let path = "\(basePath)/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
-
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw ConversationsAPIError.invalidURL
-        }
 
         return PayloadPager<UUID> { start in
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try jsonEncoder.encode(params)
 
-            let request = URLRequestBuilder(url: url)
+            let request = try URLRequestBuilder(path: path)
                 .withMethod(.post)
                 .withBody(body, contentType: .json)
                 .build()
@@ -89,14 +84,9 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
-        var components = URLComponents(string: "\(pathPrefix)\(basePath)/list/v2")
+        let path = "\(pathPrefix)\(basePath)/list/v2"
 
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw ConversationsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
@@ -122,14 +112,9 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     func getConversationGuestLink(
         conversationID: String
     ) async throws -> String? {
-        let components = URLComponents(string: "\(pathPrefix)\(basePath)/\(conversationID)/code")
+        let path = "\(pathPrefix)\(basePath)/\(conversationID)/code"
 
-        guard let url = components?.url else {
-            assertionFailure("generated an invalid url")
-            throw ConversationsAPIError.invalidURL
-        }
-
-        let request = URLRequestBuilder(url: url)
+        let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .build()
 

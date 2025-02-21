@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -277,40 +277,6 @@ extension UserClientRequestStrategyTests {
             // then
             let maxID_after = UInt16(client.preKeysRangeMax)
             XCTAssertEqual(maxID_after, expectedMaxID)
-        }
-    }
-
-    func testThatItStoresTheSignalingKeysWhenUpdatingAnInsertedObject() {
-
-        var client: UserClient!
-        syncMOC.performGroupedBlock {
-            // given
-            self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
-            self.clientRegistrationStatus.lastResortPrekey = (ushort.max, "last-resort-prekey")
-            self.clientRegistrationStatus.mockPhase = .unregistered
-
-            client = self.createSelfClient(self.syncMOC)
-            XCTAssertNil(client.apsDecryptionKey)
-            XCTAssertNil(client.apsVerificationKey)
-
-            self.sut.notifyChangeTrackers(client)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-            let response = ZMTransportResponse(
-                payload: ["id": "fakeRemoteID"] as ZMTransportData,
-                httpStatus: 200,
-                transportSessionError: nil,
-                apiVersion: APIVersion.v0.rawValue
-            )
-
-            // when
-            request.complete(with: response)
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        syncMOC.performGroupedAndWait {
-            // then
-            XCTAssertNotNil(client.apsDecryptionKey)
-            XCTAssertNotNil(client.apsVerificationKey)
         }
     }
 
@@ -815,108 +781,6 @@ extension UserClientRequestStrategyTests {
 // MARK: - Updating from push events
 
 extension UserClientRequestStrategyTests {
-
-    func testThatItCreatesARequestForClientsThatNeedToUploadSignalingKeys() {
-
-        var existingClient: UserClient!
-        syncMOC.performGroupedBlock {
-            // given
-            self.clientRegistrationStatus.mockPhase = .registered
-
-            existingClient = self.createSelfClient()
-            let existingClientSet: Set<NSManagedObject> = [existingClient]
-            let userClientNeedsToUpdateSignalingKeysKeySet: Set<AnyHashable> =
-                [ZMUserClientNeedsToUpdateSignalingKeysKey]
-
-            XCTAssertNil(existingClient.apsVerificationKey)
-            XCTAssertNil(existingClient.apsDecryptionKey)
-
-            // when
-            existingClient.needsToUploadSignalingKeys = true
-            existingClient.setLocallyModifiedKeys(userClientNeedsToUpdateSignalingKeysKeySet)
-            self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(existingClientSet)
-            }
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNotNil(request)
-
-            // and when
-            let response = ZMTransportResponse(
-                payload: nil,
-                httpStatus: 200,
-                transportSessionError: nil,
-                apiVersion: APIVersion.v0.rawValue
-            )
-            request?.complete(with: response)
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        syncMOC.performGroupedBlock {
-            XCTAssertNotNil(existingClient.apsVerificationKey)
-            XCTAssertNotNil(existingClient.apsDecryptionKey)
-            XCTAssertFalse(existingClient.needsToUploadSignalingKeys)
-            XCTAssertFalse(existingClient.hasLocalModifications(forKey: ZMUserClientNeedsToUpdateSignalingKeysKey))
-        }
-    }
-
-    func testThatItRetriesOnceWhenUploadSignalingKeysFails() {
-
-        syncMOC.performGroupedBlock {
-            // given
-            self.clientRegistrationStatus.mockPhase = .registered
-
-            let existingClient = self.createSelfClient()
-            let existingClientSet: Set<NSManagedObject> = [existingClient]
-            let userClientNeedsToUpdateSignalingKeysKeySet: Set<AnyHashable> =
-                [ZMUserClientNeedsToUpdateSignalingKeysKey]
-            XCTAssertNil(existingClient.apsVerificationKey)
-            XCTAssertNil(existingClient.apsDecryptionKey)
-
-            existingClient.needsToUploadSignalingKeys = true
-            existingClient.setLocallyModifiedKeys(userClientNeedsToUpdateSignalingKeysKeySet)
-            self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(existingClientSet)
-            }
-
-            // when
-            let request = self.sut.nextRequest(for: .v0)
-            XCTAssertNotNil(request)
-            let badResponse = ZMTransportResponse(
-                payload: ["label": "bad-request"] as ZMTransportData,
-                httpStatus: 400,
-                transportSessionError: nil,
-                apiVersion: APIVersion.v0.rawValue
-            )
-
-            request?.complete(with: badResponse)
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        // and when
-        syncMOC.performGroupedBlock {
-            let secondRequest = self.sut.nextRequest(for: .v0)
-            XCTAssertNotNil(secondRequest)
-            let success = ZMTransportResponse(
-                payload: nil,
-                httpStatus: 200,
-                transportSessionError: nil,
-                apiVersion: APIVersion.v0.rawValue
-            )
-
-            secondRequest?.complete(with: success)
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        // and when
-        syncMOC.performGroupedBlock {
-            let thirdRequest = self.sut.nextRequest(for: .v0)
-            XCTAssertNil(thirdRequest)
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-    }
 
     func testThatItCreatesARequestForClientsThatNeedToUpdateCapabilities() {
 

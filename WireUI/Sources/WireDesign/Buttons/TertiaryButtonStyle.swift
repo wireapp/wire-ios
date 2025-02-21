@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,50 +25,16 @@ struct TertiaryButtonStyle: SwiftUI.ButtonStyle {
     typealias Theme = ColorTheme.Buttons.Tertiary
 
     func makeBody(configuration: Configuration) -> some View {
-        let colors = colors(for: configuration.isPressed, enabled: isEnabled)
         configuration.label
             .lineLimit(1)
-            .padding()
-            .underline(color: colors.underline)
-            .frame(maxWidth: .infinity)
-            .background(colors.background)
-            .foregroundStyle(colors.foreground)
-            .fontWeight(.bold)
+            .padding(8)
+            .background(isEnabled ? Theme.enabled.color : Theme.disabled.color)
+            .foregroundStyle(isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color)
+            .wireTextStyle(.buttonSmall)
             .overlay {
-                if let borderColor = colors.border {
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(borderColor, lineWidth: 1)
-                }
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isEnabled ? Theme.enabledOutline.color : Theme.disabledOutline.color, lineWidth: 1)
             }
-            .clipShape(.rect(cornerRadius: 16))
-    }
-
-    func colors(
-        for pressed: Bool,
-        enabled: Bool
-    ) -> (underline: Color, background: Color, foreground: Color, border: Color?) {
-        switch (enabled, pressed) {
-        case (false, _):
-            (
-                underline: Theme.onDisabled.color,
-                background: Theme.disabled.color,
-                foreground: Theme.onDisabled.color,
-                border: nil
-            )
-        case (_, false):
-            (
-                underline: Theme.onEnabled.color,
-                background: Theme.enabled.color,
-                foreground: Theme.onEnabled.color,
-                border: nil
-            )
-        case (_, true):
-            (
-                underline: Theme.onSelected.color,
-                background: Theme.selected.color,
-                foreground: Theme.onSelected.color,
-                border: Theme.selectedOutline.color
-            )
-        }
+            .clipShape(.rect(cornerRadius: 12))
     }
 }

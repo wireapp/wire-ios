@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             // When
             try await sut.pullPendingEvents()
             XCTFail("expected an error, but none was thrown")
-        } catch UpdateEventsRepositoryError.lastEventIDMissing {
+        } catch PullPendingUpdateEventsSyncError.noLastEventID {
             // Then it threw the right error.
         } catch {
             XCTFail("unexpected error: \(error)")

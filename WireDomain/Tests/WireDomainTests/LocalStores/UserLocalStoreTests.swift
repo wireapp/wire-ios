@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ final class UserLocalStoreTests: XCTestCase {
             XCTAssertEqual(user.handle, Scaffolding.userInfo.handle)
             XCTAssertEqual(user.teamIdentifier, Scaffolding.userInfo.teamID)
             XCTAssertEqual(user.accentColorValue, Int16(Scaffolding.userInfo.accentID))
-            XCTAssertEqual(user.isAccountDeleted, Scaffolding.userInfo.deleted)
+            XCTAssertEqual(user.isAccountDeleted, Scaffolding.userInfo.isDeleted)
             XCTAssertEqual(user.emailAddress, Scaffolding.userInfo.email)
             XCTAssertEqual(user.supportedProtocols, Scaffolding.userInfo.supportedProtocols)
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
@@ -369,7 +369,7 @@ final class UserLocalStoreTests: XCTestCase {
             accentID: 1,
             previewAssetKey: nil,
             completeAssetKey: nil,
-            deleted: false,
+            isDeleted: false,
             email: "john.doe@example.com",
             expiresAt: .now,
             serviceID: nil,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,6 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 /// The task given access to the NSHTTPURLResponse and NSError.
 - (void)processCompletedURLTask:(NSURLSessionTask *)task;
 - (void)processCompletedURLResponse:(nullable NSHTTPURLResponse *)response URLError:(nullable NSError *)error;
-- (void)processWebSocketError:(NSError *)error;
 
 - (void)sessionDidReceiveAccessToken:(id<ZMTransportRequestSchedulerSession>)session;
 /// The scheduler uses this to retry sending requests if it's in offline mode.

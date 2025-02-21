@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ extension Typing: ZMTimerClient {
                         self.sendNotification(for: conversation)
                     }
                 } catch {
-                    WireLogger.updateEvent.error(("Failed to retrieve conversation object locally \(error)"))
+                    WireLogger.updateEvent.error("Failed to retrieve conversation object locally \(error)")
                 }
             }
 

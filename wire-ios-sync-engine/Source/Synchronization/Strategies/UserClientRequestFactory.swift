@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,6 @@ extension UserClientRequestFactory {
 
         let preKeysPayloadData = payloadForPreKeys(prekeys)
         let lastPreKeyPayloadData = payloadForLastPreKey(lastRestortPrekey)
-        let (signalingKeysPayloadData, signalingKeys) = payloadForSignalingKeys()
 
         var payload: [String: Any] = [
             "type": client.type.rawValue,
@@ -55,7 +54,7 @@ extension UserClientRequestFactory {
             "class": (client.deviceClass?.rawValue ?? DeviceClass.phone.rawValue),
             "lastkey": lastPreKeyPayloadData,
             "prekeys": preKeysPayloadData,
-            "sigkeys": signalingKeysPayloadData,
+
             "cookie": cookieLabel
         ]
 
@@ -74,7 +73,6 @@ extension UserClientRequestFactory {
             apiVersion: apiVersion.rawValue
         )
         request.add(storeMaxRangeID(client, maxRangeID: preKeysRangeMax))
-        request.add(storeAPSSignalingKeys(client, signalingKeys: signalingKeys))
 
         let upstreamRequest = ZMUpstreamRequest(transportRequest: request)
         return upstreamRequest!
@@ -85,17 +83,6 @@ extension UserClientRequestFactory {
             guard let client else { return }
             if response.result == .success {
                 client.preKeysRangeMax = Int64(maxRangeID)
-            }
-        })
-    }
-
-    func storeAPSSignalingKeys(_ client: UserClient, signalingKeys: SignalingKeys) -> ZMCompletionHandler {
-        ZMCompletionHandler(on: client.managedObjectContext!, block: { [weak client] response in
-            guard let client else { return }
-            if response.result == .success {
-                client.apsDecryptionKey = signalingKeys.decryptionKey
-                client.apsVerificationKey = signalingKeys.verificationKey
-                client.needsToUploadSignalingKeys = false
             }
         })
     }
@@ -120,15 +107,6 @@ extension UserClientRequestFactory {
             "key": lastResortPrekey.prekey,
             "id": NSNumber(value: lastResortPrekey.id)
         ]
-    }
-
-    func payloadForSignalingKeys() -> (payload: [String: String], signalingKeys: SignalingKeys) {
-        let signalingKeys = APSSignalingKeysStore.createKeys()
-        let payload = [
-            "enckey": signalingKeys.decryptionKey.base64String(),
-            "mackey": signalingKeys.verificationKey.base64String()
-        ]
-        return (payload, signalingKeys)
     }
 
     public func updateClientPreKeysRequest(
@@ -157,34 +135,6 @@ extension UserClientRequestFactory {
 
         let userClientNumberOfKeysRemainingKeySet: Set<String> = [ZMUserClientNumberOfKeysRemainingKey]
         return ZMUpstreamRequest(keys: userClientNumberOfKeysRemainingKeySet, transportRequest: request, userInfo: nil)
-    }
-
-    public func updateClientSignalingKeysRequest(
-        _ client: UserClient,
-        apiVersion: APIVersion
-    ) throws -> ZMUpstreamRequest {
-        if let remoteIdentifier = client.remoteIdentifier {
-            let (signalingKeysPayloadData, signalingKeys) = payloadForSignalingKeys()
-            let payload: [String: Any] = [
-                "sigkeys": signalingKeysPayloadData,
-                "prekeys": [] // NOTE backend always expects 'prekeys' to be present atm
-            ]
-            let request = ZMTransportRequest(
-                path: "/clients/\(remoteIdentifier)",
-                method: .put,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue
-            )
-            request.add(storeAPSSignalingKeys(client, signalingKeys: signalingKeys))
-
-            let userClientNeedsToUpdateSignalingKeysKeySet: Set<String> = [ZMUserClientNeedsToUpdateSignalingKeysKey]
-            return ZMUpstreamRequest(
-                keys: userClientNeedsToUpdateSignalingKeysKeySet,
-                transportRequest: request,
-                userInfo: nil
-            )
-        }
-        throw UserClientRequestError.clientNotRegistered
     }
 
     func updateClientMLSPublicKeysRequest(

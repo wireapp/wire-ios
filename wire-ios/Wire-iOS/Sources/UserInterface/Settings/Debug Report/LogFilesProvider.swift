@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ struct LogFilesProvider: LogFilesProviding {
         return url
     }
 
-    private func createInfoFile(at url: URL) throws -> URL {
+    var info: String {
         let date = Date()
 
         var body = """
@@ -159,10 +159,13 @@ struct LogFilesProvider: LogFilesProviding {
             // display only when enabled
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
         }
+        return body
+    }
 
+    private func createInfoFile(at url: URL) throws -> URL {
         let infoFileURL = url.appendingPathComponent("info.txt")
 
-        try body.write(
+        try info.write(
             to: infoFileURL,
             atomically: true,
             encoding: .utf8

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireAnalytics
 import WireMainNavigationUI
 import WireSidebarUI
 
@@ -26,26 +27,36 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     let connectUIBuilder: ConnectViewControllerBuilderProtocol
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+    let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
 
     init(
         mainCoordinator: AnyMainCoordinator,
         connectUIBuilder: ConnectViewControllerBuilderProtocol,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
     ) {
         self.mainCoordinator = mainCoordinator
         self.connectUIBuilder = connectUIBuilder
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
-    @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
-        Task {
-            let selfProfileUI = UINavigationController(
-                rootViewController: selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
-            )
+        // analytics
+        let isNotificationsBadgeVisible = viewController.accountInfo.showNotificationsBadge
+        let analyticsEventTracker = analyticsEventTracker()
+        #if false // [WPB-15245] This event has temporarily been disabled.
+            analyticsEventTracker?.trackEvent(.UI.openSelfProfile(isMigrationDotActive: isNotificationsBadgeVisible))
+        #endif
+
+        // open profile
+        Task { @MainActor in
+            let rootViewController = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
             selfProfileUI.modalPresentationStyle = .formSheet
+            selfProfileUI.presentationController?.delegate = rootViewController
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }

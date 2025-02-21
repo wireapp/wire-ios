@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
+import WireViewsDebugUI
 
 final class DeveloperToolsViewModel: ObservableObject {
 
@@ -138,6 +139,8 @@ final class DeveloperToolsViewModel: ObservableObject {
         setupPushToken()
 
         setupDatadog()
+
+        sections.append(debugViewSection)
     }
 
     // MARK: - Section Builders
@@ -288,6 +291,22 @@ final class DeveloperToolsViewModel: ObservableObject {
         guard let sessionManager = SessionManager.shared else { return false }
         return sessionManager.canSwitchBackend() == nil
     }
+
+    private lazy var debugViewSection: Section = {
+        let header = "Views"
+
+        let items: [Item] = [
+            .destination(DestinationItem(
+                title: "Authentication",
+                makeView: { AnyView(WireAuthenticationUIDebugView()) }
+            ))
+        ]
+
+        return Section(
+            header: header,
+            items: items
+        )
+    }()
 
     // MARK: - Events
 

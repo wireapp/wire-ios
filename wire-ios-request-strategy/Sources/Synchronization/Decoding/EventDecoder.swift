@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -198,30 +198,58 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
     ) async -> [ZMUpdateEvent] {
-        let decryptedEvents = await decryptEvent(event: event, publicKeys: publicKeys, proteusService: proteusService)
+        do {
+            let decryptedEvents = try await decryptEvent(
+                event: event,
+                publicKeys: publicKeys,
+                proteusService: proteusService
+            )
 
-        guard !decryptedEvents.isEmpty else {
+            // MLS message decryption operations, even successful, could result in empty decrypted events.
+            // Adding a condition to skip the guard for that specific usecase.
+            guard !decryptedEvents.isEmpty || event.type == .conversationMLSMessageAdd else {
+                return []
+            }
+
+            await eventMOC.perform {
+                self.storeUpdateEvents(
+                    decryptedEvents,
+                    startingAtIndex: index,
+                    publicKeys: publicKeys
+                )
+            }
+
+            await syncMOC.perform {
+                if let eventUUID = event.uuid, !event.isTransient {
+                    self.lastEventIDRepository.storeLastEventID(eventUUID)
+                }
+            }
+
+            return decryptedEvents
+
+        } catch let error as Failure {
+            switch error {
+            case .missingMLSGroupID:
+                WireLogger.mls.error(
+                    "failed to decrypt mls message: missing MLS group ID"
+                )
+            }
+
+            return []
+        } catch {
+            WireLogger.mls.warn(
+                "failed to decrypt mls message: \(String(describing: error))"
+            )
+
             return []
         }
-
-        await eventMOC.perform {
-            self.storeUpdateEvents(decryptedEvents, startingAtIndex: index, publicKeys: publicKeys)
-        }
-
-        await syncMOC.perform {
-            if let eventUUID = event.uuid, !event.isTransient {
-                self.lastEventIDRepository.storeLastEventID(eventUUID)
-            }
-        }
-
-        return decryptedEvents
     }
 
     private func decryptEvent(
         event: ZMUpdateEvent,
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
-    ) async -> [ZMUpdateEvent] {
+    ) async throws -> [ZMUpdateEvent] {
         switch event.type {
         case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
             let proteusEvent = await decryptProteusEventAndAddClient(event, in: syncMOC) { sessionID, encryptedData in
@@ -237,7 +265,7 @@ extension EventDecoder {
             return [event]
 
         case .conversationMLSMessageAdd:
-            return await decryptMlsMessage(from: event, context: syncMOC)
+            return try await decryptMlsMessage(from: event, context: syncMOC)
 
         default:
             return [event]
@@ -276,8 +304,8 @@ extension EventDecoder {
                     decryptedEvents.append(event)
 
                 case .conversationMLSMessageAdd:
-                    let events = await decryptMlsMessage(from: event, context: syncMOC)
-                    decryptedEvents.append(contentsOf: events)
+                    let events = try? await decryptMlsMessage(from: event, context: syncMOC)
+                    decryptedEvents.append(contentsOf: events ?? [])
 
                 default:
                     decryptedEvents.append(event)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@ public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
     }
 
     var unsafePerformCount = 0
-    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
+    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
         unsafePerformCount += 1
-        return try block(coreCrypto)
+        return try await block(coreCrypto)
     }
 
     var performAsyncCount = 0

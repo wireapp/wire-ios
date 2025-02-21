@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ final class ConversationRepositoryTests: XCTestCase {
     private var sut: ConversationRepository!
     private var conversationsAPI: MockConversationsAPI!
     private var conversationsLocalStore: MockConversationLocalStoreProtocol!
-    private var userRepository: MockUserRepositoryProtocol!
+    private var userLocalStore: MockUserLocalStoreProtocol!
     private let backendInfo: ConversationRepository.BackendInfo = .init(
         domain: "example.com",
         isFederationEnabled: false,
@@ -52,12 +52,11 @@ final class ConversationRepositoryTests: XCTestCase {
     override func setUp() async throws {
         mlsService = MockMLSServiceInterface()
         mlsProvider = MLSProvider(service: mlsService, isMLSEnabled: true)
-        userRepository = MockUserRepositoryProtocol()
+        userLocalStore = MockUserLocalStoreProtocol()
         teamRepository = MockTeamRepositoryProtocol()
         modelHelper = ModelHelper()
         conversationsLocalStore = MockConversationLocalStoreProtocol()
         conversationsAPI = MockConversationsAPI()
-        userRepository = MockUserRepositoryProtocol()
         messageRepository = MockMessageRepositoryProtocol()
 
         coreDataStackHelper = CoreDataStackHelper()
@@ -66,7 +65,7 @@ final class ConversationRepositoryTests: XCTestCase {
         sut = ConversationRepository(
             conversationsAPI: conversationsAPI,
             conversationsLocalStore: conversationsLocalStore,
-            userRepository: userRepository,
+            userLocalStore: userLocalStore,
             teamRepository: teamRepository,
             messageRepository: messageRepository,
             backendInfo: backendInfo,
@@ -75,7 +74,7 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
-        userRepository = nil
+        userLocalStore = nil
         teamRepository = nil
         mlsProvider = nil
         mlsService = nil
@@ -93,10 +92,9 @@ final class ConversationRepositoryTests: XCTestCase {
 
     func testPullFoundConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
         // Mock
-
-        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: [Scaffolding.id],
+                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
                 hasMore: false,
                 nextStart: .init()
             )
@@ -116,7 +114,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
+        XCTAssertEqual(conversationsAPI.getConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(
             conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
@@ -127,9 +125,9 @@ final class ConversationRepositoryTests: XCTestCase {
     func testPullNotFoundConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
         // Mock
 
-        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: [Scaffolding.id],
+                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
                 hasMore: false,
                 nextStart: .init()
             )
@@ -150,7 +148,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
+        XCTAssertEqual(conversationsAPI.getConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(
             conversationsLocalStore.storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
@@ -161,10 +159,9 @@ final class ConversationRepositoryTests: XCTestCase {
 
     func testPullFailedConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
         // Mock
-
-        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: [Scaffolding.id],
+                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
                 hasMore: false,
                 nextStart: .init()
             )
@@ -184,7 +181,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
+        XCTAssertEqual(conversationsAPI.getConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(
             conversationsLocalStore.storeFailedConversationConversationIDConversationDomain_Invocations.count,
@@ -435,9 +432,9 @@ final class ConversationRepositoryTests: XCTestCase {
             try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)),
             true
         )
-        userRepository.fetchOrCreateUserIdDomain_MockValue = removedUser
-        userRepository.fetchUserIdDomain_MockValue = senderUser
-        userRepository.isSelfUserIdDomain_MockValue = true
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = removedUser
+        userLocalStore.fetchUserIdDomain_MockValue = senderUser
+        userLocalStore.isSelfUserIdDomain_MockValue = (user: selfUser, isSelfUser: true)
         mlsService.wipeGroup_MockMethod = { _ in }
         messageRepository
             .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
@@ -469,9 +466,9 @@ final class ConversationRepositoryTests: XCTestCase {
         )
         XCTAssertEqual(conversationsLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
         XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
-        XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
-        XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)
-        XCTAssertEqual(userRepository.isSelfUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.fetchUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.isSelfUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(teamRepository.deleteMembershipUserIDDomainDate_Invocations.count, 1)
     }
 
@@ -492,7 +489,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         conversationsLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationsLocalStore.addOrUpdateParticipantWithRoleIn_MockMethod = { _, _, _ in }
-        userRepository.fetchOrCreateUserIdDomain_MockValue = updatedUser
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = updatedUser
 
         // When
 
@@ -508,7 +505,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         XCTAssertEqual(conversationsLocalStore.fetchOrCreateConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.addOrUpdateParticipantWithRoleIn_Invocations.count, 1)
-        XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
     }
 
     func testAddParticipants_It_Invokes_Local_Store_Methods() async throws {

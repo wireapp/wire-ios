@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,7 +68,8 @@ final class ZClientViewController: UIViewController {
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
+        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
     )
 
     private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
@@ -116,7 +117,8 @@ final class ZClientViewController: UIViewController {
         selfUser: userSession.editableSelfUser,
         userRightInterfaceType: UserRight.self,
         userSession: userSession,
-        accountSelector: SessionManager.shared
+        accountSelector: SessionManager.shared,
+        analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker }
     )
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(
@@ -175,14 +177,15 @@ final class ZClientViewController: UIViewController {
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
+        selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?
     ) {
         self.account = account
+        self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
-        self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
         self.proximityMonitorManager = ProximityMonitorManager()
@@ -215,7 +218,6 @@ final class ZClientViewController: UIViewController {
                 }
             }
 
-        setupAppearance()
         createLegalHoldDisclosureController()
     }
 
@@ -500,14 +502,6 @@ final class ZClientViewController: UIViewController {
             // selectListItemWhenNoPreviousItemSelected()
             return false
         }
-    }
-
-    private func setupAppearance() {
-
-        let labelColor: UIColor
-        labelColor = .label
-
-        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = labelColor
     }
 
     // MARK: - Setup methods

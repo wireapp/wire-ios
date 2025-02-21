@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -297,7 +297,7 @@ final class E2ETests: XCTestCase {
             completionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 60, handler: nil)
+        waitForExpectations(timeout: 60)
 
         if expected == nil {
             return XCTAssertNil(result, "Expected no OpenGraph data from \(mockData.urlString)", line: line)

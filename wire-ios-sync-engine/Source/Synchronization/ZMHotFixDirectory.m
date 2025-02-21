@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,11 +57,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"HotFix";
                      patchWithVersion:@"40.23"
                      patchCode:^(__unused NSManagedObjectContext *context){
                          [ZMHotFixDirectory removeSharingExtension];
-                     }],
-                    [ZMHotFixPatch
-                     patchWithVersion:@"41.43"
-                     patchCode:^(NSManagedObjectContext *context){
-                         [ZMHotFixDirectory moveOrUpdateSignalingKeysInContext:context];
                      }],
                     [ZMHotFixPatch
                      patchWithVersion:@"42.11"

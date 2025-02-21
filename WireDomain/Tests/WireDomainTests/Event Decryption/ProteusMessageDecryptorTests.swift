@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
     private var sut: ProteusMessageDecryptor!
     private var proteusService: MockProteusServiceInterface!
     private var userClientsLocalStore: MockUserClientsLocalStoreProtocol!
-    private var userRepository: MockUserRepositoryProtocol!
+    private var userLocalStore: MockUserLocalStoreProtocol!
 
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -44,12 +44,12 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         proteusService = MockProteusServiceInterface()
         userClientsLocalStore = MockUserClientsLocalStoreProtocol()
-        userRepository = MockUserRepositoryProtocol()
+        userLocalStore = MockUserLocalStoreProtocol()
 
         sut = ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsLocalStore: userClientsLocalStore,
-            userRepository: userRepository
+            userLocalStore: userLocalStore
         )
 
         // Scenario:
@@ -70,7 +70,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
                 in: context
             )
 
-            userRepository.fetchOrCreateUserIdDomain_MockValue = selfUser
+            userLocalStore.fetchOrCreateUserIdDomain_MockValue = selfUser
             userClientsLocalStore.fetchClientIdForUserCreateIfNeeded_MockValue = selfClient
             userClientsLocalStore.storeClientDiscoveryDateClient_MockMethod = { _, _ in }
             userClientsLocalStore.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
@@ -116,7 +116,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         userClientsLocalStore = nil
-        userRepository = nil
+        userLocalStore = nil
         modelHelper = nil
         coreDataStackHelper = nil
     }
@@ -184,7 +184,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         userClientsLocalStore.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
         userClientsLocalStore.proteusSessionIDFor_MockValue = Scaffolding.proteusSessionID
         userClientsLocalStore.clientSessionCreatedSelfClientNewClient_MockMethod = { _, _ in }
-        userRepository.fetchOrCreateUserIdDomain_MockValue = user
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = user
 
         // Given an encrypted event
         let encryptedMessage = try XCTUnwrap("!?@".base64EncodedString)
@@ -221,7 +221,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         XCTAssertEqual(userClientsLocalStore.addNewClientToIgnoredSelfClientNewClient_Invocations.count, 1)
         XCTAssertEqual(userClientsLocalStore.proteusSessionIDFor_Invocations.count, 1)
         XCTAssertEqual(userClientsLocalStore.clientSessionCreatedSelfClientNewClient_Invocations.count, 1)
-        XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
     }
 
     private enum Scaffolding {

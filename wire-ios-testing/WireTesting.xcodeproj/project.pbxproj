@@ -32,29 +32,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		590E561C2D08B15800E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				1900x1500.jpg,
-				animated.gif,
-				large.jpg,
-				"Lorem Ipsum.txt",
-				medium.jpg,
-				not_animated.gif,
-				tiny.jpg,
-			);
-			target = 096AD7BA1B68D41D00E007A8 /* WireTesting */;
-		};
-		590E56292D08B15D00E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				WireTestingTests.m,
-				ZMTExpectationTests.swift,
-				ZMTTestBaseTests.swift,
-			);
-			target = 096AD7C51B68D41D00E007A8 /* WireTesting-Tests */;
-		};
-		590E56BC2D08B18000E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		5930F4B82D43C7D9009E3514 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
 				"Public/Mock Data Model/ZMMockEntity.h",
@@ -72,12 +50,34 @@
 			);
 			target = 096AD7BA1B68D41D00E007A8 /* WireTesting */;
 		};
+		595F61DA2D43CC0700E5ECBE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WireTestingTests.m,
+				ZMTExpectationTests.swift,
+				ZMTTestBaseTests.swift,
+			);
+			target = 096AD7C51B68D41D00E007A8 /* WireTesting-Tests */;
+		};
+		595F61F32D43CC5400E5ECBE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				1900x1500.jpg,
+				animated.gif,
+				large.jpg,
+				"Lorem Ipsum.txt",
+				medium.jpg,
+				not_animated.gif,
+				tiny.jpg,
+			);
+			target = 096AD7BA1B68D41D00E007A8 /* WireTesting */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		590E56142D08B15800E5B498 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E561C2D08B15800E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
-		590E56252D08B15D00E5B498 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E56292D08B15D00E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
-		590E56992D08B18000E5B498 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E56BC2D08B18000E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
+		5930F4952D43C7D9009E3514 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5930F4B82D43C7D9009E3514 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
+		595F61D62D43CC0700E5ECBE /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (595F61DA2D43CC0700E5ECBE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+		595F61EB2D43CC5400E5ECBE /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (595F61F32D43CC5400E5ECBE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,9 +105,9 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC852BD1589E00F7853F /* WireTesting.docc */,
-				590E56992D08B18000E5B498 /* Source */,
-				590E56252D08B15D00E5B498 /* Tests */,
-				590E56142D08B15800E5B498 /* Resources */,
+				595F61EB2D43CC5400E5ECBE /* Resources */,
+				5930F4952D43C7D9009E3514 /* Source */,
+				595F61D62D43CC0700E5ECBE /* Tests */,
 				096AD7EC1B68D8DF00E007A8 /* Frameworks */,
 				096AD7BC1B68D41D00E007A8 /* Products */,
 			);
@@ -162,7 +162,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				590E56992D08B18000E5B498 /* Source */,
+				5930F4952D43C7D9009E3514 /* Source */,
 			);
 			name = WireTesting;
 			productName = ZMTesting;
@@ -273,32 +273,35 @@
 /* Begin XCBuildConfiguration section */
 		096AD7CF1B68D41D00E007A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E56142D08B15800E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 595F61EB2D43CC5400E5ECBE /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project-debug.xcconfig";
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
 		096AD7D01B68D41D00E007A8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E56142D08B15800E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 595F61EB2D43CC5400E5ECBE /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/project.xcconfig";
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
 		096AD7D21B68D41D00E007A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E56142D08B15800E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 595F61EB2D43CC5400E5ECBE /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireTesting.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -308,13 +311,14 @@
 		};
 		096AD7D31B68D41D00E007A8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E56142D08B15800E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 595F61EB2D43CC5400E5ECBE /* Resources */;
 			baseConfigurationReferenceRelativePath = Configurations/WireTesting.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -324,7 +328,7 @@
 		};
 		096AD7D51B68D41D00E007A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E56142D08B15800E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 595F61EB2D43CC5400E5ECBE /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/test-target.xcconfig";
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
@@ -337,7 +341,7 @@
 		};
 		096AD7D61B68D41D00E007A8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 590E56142D08B15800E5B498 /* Resources */;
+			baseConfigurationReferenceAnchor = 595F61EB2D43CC5400E5ECBE /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/test-target.xcconfig";
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;

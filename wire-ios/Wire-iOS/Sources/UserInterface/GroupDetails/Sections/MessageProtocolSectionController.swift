@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
             return 1
 
         case .mls, .mixed:
-            return Bundle.developerModeEnabled ? 3 : 2
+            return 2
         }
     }
 
@@ -91,10 +91,6 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
             cell.title = L10n.Localizable.GroupDetails.MessageProtocol.cipherSuite
             cell.status = ciphersuite?.description ?? ""
             cell.allowMultilineStatus = true
-
-        case (.mls, 2) where Bundle.developerModeEnabled:
-            cell.title = "Group ID (hashed)"
-            cell.status = groupID?.safeForLoggingDescription
 
         default:
             break

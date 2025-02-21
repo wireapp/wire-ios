@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,18 +21,7 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-/// Resolves 1:1 conversations
-public protocol OneOnOneResolverProtocol {
-
-    func resolveOneOnOneConversation(
-        with userID: WireDataModel.QualifiedID
-    ) async throws
-
-    func resolveAllOneOnOneConversations() async throws
-}
-
-struct OneOnOneResolver: OneOnOneResolverProtocol {
+public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     private enum Error: Swift.Error {
         case failedToActivateConversation
@@ -43,26 +32,29 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let userRepository: any UserRepositoryProtocol
-    private let conversationsRepository: any ConversationRepositoryProtocol
+    private let userLocalStore: any UserLocalStoreProtocol
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
+    private let pullMLSOneOnOneSync: any PullMLSOneOnOneSyncProtocol
     private let mlsProvider: MLSProvider
 
     // MARK: - Object lifecycle
 
-    init(
+    public init(
         context: NSManagedObjectContext,
-        userRepository: any UserRepositoryProtocol,
-        conversationsRepository: any ConversationRepositoryProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        pullMLSOneOnOneSync: any PullMLSOneOnOneSyncProtocol,
         mlsProvider: MLSProvider
     ) {
         self.context = context
-        self.userRepository = userRepository
-        self.conversationsRepository = conversationsRepository
+        self.userLocalStore = userLocalStore
+        self.conversationLocalStore = conversationLocalStore
+        self.pullMLSOneOnOneSync = pullMLSOneOnOneSync
         self.mlsProvider = mlsProvider
     }
 
-    func resolveAllOneOnOneConversations() async throws {
-        let usersIDs = try await userRepository.fetchAllUserIDsWithOneOnOneConversation()
+    public func resolveAllOneOnOneConversations() async throws {
+        let usersIDs = try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
 
         await withTaskGroup(of: Void.self) { group in
             for userID in usersIDs {
@@ -80,14 +72,14 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         }
     }
 
-    func resolveOneOnOneConversation(
+    public func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws {
-        let user = try await userRepository.fetchUser(
+        let user = try await userLocalStore.fetchUser(
             id: userID.uuid, domain: userID.domain
         )
 
-        let selfUser = await userRepository.fetchSelfUser()
+        let selfUser = await userLocalStore.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
 
         if mlsProvider.isMLSEnabled, commonProtocol == .mls {
@@ -121,14 +113,14 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
             throw Error.failedToActivateConversation
         }
 
-        /// Sync the user MLS conversation from backend.
-        let mlsGroupID = try await conversationsRepository.pullMLSOneToOneConversation(
-            userID: userID.uuid.uuidString,
+        // Sync the user MLS conversation from backend.
+        let mlsGroupID = try await pullMLSOneOnOneSync.pull(
+            userID: userID.uuid,
             userDomain: userID.domain
         )
 
-        /// Then, fetch the synced MLS conversation.
-        let mlsConversation = await conversationsRepository.fetchMLSConversation(groupID: mlsGroupID)
+        // Then, fetch the synced MLS conversation.
+        let mlsConversation = await conversationLocalStore.fetchMLSConversation(groupID: mlsGroupID)
 
         let groupID = await context.perform {
             mlsConversation?.mlsGroupID
@@ -140,7 +132,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         let mlsService = mlsProvider.service
 
-        /// If conversation already exists, there is no need to perform a migration.
+        // If conversation already exists, there is no need to perform a migration.
         let needsMLSMigration = try await mlsService.conversationExists(
             groupID: groupID
         ) == false
@@ -180,7 +172,8 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         await switchLocalConversationToMLS(
             mlsConversation: mlsConversation,
-            for: user
+            for: user,
+            userID: userID
         )
     }
 
@@ -230,21 +223,75 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     private func switchLocalConversationToMLS(
         mlsConversation: ZMConversation,
-        for user: ZMUser
+        for user: ZMUser,
+        userID: WireDataModel.QualifiedID
     ) async {
         await context.perform {
-            /// Move local messages from proteus conversation if it exists
-            if let proteusConversation = user.oneOnOneConversation {
-                /// Since ZMMessages only have a single conversation connected,
-                /// forming this union also removes the relationship to the proteus conversation.
+
+            // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both
+            // conversations here.
+            let proteusConversations: [ZMConversation] = fetchAllTeamOneOnOneProteusConversations(
+                otherUserID: userID,
+                in: context
+            )
+
+            var allProteusConversations = Set(proteusConversations)
+            if let existingConversation = user.oneOnOneConversation,
+               existingConversation.messageProtocol == .proteus {
+                allProteusConversations.insert(existingConversation)
+            }
+
+            // move local messages from proteus conversations if they exist
+            for proteusConversation in allProteusConversations {
+                // Since ZMMessages only have a single conversation connected,
+                // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+            }
+
+            if !allProteusConversations.isEmpty {
+                // insert system message that we moved from proteus to MLS
+                let sender = ZMUser.selfUser(in: context)
+                mlsConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
+
                 mlsConversation.isForcedReadOnly = false
+                // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }
 
             /// Switch active conversation
             user.oneOnOneConversation = mlsConversation
         }
+    }
+
+    private func fetchAllTeamOneOnOneProteusConversations(
+        otherUserID: WireDataModel.QualifiedID,
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
+        guard let otherUser = ZMUser.fetch(with: otherUserID, in: context) else {
+            return []
+        }
+        let selfUser = ZMUser.selfUser(in: context)
+        guard selfUser.team != nil else {
+            return []
+        }
+
+        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        let teamOneOnOnePredicate = ZMConversation.predicateForTeamOneToOneConversation()
+
+        let sameParticipant = NSPredicate(
+            format: "ANY %K.user == %@ AND ANY %K.user == %@",
+            ZMConversationParticipantRolesKey,
+            otherUser,
+            ZMConversationParticipantRolesKey,
+            selfUser
+        )
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            teamOneOnOnePredicate,
+            sameParticipant
+        ])
+
+        return context.fetchOrAssert(request: request)
     }
 
     /// Resolves a Proteus 1:1 conversation.

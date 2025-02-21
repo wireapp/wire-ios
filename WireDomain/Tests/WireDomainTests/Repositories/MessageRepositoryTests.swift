@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,22 +25,15 @@ final class MessageRepositoryTests: XCTestCase {
 
     private var sut: MessageRepository!
     private var localStore: MockMessageLocalStoreProtocol!
-    private var conversationRepository: MockConversationRepositoryProtocol!
 
     override func setUp() async throws {
         localStore = MockMessageLocalStoreProtocol()
-        conversationRepository = MockConversationRepositoryProtocol()
-
-        sut = MessageRepository(
-            localStore: localStore,
-            conversationRepository: conversationRepository
-        )
+        sut = MessageRepository(localStore: localStore)
     }
 
     override func tearDown() async throws {
         sut = nil
         localStore = nil
-        conversationRepository = nil
     }
 
     // MARK: - Tests

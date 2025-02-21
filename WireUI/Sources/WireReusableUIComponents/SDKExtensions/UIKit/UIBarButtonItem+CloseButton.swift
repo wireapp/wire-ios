@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ public extension UIBarButtonItem {
     ///
     /// - Returns: A UIBarButtonItem configured as a close button.
     static func closeButton(action: UIAction, accessibilityLabel: String) -> UIBarButtonItem {
-        let closeImage = UIImage.close
+        let closeImage = UIImage(resource: .close)
 
         let closeItem = UIBarButtonItem(title: accessibilityLabel, primaryAction: action)
 

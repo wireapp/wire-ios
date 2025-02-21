@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,12 +59,12 @@ class ProtosTests: XCTestCase {
             size: CGSize(width: 10_000, height: 20_000),
             length: 200_000,
             mimeType: "fancy image"
-        )!
+        )
         let processedProperties = ZMIImageProperties(
             size: CGSize(width: 640, height: 480),
             length: 200,
             mimeType: "downsized image"
-        )!
+        )
 
         // when
         let message = GenericMessage(
@@ -103,12 +103,12 @@ class ProtosTests: XCTestCase {
             size: CGSize(width: 10_000, height: 20_000),
             length: 200_000,
             mimeType: "fancy image"
-        )!
+        )
         let processedProperties = ZMIImageProperties(
             size: CGSize(width: 640, height: 480),
             length: 200,
             mimeType: "downsized image"
-        )!
+        )
         _ = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)
         let format = ZMImageFormat.preview
         let keys = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)

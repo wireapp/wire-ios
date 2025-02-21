@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -126,6 +126,9 @@ struct APIServiceSnapshotHelper<API> {
         line: UInt = #line
     ) async throws {
         let sut = buildAPI(apiService, apiVersion)
+
+        apiService.executeRequestRequiringAccessToken_Invocations = []
+
         try? await block(sut)
 
         let receivedRequests = apiService.executeRequestRequiringAccessToken_Invocations.map(\.request)

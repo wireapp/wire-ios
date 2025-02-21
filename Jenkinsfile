@@ -104,7 +104,7 @@ pipeline {
                         error("Could not find any ipa at provided location!")
                     } else {
                         def lastModifiedFileName = files[-1].name
-                        build job: 'iOS_Critical_Flows', parameters: [string(name: 'Track', value: 'S3'), string(name: 'AppBuildNumber', value: "ios/development/simulator/PR/$BRANCH_NAME/${lastModifiedFileName}"), string(name: 'TAGS', value: '@flows'), string(name: 'Branch', value: 'main')]
+                        build job: 'iOS_Critical_Flows', parameters: [string(name: 'Track', value: 'S3'), string(name: 'AppBuildNumber', value: "ios/development/simulator/PR/$BRANCH_NAME/${lastModifiedFileName}"), string(name: 'TAGS', value: '@flows'), string(name: 'Branch', value: CHANGE_BRANCH), string(name: 'TESTINY_RUN_NAME', value: "PR $CHANGE_TITLE")]
                     }
                 }
             }

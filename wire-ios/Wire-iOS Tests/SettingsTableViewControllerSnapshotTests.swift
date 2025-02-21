@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,6 +90,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
+    @MainActor
     func testForSettingGroup() throws {
         let group = settingsCellDescriptorFactory.settingsGroup(
             isPublicDomain: true,
@@ -99,6 +100,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         try verify(group: group)
     }
 
+    @MainActor
     private func testForAccountGroup(
         federated: Bool,
         disabledEditing: Bool = false,
@@ -117,18 +119,22 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         try verify(group: group, file: file, testName: testName, line: line)
     }
 
+    @MainActor
     func testForAccountGroup_Federated() throws {
         try testForAccountGroup(federated: true)
     }
 
+    @MainActor
     func testForAccountGroup_NotFederated() throws {
         try testForAccountGroup(federated: false)
     }
 
+    @MainActor
     func testForAccountGroupWithDisabledEditing_Federated() throws {
         try testForAccountGroup(federated: true, disabledEditing: true)
     }
 
+    @MainActor
     func testForAccountGroupWithDisabledEditing_NotFederated() throws {
         try testForAccountGroup(federated: false, disabledEditing: true)
     }

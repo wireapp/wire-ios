@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
 
 @testable import WireDataModel
@@ -284,8 +283,6 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
         // Set metadata on DB which we expect to be cleared when importing from a backup
         directory.viewContext.setPersistentStoreMetadata("1234567890", key: ZMPersistedClientIdKey)
-        directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushToken.rawValue)
-        directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushKitToken.rawValue)
         directory.viewContext.setPersistentStoreMetadata(
             "1234567890",
             key: PersistentMetadataKey.lastUpdateEventID.rawValue
@@ -308,14 +305,6 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
         // then
         XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
-        XCTAssertNil(
-            importedDirectory.viewContext
-                .persistentStoreMetadata(forKey: PersistentMetadataKey.pushToken.rawValue)
-        )
-        XCTAssertNil(
-            importedDirectory.viewContext
-                .persistentStoreMetadata(forKey: PersistentMetadataKey.pushKitToken.rawValue)
-        )
         XCTAssertNil(
             importedDirectory.viewContext
                 .persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue)

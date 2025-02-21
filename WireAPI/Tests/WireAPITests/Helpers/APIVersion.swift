@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,9 +19,17 @@
 import enum WireAPI.APIVersion
 
 extension APIVersion {
+
     var andNextVersions: [APIVersion] {
         let apiVersions = APIVersion.allCases
         let currentVersion = Int(rawValue)
         return Array(apiVersions.suffix(from: currentVersion))
     }
+
+    static func allCasesUpTo(_ end: APIVersion) -> [APIVersion] {
+        Set(APIVersion.allCases)
+            .subtracting(end.andNextVersions)
+            .sorted()
+    }
+
 }

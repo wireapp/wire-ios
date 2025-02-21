@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v5, .v6, .v7:
+        case .v5, .v6, .v7, .v8:
             return ZMTransportRequest(
                 path: "/mls/public-keys",
                 method: .get,

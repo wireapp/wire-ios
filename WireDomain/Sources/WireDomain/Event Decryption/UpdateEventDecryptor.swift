@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,19 +22,6 @@ import WireCoreCrypto
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-/// Decrypt the E2EE content within update events.
-protocol UpdateEventDecryptorProtocol {
-
-    /// Decrypt events in the given event envelope.
-    ///
-    /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
-    /// - Returns: A list of decrypted update events.
-
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
-
-}
-
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
@@ -47,13 +34,13 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         messageRepository: any MessageRepositoryProtocol,
-        userRepository: any UserRepositoryProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsLocalStore: userClientsLocalStore,
-            userRepository: userRepository
+            userLocalStore: userLocalStore
         )
 
         self.mlsMessageDecryptor = MLSMessageDecryptor(
