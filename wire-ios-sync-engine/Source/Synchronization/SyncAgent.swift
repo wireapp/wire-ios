@@ -119,12 +119,16 @@ final class SyncAgent: NSObject {
     func performIncrementalSync() async throws {
         if DeveloperFlag.newInitialSync.isOn {
             do {
-                // TODO: guard task isn't already running
-                delegate?.syncAgentDidStartIncrementalSync(self)
-                WireLogger.sync.debug("did start new resource sync")
-                incrementalSyncTask = try await incrementalSyncProvider.provideIncrementalSync().perform()
-                WireLogger.sync.debug("did finish new resource sync")
-                delegate?.syncAgentDidFinishIncrementalSync(self)
+                if let incrementalSyncTask {
+                    WireLogger.sync.info("incremental sync already running, waiting for it instead")
+                    try await incrementalSyncTask.value
+                } else {
+                    delegate?.syncAgentDidStartIncrementalSync(self)
+                    WireLogger.sync.debug("did start new resource sync")
+                    incrementalSyncTask = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    WireLogger.sync.debug("did finish new resource sync")
+                    delegate?.syncAgentDidFinishIncrementalSync(self)
+                }
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
                 throw error
