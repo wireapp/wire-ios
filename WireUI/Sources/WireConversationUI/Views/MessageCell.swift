@@ -19,7 +19,7 @@
 import SwiftUI
 import WireFoundation
 
-public final class MessageCell: UITableViewCell {
+public final class MessageCell: UITableViewCell { // TODO: this probably has to be moved out of WireConversationUI (no generics supported)
 
     public var message = Message() {
         didSet {
@@ -51,18 +51,23 @@ public final class MessageCell: UITableViewCell {
 
     private func updateContent() {
         contentConfiguration = UIHostingConfiguration {
-            MessageContentView(message: message, layout: messageLayout)
-                .swipeActions(edge: .leading) {
-                    Button {
-                        print("swipe")
-                    } label: {
-                        Label("Favorite", systemImage: "arrowshape.turn.up.backward.fill")
-                    }
+            MessageContentView(
+                message: message,
+                layout: messageLayout,
+                accountImageViewContent: { Circle().fill(.red) }
+            )
+            .swipeActions(edge: .leading) {
+                Button {
+                    print("swipe")
+                } label: {
+                    Label("Favorite", systemImage: "arrowshape.turn.up.backward.fill")
                 }
-                .environment(\.wireAccentColor, wireAccentColor)
-                .environment(\.wireAccentColorMapping, wireAccentColorMapping)
+            }
+            .environment(\.wireAccentColor, wireAccentColor)
+            .environment(\.wireAccentColorMapping, wireAccentColorMapping)
         }
     }
+
 }
 
 
@@ -81,14 +86,16 @@ public func MessageCellPreview() -> UIViewController {
     ) { tableView, indexPath, itemID in
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
         if let cell = cell as? MessageCell {
+            cell.messageLayout = .groupConversation
             cell.message = Message(
                 id: .init(itemID),
-                attributedText: AttributedString("Hello, World!")
+                attributedText: AttributedString("Hello,\nWorld!")
             )
         }
         return cell
     }
     tableViewController.tableView.dataSource = dataSource
+    tableViewController.tableView.separatorStyle = .none
 
     var snapshot = dataSource.snapshot()
     snapshot.appendSections([.single])
