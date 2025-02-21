@@ -19,6 +19,7 @@
 import DifferenceKit
 import WireDataModel
 import WireSyncEngine
+import WireConversationUI
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -437,6 +438,8 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
 }
 
+let indexForNewCellType = 3
+
 extension ConversationTableViewDataSource: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -467,6 +470,10 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard currentSections.indices.contains(section) else { return 0 }
 
+        if section == indexForNewCellType {
+            return 1
+        }
+
         return currentSections[section].elements.count
     }
 
@@ -487,6 +494,21 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         }
 
         let section = currentSections[indexPath.section]
+
+        if indexPath.section == indexForNewCellType {
+
+            if !registeredCells.contains(where: { $0 is MessageCell.Type }) {
+                tableView.register(MessageCell.self, forCellReuseIdentifier: "MessageCell")
+            }
+
+            let message = messages[indexPath.section]
+
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
+            var contentConfiguration = cell.defaultContentConfiguration()
+            contentConfiguration.text = message.normalizedText
+            cell.contentConfiguration = contentConfiguration
+            return cell
+        }
 
         guard section.elements.indices.contains(indexPath.row) else {
             fatal("section.elements has \(section.elements.count) elements, but try to access #\(indexPath)")

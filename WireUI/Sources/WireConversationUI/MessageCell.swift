@@ -16,4 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct TODO {}
+import SwiftUI
+
+public final class MessageCell: UITableViewCell {
+
+}
+
+@available(iOS 17, *)
+#Preview {
+    Color.red
+}
