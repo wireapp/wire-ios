@@ -41,6 +41,6 @@ package struct LoginViaSSOView: View {
 }
 
 #Preview {
-    let url = URL(string: "https://www.google.com")
+    let url = URL(string: "https://www.wire.com")
     LoginViaSSOView(viewModel: LoginViaSSOViewModel(ssoURL: url!))
 }

@@ -33,7 +33,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case onPremLoginNotPossible(recovery: AuthenticationMethod)
     }
 
-    package enum WebView: Hashable, Identifiable {
+    package enum ModalDestination: Hashable, Identifiable {
         package var id: Self { self }
 
         case ssoLogin(url: URL)
@@ -46,7 +46,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
-    @Published var webView: WebView?
+    @Published var webView: ModalDestination?
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
