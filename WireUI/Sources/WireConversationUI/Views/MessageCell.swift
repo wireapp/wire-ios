@@ -29,7 +29,7 @@ public final class MessageCell: UITableViewCell { // TODO: this probably has to 
         }
     }
 
-    public var messageLayout = MessageLayout.oneOnOneConversation {
+    public var messageLayout = MessageLayout.oneOnOneConversationStyle {
         didSet {
             if oldValue != messageLayout {
                 updateContent()
@@ -77,7 +77,7 @@ public final class MessageCell: UITableViewCell { // TODO: this probably has to 
 var dataSourceX: AnyObject?
 
 @MainActor
-public func MessageCellPreview() -> UIViewController {
+public func MessageCellPreview(_ messageLayout: MessageLayout) -> UIViewController {
 
     let tableViewController = UITableViewController()
     tableViewController.tableView.register(MessageCell.self, forCellReuseIdentifier: "MessageCell")
@@ -86,7 +86,7 @@ public func MessageCellPreview() -> UIViewController {
     ) { tableView, indexPath, itemID in
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
         if let cell = cell as? MessageCell {
-            cell.messageLayout = .groupConversation
+            cell.messageLayout = messageLayout
             cell.message = Message(
                 id: .init(itemID),
                 attributedText: AttributedString("Hello,\nWorld!")
@@ -112,16 +112,25 @@ public func MessageCellPreview() -> UIViewController {
 }
 
 @available(iOS 17, *)
-#Preview {
-    MessageCellPreview()
+#Preview("oneOnOne") {
+    MessageCellPreview(.oneOnOneConversationStyle)
+}
+
+@available(iOS 17, *)
+#Preview("group") {
+    MessageCellPreview(.groupConversationStyle)
 }
 
 public struct MessageCellPreviewRepresentable: UIViewControllerRepresentable {
 
-    public init() {}
+    private let messageLayout: MessageLayout
+
+    public init(messageLayout: MessageLayout) {
+        self.messageLayout = messageLayout
+    }
 
     public func makeUIViewController(context: Context) -> UIViewController {
-        MessageCellPreview()
+        MessageCellPreview(messageLayout)
     }
 
     public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

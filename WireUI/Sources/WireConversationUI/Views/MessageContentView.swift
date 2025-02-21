@@ -30,9 +30,9 @@ struct MessageContentView<
 
     var body: some View {
         switch layout {
-        case .oneOnOneConversation:
+        case .oneOnOneConversationStyle:
             oneOnOneConversationContent()
-        case .groupConversation:
+        case .groupConversationStyle:
             groupConversationContent()
         }
     }

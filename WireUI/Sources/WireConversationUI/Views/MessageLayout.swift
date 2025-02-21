@@ -17,6 +17,6 @@
 //
 
 public enum MessageLayout {
-    case oneOnOneConversation
-    case groupConversation
+    case oneOnOneConversationStyle
+    case groupConversationStyle
 }
