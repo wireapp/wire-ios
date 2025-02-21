@@ -1,6 +1,6 @@
 retain_objc_accessible: true
 schemes:
-- AllTargetsTests
+- Wire-iOS
 targets:
-- AllTargetsTests
+- Wire-iOS
 workspace: wire-ios-mono.xcworkspace
