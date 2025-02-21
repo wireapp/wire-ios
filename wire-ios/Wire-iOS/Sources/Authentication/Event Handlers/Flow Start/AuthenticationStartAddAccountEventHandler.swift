@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 /// Handles requests to add a new user account.
 final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandler {
@@ -35,6 +36,8 @@ final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandle
         if featureProvider.allowOnlyEmailLogin {
             // Hide the landing screen if account creation is disabled.
             [.transition(.provideCredentials(nil), mode: .reset)]
+        } else if DeveloperFlag.useWireAuthentication.isOn {
+            [.transition(.wireAuthenticationModule, mode: .reset)]
         } else {
             [.transition(.landingScreen, mode: .reset)]
         }

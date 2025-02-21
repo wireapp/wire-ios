@@ -16,16 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
+import Foundation
 
-func makeAuthenticationAPI() -> AuthenticationAPI {
-    let mockAuthenticationAPI = MockAuthenticationAPI()
-    mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = DomainRegistrationConfiguration(
-        backendURLString: nil,
-        domainRedirect: .none,
-        isCloudAccountAlreadyRegistered: nil,
-        ssoCodeString: nil
-    )
-    return mockAuthenticationAPI
+public struct SSOSettings: Equatable, Sendable {
+
+    public let defaultSSOCode: UUID?
+
 }

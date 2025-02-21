@@ -33,15 +33,23 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        authenticationAPI: AuthenticationAPI,
+        defaultBackendEnvironment: BackendEnvironment,
+        minTLSVersion: TLSVersion,
+        defaultAPIVersion: APIVersion,
         accountsURL: URL,
-        passwordValidator: any PasswordValidator
+        passwordValidator: any PasswordValidator,
+        onFlowCompletion: @escaping () -> Void
     ) -> some View {
-        RootComponent(
-            authenticationAPI: authenticationAPI,
+        let bridge = WireAuthenticationBridge(onFlowCompletion: onFlowCompletion)
+        let rootComponent = RootComponent(
+            bridge: bridge,
+            defaultBackendEnvironment: defaultBackendEnvironment,
+            defaultAPIVersion: defaultAPIVersion,
+            minTLSVersion: minTLSVersion,
             accountsURL: accountsURL, // this is temp
             passwordValidator: passwordValidator
-        ).rootView
+        )
+        return rootComponent.rootView
     }
 
 }
