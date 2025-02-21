@@ -46,7 +46,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
-    @Published var webView: ModalDestination?
+    @Published var modalDestination: ModalDestination?
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
@@ -120,7 +120,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         case let .loginViaSSO(code):
             // TODO: [WPB-15946] Genarate URL and handle the error
-            webView = .ssoLogin(url: URL(string: "example")!)
+            modalDestination = .ssoLogin(url: URL(string: "example")!)
 
         case let .onPremLogin(email, backendConfig):
             // TODO: [WPB-15944] Handle on-prem login
