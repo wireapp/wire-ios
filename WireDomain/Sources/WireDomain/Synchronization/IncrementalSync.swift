@@ -88,7 +88,6 @@ public struct IncrementalSync {
     private func processStoredEvents() async throws {
         let batchSize: UInt = 500
 
-        // TODO: would be good to ask the store if it has any events
         while true {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
