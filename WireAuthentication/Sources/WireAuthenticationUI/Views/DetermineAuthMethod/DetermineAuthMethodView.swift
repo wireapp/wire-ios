@@ -109,6 +109,8 @@ package struct DetermineAuthMethodView: View {
                 loginViaEmailBuilder.loginViaEmailView(email: email, canCreateAccount: false)
             case .loginOrRegister:
                 Color.red
+            case .noHistory:
+                Color.blue
             }
         }
         .sheet(item: $viewModel.webView, content: { view in
@@ -122,10 +124,11 @@ package struct DetermineAuthMethodView: View {
         .presentationDragIndicator(.hidden)
     }
 
-    enum Destination: Hashable {
+    package enum Destination: Hashable {
 
         case login(email: String)
         case loginOrRegister(email: String)
+        case noHistory//(userID, cookieData)
 
     }
 

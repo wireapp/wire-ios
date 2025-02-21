@@ -75,7 +75,7 @@ final class AuthenticationInterfaceBuilder {
         switch step {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
-            let rootView = assembly.assemble(
+            let (rootView, bridge) = assembly.assemble(
                 defaultBackendEnvironment: BackendEnvironment(
                     url: environment.backendURL,
                     webSocketURL: environment.backendWSURL,
@@ -102,6 +102,9 @@ final class AuthenticationInterfaceBuilder {
                 authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
             }
 
+            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: {
+                bridge.completeSSOSuccess()
+            })
             return AuthenticationHostingController(rootView: rootView)
 
         case .landingScreen:

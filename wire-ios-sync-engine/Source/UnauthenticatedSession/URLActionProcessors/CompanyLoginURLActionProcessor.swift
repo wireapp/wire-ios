@@ -39,6 +39,9 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
         case let .companyLoginSuccess(userInfo):
             authenticationStatus.loginSucceeded(with: userInfo)
         case let .startCompanyLogin(code):
+            guard !DeveloperFlag.useWireAuthentication.isOn else {
+                break
+            }
             guard delegate?.isAllowedToCreateNewAccount == true else {
                 presentationDelegate?.failedToPerformAction(
                     urlAction,
@@ -55,6 +58,27 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
         CompanyLoginVerificationToken.flush()
 
         presentationDelegate?.completedURLAction(urlAction)
+    }
+
+}
+
+class CompanyLoginURLActionProcessor1: URLActionProcessor {
+
+    let action: () -> Void
+
+    init(action: @escaping () -> Void) {
+        self.action = action
+    }
+
+    func process(urlAction: URLAction, delegate: (any PresentationDelegate)?) {
+        switch urlAction {
+        case let .companyLoginSuccess(userInfo):
+            action()
+            //authenticationStatus.loginSucceeded(with: userInfo)
+        default:
+            break
+        }
+
     }
 
 }

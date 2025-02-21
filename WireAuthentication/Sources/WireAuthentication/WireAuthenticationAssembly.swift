@@ -39,17 +39,24 @@ public struct WireAuthenticationAssembly {
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
         onFlowCompletion: @escaping () -> Void
-    ) -> some View {
-        let bridge = WireAuthenticationBridge(onFlowCompletion: onFlowCompletion)
+    ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
-            bridge: bridge,
             defaultBackendEnvironment: defaultBackendEnvironment,
             defaultAPIVersion: defaultAPIVersion,
             minTLSVersion: minTLSVersion,
             accountsURL: accountsURL, // this is temp
             passwordValidator: passwordValidator
         )
-        return rootComponent.rootView
+
+        let bridge = WireAuthenticationBridge(
+            onFlowCompletion: onFlowCompletion,
+            onSuccessSSOFlowCompletion: {
+                rootComponent.router.navigate(to: DetermineAuthMethodView.Destination.noHistory)
+            },
+            onFailureSSOFlowCompletion: {}
+        )
+
+        return (view: rootComponent.rootView, bridge: bridge)
     }
 
 }

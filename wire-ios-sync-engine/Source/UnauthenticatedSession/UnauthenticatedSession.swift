@@ -107,6 +107,11 @@ public class UnauthenticatedSession: NSObject {
             authenticationStatus.notifyAuthenticationDidFail(error)
         }
     }
+
+    public func appendURLActionProcessors(action: @escaping () -> Void) {
+        urlActionProcessors.append(CompanyLoginURLActionProcessor1(action: action))
+
+    }
 }
 
 extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
