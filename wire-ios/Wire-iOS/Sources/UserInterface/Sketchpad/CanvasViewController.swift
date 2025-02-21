@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,13 +66,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     // MARK: - Override methods
 
-    override var shouldAutorotate: Bool {
-        switch UIDevice.current.userInterfaceIdiom {
-        case .pad:
-            true
-        default:
-            false
-        }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
     }
 
     override func viewDidLayoutSubviews() {

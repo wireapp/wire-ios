@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertTrue(actionHandler.didPerformAction)
+        XCTAssertTrue(actionHandler.performedActions.count == 1)
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
         guard let note = testObserver.receivedChangeInfo.first else { return XCTFail() }
         XCTAssertEqual(note.user as? ZMSearchUser, searchUser)

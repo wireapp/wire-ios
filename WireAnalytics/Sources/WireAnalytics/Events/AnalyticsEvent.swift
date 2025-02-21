@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An event that can be tracked..
+/// An event that can be tracked.
 
-public struct AnalyticsEvent: Sendable, Equatable {
+public struct AnalyticsEvent: Equatable, Sendable {
 
     /// A unique name.
 
@@ -26,7 +26,7 @@ public struct AnalyticsEvent: Sendable, Equatable {
 
     /// Additional metadata.
 
-    let segmentation: Set<SegmentationEntry>
+    let segmentation: Set<Segmentation>
 
     /// Create a new `AnalyticsEvent`.
     ///
@@ -34,14 +34,13 @@ public struct AnalyticsEvent: Sendable, Equatable {
     ///   - name: A unique name.
     ///   - segmentation: Additional metadata.
 
-    init(
+    init<Collection>(
         name: String,
-        segmentation: Set<SegmentationEntry> = []
-    ) {
+        segmentation: Collection = []
+    ) where Collection: Swift.Collection, Collection.Element == Segmentation {
         self.name = name
-        self.segmentation = segmentation
+        self.segmentation = Set(segmentation)
     }
-
 }
 
 extension AnalyticsEvent: CustomDebugStringConvertible {

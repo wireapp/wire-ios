@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,5 +48,18 @@ extension PermissionDeniedViewController {
         vc.view.backgroundColor = SemanticColors.View.backgroundDefault
 
         return vc
+    }
+}
+
+private extension String {
+    func withCustomParagraphSpacing() -> NSMutableAttributedString {
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.paragraphSpacing = 10
+
+        return .init(
+            string: self,
+            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]
+        )
     }
 }

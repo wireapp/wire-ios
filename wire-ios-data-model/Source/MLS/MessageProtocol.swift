@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 /// Protocols for exchanging end-to-end-encrypted messages
 /// between clients.
 
-public enum MessageProtocol: String, CaseIterable {
+public enum MessageProtocol: String, Equatable, CaseIterable {
 
     /// With proteus, inidividual encryption sessions are created between
     /// every pair of clients in a conversation. This imposes constraints on

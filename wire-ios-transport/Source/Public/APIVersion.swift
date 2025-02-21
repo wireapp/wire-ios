@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 
 @objc
 public enum APIVersion: Int32 {
-
     case v0
     case v1
     case v2
@@ -29,7 +28,7 @@ public enum APIVersion: Int32 {
     case v5
     case v6
     case v7
-
+    case v8
 }
 
 // MARK: - CaseIterable

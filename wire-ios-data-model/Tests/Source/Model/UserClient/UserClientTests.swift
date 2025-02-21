@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -122,7 +122,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             ZMUserClientMarkedToDeleteKey,
             ZMUserClientNumberOfKeysRemainingKey,
             ZMUserClientMissingKey,
-            ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
             UserClient.needsToUploadMLSPublicKeysKey
         ])
@@ -549,43 +548,6 @@ extension UserClientTests {
         // then
         XCTAssertFalse(otherClient.verified)
     }
-}
-
-// MARK: SignalingStore
-
-extension UserClientTests {
-
-    func testThatItDeletesExistingSignalingKeys() {
-
-        // given
-        let selfClient = createSelfClient()
-        selfClient.apsVerificationKey = Data()
-        selfClient.apsDecryptionKey = Data()
-
-        XCTAssertNotNil(selfClient.apsVerificationKey)
-        XCTAssertNotNil(selfClient.apsDecryptionKey)
-
-        // when
-        UserClient.resetSignalingKeysInContext(uiMOC)
-
-        // then
-        XCTAssertNil(selfClient.apsVerificationKey)
-        XCTAssertNil(selfClient.apsDecryptionKey)
-    }
-
-    func testThatItSetsKeysNeedingToBeSynced() {
-
-        // given
-        let selfClient = createSelfClient()
-
-        // when
-        UserClient.resetSignalingKeysInContext(uiMOC)
-
-        // then
-        XCTAssertTrue(selfClient.needsToUploadSignalingKeys)
-        XCTAssertTrue(selfClient.keysThatHaveLocalModifications.contains(ZMUserClientNeedsToUpdateSignalingKeysKey))
-    }
-
 }
 
 // MARK: Capabilities

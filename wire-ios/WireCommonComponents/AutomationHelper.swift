@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,14 +55,10 @@ public final class AutomationHelper: NSObject {
     public let disablePushNotificationAlert: Bool
     /// Whether autocorrection is disabled
     public let disableAutocorrection: Bool
-    /// Whether address book upload is enabled on simulator
-    let uploadAddressbookOnSimulator: Bool
     /// Whether we should disable the call quality survey.
     public let disableCallQualitySurvey: Bool
     /// Whether we should disable dismissing the conversation input bar keyboard by dragging it downwards.
     public let disableInteractiveKeyboardDismissal: Bool
-    /// Delay in address book remote search override
-    let delayInAddressBookRemoteSearch: TimeInterval?
     /// Debug data to install in the share container
     let debugDataToInstall: URL?
 
@@ -84,7 +80,6 @@ public final class AutomationHelper: NSObject {
 
         self.disablePushNotificationAlert = arguments.hasFlag(AutomationKey.disablePushNotificationAlert)
         self.disableAutocorrection = arguments.hasFlag(AutomationKey.disableAutocorrection)
-        self.uploadAddressbookOnSimulator = arguments.hasFlag(AutomationKey.enableAddressBookOnSimulator)
         self.disableCallQualitySurvey = arguments.hasFlag(AutomationKey.disableCallQualitySurvey)
         self.shouldPersistBackendType = arguments.hasFlag(AutomationKey.persistBackendType)
         self.disableInteractiveKeyboardDismissal = arguments.hasFlag(AutomationKey.disableInteractiveKeyboardDismissal)
@@ -104,7 +99,6 @@ public final class AutomationHelper: NSObject {
         } else {
             self.debugDataToInstall = nil
         }
-        self.delayInAddressBookRemoteSearch = AutomationHelper.addressBookSearchDelay(arguments)
 
         if let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
            let apiVersion = Int32(value) {
@@ -124,8 +118,6 @@ public final class AutomationHelper: NSObject {
         case logTags = "debug-log"
         case disablePushNotificationAlert = "disable-push-alert"
         case disableAutocorrection = "disable-autocorrection"
-        case enableAddressBookOnSimulator = "addressbook-on-simulator"
-        case addressBookRemoteSearchDelay = "addressbook-search-delay"
         case debugDataToInstall = "debug-data-to-install"
         case disableCallQualitySurvey = "disable-call-quality-survey"
         case persistBackendType = "persist-backend-type"
@@ -150,15 +142,6 @@ public final class AutomationHelper: NSObject {
         guard let tagsString = arguments.flagValueIfPresent(AutomationKey.logTags.rawValue) else { return }
         let tags = tagsString.components(separatedBy: ",")
         tags.forEach { ZMSLog.set(level: .debug, tag: $0) }
-    }
-
-    /// Returns the custom time interval for address book search delay if it set in the given arguments
-    private static func addressBookSearchDelay(_ arguments: ArgumentsType) -> TimeInterval? {
-        guard let delayString = arguments.flagValueIfPresent(AutomationKey.addressBookRemoteSearchDelay.rawValue),
-              let delay = Int(delayString) else {
-            return nil
-        }
-        return TimeInterval(delay)
     }
 }
 

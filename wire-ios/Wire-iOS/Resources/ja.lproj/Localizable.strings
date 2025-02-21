@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "もっと知る";
 "peoplepicker.no_matching_results.action.manage_services" = "サービスを管理";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "結果はありません";
 "peoplepicker.no_matching_results.message.users" = "Wireで名前または@usernameで人を見つけます";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "全員がいます。";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "2週間使用できます。\n期限が切れた時は新しいものを送ります";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "さらに招待する";
 "peoplepicker.invite_team_members" = "チームに招待する";
 "peoplepicker.quick-action.open-conversation" = "開く";
 "peoplepicker.quick-action.admin-services" = "サービスを管理";
@@ -1358,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "履歴";
-"self.settings.history_backup.title" = "会話をバックアップする";
-"self.settings.history_backup.description" = "あなたの会話履歴をバックアップして保存します。 これにより、もしデバイスをなくしたり、新しいデバイスに切り替えた場合でも、会話記録をリストアすることができます。\n\nバックアップファイルを守るため、強力なパスワードを選択してください。";
-"self.settings.history_backup.action" = "今すぐバックアップする";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "エラー";
-
 "self.settings.history_backup.set_email.title" = "メールアドレスとパスワードを設定します。";
 "self.settings.history_backup.set_email.message" = "会話履歴をバックアップするために、Eメールアドレスとパスワードが必要です。[設定] - [アカウント] から入力してください。";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "パスワードを設定";
-"self.settings.history_backup.password.cancel" = "キャンセル";
-"self.settings.history_backup.password.next" = "次へ";
-"self.settings.history_backup.password.placeholder" = "パスワード";
-"self.settings.history_backup.password.description" = "バックアップは圧縮され、ここで設定したパスワードで暗号化されます。";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1504,32 +1491,11 @@
 "registration.no_history.hero" = "このデバイスで Wire を使用するのは初めてです。";
 "registration.no_history.subtitle" = "プライバシー上の理由から、会話の履歴はここに表示されません。";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "バックアップからリストアする";
 
 "registration.alert.account_exists.title" = "アカウントが存在します";
 "registration.alert.account_exists.message_email" = "登録に使用したメールアドレスは既にアカウントにリンクされています。\n\n別のメールアドレスを登録するか、このアカウントを持っている場合はログインしてみてください。";
 "registration.alert.change_email_action" = "別のメールアドレスで登録します。";
 "registration.alert.change_signin_action" = "ログイン";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "リストア履歴";
-"registration.no_history.restore_backup_warning.message" = "リストアするとバックアップされた内容で、デバイスの会話履歴を上書きします。また、同じプラットフォームで作成されたバックアップデータからのみリストア可能です。";
-"registration.no_history.restore_backup_warning.proceed" = "バックアップファイルを選択します。";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "もう一度試す";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "何か問題があります";
-"registration.no_history.restore_backup_failed.message" = "あなたの履歴はリストアできませんでした。";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "互換性のないバックアップ";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "別のアカウントからの履歴はリストアできません。";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "互換性のないバックアップ";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "このバックアップデータは、新しいまたは古すぎる Wire で作成されたため、リストアできません。";
 
 // SSO – Company Login
 "login.sso.alert.title" = "組織アカウントログイン";
@@ -1556,17 +1522,6 @@
 "login.sso.backend_switch.subtitle" = "専用のエンタープライズサービスへリダイレクトされます。";
 "login.sso.backend_switch.information" = "あなたの組織へのログインであると確信できる場合に限り、認証情報を提供してください。";
 
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "復元中…";
-"registration.no_history.restore_backup.completed" = "完了";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "このバックアップはパスワード保護されています。";
-"registration.no_history.restore_backup.password.message" = "このバックアップをリストアするにはパスワードが必要です。";
-"registration.no_history.restore_backup.password.placeholder" = "パスワード";
-"registration.no_history.restore_backup.password_error.title" = "パスワードが間違っています";
-
 "registration.no_history.logged_out.hero" = "以前にこのデバイスでワイヤーを使用しました。";
 "registration.no_history.logged_out.subtitle" = "同時に送信されたメッセージは表示されません。";
 "registration.no_history.logged_out.got_it" = "OK";
@@ -1589,17 +1544,6 @@
 "registration.email_flow.email_step.title" = "詳細を編集する";
 
 "registration.country_select.title" = "国";
-
-"registration.share_contacts.hero.title" = "Wireで友人を見つける";
-"registration.share_contacts.hero.paragraph" = "他のユーザーとつながるために、Wireがあなたの連絡先にアクセスすることを許可してください。私たちはすべての情報を匿名化し、他の誰ともあなたの連絡先に関する情報をシェアしません。";
-"registration.share_contacts.find_friends_button.title" = "連絡先を共有します";
-"registration.share_contacts.skip_button.title" = "いまは行わない";
-
-"registration.address_book_access_denied.hero.title" = "Wireはあなたの連絡先へのアクセスしていません。";
-"registration.address_book_access_denied.hero.paragraph1" = "連絡先をシェアした場合、Wireで友人を探すことが容易になります。";
-"registration.address_book_access_denied.hero.paragraph2" = "設定から連絡先を有効にすることで連絡先にアクセスできるようになります。";
-"registration.address_book_access_denied.settings_button.title" = "設定";
-"registration.address_book_access_denied.maybe_later_button.title" = "後で";
 
 "registration.push_access_denied.hero.title" = "電話やメッセージを見逃さない";
 "registration.push_access_denied.hero.paragraph1" = "設定で通知を有効にする";

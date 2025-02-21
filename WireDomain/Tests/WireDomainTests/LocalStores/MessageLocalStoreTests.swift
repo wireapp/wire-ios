@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireDomain
 
 final class MessageLocalStoreTests: XCTestCase {
 
     private var sut: MessageLocalStore!
-    private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -37,7 +37,6 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        conversationLocalStore = MockConversationLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
@@ -45,7 +44,6 @@ final class MessageLocalStoreTests: XCTestCase {
 
         sut = MessageLocalStore(
             context: context,
-            conversationLocalStore: conversationLocalStore,
             userLocalStore: userLocalStore
         )
     }
@@ -53,7 +51,6 @@ final class MessageLocalStoreTests: XCTestCase {
     override func tearDown() async throws {
         sut = nil
         stack = nil
-        conversationLocalStore = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
@@ -61,6 +58,66 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     // MARK: - Tests
+
+    func testAddTextMessage_It_Adds_Message_To_Conversation() async throws {
+        // Mock
+
+        let (clientMessage, groupConversation, selfUser, user) = await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(
+                in: context
+            )
+
+            let selfUser = modelHelper.createSelfUser(
+                id: .mockID1,
+                domain: nil,
+                in: context
+            )
+
+            let user = modelHelper.createUser(in: context)
+
+            let clientMessage = ZMClientMessage(context: context)
+
+            return (clientMessage, conversation, selfUser, user)
+        }
+
+        userLocalStore.fetchSelfUser_MockValue = selfUser
+        userLocalStore.fetchUserIdDomain_MockValue = user
+
+        // Given a regular message to add to a conversation
+        let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
+
+        // When
+
+        await sut.addClientMessage(
+            clientMessage,
+            isNewMessage: true,
+            genericMessage: genericMessage,
+            conversation: groupConversation,
+            senderID: .mockID1,
+            senderDomain: Scaffolding.domain
+        )
+
+        // Then
+
+        let expectedMessageText = "Everything"
+
+        await internalTest_assertConversationLastMessage(
+            expectedMessageText: expectedMessageText,
+            conversation: groupConversation
+        )
+    }
+
+    private func internalTest_assertConversationLastMessage(
+        expectedMessageText: String,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            XCTAssertEqual(
+                conversation.lastMessage?.textMessageData?.messageText,
+                expectedMessageText
+            )
+        }
+    }
 
     func testAddMessageToConversation_It_Adds_Correct_Message_To_Conversation() async {
         // Mock
@@ -74,29 +131,34 @@ final class MessageLocalStoreTests: XCTestCase {
         userLocalStore.fetchSelfUser_MockValue = user
         userLocalStore.fetchOrCreateUsersUserIDs_MockValue = Set([user])
 
-        for messageType in Scaffolding.allMessageTypes {
-            let conversation = await makeConversation(creator: user)
-            conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+        for messageType in Scaffolding.allSystemMessageTypes {
+            let conversationID = UUID()
+            let conversationDomain = Scaffolding.domain1
+            let conversation = await makeConversation(
+                id: conversationID,
+                domain: conversationDomain,
+                creator: user
+            )
 
             // When
 
-            await sut.addSystemMessageToConversation(
+            await sut.addSystemMessage(
                 messageType: messageType,
-                conversationID: UUID(),
-                conversationDomain: Scaffolding.domain1
+                conversationID: conversationID,
+                conversationDomain: conversationDomain
             )
 
             // Then
 
-            await internalTest_assertConversationLastMessages(
+            await internalTest_assertConversationLastSystemMessages(
                 messageType: messageType,
                 conversation: conversation
             )
         }
     }
 
-    private func internalTest_assertConversationLastMessages(
-        messageType: MessageType,
+    private func internalTest_assertConversationLastSystemMessages(
+        messageType: SystemMessageType,
         conversation: ZMConversation
     ) async {
         let lastMessagesTypes = await context.perform {
@@ -112,9 +174,17 @@ final class MessageLocalStoreTests: XCTestCase {
         XCTAssertEqual(lastMessagesTypes, expectedResults.zmMessages)
     }
 
-    private func makeConversation(creator: ZMUser) async -> ZMConversation {
+    private func makeConversation(
+        id: UUID,
+        domain: String?,
+        creator: ZMUser
+    ) async -> ZMConversation {
         await context.perform { [self] in
-            let conversation = modelHelper.createGroupConversation(in: context)
+            let conversation = modelHelper.createGroupConversation(
+                id: id,
+                domain: domain,
+                in: context
+            )
             conversation.creator = creator
             conversation.hasReadReceiptsEnabled = true
 
@@ -123,7 +193,7 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     private func expectedResults(
-        given messageType: MessageType
+        given messageType: SystemMessageType
     ) -> (messagesCount: Int, zmMessages: [ZMSystemMessageType]) {
         switch messageType {
         case .federationTermination:
@@ -156,18 +226,27 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.conversationNameChanged])
         case let .readReceiptsStatus(isEnabled, _, _):
             (messagesCount: 1, [isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled])
+        case .invalid:
+            (messagesCount: 1, [.invalid])
+        case .decryptionFailed:
+            (messagesCount: 1, [.decryptionFailed_RemoteIdentityChanged])
+        case .sessionReset:
+            (messagesCount: 1, [.sessionReset])
         }
     }
 
-    private enum Scaffolding {
-        static let conversationID = UUID.mockID1
-        static let userID = UUID.mockID2
-        static let otherUserID = UUID.mockID3
+    enum Scaffolding {
+        static let conversationID = UUID()
+        static let userID = UUID()
+        static let otherUserID = UUID()
         static let domain1 = "domain1.com"
         static let domain2 = "domain2.com"
         static let date = Date.now
+        static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
+        static let domain = "domain.com"
+        static let senderClientID = UUID()
 
-        static let allMessageTypes: [MessageType] = [
+        static let allSystemMessageTypes: [SystemMessageType] = [
             .federationTermination(domains: [domain1, domain2], date: date),
             .mlsMigrationFinalized(sender: (id: userID, domain: domain1), date: date),
             .mlsMigrationMLSNotSupportedForOtherUser(otherUser: (id: userID, domain: domain1)),
@@ -183,6 +262,14 @@ final class MessageLocalStoreTests: XCTestCase {
                 date: date
             ),
             .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date),
+            .invalid(sender: (id: userID, domain: domain1), date: date),
+            .decryptionFailed(
+                sender: (id: userID, domain: domain1),
+                senderClientID: otherUserID.uuidString,
+                remoteIdentityChanged: true,
+                date: date
+            ),
+            .sessionReset(sender: (id: userID, domain: domain), senderClientID: otherUserID.uuidString, date: date),
             .participantsAdded(
                 participants: [(id: userID, domain: domain1)],
                 sender: (id: userID, domain: domain1),
@@ -190,7 +277,6 @@ final class MessageLocalStoreTests: XCTestCase {
             ),
             .conversationNameChanged(newName: "newName", sender: (userID, domain1), date: date),
             .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date)
-
         ]
     }
 

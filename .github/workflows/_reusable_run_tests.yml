@@ -9,10 +9,13 @@ on:
         required: false
       branch:
         type: string
-        required: true
+        required: false
       notify_secret:
         type: string
         required: true
+      test_dependencies:
+        type: boolean
+        default: false
       
     secrets:
       ZENKINS_USERNAME:
@@ -28,6 +31,7 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 
 jobs:
   run-tests:
+    name: Run tests
     runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
@@ -42,6 +46,18 @@ jobs:
           ref: ${{ inputs.branch }}
           lfs: 'true'
 
+      - name: Sanitize branch name
+        run: |
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" | tee -a "$GITHUB_ENV"
+    
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
@@ -62,13 +78,6 @@ jobs:
         with:
           path: Carthage
           key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
-
-      - name: Restore Danger results
-        id: restore-danger-results
-        uses: actions/cache/restore@v4
-        with:
-          path: Danger.results
-          key: ${{ github.event.before || github.event.pull_request.base.sha }}-Danger.results
 
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
@@ -92,6 +101,11 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Display all fastlane lanes
+        if: ${{ contains(inputs.folders, 'fastlane') || inputs.all }}
+        run: |
+          bundle exec fastlane lanes
+
       - name: Setup workspace
         run: |
           ./setup.sh
@@ -101,9 +115,14 @@ jobs:
           bundle exec fastlane prepare_for_tests
 
       - name: "Test all selected frameworks" 
-        id: set_frameworks
+        if: ${{ inputs.test_dependencies || inputs.all }}
         run: |
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
+
+      - name: "Test frameworks without dependencies" 
+        if: ${{ inputs.test_dependencies == false }}
+        run: |
+          bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
 
       - name: Find all .xcresult files
         if: ${{ always() && github.event_name == 'pull_request' }}
@@ -115,11 +134,12 @@ jobs:
       - name: Debug Print xcresult files
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+
       - name: Upload .xcresult files as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: xcresults
+          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: artifacts/**/*.xcresult  # Adjust this if necessary
 
       # Scripts
@@ -134,7 +154,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Failed Snapshots and log
+          name: Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             **/SnapshotResults/
             xcodebuild*.log
@@ -143,7 +163,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-reports
+          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
@@ -161,7 +181,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: derived-data-xcode
+          name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
@@ -177,7 +197,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **Tests for ${{ inputs.branch }}**
+            **Tests for ${{ inputs.branch || github.head_ref }}**
 
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
@@ -189,7 +209,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **🚨 Tests for ${{ inputs.branch }} failed 🆘**
+            **🚨 Tests for ${{ inputs.branch || github.head_ref }} failed 🆘**
 
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
@@ -197,16 +217,30 @@ jobs:
 
   analyze-xcresults:
     needs: run-tests
+    name: Analyze xcresults
     if: ${{ always() && github.event_name == 'pull_request' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     strategy:
       matrix:
         xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
+      fail-fast: false # avoid to fail one job
     steps:
+      - name: Sanitize branch name
+        run: |
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+
       - name: Download .xcresult files
         uses: actions/download-artifact@v4
         with:
-          name: xcresults
+          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: ./artifacts
 
       - name: Display downloaded files
@@ -220,15 +254,28 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload-test-results-datadadog:
-    runs-on: ubuntu-latest
+    name: Upload to Datadog
+    runs-on: ubuntu-24.04
     needs: run-tests
     if: always()
     steps:
+      - name: Sanitize branch name
+        run: |
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+
       - name: Download tests results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: test-reports
+          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
       - uses: actions/setup-node@v3
         with:
           node-version: 18

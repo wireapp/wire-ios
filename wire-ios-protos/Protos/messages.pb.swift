@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,23 +25,6 @@
 //
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
-
-//
-// Wire
-// Copyright (C) 2024 Wire Swiss GmbH
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see http://www.gnu.org/licenses/.
 
 import Foundation
 import SwiftProtobuf
@@ -321,14 +304,22 @@ public struct GenericMessage: Sendable {
     set {content = .dataTransfer(newValue)}
   }
 
-  /// UnknownStrategy unknownStrategy = 25; -- Defined outside the oneof
-  /// Next field should be 26 ↓
   public var inCallEmoji: InCallEmoji {
     get {
       if case .inCallEmoji(let v)? = content {return v}
       return InCallEmoji()
     }
     set {content = .inCallEmoji(newValue)}
+  }
+
+  /// UnknownStrategy unknownStrategy = 25; -- Defined outside the oneof
+  /// Next field should be 26 ↓
+  public var inCallHandRaise: InCallHandRaise {
+    get {
+      if case .inCallHandRaise(let v)? = content {return v}
+      return InCallHandRaise()
+    }
+    set {content = .inCallHandRaise(newValue)}
   }
 
   public var unknownStrategy: GenericMessage.UnknownStrategy {
@@ -366,9 +357,10 @@ public struct GenericMessage: Sendable {
     case buttonActionConfirmation(ButtonActionConfirmation)
     /// client-side synchronization across devices of the same user
     case dataTransfer(DataTransfer)
+    case inCallEmoji(InCallEmoji)
     /// UnknownStrategy unknownStrategy = 25; -- Defined outside the oneof
     /// Next field should be 26 ↓
-    case inCallEmoji(InCallEmoji)
+    case inCallHandRaise(InCallHandRaise)
 
     fileprivate var isInitialized: Bool {
       // The use of inline closures is to circumvent an issue where the compiler
@@ -453,6 +445,10 @@ public struct GenericMessage: Sendable {
       }()
       case .dataTransfer: return {
         guard case .dataTransfer(let v) = self else { preconditionFailure() }
+        return v.isInitialized
+      }()
+      case .inCallHandRaise: return {
+        guard case .inCallHandRaise(let v) = self else { preconditionFailure() }
         return v.isInitialized
       }()
       default: return true
@@ -2318,6 +2314,28 @@ public struct InCallEmoji: Sendable {
   public init() {}
 }
 
+public struct InCallHandRaise: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// true if the hand is raised, false if lowered
+  public var isHandUp: Bool {
+    get {return _isHandUp ?? false}
+    set {_isHandUp = newValue}
+  }
+  /// Returns true if `isHandUp` has been explicitly set.
+  public var hasIsHandUp: Bool {return self._isHandUp != nil}
+  /// Clears the value of `isHandUp`. Subsequent reads from it will return its default value.
+  public mutating func clearIsHandUp() {self._isHandUp = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _isHandUp: Bool? = nil
+}
+
 public struct Calling: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -2440,6 +2458,7 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     22: .same(proto: "buttonActionConfirmation"),
     23: .same(proto: "dataTransfer"),
     24: .same(proto: "inCallEmoji"),
+    26: .same(proto: "inCallHandRaise"),
     25: .same(proto: "unknownStrategy"),
   ]
 
@@ -2738,6 +2757,19 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
         }
       }()
       case 25: try { try decoder.decodeSingularEnumField(value: &self._unknownStrategy) }()
+      case 26: try {
+        var v: InCallHandRaise?
+        var hadOneofValue = false
+        if let current = self.content {
+          hadOneofValue = true
+          if case .inCallHandRaise(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.content = .inCallHandRaise(v)
+        }
+      }()
       default: break
       }
     }
@@ -2840,10 +2872,13 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       guard case .inCallEmoji(let v)? = self.content else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 24)
     }()
-    case nil: break
+    default: break
     }
     try { if let v = self._unknownStrategy {
       try visitor.visitSingularEnumField(value: v, fieldNumber: 25)
+    } }()
+    try { if case .inCallHandRaise(let v)? = self.content {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 26)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -5101,6 +5136,47 @@ extension InCallEmoji: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
 
   public static func ==(lhs: InCallEmoji, rhs: InCallEmoji) -> Bool {
     if lhs.emojis != rhs.emojis {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension InCallHandRaise: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "InCallHandRaise"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "is_hand_up"),
+  ]
+
+  public var isInitialized: Bool {
+    if self._isHandUp == nil {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self._isHandUp) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._isHandUp {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 1)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: InCallHandRaise, rhs: InCallHandRaise) -> Bool {
+    if lhs._isHandUp != rhs._isHandUp {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

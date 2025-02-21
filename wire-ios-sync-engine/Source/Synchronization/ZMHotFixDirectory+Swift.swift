@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,22 +20,6 @@ import Foundation
 
 @objc
 public extension ZMHotFixDirectory {
-
-    static func moveOrUpdateSignalingKeysInContext(_ context: NSManagedObjectContext) {
-        guard let selfClient = ZMUser.selfUser(in: context).selfClient(), selfClient.apsVerificationKey == nil,
-              selfClient.apsDecryptionKey == nil
-        else { return }
-
-        if let keys = APSSignalingKeysStore.keysStoredInKeyChain() {
-            selfClient.apsVerificationKey = keys.verificationKey
-            selfClient.apsDecryptionKey = keys.decryptionKey
-            APSSignalingKeysStore.clearSignalingKeysInKeyChain()
-        } else {
-            UserClient.resetSignalingKeysInContext(context)
-        }
-
-        context.enqueueDelayedSave()
-    }
 
     static func updateClientCapabilities(_ context: NSManagedObjectContext) {
         UserClient.triggerSelfClientCapabilityUpdate(context)

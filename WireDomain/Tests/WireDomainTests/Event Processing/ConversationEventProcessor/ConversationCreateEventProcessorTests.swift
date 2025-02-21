@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,6 @@ final class ConversationCreateEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Repo_Methods() async {
         // Mock
 
-        repository.fetchConversationIdDomain_MockMethod = { _, _ in nil }
         repository.storeConversationTimestamp_MockMethod = { _, _ in }
 
         // When
@@ -55,7 +54,6 @@ final class ConversationCreateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(repository.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(repository.storeConversationTimestamp_Invocations.count, 1)
     }
 

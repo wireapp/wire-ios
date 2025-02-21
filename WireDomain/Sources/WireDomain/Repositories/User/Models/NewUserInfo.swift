@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-public struct NewUserInfo: Sendable {
+public struct NewUserInfo: Equatable, Sendable {
     let userID: WireDataModel.QualifiedID
     let name: String
     let handle: String?
@@ -26,7 +26,7 @@ public struct NewUserInfo: Sendable {
     let accentID: Int
     let previewAssetKey: String?
     let completeAssetKey: String?
-    let deleted: Bool?
+    let isDeleted: Bool
     let email: String?
     let expiresAt: Date?
     let serviceID: UUID?

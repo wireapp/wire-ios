@@ -53,6 +53,7 @@ playground.xcworkspace
 # Ignore Package.resolved files in packages and projects, only track the one in the workspace.
 **/Package.resolved
 !wire-ios-mono.xcworkspace/xcshareddata/swiftpm/Package.resolved
+**/*-Package.xcscheme
 
 # CocoaPods
 #
@@ -100,3 +101,12 @@ vendor/*
 
 # Failing Snapshot Tests
 SnapshotResults
+artifacts/
+
+# Automation Config
+wire-ios-automation/ios/backendConnections.json
+**/backendConnections.json
+**/.project
+
+# Automation Output
+wire-ios-automation/out/

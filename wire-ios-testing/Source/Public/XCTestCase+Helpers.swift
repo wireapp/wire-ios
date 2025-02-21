@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,6 +49,24 @@ public extension XCTestCase {
     typealias AsyncThrowingBlock = () async throws -> Void
     typealias ThrowingBlock = () throws -> Void
     typealias EquatableError = Equatable & Error
+
+    func assertItThrows(
+        block: AsyncThrowingBlock,
+        errorHandler: (any Error) -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async {
+        do {
+            try await block()
+            XCTFail(
+                "No error was thrown",
+                file: file,
+                line: line
+            )
+        } catch {
+            errorHandler(error)
+        }
+    }
 
     func assertItThrows(
         error expectedError: some EquatableError,

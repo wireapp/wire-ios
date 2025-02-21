@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ public protocol UpdateEventsAPI {
     /// - Parameter selfClientID: The id of the self client.
     /// - Returns: An update envelope containing the last update event.
 
-    func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEventEnvelope
+    func getLastUpdateEvent(selfClientID: String?) async throws -> UpdateEventEnvelope
 
     /// Get all update events for the self client since a particular event.
     ///
@@ -38,7 +38,7 @@ public protocol UpdateEventsAPI {
     /// - Returns: A pager of events since (but not including) the specified event.
 
     func getUpdateEvents(
-        selfClientID: String,
+        selfClientID: String?,
         sinceEventID: UUID
     ) -> PayloadPager<UpdateEventEnvelope>
 

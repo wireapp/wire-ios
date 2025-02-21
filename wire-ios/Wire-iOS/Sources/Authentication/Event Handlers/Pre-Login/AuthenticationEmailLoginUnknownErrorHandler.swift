@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ final class AuthenticationEmailLoginUnknownErrorHandler: AuthenticationEventHand
         }
 
         // We try to validate the fields to detect an error
-        var detectedError: NSError = if !ZMUser.isValidEmailAddress(credentials.email) {
+        let detectedError: NSError = if !ZMUser.isValidEmailAddress(credentials.email) {
             NSError(
                 domain: NSError.userSessionErrorDomain,
                 code: UserSessionErrorCode.invalidEmail.rawValue,

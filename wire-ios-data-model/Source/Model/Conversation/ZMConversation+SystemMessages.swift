@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -182,7 +182,34 @@ public extension ZMConversation {
 
     // MARK: - MLS Migration
 
-    func appendMLSMigrationFinalizedSystemMessage(
+    func appendMLSMigrationFinalizedSystemMessageIfNeeded(
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        if !migrationFinalizedSystemMessageExists(in: context) {
+            appendMLSMigrationFinalizedSystemMessage(sender: sender, at: timestamp)
+        }
+    }
+
+    private func migrationFinalizedSystemMessageExists(in context: NSManagedObjectContext) -> Bool {
+        let request: NSFetchRequest<ZMSystemMessage> = NSFetchRequest(entityName: ZMSystemMessage.entityName())
+        request.predicate = NSPredicate(
+            format: "%K == %d AND %K == %@",
+            #keyPath(ZMSystemMessage.systemMessageType),
+            ZMSystemMessageType.mlsMigrationFinalized.rawValue,
+            #keyPath(ZMSystemMessage.visibleInConversation),
+            self
+        )
+        request.fetchLimit = 1
+        let messageCount = context.countOrAssert(request: request)
+        return messageCount == 1
+    }
+
+    private func appendMLSMigrationFinalizedSystemMessage(
         sender: ZMUser,
         at timestamp: Date
     ) {

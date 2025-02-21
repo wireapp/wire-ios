@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
 
     private let source: AccountImageSource
     private let availability: Availability?
+    private let showNotificationsBadge: Bool
 
     @Environment(\.accountImageBorderWidth) private var accountImageBorderWidth
     @Environment(\.accountImageBorderColor) private var accountImageBorderColor
@@ -35,10 +36,12 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
 
     public init(
         source: AccountImageSource,
-        availability: Availability?
+        availability: Availability?,
+        showNotificationsBadge: Bool
     ) {
         self.source = source
         self.availability = availability
+        self.showNotificationsBadge = showNotificationsBadge
     }
 
     public func makeUIView(context: Context) -> AccountImageView {
@@ -48,6 +51,8 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
     public func updateUIView(_ view: AccountImageView, context: Context) {
         view.source = source
         view.availability = availability
+        view.hideProfileNotificationsBadge = !showNotificationsBadge
+
         view.imageBorderWidth = accountImageBorderWidth
         view.imageBorderColor = accountImageBorderColor
 
@@ -55,19 +60,6 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
         view.availabilityIndicatorView.awayColor = availabilityIndicatorAwayColor
         view.availabilityIndicatorView.busyColor = availabilityIndicatorBusyColor
         view.availabilityIndicatorView.backgroundViewColor = availabilityIndicatorBackgroundViewColor
-    }
-}
-
-extension AccountImageViewRepresentable {
-
-    init(
-        _ source: AccountImageSource,
-        _ availability: Availability?
-    ) {
-        self.init(
-            source: source,
-            availability: availability
-        )
     }
 }
 

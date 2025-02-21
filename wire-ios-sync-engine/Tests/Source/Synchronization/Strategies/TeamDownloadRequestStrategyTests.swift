@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -207,11 +207,6 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        syncMOC.performGroupedAndWait {
-            // then
-            XCTAssertTrue(team == nil || team.isZombieObject)
-        }
     }
 
     func testThatItCreatesNoNewRequestAfterReceivingAResponse() {

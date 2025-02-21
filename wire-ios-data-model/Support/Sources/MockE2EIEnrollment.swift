@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,18 @@ import Foundation
 import WireCoreCrypto
 
 class MockE2EIEnrollment: E2eiEnrollmentProtocol {
+
+    // MARK: - contextNewOidcChallengeResponse
+
+    var mockContextNewOidcChallengeResponse: ((WireCoreCrypto.CoreCryptoContext, Data) async throws -> Void)?
+
+    func contextNewOidcChallengeResponse(cc: WireCoreCrypto.CoreCryptoContext, challenge: Data) async throws {
+        guard let mock = mockContextNewOidcChallengeResponse else {
+            fatalError("no mock for `mockContextNewOidcChallengeResponse`")
+        }
+
+        return try await mock(cc, challenge)
+    }
 
     // MARK: - directoryResponse
 

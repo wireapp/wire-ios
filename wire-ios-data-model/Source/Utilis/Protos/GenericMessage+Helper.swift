@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -118,6 +118,8 @@ public extension GenericMessage {
         case let .buttonActionConfirmation(data):
             return data
         case let .dataTransfer(data):
+            return data
+        case let .inCallHandRaise(data):
             return data
         }
     }
@@ -538,6 +540,15 @@ public extension Text {
     }
 }
 
+extension WireProtos.InCallHandRaise {
+    init(handUp: Bool) {
+
+        self = InCallHandRaise.with {
+            $0.isHandUp = handUp
+        }
+    }
+}
+
 // MARK: - Reaction
 
 extension WireProtos.Reaction {
@@ -859,9 +870,9 @@ public extension ImageAsset {
 
 // MARK: - DataTransfer
 
-extension DataTransfer {
+public extension DataTransfer {
 
-    public init(trackingIdentifier: UUID) {
+    init(trackingIdentifier: UUID) {
         self = DataTransfer.with {
             $0.trackingIdentifier = TrackingIdentifier(trackingIdentifier)
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         )
         let attributedText = attributedSenderNames
 
-        var linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
+        let linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
             .user(user)
         } else {
             .conversation(conversation)

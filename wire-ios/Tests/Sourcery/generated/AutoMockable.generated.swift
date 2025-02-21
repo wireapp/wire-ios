@@ -3,7 +3,7 @@
 
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -189,44 +189,6 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
         }
 
         mock(appStateCalculator, appState, completion)
-    }
-
-}
-
-class MockBackupSource: BackupSource {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - backupActiveAccount
-
-    var backupActiveAccountPasswordCompletion_Invocations: [(password: String, completion: (Result<URL, Error>) -> Void)] = []
-    var backupActiveAccountPasswordCompletion_MockMethod: ((String, @escaping (Result<URL, Error>) -> Void) -> Void)?
-
-    func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) {
-        backupActiveAccountPasswordCompletion_Invocations.append((password: password, completion: completion))
-
-        guard let mock = backupActiveAccountPasswordCompletion_MockMethod else {
-            fatalError("no mock for `backupActiveAccountPasswordCompletion`")
-        }
-
-        mock(password, completion)
-    }
-
-    // MARK: - clearPreviousBackups
-
-    var clearPreviousBackups_Invocations: [Void] = []
-    var clearPreviousBackups_MockMethod: (() -> Void)?
-
-    func clearPreviousBackups() {
-        clearPreviousBackups_Invocations.append(())
-
-        guard let mock = clearPreviousBackups_MockMethod else {
-            fatalError("no mock for `clearPreviousBackups`")
-        }
-
-        mock()
     }
 
 }
@@ -1423,11 +1385,11 @@ class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBui
     // MARK: - build
 
     var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
-    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UIViewController)?
-    var buildMainCoordinator_MockValue: UIViewController?
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> ViewController)?
+    var buildMainCoordinator_MockValue: ViewController?
 
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
+    func build(mainCoordinator: AnyMainCoordinator) -> ViewController {
         buildMainCoordinator_Invocations.append(mainCoordinator)
 
         if let mock = buildMainCoordinator_MockMethod {

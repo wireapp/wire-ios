@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,22 +18,28 @@
 
 public typealias LegalholdPrekey = Prekey
 
-/// The team member legal hold.
+/// The team member legalhold.
 public struct TeamMemberLegalholdInfo: Equatable, Sendable {
 
-    /// The legal hold status
+    /// The legalhold status.
 
     public let status: LegalholdStatus
 
-    /// The legal hold prekey
+    /// The legalhold client id.
 
-    public let prekey: LegalholdPrekey
+    public let clientID: String?
+
+    /// The legalhold prekey.
+
+    public let prekey: LegalholdPrekey?
 
     public init(
         status: LegalholdStatus,
-        prekey: LegalholdPrekey
+        clientID: String?,
+        prekey: LegalholdPrekey?
     ) {
         self.status = status
+        self.clientID = clientID
         self.prekey = prekey
     }
 }

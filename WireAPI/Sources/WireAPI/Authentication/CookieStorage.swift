@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,18 @@
 //
 
 import Foundation
+import WireCrypto
 import WireFoundation
 
 // sourcery: AutoMockable
-protocol CookieStorageProtocol: Sendable {
+public protocol CookieStorageProtocol: Sendable {
 
     func storeCookies(_ cookies: [HTTPCookie]) async throws
     func fetchCookies() async throws -> [HTTPCookie]
 
 }
 
-actor CookieStorage: CookieStorageProtocol {
+public actor CookieStorage: CookieStorageProtocol {
 
     enum Failure: Error {
 
@@ -67,7 +68,7 @@ actor CookieStorage: CookieStorageProtocol {
         return result
     }
 
-    init(
+    public init(
         userID: UUID,
         cookieEncryptionKey: Data,
         keychain: any KeychainProtocol
@@ -85,7 +86,7 @@ actor CookieStorage: CookieStorageProtocol {
     ///
     /// - Parameter cookies: The cookies to store.
 
-    func storeCookies(_ cookies: [HTTPCookie]) async throws {
+    public func storeCookies(_ cookies: [HTTPCookie]) async throws {
         let cookieData = try HTTPCookieCodec.encodeCookies(cookies)
         try await storeCookieData(cookieData)
     }
@@ -98,7 +99,7 @@ actor CookieStorage: CookieStorageProtocol {
     ///
     /// - Returns: The stored cookies.
 
-    func fetchCookies() async throws -> [HTTPCookie] {
+    public func fetchCookies() async throws -> [HTTPCookie] {
         guard let cookieData = try await fetchCookieData() else {
             return []
         }

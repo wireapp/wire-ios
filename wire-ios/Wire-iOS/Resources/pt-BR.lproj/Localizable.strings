@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Saiba mais";
 "peoplepicker.no_matching_results.action.manage_services" = "Gerenciar Serviços";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Sem resultados.";
 "peoplepicker.no_matching_results.message.users" = "Encontre pessoas no Wire por nome ou @nomedeusuário";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Encontre pessoas no Wire por nome ou @nomedeusuario\n\nEncontre pessoas em outro domínio por @nomedeusuario@nomededominio";
 "peoplepicker.no_matching_results.message.users_all_added" = "Todo mundo está aqui.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "Pode ser usado por duas semanas. Envie um novo caso expire.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Convidar mais pessoas";
 "peoplepicker.invite_team_members" = "Convide pessoas para entrar na equipe";
 "peoplepicker.quick-action.open-conversation" = "Abrir";
 "peoplepicker.quick-action.admin-services" = "Gerenciar serviços";
@@ -1358,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Histórico";
-"self.settings.history_backup.title" = "Backup de Conversas";
-"self.settings.history_backup.description" = "Crie um backup para preservar seu histórico de conversas. Você pode usar isso para restaurar o histórico se perder o dispositivo ou mudar para um novo.\n\nEscolha uma senha forte para proteger o arquivo de backup.";
-"self.settings.history_backup.action" = "Fazer Backup Agora";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Erro";
-
 "self.settings.history_backup.set_email.title" = "Defina um e-mail e senha.";
 "self.settings.history_backup.set_email.message" = "Você precisa de um e-mail e uma senha para fazer backup de seu histórico de conversas. Você pode fazer isso na página da conta em Configurações.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Definir Senha";
-"self.settings.history_backup.password.cancel" = "Cancelar";
-"self.settings.history_backup.password.next" = "Próximo";
-"self.settings.history_backup.password.placeholder" = "Senha";
-"self.settings.history_backup.password.description" = "O backup será compactado e criptografado com a senha que você definiu aqui.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1504,32 +1491,11 @@
 "registration.no_history.hero" = "É a primeira vez que você está usando o Wire nesse dispositivo.";
 "registration.no_history.subtitle" = "Por questões de privacidade, o seu histórico de conversa não aparecerá aqui.";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "Restaurar do backup";
 
 "registration.alert.account_exists.title" = "Conta Existe";
 "registration.alert.account_exists.message_email" = "O endereço de e-mail que você usou para registrar já está vinculado a uma conta.\n\n  Use outro endereço de e-mail ou tente fazer login se você possui essa conta.";
 "registration.alert.change_email_action" = "Registrar com Outro E-Mail";
 "registration.alert.change_signin_action" = "Entrar";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Restaurar histórico";
-"registration.no_history.restore_backup_warning.message" = "O conteúdo do backup substituirá o histórico de conversas neste dispositivo.\nVocê só pode restaurar o histórico de um backup da mesma plataforma.";
-"registration.no_history.restore_backup_warning.proceed" = "Escolha o Arquivo de Backup";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Tentar novamente";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Algo deu errado";
-"registration.no_history.restore_backup_failed.message" = "Seu histórico não pôde ser restaurado.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Backup Incompatível";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "Você não pode restaurar o histórico de uma conta diferente.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Backup Incompatível";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "Este backup foi criado por uma versão mais recente ou desatualizada do Wire e não pode ser restaurado aqui.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Iniciar Sessão Empresarial";
@@ -1556,17 +1522,6 @@
 "login.sso.backend_switch.subtitle" = "Você está sendo redirecionado para o serviço de empresa dedicado.";
 "login.sso.backend_switch.information" = "Forneça credenciais somente se você tem certeza que isto é o login da sua organização.";
 
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Restaurando…";
-"registration.no_history.restore_backup.completed" = "Concluído";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "Esse backup é protegido por senha.";
-"registration.no_history.restore_backup.password.message" = "A senha é necessária para restaurar este backup.";
-"registration.no_history.restore_backup.password.placeholder" = "Senha";
-"registration.no_history.restore_backup.password_error.title" = "Senha incorreta";
-
 "registration.no_history.logged_out.hero" = "Você não usou o Wire nesse dispositivo antes.";
 "registration.no_history.logged_out.subtitle" = "Mensagens enviadas nesse meio tempo não irão aparecer.";
 "registration.no_history.logged_out.got_it" = "OK";
@@ -1589,17 +1544,6 @@
 "registration.email_flow.email_step.title" = "Editar detalhes";
 
 "registration.country_select.title" = "País";
-
-"registration.share_contacts.hero.title" = "Encontrar pessoas no Wire";
-"registration.share_contacts.hero.paragraph" = "Compartilhe seus contatos, assim podemos conectar você com outras pessoas. Nós tornamos secretas todas as informações e não compartilhamos com mais ninguém.";
-"registration.share_contacts.find_friends_button.title" = "Compartilhar Contatos";
-"registration.share_contacts.skip_button.title" = "Agora não";
-
-"registration.address_book_access_denied.hero.title" = "O Wire não tem acesso aos seus contatos.";
-"registration.address_book_access_denied.hero.paragraph1" = "O Wire ajuda você a encontrar seus amigos, se você compartilhar com seus contatos.";
-"registration.address_book_access_denied.hero.paragraph2" = "Para habilitar os contatos toque em Ajustes e ative os Contatos.";
-"registration.address_book_access_denied.settings_button.title" = "Ajustes";
-"registration.address_book_access_denied.maybe_later_button.title" = "Talvez mais tarde";
 
 "registration.push_access_denied.hero.title" = "Nunca perca uma chamada ou uma mensagem.";
 "registration.push_access_denied.hero.paragraph1" = "Habilite Notificações em Ajustes.";

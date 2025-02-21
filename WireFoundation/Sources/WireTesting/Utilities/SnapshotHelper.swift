@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@ public struct SnapshotHelper {
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
     private var snapshotReferenceDirectory = ""
+
+    private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
+        let ci = ProcessInfo.processInfo.environment["CI"]
+        return (ci == nil || ci?.isEmpty == true) ? .missing : .never
+    }
 
     public init() {}
 
@@ -140,23 +145,26 @@ public struct SnapshotHelper {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
+
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let failure = verifySnapshot(
-            of: value,
-            as: .image(
-                perceptualPrecision: perceptualPrecision,
-                layout: layout,
-                traits: traits
-            ),
-            named: name,
-            snapshotDirectory: snapshotDirectory,
-            file: file,
-            testName: testName,
-            line: line
-        )
+        withSnapshotTesting(record: defaultRecordMode) {
+            let failure = verifySnapshot(
+                of: value,
+                as: .image(
+                    perceptualPrecision: perceptualPrecision,
+                    layout: layout,
+                    traits: traits
+                ),
+                named: name,
+                snapshotDirectory: snapshotDirectory,
+                file: file,
+                testName: testName,
+                line: line
+            )
 
-        XCTAssertNil(failure, file: file, line: line)
+            XCTAssertNil(failure, file: file, line: line)
+        }
     }
 
     /// Verifies a `UIViewController`.
@@ -185,21 +193,23 @@ public struct SnapshotHelper {
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let config = size.map { ViewImageConfig(safeArea: safeArea, size: $0, traits: traits) }
 
-        let failure = verifySnapshot(
-            of: value,
-            as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(
-                perceptualPrecision: perceptualPrecision,
-                traits: traits
-            ),
-            named: name,
-            record: recording,
-            snapshotDirectory: snapshotDirectory,
-            file: file,
-            testName: testName,
-            line: line
-        )
+        withSnapshotTesting(record: defaultRecordMode) {
+            let failure = verifySnapshot(
+                of: value,
+                as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(
+                    perceptualPrecision: perceptualPrecision,
+                    traits: traits
+                ),
+                named: name,
+                record: recording,
+                snapshotDirectory: snapshotDirectory,
+                file: file,
+                testName: testName,
+                line: line
+            )
 
-        XCTAssertNil(failure, file: file, line: line)
+            XCTAssertNil(failure, file: file, line: line)
+        }
     }
 
     /// Verify a `UIView`.
@@ -220,17 +230,19 @@ public struct SnapshotHelper {
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let failure = verifySnapshot(
-            of: value,
-            as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
-            named: name,
-            snapshotDirectory: snapshotDirectory,
-            file: file,
-            testName: testName,
-            line: line
-        )
+        withSnapshotTesting(record: defaultRecordMode) {
+            let failure = verifySnapshot(
+                of: value,
+                as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
+                named: name,
+                snapshotDirectory: snapshotDirectory,
+                file: file,
+                testName: testName,
+                line: line
+            )
 
-        XCTAssertNil(failure, file: file, line: line)
+            XCTAssertNil(failure, file: file, line: line)
+        }
     }
 
     /// Shared configuration for phone sizes
@@ -299,20 +311,23 @@ public struct SnapshotHelper {
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        for (config, name) in SnapshotHelper.phoneConfigs {
-            let failure = verifySnapshot(
-                of: value,
-                as: .image(
-                    on: config,
-                    perceptualPrecision: perceptualPrecision
-                ),
-                named: name, snapshotDirectory: snapshotDirectory,
-                file: file,
-                testName: testName,
-                line: line
-            )
+        withSnapshotTesting(record: defaultRecordMode) {
+            for (config, name) in SnapshotHelper.phoneConfigs {
 
-            XCTAssertNil(failure, file: file, line: line)
+                let failure = verifySnapshot(
+                    of: value,
+                    as: .image(
+                        on: config,
+                        perceptualPrecision: perceptualPrecision
+                    ),
+                    named: name, snapshotDirectory: snapshotDirectory,
+                    file: file,
+                    testName: testName,
+                    line: line
+                )
+
+                XCTAssertNil(failure, file: file, line: line)
+            }
         }
     }
 
@@ -334,17 +349,19 @@ public struct SnapshotHelper {
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let failure = verifySnapshot(
-            of: value,
-            as: .image,
-            named: name,
-            snapshotDirectory: snapshotDirectory,
-            file: file,
-            testName: testName,
-            line: line
-        )
+        withSnapshotTesting(record: defaultRecordMode) {
+            let failure = verifySnapshot(
+                of: value,
+                as: .image,
+                named: name,
+                snapshotDirectory: snapshotDirectory,
+                file: file,
+                testName: testName,
+                line: line
+            )
 
-        XCTAssertNil(failure, file: file, line: line)
+            XCTAssertNil(failure, file: file, line: line)
+        }
     }
 
     /// Verifies that a given `UIView` renders correctly across all supported Dynamic Type content size categories.
@@ -363,35 +380,38 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-        let snapshotDirectory = snapshotDirectory(file: file)
-        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        [
-            "extra-small": UIContentSizeCategory.extraSmall,
-            "small": .small,
-            "medium": .medium,
-            "large": .large,
-            "extra-large": .extraLarge,
-            "extra-extra-large": .extraExtraLarge,
-            "extra-extra-extra-large": .extraExtraExtraLarge,
-            "accessibility-medium": .accessibilityMedium,
-            "accessibility-large": .accessibilityLarge,
-            "accessibility-extra-large": .accessibilityExtraLarge,
-            "accessibility-extra-extra-large": .accessibilityExtraExtraLarge,
-            "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
-        ].forEach { name, contentSize in
-            let failure = verifySnapshot(
-                of: value,
-                as: .image(
-                    traits: .init(preferredContentSizeCategory: contentSize)
-                ),
-                named: name,
-                snapshotDirectory: snapshotDirectory,
-                file: file,
-                testName: testName,
-                line: line
-            )
+        withSnapshotTesting(record: defaultRecordMode) {
 
-            XCTAssertNil(failure, file: file, line: line)
+            let snapshotDirectory = snapshotDirectory(file: file)
+            setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
+            [
+                "extra-small": UIContentSizeCategory.extraSmall,
+                "small": .small,
+                "medium": .medium,
+                "large": .large,
+                "extra-large": .extraLarge,
+                "extra-extra-large": .extraExtraLarge,
+                "extra-extra-extra-large": .extraExtraExtraLarge,
+                "accessibility-medium": .accessibilityMedium,
+                "accessibility-large": .accessibilityLarge,
+                "accessibility-extra-large": .accessibilityExtraLarge,
+                "accessibility-extra-extra-large": .accessibilityExtraExtraLarge,
+                "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
+            ].forEach { name, contentSize in
+                let failure = verifySnapshot(
+                    of: value,
+                    as: .image(
+                        traits: .init(preferredContentSizeCategory: contentSize)
+                    ),
+                    named: name,
+                    snapshotDirectory: snapshotDirectory,
+                    file: file,
+                    testName: testName,
+                    line: line
+                )
+
+                XCTAssertNil(failure, file: file, line: line)
+            }
         }
     }
 

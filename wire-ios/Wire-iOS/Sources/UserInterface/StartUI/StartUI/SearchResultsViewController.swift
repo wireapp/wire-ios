@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 enum SearchGroup: Int {
     case people
@@ -273,7 +273,8 @@ final class SearchResultsViewController: UIViewController {
                 let result = try await searchUsersUseCase.invoke(
                     query: query,
                     options: options,
-                    messageProtocol: filterConversation?.messageProtocol)
+                    messageProtocol: filterConversation?.messageProtocol
+                )
 
                 handleSearchResult(result: result, isCompleted: true)
             } catch {

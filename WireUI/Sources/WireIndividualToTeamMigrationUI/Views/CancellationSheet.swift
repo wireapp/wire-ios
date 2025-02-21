@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ func cancellationSheetFactory(
     let alert = UIAlertController(
         title: String.localized(key: "individualToTeam.cancellation.title", bundle: .module),
         message: String.localized(key: "individualToTeam.cancellation.body", bundle: .module),
-        preferredStyle: .actionSheet
+        preferredStyle: UIDevice.current.userInterfaceIdiom == .pad ? .alert : .actionSheet
     )
     alert.addAction(UIAlertAction(
         title: String.localized(key: "individualToTeam.cancellation.leave", bundle: .module),

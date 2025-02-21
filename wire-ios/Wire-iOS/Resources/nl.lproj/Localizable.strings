@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "Leer meer";
 "peoplepicker.no_matching_results.action.manage_services" = "Beheer diensten";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "Geen resultaten";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Iedereen is hier.";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "De uitnodiging kan 2 weken gebruikt worden. Stuur een nieuwe als hij verlopen is.";
 "peoplepicker.send_invitation.dialog.ok" = "OK";
 
-"peoplepicker.invite_more_people" = "Nodig meer mensen uit";
 "peoplepicker.invite_team_members" = "Nodig andere mensen uit voor het team";
 "peoplepicker.quick-action.open-conversation" = "Openen";
 "peoplepicker.quick-action.admin-services" = "Beheer diensten";
@@ -1358,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "Geschiedenis";
-"self.settings.history_backup.title" = "Gesprekken backupen";
-"self.settings.history_backup.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.\n\nChoose a strong password to protect the backup file.";
-"self.settings.history_backup.action" = "Nu Backuppen";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "Fout";
-
 "self.settings.history_backup.set_email.title" = "Stel een e-mailadres en een wachtwoord in.";
 "self.settings.history_backup.set_email.message" = "Je hebt een e-mailadres en wachtwoord nodig om je gespreksgeschiedenis te back-uppen. Je kunt deze toevoegen op de 'account' sectie van de instellingen.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "Wachtwoord instellen";
-"self.settings.history_backup.password.cancel" = "Annuleer";
-"self.settings.history_backup.password.next" = "Volgende";
-"self.settings.history_backup.password.placeholder" = "Wachtwoord";
-"self.settings.history_backup.password.description" = "The backup will be compressed and encrypted with the password you set here.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1504,32 +1491,11 @@
 "registration.no_history.hero" = "Het is de eerste keer dat je Wire op dit apparaat gebruikt.";
 "registration.no_history.subtitle" = "Om privacyredenen wordt je gespreksgeschiedenis hier niet getoond.";
 "registration.no_history.got_it" = "OK";
-"registration.no_history.restore_backup" = "Herstellen vanuit backup";
 
 "registration.alert.account_exists.title" = "Dit account bestaat al";
 "registration.alert.account_exists.message_email" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
 "registration.alert.change_email_action" = "Registreer met een ander e-mail";
 "registration.alert.change_signin_action" = "Inloggen";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "Geschiedenis terug zetten";
-"registration.no_history.restore_backup_warning.message" = "The backup contents will replace the conversation history on this device.\nYou can only restore history from a backup of the same platform.";
-"registration.no_history.restore_backup_warning.proceed" = "Kies back-up bestand";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "Probeer opnieuw";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "Er is iets mis gegaan";
-"registration.no_history.restore_backup_failed.message" = "Je geschiedenis kan niet worden hersteld.";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "Incompatibele backup";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "Je kan geen geschiedenis terug zetten van een ander account.";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "Incompatibele backup";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "Deze back-up is gemaakt met een nieuwere of verouderde versie van Wire en kan hier niet worden teruggezet.";
 
 // SSO – Company Login
 "login.sso.alert.title" = "Enterprise Login";
@@ -1556,17 +1522,6 @@
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
 
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Herstellen…";
-"registration.no_history.restore_backup.completed" = "Voltooid";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "Deze backup is beveiligd met een wachtwoord.";
-"registration.no_history.restore_backup.password.message" = "The password is required to restore this backup.";
-"registration.no_history.restore_backup.password.placeholder" = "Wachtwoord";
-"registration.no_history.restore_backup.password_error.title" = "Onjuist wachtwoord";
-
 "registration.no_history.logged_out.hero" = "Je hebt Wire eerder op dit apparaat gebruikt.";
 "registration.no_history.logged_out.subtitle" = "Berichten die in de tussentijd worden verzonden worden niet weergegeven.";
 "registration.no_history.logged_out.got_it" = "OK";
@@ -1589,17 +1544,6 @@
 "registration.email_flow.email_step.title" = "Details bewerken";
 
 "registration.country_select.title" = "Land";
-
-"registration.share_contacts.hero.title" = "Vind mensen op Wire";
-"registration.share_contacts.hero.paragraph" = "Geef Wire toegang tot je contacten om je te verbinden met andere mensen. We anonimiseren deze gegevens en delen ze met niemand anders.";
-"registration.share_contacts.find_friends_button.title" = "Deel contacten";
-"registration.share_contacts.skip_button.title" = "Niet nu";
-
-"registration.address_book_access_denied.hero.title" = "Wire heeft geen toegang tot je contacten.";
-"registration.address_book_access_denied.hero.paragraph1" = "Wire helpt je om je vrienden te vinden als je je contacten deelt.";
-"registration.address_book_access_denied.hero.paragraph2" = "Om toegang te geven ga je naar de instellingen voor Wire en geef je toegang tot je contacten.";
-"registration.address_book_access_denied.settings_button.title" = "Instellingen";
-"registration.address_book_access_denied.maybe_later_button.title" = "Misschien later";
 
 "registration.push_access_denied.hero.title" = "Geen gesprekken of berichten missen";
 "registration.push_access_denied.hero.paragraph1" = "Zet notificaties aan in de instellingen voor Wire.";

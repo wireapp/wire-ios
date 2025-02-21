@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,25 +18,37 @@
 
 import Foundation
 
-public final class NetworkService: NSObject {
+// sourcery: AutoMockable
+public protocol NetworkServiceProtocol {
+
+    func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
+
+}
+
+public final class NetworkService: NSObject, NetworkServiceProtocol {
 
     private let baseURL: URL
+    private let serverTrustValidator: ServerTrustValidator
     private var urlSession: URLSession?
     private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
 
-    init(baseURL: URL) {
+    public init(
+        baseURL: URL,
+        serverTrustValidator: ServerTrustValidator
+    ) {
         self.baseURL = baseURL
+        self.serverTrustValidator = serverTrustValidator
     }
 
     deinit {
         urlSession?.invalidateAndCancel()
     }
 
-    func configure(with urlSession: URLSession) {
+    public func configure(with urlSession: URLSession) {
         self.urlSession = urlSession
     }
 
-    func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+    public func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
         guard let urlSession else {
             throw NetworkServiceError.serviceNotConfigured
         }
@@ -105,13 +117,14 @@ extension NetworkService: URLSessionWebSocketDelegate {
 
 }
 
-extension NetworkService: URLSessionDataDelegate {
+extension NetworkService: URLSessionTaskDelegate {
 
     public func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
         didCompleteWithError error: (any Error)?
     ) {
+        // NOTE: This method is not called when when using async/await APIs.
         if let error {
             print("task did complete with error: \(error)")
         } else {
@@ -122,27 +135,26 @@ extension NetworkService: URLSessionDataDelegate {
     public func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-    ) {
-        print("task did receive challenge")
-
+        didReceive challenge:
+        URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         let protectionSpace = challenge.protectionSpace
 
-        guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {
-            completionHandler(.performDefaultHandling, challenge.proposedCredential)
-            return
-        }
+        if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+            guard let trust = challenge.protectionSpace.serverTrust else {
+                // If this is missing it is Apple breaking its API contract so crash.
+                fatalError("Missing server trust")
+            }
 
-        guard
-            protectionSpace.serverTrust != nil,
-            true // TODO: [WPB-10450] support certificate pinning
-        else {
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            return
+            do {
+                try await serverTrustValidator.validate(trust: trust, host: protectionSpace.host)
+                return (.performDefaultHandling, challenge.proposedCredential)
+            } catch {
+                return (.cancelAuthenticationChallenge, nil)
+            }
+        } else {
+            return (.performDefaultHandling, challenge.proposedCredential)
         }
-
-        completionHandler(.performDefaultHandling, challenge.proposedCredential)
     }
 
 }

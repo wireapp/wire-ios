@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,12 +21,58 @@ import SwiftUI
 struct DeveloperDebugActionsView: View {
 
     @ObservedObject var viewModel: DeveloperDebugActionsViewModel
+    @State var userInput: String = ""
 
     var body: some View {
         List(viewModel.buttons) { button in
             Button(action: button.action) {
                 Text(button.title)
             }
+        }
+        .sheet(item: $viewModel.mlsGroupSearchItem, content: mlsGroupSearchView)
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
+    }
+
+    @ViewBuilder
+    func mlsGroupSearchView(_ item: MLSGroupSearchItem) -> some View {
+        List {
+            Section("Conversations with MLS Group ID") {
+                HStack {
+                    TextField("Enter MLS Group ID", text: $userInput)
+                        .onSubmit(submitUserInput)
+                    Button("Search", action: submitUserInput)
+                        .disabled(userInput.isEmpty)
+                }
+            }
+            switch item {
+            case let .result(results, term):
+                if results.isEmpty, !term.isEmpty {
+                    Section {
+                        Text("Nothing found")
+                    }
+                } else {
+                    ForEach(results, id: \.id) { result in
+                        Section {
+                            TextItemCell(title: "Name:", value: result.name) {
+                                UIPasteboard.general.string = result.name
+                            }
+                            TextItemCell(title: "Conversation id:", value: result.id) {
+                                UIPasteboard.general.string = result.id
+                            }
+                            TextItemCell(title: "MLS Group id:", value: result.groupID?.description ?? "-") {
+                                UIPasteboard.general.string = result.groupID?.description ?? "-"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func submitUserInput() {
+        Task {
+            await viewModel.findConversations(with: userInput.trim())
         }
     }
 }

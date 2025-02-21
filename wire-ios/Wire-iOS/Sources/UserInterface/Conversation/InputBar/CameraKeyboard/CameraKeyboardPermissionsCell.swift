@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
     func configure(deniedAuthorization: DeniedAuthorizationType) {
         typealias KeyboardPhotoAccessDeniedLocale = L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard
-        var title: String = switch deniedAuthorization {
+        let title: String = switch deniedAuthorization {
         case .camera:           KeyboardPhotoAccessDeniedLocale.camera
         case .photos:           KeyboardPhotoAccessDeniedLocale.photos
         case .cameraAndPhotos:  KeyboardPhotoAccessDeniedLocale.cameraAndPhotos

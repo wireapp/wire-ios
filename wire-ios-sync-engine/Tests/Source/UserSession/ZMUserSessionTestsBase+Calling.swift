@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-
 import XCTest
+
 @testable import WireSyncEngine
 
 extension ZMUserSessionTestsBase {
@@ -40,7 +40,7 @@ extension ZMUserSessionTestsBase {
         guard let callCenter = user.managedObjectContext?.zm_callCenter as? WireCallCenterV3Mock
         else { XCTFail(); return }
         callCenter.setMockCallState(
-            .incoming(video: false, shouldRing: true, degraded: false),
+            .incoming(isVideo: false, shouldRing: true, degraded: false),
             conversationId: conversation.avsIdentifier!,
             callerId: user.avsIdentifier,
             isVideo: false

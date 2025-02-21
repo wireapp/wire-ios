@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,13 +38,17 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     let actionSync: EntityActionSync
 
+    let oneOnOneResolver: any OneOnOneResolverInterface
+
     public init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncProgress: SyncProgress
+        syncProgress: SyncProgress,
+        oneOnOneResolver: any OneOnOneResolverInterface
     ) {
 
         self.syncProgress = syncProgress
+        self.oneOnOneResolver = oneOnOneResolver
         self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext)
         self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(context: managedObjectContext)
 
@@ -108,7 +112,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         case .v0:
             userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             } else if let domain = BackendInfo.domain {
@@ -208,6 +212,36 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
             for: user,
             authoritative: false
         )
+
+        if userProfile.updatedKeys.contains(.teamID) {
+            // The user may have just been added to a team which may
+            // invalidate existing connections.
+            let isSelfUser = user.isSelfUser
+            let userObjectID = user.objectID
+            let userID = user.qualifiedID
+
+            Task {
+                do {
+                    let connectionValidator = ConnectionValidator(context: managedObjectContext)
+
+                    if isSelfUser {
+                        try await connectionValidator.cleanUpAllInvalidConnections()
+                        try await oneOnOneResolver.resolveAllOneOnOneConversations(in: managedObjectContext)
+                    } else {
+                        try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
+                        if let userID {
+                            try await oneOnOneResolver.resolveOneOnOneConversation(
+                                with: userID,
+                                in: managedObjectContext
+                            )
+                        }
+                    }
+                } catch {
+                    WireLogger.individualToTeamMigration
+                        .error("failed to clean up invalid connection: \(String(describing: error))")
+                }
+            }
+        }
     }
 
     func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
@@ -374,7 +408,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.qualifiedID))
             markUserProfilesAsFetched(missingIdentifiers)
 
-        case .v4, .v5, .v6, .v7:
+        case .v4, .v5, .v6, .v7, .v8:
             guard
                 let rawData = response.rawData,
                 let payload = Payload.UserProfilesV4(rawData, decoder: decoder)

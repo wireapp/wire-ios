@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         static let batchSize = 500
     }
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     var apiVersion: APIVersion {
@@ -35,7 +35,7 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
     }
 
     var resourcePath: String {
-        "\(pathPrefix)/list-connections/"
+        "\(pathPrefix)/list-connections"
     }
 
     func getConnections() async throws -> PayloadPager<Connection> {
@@ -45,17 +45,20 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try JSONEncoder.defaultEncoder.encode(params)
 
-            let request = HTTPRequest(
-                path: self.resourcePath,
-                method: .post,
-                body: body
+            let request = try URLRequestBuilder(path: self.resourcePath)
+                .withMethod(.post)
+                .withBody(body, contentType: .json)
+                .build()
+
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
             )
-            let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
                 .success(code: .ok, type: PaginatedConnectionListV0.self)
                 .failure(code: .badRequest, error: ConnectionsAPIError.invalidBody)
-                .parse(response)
+                .parse(code: response.statusCode, data: data)
         }
     }
 }

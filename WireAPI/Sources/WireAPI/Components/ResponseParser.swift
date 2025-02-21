@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,12 +59,15 @@ struct ResponseParser<Success> {
 
     /// Success with no output
 
-    func success(code: Int) -> ResponseParser<Success> where Success == Void {
-        precondition(200 ..< 300 ~= code, "Requires a valid success code: 2xx")
+    func success(code: HTTPStatusCode) -> ResponseParser<Success> where Success == Void {
+        precondition(200 ..< 300 ~= code.rawValue, "Requires a valid success code: 2xx")
 
         var copy = self
         copy.parseBlocks.append { actualCode, data in
-            guard actualCode == code, data == nil else { return nil }
+            guard
+                actualCode == code.rawValue,
+                data == nil || data?.isEmpty == true
+            else { return nil }
             return ()
         }
         return copy

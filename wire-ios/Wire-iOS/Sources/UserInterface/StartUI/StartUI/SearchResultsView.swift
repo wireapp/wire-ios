@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -104,31 +104,6 @@ final class SearchResultsView: UIView {
         super.layoutSubviews()
     }
 
-    var accessoryView: UIView? {
-        didSet {
-            guard oldValue != accessoryView else { return }
-
-            oldValue?.removeFromSuperview()
-
-            if let accessoryView {
-                accessoryContainer.addSubview(accessoryView)
-                accessoryView.translatesAutoresizingMaskIntoConstraints = false
-                accessoryContainerHeightConstraint?.isActive = false
-
-                NSLayoutConstraint.activate([
-                    accessoryView.leadingAnchor.constraint(equalTo: accessoryContainer.leadingAnchor),
-                    accessoryView.topAnchor.constraint(equalTo: accessoryContainer.topAnchor),
-                    accessoryView.trailingAnchor.constraint(equalTo: accessoryContainer.trailingAnchor),
-                    accessoryView.bottomAnchor.constraint(equalTo: accessoryContainer.bottomAnchor)
-                ])
-            } else {
-                accessoryContainerHeightConstraint?.isActive = true
-            }
-
-            updateContentInset()
-        }
-    }
-
     var emptyResultView: UIView? {
         didSet {
             guard oldValue != emptyResultView else { return }
@@ -174,26 +149,8 @@ final class SearchResultsView: UIView {
     }
 
     private func updateContentInset() {
-
-        if let accessoryView {
-            accessoryView.layoutIfNeeded()
-
-            // Use the safeAreaInsets of the window or screen directly to determine if there's a notch
-            if let window = UIApplication.shared.windows.first {
-                let safeAreaInsets = window.safeAreaInsets
-                let bottomInset = (safeAreaInsets.bottom > 0 ? accessoryViewMargin : 0) + accessoryView.frame
-                    .height - safeAreaInsets.bottom
-
-                // Add padding at the bottom of the screen
-                collectionView.contentInset.bottom = bottomInset
-                collectionView.horizontalScrollIndicatorInsets.bottom = bottomInset
-                collectionView.verticalScrollIndicatorInsets.bottom = bottomInset
-            }
-        } else {
-            // Reset the insets if no accessory view is available
-            collectionView.contentInset.bottom = 0
-            collectionView.horizontalScrollIndicatorInsets.bottom = 0
-            collectionView.verticalScrollIndicatorInsets.bottom = 0
-        }
+        collectionView.contentInset.bottom = 0
+        collectionView.horizontalScrollIndicatorInsets.bottom = 0
+        collectionView.verticalScrollIndicatorInsets.bottom = 0
     }
 }

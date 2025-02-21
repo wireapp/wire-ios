@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,9 +24,11 @@ private let zmsLog = ZMSLog(tag: "backend-environment")
 public extension BackendEnvironment {
     static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
     static var shared: BackendEnvironment = {
-        var environmentType: EnvironmentType?
-        if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
-            environmentType = EnvironmentType(stringValue: typeOverride)
+        let environmentType = if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
+            EnvironmentType(stringValue: typeOverride)
+        } else {
+            // read from userDefaults first
+            EnvironmentType(userDefaults: .applicationGroup)
         }
 
         guard let environment = BackendEnvironment(type: environmentType) else {

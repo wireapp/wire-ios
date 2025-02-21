@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
             at: Date(),
             sender: otherUser,
             client: otherClient,
-            errorCode: Int(CBOX_TOO_DISTANT_FUTURE.rawValue)
+            error: .Other(1) // Error codes are internal, just pick a random one
         )
         let systemMessage: ZMSystemMessage = (otherUser.oneOnOneConversation?.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()
@@ -62,7 +62,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
             at: Date(),
             sender: otherUser,
             client: otherClient,
-            errorCode: Int(CBOX_REMOTE_IDENTITY_CHANGED.rawValue)
+            error: .RemoteIdentityChanged
         )
         let systemMessage: ZMSystemMessage = (otherUser.oneOnOneConversation?.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()
@@ -91,7 +91,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
             at: Date(),
             sender: otherUser,
             client: otherUserClient1,
-            errorCode: Int(CBOX_TOO_DISTANT_FUTURE.rawValue)
+            error: .Other(1) // Error codes are internal, just pick a random one
         )
         let systemMessage: ZMSystemMessage = (otherUser.oneOnOneConversation?.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()

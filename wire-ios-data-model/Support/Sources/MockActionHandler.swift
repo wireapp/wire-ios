@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,16 +21,18 @@ import WireDataModel
 
 public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
+    private enum Results {
+        case values([Result<Action.Result, Action.Failure>])
+        case closure((Action) -> Result<Action.Result, Action.Failure>)
+    }
+
     public typealias Action = T
 
-    private var results: [Result<Action.Result, Action.Failure>]
+    private var results: Results
+    private var resultClosure: ((Action) -> Result<Action.Result, Action.Failure>)?
     private var token: NSObjectProtocol?
 
     private let lock = NSRecursiveLock()
-
-    public var didPerformAction: Bool {
-        results.isEmpty
-    }
 
     public var performedActions: [Action] = []
 
@@ -39,7 +41,12 @@ public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
     }
 
     public init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
-        self.results = results
+        self.results = .values(results)
+        self.token = Action.registerHandler(self, context: context)
+    }
+
+    public init(context: NotificationContext, results: @escaping (Action) -> Result<Action.Result, Action.Failure>) {
+        self.results = .closure(results)
         self.token = Action.registerHandler(self, context: context)
     }
 
@@ -48,13 +55,22 @@ public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
         lock.lock()
         defer { lock.unlock() }
 
-        if let result = results.first {
-            var action = action
-            action.notifyResult(result)
+        var action = action
+        switch results {
+        case let .values(values):
+            if let result = values.first {
+                var action = action
+                action.notifyResult(result)
+                performedActions.append(action)
+                var values = values
+                values.removeFirst()
+                results = .values(values)
+            } else {
+                assertionFailure("no expected result set")
+            }
+        case let .closure(closure):
+            action.notifyResult(closure(action))
             performedActions.append(action)
-            results.removeFirst()
-        } else {
-            assertionFailure("no expected result set")
         }
     }
 

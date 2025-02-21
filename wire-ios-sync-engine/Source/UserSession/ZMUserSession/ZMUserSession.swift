@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import Foundation
 import WireAnalytics
 import WireAPI
 import WireDataModel
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireSystem
@@ -39,13 +40,19 @@ public final class ZMUserSession: NSObject {
 
     private let appVersion: String
     private var tokens: [Any] = []
-    private var tornDown: Bool = false
+    public private(set) var isTornDown = false
 
     private(set) var isNetworkOnline = true
 
     private(set) var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
-    private(set) var apiService: APIServiceProtocol?
+    var apiService: APIServiceProtocol? {
+        guard let clientId = selfUserClient?.remoteIdentifier else {
+            return nil
+        }
+        return apiServiceFactory(clientId, userId)
+    }
+
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
@@ -84,7 +91,7 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    public private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
     private var pendingAnalyticsEvents = [AnalyticsEvent]()
 
     public internal(set) var appLockController: AppLockType
@@ -100,6 +107,8 @@ public final class ZMUserSession: NSObject {
     public var topConversationsDirectory: TopConversationsDirectory
 
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
+
+    let analyiticsLogger: WireLogger
 
     // MARK: Computed Properties
 
@@ -346,6 +355,11 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
+    private lazy var  mlsClientManager = MLSClientManager(
+        coreCryptoProvider: coreCryptoProvider,
+        mlsService: mlsService
+    )
+
     // MARK: Dependency Injection
 
     let dependencies: UserSessionDependencies
@@ -358,7 +372,7 @@ public final class ZMUserSession: NSObject {
     // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
 
-    var callStateObserverToken: Any?
+    var callStateObserverToken: AnyObject?
 
     // MARK: - Initialize
 
@@ -418,12 +432,13 @@ public final class ZMUserSession: NSObject {
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
+        self.analyiticsLogger = .analytics
 
         super.init()
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
-        analyticsEventTracker?.trackEvent(.appOpen)
+        analyticsEventTracker?.trackEvent(.App.open)
     }
 
     func setup(
@@ -493,6 +508,22 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
 
+        // Proactively keep the self user in sync, which helps add resilience
+        // in cases where the self client may otherwise only have limited
+        // one time opportunities to discover important changes.
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        selfUser.needsToBeUpdatedFromBackend = true
+
+        // Proactively ensure we clean up invalid connection state.
+        Task {
+            do {
+                let connectionValidator = ConnectionValidator(context: syncContext)
+                try await connectionValidator.cleanUpAllInvalidConnections()
+            } catch {
+                WireLogger.session.error("failed to clean up invalid connections: \(String(describing: error))")
+            }
+        }
+
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
             WireLogger.authentication.addTag(.selfClientId, value: clientId)
         }
@@ -501,11 +532,11 @@ public final class ZMUserSession: NSObject {
     // MARK: - Deinitalize
 
     deinit {
-        require(tornDown, "tearDown must be called before the ZMUserSession is deallocated")
+        require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
     public func tearDown() {
-        guard !tornDown else { return }
+        guard !isTornDown else { return }
 
         tearDownMLSGroupVerification()
 
@@ -525,7 +556,7 @@ public final class ZMUserSession: NSObject {
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.addTag(.selfClientId, value: nil)
 
-        tornDown = true
+        isTornDown = true
     }
 
     // MARK: - Methods
@@ -556,6 +587,12 @@ public final class ZMUserSession: NSObject {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
+            pullSelfUserClientsFactory: { [weak self] context in
+                guard let self else {
+                    fatal("userSession not reachable")
+                }
+                return pullSelfUserClientsFactory(context: context)
+            },
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
@@ -609,7 +646,6 @@ public final class ZMUserSession: NSObject {
             operationStatus: applicationStatusDirectory.operationStatus,
             syncStatus: applicationStatusDirectory.syncStatus,
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-            callEventStatus: applicationStatusDirectory.callEventStatus,
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled
@@ -654,7 +690,10 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setupCallStateObserverForAnalytics() {
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: self)
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: contextProvider
+        )
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
@@ -925,28 +964,30 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: notificationContext
         ).post()
 
-        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-        if selfClient?.hasRegisteredMLSClient == true {
-
-            WaitingGroupTask(context: syncContext) { [self] in
-                // these operations are not dependent and should not be executed in same do/catch
-                do {
-                    // rework implementation of following method - WPB-6053
-                    try await mlsService.performPendingJoins()
-                } catch {
-                    WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
-                }
-                await mlsService.uploadKeyPackagesIfNeeded()
-                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
-            }
-        }
-
-        if mlsFeature.isEnabled {
-            mlsService.commitPendingProposalsIfNeeded()
-        }
-
         WaitingGroupTask(context: syncContext) { [self] in
+            await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
+
+            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
+                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+                let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
+                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
+            }
+
+            if let qualifiedSelfClientID {
+                await mlsClientManager.initializeMLSClientIfNeeded(
+                    for: qualifiedSelfClientID,
+                    hasRegisteredMLSClient: hasRegisteredMLSClient,
+                    mlsFeature: mlsFeature
+                )
+            } else {
+                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
+            }
+
+            if mlsFeature.isEnabled {
+                mlsService.commitPendingProposalsIfNeeded()
+            }
+
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
         }
@@ -975,6 +1016,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
         -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
+
         let resolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
@@ -983,7 +1025,27 @@ extension ZMUserSession: ZMSyncStateDelegate {
         return ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: supportedProtocolService,
-            resolver: resolver
+            resolver: resolver,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory
+        )
+    }
+
+    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsProtocol {
+        guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
+            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
+        }
+        guard let apiVersion = BackendInfo.apiVersion,
+              let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+            WireLogger.backend.warn("apiVersion not resolved")
+
+            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
+
+        }
+
+        return PullSelfUserClients.make(
+            apiService: apiService,
+            apiVersion: wireAPIVersion,
+            context: context
         )
     }
 
@@ -1011,6 +1073,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
             try await getFeatureConfigAction.perform(in: notificationContext)
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
+        }
+    }
+
+    private func fetchBackendMLSPublicKeys() async {
+        do {
+            var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
+            let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
+            let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+            BackendInfo.isMLSEnabled = hasValidKeys
+        } catch {
+            WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")
         }
     }
 
@@ -1051,15 +1124,44 @@ extension ZMUserSession: ZMSyncStateDelegate {
         WireLogger.updateEvent.info("process pending call events")
         Task {
             do {
+                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
                 try await updateEventProcessor!.processBufferedEvents()
                 await managedObjectContext.perform {
                     completionHandler()
                 }
             } catch {
-                WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
+                WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }
+
+    func notifyAuthenticationInvalidated(_ error: Error) {
+        WireLogger.authentication.debug("notifying authentication invalidated")
+        managedObjectContext.performGroupedBlock {  [weak self] in
+            guard
+                let context = self?.managedObjectContext,
+                let accountId = ZMUser.selfUser(in: context).remoteIdentifier
+            else {
+                return
+            }
+
+            self?.delegate?.authenticationInvalidated(error as NSError, accountId: accountId)
+        }
+    }
+
+    func checkE2EICertificateExpiryStatus() {
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+            }
+        }
+    }
+}
+
+// MARK: - ZMClientRegistrationStatusDelegate
+
+extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
         // If during registration user allowed notifications,
@@ -1092,11 +1194,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
         WireLogger.authentication.addTag(.selfClientId, value: clientId)
-        guard  let selfUserId = ZMUser.selfUser(in: syncContext).remoteIdentifier else {
-            assertionFailure("unable to find selfUser from syncContext,")
-            return
-        }
-        apiService = apiServiceFactory(clientId, selfUserId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
@@ -1116,28 +1213,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         notifyAuthenticationInvalidated(error)
     }
 
-    func notifyAuthenticationInvalidated(_ error: Error) {
-        WireLogger.authentication.debug("notifying authentication invalidated")
-        managedObjectContext.performGroupedBlock {  [weak self] in
-            guard
-                let context = self?.managedObjectContext,
-                let accountId = ZMUser.selfUser(in: context).remoteIdentifier
-            else {
-                return
-            }
-
-            self?.delegate?.authenticationInvalidated(error as NSError, accountId: accountId)
-        }
-    }
-
-    func checkE2EICertificateExpiryStatus() {
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
-            if isE2EIFeatureEnabled {
-                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
-            }
-        }
-    }
 }
 
 // MARK: - URLActionProcessor

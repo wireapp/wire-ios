@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "F5BC5855-65E0-4C6D-BEC0-97FFF7D13461",
+      "id" : "9D1D0475-9029-44FF-9FE3-BECDF3815511",
       "name" : "Configuration 1",
       "options" : {
 
@@ -14,16 +14,32 @@
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       }
     ],
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireDomain Project.xcodeproj",
+      "identifier" : "01D0DCAF2C1C8C880076CB1C",
+      "name" : "WireDomainTests"
+    },
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()",
+        "PullMLSStatusSyncTests\/testPull_EndpointUnavailable()",
+        "PullMLSStatusSyncTests\/testPull_MLSNotEnabled()"
+      ],
       "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireDomainPkgTests",
-        "name" : "WireDomainPkgTests"
+        "containerPath" : "container:WireDomain Project.xcodeproj",
+        "identifier" : "01D0DCAF2C1C8C880076CB1C",
+        "name" : "WireDomainTests"
       }
     }
   ],

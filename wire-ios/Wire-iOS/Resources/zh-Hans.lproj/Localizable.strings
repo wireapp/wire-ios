@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@
 "peoplepicker.no_matching_results.action.learn_more" = "更多信息";
 "peoplepicker.no_matching_results.action.manage_services" = "管理服务";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "没有结果。";
 "peoplepicker.no_matching_results.message.users" = "通过名字或 @username 在Wire查找用户";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "用 @username@domainname 在 Wire 查找用户\n\n通过@username@domainname 在另一个域查找人员";
 "peoplepicker.no_matching_results.message.users_all_added" = "所有用户已加入群聊";
@@ -98,7 +97,6 @@
 "peoplepicker.send_invitation.dialog.message" = "邀请两周内有效。如果过期，请发送新的邀请。";
 "peoplepicker.send_invitation.dialog.ok" = "好";
 
-"peoplepicker.invite_more_people" = "邀请更多人";
 "peoplepicker.invite_team_members" = "邀请好友使用Wire";
 "peoplepicker.quick-action.open-conversation" = "开启";
 "peoplepicker.quick-action.admin-services" = "管理服务";
@@ -1358,21 +1356,10 @@
 // History backup
 
 "self.settings.conversations.title" = "历史记录";
-"self.settings.history_backup.title" = "备份对话";
-"self.settings.history_backup.description" = "创建备份以保存您的聊天记录。 如果设备丢失或切换到新设备，您可以使用它来恢复。\n\n选择一个复杂的密码来保护备份文件。";
-"self.settings.history_backup.action" = "立即备份\n";
+"self.settings.history_backup.title" = "Back up or Restore";
 "self.settings.history_backup.error.title" = "错误";
-
 "self.settings.history_backup.set_email.title" = "设置电子邮件和密码。";
 "self.settings.history_backup.set_email.message" = "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.";
-
-// History backup password
-
-"self.settings.history_backup.password.title" = "设置密码";
-"self.settings.history_backup.password.cancel" = "取消";
-"self.settings.history_backup.password.next" = "继续";
-"self.settings.history_backup.password.placeholder" = "密码";
-"self.settings.history_backup.password.description" = "备份将被压缩并使用您在此设置的密码加密。";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // System status
@@ -1504,32 +1491,11 @@
 "registration.no_history.hero" = "这是您第一次在此设备使用Wire。";
 "registration.no_history.subtitle" = "基于隐私考虑，您的历史聊天记录将不会被显示。";
 "registration.no_history.got_it" = "好";
-"registration.no_history.restore_backup" = "从备份还原";
 
 "registration.alert.account_exists.title" = "帐户已存在";
 "registration.alert.account_exists.message_email" = "这个用于注册的电子邮箱地址已经关联了一个帐户。\n\n使用另一个电子邮箱地址，或者如果您拥有此帐户，请尝试登录。";
 "registration.alert.change_email_action" = "使用另一个电子邮件注册";
 "registration.alert.change_signin_action" = "登录";
-
-// Restore History Warning Alert
-"registration.no_history.restore_backup_warning.title" = "恢复历史";
-"registration.no_history.restore_backup_warning.message" = "备份内容将取代此设备上的对话历史。\n你只能从备份的同一平台恢复历史记录。";
-"registration.no_history.restore_backup_warning.proceed" = "选择备份文件";
-
-/// Restore History Failure Alerts
-"registration.no_history.restore_backup_failed.try_again" = "再试一次";
-
-// Generic
-"registration.no_history.restore_backup_failed.title" = "好像出了点问题。";
-"registration.no_history.restore_backup_failed.message" = "您的历史无法恢复。";
-
-// Wrong Account
-"registration.no_history.restore_backup_failed.wrong_account.title" = "不兼容的备份";
-"registration.no_history.restore_backup_failed.wrong_account.message" = "你不能恢复其他帐号的历史记录。";
-
-// Incompatible Version
-"registration.no_history.restore_backup_failed.wrong_version.title" = "不兼容的备份";
-"registration.no_history.restore_backup_failed.wrong_version.message" = "此备份是由更新版本或已过时的Wire创建的，无法在此恢复。";
 
 // SSO – Company Login
 "login.sso.alert.title" = "企业登录";
@@ -1556,17 +1522,6 @@
 "login.sso.backend_switch.subtitle" = "You are being redirected to your dedicated enterprise service.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
 
-
-// Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "正在恢复…";
-"registration.no_history.restore_backup.completed" = "完成";
-
-// Password Import Alert
-"registration.no_history.restore_backup.password.title" = "此备份受密码保护。";
-"registration.no_history.restore_backup.password.message" = "需要密码来恢复备份。";
-"registration.no_history.restore_backup.password.placeholder" = "密码";
-"registration.no_history.restore_backup.password_error.title" = "密码错误";
-
 "registration.no_history.logged_out.hero" = "您曾在此设备使用过Wire。";
 "registration.no_history.logged_out.subtitle" = "这段期间发送的信息将不会显示出来。";
 "registration.no_history.logged_out.got_it" = "好";
@@ -1589,17 +1544,6 @@
 "registration.email_flow.email_step.title" = "编辑详细信息";
 
 "registration.country_select.title" = "国家";
-
-"registration.share_contacts.hero.title" = "在Wire上搜寻联络人";
-"registration.share_contacts.hero.paragraph" = "分享您的通讯录来寻找其他好友。我们将您的信息匿名处理并且不会泄漏给任何第三方。";
-"registration.share_contacts.find_friends_button.title" = "共享联络人";
-"registration.share_contacts.skip_button.title" = "先跳过";
-
-"registration.address_book_access_denied.hero.title" = "Wire没有您的通讯录使用权限。";
-"registration.address_book_access_denied.hero.paragraph1" = "在您分享通讯录后，Wire将帮助您找到其他的好友。";
-"registration.address_book_access_denied.hero.paragraph2" = "请到手机「设置」来开启通讯录使用权限。";
-"registration.address_book_access_denied.settings_button.title" = "设置";
-"registration.address_book_access_denied.maybe_later_button.title" = "稍后再说";
 
 "registration.push_access_denied.hero.title" = "别错过来电或信息。";
 "registration.push_access_denied.hero.paragraph1" = "在手机「设置」中开启接收通知消息的权限。";

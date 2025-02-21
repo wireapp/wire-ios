@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@ extension NSManagedObjectContext {
     /// Prepare a backed up database for being imported, deleting self client, push token etc.
     func prepareToImportBackup() {
         setPersistentStoreMetadata(nil as Data?, key: ZMPersistedClientIdKey)
-        setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.pushToken.rawValue)
-        setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.pushKitToken.rawValue)
         setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.lastUpdateEventID.rawValue)
         _ = makeMetadataPersistent()
     }

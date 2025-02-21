@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,5 +25,41 @@ public struct TeamPlanFeature: Hashable, Identifiable, Sendable {
     public init(id: String, description: AttributedString) {
         self.id = id
         self.description = description
+    }
+}
+
+extension [TeamPlanFeature] {
+    static var features: [TeamPlanFeature] {
+        [
+            .init(
+                id: "console",
+                description: .localizedMarkdown(
+                    key: "individualToTeam.planSelection.feature.adminConsole",
+                    bundle: .module
+                )
+            ),
+            .init(
+                id: "collaboration",
+                description: .localizedMarkdown(
+                    key: "individualToTeam.planSelection.feature.collaboration",
+                    bundle: .module
+                )
+            ),
+            .init(
+                id: "meetings",
+                description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.meetings", bundle: .module)
+            ),
+            .init(
+                id: "status",
+                description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.status", bundle: .module)
+            ),
+            .init(
+                id: "enterprise",
+                description: .localizedMarkdown(
+                    key: "individualToTeam.planSelection.feature.enterprise",
+                    bundle: .module
+                )
+            )
+        ]
     }
 }

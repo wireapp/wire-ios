@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,18 +28,21 @@ class SelfUserAPIV5: SelfUserAPIV4 {
         let encoder = JSONEncoder.defaultEncoder
         let payload = SupportedProtocolsPayloadV5(supportedProtocols: supportedProtocols)
         let body = try encoder.encode(payload)
+        let path = resourcePath + "/supported-protocols"
 
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/self/supported-protocols",
-            method: .put,
-            body: body
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (_, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
         )
 
-        let response = try await httpClient.executeRequest(request)
-
         return try ResponseParser()
-            .success(code: 200)
-            .parse(response)
+            .success(code: .ok)
+            .parse(code: response.statusCode, data: nil)
     }
 
 }

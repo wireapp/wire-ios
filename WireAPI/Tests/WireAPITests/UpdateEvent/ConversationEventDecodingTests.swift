@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -458,7 +458,8 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             subconversation: "subconversation",
-            message: "message"
+            message: "message",
+            timestamp: fractionalDate(from: "2024-06-04T15:03:07.598Z")
         )
 
         static let mlsWelcomeEvent = ConversationMLSWelcomeEvent(
@@ -471,8 +472,8 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp,
-            message: .ciphertext("foo"),
-            externalData: .ciphertext("bar"),
+            message: .init(encryptedMessage: "foo"),
+            externalData: .init(encryptedMessage: "bar"),
             messageSenderClientID: "abc123",
             messageRecipientClientID: "def456"
         )

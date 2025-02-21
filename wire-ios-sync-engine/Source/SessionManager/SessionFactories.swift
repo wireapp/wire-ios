@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ open class AuthenticatedSessionFactory {
     let flowManager: FlowManagerType
     let application: ZMApplication
 
-    var environment: BackendEnvironmentProvider
+    var environment: WireTransport.BackendEnvironment
     var reachability: Reachability
 
     let minTLSVersion: String?
@@ -37,7 +37,7 @@ open class AuthenticatedSessionFactory {
         application: ZMApplication,
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
-        environment: BackendEnvironmentProvider,
+        environment: WireTransport.BackendEnvironment,
         proxyUsername: String?,
         proxyPassword: String?,
         reachability: Reachability,
@@ -62,12 +62,28 @@ open class AuthenticatedSessionFactory {
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
 
-        let apiServiceFactory: APIServiceFactory = { [environment, minTLSVersion] clientID, userID in
+        let apiServiceFactory: APIServiceFactory = { [weak self, environment, minTLSVersion] clientID, userID in
             let wireAssembly = WireAPI.Assembly(
                 userID: userID,
                 clientID: clientID,
-                backendURL: environment.backendURL,
-                backendWebSocketURL: environment.backendWSURL,
+                backendEnvironment: BackendEnvironment(
+                    url: environment.backendURL,
+                    webSocketURL: environment.backendWSURL,
+                    pinnedKeys: environment.trustData.map { trustData in
+                        PinnedKey(
+                            key: trustData.certificateKey,
+                            hosts: trustData.hosts.map { host in
+                                switch host.rule {
+                                case .equals:
+                                    .equals(host.value)
+                                case .endsWith:
+                                    .endsWith(host.value)
+                                }
+                            }
+                        )
+                    },
+                    proxySettings: self?.proxySettings
+                ),
                 minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
                 cookieEncryptionKey: UserDefaults.cookiesKey()
             )
@@ -135,6 +151,21 @@ open class AuthenticatedSessionFactory {
 
     private(set) var proxyUsername: String?
     private(set) var proxyPassword: String?
+
+    private var proxySettings: ProxySettings? {
+        guard let proxy = environment.proxy else { return nil }
+
+        if proxy.needsAuthentication {
+            guard let proxyUsername, let proxyPassword else {
+                fatalInternal("Proxy needs authentication but credentials are missing")
+                return nil
+            }
+
+            return .authenticated(host: proxy.host, port: proxy.port, username: proxyUsername, password: proxyPassword)
+        } else {
+            return .unauthenticated(host: proxy.host, port: proxy.port)
+        }
+    }
 }
 
 // MARK: -

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,6 @@
 
 import WireAPI
 import WireDataModel
-
-/// Process conversation typing events.
-
-protocol ConversationTypingEventProcessorProtocol {
-
-    /// Process a conversation typing event.
-    ///
-    /// - Parameter event: A conversation typing event.
-
-    func processEvent(_ event: ConversationTypingEvent) async
-
-}
 
 struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
 

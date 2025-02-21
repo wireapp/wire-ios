@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ public enum MessageConfirmationType: Int16 {
     case delivered
     case read
 
-    static func convert(_ zmConfirmationType: Confirmation.TypeEnum) -> MessageConfirmationType {
+    public static func convert(_ zmConfirmationType: Confirmation.TypeEnum) -> MessageConfirmationType {
         switch zmConfirmationType {
         case .delivered:
             .delivered

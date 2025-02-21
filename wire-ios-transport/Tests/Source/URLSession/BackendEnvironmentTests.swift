@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,6 +69,7 @@ class BackendEnvironmentTests: XCTestCase {
         let environmentType = EnvironmentType.custom(url: configURL)
         return BackendEnvironment(
             title: title,
+            trustData: [],
             environmentType: environmentType,
             endpoints: endpoints,
             proxySettings: proxySettings,

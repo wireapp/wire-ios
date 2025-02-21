@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,18 +57,9 @@ struct DeveloperToolsView: View {
             }
 
         case let .text(textItem):
-            TextItemCell(title: textItem.title, value: textItem.value)
-                .contextMenu {
-                    Button(
-                        hapticFeedbackStyle: .success,
-                        action: {
-                            viewModel.handleEvent(.itemCopyRequested(item))
-                        },
-                        label: {
-                            Label("Copy", systemImage: "doc.on.doc")
-                        }
-                    )
-                }
+            TextItemCell(title: textItem.title, value: textItem.value) {
+                viewModel.handleEvent(.itemCopyRequested(item))
+            }
 
         case let .destination(destinationItem):
             NavigationLink(destinationItem.title, destination: destinationItem.makeView)
@@ -82,27 +73,6 @@ struct DeveloperToolsView: View {
         )
     }
 
-}
-
-// MARK: - Subviews
-
-private struct TextItemCell: View {
-
-    let title: String
-    let value: String
-
-    var body: some View {
-        HStack {
-            Text(title)
-
-            Spacer()
-
-            Text(value)
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .foregroundColor(.secondary)
-        }
-    }
 }
 
 // MARK: - Previews

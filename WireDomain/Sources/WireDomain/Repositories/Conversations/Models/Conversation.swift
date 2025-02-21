@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,25 +18,30 @@
 
 import WireDataModel
 
-public struct Conversation {
+public struct Conversation: Equatable {
 
-    struct Members {
+    struct Members: Equatable {
         let others: [Member]
         let selfMember: Member
 
-        struct Member {
+        struct Member: Equatable {
             let qualifiedID: QualifiedID?
             let id: UUID?
             let qualifiedTarget: QualifiedID?
             let target: UUID?
             let conversationRole: String?
-            let service: (id: UUID, provider: UUID)?
+            let service: Service?
             let archived: Bool?
             let archivedReference: Date?
             let hidden: Bool?
             let hiddenReference: String?
             let mutedStatus: Int?
             let mutedReference: Date?
+
+            struct Service: Equatable {
+                let id: UUID
+                let provider: UUID
+            }
         }
     }
 

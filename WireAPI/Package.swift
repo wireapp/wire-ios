@@ -13,12 +13,16 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../WirePlugins"),
+        .package(path: "../WireLogging"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
         .target(
             name: "WireAPI",
-            dependencies: ["WireFoundation"]
+            dependencies: [
+                "WireFoundation", "WireLogging",
+                .product(name: "WireCrypto", package: "WireFoundation")
+            ]
         ),
         .target(
             name: "WireAPISupport",
@@ -32,11 +36,14 @@ let package = Package(
             dependencies: [
                 "WireAPI",
                 "WireAPISupport",
+                .product(name: "WireCrypto", package: "WireFoundation"),
                 .product(name: "WireTestingPackage", package: "WireFoundation"),
                 .product(name: "WireFoundationSupport", package: "WireFoundation"),
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [
+                .process("APIs/AuthenticationAPI/Resources"),
+                .process("APIs/AccountsAPI/Resources"),
                 .process("APIs/BackendInfoAPI/Resources"),
                 .process("APIs/ConnectionsAPI/Resources"),
                 .process("APIs/ConversationsAPI/Resources"),
@@ -49,7 +56,8 @@ let package = Package(
                 .process("APIs/SelfUserAPI/Resources"),
                 .process("APIs/UserClientsAPI/Resources"),
                 .process("Network/PushChannel/Resources"),
-                .process("Authentication/Resources")
+                .process("Authentication/Resources"),
+                .process("Backend/Resources")
             ]
         )
     ]

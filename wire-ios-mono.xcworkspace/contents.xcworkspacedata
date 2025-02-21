@@ -16,11 +16,90 @@
    <FileRef
       location = "group:Cartfile.resolved">
    </FileRef>
+   <Group
+      location = "group:.github/workflows"
+      name = "workflows">
+      <FileRef
+         location = "group:_reusable_app_release.yml">
+      </FileRef>
+      <FileRef
+         location = "group:_reusable_app_release_without_changelog.yml">
+      </FileRef>
+      <FileRef
+         location = "group:_reusable_run_tests.yml">
+      </FileRef>
+      <FileRef
+         location = "group:beta_app_release.yml">
+      </FileRef>
+      <FileRef
+         location = "group:build_pr.yml">
+      </FileRef>
+      <FileRef
+         location = "group:c1_c2_c3_app_release_production.yml">
+      </FileRef>
+      <FileRef
+         location = "group:c1_c2_c3_app_release_restricted.yml">
+      </FileRef>
+      <FileRef
+         location = "group:c1_c3_app_release_production.yml">
+      </FileRef>
+      <FileRef
+         location = "group:c1_c3_app_release_restricted.yml">
+      </FileRef>
+      <FileRef
+         location = "group:changelog.yml">
+      </FileRef>
+      <FileRef
+         location = "group:cherry-pick-from-release-to-develop.yml">
+      </FileRef>
+      <FileRef
+         location = "group:crowdin.yml">
+      </FileRef>
+      <FileRef
+         location = "group:development.yml">
+      </FileRef>
+      <FileRef
+         location = "group:jira_lint_and_link.yml">
+      </FileRef>
+      <FileRef
+         location = "group:playground.yml">
+      </FileRef>
+      <FileRef
+         location = "group:pr-author-assigner.yml">
+      </FileRef>
+      <FileRef
+         location = "group:public_app_release.yml">
+      </FileRef>
+      <FileRef
+         location = "group:semantic_commit_lint.yml">
+      </FileRef>
+      <FileRef
+         location = "group:stale.yml">
+      </FileRef>
+      <FileRef
+         location = "group:swiftformat.yml">
+      </FileRef>
+      <FileRef
+         location = "group:swiftlint.yml">
+      </FileRef>
+      <FileRef
+         location = "group:sz_app_release_production.yml">
+      </FileRef>
+      <FileRef
+         location = "group:test_develop.yml">
+      </FileRef>
+      <FileRef
+         location = "group:test_pr_changes.yml">
+      </FileRef>
+   </Group>
    <FileRef
       location = "group:Gemfile">
    </FileRef>
    <FileRef
       location = "group:Gemfile.lock">
+   </FileRef>
+   <FileRef
+      location = "group:WireCoreCrypto">
    </FileRef>
    <FileRef
       location = "group:setup.sh">
@@ -86,7 +165,7 @@
       location = "group:wire-ios-request-strategy/WireRequestStrategy.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireDomain/Project/WireDomain Project.xcodeproj">
+      location = "group:WireDomain/WireDomain Project.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:WireDomain">
@@ -95,7 +174,13 @@
       location = "group:wire-ios-data-model/WireDataModel.xcodeproj">
    </FileRef>
    <FileRef
+      location = "container:WireDebug">
+   </FileRef>
+   <FileRef
       location = "group:wire-ios-mocktransport/WireMockTransport.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-protos/WireProtos.xcodeproj">
@@ -126,6 +211,12 @@
    </FileRef>
    <FileRef
       location = "group:WireAPI">
+   </FileRef>
+   <FileRef
+      location = "group:WireAuthentication">
+   </FileRef>
+   <FileRef
+      location = "group:WireCells">
    </FileRef>
    <FileRef
       location = "group:WireFoundation">

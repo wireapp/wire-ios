@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,44 +18,48 @@
 
 import Foundation
 import WireAPI
+import WireCoreCrypto
 import WireDataModel
 import WireLogging
-
-// sourcery: AutoMockable
-/// Decrypt the E2EE content within update events.
-protocol UpdateEventDecryptorProtocol {
-
-    /// Decrypt events in the given event envelope.
-    ///
-    /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
-    /// - Returns: A list of decrypted update events.
-
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
-
-}
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
-    private let context: NSManagedObjectContext
+    private let mlsMessageDecryptor: any MLSMessageDecryptorProtocol
+    private let messageRepository: any MessageRepositoryProtocol
 
     init(
         proteusService: any ProteusServiceInterface,
-        context: NSManagedObjectContext
+        mlsService: any MLSServiceInterface,
+        mlsDecryptionService: any MLSDecryptionServiceInterface,
+        userClientsLocalStore: any UserClientsLocalStoreProtocol,
+        messageRepository: any MessageRepositoryProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
-            managedObjectContext: context
+            userClientsLocalStore: userClientsLocalStore,
+            userLocalStore: userLocalStore
         )
-        self.context = context
+
+        self.mlsMessageDecryptor = MLSMessageDecryptor(
+            mlsDecryptionService: mlsDecryptionService,
+            mlsService: mlsService,
+            conversationLocalStore: conversationLocalStore
+        )
+
+        self.messageRepository = messageRepository
     }
 
     init(
         proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
-        context: NSManagedObjectContext
+        mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
+        messageRepository: any MessageRepositoryProtocol
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
-        self.context = context
+        self.mlsMessageDecryptor = mlsMessageDecryptor
+        self.messageRepository = messageRepository
     }
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
@@ -77,8 +81,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 do {
                     let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(from: eventData)
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
-
-                } catch let error as ProteusError {
+                } catch let error as ProteusService.DecryptionError {
                     WireLogger.updateEvent.error(
                         "failed to decrypt proteus event payload, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
@@ -86,11 +89,29 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
                     await appendFailedToDecryptProteusMessage(
                         eventData: eventData,
-                        error: error
+                        error: error.proteusError
                     )
                 } catch {
                     WireLogger.updateEvent.error(
                         "failed to decrypt proteus event, dropping: \(error.localizedDescription)",
+                        attributes: logAttributes
+                    )
+                }
+
+            case let .conversation(.mlsMessageAdd(eventData)):
+
+                WireLogger.updateEvent.info(
+                    "decrypting MLS event...",
+                    attributes: logAttributes
+                )
+
+                do {
+                    let decryptedEventData = try await mlsMessageDecryptor.decryptedEventData(from: eventData)
+                    decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
+
+                } catch {
+                    WireLogger.updateEvent.error(
+                        "failed to decrypt MLS event, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
                     )
                 }
@@ -109,36 +130,22 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         error: ProteusError
     ) async {
         // Do not notify the user if the error is just "duplicated".
-        if error == .outdatedMessage || error == .duplicateMessage {
+        if error == .DuplicateMessage {
             return
         }
 
-        await context.perform { [context] in
-            guard
-                let conversation = ZMConversation.fetch(
-                    with: eventData.conversationID.uuid,
-                    domain: eventData.conversationID.domain,
-                    in: context
-                ),
-                let sender = ZMUser.fetch(
-                    with: eventData.senderID.uuid,
-                    domain: eventData.senderID.domain,
-                    in: context
-                ),
-                let senderClient = sender.clients.first(where: {
-                    $0.remoteIdentifier == eventData.messageSenderClientID
-                })
-            else {
-                return
-            }
+        let systemMessageType: SystemMessageType = .decryptionFailed(
+            sender: (eventData.senderID.uuid, eventData.senderID.domain),
+            senderClientID: eventData.messageSenderClientID,
+            remoteIdentityChanged: error == .RemoteIdentityChanged,
+            date: eventData.timestamp
+        )
 
-            conversation.appendDecryptionFailedSystemMessage(
-                at: eventData.timestamp,
-                sender: sender,
-                client: senderClient,
-                errorCode: error.rawValue
-            )
-        }
+        await messageRepository.addSystemMessage(
+            messageType: systemMessageType,
+            conversationID: eventData.conversationID.uuid,
+            conversationDomain: eventData.conversationID.domain
+        )
     }
 
 }

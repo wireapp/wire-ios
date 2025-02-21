@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ public extension ConversationAccessMode {
 }
 
 /// Defines who can join the conversation.
-public enum ConversationAccessRole: String {
+public enum ConversationAccessRole: String, Equatable {
     /// Only the team member can join.
     case team
     /// Only users who have verified their phone number / email can join.

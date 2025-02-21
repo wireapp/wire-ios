@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -474,14 +474,13 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         conversation.conversationType = .group
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "Fancy One"
-        let decryptionError = CBOX_REMOTE_IDENTITY_CHANGED
 
         // when
         conversation.appendDecryptionFailedSystemMessage(
             at: Date(),
             sender: user,
             client: nil,
-            errorCode: Int(decryptionError.rawValue)
+            error: .RemoteIdentityChanged
         )
 
         // then
@@ -489,7 +488,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             return XCTFail()
         }
         XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged)
-        XCTAssertEqual(lastMessage.decryptionErrorCode?.intValue, Int(decryptionError.rawValue))
     }
 
     func testThatItAppendsASystemMessageOfGeneralTypeForCBErrorCodeInvalidMessage() {
@@ -505,7 +503,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             at: Date(),
             sender: user,
             client: nil,
-            errorCode: Int(decryptionError.rawValue)
+            error: .Other(UInt16(decryptionError.rawValue))
         )
 
         // then

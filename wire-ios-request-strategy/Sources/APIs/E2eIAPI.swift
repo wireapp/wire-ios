@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,8 +78,12 @@ class E2eIAPIV6: E2eIAPIV5 {
     }
 }
 
-final class E2eIAPIV7: E2eIAPIV6 {
+class E2eIAPIV7: E2eIAPIV6 {
     override var apiVersion: APIVersion { .v7 }
+}
+
+final class E2eIAPIV8: E2eIAPIV7 {
+    override var apiVersion: APIVersion { .v8 }
 }
 
 private enum Constant {

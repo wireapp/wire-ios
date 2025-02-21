@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,10 +28,7 @@ final class MessageRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         localStore = MockMessageLocalStoreProtocol()
-
-        sut = MessageRepository(
-            localStore: localStore
-        )
+        sut = MessageRepository(localStore: localStore)
     }
 
     override func tearDown() async throws {
@@ -41,14 +38,14 @@ final class MessageRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testAddMessageToConversation_It_Invokes_Local_Store_Method() async {
+    func testAddSystemMessageToConversation_It_Invokes_Local_Store_Method() async {
         // Mock
 
-        localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+        localStore.addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
-        await sut.addMessageToConversation(
+        await sut.addSystemMessage(
             messageType: .mlsMigrationMLSNotSupportedForSelfUser,
             conversationID: Scaffolding.conversationID,
             conversationDomain: Scaffolding.conversationDomain
@@ -57,16 +54,14 @@ final class MessageRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(
-            localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            localStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
             1
         )
     }
 
     private enum Scaffolding {
-
         static let conversationID = UUID.mockID1
         static let conversationDomain = "domain.com"
-
     }
 
 }

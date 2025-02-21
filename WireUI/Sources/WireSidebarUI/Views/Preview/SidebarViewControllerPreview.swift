@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import WireFoundation
 func SidebarViewControllerPreview() -> UIViewController {
     let splitViewController = UISplitViewController(style: .tripleColumn)
     let sidebarViewController = SidebarViewController(
-        accountImageView: { _, _ in MockAccountImageView() },
+        accountImageView: { _, _, _ in MockAccountImageView() },
         legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
     )
     sidebarViewController.accountInfo.displayName = "Firstname Lastname"

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCrypto
 import WireCryptobox
 import WireDataModel
 import WireProtos
@@ -103,7 +104,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
                 "recipient": self.selfClient.remoteIdentifier!,
                 "sender": self.otherClient.remoteIdentifier!,
                 "id": UUID.create().transportString(),
-                "key": Data("bah".utf8).base64String()
+                "text": Data("bah".utf8).base64String()
             ]
 
             let payload = [
@@ -122,15 +123,9 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         }
 
         // WHEN
-        disableZMLogError(true)
-        let keystore = await syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
-        let unwrappedKeyStore = try XCTUnwrap(keystore)
-        await unwrappedKeyStore.encryptionContext.performAsync { session in
-            _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
-            }
+        _ = await sut.decryptProteusEventAndAddClient(event, in: syncMOC) { _, _ in
+            throw ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.SessionNotFound)
         }
-        disableZMLogError(false)
 
         await syncMOC.perform {
             // THEN
@@ -141,104 +136,4 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         }
     }
 
-    func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000() async throws {
-        // Given
-        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
-        let sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC, lastEventIDRepository: lastEventIDRepository)
-        let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
-        let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
-        XCTAssertGreaterThan(text.count, 18_000)
-        let message = GenericMessage(content: Text(content: text))
-
-        let wrapper = await syncMOC.perform {
-            NSDictionary(dictionary: [
-                "id": UUID.create().transportString(),
-                "payload": [
-                    [
-                        "type": "conversation.otr-message-add",
-                        "from": self.otherUser.remoteIdentifier!.transportString(),
-                        "conversation": self.groupConversation.remoteIdentifier!.transportString(),
-                        "time": Date().transportString(),
-                        "data": [
-                            "recipient": self.selfClient.remoteIdentifier!,
-                            "sender": self.otherClient.remoteIdentifier!,
-                            "text": self.encryptedMessageToSelf(message: message, from: self.otherClient).base64String()
-                        ]
-                    ]
-                ]
-            ])
-        }
-
-        let event = try XCTUnwrap(ZMUpdateEvent.eventsArray(from: wrapper, source: .download)?.first)
-
-        // When
-        disableZMLogError(true)
-        let keystore = await syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
-        let unwrappedKeyStore = try XCTUnwrap(keystore)
-        await unwrappedKeyStore.encryptionContext.performAsync { session in
-            _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
-            }
-        }
-        disableZMLogError(false)
-
-        // Then
-        await syncMOC.perform {
-            guard let lastMessage = self.groupConversation.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(lastMessage.systemMessageType, .decryptionFailed)
-        }
-    }
-
-    func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000_External_Message(
-    ) async throws {
-        // Given
-        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
-        let sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC, lastEventIDRepository: lastEventIDRepository)
-        let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
-        let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
-        XCTAssertGreaterThan(text.count, 18_000)
-
-        let wrapper = await syncMOC.perform {
-            NSDictionary(dictionary: [
-                "id": UUID.create().transportString(),
-                "payload": [
-                    [
-                        "type": "conversation.otr-message-add",
-                        "from": self.otherUser.remoteIdentifier!.transportString(),
-                        "conversation": self.groupConversation.remoteIdentifier!.transportString(),
-                        "time": Date().transportString(),
-                        "data": [
-                            "data": text,
-                            "recipient": self.selfClient.remoteIdentifier!,
-                            "sender": self.otherClient.remoteIdentifier!,
-                            "text": Data("something with less than 18000 characters count".utf8).base64String()
-                        ]
-                    ]
-                ]
-            ])
-        }
-
-        let event = try XCTUnwrap(ZMUpdateEvent.eventsArray(from: wrapper, source: .download)?.first)
-
-        // When
-        disableZMLogError(true)
-        let keystore = await syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
-        let unwrappedKeyStore = try XCTUnwrap(keystore)
-        await unwrappedKeyStore.encryptionContext.performAsync { session in
-            _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
-            }
-        }
-        disableZMLogError(false)
-
-        // Then
-        await syncMOC.perform {
-            guard let lastMessage = self.groupConversation.lastMessage as? ZMSystemMessage else {
-                return XCTFail("Last conversation message is not a system message")
-            }
-            XCTAssertEqual(lastMessage.systemMessageType, .decryptionFailed)
-        }
-    }
 }

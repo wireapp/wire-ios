@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,40 +56,22 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
     // The team.create update event is only sent to the creator of the team
 
-    func testThatItDoesNotCreateALocalTeamWhenReceivingTeamCreateUpdateEvent() {
+    func testThatItCreatesALocalTeamWhenReceivingTeamCreateUpdateEvent() {
         // given
-        let teamId = UUID.create()
-        let payload: [String: Any] = [
-            "type": "team.create",
-            "team": teamId.transportString(),
-            "time": Date().transportString(),
-            "data": NSNull()
-        ]
-
-        // when
-        processEvent(fromPayload: payload)
-
-        // then
-        XCTAssertNil(Team.fetch(with: teamId, in: uiMOC))
-    }
-
-    func testThatItDoesNotSetNeedsToBeUpdatedFromBackendForExistingTeamWhenReceivingTeamCreateUpdateEvent() {
-        // given
-        let teamId = UUID.create()
-
-        syncMOC.performGroupedBlock {
-            _ = Team.fetchOrCreate(
-                with: teamId,
-                in: self.syncMOC
-            )
-            XCTAssert(self.syncMOC.saveOrRollback())
-        }
+        let teamID = UUID()
+        let creatorID = UUID()
 
         let payload: [String: Any] = [
             "type": "team.create",
-            "team": teamId.transportString(),
+            "team": teamID.transportString(),
             "time": Date().transportString(),
-            "data": NSNull()
+            "data": [
+                "creator": creatorID.transportString(),
+                "icon": "default",
+                "id": teamID.transportString(),
+                "name": "iOS Team",
+                "splash_screen": "default"
+            ]
         ]
 
         // when
@@ -97,12 +79,16 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
         // then
         guard let team = Team.fetch(
-            with: teamId,
+            with: teamID,
             in: uiMOC
         ) else {
             return XCTFail("No team created")
         }
 
+        XCTAssertEqual(team.remoteIdentifier, teamID)
+        XCTAssertEqual(team.name, "iOS Team")
+        XCTAssertEqual(team.creator?.remoteIdentifier, creatorID)
+        XCTAssertEqual(team.pictureAssetId, "default")
         XCTAssertFalse(team.needsToBeUpdatedFromBackend)
     }
 

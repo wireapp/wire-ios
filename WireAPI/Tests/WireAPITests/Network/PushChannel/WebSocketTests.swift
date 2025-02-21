@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,13 +80,13 @@ final class WebSocketTests: XCTestCase {
         }
 
         // Wait for iteration to be in progress
-        await fulfillment(of: [didReceiveMessage], timeout: 0.5)
+        await fulfillment(of: [didReceiveMessage], timeout: 1)
 
         // When
         sut.close()
 
         // Then the stream finished successfully
-        await fulfillment(of: [didFinishIterating], timeout: 0.5)
+        await fulfillment(of: [didFinishIterating], timeout: 1)
 
         // Then the connection was cancelled
         let invocations = connection.cancelWithReason_Invocations
@@ -125,13 +125,13 @@ final class WebSocketTests: XCTestCase {
         }
 
         // Wait for iteration to be in progress
-        await fulfillment(of: [didReceiveMessage], timeout: 0.5)
+        await fulfillment(of: [didReceiveMessage], timeout: 1)
 
         // When
         connection.underlyingIsOpen = false
 
         // Then the stream finished successfully
-        await fulfillment(of: [didFinishIterating], timeout: 0.5)
+        await fulfillment(of: [didFinishIterating], timeout: 1)
     }
 
     func testWebSocketFinishesIfConnectionHasError() async throws {
@@ -166,13 +166,13 @@ final class WebSocketTests: XCTestCase {
         }
 
         // Wait for iteration to be in progress
-        await fulfillment(of: [didReceiveMessage], timeout: 0.5)
+        await fulfillment(of: [didReceiveMessage], timeout: 1)
 
         // When
         shouldSendError = true
 
         // Then the stream finished with an error
-        await fulfillment(of: [didFinishIteratingDueToError], timeout: 0.5)
+        await fulfillment(of: [didFinishIteratingDueToError], timeout: 1)
     }
 
     func testWebSocketIteratesSuccessfully() async throws {

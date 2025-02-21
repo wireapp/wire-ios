@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 @import WireSystem;
 
 #import "ZMImageLoadOperation.h"
-
+#import <WireImages/WireImages-Swift.h>
 
 @interface ZMImageLoadOperation ()
 {
@@ -108,11 +108,7 @@
     CGSize size = [self imageSizeFromSourceImage];
     NSUInteger length = (NSUInteger) [(NSNumber *)self.sourceImageProperties[(__bridge id) kCGImagePropertyFileSize] intValue];
     NSString *mimeType = (__bridge id) CGImageSourceGetType(_source);
-    self.computedImageProperties = [ZMIImageProperties
-                                    imagePropertiesWithSize:size
-                                    length:length
-                                    mimeType:mimeType
-                                    ];
+    self.computedImageProperties = [[ZMIImageProperties alloc] initWithSize:size length:length mimeType:mimeType];
 }
 
 - (int)tiffOrientation;

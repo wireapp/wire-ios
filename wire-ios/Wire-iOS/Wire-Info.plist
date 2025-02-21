@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>BackupEnabled</key>
-	<string>${BACKUP_ENABLED}</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -177,6 +175,29 @@
 				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
+			<string>Wire Backup File</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.wire.backup-universal</string>
+			<key>UTTypeSize320IconFile</key>
+			<string>logo</string>
+			<key>UTTypeSize64IconFile</key>
+			<string>logo</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>wirebackup</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
 			<string>Wire iOS Backup File</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
@@ -188,8 +209,6 @@
 			<string>logo</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
-				<key>com.apple.ostype</key>
-				<string>com.wire.backup-ios-underscore</string>
 				<key>public.filename-extension</key>
 				<array>
 					<string>ios_wbu</string>
@@ -213,8 +232,6 @@
 			<string>logo</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
-				<key>com.apple.ostype</key>
-				<string>com.wire.backup-ios-hyphen</string>
 				<key>public.filename-extension</key>
 				<array>
 					<string>ios-wbu</string>

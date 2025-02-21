@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ extension SettingsCellDescriptorFactory {
 
     var optionsGroup: any SettingsCellDescriptorType {
         let descriptors = [
-            shareContactsDisabledSection,
             clearHistorySection,
             notificationVisibleSection,
             chatHeadsSection,
@@ -57,25 +56,6 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Sections
-
-    private var shareContactsDisabledSection: SettingsSectionDescriptorType {
-        let settingsButton = SettingsButtonCellDescriptor(
-            title: L10n.Localizable.Self.Settings.PrivacyContactsMenu.SettingsButton.title,
-            isDestructive: false,
-            selectAction: { _ in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-            }
-        )
-
-        return SettingsSectionDescriptor(
-            cellDescriptors: [settingsButton],
-            header: L10n.Localizable.Self.Settings.PrivacyContactsSection.title,
-            footer: L10n.Localizable.Self.Settings.PrivacyContactsMenu.DescriptionDisabled.title,
-            visibilityAction: { _ in
-                AddressBookHelper.sharedHelper.isAddressBookAccessDisabled
-            }
-        )
-    }
 
     private var clearHistorySection: SettingsSectionDescriptorType {
         let clearHistoryButton = SettingsButtonCellDescriptor(

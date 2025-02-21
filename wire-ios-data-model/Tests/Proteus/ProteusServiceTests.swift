@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,16 +97,22 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCrypto.proteusDecryptSessionIdCiphertext_MockMethod = { _, _ in
-            throw MockError()
+            throw CoreCryptoError.Proteus(.DuplicateMessage)
         }
 
         // Then
-        await assertItThrows(error: ProteusService.DecryptionError.failedToDecryptData(.duplicateMessage)) {
+        await assertItThrows {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
                 forSession: sessionID
             )
+        } errorHandler: { error in
+            // Then
+            guard case ProteusService.DecryptionError.failedToDecryptData(.DuplicateMessage) = error else {
+                XCTFail("Unexpected error: \(error)")
+                return
+            }
         }
     }
 
@@ -154,19 +160,22 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCrypto.proteusSessionFromMessageSessionIdEnvelope_MockMethod = { _, _ in
-            throw MockError()
+            throw CoreCryptoError.Proteus(.DuplicateMessage)
         }
 
-        // Then
-        await assertItThrows(
-            error: ProteusService.DecryptionError
-                .failedToEstablishSessionFromMessage(.duplicateMessage)
-        ) {
+        await assertItThrows {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
                 forSession: sessionID
             )
+        } errorHandler: { error in
+            // Then
+            guard case ProteusService.DecryptionError
+                .failedToEstablishSessionFromMessage(.DuplicateMessage) = error else {
+                XCTFail("Unexpected error: \(error)")
+                return
+            }
         }
     }
 

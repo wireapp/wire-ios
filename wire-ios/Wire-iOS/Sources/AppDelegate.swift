@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
+import WireCountly
 import WireLogging
 import WireSyncEngine
 
@@ -319,7 +320,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
-        guard appRootRouter == nil else { return }
+        WireLogger.appDelegate.info("applicationProtectedDataDidBecomeAvailable", attributes: .safePublic)
+        guard appRootRouter == nil else {
+            WireLogger.appDelegate.debug("applicationProtectedDataDidBecomeAvailable: appRootRouter nil")
+            return
+        }
         createAppRootRouterAndInitialiazeOperations(launchOptions)
     }
 }
@@ -344,6 +349,12 @@ private extension AppDelegate {
 
         guard let sessionManager = createSessionManager() else {
             fatalError("sessionManager is not created")
+        }
+
+        guard mainWindow != nil else {
+            WireLogger.appDelegate.critical("no mainWindow this should not be possible at this point")
+            assertionFailure("no mainWindow this should not be possible at this point")
+            return
         }
 
         appRootRouter = AppRootRouter(
@@ -387,7 +398,8 @@ private extension AppDelegate {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: LogFileDestination.deleteAllLogs,
-            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build()
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build(),
+            countlyProvider: { CountlyWrapper() }
         )
 
         voIPPushManager.delegate = sessionManager

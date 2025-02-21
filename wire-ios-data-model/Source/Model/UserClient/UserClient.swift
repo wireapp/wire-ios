@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ import WireLogging
 import WireUtilities
 
 public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"
-public let ZMUserClientNeedsToUpdateSignalingKeysKey = "needsToUploadSignalingKeys"
 public let ZMUserClientNeedsToUpdateCapabilitiesKey = "needsToUpdateCapabilities"
 
 public let ZMUserClientMarkedToDeleteKey = "markedToDelete"
@@ -61,58 +60,10 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var model: String?
     @NSManaged public var deviceClass: DeviceClass?
     @NSManaged public var needsToNotifyUser: Bool
-    @NSManaged public var apsVerificationKey: Data?
-    @NSManaged public var apsDecryptionKey: Data?
-    @NSManaged public var needsToUploadSignalingKeys: Bool
     @NSManaged public var needsToUpdateCapabilities: Bool
     @NSManaged public var needsToNotifyOtherUserAboutSessionReset: Bool
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
-
-    private enum Keys {
-        static let PushToken = "pushToken"
-        static let DeviceClass = "deviceClass"
-    }
-
-    // DO NOT USE THIS PROPERTY.
-    //
-    // Storing the push token on the self user client is now deprecated.
-    // From now on, we store the push token in the user defaults and is
-    // no longer the responsibility of the data model project. We keep
-    // it here so that it can still be fetched when migrating the token
-    // to user defaults, it can be deleted after some time.
-
-    @NSManaged private var primitivePushToken: Data?
-    private var pushToken: PushToken? {
-        get {
-            willAccessValue(forKey: Keys.PushToken)
-            let token: PushToken? = if let data = primitivePushToken {
-                try? JSONDecoder().decode(PushToken.self, from: data)
-            } else {
-                nil
-            }
-            didAccessValue(forKey: Keys.PushToken)
-            return token
-        }
-        set {
-            if newValue != pushToken {
-                willChangeValue(forKey: Keys.PushToken)
-                primitivePushToken = try? JSONEncoder().encode(newValue)
-                didChangeValue(forKey: Keys.PushToken)
-            }
-        }
-
-    }
-
-    /// Fetches and removes the old push token from the self client.
-    ///
-    /// - returns: the legacy push token if it exists.
-
-    public func retrieveLegacyPushToken() -> PushToken? {
-        guard let token = pushToken else { return nil }
-        pushToken = nil
-        return token
-    }
 
     /// Clients that are trusted by self client.
     @NSManaged public var trustedClients: Set<UserClient>
@@ -155,7 +106,6 @@ public class UserClient: ZMManagedObject, UserClientType {
             ZMUserClientMarkedToDeleteKey,
             ZMUserClientNumberOfKeysRemainingKey,
             ZMUserClientMissingKey,
-            ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
             UserClient.needsToUploadMLSPublicKeysKey
         ]
@@ -200,6 +150,12 @@ public class UserClient: ZMManagedObject, UserClientType {
         userClient.deviceClass = model.hasPrefix("iPad") ? .tablet : .phone
 
         return userClient
+    }
+
+    public func markAsSelfClient() {
+        guard let context = managedObjectContext else { return }
+        context.setPersistentStoreMetadata(remoteIdentifier, key: ZMPersistedClientIdKey)
+        _ = context.makeMetadataPersistent()
     }
 
     public static func fetchUserClient(
@@ -873,24 +829,6 @@ public extension UserClient {
             }
         }
     }
-}
-
-// MARK: - APSSignaling
-
-public extension UserClient {
-
-    static func resetSignalingKeysInContext(_ context: NSManagedObjectContext) {
-        guard let selfClient = ZMUser.selfUser(in: context).selfClient()
-        else { return }
-
-        selfClient.apsDecryptionKey = nil
-        selfClient.apsVerificationKey = nil
-        selfClient.needsToUploadSignalingKeys = true
-        selfClient.setLocallyModifiedKeys([ZMUserClientNeedsToUpdateSignalingKeysKey])
-
-        context.enqueueDelayedSave()
-    }
-
 }
 
 // MARK: - Update SelfClient Capability

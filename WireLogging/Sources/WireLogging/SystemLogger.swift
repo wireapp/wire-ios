@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ public struct SystemLogger: LoggerProtocol {
     }
 
     public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, osLogType: .fault)
+        log(message, attributes: attributes, osLogType: .default)
     }
 
     public func error(_ message: any LogConvertible, attributes: LogAttributes...) {

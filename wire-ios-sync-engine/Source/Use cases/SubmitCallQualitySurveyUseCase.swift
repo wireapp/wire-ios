@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,6 +32,6 @@ public struct SubmitCallQualitySurveyUseCase: SubmitCallQualitySurveyUseCaseProt
     }
 
     public func invoke(_ review: CallQualitySurveyReview) {
-        analyticsEventTracker?.trackEvent(.callQualitySurvey(review))
+        analyticsEventTracker?.trackEvent(.Calling.callQualitySurvey(review))
     }
 }

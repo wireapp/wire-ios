@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -149,20 +149,6 @@ final class UserClientsRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userClientsLocalStore.deleteClientId_Invocations.count, 1)
-    }
-
-    func testAllSelfUserClientsAreActiveMLSClients_It_Invokes_Local_Store_Method() async {
-        // Mock
-
-        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
-
-        // When
-
-        _ = await sut.allSelfUserClientsAreActiveMLSClients()
-
-        // Then
-
-        XCTAssertEqual(userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_Invocations.count, 1)
     }
 
     private enum Scaffolding {

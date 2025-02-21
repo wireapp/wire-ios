@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCrypto
 import WireCryptobox
 import WireLogging
 
@@ -288,9 +289,13 @@ public extension ZMConversation {
     }
 
     /// Creates the message that warns user about the fact that decryption of incoming message is failed
-    @objc(appendDecryptionFailedSystemMessageAtTime:sender:client:errorCode:)
-    func appendDecryptionFailedSystemMessage(at date: Date?, sender: ZMUser, client: UserClient?, errorCode: Int) {
-        let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType
+    func appendDecryptionFailedSystemMessage(
+        at date: Date?,
+        sender: ZMUser,
+        client: UserClient?,
+        error: ProteusError
+    ) {
+        let type = error == .RemoteIdentityChanged ? ZMSystemMessageType
             .decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
         let clients = client.flatMap { [$0] } ?? Set<UserClient>()
         let serverTimestamp = date ?? timestampAfterLastMessage()
@@ -303,7 +308,10 @@ public extension ZMConversation {
         )
 
         systemMessage.senderClientID = client?.remoteIdentifier
-        systemMessage.decryptionErrorCode = NSNumber(value: errorCode)
+
+        if case let .Other(code) = error {
+            systemMessage.decryptionErrorCode = NSNumber(value: code)
+        }
     }
 
     /// Adds the user to the list of participants if not already present and inserts a .participantsAdded system message
