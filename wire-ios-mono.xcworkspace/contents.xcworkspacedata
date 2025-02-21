@@ -99,6 +99,12 @@
       location = "group:Gemfile.lock">
    </FileRef>
    <FileRef
+      location = "group:crowdin.yml">
+   </FileRef>
+   <FileRef
+      location = "group:Jenkinsfile">
+   </FileRef>
+   <FileRef
       location = "group:setup.sh">
    </FileRef>
    <Group
