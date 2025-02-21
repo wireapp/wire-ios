@@ -71,6 +71,9 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var authenticationAPI: AuthenticationAPI {
         return determineAuthMethodComponent.authenticationAPI
     }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
+    }
     private let determineAuthMethodComponent: DetermineAuthMethodComponent
     private let rootComponent: RootComponent
     init(determineAuthMethodComponent: DetermineAuthMethodComponent, rootComponent: RootComponent) {
@@ -104,6 +107,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
         keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\LoginViaEmailComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
+        keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
 
     }
 }

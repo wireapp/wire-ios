@@ -46,6 +46,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let forgotPasswordURL: URL
     private let passwordValidator: any PasswordValidator
+    private let bridge: WireAuthenticationBridge
 
     let email: String
     let canCreateAccount: Bool
@@ -58,7 +59,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
         email: String,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
-        canCreateAccount: Bool
+        canCreateAccount: Bool,
+        bridge: WireAuthenticationBridge
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
@@ -66,6 +68,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
+        self.bridge = bridge
     }
 
     var localizedPasswordRules: String? {
@@ -80,13 +83,12 @@ package final class LoginViaEmailViewModel: ObservableObject {
         isLoading = true
 
         do {
-            // TODO: [WPB-15924] Handle happy path
-            _ = try await self.loginViaEmailUseCase.invoke(
+            let (cookies, token) = try await self.loginViaEmailUseCase.invoke(
                 email: email,
                 password: password,
-                verificationCode: ""
+                verificationCode: nil
             )
-            print(">>>> Login successful")
+            bridge.completeFlow(cookies: cookies, accessToken: token)
         } catch {
             switch error {
             case .invalidCredentials:
