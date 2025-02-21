@@ -989,6 +989,14 @@ extension ZMUserSession: SyncAgentDelegate {
         didFinishInitialSync()
     }
 
+    func syncAgentDidStartIncrementalSync(_ syncAgent: SyncAgent) {
+        didStartIncrementalSync()
+    }
+
+    func syncAgentDidFinishIncrementalSync(_ syncAgent: SyncAgent) {
+        didFinishIncrementalSync()
+    }
+
     func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent) {
         didStartInitialSync()
     }
