@@ -769,6 +769,13 @@
 			);
 			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;
 		};
+		015DD6E92D68E471004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				emoticons.min.json,
+			);
+			target = BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -779,7 +786,7 @@
 		015DB07A2D68DB05004EE8C9 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB0F92D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DB0FA2D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		015DB12B2D68DB7B004EE8C9 /* WireCommonComponents */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCommonComponents; sourceTree = "<group>"; };
 		015DB15C2D68DB7F004EE8C9 /* Wire Notification Service Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB1642D68DB7F004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DB1652D68DB7F004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire Notification Service Extension"; sourceTree = "<group>"; };
-		015DC1C82D68DC78004EE8C9 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DC1DB2D68DC78004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = ("Sounds/audio-notifications", ); name = Resources; path = "Wire-iOS/Resources"; sourceTree = "<group>"; };
+		015DC1C82D68DC78004EE8C9 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DC1DB2D68DC78004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DD6E92D68E471004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = ("Sounds/audio-notifications", ); name = Resources; path = "Wire-iOS/Resources"; sourceTree = "<group>"; };
 		015DC2042D68E01D004EE8C9 /* Wire-iOS UnitTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Wire-iOS UnitTests"; sourceTree = "<group>"; };
 		015DC2322D68E02D004EE8C9 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		015DC2352D68E031004EE8C9 /* Generated */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Generated; sourceTree = "<group>"; };
