@@ -16,31 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+internal import WireAuthenticationUI
 
-package protocol LoginViaSSOBuilder {
+class LoginViaSSOComponent: LoginViaSSOBuilder {
 
     @MainActor
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView
-
-}
-
-package struct LoginViaSSOView: View {
-
-    @ObservedObject var viewModel: LoginViaSSOViewModel
-
-    package init(
-        viewModel: LoginViaSSOViewModel
-    ) {
-        self.viewModel = viewModel
+    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
     }
 
-    package var body: some View {
-        SafariBrowser(url: viewModel.ssoURL)
+    @MainActor
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
     }
-}
 
-#Preview {
-    let url = URL(string: "https://www.wire.com")
-    LoginViaSSOView(viewModel: LoginViaSSOViewModel(ssoURL: url!))
 }
