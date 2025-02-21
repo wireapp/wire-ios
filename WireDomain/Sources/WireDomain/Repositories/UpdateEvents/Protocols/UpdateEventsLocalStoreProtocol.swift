@@ -60,4 +60,12 @@ public protocol UpdateEventsLocalStoreProtocol {
     func deleteNextPendingEvents(
         limit: UInt
     ) async throws
+
+    /// Delete the event envelope with the given index.
+    /// - parameter index: The index of the envelope to delete
+
+    func deleteEventEnvelope(
+        atIndex index: Int64
+    ) async throws
+
 }

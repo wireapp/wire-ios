@@ -118,4 +118,16 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         }
     }
 
+    public func deleteEventEnvelope(
+        atIndex index: Int64
+    ) async throws {
+        try await context.perform { [context] in
+            let request = StoredUpdateEventEnvelope.fetchRequest(sortIndex: index)
+            guard let envelope = try context.fetch(request).first else { return }
+            WireLogger.sync.debug("deleting stored envelope at index \(index)")
+            context.delete(envelope)
+            try context.save()
+        }
+    }
+
 }

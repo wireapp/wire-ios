@@ -2744,6 +2744,26 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         try await mock(limit)
     }
 
+    // MARK: - deleteEventEnvelope
+
+    public var deleteEventEnvelopeAtIndex_Invocations: [Int64] = []
+    public var deleteEventEnvelopeAtIndex_MockError: Error?
+    public var deleteEventEnvelopeAtIndex_MockMethod: ((Int64) async throws -> Void)?
+
+    public func deleteEventEnvelope(atIndex index: Int64) async throws {
+        deleteEventEnvelopeAtIndex_Invocations.append(index)
+
+        if let error = deleteEventEnvelopeAtIndex_MockError {
+            throw error
+        }
+
+        guard let mock = deleteEventEnvelopeAtIndex_MockMethod else {
+            fatalError("no mock for `deleteEventEnvelopeAtIndex`")
+        }
+
+        try await mock(index)
+    }
+
 }
 
 class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {

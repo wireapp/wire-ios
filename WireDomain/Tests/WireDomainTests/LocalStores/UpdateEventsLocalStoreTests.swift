@@ -198,6 +198,28 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         }
     }
 
+    func testDeleteEventEnvelope_It_Deletes_The_Stored_Envelope() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2,
+            Scaffolding.envelope3
+        ])
+
+        // When it deletes the first one
+        try await sut.deleteEventEnvelope(atIndex: 0)
+
+        // Then the first envelope (index 0) was deleted and indices 1 and 2 remain.
+        try await context.perform { [context] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let result = try context.fetch(request)
+            XCTAssertEqual(result.count, 2)
+
+            let indicesOfStoredEnvelopes = result.map(\.sortIndex)
+            XCTAssertEqual(indicesOfStoredEnvelopes, [1, 2])
+        }
+    }
+
     func testStoreLastEventID_It_Stores_Last_Event_Envelope_ID() throws {
         // Given
 
