@@ -17,33 +17,57 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 public final class MessageCell: UITableViewCell {
 
     public var message = Message() {
+        didSet {
+            if oldValue != message {
+                updateContent()
+            }
+        }
+    }
+
+    public var messageLayout = MessageLayout.oneOnOneConversation {
+        didSet {
+            if oldValue != messageLayout {
+                updateContent()
+            }
+        }
+    }
+
+    public var wireAccentColor: WireAccentColor = .default {
+        didSet {
+            if oldValue != wireAccentColor {
+                updateContent()
+            }
+        }
+    }
+
+    public var wireAccentColorMapping: WireAccentColorMapping? {
         didSet { updateContent() }
     }
 
-    public override func prepareForReuse() {
-        super.prepareForReuse()
-
-//        var contentConfiguration = defaultContentConfiguration()
-//        contentConfiguration.text = "todo"
-//        self.contentConfiguration = contentConfiguration
-    }
-
     private func updateContent() {
-        contentConfiguration = UIHostingConfiguration { // TODO: check docs for swipe action
-            MessageContentView(text: message.id.uuidString)
+        contentConfiguration = UIHostingConfiguration {
+            MessageContentView(message: message, layout: messageLayout)
+                .swipeActions(edge: .leading) {
+                    Button {
+                        print("swipe")
+                    } label: {
+                        Label("Favorite", systemImage: "arrowshape.turn.up.backward.fill")
+                    }
+                }
+                .environment(\.wireAccentColor, wireAccentColor)
+                .environment(\.wireAccentColorMapping, wireAccentColorMapping)
         }
     }
 }
 
-public struct Message: Hashable, Identifiable {
-    public var id = MessageID()
-}
 
-public typealias MessageID = UUID
+
+
 
 var dataSourceX: AnyObject?
 
@@ -57,7 +81,10 @@ public func MessageCellPreview() -> UIViewController {
     ) { tableView, indexPath, itemID in
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
         if let cell = cell as? MessageCell {
-            cell.message = .init(id: itemID)
+            cell.message = Message(
+                id: .init(itemID),
+                attributedText: AttributedString("Hello, World!")
+            )
         }
         return cell
     }

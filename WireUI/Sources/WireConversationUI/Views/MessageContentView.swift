@@ -20,9 +20,10 @@ import SwiftUI
 
 struct MessageContentView: View {
 
-    var text: String
+    var message: Message
+    var layout: MessageLayout
 
     var body: some View {
-        Text(text)
+        Text(message.attributedText)
     }
 }

@@ -45,7 +45,7 @@ let package = Package(
         .target(name: "WireConversationListUI"),
         .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
 
-        .target(name: "WireConversationUI"),
+        .target(name: "WireConversationUI", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireConversationUITests", dependencies: ["WireConversationUI"]),
 
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
