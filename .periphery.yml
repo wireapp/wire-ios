@@ -1,6 +1,4 @@
-retain_objc_accessible: true
+project: wire-ios-mono.xcworkspace
+retain_objc_annotated: true
 schemes:
 - Wire-iOS
-targets:
-- Wire-iOS
-workspace: wire-ios-mono.xcworkspace
