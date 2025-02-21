@@ -16,34 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-package protocol LoginViaSSOBuilder {
+public protocol SSOLinkGeneratorProtocol {
 
     @MainActor
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView
+    func generateSSOLink(ssoCode: UUID) async throws -> URL
 
-}
-
-package struct LoginViaSSOView: View {
-
-    @ObservedObject var viewModel: LoginViaSSOViewModel
-    @State private var showAlert = true
-
-    package init(
-        viewModel: LoginViaSSOViewModel
-    ) {
-        self.viewModel = viewModel
-    }
-
-    package var body: some View {
-        SafariBrowser(url: viewModel.ssoURL)
-    }
-
-}
-
-#Preview {
-    LoginViaSSOView(viewModel: {
-        LoginViaSSOViewModel(ssoURL: URL(string: "https://www.google.com")!)
-    }())
 }

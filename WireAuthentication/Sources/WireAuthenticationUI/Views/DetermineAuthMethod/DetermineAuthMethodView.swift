@@ -115,8 +115,8 @@ package struct DetermineAuthMethodView: View {
         }
         .sheet(item: $viewModel.webView, content: { view in
             switch view {
-            case let .ssoLogin(code: ssoCode):
-                loginViaSSOBuilder.loginViaSSOView(ssoCode: ssoCode)
+            case let .ssoLogin(url: ssoURL):
+                loginViaSSOBuilder.loginViaSSOView(ssoURL: ssoURL)
             }
         })
         .presentationDetents([.medium, .large])

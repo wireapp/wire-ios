@@ -44,6 +44,7 @@ final class MockDependencies {
                 router: rootViewModel,
                 validateEmailOrSSOCode: self,
                 determineAuthMethod: self,
+                ssoLinkGenerator: self,
                 emailOrSSOCode: emailOrSSOCode,
                 isLoading: isLoading,
                 alert: alert
@@ -97,7 +98,8 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             validateEmailOrSSOCode: self,
-            determineAuthMethod: self
+            determineAuthMethod: self,
+            ssoLinkGenerator: self
         )
     }
 
@@ -107,6 +109,13 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             loginViaEmailBuilder: self,
             loginViaSSOBuilder: self
         )
+    }
+
+}
+extension MockDependencies: SSOLinkGeneratorProtocol {
+
+    func generateSSOLink(ssoCode: UUID) async throws -> URL {
+        URL(string: "https://example.com/login/\(ssoCode)")!
     }
 
 }
@@ -134,12 +143,12 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 extension MockDependencies: LoginViaSSOBuilder {
 
-    private func loginViewModel(ssoCode: UUID) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoCode: ssoCode)
+    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
     }
 
-    func loginViaSSOView(ssoCode: UUID) -> LoginViaSSOView {
-        LoginViaSSOView(viewModel: loginViewModel(ssoCode: ssoCode))
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
     }
 
 }

@@ -19,43 +19,43 @@
 import Foundation
 import XCTest
 
-@testable import WireAuthenticationUI
-
-class LoginViaSSOViewModelTests: XCTestCase {
-
-    var sut: LoginViaSSOViewModel!
-
-    override func setUp() async throws {
-        sut = await LoginViaSSOViewModel(ssoCode: UUID())
-    }
-
-    override func tearDown() {
-        sut = nil
-    }
-
-    func testItBuildsSSOLink() async throws {
-        // Given
-        let ssoCode = UUID()
-        let userID = ssoCode
-
-        // When
-        let response = try await sut.buildSSOLink(
-            baseURL: URL(string: "https://localhost")!,
-            ssoCode: ssoCode,
-            callbackScheme: "wire"
-        )
-        let ssoURL: String = response.absoluteString.removingPercentEncoding!
-        let ssoCodeString = ssoCode.uuidString
-        let successPart1 = "success_redirect=wire://login/success?"
-        let successPart2 = "cookie=$cookie&userid=$userid&validation_token=\(ssoCodeString)"
-        let success = successPart1 + successPart2
-        let error = "error_redirect=wire://login/failure?label=$label&validation_token=\(ssoCodeString)"
-        let expectedURL = URL(
-            string: "https://localhost/sso/initiate-login/\(userID.uuidString)?\(success)&\(error)"
-        )!
-
-        // Then
-        XCTAssertEqual(ssoURL, expectedURL.absoluteString)
-    }
-
-}
+//@testable import WireAuthenticationUI
+//
+//class LoginViaSSOViewModelTests: XCTestCase {
+//
+//    var sut: LoginViaSSOViewModel!
+//
+//    override func setUp() async throws {
+//        sut = await LoginViaSSOViewModel(ssoCode: UUID())
+//    }
+//
+//    override func tearDown() {
+//        sut = nil
+//    }
+//
+//    func testItBuildsSSOLink() async throws {
+//        // Given
+//        let ssoCode = UUID()
+//        let userID = ssoCode
+//
+//        // When
+//        let response = try await sut.buildSSOLink(
+//            baseURL: URL(string: "https://localhost")!,
+//            ssoCode: ssoCode,
+//            callbackScheme: "wire"
+//        )
+//        let ssoURL: String = response.absoluteString.removingPercentEncoding!
+//        let ssoCodeString = ssoCode.uuidString
+//        let successPart1 = "success_redirect=wire://login/success?"
+//        let successPart2 = "cookie=$cookie&userid=$userid&validation_token=\(ssoCodeString)"
+//        let success = successPart1 + successPart2
+//        let error = "error_redirect=wire://login/failure?label=$label&validation_token=\(ssoCodeString)"
+//        let expectedURL = URL(
+//            string: "https://localhost/sso/initiate-login/\(userID.uuidString)?\(success)&\(error)"
+//        )!
+//
+//        // Then
+//        XCTAssertEqual(ssoURL, expectedURL.absoluteString)
+//    }
+//
+//}

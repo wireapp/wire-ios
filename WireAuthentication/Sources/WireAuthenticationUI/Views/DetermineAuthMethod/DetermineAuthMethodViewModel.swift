@@ -36,12 +36,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package enum WebView: Hashable, Identifiable {
         package var id: Self { self }
 
-        case ssoLogin(code: UUID)
+        case ssoLogin(url: URL)
     }
 
     private let router: any Router
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+    private let ssoLinkGenerator: SSOLinkGeneratorProtocol
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -56,6 +57,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         router: any Router,
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
         determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
+        ssoLinkGenerator: any SSOLinkGeneratorProtocol,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
         alert: Alert? = nil
@@ -63,6 +65,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.router = router
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.determineAuthMethod = determineAuthMethod
+        self.ssoLinkGenerator = ssoLinkGenerator
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
         self.alert = alert
@@ -73,7 +76,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         do {
             let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
-            handleAuthenticationMethod(method)
+            await handleAuthenticationMethod(method)
         } catch {
             switch error {
             case .invalidEmailOrSSOCode:
@@ -102,7 +105,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func didDismissAlert(alert: Alert) {
         switch alert {
         case let .onPremLoginNotPossible(method):
-            handleAuthenticationMethod(method)
+            Task.detached {
+                await self.handleAuthenticationMethod(method)
+            }
         default:
             break
         }
@@ -110,7 +115,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
+    private func handleAuthenticationMethod(_ method: AuthenticationMethod) async {
         switch method {
         case let .loginViaEmail(email):
             router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
@@ -119,8 +124,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
         case let .loginViaSSO(code):
-            webView = .ssoLogin(code: code)
-
+            //
+            do {
+                let url = try await ssoLinkGenerator.generateSSOLink(ssoCode: code)
+                webView = .ssoLogin(url: url)
+            } catch {
+                print("something went wrong")
+            }
         case let .onPremLogin(email, backendConfig):
             // TODO: [WPB-15944] Handle on-prem login
             break
