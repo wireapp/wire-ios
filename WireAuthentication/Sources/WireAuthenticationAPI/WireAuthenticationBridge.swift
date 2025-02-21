@@ -22,16 +22,16 @@ import Foundation
 /// (from outside into this module) and **outbound** (from inside this module
 /// to the external world).
 
-public struct WireAuthenticationBridge {
+public struct WireAuthenticationBridge<AccessToken> {
 
-    private let onFlowCompletion: () -> Void
+    private let onFlowCompletion: ([HTTPCookie], AccessToken) -> Void
 
-    public init(onFlowCompletion: @escaping () -> Void) {
+    public init(onFlowCompletion: @escaping ([HTTPCookie], AccessToken) -> Void) {
         self.onFlowCompletion = onFlowCompletion
     }
 
-    public func completeFlow() {
-        onFlowCompletion()
+    public func completeFlow(cookies: [HTTPCookie], accessToken: AccessToken) {
+        onFlowCompletion(cookies, accessToken)
     }
 
 }

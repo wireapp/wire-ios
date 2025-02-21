@@ -27,17 +27,14 @@ struct ContentView: View {
     let configuration: Configuration
 
     var body: some View {
-        BackgroundView()
-            .sheet(isPresented: .constant(true)) {
-                WireAuthenticationAssembly().assemble(
-                    defaultBackendEnvironment: configuration.defaultBackendEnvironment,
-                    minTLSVersion: configuration.minTLSVersion,
-                    defaultAPIVersion: configuration.defaultAPIVersion,
-                    accountsURL: configuration.accountsURL,
-                    passwordValidator: configuration.passwordValidator,
-                    onFlowCompletion: {}
-                )
-            }
+        WireAuthenticationAssembly().assemble(
+            defaultBackendEnvironment: configuration.defaultBackendEnvironment,
+            minTLSVersion: configuration.minTLSVersion,
+            defaultAPIVersion: configuration.defaultAPIVersion,
+            accountsURL: configuration.accountsURL,
+            passwordValidator: configuration.passwordValidator,
+            onFlowCompletion: { _, _ in }
+        )
     }
 
 }

@@ -25,7 +25,7 @@ import WireAuthenticationAPI
 
 class RootComponent: BootstrapComponent {
 
-    public let bridge: WireAuthenticationBridge
+    public let bridge: WireAuthenticationBridge<AccessToken>
     public let defaultBackendEnvironment: BackendEnvironment
     public let defaultAPIVersion: APIVersion
     public let minTLSVersion: TLSVersion
@@ -33,7 +33,7 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
 
     init(
-        bridge: WireAuthenticationBridge,
+        bridge: WireAuthenticationBridge<AccessToken>,
         defaultBackendEnvironment: BackendEnvironment,
         defaultAPIVersion: APIVersion,
         minTLSVersion: TLSVersion,
