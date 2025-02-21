@@ -19,7 +19,7 @@
 import SwiftUI
 import WireFoundation
 
-public final class MessageCell: UITableViewCell { // TODO: this probably has to be moved out of WireConversationUI (no generics supported)
+public final class MessageCell: UITableViewCell { // TODO: this probably has to be moved out of WireConversationUI (no generics supported), keep one for preview
 
     public var message = Message() {
         didSet {
@@ -60,7 +60,8 @@ public final class MessageCell: UITableViewCell { // TODO: this probably has to 
                 Button {
                     print("swipe")
                 } label: {
-                    Label("Favorite", systemImage: "arrowshape.turn.up.backward.fill")
+                    Label("Reply", systemImage: "arrowshape.turn.up.backward.fill")
+                        .rotationEffect(.degrees(180)) // TODO: doesn't have effect
                 }
             }
             .environment(\.wireAccentColor, wireAccentColor)
