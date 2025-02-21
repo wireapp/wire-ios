@@ -110,8 +110,8 @@ package struct DetermineAuthMethodView: View {
                 Color.red
             }
         }
-        .sheet(item: $viewModel.webView, content: { view in
-            switch view {
+        .sheet(item: $viewModel.modalDestination, content: {
+            switch $0 {
             case let .ssoLogin(url: ssoURL):
                 loginViaSSOBuilder.loginViaSSOView(ssoURL: ssoURL)
             }
