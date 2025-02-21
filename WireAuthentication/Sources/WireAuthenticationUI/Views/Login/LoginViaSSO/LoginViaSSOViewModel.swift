@@ -24,13 +24,10 @@ import WireAuthenticationAPI
 @MainActor
 package final class LoginViaSSOViewModel: ObservableObject {
 
-    private let ssoCode: UUID
+    let ssoURL: URL
 
-    // TODO: [WPB-15943] Generate SSO URL
-    var ssoURL: URL?
-
-    package init(ssoCode: UUID) {
-        self.ssoCode = ssoCode
+    package init(ssoURL: URL) {
+        self.ssoURL = ssoURL
     }
 
     /// Generate the link to the SSO authentication screen

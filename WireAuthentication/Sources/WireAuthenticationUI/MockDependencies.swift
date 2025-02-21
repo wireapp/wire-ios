@@ -134,12 +134,12 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 extension MockDependencies: LoginViaSSOBuilder {
 
-    private func loginViewModel(ssoCode: UUID) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoCode: ssoCode)
+    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
     }
 
-    func loginViaSSOView(ssoCode: UUID) -> LoginViaSSOView {
-        LoginViaSSOView(viewModel: loginViewModel(ssoCode: ssoCode))
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
     }
 
 }

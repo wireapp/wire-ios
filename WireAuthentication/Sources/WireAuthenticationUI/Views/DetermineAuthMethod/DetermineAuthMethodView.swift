@@ -29,7 +29,6 @@ package protocol DetermineAuthMethodBuilder {
 package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
-    @Environment(\.modalDestination) private var modalDestination
 
     let loginViaEmailBuilder: any LoginViaEmailBuilder
     let loginViaSSOBuilder: any LoginViaSSOBuilder
@@ -113,8 +112,8 @@ package struct DetermineAuthMethodView: View {
         }
         .sheet(item: $viewModel.webView, content: { view in
             switch view {
-            case let .ssoLogin(code: ssoCode):
-                loginViaSSOBuilder.loginViaSSOView(ssoCode: ssoCode)
+            case let .ssoLogin(url: ssoURL):
+                loginViaSSOBuilder.loginViaSSOView(ssoURL: ssoURL)
             }
         })
         .presentationDetents([.medium, .large])

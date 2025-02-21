@@ -25,7 +25,6 @@ import WireAuthenticationAPI
 public final class RootViewModel: ObservableObject, Router {
 
     @Published var path = NavigationPath()
-    @Published var modalDestination: ModalDestination?
 
     public init() {}
 
@@ -35,10 +34,6 @@ public final class RootViewModel: ObservableObject, Router {
 
     public func navigate(to destination: some Hashable) {
         path.append(destination)
-    }
-
-    public func present(modal: ModalDestination) {
-        modalDestination = modal
     }
 
 }

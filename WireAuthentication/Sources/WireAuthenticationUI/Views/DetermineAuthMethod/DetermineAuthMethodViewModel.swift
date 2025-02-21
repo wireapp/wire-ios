@@ -36,7 +36,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package enum WebView: Hashable, Identifiable {
         package var id: Self { self }
 
-        case ssoLogin(code: UUID)
+        case ssoLogin(url: URL)
     }
 
     private let router: any Router
@@ -119,7 +119,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
         case let .loginViaSSO(code):
-            webView = .ssoLogin(code: code)
+            // TODO: [WPB-15946] Genarate URL and handle the error
+            webView = .ssoLogin(url: URL(string: "example")!)
 
         case let .onPremLogin(email, backendConfig):
             // TODO: [WPB-15944] Handle on-prem login

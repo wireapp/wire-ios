@@ -21,14 +21,13 @@ import SwiftUI
 package protocol LoginViaSSOBuilder {
 
     @MainActor
-    func loginViaSSOView(ssoCode: UUID) -> LoginViaSSOView
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView
 
 }
 
 package struct LoginViaSSOView: View {
 
     @ObservedObject var viewModel: LoginViaSSOViewModel
-    @State private var showAlert = true
 
     package init(
         viewModel: LoginViaSSOViewModel
@@ -37,23 +36,12 @@ package struct LoginViaSSOView: View {
     }
 
     package var body: some View {
-        if let ssoURL = viewModel.ssoURL {
-            SafariBrowser(url: ssoURL)
-        } else {
-            Text("SSO URL is not available.")
-                .alert("Error", isPresented: $showAlert) {
-                    Button("OK", role: .cancel) { }
-                } message: {
-                    Text("Please try again later.")
-                }
-        }
+        SafariBrowser(url: viewModel.ssoURL)
     }
 }
 
 #Preview {
     LoginViaSSOView(viewModel: {
-        let viewModel = LoginViaSSOViewModel(ssoCode: UUID())
-        viewModel.ssoURL = URL(string: "https://www.google.com")!
-        return viewModel
+        LoginViaSSOViewModel(ssoURL: URL(string: "https://www.google.com")!)
     }())
 }

@@ -22,13 +22,13 @@ internal import WireAuthenticationUI
 class LoginViaSSOComponent: LoginViaSSOBuilder {
 
     @MainActor
-    private func loginViewModel(ssoCode: UUID) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoCode: ssoCode)
+    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
     }
 
     @MainActor
-    func loginViaSSOView(ssoCode: UUID) -> LoginViaSSOView {
-        LoginViaSSOView(viewModel: loginViewModel(ssoCode: ssoCode))
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
     }
 
 }

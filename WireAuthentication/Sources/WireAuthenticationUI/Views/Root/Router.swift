@@ -27,25 +27,4 @@ public protocol Router {
 
     func navigate<Destination: Hashable>(to destination: Destination)
 
-    func present(modal: ModalDestination)
-
-}
-
-public enum ModalDestination: Hashable, Identifiable {
-
-    case ssoLogin(code: UUID)
-
-    /// Provides a unique identifier for each `ModalDestination` case.
-    ///
-    /// This is required for SwiftUI's `.sheet(item:)` modifier, which needs an `Identifiable`
-    /// type to track and manage modal presentations. The `id` ensures that each modal
-    /// instance is uniquely identified, preventing issues with SwiftUI's view updates.
-
-    public var id: String {
-        switch self {
-        case let .ssoLogin(code):
-            "ssoLogin-\(code.uuidString)"
-        }
-    }
-
 }
