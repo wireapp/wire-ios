@@ -124,7 +124,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
         case let .loginViaSSO(code):
-            //
             do {
                 let url = try await ssoLinkGenerator.generateSSOLink(ssoCode: code)
                 webView = .ssoLogin(url: url)

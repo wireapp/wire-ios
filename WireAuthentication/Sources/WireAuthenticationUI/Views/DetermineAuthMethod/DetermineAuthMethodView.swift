@@ -29,7 +29,6 @@ package protocol DetermineAuthMethodBuilder {
 package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
-    @Environment(\.modalDestination) private var modalDestination
 
     let loginViaEmailBuilder: any LoginViaEmailBuilder
     let loginViaSSOBuilder: any LoginViaSSOBuilder

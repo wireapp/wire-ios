@@ -32,6 +32,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
     private let pullKnownUsersSync: any PullKnownUsersSyncProtocol
     private let pullConversationLabelsSync: any PullConversationLabelsSyncProtocol
     private let pullAllFeatureConfigsSync: any PullAllFeatureConfigsSyncProtocol
+    private let pullMLSStatusSync: any PullMLSStatusSyncProtocol
 
     private let logger = WireLogger(tag: "pull-resources")
 
@@ -46,7 +47,8 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         pullAllConversationsSync: any PullAllConversationsSyncProtocol,
         pullKnownUsersSync: any PullKnownUsersSyncProtocol,
         pullConversationLabelsSync: any PullConversationLabelsSyncProtocol,
-        pullAllFeatureConfigsSync: any PullAllFeatureConfigsSyncProtocol
+        pullAllFeatureConfigsSync: any PullAllFeatureConfigsSyncProtocol,
+        pullMLSStatusSync: any PullMLSStatusSyncProtocol
     ) {
         self.pullSelfUserSync = pullSelfUserSync
         self.pullSelfUserSettingsSync = pullSelfUserSettingsSync
@@ -59,6 +61,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         self.pullKnownUsersSync = pullKnownUsersSync
         self.pullConversationLabelsSync = pullConversationLabelsSync
         self.pullAllFeatureConfigsSync = pullAllFeatureConfigsSync
+        self.pullMLSStatusSync = pullMLSStatusSync
     }
 
     func pull() async throws {
@@ -82,6 +85,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
             try await pullConversationLabels()
             try await pullFeatureConfigs()
+            try await pullMLSStatus()
         }
     }
 
@@ -181,6 +185,15 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
             try await pullAllFeatureConfigsSync.pull()
         } catch {
             throw Failure(resourceName: "pull feature configs", reason: error)
+        }
+    }
+
+    private func pullMLSStatus() async throws {
+        do {
+            logger.debug("pulling MLS status")
+            try await pullMLSStatusSync.pull()
+        } catch {
+            throw Failure(resourceName: "pull MLS status", reason: error)
         }
     }
 

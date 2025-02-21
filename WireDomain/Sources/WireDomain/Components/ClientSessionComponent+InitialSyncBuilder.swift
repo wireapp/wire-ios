@@ -16,6 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// Preprocessing
-//
-GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
+import Foundation
+
+extension ClientSessionComponent: InitialSyncBuilderProtocol {
+
+    public func buildInitialSync() throws -> any InitialSyncProtocol {
+        initialSync
+    }
+
+}
