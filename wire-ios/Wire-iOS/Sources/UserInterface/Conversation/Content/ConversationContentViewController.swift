@@ -505,6 +505,15 @@ extension ConversationContentViewController: UITableViewDelegate {
         _ tableView: UITableView,
         leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
+        let sections = dataSource.currentSections
+        guard
+            sections.indices.contains(indexPath.section),
+            sections[indexPath.section].elements.indices.contains(indexPath.row),
+            sections[indexPath.section].elements[indexPath.row].instance.supportsActions
+//            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
+//            actionController.canPerformAction(action: .reply)
+        else { return nil }
+
         let replyAction = UIContextualAction(style: .normal, title: "Reply") { action, view, completionHandler in // TODO: localize string, this is for accessibility
             print("trigger reply")
             completionHandler(true)
@@ -520,6 +529,7 @@ extension ConversationContentViewController: UITableViewDelegate {
         }
 
         replyAction.image = upsideDownImage
+        replyAction.backgroundColor = UIColor.accent()
         return UISwipeActionsConfiguration(actions: [replyAction])
     }
 }

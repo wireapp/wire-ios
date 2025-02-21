@@ -221,7 +221,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let registrationBlock: (UITableView) -> Void
     private let configureBlock: (UITableViewCell, Bool) -> Void
     private let baseTypeGetter: () -> AnyClass
-    private let instanceGetter: () -> AnyObject
+    private let instanceGetter: () -> any ConversationMessageCellDescription
     private let isConfigurationEqualBlock: (AnyConversationMessageCellDescription) -> Bool
 
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
@@ -268,7 +268,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
 
-    var instance: AnyObject {
+    var instance: any ConversationMessageCellDescription {
         instanceGetter()
     }
 
