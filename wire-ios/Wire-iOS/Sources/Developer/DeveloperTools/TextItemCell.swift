@@ -16,6 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// Preprocessing
-//
-GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
+import SwiftUI
+
+struct TextItemCell: View {
+
+    let title: String
+    let value: String
+    let onCopy: () -> Void
+
+    var body: some View {
+        HStack {
+            Text(title)
+
+            Spacer()
+
+            Text(value)
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .foregroundColor(.secondary)
+        }
+        .contextMenu {
+            Button(
+                hapticFeedbackStyle: .success,
+                action: {
+                    onCopy()
+                },
+                label: {
+                    Label("Copy", systemImage: "doc.on.doc")
+                }
+            )
+        }
+    }
+}

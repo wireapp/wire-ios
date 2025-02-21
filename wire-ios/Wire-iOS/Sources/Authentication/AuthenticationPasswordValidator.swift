@@ -16,23 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
+import WireReusableUIComponents
 
-final class DeveloperDebugActionsViewModelTests: XCTestCase {
+struct AuthenticationPasswordValidator: PasswordValidator {
 
-    func testButtonsCount() throws {
-        // given
-        let viewModel = makeViewModel()
+    func isPasswordValid(_ password: String) -> Bool {
+        guard !password.isEmpty else {
+            return false
+        }
 
-        // when
-        // then
-        XCTAssertEqual(viewModel.buttons.count, 9)
+        switch PasswordRuleSet.shared.validatePassword(password) {
+        case .valid:
+            return true
+        case .invalid:
+            return false
+        }
     }
 
-    // MARK: - Helpers
-
-    private func makeViewModel() -> DeveloperDebugActionsViewModel {
-        DeveloperDebugActionsViewModel(selfClient: nil)
+    var localizedRulesDescription: String? {
+        PasswordRuleSet.localizedErrorMessage
     }
+
 }

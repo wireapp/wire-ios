@@ -16,23 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
+import SwiftUI
 
-final class DeveloperDebugActionsViewModelTests: XCTestCase {
+// A temporary bridging object to allow the new WireAuthentication flow inside
+// the existing AuthenticationController flow.
+final class AuthenticationHostingController<Content: View>: UIHostingController<Content>,
+    AuthenticationCoordinatedViewController {
 
-    func testButtonsCount() throws {
-        // given
-        let viewModel = makeViewModel()
+    var authenticationCoordinator: AuthenticationCoordinator?
 
-        // when
-        // then
-        XCTAssertEqual(viewModel.buttons.count, 9)
+    func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {
+        // no op
     }
 
-    // MARK: - Helpers
-
-    private func makeViewModel() -> DeveloperDebugActionsViewModel {
-        DeveloperDebugActionsViewModel(selfClient: nil)
+    func displayError(_ error: any Error) {
+        // no op
     }
+
 }

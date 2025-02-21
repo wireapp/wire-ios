@@ -16,5 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "ios.xcconfig"
-#include "swift.xcconfig"
+import Foundation
+
+final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandler {
+
+    typealias Context = Any
+
+    var statusProvider: AuthenticationStatusProvider?
+
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: Context
+    ) -> [AuthenticationCoordinatorAction]? {
+        switch currentStep {
+        case .wireAuthenticationModule:
+            // TODO: [WPB-16044] Return the appropriate step action here.
+            return nil
+
+        default:
+            assertionFailure("Got auth flow success but on wrong step: \(currentStep)")
+            return nil
+        }
+    }
+
+}

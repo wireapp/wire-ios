@@ -16,10 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "ios.xcconfig"
-#include "tests.xcconfig"
-#include "swift.xcconfig"
+import Foundation
 
-ARCHS[sdk=iphonesimulator*] = x86_64
-VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
-VALID_ARCHS[sdk=iphonesimulator*] = x86_64
+/// A object that facilitates intermodule communication, both **inbound**
+/// (from outside into this module) and **outbound** (from inside this module
+/// to the external world).
+
+public struct WireAuthenticationBridge {
+
+    private let onFlowCompletion: () -> Void
+
+    public init(onFlowCompletion: @escaping () -> Void) {
+        self.onFlowCompletion = onFlowCompletion
+    }
+
+    public func completeFlow() {
+        onFlowCompletion()
+    }
+
+}

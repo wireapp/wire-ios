@@ -55,7 +55,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func isValidPassword(_ password: String) -> Bool {
-        passwordValidator.validate(password)
+        passwordValidator.isPasswordValid(password)
     }
 
     func submitPassword(_ password: String) {
