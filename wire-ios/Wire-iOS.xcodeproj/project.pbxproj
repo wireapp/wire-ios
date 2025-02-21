@@ -25,6 +25,7 @@
 		014389612BC8203100EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 014389602BC8201700EC6920 /* PrivacyInfo.xcprivacy */; };
 		014389632BC8203700EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0143895F2BC8200600EC6920 /* PrivacyInfo.xcprivacy */; };
 		0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
+		015DA5EC2D68DA4F004EE8C9 /* emoticons.min.json in Resources */ = {isa = PBXBuildFile; fileRef = 015DA5EB2D68DA4F004EE8C9 /* emoticons.min.json */; };
 		016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; };
 		016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		017ABBBB299542BA0004C243 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C521ADA3F000E037A1 /* Images.xcassets */; };
@@ -788,6 +789,7 @@
 		0143895F2BC8200600EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		014389602BC8201700EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		015DA5EB2D68DA4F004EE8C9 /* emoticons.min.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = emoticons.min.json; sourceTree = "<group>"; };
 		016BDDEF2AA0AE670054FB04 /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Developer-Flags.xcconfig"; sourceTree = "<group>"; };
 		016DB6DD2C261A4900DEB81B /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFileDestination.swift; sourceTree = "<group>"; };
@@ -2250,6 +2252,7 @@
 				1EFB23DE1ACEDE5400244571 /* Localizable.stringsdict */,
 				EE0CAEB22AB048BB00BD2DB7 /* Emoji.strings */,
 				EE469EB52A9E3AE700620EA4 /* emojis.json */,
+				015DA5EB2D68DA4F004EE8C9 /* emoticons.min.json */,
 				067EF350288FCAB600B2659A /* Accessibility.strings */,
 				015DA5E12D68DA26004EE8C9 /* Sounds */,
 				015DA5D22D68DA19004EE8C9 /* Images */,
@@ -3433,6 +3436,7 @@
 				874C09361B4A8EF40077393B /* InfoPlist.strings in Resources */,
 				EE469EB62A9E3AE800620EA4 /* emojis.json in Resources */,
 				067EF352288FCAB700B2659A /* Accessibility.strings in Resources */,
+				015DA5EC2D68DA4F004EE8C9 /* emoticons.min.json in Resources */,
 				8FC8563E19924CBA0008B66B /* Localizable.strings in Resources */,
 				F122349921A715DA0038DCAC /* Backend.bundle in Resources */,
 				0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */,
