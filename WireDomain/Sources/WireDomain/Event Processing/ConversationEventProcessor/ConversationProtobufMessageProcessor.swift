@@ -210,12 +210,20 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
         date: Date,
         logAttributes: LogAttributes
     ) async throws {
-        let (assetClientMessage, isNew) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
-            id: message.messageID,
-            conversation: conversation,
-            sender: (sender.id, sender.domain, sender.clientID),
-            date: date
-        )
+        let (assetClientMessage, isNew): (ZMAssetClientMessage, Bool)
+        do {
+            (assetClientMessage, isNew) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
+                id: message.messageID,
+                conversation: conversation,
+                sender: (sender.id, sender.domain, sender.clientID),
+                date: date
+            )
+        } catch MessageLocalStore.Failure.invalidInsertion(reason: let reason) {
+            return WireLogger.eventProcessing.warn(
+                "failed to process asset message, dropping. Reason: \(reason)",
+                attributes: logAttributes
+            )
+        }
 
         await messageLocalStore.addAssetClientMessage(
             assetClientMessage,
@@ -234,12 +242,20 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
         date: Date,
         logAttributes: LogAttributes
     ) async throws {
-        let (clientMessage, isNew) = try await messageLocalStore.fetchOrCreateClientMessage(
-            id: message.messageID,
-            conversation: conversation,
-            sender: (sender.id, sender.domain, sender.clientID),
-            date: date
-        )
+        let (clientMessage, isNew): (ZMClientMessage, isNew: Bool)
+        do {
+            (clientMessage, isNew) = try await messageLocalStore.fetchOrCreateClientMessage(
+                id: message.messageID,
+                conversation: conversation,
+                sender: (sender.id, sender.domain, sender.clientID),
+                date: date
+            )
+        } catch MessageLocalStore.Failure.invalidInsertion(reason: let reason) {
+            return WireLogger.eventProcessing.warn(
+                "failed to process message, dropping. Reason: \(reason)",
+                attributes: logAttributes
+            )
+        }
 
         await messageLocalStore.addClientMessage(
             clientMessage,

@@ -24,7 +24,9 @@ import WireLogging
 public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     enum Failure: Error {
-        case failedToAddConversation
+
+        case invalidInsertion(reason: String)
+
     }
 
     /// When receiving a MLS/Proteus add message event, we treat them either as an `asset` client message or a `default`
@@ -317,11 +319,20 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         date: Date
     ) async throws -> (ZMOTRMessage, isNew: Bool) {
         try await context.perform { [self] in
-            guard let clearedTime = conversation.clearedTimeStamp,
-                  clearedTime.compare(date) != .orderedAscending,
-                  conversation.conversationType != .self,
-                  let nonce = UUID(uuidString: id) else {
-                throw Failure.failedToAddConversation
+
+            if
+                let clearedTime = conversation.clearedTimeStamp,
+                clearedTime.compare(date) != .orderedAscending
+            {
+                throw Failure.invalidInsertion(reason: "message is older than cleared time")
+            }
+
+            guard conversation.conversationType != .`self` else {
+                throw Failure.invalidInsertion(reason: "message cannot be sent to self")
+            }
+
+            guard let nonce = UUID(uuidString: id) else {
+                throw Failure.invalidInsertion(reason: "invalid nonce")
             }
 
             let clientMessage = messageType == .asset ?
