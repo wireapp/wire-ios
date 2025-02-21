@@ -90,6 +90,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 verificationCode: nil
             )
             bridge.completeFlow(cookies: cookies, accessToken: token)
+            WireLogger.authentication.info("login via email succeeded")
         } catch {
             switch error {
             case .invalidCredentials:
@@ -111,6 +112,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
             case .other:
                 alert = .unknownError
             }
+            WireLogger.authentication.info("login via email returned an error: \(error)")
         }
 
         isLoading = false
