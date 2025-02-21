@@ -24,6 +24,8 @@ struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
 
+    var focusPasswordFieldOnAppear = true
+
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
@@ -64,6 +66,7 @@ struct SetBackupPasswordView: View {
                 .disabled(!viewModel.isPasswordValid)
                 .wireButtonStyle(.primary)
                 .padding()
+                .accessibilityIdentifier("back up now")
         }
     }
 
@@ -97,7 +100,7 @@ struct SetBackupPasswordView: View {
             password: $viewModel.password,
             placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
             placeholderColor: passwordFieldPlaceholderColor,
-            focusOnAppear: true
+            focusOnAppear: focusPasswordFieldOnAppear
         )
         .tint(passwordFieldBorderColor)
     }

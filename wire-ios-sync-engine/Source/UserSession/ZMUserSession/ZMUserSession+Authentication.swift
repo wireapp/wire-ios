@@ -77,10 +77,11 @@ extension ZMUserSession {
             deleteUserKeychainItems()
         }
 
-        syncManagedObjectContext.dispatchGroup?.notify(on: .main) {
+        syncManagedObjectContext.perform {
             self.tearDown()
-            completion()
         }
+
+        completion()
     }
 
     public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
