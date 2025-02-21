@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-package struct BrowserView: UIViewControllerRepresentable {
+package struct SafariBrowser: UIViewControllerRepresentable {
 
     private let url: URL
 

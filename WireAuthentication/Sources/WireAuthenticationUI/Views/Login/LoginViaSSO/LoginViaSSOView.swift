@@ -28,6 +28,7 @@ package protocol LoginViaSSOBuilder {
 package struct LoginViaSSOView: View {
 
     @ObservedObject var viewModel: LoginViaSSOViewModel
+    @State private var showAlert = true
 
     package init(
         viewModel: LoginViaSSOViewModel
@@ -37,10 +38,16 @@ package struct LoginViaSSOView: View {
 
     package var body: some View {
         if let ssoURL = viewModel.ssoURL {
-            BrowserView(url: ssoURL)
+            SafariBrowser(url: ssoURL)
+        } else {
+            Text("SSO URL is not available.")
+                .alert("Error", isPresented: $showAlert) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text("Please try again later.")
+                }
         }
     }
-
 }
 
 #Preview {

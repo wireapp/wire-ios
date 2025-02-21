@@ -31,16 +31,16 @@ package struct DetermineAuthMethodView: View {
     @StateObject var viewModel: DetermineAuthMethodViewModel
     @Environment(\.modalDestination) private var modalDestination
 
-    let builder: any LoginViaEmailBuilder
+    let loginViaEmailBuilder: any LoginViaEmailBuilder
     let loginViaSSOBuilder: any LoginViaSSOBuilder
 
     package init(
         viewModel: DetermineAuthMethodViewModel,
-        builder: any LoginViaEmailBuilder,
+        loginViaEmailBuilder: any LoginViaEmailBuilder,
         loginViaSSOBuilder: any LoginViaSSOBuilder
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.builder = builder
+        self.loginViaEmailBuilder = loginViaEmailBuilder
         self.loginViaSSOBuilder = loginViaSSOBuilder
     }
 
@@ -106,22 +106,17 @@ package struct DetermineAuthMethodView: View {
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
-                builder.loginViaEmailView(email: email, canCreateAccount: false)
+                loginViaEmailBuilder.loginViaEmailView(email: email, canCreateAccount: false)
             case .loginOrRegister:
                 Color.red
             }
         }
-        .sheet(
-            item: modalDestination,
-            onDismiss: {
-                modalDestination.wrappedValue = nil
-            }, content: { destination in
-                switch destination {
-                case let .ssoLogin(code: ssoCode):
-                    loginViaSSOBuilder.loginViaSSOView(ssoCode: ssoCode)
-                }
+        .sheet(item: $viewModel.webView, content: { view in
+            switch view {
+            case let .ssoLogin(code: ssoCode):
+                loginViaSSOBuilder.loginViaSSOView(ssoCode: ssoCode)
             }
-        )
+        })
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)

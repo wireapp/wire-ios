@@ -48,7 +48,7 @@ final class MockDependencies {
                 isLoading: isLoading,
                 alert: alert
             ),
-            builder: self,
+            loginViaEmailBuilder: self,
             loginViaSSOBuilder: self
         )
     }
@@ -104,7 +104,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     var determineAuthMethodView: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
-            builder: self,
+            loginViaEmailBuilder: self,
             loginViaSSOBuilder: self
         )
     }
