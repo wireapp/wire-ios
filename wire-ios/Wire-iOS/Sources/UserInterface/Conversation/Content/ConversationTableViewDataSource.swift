@@ -501,11 +501,19 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
                 tableView.register(MessageCell.self, forCellReuseIdentifier: "MessageCell")
             }
 
-            let message = messages[indexPath.section]
+            print(section.elements)
+
+            let attributedText: NSAttributedString?
+            if let textMessageCellDescription = section.elements.compactMap({ $0.instance as? ConversationTextMessageCellDescription }).first {
+                attributedText = textMessageCellDescription.configuration.attributedText
+            } else {
+                let message = messages[indexPath.section]
+                attributedText = message.normalizedText.map { NSAttributedString(string: $0) }
+            }
 
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
             var contentConfiguration = cell.defaultContentConfiguration()
-            contentConfiguration.text = message.normalizedText
+            contentConfiguration.attributedText = attributedText
             cell.contentConfiguration = contentConfiguration
             return cell
         }
