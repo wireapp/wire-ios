@@ -20,7 +20,6 @@ import SwiftUI
 
 extension View {
 
-
     /// Presents an alert with a message and title based on the provided `item`.
     ///
     /// - Parameters:
@@ -30,12 +29,12 @@ extension View {
     ///   - message: A closure that returns the message of the alert.
     ///   - actions: A closure that returns the actions of the alert.
 
-    nonisolated func alert<Item, Message, Action>(
+    nonisolated func alert<Item>(
         item: Binding<Item?>,
         title: (Item) -> Text,
-        @ViewBuilder message: (Item) -> Message,
-        @ViewBuilder actions: (Item) -> Action
-    ) -> some View where Action: View, Message: View, Item: Sendable {
+        @ViewBuilder message: (Item) -> some View,
+        @ViewBuilder actions: (Item) -> some View
+    ) -> some View where Item: Sendable {
         alert(
             item.wrappedValue.map { title($0) } ?? Text(verbatim: ""),
             isPresented: .init(

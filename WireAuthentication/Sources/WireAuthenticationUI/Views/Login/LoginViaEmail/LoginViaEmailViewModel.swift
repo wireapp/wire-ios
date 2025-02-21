@@ -38,6 +38,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published var password: String = "" {
         didSet { showPasswordRules = !isPasswordValid }
     }
+
     @Published private(set) var showPasswordRules = false
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
@@ -83,7 +84,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         isLoading = true
 
         do {
-            let (cookies, token) = try await self.loginViaEmailUseCase.invoke(
+            let (cookies, token) = try await loginViaEmailUseCase.invoke(
                 email: email,
                 password: password,
                 verificationCode: nil

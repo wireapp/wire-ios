@@ -38,9 +38,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.code = code
     }
 
-    func confirm() async {
-        // TODO: Implement - not part of a current ticket
-    }
+    func confirm() async {}
 
     func resend() async {
         // TODO: [WPB-15950] Implement

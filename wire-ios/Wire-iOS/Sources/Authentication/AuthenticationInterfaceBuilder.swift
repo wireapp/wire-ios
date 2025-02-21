@@ -98,7 +98,7 @@ final class AuthenticationInterfaceBuilder {
                 defaultAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
                 passwordValidator: AuthenticationPasswordValidator(),
-                onFlowCompletion: { cookies, token in
+                onFlowCompletion: { _, _ in
                     // TODO: [WPB-16044] Pass the cookies and token
                     authenticationCoordinator?.eventResponderChain.handleEvent(
                         ofType: .wireAuthenticationModuleComplete
