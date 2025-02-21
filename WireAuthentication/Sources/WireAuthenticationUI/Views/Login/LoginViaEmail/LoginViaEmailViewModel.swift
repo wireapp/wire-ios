@@ -72,7 +72,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription
     }
 
-    func isValidPassword(_ password: String) -> Bool {
+    var isPasswordValid: Bool {
         passwordValidator.isPasswordValid(password)
     }
 
