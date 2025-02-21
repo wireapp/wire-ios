@@ -28,7 +28,7 @@ public struct IncrementalSync {
     private let decryptor: any UpdateEventDecryptorProtocol
     private let store: any UpdateEventsLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
-    private let logger = WireLogger(tag: "incremental-sync")
+    private let logger = WireLogger.sync
 
     public init(
         selfClientID: String,
@@ -109,6 +109,7 @@ public struct IncrementalSync {
                 }
             }
 
+            logger.debug("deleting processed events")
             try await store.deleteNextPendingEvents(limit: batchSize)
         }
     }
