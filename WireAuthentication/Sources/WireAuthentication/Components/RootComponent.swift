@@ -21,19 +21,29 @@ import SwiftUI
 import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
+import WireAuthenticationAPI
 
 class RootComponent: BootstrapComponent {
 
-    public let authenticationAPI: AuthenticationAPI
+    public let bridge: WireAuthenticationBridge
+    public let defaultBackendEnvironment: BackendEnvironment
+    public let defaultAPIVersion: APIVersion
+    public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let passwordValidator: any PasswordValidator
 
     init(
-        authenticationAPI: AuthenticationAPI,
+        bridge: WireAuthenticationBridge,
+        defaultBackendEnvironment: BackendEnvironment,
+        defaultAPIVersion: APIVersion,
+        minTLSVersion: TLSVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator
     ) {
-        self.authenticationAPI = authenticationAPI
+        self.bridge = bridge
+        self.defaultBackendEnvironment = defaultBackendEnvironment
+        self.defaultAPIVersion = defaultAPIVersion
+        self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.passwordValidator = passwordValidator
     }

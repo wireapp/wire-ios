@@ -105,6 +105,9 @@
       location = "group:Jenkinsfile">
    </FileRef>
    <FileRef
+      location = "group:WireCoreCrypto">
+   </FileRef>
+   <FileRef
       location = "group:setup.sh">
    </FileRef>
    <Group

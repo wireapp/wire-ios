@@ -82,9 +82,10 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
     func invoke(
         email: String,
-        password: String
-    ) async throws(LoginViaEmailUseCaseFailure) {
-        // Success
+        password: String,
+        verificationCode: String?
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], String) {
+        ([], "")
     }
 
 }
@@ -137,7 +138,7 @@ private struct MockPasswordValidator: PasswordValidator {
         self.validationCallback = validationCallback
     }
 
-    func validate(_ password: String) -> Bool {
+    func isPasswordValid(_ password: String) -> Bool {
         validationCallback(password)
     }
 

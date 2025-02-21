@@ -28,9 +28,3 @@ public extension EnvironmentValues {
         set { self[WireAccentColorKey.self] = newValue }
     }
 }
-
-public extension View {
-    func wireAccentColor(_ accentColor: WireAccentColor) -> some View {
-        environment(\.wireAccentColor, accentColor)
-    }
-}

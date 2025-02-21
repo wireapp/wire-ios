@@ -20,11 +20,10 @@ import Foundation
 
 @objc(ZMApplicationStatus)
 public protocol ApplicationStatus: AnyObject {
+
     var synchronizationState: SynchronizationState { get }
     var operationState: OperationState { get }
     var clientRegistrationDelegate: ClientRegistrationDelegate { get }
     var requestCancellation: ZMRequestCancellation { get }
-
-    func requestResyncResources()
 
 }

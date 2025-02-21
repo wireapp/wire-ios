@@ -18,10 +18,16 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
 
 struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
+
+    var focusPasswordFieldOnAppear = true
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     private typealias Strings = L10n.Localizable
     private typealias Labels = L10n.Accessibility.ExportBackup
@@ -36,7 +42,6 @@ struct SetBackupPasswordView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(Strings.ExportBackup.Cancel.title, action: viewModel.cancel)
-                            .foregroundStyle(ColorTheme.Base.primary.color)
                             .accessibilityLabel(Labels.Cancel.label)
                             .accessibilityIdentifier("cancel")
                     }
@@ -68,36 +73,37 @@ struct SetBackupPasswordView: View {
     @ViewBuilder
     private func scrollViewContent() -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Spacer()
 
             Text(Strings.ExportBackup.description)
                 .font(.body)
                 .padding(.bottom, 28)
 
-            Text(Strings.ExportBackup.SetBackupPassword.title)
-                .foregroundStyle(passwordFieldTitleColor)
-                .font(.subheadline)
-                .padding(.bottom, 2)
+            passwordField
+                .padding(.bottom, 8)
 
-            ToggleablePasswordField(
-                password: $viewModel.password,
-                placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
-                placeholderColor: passwordFieldPlaceholderColor,
-                borderColor: passwordFieldBorderColor,
-                focusOnAppear: true
-            )
-            .padding(.bottom, 8)
+            footer
 
-            Text(viewModel.localizedPasswordRules)
-                .foregroundStyle(passwordFooterColor)
-                .font(.caption)
-
-            Spacer()
         }
         .padding()
     }
 
-    // TODO: [WPB-16061] the following code is almost identical to the one in EnterPasswordView.swift, try to reuse
+    // TODO: [WPB-16061] the following code is similar to the one in EnterPasswordView.swift, try to reuse
+
+    @ViewBuilder private var passwordField: some View {
+
+        Text(Strings.ExportBackup.SetBackupPassword.title)
+            .foregroundStyle(passwordFieldTitleColor)
+            .font(.subheadline)
+            .padding(.bottom, 2)
+
+        ToggleablePasswordField(
+            password: $viewModel.password,
+            placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
+            placeholderColor: passwordFieldPlaceholderColor,
+            focusOnAppear: focusPasswordFieldOnAppear
+        )
+        .tint(passwordFieldBorderColor)
+    }
 
     private var passwordFieldTitleColor: Color {
         if !viewModel.isPasswordValid {
@@ -108,7 +114,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray40
             }.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
@@ -121,7 +127,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray60
             }.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
@@ -134,18 +140,29 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray80
             }.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
-    private var passwordFooterColor: Color {
+    @ViewBuilder private var footer: some View {
+
+        let footer = Text(viewModel.localizedPasswordRules)
+            .font(.caption)
+
         if !viewModel.isPasswordValid {
-            ColorTheme.Base.error.color
+
+            footer
+                .foregroundStyle(ColorTheme.Base.error.color)
+
         } else {
-            UIColor { $0.userInterfaceStyle != .dark
+
+            let footerColor = UIColor { $0.userInterfaceStyle != .dark
                 ? BaseColorPalette.Grays.gray70
                 : BaseColorPalette.Grays.gray40
-            }.color
+            }
+            footer
+                .foregroundStyle(footerColor.color)
+
         }
     }
 
@@ -153,4 +170,5 @@ struct SetBackupPasswordView: View {
 
 #Preview {
     SetBackupPasswordPreview()
+        .tint(.purple)
 }

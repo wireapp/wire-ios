@@ -29,8 +29,14 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var router: any Router {
         return rootComponent.router
     }
-    var authenticationAPI: AuthenticationAPI {
-        return rootComponent.authenticationAPI
+    var defaultBackendEnvironment: BackendEnvironment {
+        return rootComponent.defaultBackendEnvironment
+    }
+    var defaultAPIVersion: APIVersion {
+        return rootComponent.defaultAPIVersion
+    }
+    var minTLSVersion: TLSVersion {
+        return rootComponent.minTLSVersion
     }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
@@ -51,22 +57,29 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
     }
+    var authenticationAPI: AuthenticationAPI {
+        return determineAuthMethodComponent.authenticationAPI
+    }
+    private let determineAuthMethodComponent: DetermineAuthMethodComponent
     private let rootComponent: RootComponent
-    init(rootComponent: RootComponent) {
+    init(determineAuthMethodComponent: DetermineAuthMethodComponent, rootComponent: RootComponent) {
+        self.determineAuthMethodComponent = determineAuthMethodComponent
         self.rootComponent = rootComponent
     }
 }
 /// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent
-private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider(rootComponent: parent2(component) as! RootComponent)
+private func factory9bda312c16141c932061c770221f242f9204cf85(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider(determineAuthMethodComponent: parent1(component) as! DetermineAuthMethodComponent, rootComponent: parent2(component) as! RootComponent)
 }
 
 #else
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-any Router"
-        keyPathToName[\DetermineAuthMethodComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
-
+        keyPathToName[\DetermineAuthMethodComponentDependency.defaultBackendEnvironment] = "defaultBackendEnvironment-BackendEnvironment"
+        keyPathToName[\DetermineAuthMethodComponentDependency.defaultAPIVersion] = "defaultAPIVersion-APIVersion"
+        keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
+        localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
     }
 }
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
@@ -74,14 +87,18 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
         keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
         keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
+        keyPathToName[\LoginViaEmailComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
+        localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
+        localTable["defaultBackendEnvironment-BackendEnvironment"] = { [unowned self] in self.defaultBackendEnvironment as Any }
+        localTable["defaultAPIVersion-APIVersion"] = { [unowned self] in self.defaultAPIVersion as Any }
+        localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
         localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
-        localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
 }
@@ -102,7 +119,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent", factory9bda312c16141c932061a9403e3301bb54f80df0)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent", factory9bda312c16141c932061c770221f242f9204cf85)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
 }
 #endif
