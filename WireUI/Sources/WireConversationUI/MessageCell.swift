@@ -20,6 +20,10 @@ import SwiftUI
 
 public final class MessageCell: UITableViewCell {
 
+    public var message = Message() {
+        didSet { updateContent() }
+    }
+
     public override func prepareForReuse() {
         super.prepareForReuse()
 
@@ -27,7 +31,21 @@ public final class MessageCell: UITableViewCell {
 //        contentConfiguration.text = "todo"
 //        self.contentConfiguration = contentConfiguration
     }
+
+    private func updateContent() {
+        contentConfiguration = UIHostingConfiguration { // TODO: check docs for swipe action
+            MessageContentView(text: message.id.uuidString)
+        }
+    }
 }
+
+public struct Message: Hashable, Identifiable {
+    public var id = MessageID()
+}
+
+public typealias MessageID = UUID
+
+var dataSourceX: AnyObject?
 
 @MainActor
 public func MessageCellPreview() -> UIViewController {
@@ -38,9 +56,8 @@ public func MessageCellPreview() -> UIViewController {
         tableView: tableViewController.tableView
     ) { tableView, indexPath, itemID in
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
-        cell.contentConfiguration = UIHostingConfiguration { // TODO: check docs for swipe action
-            Text(verbatim: itemID.uuidString)
-                .background(Color.green)
+        if let cell = cell as? MessageCell {
+            cell.message = .init(id: itemID)
         }
         return cell
     }
@@ -50,6 +67,8 @@ public func MessageCellPreview() -> UIViewController {
     snapshot.appendSections([.single])
     snapshot.appendItems([.init()])
     dataSource.apply(snapshot, animatingDifferences: false)
+
+    dataSourceX = dataSource
 
     return tableViewController
 
