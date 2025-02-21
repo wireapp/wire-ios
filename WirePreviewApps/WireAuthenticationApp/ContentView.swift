@@ -33,7 +33,8 @@ struct ContentView: View {
             defaultAPIVersion: configuration.defaultAPIVersion,
             accountsURL: configuration.accountsURL,
             passwordValidator: configuration.passwordValidator,
-            onFlowCompletion: { _, _ in }
+            onFlowCompletion: { _, _ in },
+            onCreateAccount: {}
         )
     }
 

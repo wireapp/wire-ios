@@ -25,13 +25,22 @@ import Foundation
 public struct WireAuthenticationBridge {
 
     private let onFlowCompletion: ([HTTPCookie], AccessToken) -> Void
+    private let onCreateAccount: () -> Void
 
-    public init(onFlowCompletion: @escaping ([HTTPCookie], AccessToken) -> Void) {
+    public init(
+        onFlowCompletion: @escaping ([HTTPCookie], AccessToken) -> Void,
+        onCreateAccount: @escaping () -> Void
+    ) {
         self.onFlowCompletion = onFlowCompletion
+        self.onCreateAccount = onCreateAccount
     }
 
     public func completeFlow(cookies: [HTTPCookie], accessToken: AccessToken) {
         onFlowCompletion(cookies, accessToken)
+    }
+
+    public func createAccount() {
+        onCreateAccount()
     }
 
 }

@@ -119,6 +119,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
         UIApplication.shared.open(forgotPasswordURL)
     }
 
-    func createAccount() {}
+    func createAccount() {
+        bridge.createAccount()
+    }
 
 }
