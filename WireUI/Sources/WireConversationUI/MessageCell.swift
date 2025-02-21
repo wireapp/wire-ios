@@ -29,31 +29,48 @@ public final class MessageCell: UITableViewCell {
     }
 }
 
+@MainActor
+public func MessageCellPreview() -> UIViewController {
+
+    let tableViewController = UITableViewController()
+    tableViewController.tableView.register(MessageCell.self, forCellReuseIdentifier: "MessageCell")
+    let dataSource = UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>(
+        tableView: tableViewController.tableView
+    ) { tableView, indexPath, itemID in
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
+        cell.contentConfiguration = UIHostingConfiguration { // TODO: check docs for swipe action
+            Text(verbatim: itemID.uuidString)
+                .background(Color.green)
+        }
+        return cell
+    }
+    tableViewController.tableView.dataSource = dataSource
+
+    var snapshot = dataSource.snapshot()
+    snapshot.appendSections([.single])
+    snapshot.appendItems([.init()])
+    dataSource.apply(snapshot, animatingDifferences: false)
+
+    return tableViewController
+
+    enum SectionIdentifier: Hashable { case single }
+    typealias ItemIdentifier = UUID
+
+}
+
 @available(iOS 17, *)
 #Preview {
-    {
-        let tableViewController = UITableViewController()
-        tableViewController.tableView.register(MessageCell.self, forCellReuseIdentifier: "MessageCell")
-        let dataSource = UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>(
-            tableView: tableViewController.tableView
-        ) { tableView, indexPath, itemID in
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
-            cell.contentConfiguration = UIHostingConfiguration { // TODO: check docs for swipe action
-                Text(verbatim: itemID.uuidString)
-                    .background(Color.green)
-            }
-            return cell
-        }
-        tableViewController.tableView.dataSource = dataSource
+    MessageCellPreview()
+}
 
-        var snapshot = dataSource.snapshot()
-        snapshot.appendSections([.single])
-        snapshot.appendItems([.init()])
-        dataSource.apply(snapshot, animatingDifferences: false)
+public struct MessageCellPreviewRepresentable: UIViewControllerRepresentable {
 
-        return tableViewController
+    public init() {}
 
-        enum SectionIdentifier: Hashable { case single }
-        typealias ItemIdentifier = UUID
-    }()
+    public func makeUIViewController(context: Context) -> UIViewController {
+        MessageCellPreview()
+    }
+
+    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+
 }
