@@ -2589,19 +2589,20 @@ public class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
 
 }
 
-class MockUpdateEventProcessorProtocol: UpdateEventProcessorProtocol {
+public class MockUpdateEventProcessorProtocol: UpdateEventProcessorProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - processEvent
 
-    var processEvent_Invocations: [UpdateEvent] = []
-    var processEvent_MockError: Error?
-    var processEvent_MockMethod: ((UpdateEvent) async throws -> Void)?
+    public var processEvent_Invocations: [UpdateEvent] = []
+    public var processEvent_MockError: Error?
+    public var processEvent_MockMethod: ((UpdateEvent) async throws -> Void)?
 
-    func processEvent(_ event: UpdateEvent) async throws {
+    public func processEvent(_ event: UpdateEvent) async throws {
         processEvent_Invocations.append(event)
 
         if let error = processEvent_MockError {

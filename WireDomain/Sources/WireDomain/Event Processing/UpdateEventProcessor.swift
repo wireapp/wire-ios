@@ -19,7 +19,7 @@
 import Foundation
 import WireAPI
 
-struct UpdateEventProcessor {
+struct UpdateEventProcessor: UpdateEventProcessorProtocol {
 
     let conversationEventProcessor: any ConversationEventProcessorProtocol
     let featureconfigEventProcessor: any FeatureConfigEventProcessorProtocol
