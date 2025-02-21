@@ -18,10 +18,10 @@
 
 import Foundation
 
-extension ClientSessionComponent: InitialSyncBuilderProtocol {
+// sourcery: AutoMockable
+/// An object that provides an instance of `IncrementalSync`.
+public protocol IncrementalSyncProvider {
 
-    public func buildInitialSync() throws -> any InitialSyncProtocol {
-        initialSync
-    }
+    func provideIncrementalSync() throws -> IncrementalSync
 
 }

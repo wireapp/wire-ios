@@ -30,8 +30,11 @@ final class SyncAgent: NSObject {
 
     weak var delegate: SyncAgentDelegate?
     private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
-    private let initialSyncBuilder: any InitialSyncBuilderProtocol
+    private let initialSyncProvider: any InitialSyncProvider
+    private let incrementalSyncProvider: any IncrementalSyncProvider
     private let legacySyncStatus: any SyncStatusProtocol
+
+    private var incrementalSyncTask: Task<Void, any Error>?
 
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -41,11 +44,13 @@ final class SyncAgent: NSObject {
 
     init(
         lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
-        initialSyncBuilder: any InitialSyncBuilderProtocol,
+        initialSyncProvider: any InitialSyncProvider,
+        incrementalSyncProvider: any IncrementalSyncProvider,
         legacySyncStatus: any SyncStatusProtocol
     ) {
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
-        self.initialSyncBuilder = initialSyncBuilder
+        self.initialSyncProvider = initialSyncProvider
+        self.incrementalSyncProvider = incrementalSyncProvider
         self.legacySyncStatus = legacySyncStatus
         super.init()
     }
@@ -72,7 +77,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new initial sync")
-                try await initialSyncBuilder.buildInitialSync().perform(skipPullingLastUpdateEventID: false)
+                try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: false)
                 WireLogger.sync.debug("did finish new initial sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
@@ -94,7 +99,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new resource sync")
-                try await initialSyncBuilder.buildInitialSync().perform(skipPullingLastUpdateEventID: true)
+                try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: true)
                 WireLogger.sync.debug("did finish new resource sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
@@ -112,7 +117,21 @@ final class SyncAgent: NSObject {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        await legacySyncStatus.performQuickSync()
+        if DeveloperFlag.newInitialSync.isOn {
+            do {
+                // TODO: guard task isn't already running
+                delegate?.syncAgentDidStartIncrementalSync(self)
+                WireLogger.sync.debug("did start new resource sync")
+                incrementalSyncTask = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                WireLogger.sync.debug("did finish new resource sync")
+                delegate?.syncAgentDidFinishIncrementalSync(self)
+            } catch {
+                WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
+                throw error
+            }
+        } else {
+            await legacySyncStatus.performQuickSync()
+        }
     }
 
 }
