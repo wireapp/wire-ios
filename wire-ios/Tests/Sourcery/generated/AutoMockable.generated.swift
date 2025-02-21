@@ -193,44 +193,6 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
 
 }
 
-class MockBackupSource: BackupSource {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - backupActiveAccount
-
-    var backupActiveAccountPasswordCompletion_Invocations: [(password: String, completion: (Result<URL, Error>) -> Void)] = []
-    var backupActiveAccountPasswordCompletion_MockMethod: ((String, @escaping (Result<URL, Error>) -> Void) -> Void)?
-
-    func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) {
-        backupActiveAccountPasswordCompletion_Invocations.append((password: password, completion: completion))
-
-        guard let mock = backupActiveAccountPasswordCompletion_MockMethod else {
-            fatalError("no mock for `backupActiveAccountPasswordCompletion`")
-        }
-
-        mock(password, completion)
-    }
-
-    // MARK: - clearPreviousBackups
-
-    var clearPreviousBackups_Invocations: [Void] = []
-    var clearPreviousBackups_MockMethod: (() -> Void)?
-
-    func clearPreviousBackups() {
-        clearPreviousBackups_Invocations.append(())
-
-        guard let mock = clearPreviousBackups_MockMethod else {
-            fatalError("no mock for `clearPreviousBackups`")
-        }
-
-        mock()
-    }
-
-}
-
 class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
 
     // MARK: - Life cycle

@@ -18,15 +18,19 @@
 
 import SwiftUI
 
-package struct BackgroundView: View {
-    package init() {}
+public struct BackgroundView: View {
+    public init() {}
 
-    package var body: some View {
-        Image(ImageResource(name: "background", bundle: .module))
-            .resizable()
-            .scaledToFill()
-            .ignoresSafeArea()
-            .background(.black)
+    public var body: some View {
+        GeometryReader { geometry in
+            Image(ImageResource(name: "background", bundle: .module))
+                .resizable()
+                .scaledToFill()
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .clipped()
+                .background(.black)
+        }
+        .ignoresSafeArea()
     }
 }
 

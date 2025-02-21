@@ -17,6 +17,9 @@
 //
 
 import UIKit
+import WireAPI
+import WireAuthentication
+import WireCommonComponents
 import WireDataModel
 
 /// A type of view controller that can be managed by an authentication coordinator.
@@ -34,6 +37,10 @@ final class AuthenticationInterfaceBuilder {
 
     var backendEnvironment: BackendEnvironmentProvider {
         backendEnvironmentProvider()
+    }
+
+    private var environment: WireTransport.BackendEnvironment {
+        BackendEnvironment.shared
     }
 
     // MARK: - Initialization
@@ -60,8 +67,43 @@ final class AuthenticationInterfaceBuilder {
     /// - returns: The view controller to use for this step, or `nil` if the interface builder
     /// does not support this step.
 
-    func makeViewController(for step: AuthenticationFlowStep) -> AuthenticationStepViewController? {
+    @MainActor
+    func makeViewController(
+        for step: AuthenticationFlowStep,
+        authenticationCoordinator: AuthenticationCoordinator?
+    ) -> AuthenticationStepViewController? {
         switch step {
+        case .wireAuthenticationModule:
+            let assembly = WireAuthenticationAssembly()
+            let rootView = assembly.assemble(
+                defaultBackendEnvironment: BackendEnvironment(
+                    url: environment.backendURL,
+                    webSocketURL: environment.backendWSURL,
+                    pinnedKeys: environment.trustData.map { trustData in
+                        PinnedKey(
+                            key: trustData.certificateKey,
+                            hosts: trustData.hosts.map { host in
+                                switch host.rule {
+                                case .equals:
+                                    .equals(host.value)
+                                case .endsWith:
+                                    .endsWith(host.value)
+                                }
+                            }
+                        )
+                    },
+                    proxySettings: nil
+                ),
+                minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
+                defaultAPIVersion: .v8,
+                accountsURL: environment.accountsURL,
+                passwordValidator: AuthenticationPasswordValidator()
+            ) {
+                authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
+            }
+
+            return AuthenticationHostingController(rootView: rootView)
+
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
             landingViewController.configure(with: featureProvider)
@@ -113,7 +155,7 @@ final class AuthenticationInterfaceBuilder {
             return RemoveClientStepViewController(clients: clients)
 
         case let .noHistory(_, context):
-            let backupStep = BackupRestoreStepDescription(context: context)
+            let backupStep = NoHistoryHintStepDescription(context: context)
             return makeViewController(for: backupStep)
 
         case let .enterEmailVerificationCode(email, _, _):

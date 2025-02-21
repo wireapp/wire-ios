@@ -327,6 +327,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = "foo"
         let error = MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch
         mockDecryptionService.decryptMessageForSubconversationType_MockError = error
+        mockSyncStatus.mockPerformQuickSync = {}
 
         let expectation = XCTestExpectation(description: "repaired conversation")
         await uiMOC.perform {
@@ -379,7 +380,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
 
         // When
-        try await sut.createGroup(for: groupID)
+        try await _ = sut.createGroup(for: groupID)
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
@@ -408,7 +409,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // when / then
         do {
-            try await sut.createGroup(for: groupID)
+            try await _ = sut.createGroup(for: groupID)
             XCTFail("Unexpected success")
         } catch MLSService.MLSGroupCreationError.failedToCreateGroup {
             // Then
@@ -493,7 +494,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
 
         // When
-        try await sut.establishGroup(for: groupID, with: [])
+        try await _ = sut.establishGroup(for: groupID, with: [])
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
@@ -550,7 +551,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
 
         // When
-        try await sut.establishGroup(for: groupID, with: users)
+        try await _ = sut.establishGroup(for: groupID, with: users)
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
@@ -600,7 +601,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // When
         await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: usersIncludingSelf)) {
-            try await sut.establishGroup(for: groupID, with: users)
+            try await _ = sut.establishGroup(for: groupID, with: users)
         }
 
         // Then
@@ -1216,7 +1217,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
 
         // Then we try to commit pending proposals twice, once for the subgroup, once for the parent
-        var mockCommitPendingProposalArguments = await commitPendingProposalsArgumentsActor.items
+        let mockCommitPendingProposalArguments = await commitPendingProposalsArgumentsActor.items
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
         let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
 
@@ -1477,6 +1478,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
+        mockSyncStatus.mockPerformQuickSync = {}
 
         let expectation = XCTestExpectation(description: "rejoined conversation")
 
@@ -1508,6 +1510,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return
         }
 
+        mockSyncStatus.mockPerformQuickSync = {}
+
         let expectation = XCTestExpectation(description: "didn't rejoin conversation")
         expectation.isInverted = true
 
@@ -1535,6 +1539,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
+        mockSyncStatus.mockPerformQuickSync = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
@@ -1575,6 +1580,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
+        mockSyncStatus.mockPerformQuickSync = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
@@ -2024,6 +2030,60 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
+    }
+
+    func test_RetryOnCommitFailure_Keep_Throwing_Commit_Error_Prevents_Infinite_Loop() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Since `retryOnCommitFailure` is a recursive function for specific error
+        // `CommitError.failedToSendCommit(recovery: .retryAfterQuickSync`, we'll try to create an infinite loop by keep throwing the same error over and over again.
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+        }
+
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+        }
+
+        // Mock quick sync.
+        mockSyncStatus.mockPerformQuickSync = {}
+
+        do {
+            // When
+            try await sut.updateKeyMaterial(for: groupID)
+        } catch let error as SendMLSMessageAction.Failure {
+            // Then, infinite loop is broken after a few attempts, it throws an error
+            XCTAssertEqual(error, .mlsStaleMessage)
+        }
+    }
+
+    func test_RetryOnCommitFailure_Keep_Throwing_External_Commit_Error_Prevents_Infinite_Loop() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Since `retryOnCommitFailure` is a recursive function for specific error
+        // `ExternalCommitError.failedToSendCommit(recovery: .retry)`, we'll try to create an infinite loop by keep throwing the same error over and over again.
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
+        }
+
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
+        }
+
+        // Mock quick sync.
+        mockSyncStatus.mockPerformQuickSync = {}
+
+        do {
+            // When
+            try await sut.updateKeyMaterial(for: groupID)
+        } catch let error as SendMLSMessageAction.Failure {
+            // Then, infinite loop is broken after a few attempts, it throws an error
+            XCTAssertEqual(error, .mlsStaleMessage)
+        }
     }
 
     func test_RetryOnCommitFailure_ChainMultipleRecoverableOperations() async throws {

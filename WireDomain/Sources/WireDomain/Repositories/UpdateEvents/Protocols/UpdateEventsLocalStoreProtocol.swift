@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol UpdateEventsLocalStoreProtocol {
+public protocol UpdateEventsLocalStoreProtocol {
 
     /// Get last event ID.
     /// - returns: The last event ID.

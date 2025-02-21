@@ -182,7 +182,7 @@ package struct SwitchBackendConfirmationView: View {
     BackgroundView()
         .overlay(
             ZStack {
-                SwitchBackendConfirmationViewPreview()
+                SwitchBackendConfirmationPreview()
                     .padding()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -190,13 +190,15 @@ package struct SwitchBackendConfirmationView: View {
 }
 
 #Preview("Large fonts") {
-    BackgroundView()
-        .overlay(
-            ZStack {
-                SwitchBackendConfirmationViewPreview()
-                    .padding()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
-        )
+    VStack {
+        BackgroundView()
+            .overlay(
+                ZStack {
+                    SwitchBackendConfirmationPreview()
+                        .padding()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            )
+    }
+    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
 }
