@@ -103,7 +103,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     // MARK: - Live events
 
     func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
-        try pushChannel.open().compactMap {
+        try await pushChannel.open().compactMap {
             do {
                 WireLogger.sync.debug(
                     "decrypting live event",
@@ -123,7 +123,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
     func stopReceivingLiveEvents() async {
-        pushChannel.close()
+        await pushChannel.close()
     }
 
     func storeLastEventEnvelopeID(_ id: UUID) {

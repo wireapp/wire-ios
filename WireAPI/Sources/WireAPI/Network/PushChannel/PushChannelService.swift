@@ -37,7 +37,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
     private let networkService: NetworkService
     private let authenticationManager: any AuthenticationManagerProtocol
 
-    init(
+    public init(
         networkService: NetworkService,
         authenticationManager: any AuthenticationManagerProtocol
     ) {

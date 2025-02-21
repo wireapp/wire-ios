@@ -19,20 +19,20 @@
 import Foundation
 import WireFoundation
 
-final class PushChannel: PushChannelProtocol {
+public final class PushChannel: PushChannelProtocol {
 
-    typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
+    public typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
     private let webSocket: any WebSocketProtocol
     private let decoder = JSONDecoder()
 
-    init(webSocket: any WebSocketProtocol) {
+    public init(webSocket: any WebSocketProtocol) {
         self.webSocket = webSocket
     }
 
-    func open() throws -> Stream {
+    public func open() async throws -> Stream {
         print("opening new push channel")
-        return try webSocket.open().map { [weak self, decoder] message in
+        return try await webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
                 case let .data(data):
@@ -50,15 +50,15 @@ final class PushChannel: PushChannelProtocol {
                 }
             } catch {
                 print("failed to get next web socket message: \(error)")
-                self?.close()
+                await self?.close()
                 throw error
             }
         }.toStream()
     }
 
-    func close() {
+    public func close() async {
         print("closing push channel")
-        webSocket.close()
+        await webSocket.close()
     }
 
 }
