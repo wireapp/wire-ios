@@ -426,6 +426,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
     func reloadSections(newSections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
         previousSections = currentSections
+        defer { previousSections = [] }
 
         let stagedChangeset = StagedChangeset(source: previousSections, target: newSections)
 

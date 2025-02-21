@@ -322,7 +322,7 @@ extension UITableView {
         let cell = dequeueReusableCell(
             withIdentifier: reuseIdentifier,
             for: indexPath
-        ) as Any as! ConversationMessageCellTableViewAdapter<C>
+        ) as! ConversationMessageCellTableViewAdapter<C>
 
         cell.cellDescription = description
         cell.configure(
