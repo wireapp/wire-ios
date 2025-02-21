@@ -30,6 +30,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
     case newInitialSync
+    case useWireAuthentication
 
     public var description: String {
         switch self {
@@ -56,6 +57,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .newInitialSync:
             "Use the new and improved 'Initial Sync™' (formerly slow sync)"
+
+        case .useWireAuthentication:
+            "Use the new WireAuthentication feature module"
         }
     }
 
