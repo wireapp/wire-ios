@@ -20,9 +20,40 @@ import SwiftUI
 
 public final class MessageCell: UITableViewCell {
 
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+
+//        var contentConfiguration = defaultContentConfiguration()
+//        contentConfiguration.text = "todo"
+//        self.contentConfiguration = contentConfiguration
+    }
 }
 
 @available(iOS 17, *)
 #Preview {
-    Color.red
+    {
+        let tableViewController = UITableViewController()
+        tableViewController.tableView.register(MessageCell.self, forCellReuseIdentifier: "MessageCell")
+        let dataSource = UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>(
+            tableView: tableViewController.tableView
+        ) { tableView, indexPath, itemID in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
+            cell.contentConfiguration = UIHostingConfiguration { // TODO: check docs for swipe action
+                Text(verbatim: itemID.uuidString)
+                    .background(Color.green)
+            }
+            return cell
+        }
+        tableViewController.tableView.dataSource = dataSource
+
+        var snapshot = dataSource.snapshot()
+        snapshot.appendSections([.single])
+        snapshot.appendItems([.init()])
+        dataSource.apply(snapshot, animatingDifferences: false)
+
+        return tableViewController
+
+        enum SectionIdentifier: Hashable { case single }
+        typealias ItemIdentifier = UUID
+    }()
 }
