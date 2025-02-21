@@ -51,6 +51,9 @@ extension ZMConversationMessage {
 }
 
 final class ConversationTableViewDataSource: NSObject {
+
+    let indexForNewCellType = 3
+
     static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
 
     private var fetchController: NSFetchedResultsController<ZMMessage>?
@@ -438,8 +441,6 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
 }
 
-let indexForNewCellType = 3
-
 extension ConversationTableViewDataSource: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -501,19 +502,13 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
                 tableView.register(MessageCell.self, forCellReuseIdentifier: "MessageCell")
             }
 
-            print(section.elements)
-
-            let attributedText: NSAttributedString?
-            if let textMessageCellDescription = section.elements.compactMap({ $0.instance as? ConversationTextMessageCellDescription }).first {
-                attributedText = textMessageCellDescription.configuration.attributedText
-            } else {
-                let message = messages[indexPath.section]
-                attributedText = message.normalizedText.map { NSAttributedString(string: $0) }
-            }
+            let textMessageCellDescription = section.elements
+                .compactMap({ $0.instance as? ConversationTextMessageCellDescription })
+                .first
 
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
             var contentConfiguration = cell.defaultContentConfiguration()
-            contentConfiguration.attributedText = attributedText
+            contentConfiguration.attributedText = textMessageCellDescription?.configuration.attributedText
             cell.contentConfiguration = contentConfiguration
             return cell
         }
