@@ -27,6 +27,8 @@ internal import WireAuthenticationLogic
 
 public struct WireAuthenticationAssembly {
 
+    private let fallbackURLScheme = "wire-sso"
+
     public init() {
         registerProviderFactories()
     }
@@ -38,6 +40,8 @@ public struct WireAuthenticationAssembly {
         defaultAPIVersion: APIVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
+        callbackScheme: String?,
+        defaults: UserDefaults,
         onFlowCompletion: @escaping () -> Void
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
@@ -45,18 +49,13 @@ public struct WireAuthenticationAssembly {
             defaultAPIVersion: defaultAPIVersion,
             minTLSVersion: minTLSVersion,
             accountsURL: accountsURL, // this is temp
-            passwordValidator: passwordValidator
+            passwordValidator: passwordValidator,
+            callbackScheme: callbackScheme ?? fallbackURLScheme,
+            defaults: defaults,
+            onFlowCompletion: onFlowCompletion
         )
 
-        let bridge = WireAuthenticationBridge(
-            onFlowCompletion: onFlowCompletion,
-            onSuccessSSOFlowCompletion: {
-                rootComponent.router.navigate(to: DetermineAuthMethodView.Destination.noHistory)
-            },
-            onFailureSSOFlowCompletion: {}
-        )
-
-        return (view: rootComponent.rootView, bridge: bridge)
+        return (view: rootComponent.rootView, bridge: rootComponent.bridge)
     }
 
 }

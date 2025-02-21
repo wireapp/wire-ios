@@ -30,19 +30,28 @@ class RootComponent: BootstrapComponent {
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let passwordValidator: any PasswordValidator
+    public let callbackScheme: String
+    public let defaults: UserDefaults
+    let onFlowCompletion: () -> Void
 
     init(
         defaultBackendEnvironment: BackendEnvironment,
         defaultAPIVersion: APIVersion,
         minTLSVersion: TLSVersion,
         accountsURL: URL,
-        passwordValidator: any PasswordValidator
+        passwordValidator: any PasswordValidator,
+        callbackScheme: String,
+        defaults: UserDefaults,
+        onFlowCompletion: @escaping () -> Void
     ) {
         self.defaultBackendEnvironment = defaultBackendEnvironment
         self.defaultAPIVersion = defaultAPIVersion
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.passwordValidator = passwordValidator
+        self.callbackScheme = callbackScheme
+        self.defaults = defaults
+        self.onFlowCompletion = onFlowCompletion
     }
 
     @MainActor public var router: any Router {
@@ -57,6 +66,16 @@ class RootComponent: BootstrapComponent {
         RootView(
             viewModel: rootViewModel,
             builder: determineAuthMethodComponent
+        )
+    }
+
+    @MainActor var bridge: WireAuthenticationBridge {
+        WireAuthenticationBridge(
+            onFlowCompletion: onFlowCompletion,
+            onSuccessSSOFlowCompletion: {
+                SSOSuccessHandler(router: self.router).handleSuccess()
+            },
+            onFailureSSOFlowCompletion: {}
         )
     }
 

@@ -97,7 +97,9 @@ final class AuthenticationInterfaceBuilder {
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 defaultAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
-                passwordValidator: AuthenticationPasswordValidator()
+                passwordValidator: AuthenticationPasswordValidator(),
+                callbackScheme: Bundle.ssoURLScheme,
+                defaults: .shared()
             ) {
                 authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
             }
