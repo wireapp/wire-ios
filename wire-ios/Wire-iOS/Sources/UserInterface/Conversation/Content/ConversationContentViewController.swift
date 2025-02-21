@@ -500,6 +500,30 @@ extension ConversationContentViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         willSelectRow(at: indexPath, tableView: tableView)
     }
+
+    func tableView(
+        _ tableView: UITableView,
+        leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        let replyAction = UIContextualAction(style: .normal, title: "Reply") { action, view, completionHandler in // TODO: localize string, this is for accessibility
+            print("trigger reply")
+            completionHandler(true)
+        }
+
+        let arrowImage = UIImage(systemName: "arrowshape.turn.up.backward.fill")!
+            .withTintColor(.white, renderingMode: .alwaysTemplate)
+        let upsideDownImage = UIGraphicsImageRenderer(size: arrowImage.size).image { rendererContext in
+            rendererContext.cgContext.translateBy(x: arrowImage.size.width / 2, y: arrowImage.size.height / 2)
+            rendererContext.cgContext.scaleBy(x: 1.0, y: -1.0)
+            rendererContext.cgContext.translateBy(x: -arrowImage.size.width / 2, y: -arrowImage.size.height / 2)
+            arrowImage.draw(in: CGRect(origin: .zero, size: arrowImage.size))
+        }
+
+        replyAction.image = upsideDownImage
+        let configuration = UISwipeActionsConfiguration(actions: [replyAction])
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
+    }
 }
 
 extension ConversationContentViewController: UITableViewDataSourcePrefetching {
