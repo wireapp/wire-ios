@@ -128,9 +128,11 @@ final class SyncAgent: NSObject {
                     incrementalSyncTask = try await incrementalSyncProvider.provideIncrementalSync().perform()
                     WireLogger.sync.debug("did finish new resource sync")
                     delegate?.syncAgentDidFinishIncrementalSync(self)
+                    incrementalSyncTask = nil
                 }
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
+                incrementalSyncTask = nil
                 throw error
             }
         } else {
