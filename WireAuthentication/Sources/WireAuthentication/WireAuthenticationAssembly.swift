@@ -38,7 +38,7 @@ public struct WireAuthenticationAssembly {
         defaultAPIVersion: APIVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
-        onFlowCompletion: @escaping ([HTTPCookie], AccessToken) -> Void
+        onFlowCompletion: @escaping ([HTTPCookie], WireAuthenticationAPI.AccessToken) -> Void
     ) -> some View {
         let bridge = WireAuthenticationBridge(onFlowCompletion: onFlowCompletion)
         let rootComponent = RootComponent(

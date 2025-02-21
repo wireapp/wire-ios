@@ -84,8 +84,8 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], String) {
-        ([], "")
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken) {
+        ([], AccessToken(userID: UUID(), token: "", type: "", expirationDate: Date()))
     }
 
 }

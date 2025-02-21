@@ -20,8 +20,6 @@ import Foundation
 
 public protocol LoginViaEmailUseCaseProtocol: Sendable {
 
-    associatedtype AccessToken
-
     func invoke(
         email: String,
         password: String,

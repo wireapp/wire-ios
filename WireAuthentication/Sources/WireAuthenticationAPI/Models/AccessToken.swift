@@ -18,20 +18,32 @@
 
 import Foundation
 
-/// A object that facilitates intermodule communication, both **inbound**
-/// (from outside into this module) and **outbound** (from inside this module
-/// to the external world).
+/// A token used to make authenticated requests to
+/// the backend.
 
-public struct WireAuthenticationBridge {
+public struct AccessToken: Equatable, Sendable {
 
-    private let onFlowCompletion: ([HTTPCookie], AccessToken) -> Void
+    /// The user id of whom the token belongs.
 
-    public init(onFlowCompletion: @escaping ([HTTPCookie], AccessToken) -> Void) {
-        self.onFlowCompletion = onFlowCompletion
-    }
+    public let userID: UUID
 
-    public func completeFlow(cookies: [HTTPCookie], accessToken: AccessToken) {
-        onFlowCompletion(cookies, accessToken)
+    /// The authentication token.
+
+    public let token: String
+
+    /// The type of token.
+
+    public let type: String
+
+    /// The point in time the token expires.
+
+    public let expirationDate: Date
+
+    public init(userID: UUID, token: String, type: String, expirationDate: Date) {
+        self.userID = userID
+        self.token = token
+        self.type = type
+        self.expirationDate = expirationDate
     }
 
 }
