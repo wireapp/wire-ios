@@ -1732,7 +1732,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func commitPendingProposalsIfNeeded() {
         let now = Date()
-        
+
         guard now.timeIntervalSince(lastExecutionTime) > throttleInterval else {
             return // Ignore call if within the throttle period
         }
@@ -1740,7 +1740,7 @@ public final class MLSService: MLSServiceInterface {
         lastExecutionTime = now
 
         task?.cancel()
-        
+
         task = Task { [self] in
             guard !Task.isCancelled else { return }
             await commitPendingProposals()

@@ -142,14 +142,13 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     }
 
     public func recoverWithQuickSync() async {
-        self.isRecovering = true
+        isRecovering = true
         defer {
             self.isRecovering = false
         }
         await performQuickSync()
     }
-    
-    
+
     public func performQuickSync() async {
         await withCheckedContinuation { [weak self] continuation in
             guard let self else {
