@@ -35,6 +35,7 @@ final class PullResourcesSyncTests: XCTestCase {
     private var pullKnownUsersSync: MockPullKnownUsersSyncProtocol!
     private var pullConversationLabelsSync: MockPullConversationLabelsSyncProtocol!
     private var pullAllFeatureConfigsSync: MockPullAllFeatureConfigsSyncProtocol!
+    private var pullMLSStatusSync: MockPullMLSStatusSyncProtocol!
 
     override func setUp() async throws {
         pullSelfUserSync = MockPullSelfUserSyncProtocol()
@@ -48,6 +49,7 @@ final class PullResourcesSyncTests: XCTestCase {
         pullKnownUsersSync = MockPullKnownUsersSyncProtocol()
         pullConversationLabelsSync = MockPullConversationLabelsSyncProtocol()
         pullAllFeatureConfigsSync = MockPullAllFeatureConfigsSyncProtocol()
+        pullMLSStatusSync = MockPullMLSStatusSyncProtocol()
 
         sut = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
@@ -60,7 +62,8 @@ final class PullResourcesSyncTests: XCTestCase {
             pullAllConversationsSync: pullAllConversationsSync,
             pullKnownUsersSync: pullKnownUsersSync,
             pullConversationLabelsSync: pullConversationLabelsSync,
-            pullAllFeatureConfigsSync: pullAllFeatureConfigsSync
+            pullAllFeatureConfigsSync: pullAllFeatureConfigsSync,
+            pullMLSStatusSync: pullMLSStatusSync
         )
     }
 
@@ -76,6 +79,7 @@ final class PullResourcesSyncTests: XCTestCase {
         pullKnownUsersSync = nil
         pullConversationLabelsSync = nil
         pullAllFeatureConfigsSync = nil
+        pullMLSStatusSync = nil
         sut = nil
     }
 
@@ -96,6 +100,7 @@ final class PullResourcesSyncTests: XCTestCase {
         pullKnownUsersSync.pull_MockMethod = {}
         pullConversationLabelsSync.pull_MockMethod = {}
         pullAllFeatureConfigsSync.pull_MockMethod = {}
+        pullMLSStatusSync.pull_MockMethod = {}
 
         // When
         try await sut.pull()
@@ -112,6 +117,7 @@ final class PullResourcesSyncTests: XCTestCase {
         XCTAssertEqual(pullKnownUsersSync.pull_Invocations.count, 1)
         XCTAssertEqual(pullConversationLabelsSync.pull_Invocations.count, 1)
         XCTAssertEqual(pullAllFeatureConfigsSync.pull_Invocations.count, 1)
+        XCTAssertEqual(pullMLSStatusSync.pull_Invocations.count, 1)
     }
 
 }

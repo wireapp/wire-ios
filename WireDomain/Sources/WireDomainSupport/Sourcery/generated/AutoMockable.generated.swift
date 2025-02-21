@@ -1247,26 +1247,26 @@ public class MockInitialSyncBuilderProtocol: InitialSyncBuilderProtocol {
     public init() {}
 
 
-    // MARK: - build
+    // MARK: - buildInitialSync
 
-    public var build_Invocations: [Void] = []
-    public var build_MockError: Error?
-    public var build_MockMethod: (() throws -> Sync)?
-    public var build_MockValue: Sync?
+    public var buildInitialSync_Invocations: [Void] = []
+    public var buildInitialSync_MockError: Error?
+    public var buildInitialSync_MockMethod: (() throws -> Sync)?
+    public var buildInitialSync_MockValue: Sync?
 
-    public func build() throws -> Sync {
-        build_Invocations.append(())
+    public func buildInitialSync() throws -> Sync {
+        buildInitialSync_Invocations.append(())
 
-        if let error = build_MockError {
+        if let error = buildInitialSync_MockError {
             throw error
         }
 
-        if let mock = build_MockMethod {
+        if let mock = buildInitialSync_MockMethod {
             return try mock()
-        } else if let mock = build_MockValue {
+        } else if let mock = buildInitialSync_MockValue {
             return mock
         } else {
-            fatalError("no mock for `build`")
+            fatalError("no mock for `buildInitialSync`")
         }
     }
 

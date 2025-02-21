@@ -39,7 +39,7 @@ final class SyncAgentTests: XCTestCase {
             initialSyncBuilder: initialSyncBuilder,
             legacySyncStatus: legacySyncStatus
         )
-        initialSyncBuilder.build_MockValue = initialSync
+        initialSyncBuilder.buildInitialSync_MockValue = initialSync
     }
 
     override func tearDown() {
