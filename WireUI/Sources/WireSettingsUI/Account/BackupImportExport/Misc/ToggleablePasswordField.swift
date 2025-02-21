@@ -44,25 +44,8 @@ struct ToggleablePasswordField: View {
 
             if isPasswordVisible {
                 textField
-                TextField(text: $password) {
-                    Text(placeholder)
-                        .font(.body)
-                        .foregroundStyle(placeholderColor)
-                }
-                .focused($isFocused)
-                .textContentType(.password)
-                .autocapitalization(.none)
-                .accessibilityIdentifier("password input")
             } else {
                 secureField
-                SecureField(text: $password) {
-                    Text(placeholder)
-                        .font(.body)
-                        .foregroundStyle(placeholderColor)
-                }
-                .focused($isFocused)
-                .textContentType(.password)
-                .accessibilityIdentifier("password input")
             }
 
             Button {
@@ -98,6 +81,7 @@ struct ToggleablePasswordField: View {
         .textContentType(.password)
         .autocapitalization(.none)
         .focused($focusedField, equals: .textField)
+        .accessibilityIdentifier("password input")
     }
 
     @ViewBuilder private var secureField: some View {
@@ -108,6 +92,7 @@ struct ToggleablePasswordField: View {
         }
         .textContentType(.password)
         .focused($focusedField, equals: .secureField)
+        .accessibilityIdentifier("password input")
     }
 
     private var toggleButtonAccessibilityLabel: String {
