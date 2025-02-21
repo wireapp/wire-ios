@@ -124,9 +124,9 @@ final class SyncAgent: NSObject {
                     try await incrementalSyncTask.value
                 } else {
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    WireLogger.sync.debug("did start new resource sync")
+                    WireLogger.sync.debug("did start incremental sync")
                     incrementalSyncTask = try await incrementalSyncProvider.provideIncrementalSync().perform()
-                    WireLogger.sync.debug("did finish new resource sync")
+                    WireLogger.sync.debug("did finish incremental sync")
                     delegate?.syncAgentDidFinishIncrementalSync(self)
                     incrementalSyncTask = nil
                 }

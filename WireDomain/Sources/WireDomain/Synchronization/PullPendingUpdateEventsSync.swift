@@ -66,7 +66,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
             func log(_ message: String, envelopeID: UUID?) {
                 WireLogger.sync.debug(
-                    "event \(count) os \(batchCount): \(message)",
+                    "event \(count) of \(batchCount): \(message)",
                     attributes: [.eventEnvelopeID: envelopeID]
                 )
             }
