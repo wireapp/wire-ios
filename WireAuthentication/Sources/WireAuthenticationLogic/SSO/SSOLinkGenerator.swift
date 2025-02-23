@@ -41,7 +41,7 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
 
     package func generateSSOLink(ssoCode: UUID) async throws -> URL {
         try await authenticationAPI.validateLoginToken(ssoCode: ssoCode)
-        return try await buildSSOLink(baseURL: baseURL, ssoCode: ssoCode, callbackScheme: callbackScheme)
+        return try await buildSSOLink(ssoCode: ssoCode)
     }
 
     /// Generate the link to the SSO authentication screen
@@ -52,7 +52,7 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
     ///   - callbackScheme: The URL scheme that where the callback will be provided.
     /// - Returns: URL to the SSO authentication screen
     @MainActor
-    private func buildSSOLink(baseURL: URL, ssoCode: UUID, callbackScheme: String) async throws -> URL {
+    func buildSSOLink(ssoCode: UUID) async throws -> URL {
         let validationToken = SSOLoginVerificationToken()
         var components = URLComponents()
         components.scheme = "https"

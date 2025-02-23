@@ -31,6 +31,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case invalidResponse
         case unknownError
         case onPremLoginNotPossible(recovery: AuthenticationMethod)
+        case invalidSSOLink
+
     }
 
     package enum ModalDestination: Hashable, Identifiable {
@@ -128,7 +130,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 let url = try await ssoLinkGenerator.generateSSOLink(ssoCode: code)
                 modalDestination = .ssoLogin(url: url)
             } catch {
-                print("something went wrong")
+                alert = .invalidSSOLink
             }
         case let .onPremLogin(email, backendConfig):
             // TODO: [WPB-15944] Handle on-prem login

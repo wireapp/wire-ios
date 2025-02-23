@@ -143,6 +143,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Title.general)
         case .onPremLoginNotPossible:
             Text(L10n.Authentication.Error.Title.onPremNotPossible)
+        case .invalidSSOLink:
+            Text(L10n.Authentication.Error.Title.invalidSSOLink)
         }
     }
 
@@ -156,6 +158,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Message.general)
         case .onPremLoginNotPossible:
             Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
+        case .invalidSSOLink:
+            Text(L10n.Authentication.Error.Message.invalidSSOLink)
         }
     }
 

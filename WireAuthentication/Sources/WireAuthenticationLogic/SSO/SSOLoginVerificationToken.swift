@@ -59,4 +59,10 @@ package extension SSOLoginVerificationToken {
         }
     }
 
+    static func current(in defaults: UserDefaults) -> SSOLoginVerificationToken? {
+        defaults.data(forKey: SSOLoginVerificationToken.defaultsKey).flatMap {
+            try? JSONDecoder().decode(SSOLoginVerificationToken.self, from: $0)
+        }
+    }
+
 }

@@ -55,9 +55,11 @@
 "authentication.error.title.no_internet" = "No internet";
 "authentication.error.title.general" = "Error";
 "authentication.error.title.on_prem_not_possible" = "On prem not possible";
+"authentication.error.title.invalidSSOLink" = "Error";
 
 "authentication.error.message.no_internet" = "You are not connected to the internet.";
 "authentication.error.message.general" = "Something went wrong";
 "authentication.error.message.email_is_already_registered" = "Email is already registered on Wire Cloud.";
+"authentication.error.message.invalidSSOLink" = "Invalid company login url.";
 
 "authentication.error.confirm" = "OK";
