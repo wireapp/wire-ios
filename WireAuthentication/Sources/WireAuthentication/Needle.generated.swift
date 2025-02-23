@@ -38,6 +38,12 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
     }
+    var callbackScheme: String {
+        return rootComponent.callbackScheme
+    }
+    var defaults: UserDefaults {
+        return rootComponent.defaults
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -79,6 +85,8 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.defaultBackendEnvironment] = "defaultBackendEnvironment-BackendEnvironment"
         keyPathToName[\DetermineAuthMethodComponentDependency.defaultAPIVersion] = "defaultAPIVersion-APIVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
+        keyPathToName[\DetermineAuthMethodComponentDependency.callbackScheme] = "callbackScheme-String"
+        keyPathToName[\DetermineAuthMethodComponentDependency.defaults] = "defaults-UserDefaults"
         localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
     }
 }
@@ -93,12 +101,13 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
-        localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["defaultBackendEnvironment-BackendEnvironment"] = { [unowned self] in self.defaultBackendEnvironment as Any }
         localTable["defaultAPIVersion-APIVersion"] = { [unowned self] in self.defaultAPIVersion as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
         localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
+        localTable["callbackScheme-String"] = { [unowned self] in self.callbackScheme as Any }
+        localTable["defaults-UserDefaults"] = { [unowned self] in self.defaults as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
 }

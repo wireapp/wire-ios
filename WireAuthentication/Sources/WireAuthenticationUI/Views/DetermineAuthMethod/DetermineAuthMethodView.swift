@@ -127,7 +127,7 @@ package struct DetermineAuthMethodView: View {
 
         case login(email: String)
         case loginOrRegister(email: String)
-        case noHistory//(userID, cookieData)
+        case noHistory(userID: UUID, cookieData: Data)
 
     }
 

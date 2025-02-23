@@ -29,7 +29,8 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var defaultBackendEnvironment: BackendEnvironment { get }
     var defaultAPIVersion: APIVersion { get }
     var minTLSVersion: TLSVersion { get }
-   // var callbackScheme: String { get }
+    var callbackScheme: String { get }
+    var defaults: UserDefaults { get }
 
 }
 
@@ -50,7 +51,9 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
             baseURL: dependency.defaultBackendEnvironment.url,
-            callbackScheme: "wire-sso-alpha")
+            callbackScheme: dependency.callbackScheme,
+            defaults: dependency.defaults
+        )
     }
 
     @MainActor private var viewModel: DetermineAuthMethodViewModel {

@@ -104,8 +104,8 @@ final class AuthenticationInterfaceBuilder {
                 authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
             }
 
-            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: {
-                bridge.completeSSOSuccess()
+            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
+                bridge.completeSSOSuccess(userID: userID, cookieData: cookieData)
             })
             return AuthenticationHostingController(rootView: rootView)
 

@@ -108,8 +108,8 @@ public class UnauthenticatedSession: NSObject {
         }
     }
 
-    public func appendURLActionProcessors(action: @escaping () -> Void) {
-        urlActionProcessors.append(CompanyLoginURLActionProcessor1(action: action))
+    public func appendURLActionProcessors(action: @escaping (UUID, Data) -> Void) {
+        urlActionProcessors.append(AuthenticationModuleURLActionProcessor(action: action))
 
     }
 }

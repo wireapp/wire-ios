@@ -61,24 +61,3 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
     }
 
 }
-
-class CompanyLoginURLActionProcessor1: URLActionProcessor {
-
-    let action: () -> Void
-
-    init(action: @escaping () -> Void) {
-        self.action = action
-    }
-
-    func process(urlAction: URLAction, delegate: (any PresentationDelegate)?) {
-        switch urlAction {
-        case let .companyLoginSuccess(userInfo):
-            action()
-            //authenticationStatus.loginSucceeded(with: userInfo)
-        default:
-            break
-        }
-
-    }
-
-}

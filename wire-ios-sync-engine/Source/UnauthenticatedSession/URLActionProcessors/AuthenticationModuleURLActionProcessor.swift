@@ -18,18 +18,22 @@
 
 import Foundation
 
-public struct SSOSuccessHandler {
+class AuthenticationModuleURLActionProcessor: URLActionProcessor {
 
-    let router: any Router
+    let action: (UUID, Data) -> Void
 
-    public init(router: any Router) {
-        self.router = router
+    init(action: @escaping (UUID, Data) -> Void) {
+        self.action = action
     }
 
-    @MainActor
-    public func handleSuccess() {
-        // TODO: do not navigate
-        router.navigate(to: DetermineAuthMethodView.Destination.noHistory)
+    func process(urlAction: URLAction, delegate: (any PresentationDelegate)?) {
+        switch urlAction {
+        case let .companyLoginSuccess(userInfo):
+            action(userInfo.identifier, userInfo.cookieData)
+        default:
+            break
+        }
+
     }
 
 }

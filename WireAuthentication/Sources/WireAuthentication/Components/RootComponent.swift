@@ -72,10 +72,12 @@ class RootComponent: BootstrapComponent {
     @MainActor var bridge: WireAuthenticationBridge {
         WireAuthenticationBridge(
             onFlowCompletion: onFlowCompletion,
-            onSuccessSSOFlowCompletion: {
-                SSOSuccessHandler(router: self.router).handleSuccess()
+            onSuccessSSOFlowCompletion: { userID, cookieData in
+                SSOSuccessHandler(router: self.router).handleSuccess(userID: userID, cookieData: cookieData)
             },
-            onFailureSSOFlowCompletion: {}
+            onFailureSSOFlowCompletion: {
+                // TODO: Handle error
+            }
         )
     }
 

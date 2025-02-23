@@ -25,15 +25,18 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
     private let authenticationAPI: AuthenticationAPI
     private let baseURL: URL
     private let callbackScheme: String
+    private let defaults: UserDefaults
 
     package init(
         authenticationAPI: AuthenticationAPI,
         baseURL: URL,
-        callbackScheme: String
+        callbackScheme: String,
+        defaults: UserDefaults
     ) {
         self.authenticationAPI = authenticationAPI
         self.baseURL = baseURL
         self.callbackScheme = callbackScheme
+        self.defaults = defaults
     }
 
     package func generateSSOLink(ssoCode: UUID) async throws -> URL {
@@ -50,14 +53,14 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
     /// - Returns: URL to the SSO authentication screen
     @MainActor
     private func buildSSOLink(baseURL: URL, ssoCode: UUID, callbackScheme: String) async throws -> URL {
-        let validationToken = CompanyLoginVerificationToken()
+        let validationToken = SSOLoginVerificationToken()
         var components = URLComponents()
         components.scheme = "https"
         components.host = baseURL.host
         components.path = "/sso/initiate-login/\(ssoCode.uuidString)"
 
-        let successCallback = makeSuccessCallbackString(using: validationToken)
-        let errorCallback = makeFailureCallbackString(using: validationToken)
+        let successCallback = try makeSuccessCallbackString(using: validationToken)
+        let errorCallback = try makeFailureCallbackString(using: validationToken)
 
         components.queryItems = [
             URLQueryItem(
@@ -68,15 +71,14 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
         ]
 
         guard let url = components.url else {
-            throw LoginViaSSOViewModelFailure.invalidSSOURL
+            throw SSOLinkGeneratorFailure.invalidSSOURL
         }
 
-        validationToken.store()
-        print(validationToken.uuid.uuidString)
+        validationToken.store(in: defaults)
         return url
     }
 
-    private func makeSuccessCallbackString(using token: CompanyLoginVerificationToken) -> String {
+    private func makeSuccessCallbackString(using token: SSOLoginVerificationToken) throws -> String {
         var components = URLComponents()
         components.scheme = callbackScheme
         components.host = URL.Host.login
@@ -88,10 +90,14 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
             URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.uuidString.lowercased())
         ]
 
-        return components.url!.absoluteString
+        guard let url = components.url else {
+            throw SSOLinkGeneratorFailure.invalidSSOURL
+        }
+
+        return url.absoluteString
     }
 
-    private func makeFailureCallbackString(using token: CompanyLoginVerificationToken) -> String {
+    private func makeFailureCallbackString(using token: SSOLoginVerificationToken) throws -> String {
         var components = URLComponents()
         components.scheme = callbackScheme
         components.host = URL.Host.login
@@ -102,18 +108,12 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
             URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.uuidString.lowercased())
         ]
 
-        return components.url!.absoluteString
+        guard let url = components.url else {
+            throw SSOLinkGeneratorFailure.invalidSSOURL
+        }
+
+        return url.absoluteString
     }
-
-}
-
-package enum LoginViaSSOViewModelFailure: Error, Equatable {
-
-    /// Invalid company login URL
-
-    case invalidSSOURL
-
-    case unknown
 
 }
 
@@ -131,7 +131,7 @@ private extension URL {
 }
 
 private extension URLQueryItem {
-
+    
     enum Key {
         static let successRedirect = "success_redirect"
         static let errorRedirect = "error_redirect"
@@ -140,66 +140,11 @@ private extension URLQueryItem {
         static let errorLabel = "label"
         static let validationToken = "validation_token"
     }
-
+    
     enum Template {
         static let cookie = "$cookie"
         static let userIdentifier = "$userid"
         static let errorLabel = "$label"
     }
-
-}
-
-public struct CompanyLoginVerificationToken: Codable, Equatable {
-
-    /// The unique identifier of the token.
-    let uuid: UUID
-    /// The creation date of the token.
-    let creationDate: Date
-    /// The amount of seconds the token should be considered valid.
-    let timeToLive: TimeInterval
-
-    /// Creates a new validation token with an expiration time
-    /// of 30 minutes if not specified otherwise.
-    init(uuid: UUID = .init(), creationDate: Date = .init(), timeToLive: TimeInterval = 60 * 30) {
-        self.uuid = uuid
-        self.creationDate = creationDate
-        self.timeToLive = timeToLive
-    }
-
-    /// Whether the token is no langer valid (older than its time to live).
-    var isExpired: Bool {
-        abs(creationDate.timeIntervalSinceNow) >= timeToLive
-    }
-
-    /// Validates a passed in UUID against the token.
-    /// - parameter identifier: The uuid which should be validated against the token.
-    /// - returns: Whether the UUID matches the token and the token is still valid.
-    func matches(identifier: UUID) -> Bool {
-        uuid == identifier && !isExpired
-    }
-}
-
-public extension CompanyLoginVerificationToken {
-
-    private static let defaultsKey = "CompanyLoginVerificationTokenDefaultsKey"
-
-    /// Stores the token in the provided defaults.
-    /// - parameter defaults: The defaults to store the token in.
-    /// - returns: Whether the write operation succeeded.
-    @discardableResult
-    func store() -> Bool {
-        do {
-            let data = try JSONEncoder().encode(self)
-            let wireGroupId = "com.wearezeta.zclient.alpha"
-            let use = UserDefaults(suiteName: "group.\(wireGroupId)")
-            //UserDefaults.setValue(data, forKey: CompanyLoginVerificationToken.defaultsKey)
-            UserDefaults.standard.set(data, forKey: CompanyLoginVerificationToken.defaultsKey)
-            use?.set(data, forKey: CompanyLoginVerificationToken.defaultsKey)
-            //defaults.set(data, forKey: CompanyLoginVerificationToken.defaultsKey)
-            return true
-        } catch {
-            return false
-        }
-    }
-
+    
 }

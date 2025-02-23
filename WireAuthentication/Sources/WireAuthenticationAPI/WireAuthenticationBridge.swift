@@ -25,12 +25,12 @@ import Foundation
 public struct WireAuthenticationBridge {
 
     private let onFlowCompletion: () -> Void
-    private let onSuccessSSOFlowCompletion: () -> Void
+    private let onSuccessSSOFlowCompletion: (UUID, Data) -> Void
     private let onFailureSSOFlowCompletion: () -> Void
 
     public init(
         onFlowCompletion: @escaping () -> Void,
-        onSuccessSSOFlowCompletion: @escaping () -> Void,
+        onSuccessSSOFlowCompletion: @escaping (UUID, Data) -> Void,
         onFailureSSOFlowCompletion: @escaping () -> Void
     ) {
         self.onFlowCompletion = onFlowCompletion
@@ -43,9 +43,9 @@ public struct WireAuthenticationBridge {
         onFlowCompletion()
     }
 
-    //@MainActor
-    public func completeSSOSuccess() {
-        onSuccessSSOFlowCompletion()
+    @MainActor
+    public func completeSSOSuccess(userID: UUID, cookieData: Data) {
+        onSuccessSSOFlowCompletion(userID, cookieData)
     }
 
     public func completeSSOFailure() {

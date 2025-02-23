@@ -24,3 +24,11 @@ public protocol SSOLinkGeneratorProtocol {
     func generateSSOLink(ssoCode: UUID) async throws -> URL
 
 }
+
+package enum SSOLinkGeneratorFailure: Error, Equatable {
+
+    case invalidSSOURL
+
+    case unknown
+
+}
