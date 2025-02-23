@@ -38,10 +38,9 @@ package struct LoginViaSSOView: View {
     package var body: some View {
         SafariBrowser(url: viewModel.ssoURL)
     }
-
 }
 
 #Preview {
-    let url = URL(string: "https://www.google.com")
+    let url = URL(string: "https://www.wire.com")
     LoginViaSSOView(viewModel: LoginViaSSOViewModel(ssoURL: url!))
 }
