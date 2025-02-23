@@ -71,7 +71,11 @@ let package = Package(
         ),
         .testTarget(
             name: "WireAuthenticationUITests",
-            dependencies: ["WireAuthenticationUI"]
+            dependencies: [
+                "WireAuthenticationUI",
+                "WireAuthenticationAPISupport",
+                .product(name: "WireReusableUIComponentsSupport", package: "WireUI"),
+            ]
         )
     ]
 )

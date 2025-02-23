@@ -20,8 +20,12 @@ import WireAuthenticationUI
 
 final class MockRouter: Router {
 
+    public var navigate_Invocations: [any Hashable] = []
+
     func popToRoot() {}
 
-    func navigate(to destination: some Hashable) {}
+    func navigate(to destination: some Hashable) {
+        navigate_Invocations.append(destination)
+    }
 
 }
