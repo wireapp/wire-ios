@@ -41,6 +41,10 @@ let package = Package(
         .target(
             name: "WireAuthenticationAPI"
         ),
+        .target(
+            name: "WireAuthenticationAPISupport",
+            dependencies: ["WireAuthenticationAPI"]
+        ),
 
         .target(
             name: "WireAuthenticationLogic",
