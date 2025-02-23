@@ -19,6 +19,7 @@ let package = Package(
         .library(name: "WireMoveToFolderUI", targets: ["WireMoveToFolderUI"]),
         .library(name: "WireMoveToFolderUISupport", targets: ["WireMoveToFolderUISupport"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
+        .library(name: "WireReusableUIComponentsSupport", targets: ["WireReusableUIComponentsSupport"]),
         .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
         .library(name: "WireSettingsUISupport", targets: ["WireSettingsUISupport"]),
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
@@ -77,6 +78,13 @@ let package = Package(
             name: "WireReusableUIComponents",
             dependencies: ["WireDesign", "WireFoundation"],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
+        .target(
+            name: "WireReusableUIComponentsSupport",
+            dependencies: ["WireReusableUIComponents"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
         ),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
 
