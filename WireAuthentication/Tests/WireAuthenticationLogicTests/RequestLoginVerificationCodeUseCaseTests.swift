@@ -20,7 +20,6 @@ import Testing
 import WireAPI
 import WireAPISupport
 import WireAuthenticationAPI
-import WireAuthenticationUI
 
 @testable import WireAuthenticationLogic
 
