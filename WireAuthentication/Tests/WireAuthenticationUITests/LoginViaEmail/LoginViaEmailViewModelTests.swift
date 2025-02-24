@@ -78,7 +78,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
         // given
         loginViaEmailUseCase
             .invokeEmailPasswordVerificationCode_MockValue = ([Scaffolding.someCookie], Scaffolding.someAccessToken)
-        sut.password = "password"
+        sut.password = " password "
 
         // when
         await sut.submitPassword()
@@ -199,16 +199,20 @@ class LoginViaEmailViewModelTests: XCTestCase {
         passwordValidator.isPasswordValid_MockMethod = { $0.count >= 4 }
 
         // when
-        sut.password = "aaa"
+        sut.password = " aaa "
+        passwordValidator.isPasswordValid_Invocations = []
 
         // then
         XCTAssertFalse(sut.isPasswordValid)
+        XCTAssertEqual(passwordValidator.isPasswordValid_Invocations, ["aaa"])
 
         // when
-        sut.password = "aaaa"
+        sut.password = " aaaa "
+        passwordValidator.isPasswordValid_Invocations = []
 
         // then
         XCTAssertTrue(sut.isPasswordValid)
+        XCTAssertEqual(passwordValidator.isPasswordValid_Invocations, ["aaaa"])
     }
 
     // MARK: - isCreateAccount tests

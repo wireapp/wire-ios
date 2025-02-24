@@ -77,7 +77,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     var isPasswordValid: Bool {
-        passwordValidator.isPasswordValid(password)
+        passwordValidator.isPasswordValid(cleanPassword)
     }
 
     func submitPassword() async {
@@ -86,7 +86,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         do {
             let (cookies, token) = try await loginViaEmailUseCase.invoke(
                 email: email,
-                password: password,
+                password: cleanPassword,
                 verificationCode: nil
             )
             bridge.completeFlow(cookies: cookies, accessToken: token)
@@ -124,6 +124,12 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     func createAccount() {
         bridge.createAccount()
+    }
+
+    // MARK: - Private
+
+    private var cleanPassword: String {
+        password.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
 }
