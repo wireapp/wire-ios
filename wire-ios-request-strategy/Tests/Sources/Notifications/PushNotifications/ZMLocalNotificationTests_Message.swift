@@ -146,7 +146,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
             XCTAssertEqual(note!.content.threadIdentifier, "")
         }
     }
-    
+
     func testThatItDoesNotCreateANotificationForText_FromSelf() {
         // given
         syncMOC.performGroupedAndWait {

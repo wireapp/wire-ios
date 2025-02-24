@@ -195,8 +195,7 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
     override func shouldCreateNotification() -> Bool {
         // if there is a sender, it's not the selfUser
         if let sender, sender.isSelfUser { return false }
-        
-        
+
         if conversation == nil {
             // WPB-8946: fixes bug: notifications shown even though availability is busy or away
             let availability = moc.performAndWait { ZMUser.selfUser(in: moc).availability }
