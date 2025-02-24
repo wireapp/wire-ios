@@ -20,7 +20,15 @@ import Foundation
 
 public struct Message: Hashable, Identifiable {
 
-    public var id = MessageID()
-    public var attributedText = AttributedString()
+    public var id: MessageID
+    public var attributedText: AttributedString
+
+    public init(
+        id: MessageID = MessageID()
+        , attributedText: Foundation.AttributedString = AttributedString()
+    ) {
+        self.id = id
+        self.attributedText = attributedText
+    }
 
 }

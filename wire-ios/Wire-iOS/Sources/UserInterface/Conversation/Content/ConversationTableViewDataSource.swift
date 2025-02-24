@@ -498,15 +498,15 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         if indexPath.section == indexForNewCellType {
 
-            if !registeredCells.contains(where: { $0 is MessageCell.Type }) {
-                tableView.register(MessageCell.self, forCellReuseIdentifier: "MessageCell")
+            if !registeredCells.contains(where: { $0 is UnifiedMessageCell.Type }) {
+                tableView.register(UnifiedMessageCell.self, forCellReuseIdentifier: "UnifiedMessageCell")
             }
 
             let textMessageCellDescription = section.elements
                 .compactMap({ $0.instance as? ConversationTextMessageCellDescription })
                 .first
 
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "UnifiedMessageCell", for: indexPath)
             var contentConfiguration = cell.defaultContentConfiguration()
             contentConfiguration.attributedText = textMessageCellDescription?.configuration.attributedText
             cell.contentConfiguration = contentConfiguration

@@ -18,8 +18,12 @@
 
 import SwiftUI
 import WireFoundation
+import WireConversationUI
+import WireDesign
 
-public final class MessageCell: UITableViewCell { // TODO: this probably has to be moved out of WireConversationUI (no generics supported), keep one for preview
+/// A new cell which contains one whole message.
+public final class UnifiedMessageCell: UITableViewCell {
+    public typealias Message = WireConversationUI.Message
 
     public var message = Message() {
         didSet {
@@ -51,10 +55,10 @@ public final class MessageCell: UITableViewCell { // TODO: this probably has to 
 
     private func updateContent() {
         contentConfiguration = UIHostingConfiguration {
-            MessageContentView(
+            MessageViewBuilder().build(
                 message: message,
-                layout: messageLayout,
-                accountImageViewContent: { Circle().fill(.red) }
+                layout: messageLayout
+                // accountImageViewContent: { Circle().fill(.red) }
             )
             .swipeActions(edge: .leading) {
                 Button {
@@ -81,12 +85,12 @@ var dataSourceX: AnyObject?
 public func MessageCellPreview(_ messageLayout: MessageLayout) -> UIViewController {
 
     let tableViewController = UITableViewController()
-    tableViewController.tableView.register(MessageCell.self, forCellReuseIdentifier: "MessageCell")
+    tableViewController.tableView.register(UnifiedMessageCell.self, forCellReuseIdentifier: "MessageCell")
     let dataSource = UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>(
         tableView: tableViewController.tableView
     ) { tableView, indexPath, itemID in
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath)
-        if let cell = cell as? MessageCell {
+        if let cell = cell as? UnifiedMessageCell {
             cell.messageLayout = messageLayout
             cell.message = Message(
                 id: .init(itemID),

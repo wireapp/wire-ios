@@ -67,6 +67,7 @@ struct MessageContentView<
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+        .id(message.id)
     }
 
 }
