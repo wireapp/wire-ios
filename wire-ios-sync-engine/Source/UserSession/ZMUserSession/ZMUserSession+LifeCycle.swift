@@ -50,6 +50,7 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
+        syncAgent?.suspend()
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
@@ -63,7 +64,7 @@ public extension ZMUserSession {
 
     @objc
     func applicationWillEnterForeground(_ note: Notification?) {
-
+        syncAgent?.triggerSync()
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()
