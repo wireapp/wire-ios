@@ -55,7 +55,6 @@ public struct IncrementalSync {
         try await processStoredEvents()
 
         return Task { @Sendable [logger, decryptor, store, processor] in
-            let jsonEncoder = JSONEncoder()
             logger.debug("handling live event stream")
             for try await var envelope in liveEventStream {
                 logger.debug("received live event envelope")
