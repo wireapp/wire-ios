@@ -26,25 +26,25 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
     let cellDescriptions: [AnyConversationMessageCellDescription]
 
     var topMargin: Float {
-        get { fatalError() }
+        get { cellDescriptions.first?.topMargin ?? 0 }
         set { fatalError() }
     }
 
     var isFullWidth: Bool {
-        fatalError()
+        true
     }
 
     var supportsActions: Bool {
-        fatalError()
+        cellDescriptions.contains(where: \.supportsActions)
     }
 
     var showEphemeralTimer: Bool {
-        get { fatalError() }
-        set { fatalError() }
+        get { cellDescriptions.contains(where: \.showEphemeralTimer) }
+        set { fatalError("TODO?") }
     }
 
     var containsHighlightableContent: Bool {
-        fatalError()
+        cellDescriptions.contains(where: \.containsHighlightableContent)
     }
 
     var message: (any ZMConversationMessage)? {

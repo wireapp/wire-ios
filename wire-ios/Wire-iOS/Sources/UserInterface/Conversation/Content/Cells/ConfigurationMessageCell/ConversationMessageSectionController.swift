@@ -134,7 +134,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Content Types
 
-    private func addContent(context: ConversationMessageContext, isSenderVisible: Bool) {
+    private func addContent(
+        context: ConversationMessageContext,
+        isSenderVisible: Bool,
+        to cellDescriptions: inout [AnyConversationMessageCellDescription]
+    ) {
 
         let contentCellDescriptions: [AnyConversationMessageCellDescription] = if message.isKnock {
             addPingMessageCells()
@@ -278,7 +282,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
-        addContent(context: context, isSenderVisible: isSenderVisible)
+        addContent(
+            context: context,
+            isSenderVisible: isSenderVisible,
+            to: &cellDescriptions
+        )
 
         if isToolboxVisible(in: context) {
             let description = ConversationMessageToolboxCellDescription(message: message)
@@ -315,6 +323,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         for cellDescription in cellDescriptions {
             if cellDescription.canBeCombinedWithOtherCells {
                 currentCombination.append(cellDescription)
+            } else if currentCombination.count == 1 { // don't use the stack for single items
+                result.append(currentCombination[0])
+                currentCombination.removeAll()
             } else if !currentCombination.isEmpty {
                 let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
                 result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
@@ -323,7 +334,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             result.append(cellDescription)
         }
 
-        if !currentCombination.isEmpty {
+        if currentCombination.count == 1 { // don't use the stack for single items
+            result.append(currentCombination[0])
+        } else if !currentCombination.isEmpty {
             let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
             result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
         }

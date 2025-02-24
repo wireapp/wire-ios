@@ -385,7 +385,7 @@
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
 		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
-		59904B8C2D6C745B00C3DC10 /* UnifiedMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59904B8B2D6C745700C3DC10 /* UnifiedMessageCell.swift */; };
+		59904B8C2D6C745B00C3DC10 /* StackViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59904B8B2D6C745700C3DC10 /* StackViewCell.swift */; };
 		59948F6E2BF2151500832257 /* OtherUserClientsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16814843228D89EC0069F16F /* OtherUserClientsListViewController.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
 		5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
@@ -2320,7 +2320,7 @@
 		598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCaseTests.swift; sourceTree = "<group>"; };
-		59904B8B2D6C745700C3DC10 /* UnifiedMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnifiedMessageCell.swift; sourceTree = "<group>"; };
+		59904B8B2D6C745700C3DC10 /* StackViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewCell.swift; sourceTree = "<group>"; };
 		5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
 		599EA3C72C2426DA009319D4 /* ConversationListViewController+UISearchResultsUpdating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+UISearchResultsUpdating.swift"; sourceTree = "<group>"; };
 		599EA3CC2C243CF1009319D4 /* ConversationFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationFilter.swift; sourceTree = "<group>"; };
@@ -6461,7 +6461,6 @@
 		8FC85181199245760008B66B /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				59904B8B2D6C745700C3DC10 /* UnifiedMessageCell.swift */,
 				5E35F72F217F124000D3F4FE /* ConfigurationMessageCell */,
 				8781C94E1E2687590024F3F6 /* MessageAction.swift */,
 				EF066E1521EF938C00D56CAD /* MessageActionResponder.swift */,
@@ -6471,6 +6470,7 @@
 				BF4D99CA1E79AAD400A7B08F /* ParticipantsCellViewModel.swift */,
 				EE7E0E752109FE9200787C65 /* ParticipantsStringFormatter.swift */,
 				160C311E1E4C78480012E4BC /* CustomMessageView.swift */,
+				59904B8B2D6C745700C3DC10 /* StackViewCell.swift */,
 				0685007F26B35DFC00721F80 /* Restrictions */,
 				87F18BB41E0154C000C69D9B /* FileTransfer */,
 				874448871C22FCE500E7B947 /* Utility */,
@@ -9885,7 +9885,7 @@
 				BF2A74731CEB4882002608BF /* AudioButtonOverlay.swift in Sources */,
 				5EA952C722647B3100C83FDB /* IconButton.swift in Sources */,
 				A97FA6FC23B57067005257A8 /* StartUIViewController.swift in Sources */,
-				59904B8C2D6C745B00C3DC10 /* UnifiedMessageCell.swift in Sources */,
+				59904B8C2D6C745B00C3DC10 /* StackViewCell.swift in Sources */,
 				6305E31D265D34BD00A44933 /* RoundedPageIndicator.swift in Sources */,
 				EF00FD741FDA97BA0059FEDC /* UIViewController+Orientation.swift in Sources */,
 				EF527E362111B74100F7AE15 /* UIViewController+IsVisible.swift in Sources */,

@@ -115,7 +115,7 @@ extension ConversationMessageContentView {
 /// The role of this object is to provide a `configuration` view model for
 /// the view type it declares as the contents of the cell.
 
-protocol ConversationMessageCellDescription: AnyObject {
+protocol ConversationMessageCellDescription: AnyObject, CustomDebugStringConvertible {
     /// The view that will be displayed for the cell.
     associatedtype View: ConversationMessageContentView, UIView
 
@@ -232,6 +232,10 @@ extension ConversationMessageCellDescription {
         type(of: self) == type(of: other)
     }
 
+    var debugDescription: String {
+        String(describing: type(of: self).self)
+    }
+
 }
 
 extension ConversationMessageCellDescription where View.Configuration: Equatable {
@@ -264,6 +268,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _canBeCombinedWithOtherCells: () -> Bool
     private let _topMargin: AnyMutableProperty<Float>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
+    private let _supportsActions: () -> Bool
     private let _showEphemeralTimer: AnyMutableProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
@@ -297,15 +302,16 @@ final class AnyConversationMessageCellDescription: NSObject {
             description.isConfigurationEqual(with: otherDescription.instance)
         }
 
-        self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
-        self._message = AnyMutableProperty(description, keyPath: \.message)
-        self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
+        _delegate = AnyMutableProperty(description, keyPath: \.delegate)
+        _message = AnyMutableProperty(description, keyPath: \.message)
+        _actionController = AnyMutableProperty(description, keyPath: \.actionController)
         _canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
-        self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
-        self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
-        self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
-        self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
-        self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
+        _topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
+        _containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
+        _supportsActions = { description.supportsActions }
+        _showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
+        _axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
+        _axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
 
     var instance: any ConversationMessageCellDescription {
@@ -344,6 +350,10 @@ final class AnyConversationMessageCellDescription: NSObject {
         _containsHighlightableContent.getter()
     }
 
+    var supportsActions: Bool {
+        _supportsActions()
+    }
+
     var showEphemeralTimer: Bool {
         get { _showEphemeralTimer.getter() }
         set { _showEphemeralTimer.setter(newValue) }
@@ -358,6 +368,10 @@ final class AnyConversationMessageCellDescription: NSObject {
     var cellAccessibilityLabel: String? {
         _axLabel.getter()
     }
+
+//    override var debugDescription: String {
+//        String(reflecting: instanceGetter)
+//    }
 
     func configure(cell: UITableViewCell, animated: Bool = false) {
         configureBlock(cell, animated)
