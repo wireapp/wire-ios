@@ -680,4 +680,72 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
     }
 
+    func test_decryptMessage_throwsBufferedDecryptedMessage_withCC_BufferedFutureMessageError() async throws {
+        try await internalTest_decryptMessage_throwsError(WireCoreCrypto.MlsError.BufferedFutureMessage)
+    }
+
+    func test_decryptMessage_throwsBufferedDecryptedMessage_withCC_OtherError() async throws {
+        try await internalTest_decryptMessage_throwsError(WireCoreCrypto.MlsError.Other("Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."))
+    }
+
+    
+    func internalTest_decryptMessage_throwsError(_ error: Error) async throws {
+
+        // Given
+        let groupID = MLSGroupID.random()
+        let encryptedMessage = Data.random(byteCount: 1)
+        let decryptedMessage = DecryptedMessage(
+            message: nil,
+            proposals: [],
+            isActive: false,
+            commitDelay: 0,
+            senderClientId: nil,
+            hasEpochChanged: false,
+            identity: .withBasicCredentials(),
+            bufferedMessages: nil,
+            crlNewDistributionPoints: nil
+        )
+
+        mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
+            throw error
+        }
+
+        // When
+        await assertItThrows(error: MLSActionExecutor.Failure.bufferedDecryptedMessage) {
+            let _ = try await sut.decryptMessage(encryptedMessage, in: groupID)
+        }
+
+        // Then
+        XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
+    }
+    
+    func test_decryptMessage_successfully() async throws {
+
+        // Given
+        let groupID = MLSGroupID.random()
+        let encryptedMessage = Data.random(byteCount: 1)
+        let decryptedMessage = DecryptedMessage(
+            message: nil,
+            proposals: [],
+            isActive: false,
+            commitDelay: 0,
+            senderClientId: nil,
+            hasEpochChanged: false,
+            identity: .withBasicCredentials(),
+            bufferedMessages: nil,
+            crlNewDistributionPoints: nil
+        )
+
+        mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
+            throw WireCoreCrypto.MlsError.BufferedFutureMessage
+        }
+
+        // When
+        await assertItThrows(error: MLSActionExecutor.Failure.bufferedDecryptedMessage) {
+            let _ = try await sut.decryptMessage(encryptedMessage, in: groupID)
+        }
+
+        // Then
+        XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
+    }
 }
