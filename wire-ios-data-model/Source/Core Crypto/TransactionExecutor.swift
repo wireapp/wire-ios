@@ -18,8 +18,8 @@
 
 import WireCoreCrypto
 
-/// Wrapper to execute
-class TransactionExecutor<Result>: CoreCryptoCommand {
+/// Wrapper to execute CoreCrypto transactions
+final class TransactionExecutor<Result>: CoreCryptoCommand {
     let block: (_ context: CoreCryptoContext) async throws -> Result?
     var result: Result?
 

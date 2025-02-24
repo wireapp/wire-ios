@@ -122,7 +122,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     enum Failure: Error {
         case bufferedDecryptedMessage
     }
-    
+
     // MARK: - Types
 
     enum Action {
@@ -321,12 +321,12 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     }
 
     // MARK: - Decryption
-  
+
     public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
         try await performNonReentrant(groupID: groupID) {
             try await coreCrypto.perform {
                 let result = try await $0.transaction { context in
-                    
+
                     do {
                         return try await context.decryptMessage(conversationId: groupID.data, payload: message)
                     } catch let CoreCryptoError.Mls(error) {

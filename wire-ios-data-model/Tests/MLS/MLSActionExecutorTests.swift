@@ -685,10 +685,14 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     }
 
     func test_decryptMessage_throwsBufferedDecryptedMessage_withCC_OtherError() async throws {
-        try await internalTest_decryptMessage_throwsError(WireCoreCrypto.MlsError.Other("Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."))
+        try await internalTest_decryptMessage_throwsError(
+            WireCoreCrypto.MlsError
+                .Other(
+                    "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
+                )
+        )
     }
 
-    
     func internalTest_decryptMessage_throwsError(_ error: Error) async throws {
 
         // Given
@@ -712,13 +716,13 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // When
         await assertItThrows(error: MLSActionExecutor.Failure.bufferedDecryptedMessage) {
-            let _ = try await sut.decryptMessage(encryptedMessage, in: groupID)
+            _ = try await sut.decryptMessage(encryptedMessage, in: groupID)
         }
 
         // Then
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
     }
-    
+
     func test_decryptMessage_successfully() async throws {
 
         // Given
@@ -742,7 +746,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // When
         await assertItThrows(error: MLSActionExecutor.Failure.bufferedDecryptedMessage) {
-            let _ = try await sut.decryptMessage(encryptedMessage, in: groupID)
+            _ = try await sut.decryptMessage(encryptedMessage, in: groupID)
         }
 
         // Then

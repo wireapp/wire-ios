@@ -194,36 +194,36 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 .error(
                     "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
                 )
-            
+
             switch error {
-                
-                // Received messages targeting a future epoch, we might have lost messages.
+
+            // Received messages targeting a future epoch, we might have lost messages.
             case .WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
-                
-                // Message arrive in future epoch, it has been buffered and will be consumed later.
+
+            // Message arrive in future epoch, it has been buffered and will be consumed later.
             case .BufferedFutureMessage: return []
-                
-                // Received already sent or received message, can safely be ignored.
+
+            // Received already sent or received message, can safely be ignored.
             case .DuplicateMessage: return []
-                
-                // Received self commit, any pending self commit has now been merged
+
+            // Received self commit, any pending self commit has now been merged
             case .SelfCommitIgnored: return []
-                
-                // Received stale commit, this commit is targeting a past epoch and we have already consumed it
+
+            // Received stale commit, this commit is targeting a past epoch and we have already consumed it
             case .StaleCommit: return []
-                
-                // Received stale proposal, this proposal is targeting a past epoch and we have already consumed it
+
+            // Received stale proposal, this proposal is targeting a past epoch and we have already consumed it
             case .StaleProposal: return []
-                
-                // Message arrive in an unmerged group, it has been buffered and will be consumed later.
+
+            // Message arrive in an unmerged group, it has been buffered and will be consumed later.
             case .UnmergedPendingGroup: return []
-                
-                // Incoming message is a commit for which we have not yet received all the proposals. Buffering until all
-                // proposals have arrived.
-                // Clients do not need to take any action in response to this message. This error simply indicates that the
-                // commit has been buffered, and will be automatically unbuffered when possible.
+
+            // Incoming message is a commit for which we have not yet received all the proposals. Buffering until all
+            // proposals have arrived.
+            // Clients do not need to take any action in response to this message. This error simply indicates that the
+            // commit has been buffered, and will be automatically unbuffered when possible.
             case .Other(coreCryptoCommitForMissingProposalError): return []
-                
+
             case .Other, .ConversationAlreadyExists, .MessageEpochTooOld, .OrphanWelcome:
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
