@@ -27,8 +27,6 @@ final class StackingConversationMessageContentView: UIView, ConversationMessageC
 
     var delegate: (any ConversationMessageCellDelegate)?
 
-    func configure(with object: [Void], animated: Bool) {
-        fatalError()
-    }
+    func configure(with _: Void, animated: Bool) {}
 
 }

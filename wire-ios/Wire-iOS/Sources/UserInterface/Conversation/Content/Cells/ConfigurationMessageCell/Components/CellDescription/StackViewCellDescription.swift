@@ -23,41 +23,90 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
     typealias View = StackingConversationMessageContentView
 
     var canBeCombinedWithOtherCells: Bool { false }
+    let cellDescriptions: [AnyConversationMessageCellDescription]
 
-    var topMargin: Float
-    let isFullWidth: Bool
-    let supportsActions: Bool
-    var showEphemeralTimer: Bool
-    let containsHighlightableContent: Bool
-    var message: (any ZMConversationMessage)?
-    var delegate: (any ConversationMessageCellDelegate)?
-    var actionController: ConversationMessageActionController?
-    let configuration: View.Configuration
-    let accessibilityIdentifier: String?
-    let accessibilityLabel: String?
+    var topMargin: Float {
+        get { fatalError() }
+        set { fatalError() }
+    }
 
-    init(cellDescriptions: [AnyConversationMessageCellDescription]) {
+    var isFullWidth: Bool {
         fatalError()
     }
 
-    init(
-        topMargin: Float,
-        isFullWidth: Bool,
-        supportsActions: Bool,
-        showEphemeralTimer: Bool,
-        containsHighlightableContent: Bool,
-        configuration: View.Configuration,
-        accessibilityIdentifier: String?,
-        accessibilityLabel: String?
-    ) {
-        self.topMargin = topMargin
-        self.isFullWidth = isFullWidth
-        self.supportsActions = supportsActions
-        self.showEphemeralTimer = showEphemeralTimer
-        self.containsHighlightableContent = containsHighlightableContent
-        self.configuration = configuration
-        self.accessibilityIdentifier = accessibilityIdentifier
-        self.accessibilityLabel = accessibilityLabel
+    var supportsActions: Bool {
+        fatalError()
+    }
+
+    var showEphemeralTimer: Bool {
+        get { fatalError() }
+        set { fatalError() }
+    }
+
+    var containsHighlightableContent: Bool {
+        fatalError()
+    }
+
+    var message: (any ZMConversationMessage)? {
+        get {
+            for cellDescription in cellDescriptions {
+                if let message = cellDescription.message {
+                    return message
+                }
+            }
+            return nil
+        }
+        set {
+            for cellDescription in cellDescriptions {
+                cellDescription.message = newValue
+            }
+        }
+    }
+
+    var delegate: (any ConversationMessageCellDelegate)? {
+        get {
+            for cellDescription in cellDescriptions {
+                if let delegate = cellDescription.delegate {
+                    return delegate
+                }
+            }
+            return nil
+        }
+        set {
+            for cellDescription in cellDescriptions {
+                cellDescription.delegate = newValue
+            }
+        }
+    }
+
+    var actionController: ConversationMessageActionController? {
+        get {
+            for cellDescription in cellDescriptions {
+                if let actionController = cellDescription.actionController {
+                    return actionController
+                }
+            }
+            return nil
+        }
+        set {
+            for cellDescription in cellDescriptions {
+                cellDescription.actionController = newValue
+            }
+        }
+    }
+
+    let configuration: Void = ()
+
+    var accessibilityIdentifier: String? {
+        fatalError()
+    }
+
+    var accessibilityLabel: String? {
+        fatalError()
+    }
+
+    init(cellDescriptions: [AnyConversationMessageCellDescription]) {
+        self.cellDescriptions = cellDescriptions
     }
 
 }

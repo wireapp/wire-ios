@@ -27,7 +27,7 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
 
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { fatalError("TODO") } // TODO: fix
+    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0

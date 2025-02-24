@@ -123,7 +123,7 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
     typealias View = ConversationAudioMessageCell
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { fatalError("TODO") } // TODO: fix
+    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var topMargin: Float = 8
     var showEphemeralTimer: Bool = false
