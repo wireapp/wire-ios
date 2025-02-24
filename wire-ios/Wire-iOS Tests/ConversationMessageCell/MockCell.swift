@@ -42,6 +42,8 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
     typealias View = MockCell
     let configuration: View.Configuration
 
+    var canBeCombinedWithOtherCells: Bool { fatalError("TODO") }
+
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
     var isFullWidth: Bool = false

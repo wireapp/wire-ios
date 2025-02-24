@@ -58,6 +58,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     /// The view descriptor of the section.
     private/*(set)*/ var cellDescriptions: [AnyConversationMessageCellDescription] = []
 
+#if DEBUG
+    var cellDescriptionsForTesting:  [AnyConversationMessageCellDescription] {
+        get { cellDescriptions }
+        set { cellDescriptions = newValue }
+    }
+#endif
+
     /// The view descriptors in the order in which the tableview displays them.
     var tableViewCellDescriptions: [AnyConversationMessageCellDescription] {
         useInvertedIndices ? cellDescriptions.reversed() : cellDescriptions

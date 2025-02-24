@@ -66,7 +66,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession
         )
-        section.cellDescriptions.removeAll()
+        section.cellDescriptionsForTesting.removeAll()
         section.useInvertedIndices = false
 
         // WHEN
@@ -88,7 +88,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession
         )
-        section.cellDescriptions.removeAll()
+        section.cellDescriptionsForTesting.removeAll()
         section.useInvertedIndices = true
 
         // WHEN
@@ -116,7 +116,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         )
 
         // Then
-        let cellDescriptions = section.cellDescriptions
+        let cellDescriptions = section.cellDescriptionsForTesting
         guard cellDescriptions.count == 3 else {
             return XCTFail("Expected 3 cells")
         }
@@ -142,7 +142,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         )
 
         // THEN
-        let cellDescriptions = section.cellDescriptions
+        let cellDescriptions = section.cellDescriptionsForTesting
         guard cellDescriptions.count == 2 else {
             return XCTFail("Expected 2 cells")
         }
@@ -163,7 +163,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         )
 
         // Then
-        let cellDescriptions = section.cellDescriptions
+        let cellDescriptions = section.cellDescriptionsForTesting
         guard cellDescriptions.count == 3 else {
             return XCTFail("Expected 3 cells")
         }
@@ -187,7 +187,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             userSession: userSession
         )
 
-        let cellDescriptions = section.cellDescriptions
+        let cellDescriptions = section.cellDescriptionsForTesting
         guard cellDescriptions.count == 3 else {
             return XCTFail("Expected 3 cells")
         }
