@@ -303,9 +303,32 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             topCellDescription.topMargin = context.spacing
         }
 
-        // TODO: combine
+        self.cellDescriptions = Self.combine(cellDescriptions)
+    }
 
-        self.cellDescriptions = cellDescriptions
+    private static func combine(
+        _ cellDescriptions: [AnyConversationMessageCellDescription]
+    ) -> [AnyConversationMessageCellDescription] {
+        var result = [AnyConversationMessageCellDescription]()
+        var currentCombination = [AnyConversationMessageCellDescription]()
+
+        for cellDescription in cellDescriptions {
+            if cellDescription.canBeCombinedWithOtherCells {
+                currentCombination.append(cellDescription)
+            } else if !currentCombination.isEmpty {
+                let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
+                result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
+                currentCombination.removeAll()
+            }
+            result.append(cellDescription)
+        }
+
+        if !currentCombination.isEmpty {
+            let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
+            result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
+        }
+
+        return result
     }
 
     private func updateDelegates() {

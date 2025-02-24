@@ -261,6 +261,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
+    private let _canBeCombinedWithOtherCells: () -> Bool
     private let _topMargin: AnyMutableProperty<Float>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _showEphemeralTimer: AnyMutableProperty<Bool>
@@ -299,6 +300,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
+        _canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
         self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
@@ -327,6 +329,10 @@ final class AnyConversationMessageCellDescription: NSObject {
     var actionController: ConversationMessageActionController? {
         get { _actionController.getter() }
         set { _actionController.setter(newValue) }
+    }
+
+    var canBeCombinedWithOtherCells: Bool {
+        _canBeCombinedWithOtherCells()
     }
 
     var topMargin: Float {

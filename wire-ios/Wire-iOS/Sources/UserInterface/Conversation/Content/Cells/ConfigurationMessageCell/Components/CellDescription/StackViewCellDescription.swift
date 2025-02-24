@@ -36,6 +36,10 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
     let accessibilityIdentifier: String?
     let accessibilityLabel: String?
 
+    init(cellDescriptions: [AnyConversationMessageCellDescription]) {
+        fatalError()
+    }
+
     init(
         topMargin: Float,
         isFullWidth: Bool,
