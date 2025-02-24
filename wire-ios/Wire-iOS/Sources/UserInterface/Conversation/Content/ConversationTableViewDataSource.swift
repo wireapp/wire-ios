@@ -103,26 +103,25 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    private var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
+    private(set) var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
 
     /// calculate cell sections
     ///
     /// - Parameter forceRecalculate: true if force recreate cell with context check
     /// - Returns: arraySection of cell desctiptions
     @discardableResult
-    func calculateSections(forceRecalculate: Bool = false) -> [ArraySection<
-        String,
-        AnyConversationMessageCellDescription
-    >] {
-        messages.enumerated().map { tuple in
-            let sectionIdentifier = tuple.element.objectIdentifier
-            let context = self.context(
-                for: tuple.element,
-                at: tuple.offset,
+    func calculateSections(
+        forceRecalculate: Bool = false
+    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
+        messages.enumerated().map { offset, element in
+            let sectionIdentifier = element.objectIdentifier
+            let context = context(
+                for: element,
+                at: offset,
                 firstUnreadMessage: firstUnreadMessage,
                 searchQueries: searchQueries
             )
-            let sectionController = self.sectionController(for: tuple.element, at: tuple.offset)
+            let sectionController = sectionController(for: element, at: offset)
 
             // Re-create cell description if the context has changed (message has been moved around or received new
             // neighbours).
@@ -134,10 +133,9 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    func calculateSections(updating sectionController: ConversationMessageSectionController) -> [ArraySection<
-        String,
-        AnyConversationMessageCellDescription
-    >] {
+    func calculateSections(
+        updating sectionController: ConversationMessageSectionController
+    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
         let sectionIdentifier = sectionController.message.objectIdentifier
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
@@ -488,9 +486,6 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         let section = currentSections[indexPath.section]
 
-        if !registeredCells.contains(where: { $0 is UnifiedMessageCell.Type }) {
-            tableView.register(UnifiedMessageCell.self, forCellReuseIdentifier: "UnifiedMessageCell")
-        }
         if !registeredCells.contains(where: { $0 is StackViewCell.Type }) {
             tableView.register(StackViewCell.self, forCellReuseIdentifier: "StackViewCell")
         }
@@ -513,18 +508,6 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
                 cell.stackView.layoutIfNeeded()
             }
         }
-
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "UnifiedMessageCell", for: indexPath)
-//        if let cell = cell as? UnifiedMessageCell {
-//            cell.message = .init(messages[indexPath.section])
-//            cell.messageLayout = .groupConversationStyle // TODO: fix
-//            cell.wireAccentColor = .amber // TODO: fix
-//            cell.wireAccentColorMapping = WireAccentColorMapping()
-//        }
-
-//        var contentConfiguration = cell.defaultContentConfiguration()
-//        contentConfiguration.attributedText = textMessageCellDescription?.configuration.attributedText
-//        cell.contentConfiguration = contentConfiguration
 
         return cell
 

@@ -56,7 +56,7 @@ extension ZMConversationMessage {
 final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// The view descriptor of the section.
-    var cellDescriptions: [AnyConversationMessageCellDescription] = []
+    private/*(set)*/ var cellDescriptions: [AnyConversationMessageCellDescription] = []
 
     /// The view descriptors in the order in which the tableview displays them.
     var tableViewCellDescriptions: [AnyConversationMessageCellDescription] {
