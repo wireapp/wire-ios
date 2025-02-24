@@ -146,6 +146,16 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
             XCTAssertEqual(note!.content.threadIdentifier, "")
         }
     }
+    
+    func testThatItDoesNotCreateANotificationForText_FromSelf() {
+        // given
+        syncMOC.performGroupedAndWait {
+            let note = self.textNotification(self.oneOnOneConversation, sender: self.selfUser, isEphemeral: false)
+
+            // then
+            XCTAssertNil(note)
+        }
+    }
 
     func testItCreatesMessageNotificationsCorrectly() {
 
