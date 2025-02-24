@@ -34,6 +34,7 @@ final class SyncAgent: NSObject {
     private let incrementalSyncProvider: any IncrementalSyncProvider
     private let legacySyncStatus: any SyncStatusProtocol
 
+    private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncTask: Task<Void, any Error>?
 
     private var hasCompletedInitialSync: Bool {
@@ -118,19 +119,20 @@ final class SyncAgent: NSObject {
 
     func performIncrementalSync() async throws {
         if DeveloperFlag.newInitialSync.isOn {
+            guard incrementalSyncTask == nil else {
+                WireLogger.sync.info("incremental sync already running...")
+                return
+            }
+
             do {
-                if let incrementalSyncTask {
-                    WireLogger.sync.info("incremental sync already running, waiting for it instead")
-                    try await incrementalSyncTask.value
-                } else {
+                try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
+                    guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
                     incrementalSyncTask = try await incrementalSyncProvider.provideIncrementalSync().perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self)
-                    incrementalSyncTask = nil
                 }
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
-                incrementalSyncTask = nil
                 throw error
             }
         } else {
