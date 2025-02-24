@@ -28,9 +28,7 @@ package struct SSOSuccessHandler {
 
     @MainActor
     package func handleSuccess(userID: UUID, cookieData: Data) {
-        // TODO: do not navigate
         viewModel.presentNoHistorySheet(userID: userID, cookieData: cookieData)
-        //router.navigate(to: DetermineAuthMethodView.Destination.noHistory(userID: userID, cookieData: cookieData))
         notifySSOLoginCompletion()
     }
 

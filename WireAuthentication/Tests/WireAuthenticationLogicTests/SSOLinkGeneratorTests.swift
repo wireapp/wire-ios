@@ -36,7 +36,8 @@ class SSOLinkGeneratorTests: XCTestCase {
             authenticationAPI: mockAuthenticationAPI,
             baseURL: URL(string: "https://localhost")!,
             callbackScheme: "wire",
-            defaults: defaults)
+            defaults: defaults
+        )
     }
 
     override func tearDown() {

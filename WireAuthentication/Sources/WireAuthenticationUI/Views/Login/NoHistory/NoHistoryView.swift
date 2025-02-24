@@ -29,7 +29,7 @@ package protocol NoHistoryViewBuilder {
 }
 
 package struct NoHistoryView: View {
-    
+
     @ObservedObject var viewModel: NoHistoryViewModel
 
     package init(

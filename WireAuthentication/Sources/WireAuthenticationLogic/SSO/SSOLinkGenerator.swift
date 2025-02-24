@@ -131,7 +131,7 @@ private extension URL {
 }
 
 private extension URLQueryItem {
-    
+
     enum Key {
         static let successRedirect = "success_redirect"
         static let errorRedirect = "error_redirect"
@@ -140,11 +140,11 @@ private extension URLQueryItem {
         static let errorLabel = "label"
         static let validationToken = "validation_token"
     }
-    
+
     enum Template {
         static let cookie = "$cookie"
         static let userIdentifier = "$userid"
         static let errorLabel = "$label"
     }
-    
+
 }

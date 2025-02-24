@@ -21,7 +21,6 @@ import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 
-
 @MainActor
 public final class RootViewModel: ObservableObject, Router {
 

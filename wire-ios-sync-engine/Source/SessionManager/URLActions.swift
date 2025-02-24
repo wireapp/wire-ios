@@ -157,7 +157,7 @@ extension URLAction {
             }
 
             switch pathComponents[1] {
-            case URL.Path.success://
+            case URL.Path.success:
                 guard URLAction.validateURLSchemeRequest(with: components, in: defaults) else {
                     throw CompanyLoginError.tokenNotFound
                 }
@@ -177,7 +177,7 @@ extension URLAction {
                 let userInfo = UserInfo(identifier: userID, cookieData: cookieData)
                 self = .companyLoginSuccess(userInfo: userInfo)
 
-            case URL.Path.failure://
+            case URL.Path.failure:
                 guard URLAction.validateURLSchemeRequest(with: components, in: defaults) else {
                     throw CompanyLoginError.tokenNotFound
                 }
@@ -197,7 +197,7 @@ extension URLAction {
         }
     }
 
-    private static func validateURLSchemeRequest(with components: URLComponents, in defaults: UserDefaults) -> Bool {//
+    private static func validateURLSchemeRequest(with components: URLComponents, in defaults: UserDefaults) -> Bool {
         guard let storedToken = CompanyLoginVerificationToken.current(in: defaults) else { return false }
         guard let token = components.query(for: URLQueryItem.Key.validationToken).flatMap(UUID.init(transportString:))
         else { return false }
