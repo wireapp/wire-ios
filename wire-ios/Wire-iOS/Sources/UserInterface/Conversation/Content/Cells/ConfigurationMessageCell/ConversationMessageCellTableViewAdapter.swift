@@ -95,27 +95,27 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     private var singleTapGesture: UITapGestureRecognizer!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        self.cellView = C.View(frame: .zero)
+        cellView = C.View(frame: .zero)
         cellView.translatesAutoresizingMaskIntoConstraints = false
-        self.ephemeralCountdownView = EphemeralCountdownView()
+        ephemeralCountdownView = EphemeralCountdownView()
         ephemeralCountdownView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        self.focusStyle = .custom
-        self.selectionStyle = .none
-        self.backgroundColor = .clear
-        self.isOpaque = false
+        focusStyle = .custom
+        selectionStyle = .none
+        backgroundColor = .clear
+        isOpaque = false
 
         contentView.addSubview(cellView)
         contentView.addSubview(ephemeralCountdownView)
 
-        self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
-        self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
-        self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
+        trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
+        bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
-        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
+        ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
 
         NSLayoutConstraint.activate([
             ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -127,14 +127,14 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
             bottom
         ])
 
-        self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
+        longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         contentView.addGestureRecognizer(longPressGesture)
 
-        self.doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
+        doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
         contentView.addGestureRecognizer(doubleTapGesture)
 
-        self.singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
+        singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
         cellView.addGestureRecognizer(singleTapGesture)
         singleTapGesture.require(toFail: doubleTapGesture)
         singleTapGesture.delegate = self
