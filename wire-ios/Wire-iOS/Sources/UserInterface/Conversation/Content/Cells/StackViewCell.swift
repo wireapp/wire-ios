@@ -57,6 +57,7 @@ final class StackViewCell: UITableViewCell {
 
         let tempCellView = self
         tempCellView.addGestureRecognizer(singleTapGesture)
+        singleTapGesture.cancelsTouchesInView = false // Allows other gestures (like swipes) to continue
         singleTapGesture.require(toFail: doubleTapGesture)
         singleTapGesture.delegate = self
 
@@ -68,6 +69,10 @@ final class StackViewCell: UITableViewCell {
             trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
         ])
+    }
+
+    func requireSingleTapGestureRecognizer(toFail otherGestureRecognizer: UIGestureRecognizer) {
+        singleTapGesture.require(toFail: otherGestureRecognizer) // TODO: consider if we want to prevent this from being called more than once
     }
 
     @objc

@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 
 final class StackViewCellDescription: ConversationMessageCellDescription {
-    typealias View = StackingConversationMessageContentView
+    typealias View = ConversationStackMessageContentView
 
     var canBeCombinedWithOtherCells: Bool { false }
     let cellDescriptions: [AnyConversationMessageCellDescription]

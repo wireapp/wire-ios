@@ -503,6 +503,9 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
                 let arrangedSubview = cellDescription.makeView()
                 cell.stackView.insertArrangedSubview(arrangedSubview, at: 0)
             }
+            if let swipeGesture = tableView.gestureRecognizers?.first(where: { $0 is UISwipeGestureRecognizer }) { // TODO: delete, doesn't work
+                cell.requireSingleTapGestureRecognizer(toFail: swipeGesture)
+            }
             UIView.performWithoutAnimation {
                 cell.stackView.setNeedsLayout()
                 cell.stackView.layoutIfNeeded()

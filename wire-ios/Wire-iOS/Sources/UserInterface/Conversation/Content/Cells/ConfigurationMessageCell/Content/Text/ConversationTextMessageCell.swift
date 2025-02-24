@@ -19,9 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView,
-    ConversationMessageCell,
-    TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageContentView, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -51,7 +49,7 @@ final class ConversationTextMessageCell: UIView,
         return view
     }()
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -158,7 +156,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8

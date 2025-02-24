@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class StackingConversationMessageContentView: UIView, ConversationMessageContentView {
+final class ConversationStackMessageContentView: UIView, ConversationMessageContentView {
 
     var isSelected = false
 
