@@ -41,10 +41,8 @@ class NoHistoryComponent: NoHistoryViewBuilder {
     }
 
     func noHistoryView(userID: UUID, cookieData: Data) -> NoHistoryView {
-        NoHistoryView(viewModel: noHistoryViewModel(
-            userID: userID,
-            cookieData: cookieData,
-            onFlowCompletion: onFlowCompletion)
+        NoHistoryView(
+            viewModel: noHistoryViewModel(userID: userID, cookieData: cookieData, onFlowCompletion: onFlowCompletion)
         )
     }
 
