@@ -62,8 +62,25 @@ final class SyncAgent: NSObject {
     ///
     /// If no last event id is known, then the initial sync will be performed,
     /// otherwise the incremental sync will be performed.
+    ///
+    /// This method logs any errors and does not wait for the sync to finish.
 
-    func performSyncIfNeeded() async throws {
+    func triggerSync() {
+        Task {
+            do {
+                try await performSync()
+            } catch {
+                WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
+            }
+        }
+    }
+
+    /// Performs the appropriate sync depending in the local state.
+    ///
+    /// If no last event id is known, then the initial sync will be performed,
+    /// otherwise the incremental sync will be performed.
+
+    func performSync() async throws {
         if !hasCompletedInitialSync {
             try await performInitialSync()
         } else {

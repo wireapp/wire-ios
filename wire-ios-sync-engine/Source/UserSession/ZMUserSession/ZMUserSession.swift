@@ -101,7 +101,7 @@ public final class ZMUserSession: NSObject {
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
-    private var syncAgent: SyncAgent?
+    var syncAgent: SyncAgent?
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
@@ -566,14 +566,7 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
         syncAgent.delegate = self
-
-        Task {
-            do {
-                try await syncAgent.performSyncIfNeeded()
-            } catch {
-                WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
-            }
-        }
+        syncAgent.triggerSync()
     }
 
     // MARK: - Deinitalize

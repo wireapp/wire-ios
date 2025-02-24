@@ -59,7 +59,7 @@ final class SyncAgentTests: XCTestCase {
         legacySyncStatus.performQuickSync_MockMethod = {}
 
         // When
-        try await sut.performSyncIfNeeded()
+        try await sut.performSync()
 
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations, [false])
@@ -75,7 +75,7 @@ final class SyncAgentTests: XCTestCase {
         legacySyncStatus.performQuickSync_MockMethod = {}
 
         // When
-        try await sut.performSyncIfNeeded()
+        try await sut.performSync()
 
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations.count, 0)
