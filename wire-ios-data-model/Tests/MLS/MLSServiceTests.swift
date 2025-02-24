@@ -968,6 +968,51 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Pending proposals
 
+    func test_CommitPendingProposalsIfNeeded_It_Discards_Calls_Within_The_Throttle_Interval() async throws {
+        // Given
+        let futureCommitDate = Date().addingTimeInterval(2)
+        let groupID = MLSGroupID(.init([1, 2, 3]))
+        var conversation: ZMConversation!
+
+        await uiMOC.perform { [self] in
+            // A group with pending proposal in the future
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = futureCommitDate
+        }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
+
+        // Mock committing pending proposal.
+        var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
+        let updateEvent = dummyMemberJoinEvent()
+
+        var commitPendingProposalsCount = 0
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            commitPendingProposalsCount += 1
+            return [updateEvent]
+        }
+
+        // When
+        await withTaskGroup(of: Void.self) { group in
+            for _ in 0 ..< 10 {  // Simulating 10 rapid calls
+                group.addTask {
+                    await self.sut.commitPendingProposalsIfNeeded()
+                }
+
+                try? await Task.sleep(
+                    nanoseconds: 100_000_000
+                ) // 0.1s delay between each call
+            }
+        }
+
+        // Then, 9 calls within the throttle interval have been discarded, only 1 went through.
+        XCTAssertEqual(commitPendingProposalsCount, 1)
+        XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[updateEvent]])
+    }
+
     func test_CommitPendingProposals_NoProposalsExist() async throws {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
