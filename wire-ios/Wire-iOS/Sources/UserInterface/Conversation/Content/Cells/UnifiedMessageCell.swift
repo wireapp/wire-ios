@@ -22,11 +22,48 @@ import WireConversationUI
 import WireDesign
 import WireDataModel
 
-/// A new cell which contains one whole message.
-public final class UnifiedMessageCell: UITableViewCell {
-    public typealias Message = WireConversationUI.Message
+final class StackViewCell: UITableViewCell {
 
-    public var message = Message() {
+    let stackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        return stackView
+    }()
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupStackView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    private func setupStackView() {
+
+        focusStyle = .custom
+        selectionStyle = .none
+        backgroundColor = .clear
+        isOpaque = false
+
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
+        ])
+    }
+
+}
+
+/// A new cell which contains one whole message.
+final class UnifiedMessageCell: UITableViewCell {
+    typealias Message = WireConversationUI.Message
+
+    var message = Message() {
         didSet {
             if oldValue != message {
                 updateContent()
@@ -34,7 +71,7 @@ public final class UnifiedMessageCell: UITableViewCell {
         }
     }
 
-    public var messageLayout = MessageLayout.oneOnOneConversationStyle {
+    var messageLayout = MessageLayout.oneOnOneConversationStyle {
         didSet {
             if oldValue != messageLayout {
                 updateContent()
@@ -42,7 +79,7 @@ public final class UnifiedMessageCell: UITableViewCell {
         }
     }
 
-    public var wireAccentColor: WireAccentColor = .default {
+    var wireAccentColor: WireAccentColor = .default {
         didSet {
             if oldValue != wireAccentColor {
                 updateContent()
@@ -50,7 +87,7 @@ public final class UnifiedMessageCell: UITableViewCell {
         }
     }
 
-    public var wireAccentColorMapping: WireAccentColorMapping? {
+    var wireAccentColorMapping: WireAccentColorMapping? {
         didSet { updateContent() }
     }
 
@@ -90,7 +127,7 @@ extension WireConversationUI.Message {
 var dataSourceX: AnyObject?
 
 @MainActor
-public func MessageCellPreview(_ messageLayout: MessageLayout) -> UIViewController {
+func MessageCellPreview(_ messageLayout: MessageLayout) -> UIViewController {
 
     let tableViewController = UITableViewController()
     tableViewController.tableView.register(UnifiedMessageCell.self, forCellReuseIdentifier: "MessageCell")
@@ -134,18 +171,18 @@ public func MessageCellPreview(_ messageLayout: MessageLayout) -> UIViewControll
     MessageCellPreview(.groupConversationStyle)
 }
 
-public struct MessageCellPreviewRepresentable: UIViewControllerRepresentable {
+struct MessageCellPreviewRepresentable: UIViewControllerRepresentable {
 
     private let messageLayout: MessageLayout
 
-    public init(messageLayout: MessageLayout) {
+    init(messageLayout: MessageLayout) {
         self.messageLayout = messageLayout
     }
 
-    public func makeUIViewController(context: Context) -> UIViewController {
+    func makeUIViewController(context: Context) -> UIViewController {
         MessageCellPreview(messageLayout)
     }
 
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 
 }

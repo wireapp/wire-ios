@@ -503,21 +503,41 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
             if !registeredCells.contains(where: { $0 is UnifiedMessageCell.Type }) {
                 tableView.register(UnifiedMessageCell.self, forCellReuseIdentifier: "UnifiedMessageCell")
             }
+            if !registeredCells.contains(where: { $0 is StackViewCell.Type }) {
+                tableView.register(StackViewCell.self, forCellReuseIdentifier: "StackViewCell")
+            }
 
             let textMessageCellDescription = section.elements
                 .compactMap({ $0.instance as? ConversationTextMessageCellDescription })
                 .first
 
-            let cell = tableView.dequeueReusableCell(withIdentifier: "UnifiedMessageCell", for: indexPath)
-            if let cell = cell as? UnifiedMessageCell {
-                cell.message = .init(messages[indexPath.section])
-                cell.messageLayout = .groupConversationStyle // TODO: fix
-                cell.wireAccentColor = .amber // TODO: fix
-                cell.wireAccentColorMapping = WireAccentColorMapping()
+            let cell = tableView.dequeueReusableCell(withIdentifier: "StackViewCell", for: indexPath)
+            if let cell = cell as? StackViewCell {
+                cell.stackView.arrangedSubviews.forEach { arrangedSubview in
+                    arrangedSubview.removeFromSuperview()
+                }
+                for cellDescription in section.elements {
+                    let arrangedSubview = cellDescription.makeView()
+                    cell.stackView.insertArrangedSubview(arrangedSubview, at: 0)
+                }
+                UIView.performWithoutAnimation {
+                    cell.stackView.setNeedsLayout()
+                    cell.stackView.layoutIfNeeded()
+                }
             }
+
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "UnifiedMessageCell", for: indexPath)
+//            if let cell = cell as? UnifiedMessageCell {
+//                cell.message = .init(messages[indexPath.section])
+//                cell.messageLayout = .groupConversationStyle // TODO: fix
+//                cell.wireAccentColor = .amber // TODO: fix
+//                cell.wireAccentColorMapping = WireAccentColorMapping()
+//            }
+
 //            var contentConfiguration = cell.defaultContentConfiguration()
 //            contentConfiguration.attributedText = textMessageCellDescription?.configuration.attributedText
 //            cell.contentConfiguration = contentConfiguration
+
             return cell
         }
 

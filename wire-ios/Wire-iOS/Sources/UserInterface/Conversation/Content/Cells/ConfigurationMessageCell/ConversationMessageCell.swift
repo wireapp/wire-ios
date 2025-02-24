@@ -153,6 +153,7 @@ protocol ConversationMessageCellDescription: AnyObject {
 
     func register(in tableView: UITableView)
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell
+    func makeView() -> UIView
     func willDisplayCell()
     func didEndDisplayingCell()
     func isConfigurationEqual(with other: Any) -> Bool
@@ -170,6 +171,30 @@ extension ConversationMessageCellDescription {
 
     func register(in tableView: UITableView) {
         tableView.register(cell: type(of: self))
+    }
+
+    func makeView() -> UIView {
+        let view = View()
+        let container = UIView()
+
+        view.translatesAutoresizingMaskIntoConstraints = false
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(view)
+
+        let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor)
+        let trailing = view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+        let top = view.topAnchor.constraint(equalTo: container.topAnchor)
+        let bottom = view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+
+        top.constant = CGFloat(topMargin)
+        leading.constant = isFullWidth ? 0 : view.conversationHorizontalMargins.left
+        trailing.constant = isFullWidth ? 0 : -view.conversationHorizontalMargins.right
+
+        NSLayoutConstraint.activate([leading, trailing, top, bottom])
+
+        view.configure(with: configuration, animated: false)
+
+        return container
     }
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
@@ -218,6 +243,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
 
 final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
+    private let viewGenerator: () -> UIView
     private let registrationBlock: (UITableView) -> Void
     private let configureBlock: (UITableViewCell, Bool) -> Void
     private let baseTypeGetter: () -> AnyClass
@@ -240,6 +266,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
         self.configureBlock = { cell, animated in
             description.configureCell(cell, animated: animated)
+        }
+
+        self.viewGenerator = {
+            description.makeView()
         }
 
         self.cellGenerator = { tableView, indexPath in
@@ -325,6 +355,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         cellGenerator(tableView, indexPath)
+    }
+
+    func makeView() -> UIView {
+        viewGenerator()
     }
 
     func isConfigurationEqual(with description: AnyConversationMessageCellDescription) -> Bool {
