@@ -102,7 +102,7 @@ extension EventDecoder {
             StoredUpdateEvent.highestIndex(self.eventMOC)
         }
 
-        guard proteusProvider.canPerform, !events.isEmpty else {
+        guard proteusProvider.canPerform else {
             WireLogger.proteus.warn("ignore decrypting events because it is not safe")
             return []
         }
