@@ -20,16 +20,26 @@ import Foundation
 
 enum NotificationTitle {
 
-    case conversationMessage(MessageTitleFormat)
+    case conversationMessage(MessageTitleDescriptor)
 
     func make() -> String {
         switch self {
-        case let .conversationMessage(messageFormat):
-            let conversationMessageTitleComposer = ConversationMessageNotificationTitleComposer(
-                format: messageFormat
-            )
-
-            return conversationMessageTitleComposer.make()
+        case let .conversationMessage(titleDescriptor):
+            return make(titleDescriptor: titleDescriptor)
+        }
+    }
+    
+    // TODO: [WPB-15153] - Localize strings
+    private func make(titleDescriptor: MessageTitleDescriptor) -> String {
+        switch titleDescriptor {
+        case let .sender(sender):
+            "\(sender)"
+        case let .senderInTeam(sender, team):
+            "\(sender) in \(team)"
+        case let .conversation(conversation):
+            "\(conversation)"
+        case let .conversationInTeam(conversation, team):
+            "\(conversation) in \(team)"
         }
     }
 
@@ -38,7 +48,7 @@ enum NotificationTitle {
 extension NotificationTitle {
 
     /// The expected formats for the title of a new message notification.
-    enum MessageTitleFormat {
+    enum MessageTitleDescriptor {
         /// `[sender name]`
         case sender(sender: String)
         /// `[sender name] in [team name]`

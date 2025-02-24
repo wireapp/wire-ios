@@ -18,46 +18,48 @@
 
 import Foundation
 
-/// The Either type represents duality.
-/// A value that can either be of a type or another.
-enum Either<A, B>{
-  case left(A)
-  case right(B)
-}
-
 enum NotificationBody {
 
-    case conversation(Either<UserMessageBodyFormat, SystemMessageBodyFormat>)
-    case user(UserConnectionBodyFormat)
+    case singleMessage(NewMessageBodyDescriptor)
     case bundled(messagesCount: Int)
 
     func make() -> String {
         switch self {
-        case let .conversation(format):
-            var composer: NotificationComposer
-            
-            switch format {
-            case .left(let userMessageBodyFormat):
-                composer = ConversationUserMessageNotificationBodyComposer(
-                    format: userMessageBodyFormat
-                )
-            case .right(let systemMessageBodyFormat):
-                composer = ConversationSystemMessageNotificationBodyComposer(
-                    format: systemMessageBodyFormat
-                )
-            }
-            
-            return composer.make()
-            
-        case let .user(userConnectionBodyFormat):
-            let userConnectionBodyComposer = UserConnectionNotificationBodyComposer(
-                format: userConnectionBodyFormat
-            )
-
-            return userConnectionBodyComposer.make()
-
+        case .singleMessage(let newMessageBodyDescriptor):
+            make(bodyDescriptor: newMessageBodyDescriptor)
         case let .bundled(count):
-            return "\(count) new messages."
+            "\(count) new messages."
+        }
+    }
+    
+    private func make(bodyDescriptor: NewMessageBodyDescriptor) -> String {
+        switch bodyDescriptor {
+        case .sentWithUnknownSender:
+            "Someone sent a message"
+        case .mentionedWithUnknownSender:
+            "Someone mentioned you"
+        case .repliedWithUnknownSender:
+            "Someone replied to you"
+        case let .text(content, senderName):
+            senderName != nil ? "\(senderName!): \(content)" : content
+        case let .textWithMention(content, senderName):
+            senderName != nil ? "Mention from \(senderName!): \(content)" : "Mention: \(content)"
+        case let .textWithReply(content, senderName):
+            senderName != nil ? "Reply from \(senderName!): \(content)" : "Reply: \(content)"
+        case let .sharedPicture(senderName):
+            senderName != nil ? "\(senderName!) shared a picture" : "Shared a picture"
+        case let .sharedVideo(senderName):
+            senderName != nil ? "\(senderName!) shared a video" : "Shared a video"
+        case let .sharedAudio(senderName):
+            senderName != nil ? "\(senderName!) shared an audio message" : "Shared an audio message"
+        case let .sharedFile(senderName):
+            senderName != nil ? "\(senderName!) shared a file" : "Shared a file"
+        case let .sharedLocation(senderName):
+            senderName != nil ? "\(senderName!) shared a location" : "Shared a location"
+        case let .ping(senderName):
+            senderName != nil ? "\(senderName!) pinged you" : "Pinged you"
+        case .hidden:
+            "New message"
         }
     }
 
@@ -66,7 +68,7 @@ enum NotificationBody {
 extension NotificationBody {
 
     /// The expected formats for the body of a new conversation user message notification.
-    enum UserMessageBodyFormat {
+    enum NewMessageBodyDescriptor {
         /// `Someone sent a message`
         case sentWithUnknownSender
         /// `Someone mentioned you`
@@ -94,32 +96,4 @@ extension NotificationBody {
         /// `New message`
         case hidden
     }
-
-    /// The expected formats for the body of a new conversation system message notification.
-    enum SystemMessageBodyFormat {
-        /// `[sender name] created a conversation` or `Someone created a conversation` if sender is nil
-        case createdConversation(senderName: String?)
-        /// `[sender name] added you` or `Someone added you` if sender is nil
-        case addedYou(senderName: String?)
-        /// `[sender name] removed you` or `Someone removed you` if sender is nil
-        case removedYou(senderName: String?)
-        /// `[sender name] set the message timer to [value]` or `Someone set the message timer to [value]` if sender is
-        /// nil
-        case setMessageTimer(senderName: String?, timeoutValue: String)
-        /// `[sender name] turned off the message timer` or `Someone turned off the message timer` if sender is nil
-        case turnedOffMessageTimer(senderName: String?)
-        /// `[sender name] deleted the group` or `Someone deleted the group` if sender is nil
-        case deletedGroup(senderName: String?)
-    }
-
-    /// The expected formats for the body of a new user connection notification.
-    enum UserConnectionBodyFormat {
-        /// `[username]` just joined Wire
-        case userJoined(username: String)
-        /// `[username]` wants to connect
-        case userWantsToConnect(username: String)
-        /// You and `[username]` are now connected
-        case usersConnected(username: String)
-    }
-
 }
