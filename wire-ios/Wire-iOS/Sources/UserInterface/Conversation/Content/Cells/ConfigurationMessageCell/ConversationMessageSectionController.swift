@@ -323,15 +323,16 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         for cellDescription in cellDescriptions {
             if cellDescription.canBeCombinedWithOtherCells {
                 currentCombination.append(cellDescription)
-            } else if currentCombination.count == 1 { // don't use the stack for single items
-                result.append(currentCombination[0])
+            } else {
+                if currentCombination.count == 1 { // don't use the stack for single items
+                    result.append(currentCombination[0])
+                } else if !currentCombination.isEmpty {
+                    let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
+                    result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
+                }
                 currentCombination.removeAll()
-            } else if !currentCombination.isEmpty {
-                let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
-                result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
-                currentCombination.removeAll()
+                result.append(cellDescription)
             }
-            result.append(cellDescription)
         }
 
         if currentCombination.count == 1 { // don't use the stack for single items
