@@ -124,6 +124,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
             .conversationCreated,
+            .memberJoin(addedUserIDs: [.mockID4]), // concerns self user
             .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
             .messageTimerUpdate(newTimer: nil) // disabled timer
         ]
@@ -162,6 +163,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
             .conversationCreated,
+            .memberJoin(addedUserIDs: [.mockID4]), // concerns self user
             .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
             .messageTimerUpdate(newTimer: nil) // disabled timer
         ]
@@ -198,7 +200,8 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID3)
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
-            .memberLeave(removedUserIDs: [UUID()]) // doesn't concern self user
+            .memberLeave(removedUserIDs: [UUID()]), // doesn't concern self user
+            .memberJoin(addedUserIDs: [UUID()]) // doesn't concern self user
         ]
 
         for systemMessage in systemMessages {
@@ -210,7 +213,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
             let shouldBuildNotification = await sut.shouldBuildNotification()
 
-            XCTAssertEqual(shouldBuildNotification, false) // user is not self user
+            XCTAssertEqual(shouldBuildNotification, false) // because user is not self user
         }
     }
 
@@ -243,7 +246,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         case .conversationCreated:
             XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) created a conversation")
         case .memberJoin:
-            break
+            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) added you")
         case .conversationDeleted:
             break
         case let .messageTimerUpdate(timeoutValue):

@@ -32,8 +32,7 @@ struct NewSystemMessageNotificationBodyComposer {
             senderName != nil ? "\(senderName!) set the message timer to \(timeoutValue)" :
                 "Someone set the message timer to \(timeoutValue)"
         case let .addedYou(senderName):
-            // TODO: [WPB-11661]
-            ""
+            senderName != nil ? "\(senderName!) added you" : "Someone added you"
         case let .turnedOffMessageTimer(senderName):
             senderName != nil ? "\(senderName!) turned off the message timer" : "Someone turned off the message timer"
         case let .deletedGroup(senderName):

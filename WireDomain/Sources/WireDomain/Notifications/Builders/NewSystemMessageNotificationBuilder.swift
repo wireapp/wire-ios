@@ -90,8 +90,7 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
         case let .memberLeave(removedUserIDs):
             removedUserIDs.contains(context.selfUserID)
         case let .memberJoin(addedUserIDs):
-            // TODO: [WPB-11661]
-            true
+            addedUserIDs.contains(context.selfUserID)
         case .conversationCreated, .conversationDeleted, .messageTimerUpdate:
             true
         }
@@ -101,11 +100,10 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
         switch context.systemMessage {
         case .memberLeave:
             return buildMemberLeaveNotification()
+        case .memberJoin:
+            return buildMemberJoinNotification()
         case .conversationCreated:
             return buildConversationCreatedNotification()
-        case .memberJoin:
-            // TODO: [WPB-11661]
-            break
         case .conversationDeleted:
             // TODO: [WPB-11658]
             break
@@ -147,6 +145,26 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
 
         return content
     }
+    
+    private func buildMemberJoinNotification() -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+
+        if let title = makeTitle() {
+            content.title = title
+        }
+        
+        let body = NotificationBody.newSystemMessage(
+            .addedYou(senderName: context.senderName)
+        )
+            
+        content.body = body.make()
+        content.categoryIdentifier = makeCategory()
+        content.sound = makeSound()
+        content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
+
+        return content
+    }
 
     private func buildConversationCreatedNotification() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
@@ -180,11 +198,11 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
         } else {
             .turnedOffMessageTimer(senderName: context.senderName)
         }
-
+        
         let body = NotificationBody.newSystemMessage(
             bodyFormat
         )
-
+            
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
