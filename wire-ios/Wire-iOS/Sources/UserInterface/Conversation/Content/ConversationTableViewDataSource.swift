@@ -19,7 +19,6 @@
 import DifferenceKit
 import WireDataModel
 import WireSyncEngine
-import WireConversationUI
 import WireFoundation
 import WireDesign
 
