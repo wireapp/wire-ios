@@ -24,20 +24,18 @@ struct NewSystemMessageNotificationBodyComposer {
     // TODO: [WPB-15153] - Localize strings
     func make() -> String {
         switch format {
+        case let .removedYou(senderName):
+            senderName != nil ? "\(senderName!) removed you" : "Someone removed you"
+        case let .setMessageTimer(senderName, timeoutValue):
+            senderName != nil ? "\(senderName!) set the message timer to \(timeoutValue)" :
+                "Someone set the message timer to \(timeoutValue)"
+        case let .addedYou(senderName):
+            senderName != nil ? "\(senderName!) added you" : "Someone added you"
         case let .createdConversation(senderName):
             // TODO: [WPB-11657]
             ""
-        case let .removedYou(senderName):
-            senderName != nil ? "\(senderName!) removed you" : "Someone removed you"
-        case let .setMessageTimer(senderName):
-            // TODO: [WPB-11663]
-            ""
-        case let .addedYou(senderName):
-            // TODO: [WPB-11661]
-            ""
         case let .turnedOffMessageTimer(senderName):
-            // TODO: [WPB-11663]
-            ""
+            senderName != nil ? "\(senderName!) turned off the message timer" : "Someone turned off the message timer"
         case let .deletedGroup(senderName):
             senderName != nil ? "\(senderName!) deleted the group" : "Someone deleted the group"
         }

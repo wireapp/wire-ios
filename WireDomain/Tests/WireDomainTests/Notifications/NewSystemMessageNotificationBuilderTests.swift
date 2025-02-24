@@ -74,7 +74,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         }
     }
 
-    func testGenerateNewSystemMessageNotifications_Is_Group_Conversation_And_Is_Team_User() async throws {
+    func testGenerateNewSystemMessageNotifications_For_Group_Conversation_And_Team_User() async throws {
 
         // Mock
 
@@ -84,7 +84,9 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID4)
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
-            .memberLeave(removedUserIDs: [.mockID4]) // concerns self user
+            .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
+            .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
+            .messageTimerUpdate(newTimer: nil) // disabled timer
         ]
 
         for systemMessage in systemMessages {
@@ -109,7 +111,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         }
     }
 
-    func testGenerateNewSystemMessageNotifications_Is_Group_Conversation_And_Is_Personal_User() async throws {
+    func testGenerateNewSystemMessageNotifications_For_Group_Conversation_And_Personal_User() async throws {
 
         // Mock
 
@@ -120,7 +122,10 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
-            .conversationDeleted
+            .conversationDeleted,
+            .memberJoin(addedUserIDs: [.mockID4]), // concerns self user
+            .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
+            .messageTimerUpdate(newTimer: nil) // disabled timer
         ]
 
         for systemMessage in systemMessages {
@@ -145,7 +150,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         }
     }
 
-    func testGenerateNewSystemMessageNotifications_Is_OneOnOne_Conversation_And_Team() async throws {
+    func testGenerateNewSystemMessageNotifications_For_OneOnOne_Conversation_And_Team() async throws {
 
         // Mock
 
@@ -156,7 +161,10 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
-            .conversationDeleted
+            .conversationDeleted,
+            .memberJoin(addedUserIDs: [.mockID4]), // concerns self user
+            .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
+            .messageTimerUpdate(newTimer: nil) // disabled timer
         ]
 
         for systemMessage in systemMessages {
@@ -191,7 +199,8 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         await setupMock(isGroup: isGroup, isTeam: isTeam, selfUserID: .mockID3)
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
-            .memberLeave(removedUserIDs: [UUID()]) // doesn't concern self user
+            .memberLeave(removedUserIDs: [UUID()]), // doesn't concern self user
+            .memberJoin(addedUserIDs: [UUID()]) // doesn't concern self user
         ]
 
         for systemMessage in systemMessages {
@@ -203,7 +212,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
             let shouldBuildNotification = await sut.shouldBuildNotification()
 
-            XCTAssertEqual(shouldBuildNotification, false) // user is not self user
+            XCTAssertEqual(shouldBuildNotification, false) // because user is not self user
         }
     }
 
@@ -233,14 +242,21 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         switch systemMessage {
         case .memberLeave:
             XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) removed you")
-        case .conversationCreated:
-            break
         case .memberJoin:
+            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) added you")
+        case .conversationCreated:
             break
         case .conversationDeleted:
             XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) deleted the group")
-        case .messageTimerUpdate:
-            break
+        case let .messageTimerUpdate(timeoutValue):
+            if let timeoutValue {
+                XCTAssertEqual(
+                    notificationContent.body,
+                    "\(Scaffolding.senderName) set the message timer to \(timeoutValue / 1000) seconds"
+                )
+            } else {
+                XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) turned off the message timer")
+            }
         }
 
         // Category
@@ -297,6 +313,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
     }
 
     private enum Scaffolding {
+        static let timeoutValue: Int64 = 10_000
         static let senderName = "User1"
         static let conversationName = "Conversation1"
         static let teamName = "Team1"
