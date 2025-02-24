@@ -331,7 +331,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/601522340/Use+Case+Committing+pending+proposals+MLS)
 
-    func commitPendingProposals() async
+    func commitPendingProposalsIfNeeded()
 
     /// Commits pending proposals for a group.
     ///
@@ -1726,7 +1726,28 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    public func commitPendingProposals() async {
+    private var task: Task<Void, Never>?
+    private var lastExecutionTime = Date.distantPast
+    private let throttleInterval: TimeInterval = 2.0 // 2 seconds throttle
+
+    public func commitPendingProposalsIfNeeded() {
+        let now = Date.now
+
+        guard now.timeIntervalSince(lastExecutionTime) > throttleInterval else {
+            return // Ignore call if within the throttle period
+        }
+
+        lastExecutionTime = now
+
+        task?.cancel()
+
+        task = Task { [self] in
+            guard !Task.isCancelled else { return }
+            await commitPendingProposals()
+        }
+    }
+
+    func commitPendingProposals() async {
         guard context != nil else {
             return
         }

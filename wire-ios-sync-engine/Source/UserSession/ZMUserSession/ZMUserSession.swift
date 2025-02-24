@@ -985,7 +985,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
 
             if !isRecovering, mlsFeature.isEnabled {
-                await mlsService.commitPendingProposals()
+                Task {
+                    mlsService.commitPendingProposalsIfNeeded()
+                }
             }
 
             await calculateSelfSupportedProtocolsIfNeeded()

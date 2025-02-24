@@ -131,7 +131,7 @@ extension EventDecoder {
 
         if let mlsService = await context.perform({ context.mlsService }),
            updateEvent.source == .webSocket {
-            await mlsService.commitPendingProposals()
+            mlsService.commitPendingProposalsIfNeeded()
         }
 
         return events
