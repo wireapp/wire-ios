@@ -92,19 +92,18 @@ final class NotificationSession {
 
             switch event {
             case let .conversation(conversationEvent):
+
                 notificationBuilder = await ConversationNotificationBuilder(
                     event: conversationEvent
                 )
-            // TODO: [WPB-10218] - Generate notif for other update events
-            case let .featureConfig(featureConfigEvent):
-                continue
-            case let .federation(federationEvent):
-                continue
+
             case let .user(userEvent):
-                continue
-            case let .team(teamEvent):
-                continue
-            case let .unknown(eventType):
+
+                notificationBuilder = UserNotificationBuilder(
+                    event: userEvent
+                )
+
+            default:
                 continue
             }
 

@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct NewSystemMessageNotificationBodyComposer {
+struct ConversationSystemMessageNotificationBodyComposer {
     let format: NotificationBody.SystemMessageBodyFormat
 
     // TODO: [WPB-15153] - Localize strings

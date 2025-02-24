@@ -20,25 +20,33 @@ import Foundation
 
 enum NotificationBody {
 
-    case newUserMessage(UserMessageBodyFormat)
-    case newSystemMessage(SystemMessageBodyFormat)
+    case conversationUserMessage(UserMessageBodyFormat)
+    case conversationSystemMessage(SystemMessageBodyFormat)
+    case userConnection(UserConnectionBodyFormat)
     case bundled(messagesCount: Int)
 
     func make() -> String {
         switch self {
-        case let .newUserMessage(userMessageBodyFormat):
-            let newUserMessageBodyComposer = NewUserMessageNotificationBodyComposer(
+        case let .conversationUserMessage(userMessageBodyFormat):
+            let conversationUserMessageBodyComposer = ConversationUserMessageNotificationBodyComposer(
                 format: userMessageBodyFormat
             )
 
-            return newUserMessageBodyComposer.make()
+            return conversationUserMessageBodyComposer.make()
 
-        case let .newSystemMessage(systemMessageBodyFormat):
-            let newSystemMessageBodyComposer = NewSystemMessageNotificationBodyComposer(
+        case let .conversationSystemMessage(systemMessageBodyFormat):
+            let conversationSystemMessageBodyComposer = ConversationSystemMessageNotificationBodyComposer(
                 format: systemMessageBodyFormat
             )
 
-            return newSystemMessageBodyComposer.make()
+            return conversationSystemMessageBodyComposer.make()
+
+        case let .userConnection(userConnectionBodyFormat):
+            let userConnectionBodyComposer = UserConnectionNotificationBodyComposer(
+                format: userConnectionBodyFormat
+            )
+
+            return userConnectionBodyComposer.make()
 
         case let .bundled(count):
             return "\(count) new messages."
@@ -49,7 +57,7 @@ enum NotificationBody {
 
 extension NotificationBody {
 
-    /// The expected formats for the body of a new user message notification.
+    /// The expected formats for the body of a new conversation user message notification.
     enum UserMessageBodyFormat {
         /// `Someone sent a message`
         case sentWithUnknownSender
@@ -79,7 +87,7 @@ extension NotificationBody {
         case hidden
     }
 
-    /// The expected formats for the body of a new system message notification.
+    /// The expected formats for the body of a new conversation system message notification.
     enum SystemMessageBodyFormat {
         /// `[sender name] created a conversation` or `Someone created a conversation` if sender is nil
         case createdConversation(senderName: String?)
@@ -94,6 +102,16 @@ extension NotificationBody {
         case turnedOffMessageTimer(senderName: String?)
         /// `[sender name] deleted the group` or `Someone deleted the group` if sender is nil
         case deletedGroup(senderName: String?)
+    }
+
+    /// The expected formats for the body of a new user connection notification.
+    enum UserConnectionBodyFormat {
+        /// `[username]` just joined Wire
+        case userJoined(username: String)
+        /// `[username]` wants to connect
+        case userWantsToConnect(username: String)
+        /// You and `[username]` are now connected
+        case usersConnected(username: String)
     }
 
 }

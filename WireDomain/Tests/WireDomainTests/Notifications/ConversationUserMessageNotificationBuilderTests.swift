@@ -25,8 +25,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class NewUserMessageNotificationBuilderTests: XCTestCase {
-    private var sut: NewUserMessageNotificationBuilder!
+final class ConversationUserMessageNotificationBuilderTests: XCTestCase {
+    private var sut: ConversationUserMessageNotificationBuilder!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
@@ -87,7 +87,7 @@ final class NewUserMessageNotificationBuilderTests: XCTestCase {
         for messageCapable in messagesCapable {
             let genericMessage = GenericMessage(content: messageCapable)
 
-            sut = await NewUserMessageNotificationBuilder(
+            sut = await ConversationUserMessageNotificationBuilder(
                 message: genericMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
@@ -120,7 +120,7 @@ final class NewUserMessageNotificationBuilderTests: XCTestCase {
 
         for messageCapable in messagesCapable {
             let genericMessage = GenericMessage(content: messageCapable)
-            sut = await NewUserMessageNotificationBuilder(
+            sut = await ConversationUserMessageNotificationBuilder(
                 message: genericMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
@@ -153,7 +153,7 @@ final class NewUserMessageNotificationBuilderTests: XCTestCase {
 
         for messageCapable in messagesCapable {
             let genericMessage = GenericMessage(content: messageCapable)
-            sut = await NewUserMessageNotificationBuilder(
+            sut = await ConversationUserMessageNotificationBuilder(
                 message: genericMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID

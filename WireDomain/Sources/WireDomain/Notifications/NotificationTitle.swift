@@ -20,16 +20,16 @@ import Foundation
 
 enum NotificationTitle {
 
-    case newMessage(MessageTitleFormat)
+    case conversationMessage(MessageTitleFormat)
 
     func make() -> String {
         switch self {
-        case let .newMessage(messageFormat):
-            let newMessageTitleComposer = NewMessageNotificationTitleComposer(
+        case let .conversationMessage(messageFormat):
+            let conversationMessageTitleComposer = ConversationMessageNotificationTitleComposer(
                 format: messageFormat
             )
 
-            return newMessageTitleComposer.make()
+            return conversationMessageTitleComposer.make()
         }
     }
 

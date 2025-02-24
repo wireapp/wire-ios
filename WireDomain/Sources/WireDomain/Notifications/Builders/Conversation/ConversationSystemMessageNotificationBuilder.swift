@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-struct NewSystemMessageNotificationBuilder: NotificationBuilder {
+struct ConversationSystemMessageNotificationBuilder: NotificationBuilder {
 
     enum SystemMessage {
         case memberLeave(removedUserIDs: Set<UUID>)
@@ -132,7 +132,7 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.newSystemMessage(
+        let body = NotificationBody.conversationSystemMessage(
             .removedYou(senderName: context.senderName)
         )
 
@@ -258,7 +258,7 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
         }
 
         return NotificationTitle
-            .newMessage(format)
+            .conversationMessage(format)
             .make()
     }
 
