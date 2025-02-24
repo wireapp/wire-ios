@@ -18,14 +18,10 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// An object that builds `InitialSync`.
-public protocol InitialSyncBuilderProtocol {
+extension ClientSessionComponent: InitialSyncBuilderProtocol {
 
-    // Workaround for Sourcery unable to generate compilable mock
-    // due to `any InitialSyncProtocol?`
-    typealias Sync = any InitialSyncProtocol
-
-    func buildInitialSync() throws -> Sync
+    public func buildInitialSync() throws -> any InitialSyncProtocol {
+        initialSync
+    }
 
 }

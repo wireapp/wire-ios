@@ -16,16 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-// sourcery: AutoMockable
-/// An object that builds `InitialSync`.
-public protocol InitialSyncBuilderProtocol {
+package struct SafariBrowser: UIViewControllerRepresentable {
 
-    // Workaround for Sourcery unable to generate compilable mock
-    // due to `any InitialSyncProtocol?`
-    typealias Sync = any InitialSyncProtocol
+    private let url: URL
 
-    func buildInitialSync() throws -> Sync
+    package init(url: URL) {
+        self.url = url
+    }
+
+    package func makeUIViewController(context: Context) -> BrowserViewController {
+        BrowserViewController(url: url)
+    }
+
+    package func updateUIViewController(_ viewController: BrowserViewController, context: Context) {}
 
 }

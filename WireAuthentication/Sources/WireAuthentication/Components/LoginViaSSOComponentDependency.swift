@@ -17,15 +17,18 @@
 //
 
 import Foundation
+internal import WireAuthenticationUI
 
-// sourcery: AutoMockable
-/// An object that builds `InitialSync`.
-public protocol InitialSyncBuilderProtocol {
+class LoginViaSSOComponent: LoginViaSSOBuilder {
 
-    // Workaround for Sourcery unable to generate compilable mock
-    // due to `any InitialSyncProtocol?`
-    typealias Sync = any InitialSyncProtocol
+    @MainActor
+    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
+    }
 
-    func buildInitialSync() throws -> Sync
+    @MainActor
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
+    }
 
 }

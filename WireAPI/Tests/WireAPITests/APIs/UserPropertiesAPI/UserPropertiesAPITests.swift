@@ -29,7 +29,7 @@ final class UserPropertiesAPITests: XCTestCase {
     override func setUp() {
         super.setUp()
         apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
-            let builder = UserPropertiesBuilder(apiService: apiService)
+            let builder = UserPropertiesAPIBuilder(apiService: apiService)
             return builder.makeAPI(for: apiVersion)
         }
     }

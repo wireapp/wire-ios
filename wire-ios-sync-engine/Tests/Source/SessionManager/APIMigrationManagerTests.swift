@@ -17,13 +17,16 @@
 //
 
 import Foundation
+import WireAPI
 import WireDataModelSupport
-import WireTransport
 import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
+@testable import WireTransport
 
-class APIMigrationMock: APIMigration {
+private typealias APIVersion = WireTransport.APIVersion
+
+private class APIMigrationMock: APIMigration {
     var version: APIVersion
 
     init(version: APIVersion) {
@@ -244,6 +247,32 @@ final class APIMigrationManagerTests: MessagingTest {
             useCache: true
         )
 
+        let baseURL = URL(string: "http://bar.example.com")!
+
+        let backendEnvironment = WireTransport.BackendEnvironment(
+            title: "Mock backend environment",
+            trustData: [],
+            environmentType: .production,
+            endpoints: BackendEndpoints(
+                backendURL: baseURL,
+                backendWSURL: baseURL,
+                blackListURL: baseURL,
+                teamsURL: baseURL,
+                accountsURL: baseURL,
+                websiteURL: baseURL,
+                countlyURL: nil
+            ),
+            proxySettings: nil,
+            certificateTrust: ServerCertificateTrust(trustData: [])
+        )
+
+        let wireAPIBackendEnvironment = WireAPI.BackendEnvironment(
+            url: backendEnvironment.backendURL,
+            webSocketURL: backendEnvironment.backendWSURL,
+            pinnedKeys: [],
+            proxySettings: nil
+        )
+
         let mockTransportSession = RecordingMockTransportSession(
             cookieStorage: cookieStorage,
             pushChannel: MockPushChannel()
@@ -259,6 +288,8 @@ final class APIMigrationManagerTests: MessagingTest {
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
+            backendEnvironment: backendEnvironment,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             appVersion: "999",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
@@ -273,7 +304,8 @@ final class APIMigrationManagerTests: MessagingTest {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: mockTransportSession,
-            userId: .create()
+            userId: .create(),
+            minTLSVersion: nil
         )
 
         let userSession = builder.build()
