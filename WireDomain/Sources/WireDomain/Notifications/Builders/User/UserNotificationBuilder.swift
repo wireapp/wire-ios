@@ -39,20 +39,16 @@ struct UserNotificationBuilder: NotificationBuilder {
 
         switch event {
         case let .connection(userConnectionEvent):
-            let isPending = userConnectionEvent.connection.status == .pending
 
             builder = UserConnectionEventNotificationBuilder(
                 userConnectionEvent: userConnectionEvent
             )
 
         case let .contactJoin(userContactJoinEvent):
-            
-            fatalError() // TODO: check with backend if it's needed
 
-//            builder = UserConnectionNotificationBuilder(
-//                connectionStatus: .joined,
-//                username: userContactJoinEvent.name
-//            )
+            builder = UserContactJoinEventNotificationBuilder(
+                name: userContactJoinEvent.name
+            )
 
         default:
             return UNMutableNotificationContent()
