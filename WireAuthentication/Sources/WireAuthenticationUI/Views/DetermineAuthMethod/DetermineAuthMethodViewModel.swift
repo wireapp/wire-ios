@@ -33,6 +33,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case onPremLoginNotPossible(recovery: AuthenticationMethod)
     }
 
+    package enum ModalDestination: Hashable, Identifiable {
+        package var id: Self { self }
+
+        case ssoLogin(url: URL)
+    }
+
     private let router: any Router
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
@@ -40,6 +46,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
+    @Published var modalDestination: ModalDestination?
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
@@ -112,8 +119,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
         case let .loginViaSSO(code):
-            // TODO: [WPB-15943] Handle login via SSO
-            break
+            // TODO: [WPB-15946] Genarate URL and handle the error
+            modalDestination = .ssoLogin(url: URL(string: "example")!)
 
         case let .onPremLogin(email, backendConfig):
             // TODO: [WPB-15944] Handle on-prem login

@@ -24,6 +24,12 @@ import WireAuthenticationAPI
 @MainActor
 package final class LoginViaSSOViewModel: ObservableObject {
 
+    let ssoURL: URL
+
+    package init(ssoURL: URL) {
+        self.ssoURL = ssoURL
+    }
+
     /// Generate the link to the SSO authentication screen
     ///
     /// - Parameters:

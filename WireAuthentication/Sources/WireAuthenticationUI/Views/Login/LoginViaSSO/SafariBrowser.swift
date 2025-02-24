@@ -18,29 +18,18 @@
 
 import SwiftUI
 
-package protocol LoginViaSSOBuilder {
+package struct SafariBrowser: UIViewControllerRepresentable {
 
-    @MainActor
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView
+    private let url: URL
 
-}
-
-package struct LoginViaSSOView: View {
-
-    @ObservedObject var viewModel: LoginViaSSOViewModel
-
-    package init(
-        viewModel: LoginViaSSOViewModel
-    ) {
-        self.viewModel = viewModel
+    package init(url: URL) {
+        self.url = url
     }
 
-    package var body: some View {
-        SafariBrowser(url: viewModel.ssoURL)
+    package func makeUIViewController(context: Context) -> BrowserViewController {
+        BrowserViewController(url: url)
     }
-}
 
-#Preview {
-    let url = URL(string: "https://www.wire.com")
-    LoginViaSSOView(viewModel: LoginViaSSOViewModel(ssoURL: url!))
+    package func updateUIViewController(_ viewController: BrowserViewController, context: Context) {}
+
 }

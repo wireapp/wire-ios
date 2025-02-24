@@ -30,14 +30,17 @@ package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
-    let builder: any LoginViaEmailBuilder
+    let loginViaEmailBuilder: any LoginViaEmailBuilder
+    let loginViaSSOBuilder: any LoginViaSSOBuilder
 
     package init(
         viewModel: DetermineAuthMethodViewModel,
-        builder: any LoginViaEmailBuilder
+        loginViaEmailBuilder: any LoginViaEmailBuilder,
+        loginViaSSOBuilder: any LoginViaSSOBuilder
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.builder = builder
+        self.loginViaEmailBuilder = loginViaEmailBuilder
+        self.loginViaSSOBuilder = loginViaSSOBuilder
     }
 
     package var body: some View {
@@ -111,6 +114,12 @@ package struct DetermineAuthMethodView: View {
                 builder.loginViaEmailView(email: email, canCreateAccount: true)
             }
         }
+        .sheet(item: $viewModel.modalDestination, content: {
+            switch $0 {
+            case let .ssoLogin(url: ssoURL):
+                loginViaSSOBuilder.loginViaSSOView(ssoURL: ssoURL)
+            }
+        })
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)

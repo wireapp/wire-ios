@@ -41,6 +41,7 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
         let sut = EnterPasswordView(
             password: .constant("invalid"),
             passwordIsWrong: .constant(true),
+            focusPasswordFieldOnAppear: false,
             continueAction: { _ in },
             cancelAction: {}
         )
@@ -59,6 +60,7 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
         let sut = EnterPasswordView(
             password: .constant("G00dPassword!"),
             passwordIsWrong: .constant(false),
+            focusPasswordFieldOnAppear: false,
             continueAction: { _ in },
             cancelAction: {}
         )
@@ -77,6 +79,7 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
         let sut = EnterPasswordView(
             password: .constant(""),
             passwordIsWrong: .constant(false),
+            focusPasswordFieldOnAppear: false,
             continueAction: { _ in },
             cancelAction: {}
         )
@@ -92,6 +95,7 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
         let sut = EnterPasswordView(
             password: .constant(""),
             passwordIsWrong: .constant(false),
+            focusPasswordFieldOnAppear: false,
             continueAction: { _ in },
             cancelAction: {}
         )
