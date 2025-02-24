@@ -20,6 +20,9 @@ import UIKit
 import WireDataModel
 import WireUtilities
 
+@available(*, deprecated, renamed: "ConversationMessageContentView")
+typealias ConversationMessageCell = ConversationMessageContentView
+
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
@@ -43,7 +46,7 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
 /// A generic view that displays conversation contents.
 
-protocol ConversationMessageCell: AnyObject {
+protocol ConversationMessageContentView: AnyObject {
     /// The object that contains the configuration of the view.
     associatedtype Configuration
 
@@ -80,7 +83,7 @@ protocol ConversationMessageCell: AnyObject {
     func prepareForReuse()
 }
 
-extension ConversationMessageCell {
+extension ConversationMessageContentView {
 
     var selectionView: UIView? {
         nil
@@ -114,7 +117,7 @@ extension ConversationMessageCell {
 
 protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
-    associatedtype View: ConversationMessageCell, UIView
+    associatedtype View: ConversationMessageContentView, UIView
 
     /// The views of neighbouring cell descriptions which return `true` might be
     /// arranged in a vertical stack view inside a single table view cell.
