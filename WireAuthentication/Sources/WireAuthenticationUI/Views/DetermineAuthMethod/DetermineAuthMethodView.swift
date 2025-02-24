@@ -109,9 +109,9 @@ package struct DetermineAuthMethodView: View {
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
-                builder.loginViaEmailView(email: email, canCreateAccount: false)
+                loginViaEmailBuilder.loginViaEmailView(email: email, canCreateAccount: false)
             case let .loginOrRegister(email):
-                builder.loginViaEmailView(email: email, canCreateAccount: true)
+                loginViaEmailBuilder.loginViaEmailView(email: email, canCreateAccount: true)
             }
         }
         .sheet(item: $viewModel.modalDestination, content: {
