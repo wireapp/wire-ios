@@ -30,13 +30,17 @@ public final class VerificationCodeViewModel: ObservableObject {
     let email: String
     let password: String
 
+    private let loginViaEmailUseCase: LoginViaEmailUseCaseProtocol
+
     package init(
         email: String,
         password: String,
+        loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         code: [String] = ["", "", "", "", "", ""]
     ) {
         self.email = email
         self.password = password
+        self.loginViaEmailUseCase = loginViaEmailUseCase
         self.code = code
     }
 

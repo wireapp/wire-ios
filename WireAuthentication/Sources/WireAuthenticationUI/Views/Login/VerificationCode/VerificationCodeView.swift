@@ -145,21 +145,17 @@ package struct VerificationCodeView: View {
 }
 
 #Preview("Empty code") {
-    VerificationCodeView(
-        viewModel: VerificationCodeViewModel(
-            email: "name.name@mail.com",
-            password: "pasword"
-        )
+    MockDependencies().previewVerificationCodeView(
+        email: "name.name@mail.com",
+        password: "pasword"
     )
 }
 
 #Preview("Not empty code") {
-    VerificationCodeView(
-        viewModel: VerificationCodeViewModel(
-            email: "name.name@mail.com",
-            password: "pasword",
-            code: ["1", "2", "3", "4", "5", ""]
-        )
+    MockDependencies().previewVerificationCodeView(
+        email: "name.name@mail.com",
+        password: "pasword",
+        code: ["1", "2", "3", "4", "5", ""]
     )
 }
 
@@ -169,11 +165,9 @@ package struct VerificationCodeView: View {
             VStack(spacing: 0) {
                 Spacer()
                     .frame(maxHeight: .infinity)
-                VerificationCodeView(
-                    viewModel: VerificationCodeViewModel(
-                        email: "name.name@mail.com",
-                        password: "pasword"
-                    )
+                MockDependencies().previewVerificationCodeView(
+                    email: "name.name@mail.com",
+                    password: "pasword"
                 )
             }
         }
