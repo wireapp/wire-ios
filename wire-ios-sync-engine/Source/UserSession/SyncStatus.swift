@@ -59,21 +59,25 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
     public var isSlowSyncing: Bool {
-        !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
+        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        return !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
     }
 
     private var isForceQuickSync = false
 
     public var isSyncing: Bool {
-        currentSyncPhase.isSyncing || !isPushChannelOpen
+        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        return currentSyncPhase.isSyncing || !isPushChannelOpen
     }
 
     public var isSyncingInBackground: Bool {
-        currentSyncPhase.isSyncing
+        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        return currentSyncPhase.isSyncing
     }
 
     public var isPushChannelOpen: Bool {
-        pushChannelEstablishedDate != nil
+        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        return pushChannelEstablishedDate != nil
     }
 
     public init(
