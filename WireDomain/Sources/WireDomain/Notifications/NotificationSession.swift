@@ -124,14 +124,16 @@ final class NotificationSession {
         }
 
         var notification = UNMutableNotificationContent()
-
-        if notifications.count > 1 {
+        
+        switch notifications.count {
+        case 0:
+            return notification
+        case 1:
+          return notifications[0]
+        default:
             let body = NotificationBody.bundled(messagesCount: notifications.count)
             notification.body = body.make()
-        } else if let singleNotification = notifications.first {
-            notification = singleNotification
+            return notification
         }
-
-        return notification
     }
 }
