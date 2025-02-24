@@ -55,7 +55,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
         
         guard let decryptedMessage,
-              let (genericMessage, _) = ProtobufMessageHelper.getProtobufMessage(
+              let (genericMessage, _) = ProtobufMessageDecoder.getProtobufMessage(
                   from: decryptedMessage
               ) else {
             throw Failure.failedToDecryptMLSMessage
@@ -156,19 +156,19 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
 
         let body: NotificationBody = switch assetType {
         case .image:
-            .conversationUserMessage(
+            .singleMessage(
                 .sharedPicture(senderName: isGroupConversation ? senderName : nil)
             )
         case .video:
-            .conversationUserMessage(
+            .singleMessage(
                 .sharedVideo(senderName: isGroupConversation ? senderName : nil)
             )
         case .audio:
-            .conversationUserMessage(
+            .singleMessage(
                 .sharedAudio(senderName: isGroupConversation ? senderName : nil)
             )
         case .fileUpload:
-            .conversationUserMessage(
+            .singleMessage(
                 .sharedFile(senderName: isGroupConversation ? senderName : nil)
             )
         }
@@ -190,7 +190,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.conversationUserMessage(
+        let body = NotificationBody.singleMessage(
             .ping(senderName: context.isGroupConversation ? senderName : nil)
         )
 
@@ -207,7 +207,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         let content = UNMutableNotificationContent()
 
         // No title for hidden message, only a body.
-        let body: NotificationBody = .conversationUserMessage(.hidden)
+        let body: NotificationBody = .singleMessage(.hidden)
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
@@ -246,7 +246,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let format: NotificationBody.UserMessageBodyFormat = if isMention {
+        let format: NotificationBody.NewMessageBodyDescriptor = if isMention {
             .textWithMention(content: text, senderName: senderName)
         } else if isReply {
             .textWithReply(content: text, senderName: senderName)
@@ -254,7 +254,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
             .text(content: text, senderName: senderName)
         }
 
-        let body = NotificationBody.conversationUserMessage(
+        let body = NotificationBody.singleMessage(
             format
         )
 
@@ -276,7 +276,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.conversationUserMessage(
+        let body = NotificationBody.singleMessage(
             .sharedLocation(senderName: isGroupConversation ? senderName : nil)
         )
 
@@ -315,7 +315,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
 
         let content = UNMutableNotificationContent()
 
-        let format: NotificationBody.UserMessageBodyFormat = if isMention {
+        let format: NotificationBody.NewMessageBodyDescriptor = if isMention {
             .mentionedWithUnknownSender
         } else if isReply {
             .repliedWithUnknownSender
@@ -323,7 +323,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
             .sentWithUnknownSender
         }
 
-        let body = NotificationBody.conversationUserMessage(
+        let body = NotificationBody.singleMessage(
             format
         )
 
@@ -349,7 +349,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
             return nil
         }
 
-        let format: NotificationTitle.MessageTitleFormat = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {

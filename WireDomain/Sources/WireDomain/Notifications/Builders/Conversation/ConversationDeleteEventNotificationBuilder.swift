@@ -89,11 +89,13 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.conversationSystemMessage(
-            .deletedGroup(senderName: context.senderName)
-        )
+        let body = if let senderName = context.senderName {
+            "\(senderName) deleted the group"
+        } else {
+            "Someone deleted the group"
+        }
 
-        content.body = body.make()
+        content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
@@ -114,7 +116,7 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
             return nil
         }
 
-        let format: NotificationTitle.MessageTitleFormat = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {

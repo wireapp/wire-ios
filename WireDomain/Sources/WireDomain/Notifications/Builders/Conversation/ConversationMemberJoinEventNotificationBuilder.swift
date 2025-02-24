@@ -60,7 +60,6 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
         let teamName = await userLocalStore.teamName(for: selfUser)
 
         let selfUserID = await userLocalStore.id(for: selfUser)
-        let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
 
         self.context = Context(
             senderName: senderName,
@@ -92,11 +91,13 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
             content.title = title
         }
         
-        let body = NotificationBody.conversationSystemMessage(
-            .addedYou(senderName: context.senderName)
-        )
+        let body = if let senderName = context.senderName {
+            "\(senderName) added you"
+        } else {
+            "Someone added you"
+        }
             
-        content.body = body.make()
+        content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
@@ -117,7 +118,7 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
             return nil
         }
 
-        let format: NotificationTitle.MessageTitleFormat = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {

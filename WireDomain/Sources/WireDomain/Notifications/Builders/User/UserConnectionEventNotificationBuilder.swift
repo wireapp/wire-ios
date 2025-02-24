@@ -60,30 +60,21 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
 
     // MARK: - Build notifications
 
-//    private func buildUserJoinNotification() -> UNMutableNotificationContent {
-//        let content = UNMutableNotificationContent()
-//
-//        let body = NotificationBody.userConnection(
-//            .userJoined(username: context.username)
-//        )
-//
-//        content.body = body.make()
-//        content.categoryIdentifier = makeCategory()
-//        content.sound = makeSound()
-//
-//        return content
-//    }
-
     private func buildConnectionRequestNotification(
         isPending: Bool
     ) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
+        
+        let connectionStatus = context.connectionStatus
 
-        let body = NotificationBody.userConnection(
-            isPending ? .userWantsToConnect(username: context.username) : .usersConnected(username: context.username)
-        )
+        let body = switch connectionStatus {
+        case .pending:
+            "\(context.username) wants to connect"
+        case .accepted:
+            "You and \(context.username) are now connected"
+        }
 
-        content.body = body.make()
+        content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
 
@@ -99,7 +90,7 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
 
     private func makeCategory() -> String {
         switch context.connectionStatus {
-        case .accepted: // .join
+        case .accepted:
             NotificationCategory.nonActionable.rawValue
         case .pending:
             NotificationCategory.incomingConnectionRequest.rawValue

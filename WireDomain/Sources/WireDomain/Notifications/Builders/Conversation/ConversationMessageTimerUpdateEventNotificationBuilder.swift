@@ -60,7 +60,6 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
         let teamName = await userLocalStore.teamName(for: selfUser)
 
         let selfUserID = await userLocalStore.id(for: selfUser)
-        let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
 
         self.context = Context(
             senderName: senderName,
@@ -102,17 +101,22 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
             content.title = title
         }
 
-        let bodyFormat: NotificationBody.SystemMessageBodyFormat = if let timeout {
-            .setMessageTimer(senderName: context.senderName, timeoutValue: timeout)
+        let body: String = if let timeout {
+            if let senderName = context.senderName {
+                "\(senderName) set the message timer to \(timeout)"
+            } else {
+                "Someone set the message timer to \(timeout)"
+            }
         } else {
-            .turnedOffMessageTimer(senderName: context.senderName)
+            if let senderName = context.senderName {
+                "\(senderName) turned off the message timer"
+            } else {
+                "Someone turned off the message timer"
+            }
         }
         
-        let body = NotificationBody.conversationSystemMessage(
-            bodyFormat
-        )
             
-        content.body = body.make()
+        content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
@@ -133,7 +137,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
             return nil
         }
 
-        let format: NotificationTitle.MessageTitleFormat = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {

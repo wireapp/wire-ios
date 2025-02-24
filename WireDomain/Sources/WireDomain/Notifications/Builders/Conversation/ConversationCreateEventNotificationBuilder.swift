@@ -58,7 +58,6 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
         let teamName = await userLocalStore.teamName(for: selfUser)
 
         let selfUserID = await userLocalStore.id(for: selfUser)
-        let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
 
         self.context = Context(
             senderName: senderName,
@@ -89,11 +88,13 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.conversationSystemMessage(
-            .createdConversation(senderName: context.senderName)
-        )
+        let body = if let senderName = context.senderName {
+            "\(senderName) created a conversation"
+        } else {
+            "Someone created a conversation"
+        }
 
-        content.body = body.make()
+        content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
@@ -114,7 +115,7 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
             return nil
         }
 
-        let format: NotificationTitle.MessageTitleFormat = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {

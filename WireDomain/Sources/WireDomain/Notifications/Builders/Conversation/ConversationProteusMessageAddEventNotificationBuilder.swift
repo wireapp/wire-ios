@@ -57,7 +57,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         let externalEncryptedMessage = proteusMessageEvent.externalData?.encryptedMessage
 
         guard let decryptedMessage,
-              let (genericMessage, _) = ProtobufMessageHelper.getProtobufMessage(
+              let (genericMessage, _) = ProtobufMessageDecoder.getProtobufMessage(
                   from: decryptedMessage,
                   externalData: externalEncryptedMessage
               ) else {
@@ -159,19 +159,19 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
 
         let body: NotificationBody = switch assetType {
         case .image:
-            .conversationUserMessage(
+            .singleMessage(
                 .sharedPicture(senderName: isGroupConversation ? senderName : nil)
             )
         case .video:
-            .conversationUserMessage(
+            .singleMessage(
                 .sharedVideo(senderName: isGroupConversation ? senderName : nil)
             )
         case .audio:
-            .conversationUserMessage(
+            .singleMessage(
                 .sharedAudio(senderName: isGroupConversation ? senderName : nil)
             )
         case .fileUpload:
-            .conversationUserMessage(
+            .singleMessage(
                 .sharedFile(senderName: isGroupConversation ? senderName : nil)
             )
         }
@@ -193,7 +193,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             content.title = title
         }
 
-        let body = NotificationBody.conversationUserMessage(
+        let body = NotificationBody.singleMessage(
             .ping(senderName: context.isGroupConversation ? senderName : nil)
         )
 
@@ -210,7 +210,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         let content = UNMutableNotificationContent()
 
         // No title for hidden message, only a body.
-        let body: NotificationBody = .conversationUserMessage(.hidden)
+        let body: NotificationBody = .singleMessage(.hidden)
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
@@ -249,7 +249,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             content.title = title
         }
 
-        let format: NotificationBody.UserMessageBodyFormat = if isMention {
+        let format: NotificationBody.NewMessageBodyDescriptor = if isMention {
             .textWithMention(content: text, senderName: senderName)
         } else if isReply {
             .textWithReply(content: text, senderName: senderName)
@@ -257,7 +257,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             .text(content: text, senderName: senderName)
         }
 
-        let body = NotificationBody.conversationUserMessage(
+        let body = NotificationBody.singleMessage(
             format
         )
 
@@ -279,7 +279,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             content.title = title
         }
 
-        let body = NotificationBody.conversationUserMessage(
+        let body = NotificationBody.singleMessage(
             .sharedLocation(senderName: isGroupConversation ? senderName : nil)
         )
 
@@ -318,7 +318,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
 
         let content = UNMutableNotificationContent()
 
-        let format: NotificationBody.UserMessageBodyFormat = if isMention {
+        let format: NotificationBody.NewMessageBodyDescriptor = if isMention {
             .mentionedWithUnknownSender
         } else if isReply {
             .repliedWithUnknownSender
@@ -326,7 +326,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             .sentWithUnknownSender
         }
 
-        let body = NotificationBody.conversationUserMessage(
+        let body = NotificationBody.singleMessage(
             format
         )
 
@@ -352,7 +352,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             return nil
         }
 
-        let format: NotificationTitle.MessageTitleFormat = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {
