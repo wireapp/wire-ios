@@ -21,12 +21,41 @@ import WireDataModel
 
 final class ConversationStackMessageContentView: UIView, ConversationMessageContentView {
 
+//    private let stackView = {
+//        let stackView = UIStackView()
+//        stackView.axis = .vertical
+//        return stackView
+//    }()
+    private var stackView = UIStackView() {
+        didSet {
+            oldValue.removeFromSuperview()
+            setupStackView()
+        }
+    }
+
     var isSelected = false
 
     var message: (any ZMConversationMessage)?
 
     var delegate: (any ConversationMessageCellDelegate)?
 
-    func configure(with _: Void, animated: Bool) {}
+    func configure(with configuration: [AnyConversationMessageCellDescription], animated: Bool) {
+        let arrangedSubviews = configuration.map { cellDescription in
+            cellDescription.makeView()
+        }
+        stackView = .init(arrangedSubviews: arrangedSubviews)
+    }
+
+    private func setupStackView() {
+        stackView.axis = .vertical
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
+        ])
+    }
 
 }

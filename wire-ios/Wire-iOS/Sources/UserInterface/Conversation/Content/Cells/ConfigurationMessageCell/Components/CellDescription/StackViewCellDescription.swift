@@ -22,8 +22,8 @@ import WireDataModel
 final class StackViewCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationStackMessageContentView
 
+    var cellDescriptions: [AnyConversationMessageCellDescription] { configuration }
     var canBeCombinedWithOtherCells: Bool { false }
-    let cellDescriptions: [AnyConversationMessageCellDescription]
 
     var topMargin: Float {
         get { cellDescriptions.first?.topMargin ?? 0 }
@@ -95,7 +95,7 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
         }
     }
 
-    let configuration: Void = ()
+    let configuration: [AnyConversationMessageCellDescription]
 
     var accessibilityIdentifier: String? {
         fatalError()
@@ -106,7 +106,7 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
     }
 
     init(cellDescriptions: [AnyConversationMessageCellDescription]) {
-        self.cellDescriptions = cellDescriptions
+        configuration = cellDescriptions
     }
 
 }

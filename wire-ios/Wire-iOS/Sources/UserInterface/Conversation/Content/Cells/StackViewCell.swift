@@ -23,7 +23,7 @@ import WireDataModel
 
 final class StackViewCell: UITableViewCell {
 
-    let stackView = {
+    private let stackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         return stackView

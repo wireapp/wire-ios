@@ -461,7 +461,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard currentSections.indices.contains(section) else { return 0 }
 
-        return 1
+//        return 1
 
         // old implementation:
 
@@ -486,33 +486,33 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         let section = currentSections[indexPath.section]
 
-        if !registeredCells.contains(where: { $0 is StackViewCell.Type }) {
-            tableView.register(StackViewCell.self, forCellReuseIdentifier: "StackViewCell")
-        }
+//        if !registeredCells.contains(where: { $0 is StackViewCell.Type }) {
+//            tableView.register(StackViewCell.self, forCellReuseIdentifier: "StackViewCell")
+//        }
 
-        let textMessageCellDescription = section.elements
-            .compactMap({ $0.instance as? ConversationTextMessageCellDescription })
-            .first
+//        let textMessageCellDescription = section.elements
+//            .compactMap({ $0.instance as? ConversationTextMessageCellDescription })
+//            .first
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "StackViewCell", for: indexPath)
-        if let cell = cell as? StackViewCell {
-            cell.stackView.arrangedSubviews.forEach { arrangedSubview in
-                arrangedSubview.removeFromSuperview()
-            }
-            for cellDescription in section.elements {
-                let arrangedSubview = cellDescription.makeView()
-                cell.stackView.insertArrangedSubview(arrangedSubview, at: 0)
-            }
-            if let swipeGesture = tableView.gestureRecognizers?.first(where: { $0 is UISwipeGestureRecognizer }) { // TODO: delete, doesn't work
-                cell.requireSingleTapGestureRecognizer(toFail: swipeGesture)
-            }
-            UIView.performWithoutAnimation {
-                cell.stackView.setNeedsLayout()
-                cell.stackView.layoutIfNeeded()
-            }
-        }
-
-        return cell
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "StackViewCell", for: indexPath)
+//        if let cell = cell as? StackViewCell {
+//            cell.stackView.arrangedSubviews.forEach { arrangedSubview in
+//                arrangedSubview.removeFromSuperview()
+//            }
+//            for cellDescription in section.elements {
+//                let arrangedSubview = cellDescription.makeView()
+//                cell.stackView.insertArrangedSubview(arrangedSubview, at: 0)
+//            }
+//            if let swipeGesture = tableView.gestureRecognizers?.first(where: { $0 is UISwipeGestureRecognizer }) { // TODO: delete, doesn't work
+//                cell.requireSingleTapGestureRecognizer(toFail: swipeGesture)
+//            }
+//            UIView.performWithoutAnimation {
+//                cell.stackView.setNeedsLayout()
+//                cell.stackView.layoutIfNeeded()
+//            }
+//        }
+//
+//        return cell
 
         // old implementation:
 

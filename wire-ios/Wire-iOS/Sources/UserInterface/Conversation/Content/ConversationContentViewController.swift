@@ -510,7 +510,6 @@ extension ConversationContentViewController: UITableViewDelegate {
         guard
             sections.indices.contains(indexPath.section),
             sections[indexPath.section].elements.indices.contains(indexPath.row),
-            print(sections[indexPath.section].elements[indexPath.row].instance) != nil,
             sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
             let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
             actionController.canPerformAction(action: .reply)
