@@ -85,6 +85,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
+            .conversationCreated,
             .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
             .messageTimerUpdate(newTimer: nil) // disabled timer
         ]
@@ -123,6 +124,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
             .conversationDeleted,
+            .conversationCreated,
             .memberJoin(addedUserIDs: [.mockID4]), // concerns self user
             .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
             .messageTimerUpdate(newTimer: nil) // disabled timer
@@ -162,6 +164,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
             .conversationDeleted,
+            .conversationCreated,
             .memberJoin(addedUserIDs: [.mockID4]), // concerns self user
             .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
             .messageTimerUpdate(newTimer: nil) // disabled timer
@@ -242,10 +245,10 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         switch systemMessage {
         case .memberLeave:
             XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) removed you")
+        case .conversationCreated:
+            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) created a conversation")
         case .memberJoin:
             XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) added you")
-        case .conversationCreated:
-            break
         case .conversationDeleted:
             XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) deleted the group")
         case let .messageTimerUpdate(timeoutValue):
