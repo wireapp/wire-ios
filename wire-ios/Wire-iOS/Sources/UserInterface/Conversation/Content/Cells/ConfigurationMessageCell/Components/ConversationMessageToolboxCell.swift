@@ -110,6 +110,8 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
+    var canBeCombinedWithOtherCells: Bool { fatalError("TODO") } // TODO: fix
+
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 2
     let isFullWidth: Bool = true

@@ -116,6 +116,11 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
     associatedtype View: ConversationMessageCell, UIView
 
+    /// The views of neighbouring cell descriptions which return `true` might be
+    /// arranged in a vertical stack view inside a single table view cell.
+    /// If `false` the resulting view will always end up in a single table view cell.
+    var canBeCombinedWithOtherCells: Bool { get }
+
     /// The top margin is used to configure the spacing between cells. This property will
     /// get updated by the ConversationMessageSectionController if necessary so any
     /// default value is just a recommendation.

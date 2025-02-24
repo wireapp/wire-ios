@@ -151,6 +151,8 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationButtonMessageCell
 
+    var canBeCombinedWithOtherCells: Bool { fatalError("TODO") } // TODO: fix
+
     var topMargin: Float = .ConversationButtonMessageCell.verticalInset
 
     var isFullWidth: Bool = false

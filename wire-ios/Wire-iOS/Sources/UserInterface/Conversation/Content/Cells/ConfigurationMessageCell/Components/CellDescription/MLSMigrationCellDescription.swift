@@ -32,6 +32,8 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     let configuration: View.Configuration
 
+    var canBeCombinedWithOtherCells: Bool { fatalError("TODO") } // TODO: fix
+
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
 

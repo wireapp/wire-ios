@@ -31,6 +31,8 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
+    var canBeCombinedWithOtherCells: Bool { fatalError("TODO") } // TODO: fix
+
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
 

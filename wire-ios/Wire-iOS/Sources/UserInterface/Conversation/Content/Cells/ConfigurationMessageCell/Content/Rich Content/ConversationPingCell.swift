@@ -130,6 +130,8 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
     typealias View = ConversationPingCell
     let configuration: ConversationPingCell.Configuration
 
+    var canBeCombinedWithOtherCells: Bool { fatalError("TODO") } // TODO: fix
+
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?

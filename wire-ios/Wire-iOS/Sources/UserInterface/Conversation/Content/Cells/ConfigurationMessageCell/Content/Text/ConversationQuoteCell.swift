@@ -324,6 +324,8 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     typealias View = ConversationReplyCell
     let configuration: View.Configuration
 
+    var canBeCombinedWithOtherCells: Bool { fatalError("TODO") } // TODO: fix
+
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
     let isFullWidth = false
