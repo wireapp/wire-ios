@@ -46,7 +46,7 @@ public struct IncrementalSync {
         self.processor = processor
     }
 
-    public func perform() async throws -> Task<Void, any Error> {
+    public func perform() async throws -> Token {
         logger.debug("performing incremental sync")
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
         logger.debug("opening push channel")
@@ -54,52 +54,63 @@ public struct IncrementalSync {
         try await updateEventsSync.pull()
         try await processStoredEvents()
 
-        return Task { @Sendable [logger, decryptor, store, processor] in
+        let task = Task { @Sendable [logger, decryptor, store, processor] in
             logger.debug("handling live event stream")
-            for try await var envelope in liveEventStream {
-                logger.debug("received live event envelope")
-                try Task.checkCancellation()
-                // TODO: [WPB-16165] skip if duplicate.
 
-                do {
-                    // Decrypt.
-                    logger.debug("decrypting live event envelope")
-                    envelope.events = try await decryptor.decryptEvents(in: envelope)
-                } catch {
-                    logger.error("failed to decrypt live event envelope: \(String(describing: error))")
-                    continue
-                }
+            do {
+                for try await var envelope in liveEventStream {
+                    logger.debug("received live event envelope")
 
-                let index: Int64
-                do {
-                    // Store.
-                    logger.debug("storing live event envelope")
-                    index = try await store.indexOfLastEventEnvelope() + 1
-                    try await store.persistEventEnvelope(envelope, index: index)
-                } catch {
-                    logger.error("failed to store live event envelope: \(String(describing: error))")
-                    continue
-                }
+                    // TODO: [WPB-16165] skip if duplicate.
 
-                // Process.
-                for event in envelope.events {
                     do {
-                        logger.debug("processing live event: \(event.name)")
-                        try await processor.processEvent(event)
+                        // Decrypt.
+                        logger.debug("decrypting live event envelope")
+                        envelope.events = try await decryptor.decryptEvents(in: envelope)
                     } catch {
-                        logger.error("failed to process live event: \(String(describing: error))")
+                        logger.error("failed to decrypt live event envelope: \(String(describing: error))")
+                        continue
+                    }
+
+                    let index: Int64
+                    do {
+                        // Store.
+                        logger.debug("storing live event envelope")
+                        index = try await store.indexOfLastEventEnvelope() + 1
+                        try await store.persistEventEnvelope(envelope, index: index)
+                    } catch {
+                        logger.error("failed to store live event envelope: \(String(describing: error))")
+                        continue
+                    }
+
+                    // Process.
+                    for event in envelope.events {
+                        do {
+                            logger.debug("processing live event: \(event.name)")
+                            try await processor.processEvent(event)
+                        } catch {
+                            logger.error("failed to process live event: \(String(describing: error))")
+                        }
+                    }
+
+                    do {
+                        // Delete.
+                        logger.debug("deleting live event envelope")
+                        try await store.deleteEventEnvelope(atIndex: index)
+                    } catch {
+                        logger.error("failed to delete live event envelope: \(String(describing: error))")
                     }
                 }
-
-                do {
-                    // Delete.
-                    logger.debug("deleting live event envelope")
-                    try await store.deleteEventEnvelope(atIndex: index)
-                } catch {
-                    logger.error("failed to delete live event envelope: \(String(describing: error))")
-                }
+            } catch {
+                logger.warn("live event stream encountered error: \(String(describing: error))")
             }
+
+            logger.debug("live event stream did finish")
         }
+
+        return Token(task: task, closePushChannel: {
+            await pushChannel.close()
+        })
     }
 
     private func processStoredEvents() async throws {
@@ -127,6 +138,17 @@ public struct IncrementalSync {
             }
 
             try await store.deleteNextPendingEvents(limit: batchSize)
+        }
+    }
+
+    public struct Token {
+
+        let task: Task<Void, Never>
+        let closePushChannel: () async -> Void
+
+        public func suspend() async {
+            task.cancel()
+            await closePushChannel()
         }
     }
 

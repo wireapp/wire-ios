@@ -35,7 +35,7 @@ final class SyncAgent: NSObject {
     private let legacySyncStatus: any SyncStatusProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
-    private var incrementalSyncTask: Task<Void, any Error>?
+    private var incrementalSyncToken: IncrementalSync.Token?
 
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -61,8 +61,11 @@ final class SyncAgent: NSObject {
     /// Suspend any ongoing sync tasks.
 
     func suspend() {
-        incrementalSyncTask?.cancel()
-        incrementalSyncTask = nil
+        WireLogger.sync.debug("suspending sync")
+        Task {
+            await incrementalSyncToken?.suspend()
+            incrementalSyncToken = nil
+        }
     }
 
     /// Trigger the appropriate sync depending in the local state.
@@ -143,7 +146,7 @@ final class SyncAgent: NSObject {
 
     func performIncrementalSync() async throws {
         if DeveloperFlag.newInitialSync.isOn {
-            guard incrementalSyncTask == nil else {
+            guard incrementalSyncToken == nil else {
                 WireLogger.sync.info("incremental sync already running...")
                 return
             }
@@ -152,7 +155,7 @@ final class SyncAgent: NSObject {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncTask = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self)
                 }
             } catch {
