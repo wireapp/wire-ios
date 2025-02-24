@@ -45,7 +45,10 @@ package struct RootView: View {
                         determineAuthMethodBuilder.determineAuthMethodView
                     }
                 case let .noHistory(userID, cookieData):
-                    noHistoryViewBuilder.noHistoryView(userID: userID, cookieData: cookieData)
+                    noHistoryViewBuilder.noHistoryView(
+                        userID: userID,
+                        cookieData: cookieData
+                    )
                 }
             }
     }

@@ -21,13 +21,31 @@ internal import WireAuthenticationUI
 
 class NoHistoryComponent: NoHistoryViewBuilder {
 
+    let onFlowCompletion: () -> Void
+
+    init(onFlowCompletion: @escaping () -> Void) {
+        self.onFlowCompletion = onFlowCompletion
+    }
+
     @MainActor
-    private func noHistoryViewModel(userID: UUID, cookieData: Data) -> NoHistoryViewModel {
-        NoHistoryViewModel(userID: userID, cookieData: cookieData)
+    private func noHistoryViewModel(
+        userID: UUID,
+        cookieData: Data,
+        onFlowCompletion: @escaping () -> Void
+    ) -> NoHistoryViewModel {
+        NoHistoryViewModel(
+            userID: userID,
+            cookieData: cookieData,
+            onFlowCompletion: onFlowCompletion
+        )
     }
 
     func noHistoryView(userID: UUID, cookieData: Data) -> NoHistoryView {
-        NoHistoryView(viewModel: noHistoryViewModel(userID: userID, cookieData: cookieData))
+        NoHistoryView(viewModel: noHistoryViewModel(
+            userID: userID,
+            cookieData: cookieData,
+            onFlowCompletion: onFlowCompletion)
+        )
     }
 
 }

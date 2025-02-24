@@ -21,10 +21,7 @@ import SwiftUI
 package protocol NoHistoryViewBuilder {
 
     @MainActor
-    func noHistoryView(
-        userID: UUID,
-        cookieData: Data
-    ) -> NoHistoryView
+    func noHistoryView(userID: UUID, cookieData: Data) -> NoHistoryView
 
 }
 
@@ -63,14 +60,22 @@ package struct NoHistoryView: View {
 }
 
 #Preview {
-    let viewModel = NoHistoryViewModel(userID: UUID(), cookieData: Data())
+    let viewModel = NoHistoryViewModel(
+        userID: UUID(),
+        cookieData: Data(),
+        onFlowCompletion: {}
+    )
     NoHistoryView(viewModel: viewModel)
 }
 
 #Preview("With background") {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            let viewModel = NoHistoryViewModel(userID: UUID(), cookieData: Data())
+            let viewModel = NoHistoryViewModel(
+                userID: UUID(),
+                cookieData: Data(),
+                onFlowCompletion: {}
+            )
             NoHistoryView(viewModel: viewModel)
         }
 }

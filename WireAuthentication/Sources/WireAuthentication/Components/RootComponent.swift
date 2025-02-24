@@ -88,8 +88,8 @@ class RootComponent: BootstrapComponent {
         DetermineAuthMethodComponent(parent: self)
     }
 
-    var noHistoryComponent: NoHistoryComponent {
-        NoHistoryComponent()
+    @MainActor var noHistoryComponent: NoHistoryComponent {
+        NoHistoryComponent(onFlowCompletion: bridge.onFlowCompletion)
     }
 
 }

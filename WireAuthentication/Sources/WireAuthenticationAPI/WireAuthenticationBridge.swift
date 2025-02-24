@@ -24,7 +24,7 @@ import Foundation
 
 public struct WireAuthenticationBridge {
 
-    private let onFlowCompletion: () -> Void
+    public let onFlowCompletion: () -> Void
     private let onSuccessSSOFlowCompletion: (UUID, Data) -> Void
     private let onFailureSSOFlowCompletion: () -> Void
 
