@@ -41,3 +41,18 @@ package struct SSOSuccessHandler {
 extension Notification.Name {
     static let ssoLoginDidFinishNotification = Notification.Name("SSOLoginDidFinish")
 }
+
+
+package struct SSOFailureHandler {
+
+    private let viewModel: RootViewModel
+
+    package init(viewModel: RootViewModel) {
+        self.viewModel = viewModel
+    }
+
+    @MainActor
+    package func handleFailure() {
+        viewModel.showSSOFailureAlert = true
+    }
+}

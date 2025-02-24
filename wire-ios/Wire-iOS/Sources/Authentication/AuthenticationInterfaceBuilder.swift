@@ -107,6 +107,8 @@ final class AuthenticationInterfaceBuilder {
             authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
                 bridge.completeSSOSuccess(userID: userID, cookieData: cookieData)
             })
+            authenticationCoordinator?.unauthenticatedSession.setErrorHandler(bridge.completeSSOFailure)
+
             return AuthenticationHostingController(rootView: rootView)
 
         case .landingScreen:

@@ -77,7 +77,7 @@ class RootComponent: BootstrapComponent {
                 SSOSuccessHandler(viewModel: self.rootViewModel).handleSuccess(userID: userID, cookieData: cookieData)
             },
             onFailureSSOFlowCompletion: {
-                // TODO: [WPB-15929] Handle error
+                SSOFailureHandler(viewModel: self.rootViewModel).handleFailure()
             }
         )
     }

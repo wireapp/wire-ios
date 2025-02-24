@@ -43,6 +43,13 @@ package struct RootView: View {
                 case .authFlow:
                     NavigationStack(path: $viewModel.path) {
                         determineAuthMethodBuilder.determineAuthMethodView
+                            .alert(L10n.Authentication.Error.Title.ssoLoginFailed, isPresented: $viewModel.showSSOFailureAlert) {
+                                Button(L10n.Authentication.Error.confirm, role: .cancel) {
+                                    viewModel.showSSOFailureAlert = false
+                                }
+                            } message: {
+                                Text(L10n.Authentication.Error.Message.ssoLoginFailed)
+                            }
                     }
                 case let .noHistory(userID, cookieData):
                     noHistoryViewBuilder.noHistoryView(

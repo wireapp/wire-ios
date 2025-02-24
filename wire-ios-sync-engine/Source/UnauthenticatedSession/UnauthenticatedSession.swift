@@ -53,6 +53,8 @@ public class UnauthenticatedSession: NSObject {
 
     weak var delegate: UnauthenticatedSessionDelegate?
 
+    public var wireAuthenticationErrorHandler: (() -> Void)?
+
     init(
         transportSession: UnauthenticatedTransportSessionProtocol,
         reachability: ReachabilityProvider,
@@ -106,6 +108,10 @@ public class UnauthenticatedSession: NSObject {
             let error = NSError(userSessionErrorCode: .networkError, userInfo: nil)
             authenticationStatus.notifyAuthenticationDidFail(error)
         }
+    }
+
+    public func setErrorHandler(_ errorHandler: @escaping () -> Void) {
+        self.wireAuthenticationErrorHandler = errorHandler
     }
 
     public func appendURLActionProcessors(action: @escaping (UUID, Data) -> Void) {

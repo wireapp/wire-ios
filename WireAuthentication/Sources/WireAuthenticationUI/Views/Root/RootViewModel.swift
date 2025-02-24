@@ -33,6 +33,7 @@ public final class RootViewModel: ObservableObject, Router {
 
     @Published var path = NavigationPath()
     @Published var activeSheet: ActiveSheet? = .authFlow
+    @Published var showSSOFailureAlert: Bool = false
 
     public init() {}
 
