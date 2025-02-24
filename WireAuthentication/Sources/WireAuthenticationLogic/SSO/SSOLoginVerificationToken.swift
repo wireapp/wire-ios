@@ -65,4 +65,8 @@ package extension SSOLoginVerificationToken {
         }
     }
 
+    static func flush(in defaults: UserDefaults) {
+        defaults.removeObject(forKey: defaultsKey)
+    }
+
 }

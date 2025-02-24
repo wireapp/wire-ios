@@ -116,6 +116,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     func dismissmodalView() {
+        ssoLinkGenerator.flushToken()
         modalDestination = nil
     }
 

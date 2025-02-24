@@ -132,6 +132,8 @@ extension MockDependencies: SSOLinkGeneratorProtocol {
         URL(string: "https://example.com/login/\(ssoCode)")!
     }
 
+    func flushToken() {}
+
 }
 
 extension MockDependencies: LoginViaEmailBuilder {

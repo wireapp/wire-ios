@@ -23,6 +23,9 @@ public protocol SSOLinkGeneratorProtocol {
     @MainActor
     func generateSSOLink(ssoCode: UUID) async throws -> URL
 
+    @MainActor
+    func flushToken()
+
 }
 
 package enum SSOLinkGeneratorFailure: Error, Equatable {

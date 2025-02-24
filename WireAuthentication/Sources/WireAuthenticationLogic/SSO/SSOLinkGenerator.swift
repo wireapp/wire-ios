@@ -44,6 +44,10 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
         return try await buildSSOLink(ssoCode: ssoCode)
     }
 
+    package func flushToken() {
+        SSOLoginVerificationToken.flush(in: defaults)
+    }
+
     /// Generate the link to the SSO authentication screen
     ///
     /// - Parameters:

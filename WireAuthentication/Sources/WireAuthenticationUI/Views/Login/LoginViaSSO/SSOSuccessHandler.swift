@@ -28,8 +28,8 @@ package struct SSOSuccessHandler {
 
     @MainActor
     package func handleSuccess(userID: UUID, cookieData: Data) {
-        viewModel.presentNoHistorySheet(userID: userID, cookieData: cookieData)
         notifySSOLoginCompletion()
+        viewModel.presentNoHistorySheet(userID: userID, cookieData: cookieData)
     }
 
     private func notifySSOLoginCompletion() {
