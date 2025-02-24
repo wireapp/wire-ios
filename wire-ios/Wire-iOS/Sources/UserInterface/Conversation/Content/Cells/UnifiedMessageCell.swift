@@ -30,9 +30,13 @@ final class StackViewCell: UITableViewCell {
         return stackView
     }()
 
+    private lazy var longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
+    private lazy var doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
+    private lazy var singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupStackView()
+        setup()
     }
 
     @available(*, unavailable)
@@ -40,12 +44,22 @@ final class StackViewCell: UITableViewCell {
         fatalError("init(coder:) is not supported")
     }
 
-    private func setupStackView() {
+    private func setup() {
 
         focusStyle = .custom
         selectionStyle = .none
         backgroundColor = .clear
         isOpaque = false
+
+        contentView.addGestureRecognizer(longPressGesture)
+
+        doubleTapGesture.numberOfTapsRequired = 2
+        contentView.addGestureRecognizer(doubleTapGesture)
+
+        let tempCellView = self
+        tempCellView.addGestureRecognizer(singleTapGesture)
+        singleTapGesture.require(toFail: doubleTapGesture)
+        singleTapGesture.delegate = self
 
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
@@ -55,6 +69,30 @@ final class StackViewCell: UITableViewCell {
             trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
         ])
+    }
+
+    @objc
+    private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        if gestureRecognizer.state == .began {
+            //showMenu()
+            fatalError("TODO")
+        }
+    }
+
+    @objc
+    private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        fatalError("TODO")
+//        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+//            cellDescription?.actionController?.performDoubleTapAction()
+//        }
+    }
+
+    @objc
+    private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        fatalError("TODO")
+//        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+//            cellDescription?.actionController?.performSingleTapAction()
+//        }
     }
 
 }
