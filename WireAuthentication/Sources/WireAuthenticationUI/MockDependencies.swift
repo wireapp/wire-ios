@@ -48,7 +48,8 @@ final class MockDependencies {
                 isLoading: isLoading,
                 alert: alert
             ),
-            builder: self
+            loginViaEmailBuilder: self,
+            loginViaSSOBuilder: self
         )
     }
 
@@ -103,7 +104,8 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     var determineAuthMethodView: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
-            builder: self
+            loginViaEmailBuilder: self,
+            loginViaSSOBuilder: self
         )
     }
 
@@ -130,6 +132,18 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 }
 
+extension MockDependencies: LoginViaSSOBuilder {
+
+    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
+    }
+
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
+    }
+
+}
+
 private struct MockPasswordValidator: PasswordValidator {
 
     let validationCallback: @Sendable (String) -> Bool
@@ -138,7 +152,7 @@ private struct MockPasswordValidator: PasswordValidator {
         self.validationCallback = validationCallback
     }
 
-    func validate(_ password: String) -> Bool {
+    func isPasswordValid(_ password: String) -> Bool {
         validationCallback(password)
     }
 

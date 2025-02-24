@@ -166,8 +166,9 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
 // MARK: - State Management
 
-extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
+extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControllerDelegate {
 
+    @MainActor
     func stateDidChange(
         _ newState: AuthenticationFlowStep,
         mode: AuthenticationStateController.StateChangeMode
@@ -176,7 +177,10 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             return
         }
 
-        guard let stepViewController = interfaceBuilder.makeViewController(for: newState) else {
+        guard let stepViewController = interfaceBuilder.makeViewController(
+            for: newState,
+            authenticationCoordinator: self
+        ) else {
             fatalError("Step \(newState) requires user interface, but the interface builder does not support it.")
         }
 

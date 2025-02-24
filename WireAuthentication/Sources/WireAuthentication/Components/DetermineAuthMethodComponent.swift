@@ -56,7 +56,8 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     @MainActor var determineAuthMethodView: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: viewModel,
-            builder: loginViaEmailComponent
+            loginViaEmailBuilder: loginViaEmailComponent,
+            loginViaSSOBuilder: loginViaSSOComponent
         )
     }
 
@@ -73,6 +74,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     var loginViaEmailComponent: LoginViaEmailComponent {
         LoginViaEmailComponent(parent: self)
+    }
+
+    var loginViaSSOComponent: LoginViaSSOComponent {
+        LoginViaSSOComponent()
     }
 
 }

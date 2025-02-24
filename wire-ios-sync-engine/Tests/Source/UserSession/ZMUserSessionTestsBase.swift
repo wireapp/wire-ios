@@ -17,6 +17,7 @@
 //
 
 import Combine
+import WireAPI
 import WireDataModelSupport
 import WireRequestStrategySupport
 import WireTransportSupport
@@ -30,6 +31,8 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockPushChannel: MockPushChannel!
     var mockEARService: MockEARServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
+    var backendEnvironment: WireTransport.BackendEnvironment!
+    var wireAPIBackendEnvironment: WireAPI.BackendEnvironment!
     var transportSession: RecordingMockTransportSession!
     var cookieStorage: ZMPersistentCookieStorage!
     var validCookie: Data!
@@ -58,6 +61,31 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         dataChangeNotificationsCount = 0
         baseURL = URL(string: "http://bar.example.com")
+
+        backendEnvironment = WireTransport.BackendEnvironment(
+            title: "Mock backend environment",
+            trustData: [],
+            environmentType: .production,
+            endpoints: BackendEndpoints(
+                backendURL: baseURL,
+                backendWSURL: baseURL,
+                blackListURL: baseURL,
+                teamsURL: baseURL,
+                accountsURL: baseURL,
+                websiteURL: baseURL,
+                countlyURL: nil
+            ),
+            proxySettings: nil,
+            certificateTrust: ServerCertificateTrust(trustData: [])
+        )
+
+        wireAPIBackendEnvironment = WireAPI.BackendEnvironment(
+            url: backendEnvironment.backendURL,
+            webSocketURL: backendEnvironment.backendWSURL,
+            pinnedKeys: [],
+            proxySettings: nil
+        )
+
         cookieStorage = ZMPersistentCookieStorage(
             forServerName: "usersessiontest.example.com",
             userIdentifier: .create(),
@@ -98,6 +126,8 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3.self
 
+        backendEnvironment = nil
+        wireAPIBackendEnvironment = nil
         baseURL = nil
         cookieStorage = nil
         validCookie = nil
@@ -134,6 +164,8 @@ class ZMUserSessionTestsBase: MessagingTest {
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
+            backendEnvironment: backendEnvironment,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             appVersion: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
@@ -148,7 +180,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            userId: coreDataStack.account.userIdentifier
+            userId: coreDataStack.account.userIdentifier,
+            minTLSVersion: nil
         )
 
         let userSession = builder.build()

@@ -81,6 +81,7 @@
 		0679DEE12C49729500044FC7 /* URLsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0679DEE02C49729500044FC7 /* URLsTests.swift */; };
 		067EF352288FCAB700B2659A /* Accessibility.strings in Resources */ = {isa = PBXBuildFile; fileRef = 067EF350288FCAB600B2659A /* Accessibility.strings */; };
 		067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067F605C28B8EC8000FCC334 /* DebugCommand.swift */; };
+		06816F432D676A54004051BA /* AuthenticationPasswordValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06816F422D676A54004051BA /* AuthenticationPasswordValidator.swift */; };
 		0685008126B35E7A00721F80 /* AudioMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008026B35E7A00721F80 /* AudioMessageRestrictionView.swift */; };
 		0685008526B36BBC00721F80 /* VideoMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008426B36BBC00721F80 /* VideoMessageRestrictionView.swift */; };
 		0685008926B3705100721F80 /* ImageMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008826B3705100721F80 /* ImageMessageRestrictionView.swift */; };
@@ -1452,6 +1453,9 @@
 		EE52379123F557B900D4FE79 /* MockServiceUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379023F557B900D4FE79 /* MockServiceUserType+Creation.swift */; };
 		EE52379323F5588000D4FE79 /* MockUserType+CodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */; };
 		EE52989026B7FB21001A6D03 /* ZClientViewController+ConferenceCallingAvailabilty.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52988F26B7FB21001A6D03 /* ZClientViewController+ConferenceCallingAvailabilty.swift */; };
+		EE543B4A2D564AC000CA96BA /* WireAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = EE543B492D564AC000CA96BA /* WireAuthentication */; };
+		EE543B4C2D56555B00CA96BA /* WireAuthenticationModuleCompletionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE543B4B2D56555B00CA96BA /* WireAuthenticationModuleCompletionHandler.swift */; };
+		EE543B502D59EFF400CA96BA /* AuthenticationHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE543B4F2D59EFF400CA96BA /* AuthenticationHostingController.swift */; };
 		EE571C032175ED7B0011B59C /* GroupDetailsNotificationOptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE571C022175ED7B0011B59C /* GroupDetailsNotificationOptionsCell.swift */; };
 		EE593F9A2B73C3E6008D1109 /* DeepLinksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE593F992B73C3E6008D1109 /* DeepLinksViewModel.swift */; };
 		EE593F9C2B73C3F0008D1109 /* DeepLinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE593F9B2B73C3F0008D1109 /* DeepLinksView.swift */; };
@@ -2021,6 +2025,7 @@
 		067EF364288FCAEA00B2659A /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067EF365288FCAEB00B2659A /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067F605C28B8EC8000FCC334 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
+		06816F422D676A54004051BA /* AuthenticationPasswordValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationPasswordValidator.swift; sourceTree = "<group>"; };
 		0685008026B35E7A00721F80 /* AudioMessageRestrictionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMessageRestrictionView.swift; sourceTree = "<group>"; };
 		0685008426B36BBC00721F80 /* VideoMessageRestrictionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMessageRestrictionView.swift; sourceTree = "<group>"; };
 		0685008826B3705100721F80 /* ImageMessageRestrictionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMessageRestrictionView.swift; sourceTree = "<group>"; };
@@ -3403,6 +3408,8 @@
 		EE52379023F557B900D4FE79 /* MockServiceUserType+Creation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockServiceUserType+Creation.swift"; sourceTree = "<group>"; };
 		EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+CodingKeys.swift"; sourceTree = "<group>"; };
 		EE52988F26B7FB21001A6D03 /* ZClientViewController+ConferenceCallingAvailabilty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZClientViewController+ConferenceCallingAvailabilty.swift"; sourceTree = "<group>"; };
+		EE543B4B2D56555B00CA96BA /* WireAuthenticationModuleCompletionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireAuthenticationModuleCompletionHandler.swift; sourceTree = "<group>"; };
+		EE543B4F2D59EFF400CA96BA /* AuthenticationHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationHostingController.swift; sourceTree = "<group>"; };
 		EE571C022175ED7B0011B59C /* GroupDetailsNotificationOptionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsNotificationOptionsCell.swift; sourceTree = "<group>"; };
 		EE593F992B73C3E6008D1109 /* DeepLinksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinksViewModel.swift; sourceTree = "<group>"; };
 		EE593F9B2B73C3F0008D1109 /* DeepLinksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinksView.swift; sourceTree = "<group>"; };
@@ -3838,6 +3845,7 @@
 			files = (
 				0619A95C2D3FE78700876BDE /* WireAuthenticationUI in Frameworks */,
 				EEE25B4129719C750008B894 /* WireRequestStrategy.framework in Frameworks */,
+				EE543B4A2D564AC000CA96BA /* WireAuthentication in Frameworks */,
 				EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */,
 				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
 				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
@@ -4887,6 +4895,7 @@
 				5E8DA75B211B085A00360979 /* AnyAuthenticationEventHandler.swift */,
 				5E8DA74E211AEE3D00360979 /* AuthenticationCoordinatorAction.swift */,
 				5E8DA76B211B2EC200360979 /* AuthenticationEventResponderChain.swift */,
+				EE543B4B2D56555B00CA96BA /* WireAuthenticationModuleCompletionHandler.swift */,
 				5EE73BE92123078B0032986D /* Registration */,
 				5E8DA76D211B41FC00360979 /* Flow Start */,
 				5E8DA780211C3B7200360979 /* Pre-Login */,
@@ -4998,6 +5007,7 @@
 				F1199D301FC8490A0070FAC3 /* AuthenticationStepController.swift */,
 				5E8FFC1921EF6EB10052DF03 /* RemoveClientStepViewController.swift */,
 				5E90418821F230A900C3B413 /* AuthenticationCredentialsViewController.swift */,
+				EE543B4F2D59EFF400CA96BA /* AuthenticationHostingController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -7876,6 +7886,7 @@
 				5E766D9A211472C0005242B4 /* AuthenticationFlowStep.swift */,
 				5E53B0DB211AB7AC009C7124 /* AuthenticationInterfaceBuilder.swift */,
 				5E8FFC0221ECC5CF0052DF03 /* AuthenticationFeatureProvider.swift */,
+				06816F422D676A54004051BA /* AuthenticationPasswordValidator.swift */,
 				5E9E8AA2216284320058D6E1 /* Landing */,
 				5E8DA763211B2CF000360979 /* Coordinator */,
 				EF2126B51FB9DFE300625A9B /* Interface */,
@@ -8410,6 +8421,7 @@
 				594341D62D08611700A6C0B5 /* WireCountly */,
 				0619A95B2D3FE78700876BDE /* WireAuthenticationUI */,
 				76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */,
+				EE543B492D564AC000CA96BA /* WireAuthentication */,
 				01D2B7A42D64A9190030D28D /* WireCoreCrypto */,
 			);
 			productName = "ZClient iOS";
@@ -8927,6 +8939,7 @@
 				1648EEF12049A69800CC6B37 /* GroupConversationSectionController.swift in Sources */,
 				59B404512CAA937400CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift in Sources */,
 				BF515F941D9D1C1900C786FB /* EmojiSectionViewController.swift in Sources */,
+				EE543B502D59EFF400CA96BA /* AuthenticationHostingController.swift in Sources */,
 				EF42658B2333DB9800DDAD0A /* ConversationListViewModelDelegate.swift in Sources */,
 				BFE3FEEA209747D6003D9AB5 /* CallStatusView.swift in Sources */,
 				A9806A3E23E41EF400691DFE /* Token.swift in Sources */,
@@ -9271,6 +9284,7 @@
 				E9C0B35B2B558D8600BC80E8 /* ConversationParticipantsSystemMessageCell.swift in Sources */,
 				5EA73D7920D900830001D106 /* GroupOptionsSectionController.swift in Sources */,
 				BF79B10220AB236A001BF4FE /* SectionFooter.swift in Sources */,
+				06816F432D676A54004051BA /* AuthenticationPasswordValidator.swift in Sources */,
 				8710673F1C0DC5570035603B /* SettingsPropertySelectValueCellDescriptor.swift in Sources */,
 				D525426F209363DC001C04C1 /* CallActionAppearance.swift in Sources */,
 				D3A74DC7294CAFEF00DD272F /* AccessibilityActionView.swift in Sources */,
@@ -9443,6 +9457,7 @@
 				A96131A023E81CC300194608 /* ParticipantDeviceHeaderView.swift in Sources */,
 				877A32601E892A100017DD9A /* ConversationListAccessoryView.swift in Sources */,
 				5EE73BF5212419ED0032986D /* AuthenticationCoordinator+Registration.swift in Sources */,
+				EE543B4C2D56555B00CA96BA /* WireAuthenticationModuleCompletionHandler.swift in Sources */,
 				EE7E0E762109FE9200787C65 /* ParticipantsStringFormatter.swift in Sources */,
 				068DCC5D29C0C09B00F7E4F1 /* MessageSendFailureView.swift in Sources */,
 				87AC33CD2182064F00069C79 /* ReplyComposingView.swift in Sources */,
@@ -11502,6 +11517,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */;
 			productName = FLAnimatedImage;
+		};
+		EE543B492D564AC000CA96BA /* WireAuthentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAuthentication;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
