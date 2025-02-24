@@ -25,6 +25,8 @@ import WireAuthenticationAPI
 public final class VerificationCodeViewModel: ObservableObject {
 
     @Published var code: [String]
+    @Published private(set) var isLoading = false
+
     let email: String
     let password: String
 
@@ -38,7 +40,11 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.code = code
     }
 
-    func confirm() async {}
+    func confirm() async {
+        isLoading = true
+
+        isLoading = false
+    }
 
     func resend() async {
         // TODO: [WPB-15950] Implement

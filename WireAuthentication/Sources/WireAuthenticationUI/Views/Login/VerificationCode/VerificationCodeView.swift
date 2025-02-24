@@ -67,7 +67,13 @@ package struct VerificationCodeView: View {
             Button(action: {
                 Task { await viewModel.confirm() }
             }, label: {
-                Text(L10n.VerificationCode.confirm)
+                HStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+
+                    Text(L10n.VerificationCode.confirm)
+                }
             })
             .wireButtonStyle(.primary)
             .padding(.horizontal)
