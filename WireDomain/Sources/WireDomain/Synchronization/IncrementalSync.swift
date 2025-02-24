@@ -72,7 +72,7 @@ public struct IncrementalSync {
 
                 // Process.
                 for event in envelope.events {
-                    logger.debug("processing live event: \(event)")
+                    logger.debug("processing live event: \(event.name)")
                     try await processor.processEvent(event)
                 }
 
@@ -100,7 +100,7 @@ public struct IncrementalSync {
 
             for event in envelopes.flatMap(\.events) {
                 do {
-                    logger.debug("processing pending event: \(event)")
+                    logger.debug("processing pending event: \(event.name)")
                     try await processor.processEvent(event)
                 } catch {
                     logger.error("failed to process stored event, dropping: \(error)")
