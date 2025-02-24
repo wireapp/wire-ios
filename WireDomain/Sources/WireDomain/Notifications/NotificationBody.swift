@@ -89,7 +89,7 @@ extension NotificationBody {
         case removedYou(senderName: String?)
         /// `[sender name] set the message timer to [value]` or `Someone set the message timer to [value]` if sender is
         /// nil
-        case setMessageTimer(senderName: String?)
+        case setMessageTimer(senderName: String?, timeoutValue: String)
         /// `[sender name] turned off the message timer` or `Someone turned off the message timer` if sender is nil
         case turnedOffMessageTimer(senderName: String?)
         /// `[sender name] deleted the group` or `Someone deleted the group` if sender is nil

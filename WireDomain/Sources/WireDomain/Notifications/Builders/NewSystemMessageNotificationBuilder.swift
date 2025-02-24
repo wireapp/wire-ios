@@ -110,9 +110,18 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
         case .conversationDeleted:
             // TODO: [WPB-11658]
             break
-        case .messageTimerUpdate:
-            // TODO: [WPB-11663]
-            break
+        case let .messageTimerUpdate(timeoutValue):
+            var timeoutStrValue: String?
+
+            if let timeoutValue {
+                let timerInMilliseconds = Double(timeoutValue)
+                let timeoutValue = timerInMilliseconds / 1000
+                let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
+
+                timeoutStrValue = timeout.displayString
+            }
+
+            return buildTimerUpdateNotification(timeout: timeoutStrValue)
         }
 
         return UNMutableNotificationContent()
@@ -129,6 +138,32 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
 
         let body = NotificationBody.newSystemMessage(
             .removedYou(senderName: context.senderName)
+        )
+
+        content.body = body.make()
+        content.categoryIdentifier = makeCategory()
+        content.sound = makeSound()
+        content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
+
+        return content
+    }
+
+    private func buildTimerUpdateNotification(timeout: String?) -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+
+        if let title = makeTitle() {
+            content.title = title
+        }
+
+        let bodyFormat: NotificationBody.SystemMessageBodyFormat = if let timeout {
+            .setMessageTimer(senderName: context.senderName, timeoutValue: timeout)
+        } else {
+            .turnedOffMessageTimer(senderName: context.senderName)
+        }
+
+        let body = NotificationBody.newSystemMessage(
+            bodyFormat
         )
 
         content.body = body.make()
