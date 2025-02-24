@@ -18,7 +18,7 @@
 
 import WireProtos
 
-struct ProtobufMessageHelper {
+struct ProtobufMessageDecoder {
 
     private init() {}
 
