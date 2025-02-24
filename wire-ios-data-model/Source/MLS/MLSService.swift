@@ -1060,8 +1060,10 @@ public final class MLSService: MLSServiceInterface {
         }
 
         do {
+            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite
             let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(
                 clientID: clientID,
+                ciphersuite: MLSCipherSuite(rawValue: ciphersuite.rawValue),
                 context: context.notificationContext
             )
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
@@ -1122,11 +1124,13 @@ public final class MLSService: MLSServiceInterface {
 
     private func countUnclaimedKeyPackages(
         clientID: String,
+        ciphersuite: MLSCipherSuite?,
         context: NotificationContext
     ) async throws -> Int {
         do {
             return try await actionsProvider.countUnclaimedKeyPackages(
                 clientID: clientID,
+                ciphersuite: ciphersuite,
                 context: context
             )
 
