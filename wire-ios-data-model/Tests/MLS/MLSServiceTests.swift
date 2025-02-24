@@ -1732,7 +1732,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // mock return value for unclaimed key packages count
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             countUnclaimedKeyPackages.fulfill()
             return unsufficientKeyPackagesAmount
         }
@@ -1749,7 +1749,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockClientKeypackagesCount, 1)
 
         let countUnclaimedKeypackagesInvocations = mockActionsProvider
-            .countUnclaimedKeyPackagesClientIDContext_Invocations
+            .countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations
         XCTAssertEqual(countUnclaimedKeypackagesInvocations.count, 1)
         XCTAssertEqual(countUnclaimedKeypackagesInvocations.first?.clientID, clientID)
 
@@ -1775,7 +1775,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
 
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             countUnclaimedKeyPackages.fulfill()
             return 0
         }
@@ -1800,7 +1800,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
 
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             throw TestError.failedToCountUnclaimedKeyPackages
         }
 
@@ -1824,7 +1824,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
 
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             0
         }
 
@@ -1860,7 +1860,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // mock return value for unclaimed key packages count
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             countUnclaimedKeyPackages.fulfill()
             return self.sut.targetUnclaimedKeyPackageCount
         }
