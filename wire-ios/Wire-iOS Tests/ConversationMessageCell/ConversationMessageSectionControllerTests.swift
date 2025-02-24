@@ -64,14 +64,14 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: MockMessage(),
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: false
         )
         section.cellDescriptionsForTesting.removeAll()
-        section.useInvertedIndices = false
 
         // WHEN
-        section.add(description: MockCellDescription<Bool>())
-        section.add(description: MockCellDescription<String>())
+        section.addForTesting(description: MockCellDescription<Bool>())
+        section.addForTesting(description: MockCellDescription<String>())
 
         // THEN
         let cell1 = section.tableViewCellDescriptions[0]
@@ -86,14 +86,14 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: MockMessage(),
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: true
         )
         section.cellDescriptionsForTesting.removeAll()
-        section.useInvertedIndices = true
 
         // WHEN
-        section.add(description: MockCellDescription<Bool>())
-        section.add(description: MockCellDescription<String>())
+        section.addForTesting(description: MockCellDescription<Bool>())
+        section.addForTesting(description: MockCellDescription<String>())
 
         // THEN
         let cell1 = section.tableViewCellDescriptions[0]
@@ -112,7 +112,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: false
         )
 
         // Then
@@ -138,7 +139,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: false
         )
 
         // THEN
@@ -159,7 +161,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // When
         let section = ConversationMessageSectionController(
             message: message,
-            context: context, userSession: userSession
+            context: context,
+            userSession: userSession,
+            useInvertedIndices: false
         )
 
         // Then
@@ -184,7 +188,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: false
         )
 
         let cellDescriptions = section.cellDescriptionsForTesting

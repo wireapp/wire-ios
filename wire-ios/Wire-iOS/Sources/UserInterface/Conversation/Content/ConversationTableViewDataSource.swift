@@ -219,9 +219,9 @@ final class ConversationTableViewDataSource: NSObject {
             message: message,
             context: context,
             selected: message.isEqual(selectedMessage),
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: true
         )
-        sectionController.useInvertedIndices = true
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
         sectionController.actionController = actionController(for: message)

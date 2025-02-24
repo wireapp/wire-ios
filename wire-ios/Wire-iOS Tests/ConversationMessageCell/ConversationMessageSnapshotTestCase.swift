@@ -164,7 +164,12 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
     ) -> UIStackView {
         let context = (context ?? ConversationMessageContext.defaultContext)!
 
-        let section = ConversationMessageSectionController(message: message, context: context, userSession: userSession)
+        let section = ConversationMessageSectionController(
+            message: message,
+            context: context,
+            userSession: userSession,
+            useInvertedIndices: false
+        )
         let views = section.cellDescriptionsForTesting.map { $0.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical
