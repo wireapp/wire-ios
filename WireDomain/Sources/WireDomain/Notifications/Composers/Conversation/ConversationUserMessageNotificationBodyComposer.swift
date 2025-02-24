@@ -18,8 +18,8 @@
 
 import Foundation
 
-struct NewMessageNotificationBodyComposer {
-    let format: NotificationBody.MessageBodyFormat
+struct ConversationUserMessageNotificationBodyComposer {
+    let format: NotificationBody.UserMessageBodyFormat
 
     // TODO: [WPB-15153] - Localize strings
     func make() -> String {

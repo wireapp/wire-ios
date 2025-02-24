@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct NewMessageNotificationTitleComposer {
+struct ConversationMessageNotificationTitleComposer {
     let format: NotificationTitle.MessageTitleFormat
 
     // TODO: [WPB-15153] - Localize strings

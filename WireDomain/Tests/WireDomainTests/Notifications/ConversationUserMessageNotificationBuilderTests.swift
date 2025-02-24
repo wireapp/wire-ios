@@ -25,8 +25,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class NewMessageNotificationBuilderTests: XCTestCase {
-    private var sut: NewMessageNotificationBuilder!
+final class ConversationUserMessageNotificationBuilderTests: XCTestCase {
+    private var sut: ConversationUserMessageNotificationBuilder!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
@@ -74,7 +74,7 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
         }
     }
 
-    func testGenerateNewMessageNotifications_Is_Group_Conversation_And_Is_Team_User() async throws {
+    func testGenerateNewUserMessageNotifications_Is_Group_Conversation_And_Is_Team_User() async throws {
 
         // Mock
 
@@ -86,11 +86,15 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
 
         for messageCapable in messagesCapable {
             let genericMessage = GenericMessage(content: messageCapable)
-            sut = await NewMessageNotificationBuilder(
+
+            sut = await ConversationUserMessageNotificationBuilder(
                 message: genericMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
+
+            let shouldBuildNotification = await sut.shouldBuildNotification()
+            XCTAssertEqual(shouldBuildNotification, true)
 
             let notification = await sut.buildContent()
 
@@ -104,7 +108,7 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
         }
     }
 
-    func testGenerateNewMessageNotifications_Is_Group_Conversation_And_Is_Personal_User() async throws {
+    func testGenerateNewUserMessageNotifications_Is_Group_Conversation_And_Is_Personal_User() async throws {
 
         // Mock
 
@@ -116,11 +120,14 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
 
         for messageCapable in messagesCapable {
             let genericMessage = GenericMessage(content: messageCapable)
-            sut = await NewMessageNotificationBuilder(
+            sut = await ConversationUserMessageNotificationBuilder(
                 message: genericMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
+
+            let shouldBuildNotification = await sut.shouldBuildNotification()
+            XCTAssertEqual(shouldBuildNotification, true)
 
             let notification = await sut.buildContent()
 
@@ -134,7 +141,7 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
         }
     }
 
-    func testGenerateNewMessageNotifications_Is_OneOnOne_Conversation_And_Team() async throws {
+    func testGenerateNewUserMessageNotifications_Is_OneOnOne_Conversation_And_Team() async throws {
 
         // Mock
 
@@ -146,11 +153,14 @@ final class NewMessageNotificationBuilderTests: XCTestCase {
 
         for messageCapable in messagesCapable {
             let genericMessage = GenericMessage(content: messageCapable)
-            sut = await NewMessageNotificationBuilder(
+            sut = await ConversationUserMessageNotificationBuilder(
                 message: genericMessage,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
+
+            let shouldBuildNotification = await sut.shouldBuildNotification()
+            XCTAssertEqual(shouldBuildNotification, true)
 
             let notificationContent = await sut.buildContent()
 
