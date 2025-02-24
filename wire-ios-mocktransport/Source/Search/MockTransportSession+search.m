@@ -66,38 +66,4 @@
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
-// handles /onboarding
-- (ZMTransportResponse *)processOnboardingRequest:(ZMTransportRequest *)request
-{
-    if(request.method == ZMTransportRequestMethodPost) {
-        NSArray *selfEmailArray = [[request.payload asDictionary] arrayForKey:@"self"];
-        if(selfEmailArray.count == 0) {
-            return [self errorResponseWithCode:400 reason:@"no self email" apiVersion:request.apiVersion];
-        }
-        NSArray *cards = [[request.payload asDictionary] arrayForKey:@"cards"];
-        if(cards == nil) {
-            return [self errorResponseWithCode:400 reason:@"missing contacts" apiVersion:request.apiVersion];
-        }
-        
-        NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
-        
-        // This method is just a simulation, it does not do any actual matching, it just returns all users
-        NSMutableArray *results = [NSMutableArray array];
-        for (MockUser *user in users) {
-            if (user == self.selfUser) {
-                continue;
-            }
-            [results addObject:@{
-                                @"id" : user.identifier,
-                                @"cards" : @[]
-                                }];
-        }
-        return [ZMTransportResponse responseWithPayload:@{@"results" : results} HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
-        
-    }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
-}
-
-
 @end
