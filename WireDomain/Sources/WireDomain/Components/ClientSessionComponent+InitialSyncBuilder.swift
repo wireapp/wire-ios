@@ -16,5 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "ios.xcconfig"
-#include "swift.xcconfig"
+import Foundation
+
+extension ClientSessionComponent: InitialSyncBuilderProtocol {
+
+    public func buildInitialSync() throws -> any InitialSyncProtocol {
+        initialSync
+    }
+
+}

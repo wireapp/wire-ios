@@ -20,7 +20,7 @@ import Foundation
 
 /// A builder of `UserPropertiesAPI`.
 
-public struct UserPropertiesBuilder {
+public struct UserPropertiesAPIBuilder {
 
     let apiService: any APIServiceProtocol
 

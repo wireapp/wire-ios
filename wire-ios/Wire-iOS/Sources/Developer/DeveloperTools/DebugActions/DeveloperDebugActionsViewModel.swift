@@ -64,9 +64,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private func setupButtons() {
         buttons = [
             .init(title: "Send debug logs", action: sendDebugLogs),
-            .init(title: "Perform quick sync", action: performQuickSync),
-            .init(title: "Resync resources", action: resyncResources),
-            .init(title: "Break next quick sync", action: breakNextQuickSync),
+            .init(title: "Trigger incremental sync", action: triggerIncrementalSync),
+            .init(title: "Trigger resources sync", action: triggerResourcesSync),
+            .init(title: "Break next incremental sync", action: breakNextIncrementalSync),
             .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
@@ -104,22 +104,18 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     // MARK: Quick Sync
 
-    private func breakNextQuickSync() {
+    private func breakNextIncrementalSync() {
         userSession?.setBogusLastEventID()
     }
 
-    private func performQuickSync() {
-        guard let userSession else { return }
-
-        Task {
-            await userSession.syncStatus.performQuickSync()
-        }
+    private func triggerIncrementalSync() {
+        userSession?.triggerIncrementalSync()
     }
 
     // MARK: Resync resources
 
-    private func resyncResources() {
-        DebugActions.triggerResyncResources()
+    private func triggerResourcesSync() {
+        userSession?.triggerResourcesSync()
     }
 
     // MARK: Proteus to MLS migration

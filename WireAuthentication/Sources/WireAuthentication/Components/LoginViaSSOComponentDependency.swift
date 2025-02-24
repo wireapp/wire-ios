@@ -16,10 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "ios.xcconfig"
-#include "tests.xcconfig"
-#include "swift.xcconfig"
+import Foundation
+internal import WireAuthenticationUI
 
-ARCHS[sdk=iphonesimulator*] = x86_64
-VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
-VALID_ARCHS[sdk=iphonesimulator*] = x86_64
+class LoginViaSSOComponent: LoginViaSSOBuilder {
+
+    @MainActor
+    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
+    }
+
+    @MainActor
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
+    }
+
+}
