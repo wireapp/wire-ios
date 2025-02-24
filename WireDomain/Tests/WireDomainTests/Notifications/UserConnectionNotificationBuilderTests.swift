@@ -16,22 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
-import WireDataModel
-import WireDataModelSupport
-import WireTestingPackage
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
-@testable import WireDomainSupport
 
 final class UserConnectionNotificationBuilderTests: XCTestCase {
     private var sut: UserConnectionNotificationBuilder!
 
     func testGenerateUserConnectionNotifications() async {
-
         let connectionStatuses: [UserConnectionNotificationBuilder.ConnectionStatus] = [
-            .joined
+            .joined,
+            .pending,
+            .accepted
         ]
 
         for connectionStatus in connectionStatuses {
@@ -42,18 +37,21 @@ final class UserConnectionNotificationBuilderTests: XCTestCase {
 
             let notification = await sut.buildContent()
 
+            XCTAssertEqual(notification.title, "")
+            XCTAssertEqual(notification.sound, UNNotificationSound(named: .init("default")))
+
             switch connectionStatus {
             case .joined:
-                XCTAssertEqual(notification.title, "")
                 XCTAssertEqual(notification.body, "\(Scaffolding.username) just joined Wire")
-                XCTAssertEqual(notification.sound, UNNotificationSound(named: .init("default")))
                 XCTAssertEqual(notification.categoryIdentifier, NotificationCategory.nonActionable.rawValue)
 
             case .pending:
-                fatalError()
+                XCTAssertEqual(notification.body, "\(Scaffolding.username) wants to connect")
+                XCTAssertEqual(notification.categoryIdentifier, NotificationCategory.incomingConnectionRequest.rawValue)
 
             case .accepted:
-                fatalError()
+                XCTAssertEqual(notification.body, "You and \(Scaffolding.username) are now connected")
+                XCTAssertEqual(notification.categoryIdentifier, NotificationCategory.nonActionable.rawValue)
             }
         }
     }
