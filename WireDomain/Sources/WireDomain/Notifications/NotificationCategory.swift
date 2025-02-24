@@ -33,18 +33,18 @@ public enum NotificationCategory: String, CaseIterable {
         case .nonActionable:
             []
         case .unmutedConversation:
-            [MuteNotificationAction()]
+            [MuteConversationNotificationAction()]
         case .incomingCall:
             [IgnoreCallNotificationAction()]
         case .missedCall:
-            [CallbackNotificationAction()]
+            [StartCallNotificationAction()]
         case .incomingConnectionRequest:
-            [AcceptConnectionNotificationAction()]
+            [AcceptConnectionRequestNotificationAction()]
         }
     }
 
     private func make() -> UNNotificationCategory {
-        let userActions = actions.map { $0.make() }
+        let userActions = actions.map { $0.makeUNNotificationAction() }
 
         return UNNotificationCategory(
             identifier: rawValue,
