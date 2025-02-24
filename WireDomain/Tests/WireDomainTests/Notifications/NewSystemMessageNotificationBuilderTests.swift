@@ -123,6 +123,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
+            .conversationDeleted,
             .conversationCreated,
             .memberJoin(addedUserIDs: [.mockID4]), // concerns self user
             .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
@@ -162,6 +163,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
 
         let systemMessages: [NewSystemMessageNotificationBuilder.SystemMessage] = [
             .memberLeave(removedUserIDs: [.mockID4]), // concerns self user
+            .conversationDeleted,
             .conversationCreated,
             .memberJoin(addedUserIDs: [.mockID4]), // concerns self user
             .messageTimerUpdate(newTimer: Scaffolding.timeoutValue), // enabled timer
@@ -248,7 +250,7 @@ final class NewSystemMessageNotificationBuilderTests: XCTestCase {
         case .memberJoin:
             XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) added you")
         case .conversationDeleted:
-            break
+            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) deleted the group")
         case let .messageTimerUpdate(timeoutValue):
             if let timeoutValue {
                 XCTAssertEqual(

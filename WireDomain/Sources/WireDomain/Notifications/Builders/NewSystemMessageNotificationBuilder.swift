@@ -105,8 +105,7 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
         case .conversationCreated:
             return buildConversationCreatedNotification()
         case .conversationDeleted:
-            // TODO: [WPB-11658]
-            break
+            return buildDeletedConversationNotification()
         case let .messageTimerUpdate(timeoutValue):
             var timeoutStrValue: String?
 
@@ -203,6 +202,26 @@ struct NewSystemMessageNotificationBuilder: NotificationBuilder {
             bodyFormat
         )
             
+        content.body = body.make()
+        content.categoryIdentifier = makeCategory()
+        content.sound = makeSound()
+        content.userInfo = makeUserInfo()
+        content.threadIdentifier = context.conversationID.uuid.transportString()
+
+        return content
+    }
+
+    private func buildDeletedConversationNotification() -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+
+        if let title = makeTitle() {
+            content.title = title
+        }
+
+        let body = NotificationBody.newSystemMessage(
+            .deletedGroup(senderName: context.senderName)
+        )
+
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()

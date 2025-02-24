@@ -36,8 +36,7 @@ struct NewSystemMessageNotificationBodyComposer {
         case let .turnedOffMessageTimer(senderName):
             senderName != nil ? "\(senderName!) turned off the message timer" : "Someone turned off the message timer"
         case let .deletedGroup(senderName):
-            // TODO: [WPB-11658]
-            ""
+            senderName != nil ? "\(senderName!) deleted the group" : "Someone deleted the group"
         }
     }
 }
