@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "ios.xcconfig"
-#include "tests.xcconfig"
-#include "swift.xcconfig"
+import Foundation
 
-ARCHS[sdk=iphonesimulator*] = x86_64
-VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
-VALID_ARCHS[sdk=iphonesimulator*] = x86_64
+public struct SSOSettings: Equatable, Sendable {
+
+    public let defaultSSOCode: UUID?
+
+}

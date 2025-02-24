@@ -445,9 +445,10 @@ public class SettingsPageSteps {
                 .replaceAliasesOccurrences(passcode, ClientUsersManager.FindBy.PASSWORD_ALIAS);
         getSettingsPage().inputLockPasscode(passcode);
     }
-@When("^I tap on lock passcode button$")
+
+    @When("^I tap on lock passcode button$")
     public void iTapLockPasscodeButton() {
-    getSettingsPage().tapLockPasscodeButton();
-}
+        getSettingsPage().tapLockPasscodeButton();
+    }
 }
 

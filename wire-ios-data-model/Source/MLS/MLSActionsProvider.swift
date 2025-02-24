@@ -27,6 +27,7 @@ protocol MLSActionsProviderProtocol {
 
     func countUnclaimedKeyPackages(
         clientID: String,
+        ciphersuite: MLSCipherSuite?,
         context: NotificationContext
     ) async throws -> Int
 
@@ -115,9 +116,10 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
 
     func countUnclaimedKeyPackages(
         clientID: String,
+        ciphersuite: MLSCipherSuite?,
         context: NotificationContext
     ) async throws -> Int {
-        var action = CountSelfMLSKeyPackagesAction(clientID: clientID)
+        var action = CountSelfMLSKeyPackagesAction(clientID: clientID, ciphersuite: ciphersuite)
         return try await action.perform(in: context)
     }
 

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAPI
 import WireAuthenticationAPI
 import WireReusableUIComponents
 
@@ -34,7 +35,10 @@ final class MockDependencies {
     var _backendEnvironment = BackendEnvironment(
         title: "<backend name>",
         url: URL(string: "https://example.com")!,
-        accountsURL: URL(string: "https://example.com")!
+        accountsURL: URL(string: "https://example.com")!,
+        webSocketURL: URL(string: "https://example.com")!,
+        pinnedKeys: [],
+        proxySettings: nil
     )
 
     var rootView: RootView {
@@ -58,7 +62,8 @@ final class MockDependencies {
                 isLoading: isLoading,
                 alert: alert
             ),
-            builder: self
+            loginViaEmailBuilder: self,
+            loginViaSSOBuilder: self
         )
     }
 
@@ -113,7 +118,8 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     var determineAuthMethodView: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
-            builder: self
+            loginViaEmailBuilder: self,
+            loginViaSSOBuilder: self
         )
     }
 
@@ -158,6 +164,17 @@ extension MockDependencies: LoginViaEmailOnPremViewBuilder {
             viewModel: loginViaEmailOnPremViewModel(email: email, canCreateAccount: canCreateAccount)
         )
     }
+}
+
+extension MockDependencies: LoginViaSSOBuilder {
+
+    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
+    }
+
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
+    }
 
 }
 
@@ -169,7 +186,7 @@ private struct MockPasswordValidator: PasswordValidator {
         self.validationCallback = validationCallback
     }
 
-    func validate(_ password: String) -> Bool {
+    func isPasswordValid(_ password: String) -> Bool {
         validationCallback(password)
     }
 

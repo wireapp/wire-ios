@@ -22,4 +22,113 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class LoginViaSSOViewModel: ObservableObject {}
+package final class LoginViaSSOViewModel: ObservableObject {
+
+    let ssoURL: URL
+
+    package init(ssoURL: URL) {
+        self.ssoURL = ssoURL
+    }
+
+    /// Generate the link to the SSO authentication screen
+    ///
+    /// - Parameters:
+    ///   - baseURL: Backend URL.
+    ///   - ssoCode: SSO code
+    ///   - callbackScheme: The URL scheme that where the callback will be provided.
+    /// - Returns: URL to the SSO authentication screen
+    func buildSSOLink(baseURL: URL, ssoCode: UUID, callbackScheme: String) async throws -> URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = baseURL.host
+        components.path = "/sso/initiate-login/\(ssoCode.uuidString)"
+
+        let successCallback = makeSuccessCallbackString(using: ssoCode, callbackScheme: callbackScheme)
+        let errorCallback = makeFailureCallbackString(using: ssoCode, callbackScheme: callbackScheme)
+
+        components.queryItems = [
+            URLQueryItem(
+                name: URLQueryItem.Key.successRedirect,
+                value: successCallback
+            ),
+            URLQueryItem(name: URLQueryItem.Key.errorRedirect, value: errorCallback)
+        ]
+
+        guard let url = components.url else {
+            throw LoginViaSSOViewModelFailure.invalidSSOURL
+        }
+
+        return url
+    }
+
+    private func makeSuccessCallbackString(using token: UUID, callbackScheme: String) -> String {
+        var components = URLComponents()
+        components.scheme = callbackScheme
+        components.host = URL.Host.login
+        components.path = "/" + URL.Path.success
+
+        components.queryItems = [
+            URLQueryItem(name: URLQueryItem.Key.cookie, value: URLQueryItem.Template.cookie),
+            URLQueryItem(name: URLQueryItem.Key.userIdentifier, value: URLQueryItem.Template.userIdentifier),
+            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuidString)
+        ]
+
+        return components.url!.absoluteString
+    }
+
+    private func makeFailureCallbackString(using token: UUID, callbackScheme: String) -> String {
+        var components = URLComponents()
+        components.scheme = callbackScheme
+        components.host = URL.Host.login
+        components.path = "/" + URL.Path.failure
+
+        components.queryItems = [
+            URLQueryItem(name: URLQueryItem.Key.errorLabel, value: URLQueryItem.Template.errorLabel),
+            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuidString)
+        ]
+
+        return components.url!.absoluteString
+    }
+}
+
+package enum LoginViaSSOViewModelFailure: Error, Equatable {
+
+    /// Invalid company login URL
+
+    case invalidSSOURL
+
+    case unknown
+
+}
+
+private extension URL {
+
+    enum Host {
+        static let login = "login"
+    }
+
+    enum Path {
+        static let success = "success"
+        static let failure = "failure"
+    }
+
+}
+
+private extension URLQueryItem {
+
+    enum Key {
+        static let successRedirect = "success_redirect"
+        static let errorRedirect = "error_redirect"
+        static let cookie = "cookie"
+        static let userIdentifier = "userid"
+        static let errorLabel = "label"
+        static let validationToken = "validation_token"
+    }
+
+    enum Template {
+        static let cookie = "$cookie"
+        static let userIdentifier = "$userid"
+        static let errorLabel = "$label"
+    }
+
+}

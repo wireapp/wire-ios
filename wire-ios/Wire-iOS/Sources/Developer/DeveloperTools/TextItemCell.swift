@@ -16,16 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
+import SwiftUI
 
-func makeAuthenticationAPI() -> AuthenticationAPI {
-    let mockAuthenticationAPI = MockAuthenticationAPI()
-    mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = DomainRegistrationConfiguration(
-        backendURLString: nil,
-        domainRedirect: .none,
-        isCloudAccountAlreadyRegistered: nil,
-        ssoCodeString: nil
-    )
-    return mockAuthenticationAPI
+struct TextItemCell: View {
+
+    let title: String
+    let value: String
+    let onCopy: () -> Void
+
+    var body: some View {
+        HStack {
+            Text(title)
+
+            Spacer()
+
+            Text(value)
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .foregroundColor(.secondary)
+        }
+        .contextMenu {
+            Button(
+                hapticFeedbackStyle: .success,
+                action: {
+                    onCopy()
+                },
+                label: {
+                    Label("Copy", systemImage: "doc.on.doc")
+                }
+            )
+        }
+    }
 }

@@ -24,15 +24,18 @@ import WireReusableUIComponents
 
 struct ContentView: View {
 
-    let authenticationAPI: AuthenticationAPI
+    let configuration: Configuration
 
     var body: some View {
         BackgroundView()
             .sheet(isPresented: .constant(true)) {
                 WireAuthenticationAssembly().assemble(
-                    authenticationAPI: authenticationAPI,
-                    accountsURL: URL(string: "https://example.com")!,
-                    passwordValidator: LoginPasswordValidator()
+                    defaultBackendEnvironment: configuration.defaultBackendEnvironment,
+                    minTLSVersion: configuration.minTLSVersion,
+                    defaultAPIVersion: configuration.defaultAPIVersion,
+                    accountsURL: configuration.accountsURL,
+                    passwordValidator: configuration.passwordValidator,
+                    onFlowCompletion: {}
                 )
             }
     }
@@ -40,17 +43,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(authenticationAPI: makeAuthenticationAPI())
-}
-
-private struct LoginPasswordValidator: PasswordValidator {
-
-    func validate(_ password: String) -> Bool {
-        !password.isEmpty
-    }
-
-    var localizedRulesDescription: String? {
-        "Password rules"
-    }
-
+    ContentView(configuration: .live)
 }

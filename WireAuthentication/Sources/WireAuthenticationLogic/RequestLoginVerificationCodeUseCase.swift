@@ -16,5 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#include "ios.xcconfig"
-#include "swift.xcconfig"
+import WireAPI
+import WireAuthenticationAPI
+
+package struct RequestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCaseProtocol {
+
+    private let authenticationAPI: AuthenticationAPI
+
+    package init(authenticationAPI: AuthenticationAPI) {
+        self.authenticationAPI = authenticationAPI
+    }
+
+    package func invoke(
+        email: String
+    ) async throws(RequestLoginVerificationCodeUseCaseFailure) {
+        do {
+            try await authenticationAPI.requestVerificationCode(for: email)
+        } catch AuthenticationAPIError.invalidEmail {
+            throw .invalidEmail
+        } catch {
+            throw .unexpected(error)
+        }
+    }
+
+}
