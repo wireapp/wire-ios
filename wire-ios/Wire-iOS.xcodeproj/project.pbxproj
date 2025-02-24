@@ -554,7 +554,7 @@
 		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "Entitlements-Dev.entitlements"; path = "Wire-iOS/Entitlements-Dev.entitlements"; sourceTree = "<group>"; };
+		87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Entitlements-Dev.entitlements"; path = "Wire-iOS/Entitlements-Dev.entitlements"; sourceTree = "<group>"; };
 		87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "Entitlements-Prod.entitlements"; path = "Wire-iOS/Entitlements-Prod.entitlements"; sourceTree = "<group>"; };
 		8F42C538199244A700288E4D /* Wire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FC853A0199245770008B66B /* Wire-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Wire-Info.plist"; path = "Wire-iOS/Wire-Info.plist"; sourceTree = "<group>"; };
@@ -1325,18 +1325,18 @@
 			children = (
 				EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */,
 				015D91E72D68D481004EE8C9 /* Scripts */,
-				87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */,
-				87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */,
 				015DC1DC2D68DD85004EE8C9 /* iOS StyleKit.pcvd */,
 				015DC1DD2D68DD85004EE8C9 /* SECURITY.md */,
 				015DC1DE2D68DD85004EE8C9 /* swiftgen.yml */,
 				015DC1DF2D68DD85004EE8C9 /* swiftgenShareExtension.yml */,
+				87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */,
+				87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */,
+				8FC853A0199245770008B66B /* Wire-Info.plist */,
 				0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */,
 				01B71BB42D6D2DB3002C5A38 /* Configuration */,
 				01B71B942D6D2DAB002C5A38 /* Resources */,
 				015DA6092D68DA96004EE8C9 /* Generated */,
 				015DAB7D2D68DAB0004EE8C9 /* Sources */,
-				8FC8564919924D4E0008B66B /* Supporting Files */,
 				015DB07A2D68DB05004EE8C9 /* Tests */,
 				015DD59D2D68E261004EE8C9 /* Wire-iOS Tests */,
 				015DC2042D68E01D004EE8C9 /* Wire-iOS UnitTests */,
@@ -1363,14 +1363,6 @@
 				E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		8FC8564919924D4E0008B66B /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				8FC853A0199245770008B66B /* Wire-Info.plist */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
