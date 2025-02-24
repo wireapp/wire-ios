@@ -18,6 +18,7 @@
 
 import Foundation
 import WireFoundation
+import WireLogging
 
 public final class PushChannel: PushChannelProtocol {
 
@@ -31,25 +32,25 @@ public final class PushChannel: PushChannelProtocol {
     }
 
     public func open() async throws -> Stream {
-        print("opening new push channel")
+        WireLogger.sync.debug("opening new push channel")
         return try await webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
                 case let .data(data):
-                    print("received web socket data, decoding...")
+                    WireLogger.sync.debug("received web socket data, decoding...")
                     let envelope = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
                     return envelope.toAPIModel()
 
                 case .string:
-                    print("received web socket string, ignoring...")
+                    WireLogger.sync.debug("received web socket string, ignoring...")
                     throw PushChannelError.receivedInvalidMessage
 
                 @unknown default:
-                    print("received web socket message, ignoring...")
+                    WireLogger.sync.debug("received web socket message, ignoring...")
                     throw PushChannelError.receivedInvalidMessage
                 }
             } catch {
-                print("failed to get next web socket message: \(error)")
+                WireLogger.sync.debug("failed to get next web socket message: \(error)")
                 await self?.close()
                 throw error
             }
@@ -57,7 +58,7 @@ public final class PushChannel: PushChannelProtocol {
     }
 
     public func close() async {
-        print("closing push channel")
+        WireLogger.sync.debug("closing push channel")
         await webSocket.close()
     }
 
