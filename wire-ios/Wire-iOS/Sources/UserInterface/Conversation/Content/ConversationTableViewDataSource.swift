@@ -104,8 +104,7 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    var previousSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
-    var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
+    private var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
 
     /// calculate cell sections
     ///
@@ -429,14 +428,8 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
     }
 
     func reloadSections(newSections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
-        previousSections = currentSections
-        defer { previousSections = [] }
-
-        let stagedChangeset = StagedChangeset(source: previousSections, target: newSections)
-
-        tableView.reload(using: stagedChangeset, with: .fade) { data in
-            currentSections = data
-        }
+        let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
+        tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
     }
 
 }
