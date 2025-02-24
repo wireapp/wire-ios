@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UserNotifications
+import Foundation
 
-struct MuteNotificationAction: NotificationAction {
+struct AcceptConnectionRequestNotificationAction: NotificationAction {
     var identifier: String {
-        "conversationMuteAction"
+        "acceptConnectionRequestAction"
     }
 
     var title: String {
-        "conversation.mute"
+        "connection.accept"
     }
 
     var isDestructive: Bool {
@@ -38,4 +38,5 @@ struct MuteNotificationAction: NotificationAction {
     var requiresAuthentication: Bool {
         false
     }
+
 }

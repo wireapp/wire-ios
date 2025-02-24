@@ -37,7 +37,7 @@ protocol NotificationAction {
 }
 
 extension NotificationAction {
-    func make() -> UNNotificationAction {
+    func makeUNNotificationAction() -> UNNotificationAction {
         var options = UNNotificationActionOptions()
 
         if isDestructive {

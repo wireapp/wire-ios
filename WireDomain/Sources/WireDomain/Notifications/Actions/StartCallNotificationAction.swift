@@ -18,9 +18,9 @@
 
 import Foundation
 
-struct CallbackNotificationAction: NotificationAction {
+struct StartCallNotificationAction: NotificationAction {
     var identifier: String {
-        "callbackCallAction"
+        "startCallAction"
     }
 
     var title: String {
