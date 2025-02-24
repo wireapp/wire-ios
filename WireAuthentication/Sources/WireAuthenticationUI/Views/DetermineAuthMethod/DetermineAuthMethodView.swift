@@ -71,7 +71,6 @@ package struct DetermineAuthMethodView: View {
                         string: $viewModel.emailOrSSOCode
                     )
                     .autocapitalization(.none)
-                    .keyboardType(.emailAddress)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }
