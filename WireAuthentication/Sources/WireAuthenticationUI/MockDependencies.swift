@@ -144,6 +144,7 @@ extension MockDependencies: VerificationCodeBuilder {
                 email: email,
                 password: password,
                 loginViaEmailUseCase: self,
+                onFlowCompletion: { _, _ in },
                 code: code
             )
         )
@@ -157,7 +158,8 @@ extension MockDependencies: VerificationCodeBuilder {
             viewModel: VerificationCodeViewModel(
                 email: email,
                 password: password,
-                loginViaEmailUseCase: self
+                loginViaEmailUseCase: self,
+                onFlowCompletion: { _, _  in }
             )
         )
     }

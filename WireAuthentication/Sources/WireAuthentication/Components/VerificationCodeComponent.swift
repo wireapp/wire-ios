@@ -38,7 +38,8 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
             viewModel: viewModel(
                 email: email,
                 password: password,
-                loginViaEmailUseCase: dependency.loginViaEmailUseCase
+                loginViaEmailUseCase: dependency.loginViaEmailUseCase,
+                onFlowCompletion: { _, _ in } // FIXME: Bridge
             )
         )
     }
