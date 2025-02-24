@@ -20,6 +20,8 @@ import DifferenceKit
 import WireDataModel
 import WireSyncEngine
 import WireConversationUI
+import WireFoundation
+import WireDesign
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -507,9 +509,15 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
                 .first
 
             let cell = tableView.dequeueReusableCell(withIdentifier: "UnifiedMessageCell", for: indexPath)
-            var contentConfiguration = cell.defaultContentConfiguration()
-            contentConfiguration.attributedText = textMessageCellDescription?.configuration.attributedText
-            cell.contentConfiguration = contentConfiguration
+            if let cell = cell as? UnifiedMessageCell {
+                cell.message = .init(messages[indexPath.section])
+                cell.messageLayout = .groupConversationStyle // TODO: fix
+                cell.wireAccentColor = .amber // TODO: fix
+                cell.wireAccentColorMapping = WireAccentColorMapping()
+            }
+//            var contentConfiguration = cell.defaultContentConfiguration()
+//            contentConfiguration.attributedText = textMessageCellDescription?.configuration.attributedText
+//            cell.contentConfiguration = contentConfiguration
             return cell
         }
 

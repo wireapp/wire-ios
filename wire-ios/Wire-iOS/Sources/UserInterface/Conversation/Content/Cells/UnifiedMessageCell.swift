@@ -20,6 +20,7 @@ import SwiftUI
 import WireFoundation
 import WireConversationUI
 import WireDesign
+import WireDataModel
 
 /// A new cell which contains one whole message.
 public final class UnifiedMessageCell: UITableViewCell {
@@ -60,17 +61,24 @@ public final class UnifiedMessageCell: UITableViewCell {
                 layout: messageLayout
                 // accountImageViewContent: { Circle().fill(.red) }
             )
-            .swipeActions(edge: .leading) {
-                Button {
-                    print("swipe")
-                } label: {
-                    Label("Reply", systemImage: "arrowshape.turn.up.backward.fill")
-                        .rotationEffect(.degrees(180)) // TODO: doesn't have effect
-                }
-            }
+//            .swipeActions(edge: .leading) {
+//                Button {
+//                    print("swipe")
+//                } label: {
+//                    Label("Reply", systemImage: "arrowshape.turn.up.backward.fill")
+//                }
+//            }
             .environment(\.wireAccentColor, wireAccentColor)
             .environment(\.wireAccentColorMapping, wireAccentColorMapping)
         }
+    }
+
+}
+
+extension WireConversationUI.Message {
+
+    init(_ message: ZMMessage) {
+        self.init()
     }
 
 }
