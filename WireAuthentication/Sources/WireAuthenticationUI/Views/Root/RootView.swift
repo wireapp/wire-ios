@@ -23,21 +23,29 @@ package struct RootView: View {
 
     @StateObject var viewModel: RootViewModel
 
-    let builder: any DetermineAuthMethodBuilder
+    let determineAuthMethodBuilder: any DetermineAuthMethodBuilder
+    let noHistoryViewBuilder: any NoHistoryViewBuilder
 
     package init(
         viewModel: RootViewModel,
-        builder: any DetermineAuthMethodBuilder
+        determineAuthMethodBuilder: any DetermineAuthMethodBuilder,
+        noHistoryViewBuilder: any NoHistoryViewBuilder
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.builder = builder
+        self.determineAuthMethodBuilder = determineAuthMethodBuilder
+        self.noHistoryViewBuilder = noHistoryViewBuilder
     }
 
     package var body: some View {
         BackgroundView()
-            .sheet(isPresented: .constant(true)) {
-                NavigationStack(path: $viewModel.path) {
-                    builder.determineAuthMethodView
+            .sheet(item: $viewModel.activeSheet) { sheet in
+                switch sheet {
+                case .authFlow:
+                    NavigationStack(path: $viewModel.path) {
+                        determineAuthMethodBuilder.determineAuthMethodView
+                    }
+                case let .noHistory(userID, cookieData):
+                    noHistoryViewBuilder.noHistoryView(userID: userID, cookieData: cookieData)
                 }
             }
     }

@@ -18,11 +18,27 @@
 
 import SwiftUI
 
-struct NoHistoryView: View {
+package protocol NoHistoryViewBuilder {
 
+    @MainActor
+    func noHistoryView(
+        userID: UUID,
+        cookieData: Data
+    ) -> NoHistoryView
+
+}
+
+package struct NoHistoryView: View {
+    
     @ObservedObject var viewModel: NoHistoryViewModel
 
-    var body: some View {
+    package init(
+        viewModel: NoHistoryViewModel
+    ) {
+        self.viewModel = viewModel
+    }
+
+    package var body: some View {
         VStack(spacing: 20) {
             Text(L10n.Authentication.NoHistory.title)
                 .multilineTextAlignment(.center)
@@ -47,12 +63,18 @@ struct NoHistoryView: View {
 }
 
 #Preview {
-    NoHistoryView(viewModel: NoHistoryViewModel())
+    NoHistoryView(viewModel: NoHistoryViewModel(
+        userID: UUID(),
+        cookieData: Data())
+    )
 }
 
 #Preview("With background") {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            NoHistoryView(viewModel: NoHistoryViewModel())
+            NoHistoryView(viewModel: NoHistoryViewModel(
+                userID: UUID(),
+                cookieData: Data())
+            )
         }
 }

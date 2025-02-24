@@ -35,13 +35,13 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
     }
 
     func process(urlAction: URLAction, delegate presentationDelegate: PresentationDelegate?) {
+        guard !DeveloperFlag.useWireAuthentication.isOn else {
+            return
+        }
         switch urlAction {
         case let .companyLoginSuccess(userInfo):
             authenticationStatus.loginSucceeded(with: userInfo)
         case let .startCompanyLogin(code):
-            guard !DeveloperFlag.useWireAuthentication.isOn else {
-                break
-            }
             guard delegate?.isAllowedToCreateNewAccount == true else {
                 presentationDelegate?.failedToPerformAction(
                     urlAction,

@@ -65,7 +65,8 @@ class RootComponent: BootstrapComponent {
     @MainActor var rootView: some View {
         RootView(
             viewModel: rootViewModel,
-            builder: determineAuthMethodComponent
+            determineAuthMethodBuilder: determineAuthMethodComponent,
+            noHistoryViewBuilder: noHistoryComponent
         )
     }
 
@@ -73,7 +74,7 @@ class RootComponent: BootstrapComponent {
         WireAuthenticationBridge(
             onFlowCompletion: onFlowCompletion,
             onSuccessSSOFlowCompletion: { userID, cookieData in
-                SSOSuccessHandler(router: self.router).handleSuccess(userID: userID, cookieData: cookieData)
+                SSOSuccessHandler(viewModel: self.rootViewModel).handleSuccess(userID: userID, cookieData: cookieData)
             },
             onFailureSSOFlowCompletion: {
                 // TODO: Handle error
@@ -86,5 +87,10 @@ class RootComponent: BootstrapComponent {
     var determineAuthMethodComponent: DetermineAuthMethodComponent {
         DetermineAuthMethodComponent(parent: self)
     }
+
+    var noHistoryComponent: NoHistoryComponent {
+        NoHistoryComponent()
+    }
+
 
 }

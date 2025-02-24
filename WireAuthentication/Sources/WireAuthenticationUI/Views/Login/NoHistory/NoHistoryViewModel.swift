@@ -22,6 +22,15 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class NoHistoryViewModel: ObservableObject {
+package final class NoHistoryViewModel: ObservableObject {
+
+    private let userID: UUID
+    private let cookieData: Data
+
+    package init(userID: UUID, cookieData: Data) {
+        self.userID = userID
+        self.cookieData = cookieData
+    }
+
     func confirm() {}
 }

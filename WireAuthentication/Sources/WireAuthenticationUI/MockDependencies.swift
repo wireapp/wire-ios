@@ -30,7 +30,8 @@ final class MockDependencies {
     var rootView: RootView {
         RootView(
             viewModel: rootViewModel,
-            builder: self
+            determineAuthMethodBuilder: self,
+            noHistoryViewBuilder: self
         )
     }
 
@@ -112,6 +113,19 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     }
 
 }
+
+extension MockDependencies: NoHistoryViewBuilder {
+
+    private var noHistoryViewModel: NoHistoryViewModel {
+        NoHistoryViewModel(userID: UUID(), cookieData: Data())
+    }
+
+    func noHistoryView(userID: UUID, cookieData: Data) -> NoHistoryView {
+        NoHistoryView(viewModel: noHistoryViewModel)
+    }
+
+}
+
 extension MockDependencies: SSOLinkGeneratorProtocol {
 
     func generateSSOLink(ssoCode: UUID) async throws -> URL {

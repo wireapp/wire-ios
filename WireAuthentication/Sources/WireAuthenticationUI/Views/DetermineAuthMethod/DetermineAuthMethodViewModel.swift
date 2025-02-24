@@ -115,6 +115,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
+    func dismissmodalView() {
+        modalDestination = nil
+    }
+
     // MARK: - Private
 
     private func handleAuthenticationMethod(_ method: AuthenticationMethod) async {

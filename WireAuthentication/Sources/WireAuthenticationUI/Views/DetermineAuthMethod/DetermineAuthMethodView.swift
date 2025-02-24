@@ -112,6 +112,11 @@ package struct DetermineAuthMethodView: View {
                 Color.blue
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .ssoLoginDidFinishNotification)) { _ in
+            Task {
+                viewModel.dismissmodalView()
+            }
+        }
         .sheet(item: $viewModel.modalDestination, content: {
             switch $0 {
             case let .ssoLogin(url: ssoURL):

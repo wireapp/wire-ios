@@ -18,18 +18,28 @@
 
 import Foundation
 
-public struct SSOSuccessHandler {
+package struct SSOSuccessHandler {
 
-    let router: any Router
+    private let viewModel: RootViewModel
 
-    public init(router: any Router) {
-        self.router = router
+    package init(viewModel: RootViewModel) {
+        self.viewModel = viewModel
     }
 
     @MainActor
-    public func handleSuccess(userID: UUID, cookieData: Data) {
+    package func handleSuccess(userID: UUID, cookieData: Data) {
         // TODO: do not navigate
-        router.navigate(to: DetermineAuthMethodView.Destination.noHistory(userID: userID, cookieData: cookieData))
+        viewModel.presentNoHistorySheet(userID: userID, cookieData: cookieData)
+        //router.navigate(to: DetermineAuthMethodView.Destination.noHistory(userID: userID, cookieData: cookieData))
+        notifySSOLoginCompletion()
     }
 
+    private func notifySSOLoginCompletion() {
+        NotificationCenter.default.post(name: .ssoLoginDidFinishNotification, object: self)
+    }
+
+}
+
+extension Notification.Name {
+    static let ssoLoginDidFinishNotification = Notification.Name("SSOLoginDidFinish")
 }

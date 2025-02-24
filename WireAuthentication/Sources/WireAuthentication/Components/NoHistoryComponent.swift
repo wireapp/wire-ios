@@ -16,37 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
-import WireAuthenticationAPI
+internal import WireAuthenticationUI
 
+class NoHistoryComponent: NoHistoryViewBuilder {
 
-@MainActor
-public final class RootViewModel: ObservableObject, Router {
-
-    enum ActiveSheet: Identifiable, Hashable {
-        var id: Self { self }
-
-        case authFlow
-        case noHistory(userID: UUID, cookieData: Data)
+    @MainActor
+    private func noHistoryViewModel(userID: UUID, cookieData: Data) -> NoHistoryViewModel {
+        NoHistoryViewModel(userID: userID, cookieData: cookieData)
     }
 
-    @Published var path = NavigationPath()
-    @Published var activeSheet: ActiveSheet? = .authFlow
-
-    public init() {}
-
-    public func popToRoot() {
-        path.removeLast(path.count)
-    }
-
-    public func navigate(to destination: some Hashable) {
-        path.append(destination)
-    }
-
-    func presentNoHistorySheet(userID: UUID, cookieData: Data) {
-        activeSheet = .noHistory(userID: userID, cookieData: cookieData)
+    func noHistoryView(userID: UUID, cookieData: Data) -> NoHistoryView {
+        NoHistoryView(viewModel: noHistoryViewModel(userID: userID, cookieData: cookieData))
     }
 
 }
