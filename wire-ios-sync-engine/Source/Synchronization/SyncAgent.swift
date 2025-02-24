@@ -58,7 +58,14 @@ final class SyncAgent: NSObject {
 
     // MARK: - API
 
-    /// Performs the appropriate sync depending in the local state.
+    /// Suspend any ongoing sync tasks.
+
+    func suspend() {
+        incrementalSyncTask?.cancel()
+        incrementalSyncTask = nil
+    }
+
+    /// Trigger the appropriate sync depending in the local state.
     ///
     /// If no last event id is known, then the initial sync will be performed,
     /// otherwise the incremental sync will be performed.
