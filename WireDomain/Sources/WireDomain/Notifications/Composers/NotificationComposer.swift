@@ -18,21 +18,7 @@
 
 import Foundation
 
-struct ConversationMessageNotificationTitleComposer: NotificationComposer {
-    let format: NotificationTitle.MessageTitleFormat
-
-    // TODO: [WPB-15153] - Localize strings
-    func make() -> String {
-        switch format {
-        case let .sender(sender):
-            "\(sender)"
-        case let .senderInTeam(sender, team):
-            "\(sender) in \(team)"
-        case let .conversation(conversation):
-            "\(conversation)"
-        case let .conversationInTeam(conversation, team):
-            "\(conversation) in \(team)"
-        }
-    }
-
+/// Composes a localizable string.
+protocol NotificationComposer {
+    func make() -> String
 }

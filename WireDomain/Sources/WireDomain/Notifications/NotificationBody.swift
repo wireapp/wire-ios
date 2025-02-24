@@ -18,30 +18,38 @@
 
 import Foundation
 
+/// The Either type represents duality.
+/// A value that can either be of a type or another.
+enum Either<A, B>{
+  case left(A)
+  case right(B)
+}
+
 enum NotificationBody {
 
-    case conversationUserMessage(UserMessageBodyFormat)
-    case conversationSystemMessage(SystemMessageBodyFormat)
-    case userConnection(UserConnectionBodyFormat)
+    case conversation(Either<UserMessageBodyFormat, SystemMessageBodyFormat>)
+    case user(UserConnectionBodyFormat)
     case bundled(messagesCount: Int)
 
     func make() -> String {
         switch self {
-        case let .conversationUserMessage(userMessageBodyFormat):
-            let conversationUserMessageBodyComposer = ConversationUserMessageNotificationBodyComposer(
-                format: userMessageBodyFormat
-            )
-
-            return conversationUserMessageBodyComposer.make()
-
-        case let .conversationSystemMessage(systemMessageBodyFormat):
-            let conversationSystemMessageBodyComposer = ConversationSystemMessageNotificationBodyComposer(
-                format: systemMessageBodyFormat
-            )
-
-            return conversationSystemMessageBodyComposer.make()
-
-        case let .userConnection(userConnectionBodyFormat):
+        case let .conversation(format):
+            var composer: NotificationComposer
+            
+            switch format {
+            case .left(let userMessageBodyFormat):
+                composer = ConversationUserMessageNotificationBodyComposer(
+                    format: userMessageBodyFormat
+                )
+            case .right(let systemMessageBodyFormat):
+                composer = ConversationSystemMessageNotificationBodyComposer(
+                    format: systemMessageBodyFormat
+                )
+            }
+            
+            return composer.make()
+            
+        case let .user(userConnectionBodyFormat):
             let userConnectionBodyComposer = UserConnectionNotificationBodyComposer(
                 format: userConnectionBodyFormat
             )

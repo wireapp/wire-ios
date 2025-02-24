@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct UserConnectionNotificationBodyComposer {
+struct UserConnectionNotificationBodyComposer: NotificationComposer {
     let format: NotificationBody.UserConnectionBodyFormat
 
     // TODO: [WPB-15153] - Localize strings
