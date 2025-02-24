@@ -34,8 +34,8 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
         emailOrSSOCode: String
     ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
         let emailOrSSOCode = try validateEmailOrSSOCode(input: emailOrSSOCode)
-        switch emailOrSSOCode {
 
+        switch emailOrSSOCode {
         case let .email(email, domain):
             do {
                 return try await determineAuthMethod(email: email, domain: domain)

@@ -136,6 +136,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             } catch {
                 alert = .invalidSSOLink
             }
+
         case let .onPremLogin(email, backendConfig):
             // TODO: [WPB-15944] Handle on-prem login
             break

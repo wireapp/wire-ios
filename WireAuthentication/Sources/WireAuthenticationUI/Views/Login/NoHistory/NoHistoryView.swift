@@ -63,18 +63,14 @@ package struct NoHistoryView: View {
 }
 
 #Preview {
-    NoHistoryView(viewModel: NoHistoryViewModel(
-        userID: UUID(),
-        cookieData: Data())
-    )
+    let viewModel = NoHistoryViewModel(userID: UUID(), cookieData: Data())
+    NoHistoryView(viewModel: viewModel)
 }
 
 #Preview("With background") {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            NoHistoryView(viewModel: NoHistoryViewModel(
-                userID: UUID(),
-                cookieData: Data())
-            )
+            let viewModel = NoHistoryViewModel(userID: UUID(), cookieData: Data())
+            NoHistoryView(viewModel: viewModel)
         }
 }
