@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAPI
 import UserNotifications
 
-struct UserConnectionNotificationBuilder: NotificationBuilder {
+struct UserConnectionEventNotificationBuilder: NotificationBuilder {
 
-    enum ConnectionStatus {
-        case joined
+    private enum ConnectionStatus {
         case pending
         case accepted
     }
 
-    struct Context {
+    private struct Context {
         let connectionStatus: ConnectionStatus
         let username: String
     }
@@ -34,12 +34,14 @@ struct UserConnectionNotificationBuilder: NotificationBuilder {
     private let context: Context
 
     init(
-        connectionStatus: ConnectionStatus,
-        username: String
+        userConnectionEvent: UserConnectionEvent
     ) {
+        
+        let isPendingConnection = userConnectionEvent.connection.status == .pending
+        
         self.context = Context(
-            connectionStatus: connectionStatus,
-            username: username
+            connectionStatus: isPendingConnection ? .pending : .accepted,
+            username: userConnectionEvent.userName
         )
     }
 
@@ -49,8 +51,6 @@ struct UserConnectionNotificationBuilder: NotificationBuilder {
 
     func buildContent() async -> UNMutableNotificationContent {
         switch context.connectionStatus {
-        case .joined:
-            buildUserJoinNotification()
         case .pending:
             buildConnectionRequestNotification(isPending: true)
         case .accepted:
@@ -60,19 +60,19 @@ struct UserConnectionNotificationBuilder: NotificationBuilder {
 
     // MARK: - Build notifications
 
-    private func buildUserJoinNotification() -> UNMutableNotificationContent {
-        let content = UNMutableNotificationContent()
-
-        let body = NotificationBody.userConnection(
-            .userJoined(username: context.username)
-        )
-
-        content.body = body.make()
-        content.categoryIdentifier = makeCategory()
-        content.sound = makeSound()
-
-        return content
-    }
+//    private func buildUserJoinNotification() -> UNMutableNotificationContent {
+//        let content = UNMutableNotificationContent()
+//
+//        let body = NotificationBody.userConnection(
+//            .userJoined(username: context.username)
+//        )
+//
+//        content.body = body.make()
+//        content.categoryIdentifier = makeCategory()
+//        content.sound = makeSound()
+//
+//        return content
+//    }
 
     private func buildConnectionRequestNotification(
         isPending: Bool
@@ -99,7 +99,7 @@ struct UserConnectionNotificationBuilder: NotificationBuilder {
 
     private func makeCategory() -> String {
         switch context.connectionStatus {
-        case .joined, .accepted:
+        case .accepted: // .join
             NotificationCategory.nonActionable.rawValue
         case .pending:
             NotificationCategory.incomingConnectionRequest.rawValue

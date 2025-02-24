@@ -34,24 +34,25 @@ struct UserNotificationBuilder: NotificationBuilder {
         true
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async throws -> UNMutableNotificationContent {
         let builder: NotificationBuilder
 
         switch event {
         case let .connection(userConnectionEvent):
             let isPending = userConnectionEvent.connection.status == .pending
 
-            builder = UserConnectionNotificationBuilder(
-                connectionStatus: isPending ? .pending : .accepted,
-                username: userConnectionEvent.userName
+            builder = UserConnectionEventNotificationBuilder(
+                userConnectionEvent: userConnectionEvent
             )
 
         case let .contactJoin(userContactJoinEvent):
+            
+            fatalError() // TODO: check with backend if it's needed
 
-            builder = UserConnectionNotificationBuilder(
-                connectionStatus: .joined,
-                username: userContactJoinEvent.name
-            )
+//            builder = UserConnectionNotificationBuilder(
+//                connectionStatus: .joined,
+//                username: userContactJoinEvent.name
+//            )
 
         default:
             return UNMutableNotificationContent()
@@ -61,7 +62,7 @@ struct UserNotificationBuilder: NotificationBuilder {
             return UNMutableNotificationContent()
         }
 
-        return await builder.buildContent()
+        return try await builder.buildContent()
     }
 
 }

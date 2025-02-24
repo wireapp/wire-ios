@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireAPI
 
-struct ConversationUserMessageNotificationBuilder: NotificationBuilder {
-
+struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilder {
+    
+    enum Failure: Error {
+        case failedToDecryptProteusMessage
+    }
+    
     private enum AssetType {
         case image
         case video
@@ -44,11 +48,23 @@ struct ConversationUserMessageNotificationBuilder: NotificationBuilder {
     private let context: Context
 
     init(
-        message: GenericMessage,
+        proteusMessageEvent: ConversationProteusMessageAddEvent,
         conversationID: WireAPI.QualifiedID,
         senderID: UserID
-    ) async {
-        self.message = message
+    ) async throws {
+        
+        let decryptedMessage = proteusMessageEvent.message.decryptedMessage
+        let externalEncryptedMessage = proteusMessageEvent.externalData?.encryptedMessage
+
+        guard let decryptedMessage,
+              let (genericMessage, _) = ProtobufMessageHelper.getProtobufMessage(
+                  from: decryptedMessage,
+                  externalData: externalEncryptedMessage
+              ) else {
+            throw Failure.failedToDecryptProteusMessage
+        }
+        
+        self.message = genericMessage
 
         let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
         let userLocalStore: UserLocalStoreProtocol = Injector.resolve()

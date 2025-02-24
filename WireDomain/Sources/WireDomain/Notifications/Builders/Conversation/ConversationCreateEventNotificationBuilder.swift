@@ -16,19 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireAPI
 
-struct ConversationSystemMessageNotificationBuilder: NotificationBuilder {
-
-    enum SystemMessage {
-        case memberLeave(removedUserIDs: Set<UUID>)
-        case conversationCreated
-        case memberJoin(addedUserIDs: Set<UUID>)
-        case conversationDeleted
-        case messageTimerUpdate(newTimer: Int64?)
-    }
-
+struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
+    
     private let context: Context
 
     struct Context {
@@ -39,12 +31,9 @@ struct ConversationSystemMessageNotificationBuilder: NotificationBuilder {
         let conversationID: WireAPI.QualifiedID
         let senderID: UUID
         let selfUserID: UUID
-        let hidesNotificationContent: Bool
-        let systemMessage: SystemMessage
     }
 
     init(
-        systemMessage: SystemMessage,
         conversationID: WireAPI.QualifiedID,
         senderID: UserID
     ) async {
@@ -78,92 +67,20 @@ struct ConversationSystemMessageNotificationBuilder: NotificationBuilder {
             teamName: teamName,
             conversationID: conversationID,
             senderID: senderID.uuid,
-            selfUserID: selfUserID,
-            hidesNotificationContent: shouldHideNotification,
-            systemMessage: systemMessage
+            selfUserID: selfUserID
         )
 
     }
 
     func shouldBuildNotification() async -> Bool {
-        switch context.systemMessage {
-        case let .memberLeave(removedUserIDs):
-            removedUserIDs.contains(context.selfUserID)
-        case let .memberJoin(addedUserIDs):
-            addedUserIDs.contains(context.selfUserID)
-        case .conversationCreated, .conversationDeleted, .messageTimerUpdate:
-            true
-        }
+        true
     }
 
     func buildContent() async -> UNMutableNotificationContent {
-        switch context.systemMessage {
-        case .memberLeave:
-            return buildMemberLeaveNotification()
-        case .memberJoin:
-            return buildMemberJoinNotification()
-        case .conversationCreated:
-            return buildConversationCreatedNotification()
-        case .conversationDeleted:
-            return buildDeletedConversationNotification()
-        case let .messageTimerUpdate(timeoutValue):
-            var timeoutStrValue: String?
-
-            if let timeoutValue {
-                let timerInMilliseconds = Double(timeoutValue)
-                let timeoutValue = timerInMilliseconds / 1000
-                let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
-
-                timeoutStrValue = timeout.displayString
-            }
-
-            return buildTimerUpdateNotification(timeout: timeoutStrValue)
-        }
-
-        return UNMutableNotificationContent()
+        buildConversationCreatedNotification()
     }
 
     // MARK: - Build notifications
-
-    private func buildMemberLeaveNotification() -> UNMutableNotificationContent {
-        let content = UNMutableNotificationContent()
-
-        if let title = makeTitle() {
-            content.title = title
-        }
-
-        let body = NotificationBody.conversationSystemMessage(
-            .removedYou(senderName: context.senderName)
-        )
-
-        content.body = body.make()
-        content.categoryIdentifier = makeCategory()
-        content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
-
-        return content
-    }
-    
-    private func buildMemberJoinNotification() -> UNMutableNotificationContent {
-        let content = UNMutableNotificationContent()
-
-        if let title = makeTitle() {
-            content.title = title
-        }
-        
-        let body = NotificationBody.newSystemMessage(
-            .addedYou(senderName: context.senderName)
-        )
-            
-        content.body = body.make()
-        content.categoryIdentifier = makeCategory()
-        content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
-
-        return content
-    }
 
     private func buildConversationCreatedNotification() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
@@ -172,54 +89,8 @@ struct ConversationSystemMessageNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.newSystemMessage(
+        let body = NotificationBody.conversationSystemMessage(
             .createdConversation(senderName: context.senderName)
-        )
-
-        content.body = body.make()
-        content.categoryIdentifier = makeCategory()
-        content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
-
-        return content
-    }
-    
-    private func buildTimerUpdateNotification(timeout: String?) -> UNMutableNotificationContent {
-        let content = UNMutableNotificationContent()
-
-        if let title = makeTitle() {
-            content.title = title
-        }
-
-        let bodyFormat: NotificationBody.SystemMessageBodyFormat = if let timeout {
-            .setMessageTimer(senderName: context.senderName, timeoutValue: timeout)
-        } else {
-            .turnedOffMessageTimer(senderName: context.senderName)
-        }
-        
-        let body = NotificationBody.newSystemMessage(
-            bodyFormat
-        )
-            
-        content.body = body.make()
-        content.categoryIdentifier = makeCategory()
-        content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
-
-        return content
-    }
-
-    private func buildDeletedConversationNotification() -> UNMutableNotificationContent {
-        let content = UNMutableNotificationContent()
-
-        if let title = makeTitle() {
-            content.title = title
-        }
-
-        let body = NotificationBody.newSystemMessage(
-            .deletedGroup(senderName: context.senderName)
         )
 
         content.body = body.make()

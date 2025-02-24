@@ -19,6 +19,7 @@
 import Combine
 import WireAPI
 import WireDataModel
+import WireLogging
 
 /// Observes pending events, process them and generates new notifications content.
 final class NotificationSession {
@@ -93,7 +94,7 @@ final class NotificationSession {
             switch event {
             case let .conversation(conversationEvent):
 
-                notificationBuilder = await ConversationNotificationBuilder(
+                notificationBuilder = await ConversationEventNotificationBuilder(
                     event: conversationEvent
                 )
 
@@ -111,8 +112,15 @@ final class NotificationSession {
                 continue
             }
 
-            let notificationContent = await notificationBuilder.buildContent()
-            notifications.append(notificationContent)
+            do {
+                let notificationContent = try await notificationBuilder.buildContent()
+                notifications.append(notificationContent)
+            } catch {
+                WireLogger.notifications.error(
+                    "Failed to build notification: \(error.localizedDescription)"
+                )
+                notifications.append(UNMutableNotificationContent())
+            }
         }
 
         var notification = UNMutableNotificationContent()
