@@ -16,11 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "MockTransportSession.h"
-#import "MockTransportSession+internal.h"
+import Foundation
+internal import WireAuthenticationUI
 
-@interface MockTransportSession (Search)
+class LoginViaSSOComponent: LoginViaSSOBuilder {
 
-- (ZMTransportResponse *)processSearchRequest:(ZMTransportRequest *)request;
+    @MainActor
+    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
+    }
 
-@end
+    @MainActor
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
+    }
+
+}

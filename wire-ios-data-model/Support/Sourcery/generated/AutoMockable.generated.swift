@@ -3792,24 +3792,24 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - countUnclaimedKeyPackages
 
-    var countUnclaimedKeyPackagesClientIDContext_Invocations: [(clientID: String, context: NotificationContext)] = []
-    var countUnclaimedKeyPackagesClientIDContext_MockError: Error?
-    var countUnclaimedKeyPackagesClientIDContext_MockMethod: ((String, NotificationContext) async throws -> Int)?
-    var countUnclaimedKeyPackagesClientIDContext_MockValue: Int?
+    var countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations: [(clientID: String, ciphersuite: MLSCipherSuite?, context: NotificationContext)] = []
+    var countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockError: Error?
+    var countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod: ((String, MLSCipherSuite?, NotificationContext) async throws -> Int)?
+    var countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockValue: Int?
 
-    func countUnclaimedKeyPackages(clientID: String, context: NotificationContext) async throws -> Int {
-        countUnclaimedKeyPackagesClientIDContext_Invocations.append((clientID: clientID, context: context))
+    func countUnclaimedKeyPackages(clientID: String, ciphersuite: MLSCipherSuite?, context: NotificationContext) async throws -> Int {
+        countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations.append((clientID: clientID, ciphersuite: ciphersuite, context: context))
 
-        if let error = countUnclaimedKeyPackagesClientIDContext_MockError {
+        if let error = countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockError {
             throw error
         }
 
-        if let mock = countUnclaimedKeyPackagesClientIDContext_MockMethod {
-            return try await mock(clientID, context)
-        } else if let mock = countUnclaimedKeyPackagesClientIDContext_MockValue {
+        if let mock = countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod {
+            return try await mock(clientID, ciphersuite, context)
+        } else if let mock = countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `countUnclaimedKeyPackagesClientIDContext`")
+            fatalError("no mock for `countUnclaimedKeyPackagesClientIDCiphersuiteContext`")
         }
     }
 

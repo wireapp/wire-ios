@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 private let log = ZMSLog(tag: "ConversationMessageDestructionTimeout")
 
@@ -93,6 +94,17 @@ private enum MessageDestructionTimeoutRequestFactory {
         guard let identifier = conversation.remoteIdentifier?.transportString()
         else { fatal("conversation inserted on backend") }
 
+        let path: String
+        if apiVersion < .v8 {
+            path = "/conversations/\(identifier)/message-timer"
+        } else {
+            if conversation.domain == nil {
+                WireLogger.conversation.warn("MessageDestructionTimeoutRequestFactory: conversation.domain == nil")
+            }
+            let domain = conversation.domain ?? BackendInfo.domain ?? "None"
+            path = "/conversations/\(domain)/\(identifier)/message-timer"
+        }
+
         let payload: [AnyHashable: Any?]
         if timeout == 0 {
             payload = ["message_timer": nil]
@@ -102,7 +114,7 @@ private enum MessageDestructionTimeoutRequestFactory {
             payload = ["message_timer": timeoutInMS]
         }
         return .init(
-            path: "/conversations/\(identifier)/message-timer",
+            path: path,
             method: .put,
             payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
