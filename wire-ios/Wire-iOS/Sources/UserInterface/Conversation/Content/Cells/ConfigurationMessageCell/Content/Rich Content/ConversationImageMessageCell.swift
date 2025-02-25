@@ -20,9 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationImageMessageCell: UIView,
-    ConversationMessageContentView,
-    ContextMenuDelegate {
+final class ConversationImageMessageCell: UIView, ConversationMessageContentView, ContextMenuDelegate {
 
     struct Configuration {
         let image: ZMImageMessageData
@@ -70,24 +68,24 @@ final class ConversationImageMessageCell: UIView,
     }
 
     private func configureView() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.masksToBounds = true
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func createConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor)
-        let trailing = containerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
+        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let bottom = containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        // TODO: was `lessThanOrEqualTo` used wrong before?
+        let trailing = trailingAnchor.constraint(lessThanOrEqualTo: containerView.trailingAnchor, constant: margins.trailing)
+        let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
         widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
         heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
@@ -177,9 +175,8 @@ final class ConversationImageMessageCellDescription: ConversationMessageContentV
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
 
-    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

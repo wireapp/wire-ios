@@ -56,12 +56,14 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageConte
 
     private func configureSubviews() {
         articleView.delegate = self
+        articleView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(articleView)
     }
 
     private func configureConstraints() {
-        articleView.translatesAutoresizingMaskIntoConstraints = false
-        articleView.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        articleView.fitIn(view: self, insets: insets)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -106,9 +108,8 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCo
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
 
-    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

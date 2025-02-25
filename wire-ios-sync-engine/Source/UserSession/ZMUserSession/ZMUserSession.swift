@@ -1001,8 +1001,8 @@ extension ZMUserSession: SyncAgentDelegate {
         didStartIncrementalSync()
     }
 
-    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent) {
-        didFinishIncrementalSync()
+    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool) {
+        didFinishIncrementalSync(isRecovering: isRecovering)
     }
 
     func didStartInitialSync() {
@@ -1054,7 +1054,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    func didFinishIncrementalSync() {
+    func didFinishIncrementalSync(isRecovering: Bool) {
         syncContext.performGroupedBlock { [weak self] in
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync")
@@ -1086,8 +1086,8 @@ extension ZMUserSession: SyncAgentDelegate {
                     WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
                 }
 
-                if mlsFeature.isEnabled {
-                    mlsService.commitPendingProposalsIfNeeded()
+                if !isRecovering, mlsFeature.isEnabled {
+                    await mlsService.commitPendingProposalsIfNeeded()
                 }
 
                 await calculateSelfSupportedProtocolsIfNeeded()

@@ -230,7 +230,7 @@ public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
         didCallStartQuickSync = true
     }
 
-    public func didFinishQuickSync() {
+    public func didFinishQuickSync(isRecovering: Bool) {
         didCallFinishQuickSync = true
     }
 

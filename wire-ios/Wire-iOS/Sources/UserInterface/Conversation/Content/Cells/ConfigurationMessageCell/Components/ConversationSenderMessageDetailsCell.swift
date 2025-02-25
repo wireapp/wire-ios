@@ -288,9 +288,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageContent
     var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 16
+    var topMargin: CGFloat = 16
 
-    static let isFullWidth = true
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 

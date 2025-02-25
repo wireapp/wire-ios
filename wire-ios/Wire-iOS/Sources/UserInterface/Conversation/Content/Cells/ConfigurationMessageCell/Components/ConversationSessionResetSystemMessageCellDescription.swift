@@ -31,8 +31,7 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
-    var topMargin: Float = 0
-    static let isFullWidth = true
+    var topMargin: CGFloat = 0
     var supportsActions: Bool = false
     var showEphemeralTimer: Bool = false
     var containsHighlightableContent: Bool = false

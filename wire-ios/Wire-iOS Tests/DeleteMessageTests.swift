@@ -65,7 +65,7 @@ final class DeleteMessageTests: XCTestCase {
             XCTFail("You can't just give the ConversationCellTypeCOUNT and expect a message!")
         }
 
-        return message
+        return message as Any as? ZMConversationMessage
     }
 
     func actionController(for conversationType: ConversationCellType) -> ConversationMessageActionController {

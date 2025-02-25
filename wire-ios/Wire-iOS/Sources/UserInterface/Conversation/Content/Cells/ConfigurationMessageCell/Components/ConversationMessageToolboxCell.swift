@@ -113,8 +113,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageConten
     var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 2
-    static let isFullWidth = true
+    var topMargin: CGFloat = 2
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 

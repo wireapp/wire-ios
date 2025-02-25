@@ -90,9 +90,6 @@ protocol DecryptedMessageBundle {
 extension DecryptedMessage: DecryptedMessageBundle {}
 extension BufferedDecryptedMessage: DecryptedMessageBundle {}
 
-private let commitForMissingProposal =
-    "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
-
 /// A class responsible for decrypting messages for MLS groups.
 /// It is also responsible for processing welcome messages and publishing events
 /// when the epoch changes or new CRL distribution points are found.
@@ -225,11 +222,14 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             // proposals have arrived.
             // Clients do not need to take any action in response to this message. This error simply indicates that the
             // commit has been buffered, and will be automatically unbuffered when possible.
-            case .Other(commitForMissingProposal): return []
+            case .Other(coreCryptoCommitForMissingProposalError): return []
 
             case .Other, .ConversationAlreadyExists, .MessageEpochTooOld, .OrphanWelcome:
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
+        } catch MLSActionExecutor.Failure.bufferedDecryptedMessage {
+            // [WPB-16231] fix CC transaction is not saved
+            return []
         } catch {
             WireLogger.mls
                 .error(

@@ -28,7 +28,7 @@ struct ConversationMessageContext: Equatable {
     var isLastMessage: Bool = false
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
-    var spacing: Float = 0
+    var spacing: CGFloat = 0
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
@@ -173,8 +173,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             topContentCellDescription.showEphemeralTimer = message.isEphemeral && !message.isObfuscated
 
             if isSenderVisible, topContentCellDescription.baseType == ConversationTextMessageCellDescription.self {
-                topContentCellDescription
-                    .topMargin = 0 // We only do this for text content since the text label already contains the spacing
+                // We only do this for text content since the text label already contains the spacing
+                topContentCellDescription.topMargin = 0
             }
         }
 

@@ -141,8 +141,7 @@ final class ConversationPingCellDescription: ConversationMessageContentViewDescr
         set { /* pings doesn't support the ephemeral timer */ }
     }
 
-    var topMargin: Float = 0
-    static let isFullWidth = true
+    var topMargin: CGFloat = 0
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 

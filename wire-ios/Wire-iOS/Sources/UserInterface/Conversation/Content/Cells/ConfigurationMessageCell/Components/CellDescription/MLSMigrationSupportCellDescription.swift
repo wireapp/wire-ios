@@ -30,9 +30,8 @@ final class MLSMigrationSupportCellDescription: ConversationMessageContentViewDe
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 0
 
-    static let isFullWidth = true
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 

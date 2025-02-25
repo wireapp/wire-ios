@@ -43,12 +43,11 @@ final class UnknownMessageCellDescription: ConversationMessageContentViewDescrip
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 0
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    static let isFullWidth = false
     let supportsActions: Bool = false
     let containsHighlightableContent = false
 

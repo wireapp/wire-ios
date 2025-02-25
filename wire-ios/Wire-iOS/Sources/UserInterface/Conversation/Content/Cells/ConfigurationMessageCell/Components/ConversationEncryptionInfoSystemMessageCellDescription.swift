@@ -31,9 +31,8 @@ final class ConversationEncryptionInfoSystemMessageCellDescription: Conversation
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 26.0
+    var topMargin: CGFloat = 26.0
 
-    static let isFullWidth = true
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 

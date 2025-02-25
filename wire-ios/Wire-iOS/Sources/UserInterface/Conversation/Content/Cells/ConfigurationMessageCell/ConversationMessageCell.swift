@@ -43,7 +43,7 @@ protocol ConversationMessageContentViewDelegate: AnyObject, MessageActionRespond
 
 /// A generic view that displays conversation contents.
 
-protocol ConversationMessageContentView: AnyObject {
+protocol ConversationMessageContentView: UIView {
     /// The object that contains the configuration of the view.
     associatedtype Configuration
 
@@ -124,10 +124,7 @@ protocol ConversationMessageContentViewDescription: AnyObject {
     /// The top margin is used to configure the spacing between cells. This property will
     /// get updated by the ConversationMessageSectionController if necessary so any
     /// default value is just a recommendation.
-    var topMargin: Float { get set }
-
-    /// Whether the view occupies the entire width of the cell.
-    static var isFullWidth: Bool { get }
+    var topMargin: CGFloat { get set }
 
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
@@ -243,7 +240,7 @@ final class AnyConversationMessageContentViewDescription: NSObject {
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
     private let _canBeCombinedWithOtherCells: () -> Bool
-    private let _topMargin: AnyMutableProperty<Float>
+    private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
     private let _showEphemeralTimer: AnyMutableProperty<Bool>
@@ -322,7 +319,7 @@ final class AnyConversationMessageContentViewDescription: NSObject {
         _canBeCombinedWithOtherCells()
     }
 
-    var topMargin: Float {
+    var topMargin: CGFloat {
         get { _topMargin.getter() }
         set { _topMargin.setter(newValue) }
     }

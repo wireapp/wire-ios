@@ -45,8 +45,7 @@ final class MockCellDescription<T>: ConversationMessageContentViewDescription {
     var canBeCombinedWithOtherCells: Bool { fatalError("TODO") }
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-    static var isFullWidth: Bool { false }
+    var topMargin: CGFloat = 0
     var supportsActions: Bool = true
     var containsHighlightableContent: Bool = true
 
