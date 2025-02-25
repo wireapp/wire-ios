@@ -320,10 +320,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     ) async throws -> (ZMOTRMessage, isNew: Bool) {
         try await context.perform { [self] in
 
-            if
-                let clearedTime = conversation.clearedTimeStamp,
-                clearedTime.compare(date) != .orderedAscending
-            {
+            if let clearedTime = conversation.clearedTimeStamp, clearedTime.compare(date) != .orderedAscending {
                 throw Failure.invalidInsertion(reason: "message is older than cleared time")
             }
 

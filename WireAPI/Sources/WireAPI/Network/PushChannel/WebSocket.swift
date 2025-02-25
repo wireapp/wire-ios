@@ -58,7 +58,8 @@ public actor WebSocket: WebSocketProtocol {
             return Stream { continuation in
                 self.continuation = continuation
 
-                @Sendable func yieldNextMessage() {
+                @Sendable
+                func yieldNextMessage() {
                     guard connection.isOpen else {
                         continuation.finish()
                         return

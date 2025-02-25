@@ -22,7 +22,7 @@ public extension UpdateEvent {
 
     var name: String {
         switch self {
-        case .conversation(let event):
+        case let .conversation(event):
             switch event {
             case .accessUpdate:
                 "conversation.accessUpdate"
@@ -55,19 +55,19 @@ public extension UpdateEvent {
             case .typing:
                 "conversation.typing"
             }
-        case .featureConfig(let event):
+        case let .featureConfig(event):
             switch event {
             case .update:
                 "featureConfig.update"
             }
-        case .federation(let event):
+        case let .federation(event):
             switch event {
             case .connectionRemoved:
                 "federation.connectionRemoved"
             case .delete:
                 "federation.delete"
             }
-        case .user(let event):
+        case let .user(event):
             switch event {
             case .clientAdd:
                 "user.clientAdd"
@@ -94,7 +94,7 @@ public extension UpdateEvent {
             case .update:
                 "user.update"
             }
-        case .team(let event):
+        case let .team(event):
             switch event {
             case .delete:
                 "team.delete"
@@ -103,7 +103,7 @@ public extension UpdateEvent {
             case .memberUpdate:
                 "team.memberUpdate"
             }
-        case .unknown(let eventType):
+        case let .unknown(eventType):
             "unknown.\(eventType)"
         }
     }

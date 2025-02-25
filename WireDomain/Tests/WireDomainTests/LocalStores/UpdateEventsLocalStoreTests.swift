@@ -133,7 +133,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
     }
 
-    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total_Number_Of_Envelopes() async throws {
+    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total() async throws {
         // Given there are stored envelopes.
 
         try await insertStoredEventEnvelopes([

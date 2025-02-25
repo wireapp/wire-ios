@@ -89,34 +89,49 @@ public final class ClientSessionComponent {
         authenticationManager: authenticationManager
     )
 
-    private lazy var backendInfoAPI: any BackendInfoAPI = BackendInfoAPIBuilder(apiService: apiService)
-        .makeAPI(for: apiVersion)
+    private lazy var backendInfoAPI: any BackendInfoAPI = BackendInfoAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
-    private lazy var conversationsAPI: any ConversationsAPI = ConversationsAPIBuilder(apiService: apiService)
-        .makeAPI(for: apiVersion)
+    private lazy var conversationsAPI: any ConversationsAPI = ConversationsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
-    private lazy var featureConfigsAPI: any FeatureConfigsAPI = FeatureConfigsAPIBuilder(apiService: apiService)
-        .makeAPI(for: apiVersion)
+    private lazy var featureConfigsAPI: any FeatureConfigsAPI = FeatureConfigsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
-    private lazy var pushChannelAPI: any PushChannelAPI = PushChannelAPIBuilder(pushChannelService: pushChannelService).makeAPI()
+    private lazy var pushChannelAPI: any PushChannelAPI = PushChannelAPIBuilder(
+        pushChannelService: pushChannelService
+    ).makeAPI()
 
-    private lazy var selfUserAPI: any SelfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+    private lazy var selfUserAPI: any SelfUserAPI = SelfUserAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
-    private lazy var teamsAPI: any TeamsAPI = TeamsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+    private lazy var teamsAPI: any TeamsAPI = TeamsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
-    private lazy var updateEventsAPI: any UpdateEventsAPI = UpdateEventsAPIBuilder(apiService: apiService)
-        .makeAPI(for: apiVersion)
+    private lazy var updateEventsAPI: any UpdateEventsAPI = UpdateEventsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
-    private lazy var userClientsAPI: any UserClientsAPI = UserClientsAPIBuilder(apiService: apiService)
-        .makeAPI(for: apiVersion)
+    private lazy var userClientsAPI: any UserClientsAPI = UserClientsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
-    private lazy var userConnectionsAPI: any ConnectionsAPI = ConnectionsAPIBuilder(apiService: apiService)
-        .makeAPI(for: apiVersion)
+    private lazy var userConnectionsAPI: any ConnectionsAPI = ConnectionsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
-    private lazy var usersAPI: any UsersAPI = UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+    private lazy var usersAPI: any UsersAPI = UsersAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
-    private lazy var userPropertiesAPI: any UserPropertiesAPI = UserPropertiesAPIBuilder(apiService: apiService)
-        .makeAPI(for: apiVersion)
+    private lazy var userPropertiesAPI: any UserPropertiesAPI = UserPropertiesAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
 
     // MARK: - Local storage
 
@@ -383,135 +398,161 @@ public final class ClientSessionComponent {
         )
     }()
 
-    private lazy var conversationAccessUpdateEventProcessor: some ConversationAccessUpdateEventProcessorProtocol = ConversationAccessUpdateEventProcessor(
-        repository: conversationRepository,
-        localStore: conversationLocalStore
-    )
+    private lazy var conversationAccessUpdateEventProcessor: some ConversationAccessUpdateEventProcessorProtocol =
+        ConversationAccessUpdateEventProcessor(
+            repository: conversationRepository,
+            localStore: conversationLocalStore
+        )
 
-    private lazy var conversationCreateEventProcessor: some ConversationCreateEventProcessorProtocol = ConversationCreateEventProcessor(
-        repository: conversationRepository
-    )
+    private lazy var conversationCreateEventProcessor: some ConversationCreateEventProcessorProtocol =
+        ConversationCreateEventProcessor(
+            repository: conversationRepository
+        )
 
-    private lazy var conversationDeleteEventProcessor: some ConversationDeleteEventProcessorProtocol = ConversationDeleteEventProcessor(
-        repository: conversationRepository
-    )
+    private lazy var conversationDeleteEventProcessor: some ConversationDeleteEventProcessorProtocol =
+        ConversationDeleteEventProcessor(
+            repository: conversationRepository
+        )
 
-    private lazy var conversationMemberJoinEventProcessor: some ConversationMemberJoinEventProcessorProtocol = ConversationMemberJoinEventProcessor(
-        conversationRepository: conversationRepository,
-        conversationLocalStore: conversationLocalStore,
-        userRepository: userRepository
-    )
+    private lazy var conversationMemberJoinEventProcessor: some ConversationMemberJoinEventProcessorProtocol =
+        ConversationMemberJoinEventProcessor(
+            conversationRepository: conversationRepository,
+            conversationLocalStore: conversationLocalStore,
+            userRepository: userRepository
+        )
 
-    private lazy var conversationMemberLeaveEventProcessor: some ConversationMemberLeaveEventProcessorProtocol = ConversationMemberLeaveEventProcessor(
-        repository: conversationRepository
-    )
+    private lazy var conversationMemberLeaveEventProcessor: some ConversationMemberLeaveEventProcessorProtocol =
+        ConversationMemberLeaveEventProcessor(
+            repository: conversationRepository
+        )
 
-    private lazy var conversationMemberUpdateEventProcessor: some ConversationMemberUpdateEventProcessorProtocol = ConversationMemberUpdateEventProcessor(
-        conversationRepository: conversationRepository,
-        userRepository: userRepository,
-        localStore: conversationLocalStore
-    )
+    private lazy var conversationMemberUpdateEventProcessor: some ConversationMemberUpdateEventProcessorProtocol =
+        ConversationMemberUpdateEventProcessor(
+            conversationRepository: conversationRepository,
+            userRepository: userRepository,
+            localStore: conversationLocalStore
+        )
 
-    private lazy var conversationMessageTimerUpdateEventProcessor: some ConversationMessageTimerUpdateEventProcessorProtocol = ConversationMessageTimerUpdateEventProcessor(
-        conversationLocalStore: conversationLocalStore,
-        messageLocalStore: messageLocalStore
-    )
+    private lazy var conversationMessageTimerUpdateEventProcessor: some ConversationMessageTimerUpdateEventProcessorProtocol =
+        ConversationMessageTimerUpdateEventProcessor(
+            conversationLocalStore: conversationLocalStore,
+            messageLocalStore: messageLocalStore
+        )
 
-    private lazy var conversationMLSMessageAddEventProcessor: some ConversationMLSMessageAddEventProcessorProtocol = ConversationMLSMessageAddEventProcessor(
-        conversationLocalStore: conversationLocalStore,
-        messageLocalStore: messageLocalStore,
-        userLocalStore: userLocalStore,
-        protobufMessageProcessor: conversationProtobufMessageProcessor
-    )
+    private lazy var conversationMLSMessageAddEventProcessor: some ConversationMLSMessageAddEventProcessorProtocol =
+        ConversationMLSMessageAddEventProcessor(
+            conversationLocalStore: conversationLocalStore,
+            messageLocalStore: messageLocalStore,
+            userLocalStore: userLocalStore,
+            protobufMessageProcessor: conversationProtobufMessageProcessor
+        )
 
-    private lazy var conversationMLSWelcomeEventProcessor: some ConversationMLSWelcomeEventProcessorProtocol = ConversationMLSWelcomeEventProcessor(
-        conversationRepository: conversationRepository,
-        conversationLocalStore: conversationLocalStore,
-        mlsService: mlsService,
-        mlsDecryptionService: mlsDecryptionService,
-        oneOnOneResolver: oneOnOneResolver
-    )
+    private lazy var conversationMLSWelcomeEventProcessor: some ConversationMLSWelcomeEventProcessorProtocol =
+        ConversationMLSWelcomeEventProcessor(
+            conversationRepository: conversationRepository,
+            conversationLocalStore: conversationLocalStore,
+            mlsService: mlsService,
+            mlsDecryptionService: mlsDecryptionService,
+            oneOnOneResolver: oneOnOneResolver
+        )
 
-    private lazy var conversationProteusMessageAddEventProcessor: some ConversationProteusMessageAddEventProcessorProtocol = ConversationProteusMessageAddEventProcessor(
-        conversationLocalStore: conversationLocalStore,
-        messageLocalStore: messageLocalStore,
-        userLocalStore: userLocalStore,
-        protobufMessageProcessor: conversationProtobufMessageProcessor
-    )
+    private lazy var conversationProteusMessageAddEventProcessor: some ConversationProteusMessageAddEventProcessorProtocol =
+        ConversationProteusMessageAddEventProcessor(
+            conversationLocalStore: conversationLocalStore,
+            messageLocalStore: messageLocalStore,
+            userLocalStore: userLocalStore,
+            protobufMessageProcessor: conversationProtobufMessageProcessor
+        )
 
-    private lazy var conversationProtocolUpdateEventProcessor: some ConversationProtocolUpdateEventProcessorProtocol = ConversationProtocolUpdateEventProcessor(
-        repository: conversationRepository
-    )
+    private lazy var conversationProtocolUpdateEventProcessor: some ConversationProtocolUpdateEventProcessorProtocol =
+        ConversationProtocolUpdateEventProcessor(
+            repository: conversationRepository
+        )
 
-    private lazy var conversationReceiptModeUpdateEventProcessor: some ConversationReceiptModeUpdateEventProcessorProtocol = ConversationReceiptModeUpdateEventProcessor(
-        userRepository: userRepository,
-        conversationRepository: conversationRepository,
-        conversationLocalStore: conversationLocalStore,
-        messageRepository: messageRepository
-    )
+    private lazy var conversationReceiptModeUpdateEventProcessor: some ConversationReceiptModeUpdateEventProcessorProtocol =
+        ConversationReceiptModeUpdateEventProcessor(
+            userRepository: userRepository,
+            conversationRepository: conversationRepository,
+            conversationLocalStore: conversationLocalStore,
+            messageRepository: messageRepository
+        )
 
-    private lazy var conversationRenameEventProcessor: some ConversationRenameEventProcessorProtocol = ConversationRenameEventProcessor(
-        repository: conversationRepository
-    )
+    private lazy var conversationRenameEventProcessor: some ConversationRenameEventProcessorProtocol =
+        ConversationRenameEventProcessor(
+            repository: conversationRepository
+        )
 
-    private lazy var conversationTypingEventProcessor: some ConversationTypingEventProcessorProtocol = ConversationTypingEventProcessor(
-        conversationRepository: conversationRepository,
-        conversationLocalStore: conversationLocalStore,
-        userRepository: userRepository
-    )
+    private lazy var conversationTypingEventProcessor: some ConversationTypingEventProcessorProtocol =
+        ConversationTypingEventProcessor(
+            conversationRepository: conversationRepository,
+            conversationLocalStore: conversationLocalStore,
+            userRepository: userRepository
+        )
 
-    private lazy var featureConfigUpdateEventProcessor: some FeatureConfigUpdateEventProcessorProtocol = FeatureConfigUpdateEventProcessor(
-        repository: featureConfigRepository
-    )
+    private lazy var featureConfigUpdateEventProcessor: some FeatureConfigUpdateEventProcessorProtocol =
+        FeatureConfigUpdateEventProcessor(
+            repository: featureConfigRepository
+        )
 
-    private lazy var federationConnectionRemovedEventProcessor: some FederationConnectionRemovedEventProcessorProtocol = FederationConnectionRemovedEventProcessor(
-        context: syncContext
-    )
+    private lazy var federationConnectionRemovedEventProcessor: some FederationConnectionRemovedEventProcessorProtocol =
+        FederationConnectionRemovedEventProcessor(
+            context: syncContext
+        )
 
-    private lazy var federationDeleteEventProcessor: some FederationDeleteEventProcessorProtocol = FederationDeleteEventProcessor(
-        context: syncContext
-    )
+    private lazy var federationDeleteEventProcessor: some FederationDeleteEventProcessorProtocol =
+        FederationDeleteEventProcessor(
+            context: syncContext
+        )
 
-    private lazy var userClientAddEventProcessor: some UserClientAddEventProcessorProtocol = UserClientAddEventProcessor(
-        repository: userClientsRepository
-    )
+    private lazy var userClientAddEventProcessor: some UserClientAddEventProcessorProtocol =
+        UserClientAddEventProcessor(
+            repository: userClientsRepository
+        )
 
-    private lazy var userClientRemoveEventProcessor: some UserClientRemoveEventProcessorProtocol = UserClientRemoveEventProcessor()
+    private lazy var userClientRemoveEventProcessor: some UserClientRemoveEventProcessorProtocol =
+        UserClientRemoveEventProcessor()
 
-    private lazy var userConnectionEventProcessor: some UserConnectionEventProcessorProtocol = UserConnectionEventProcessor(
-        connectionsRepository: userConnectionsRepository,
-        oneOnOneResolver: oneOnOneResolver
-    )
+    private lazy var userConnectionEventProcessor: some UserConnectionEventProcessorProtocol =
+        UserConnectionEventProcessor(
+            connectionsRepository: userConnectionsRepository,
+            oneOnOneResolver: oneOnOneResolver
+        )
 
     private lazy var userDeleteEventProcessor: some UserDeleteEventProcessorProtocol = UserDeleteEventProcessor(
         repository: userRepository
     )
 
-    private lazy var userLegalholdDisableEventProcessor: some UserLegalholdDisableEventProcessorProtocol = UserLegalholdDisableEventProcessor(
-        repository: userRepository
-    )
+    private lazy var userLegalholdDisableEventProcessor: some UserLegalholdDisableEventProcessorProtocol =
+        UserLegalholdDisableEventProcessor(
+            repository: userRepository
+        )
 
-    private lazy var userLegalholdEnableEventProcessor: some UserLegalholdEnableEventProcessorProtocol = UserLegalholdEnableEventProcessor(
-        context: syncContext,
-        userRepository: userRepository,
-        userClientsRepository: userClientsRepository
-    )
+    private lazy var userLegalholdEnableEventProcessor: some UserLegalholdEnableEventProcessorProtocol =
+        UserLegalholdEnableEventProcessor(
+            context: syncContext,
+            userRepository: userRepository,
+            userClientsRepository: userClientsRepository
+        )
 
-    private lazy var userLegalholdRequestEventProcessor: some UserLegalholdRequestEventProcessorProtocol = UserLegalholdRequestEventProcessor(
-        repository: userRepository
-    )
+    private lazy var userLegalholdRequestEventProcessor: some UserLegalholdRequestEventProcessorProtocol =
+        UserLegalholdRequestEventProcessor(
+            repository: userRepository
+        )
 
-    private lazy var userPropertiesSetEventProcessor: some UserPropertiesSetEventProcessorProtocol = UserPropertiesSetEventProcessor(
-        repository: userRepository
-    )
+    private lazy var userPropertiesSetEventProcessor: some UserPropertiesSetEventProcessorProtocol =
+        UserPropertiesSetEventProcessor(
+            repository: userRepository
+        )
 
-    private lazy var userPropertiesDeleteEventProcessor: some UserPropertiesDeleteEventProcessorProtocol = UserPropertiesDeleteEventProcessor(
-        repository: userRepository
-    )
+    private lazy var userPropertiesDeleteEventProcessor: some UserPropertiesDeleteEventProcessorProtocol =
+        UserPropertiesDeleteEventProcessor(
+            repository: userRepository
+        )
 
-    private lazy var userPushRemoveEventProcessor: some UserPushRemoveEventProcessorProtocol = UserPushRemoveEventProcessor(
-        repository: userRepository
-    )
+    private lazy var userPushRemoveEventProcessor: some UserPushRemoveEventProcessorProtocol =
+        UserPushRemoveEventProcessor(
+            repository: userRepository
+        )
 
     private lazy var userUpdateEventProcessor: some UserUpdateEventProcessorProtocol = UserUpdateEventProcessor(
         repository: userRepository
@@ -521,13 +562,15 @@ public final class ClientSessionComponent {
         context: syncContext
     )
 
-    private lazy var teamMemberLeaveEventProcessor: some TeamMemberLeaveEventProcessorProtocol = TeamMemberLeaveEventProcessor(
-        repository: teamRepository
-    )
+    private lazy var teamMemberLeaveEventProcessor: some TeamMemberLeaveEventProcessorProtocol =
+        TeamMemberLeaveEventProcessor(
+            repository: teamRepository
+        )
 
-    private lazy var teamMemberUpdateEventProcessor: some TeamMemberUpdateEventProcessorProtocol = TeamMemberUpdateEventProcessor(
-        repository: teamRepository
-    )
+    private lazy var teamMemberUpdateEventProcessor: some TeamMemberUpdateEventProcessorProtocol =
+        TeamMemberUpdateEventProcessor(
+            repository: teamRepository
+        )
 
     private lazy var updateEventProcessor: some UpdateEventProcessorProtocol = {
         let conversationEventProcessor = ConversationEventProcessor(
@@ -588,11 +631,12 @@ public final class ClientSessionComponent {
 
     // MARK: - Other
 
-    private lazy var conversationProtobufMessageProcessor: some ConversationProtobufMessageProcessorProtocol = ConversationProtobufMessageProcessor(
-        messageLocalStore: messageLocalStore,
-        conversationLocalStore: conversationLocalStore,
-        userLocalStore: userLocalStore
-    )
+    private lazy var conversationProtobufMessageProcessor: some ConversationProtobufMessageProcessorProtocol =
+        ConversationProtobufMessageProcessor(
+            messageLocalStore: messageLocalStore,
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore
+        )
 
     private lazy var oneOnOneResolver: some OneOnOneResolverProtocol = OneOnOneResolver(
         context: syncContext,

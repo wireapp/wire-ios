@@ -59,7 +59,6 @@ public final class StoredUpdateEventEnvelope: NSManagedObject {
         return request
     }
 
-
     /// Create a fetch request to retrieve a single event envelope.
     ///
     /// - Parameter sortIndex: The sort index of the desired envelope.

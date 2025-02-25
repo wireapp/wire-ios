@@ -218,7 +218,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 sender: (sender.id, sender.domain, sender.clientID),
                 date: date
             )
-        } catch MessageLocalStore.Failure.invalidInsertion(reason: let reason) {
+        } catch let MessageLocalStore.Failure.invalidInsertion(reason: reason) {
             return WireLogger.eventProcessing.warn(
                 "failed to process asset message, dropping. Reason: \(reason)",
                 attributes: logAttributes
@@ -250,7 +250,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 sender: (sender.id, sender.domain, sender.clientID),
                 date: date
             )
-        } catch MessageLocalStore.Failure.invalidInsertion(reason: let reason) {
+        } catch let MessageLocalStore.Failure.invalidInsertion(reason: reason) {
             return WireLogger.eventProcessing.warn(
                 "failed to process message, dropping. Reason: \(reason)",
                 attributes: logAttributes
