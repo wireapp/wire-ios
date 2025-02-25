@@ -32,25 +32,25 @@ public final class PushChannel: PushChannelProtocol {
     }
 
     public func open() async throws -> Stream {
-        WireLogger.sync.debug("opening new push channel")
+        WireLogger.pushChannel.debug("opening new push channel")
         return try await webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
                 case let .data(data):
-                    WireLogger.sync.debug("received web socket data, decoding...")
+                    WireLogger.pushChannel.debug("received web socket data, decoding...")
                     let envelope = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
                     return envelope.toAPIModel()
 
                 case .string:
-                    WireLogger.sync.debug("received web socket string, ignoring...")
+                    WireLogger.pushChannel.debug("received web socket string, ignoring...")
                     throw PushChannelError.receivedInvalidMessage
 
                 @unknown default:
-                    WireLogger.sync.debug("received web socket message, ignoring...")
+                    WireLogger.pushChannel.debug("received web socket message, ignoring...")
                     throw PushChannelError.receivedInvalidMessage
                 }
             } catch {
-                WireLogger.sync.debug("failed to get next web socket message: \(error)")
+                WireLogger.pushChannel.debug("failed to get next web socket message: \(error)")
                 await self?.close()
                 throw error
             }
@@ -58,7 +58,7 @@ public final class PushChannel: PushChannelProtocol {
     }
 
     public func close() async {
-        WireLogger.sync.debug("closing push channel")
+        WireLogger.pushChannel.debug("closing push channel")
         await webSocket.close()
     }
 
