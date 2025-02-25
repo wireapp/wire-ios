@@ -230,7 +230,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
 
 final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
-    private let viewGenerator: (_ frame: CGRect) -> UIView
+    private let viewGenerator: (_ frame: CGRect) -> (any UIView & ConversationMessageContentView)
     private let registrationBlock: (UITableView) -> Void
     private let configureBlock: (UITableViewCell, Bool) -> Void
     private let baseTypeGetter: () -> AnyClass
@@ -360,7 +360,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         cellGenerator(tableView, indexPath)
     }
 
-    func makeView(frame: CGRect) -> UIView {
+    func makeView(frame: CGRect) -> (any UIView & ConversationMessageContentView) {
         viewGenerator(frame)
     }
 

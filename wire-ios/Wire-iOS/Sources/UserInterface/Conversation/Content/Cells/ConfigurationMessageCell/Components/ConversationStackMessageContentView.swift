@@ -47,6 +47,12 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCont
         for cellDescription in configuration {
             print(cellDescription.instance)
             let arrangedSubview = cellDescription.makeView(frame: .zero)
+//            cellDescription.configuration
+//            cellDescription.configure(cell: <#T##UITableViewCell#>, animated: <#T##Bool#>)
+            // arrangedSubview.configure(
+            //     with: cellDescription.configuration,
+            //     animated: animated
+            // )
             stackView.insertArrangedSubview(arrangedSubview, at: 0)
         }
         UIView.performWithoutAnimation {

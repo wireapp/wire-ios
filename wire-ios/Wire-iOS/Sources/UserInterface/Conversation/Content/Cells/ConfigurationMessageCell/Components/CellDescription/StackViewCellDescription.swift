@@ -99,11 +99,11 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
     let configuration: View.Configuration
 
     var accessibilityIdentifier: String? {
-        fatalError()
+        nil // TODO: fix!
     }
 
     var accessibilityLabel: String? {
-        fatalError()
+        nil // TODO: fix!
     }
 
     init(cellDescriptions: [AnyConversationMessageCellDescription]) {
