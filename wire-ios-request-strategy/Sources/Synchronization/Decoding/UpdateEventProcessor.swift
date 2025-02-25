@@ -38,7 +38,7 @@ public protocol UpdateEventProcessor: AnyObject {
     func processEvents(_ events: [ZMUpdateEvent]) async throws
 
     func processLiveEvents(_ events: [ZMUpdateEvent]) async throws
-    
+
     /// Forward any buffered events to `processEvents`
     func processBufferedEvents() async throws
 }

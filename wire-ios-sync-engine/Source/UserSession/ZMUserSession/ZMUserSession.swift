@@ -968,7 +968,6 @@ extension ZMUserSession: UpdateEventProcessor {
         assertionFailure("should not be used")
     }
 
-    
     public func processBufferedEvents() async throws {
         try await updateEventProcessor?.processBufferedEvents()
     }

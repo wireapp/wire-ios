@@ -93,14 +93,14 @@ actor EventProcessor: UpdateEventProcessor {
 
     /// Decrypt Store and Process events from webSocket
     func processLiveEvents(_ events: [ZMUpdateEvent]) async throws {
-       try await processEvents(events, duringQuickSync: false)
+        try await processEvents(events, duringQuickSync: false)
     }
 
     /// Decrypt Store and Process events during quickSync
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
         try await processEvents(events, duringQuickSync: true)
     }
-    
+
     private func processEvents(_ events: [ZMUpdateEvent], duringQuickSync: Bool) async throws {
 
         try await enqueueTask {
@@ -111,11 +111,17 @@ actor EventProcessor: UpdateEventProcessor {
             let publicKeys = try? await self.earService.fetchPublicKeys()
 
             if duringQuickSync {
-                NotificationCenter.default.post(name: .didStartDecryptingEventsNotification, object: self.syncContext.notificationContext)
+                NotificationCenter.default.post(
+                    name: .didStartDecryptingEventsNotification,
+                    object: self.syncContext.notificationContext
+                )
             }
             let decryptedEvents = try await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
             if duringQuickSync {
-                NotificationCenter.default.post(name: .didStopDecryptingEventsNotification, object: self.syncContext.notificationContext)
+                NotificationCenter.default.post(
+                    name: .didStopDecryptingEventsNotification,
+                    object: self.syncContext.notificationContext
+                )
             }
 
             await self.processBackgroundEvents(decryptedEvents)

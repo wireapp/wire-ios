@@ -52,7 +52,7 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
 
     private var decryptionState: DecryptionState = .notStarted
     private var cancellables = Set<AnyCancellable>()
-    
+
     public init(
         context: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
@@ -62,9 +62,9 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
         self.applicationStatus = applicationStatus
         self.notificationContext = notificationContext
 
-        self.setupObservation()
+        setupObservation()
     }
-    
+
     private func setupObservation() {
         notificationCenter
             .publisher(for: .didStartDecryptingEventsNotification)
@@ -73,7 +73,7 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
                 self?.decryptionState = .inProgress
             }
             .store(in: &cancellables)
-        
+
         notificationCenter
             .publisher(for: .didStopDecryptingEventsNotification)
             .receive(on: decryptionQueue)
@@ -110,6 +110,6 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
     }
 
     private var finishedDecrypting: Bool {
-        self.decryptionState == .done
+        decryptionState == .done
     }
 }
