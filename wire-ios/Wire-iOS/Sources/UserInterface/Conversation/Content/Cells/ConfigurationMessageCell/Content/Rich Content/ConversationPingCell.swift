@@ -140,7 +140,6 @@ final class ConversationPingCellDescription: ConversationMessageContentViewDescr
     }
 
     var topMargin: Float = 0
-    static let isFullWidth = true
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 

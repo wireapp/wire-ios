@@ -48,8 +48,6 @@ final class MessageReactionsCellDescription: ConversationMessageContentViewDescr
 
     var topMargin: Float = 0
 
-    static let isFullWidth = true
-
     var supportsActions: Bool = false
 
     var showEphemeralTimer: Bool = false

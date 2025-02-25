@@ -30,7 +30,6 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var actionController: ConversationMessageActionController?
 
     var topMargin: Float = 0
-    static let isFullWidth = true
     var supportsActions: Bool = false
     var showEphemeralTimer: Bool = false
     var containsHighlightableContent: Bool = false
