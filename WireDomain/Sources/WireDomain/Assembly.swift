@@ -30,7 +30,7 @@ public final class Assembly {
     private let apiService: any APIServiceProtocol
     private let apiVersion: WireAPI.APIVersion
     private let pushChannel: any PushChannelProtocol
-    private let cookieStorage: ZMPersistentCookieStorage
+    private let backendEnvironmentProvider: BackendEnvironmentProvider
 
     init(
         userID: UUID,
@@ -41,7 +41,7 @@ public final class Assembly {
         apiService: any APIServiceProtocol,
         apiVersion: WireAPI.APIVersion,
         pushChannel: any PushChannelProtocol,
-        cookieStorage: ZMPersistentCookieStorage
+        backendEnvironmentProvider: BackendEnvironmentProvider
     ) {
         self.userID = userID
         self.clientID = clientID
@@ -51,7 +51,7 @@ public final class Assembly {
         self.apiService = apiService
         self.apiVersion = apiVersion
         self.pushChannel = pushChannel
-        self.cookieStorage = cookieStorage
+        self.backendEnvironmentProvider = backendEnvironmentProvider
 
         registerNotificationServiceDependencies()
     }
@@ -93,12 +93,12 @@ extension Assembly {
             self.pushChannel
         }
 
-        Injector.register(UpdateEventsLocalStoreProtocol.self) {
-            self.updateEventsLocalStore
+        Injector.register(BackendEnvironmentProvider.self) {
+            self.backendEnvironmentProvider
         }
 
-        Injector.register(ZMPersistentCookieStorage.self) {
-            self.cookieStorage
+        Injector.register(UpdateEventsLocalStoreProtocol.self) {
+            self.updateEventsLocalStore
         }
     }
 }

@@ -28,6 +28,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     enum Failure: Error {
         case missingSelfClientID
+        case notAuthenticated
     }
 
     // MARK: - Properties
@@ -35,12 +36,12 @@ final class NotificationService: UNNotificationServiceExtension {
     private let logger = WireLogger.notifications
     private var notificationSession: NotificationSession?
     private var contentHandler: ((UNNotificationContent) -> Void)?
-    private var ongoingTask: Task<Void, Never>?
+    private var onGoingTask: Task<Void, Never>?
 
     // MARK: - Object lifecycle
 
     override init() {
-        logger.info("initializing new legacy notification service")
+        logger.info("initializing notification service")
         super.init()
     }
 
@@ -50,21 +51,10 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        ongoingTask?.cancel()
-        let cookieStorage: ZMPersistentCookieStorage = Injector.resolve()
-        let isAuthenticated = cookieStorage.isAuthenticated
-
-        guard isAuthenticated else {
-            logger.error(
-                "Not displaying notification because app is not authenticated"
-            )
-
-            return finishWithEmptyNotification()
-        }
-
+        onGoingTask?.cancel()
         self.contentHandler = contentHandler
 
-        ongoingTask = Task {
+        onGoingTask = Task {
             do {
                 let notificationUserInfo = request.content.userInfo
 
@@ -97,6 +87,19 @@ final class NotificationService: UNNotificationServiceExtension {
     ) async throws -> NotificationSession {
         let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
         let selfUserInfo = await userLocalStore.selfUserInfo()
+        let environment: BackendEnvironmentProvider = Injector.resolve()
+
+        let cookieStorage = ZMPersistentCookieStorage(
+            forServerName: environment.backendURL.host!,
+            userIdentifier: userID,
+            useCache: false
+        )
+
+        let isAuthenticated = cookieStorage.isAuthenticated
+
+        guard isAuthenticated else {
+            throw Failure.notAuthenticated
+        }
 
         guard let selfClientID = selfUserInfo.clientId else {
             throw Failure.missingSelfClientID
@@ -126,6 +129,10 @@ final class NotificationService: UNNotificationServiceExtension {
     private func finishWithEmptyNotification() {
         logger.info("finishing without showing notification")
         let emptyNotification = UNNotificationContent()
+
+        // With the "filtering" entitlement, we can tell iOS to not display a user notification by
+        // passing empty content to the content handler.
+        // See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
         contentHandler?(emptyNotification)
         terminate()
     }
@@ -159,6 +166,11 @@ final class NotificationService: UNNotificationServiceExtension {
                 logger.error(
                     "failed to create notification session: missing self client ID"
                 )
+
+            case .notAuthenticated:
+                logger.error(
+                    "Not displaying notification because app is not authenticated"
+                )
             }
 
         default:
@@ -172,6 +184,6 @@ final class NotificationService: UNNotificationServiceExtension {
         // Content handler should only be consumed once.
         contentHandler = nil
         notificationSession = nil
-        ongoingTask = nil
+        onGoingTask = nil
     }
 }

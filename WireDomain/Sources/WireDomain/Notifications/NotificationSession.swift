@@ -66,9 +66,8 @@ final class NotificationSession {
     // MARK: - Notifications
 
     func processPushNotification(
-        eventID: UUID
+        eventID newEventID: UUID
     ) async throws {
-        let newEventID = eventID
         let lastEventId = updateEventsRepository.fetchLastEventEnvelopeID()
 
         if lastEventId == nil {
