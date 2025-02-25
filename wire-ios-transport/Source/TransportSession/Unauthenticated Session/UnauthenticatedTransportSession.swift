@@ -291,14 +291,14 @@ extension ZMTransportResponse {
 
 }
 
-extension HTTPCookie {
+public extension HTTPCookie {
 
-    public static func cookies(from string: String, for url: URL) -> [HTTPCookie] {
+    static func cookies(from string: String, for url: URL) -> [HTTPCookie] {
         let headers = [HeaderKey.cookie.rawValue: string]
         return HTTPCookie.cookies(withResponseHeaderFields: headers, for: url)
     }
 
-    public static func extractCookieData(from cookieString: String, url: URL) -> Data? {
+    static func extractCookieData(from cookieString: String, url: URL) -> Data? {
         let cookies = HTTPCookie.cookies(from: cookieString, for: url)
         return extractData(from: cookies)
     }
