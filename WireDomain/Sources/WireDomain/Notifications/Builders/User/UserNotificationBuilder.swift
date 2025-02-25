@@ -39,9 +39,19 @@ struct UserNotificationBuilder: NotificationBuilder {
 
         switch event {
         case let .connection(userConnectionEvent):
+            let connection = userConnectionEvent.connection
+            var qualifiedID: WireAPI.QualifiedID?
 
-            builder = UserConnectionEventNotificationBuilder(
-                userConnectionEvent: userConnectionEvent
+            if let qualifiedConversationID = connection.qualifiedConversationID {
+                qualifiedID = qualifiedConversationID
+            } else if let conversationID = connection.conversationID {
+                qualifiedID = .init(uuid: conversationID, domain: "")
+            }
+
+            builder = await UserConnectionEventNotificationBuilder(
+                userConnectionEvent: userConnectionEvent,
+                conversationID: qualifiedID,
+                senderID: connection.senderID
             )
 
         case let .contactJoin(userContactJoinEvent):

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import UserNotifications
+import WireAPI
 
 struct UserContactJoinEventNotificationBuilder: NotificationBuilder {
 
@@ -47,13 +47,13 @@ struct UserContactJoinEventNotificationBuilder: NotificationBuilder {
 
     private func buildUserContactJoinNotification() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        
+
         let body = "\(context.name) just joined Wire"
-        
+
         content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
-        
+
         return content
     }
 
@@ -69,4 +69,3 @@ struct UserContactJoinEventNotificationBuilder: NotificationBuilder {
     }
 
 }
-

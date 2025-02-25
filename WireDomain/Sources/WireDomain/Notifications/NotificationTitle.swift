@@ -25,10 +25,10 @@ enum NotificationTitle {
     func make() -> String {
         switch self {
         case let .conversationMessage(titleDescriptor):
-            return make(titleDescriptor: titleDescriptor)
+            make(titleDescriptor: titleDescriptor)
         }
     }
-    
+
     // TODO: [WPB-15153] - Localize strings
     private func make(titleDescriptor: MessageTitleDescriptor) -> String {
         switch titleDescriptor {

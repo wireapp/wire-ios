@@ -25,13 +25,13 @@ enum NotificationBody {
 
     func make() -> String {
         switch self {
-        case .singleMessage(let newMessageBodyDescriptor):
+        case let .singleMessage(newMessageBodyDescriptor):
             make(bodyDescriptor: newMessageBodyDescriptor)
         case let .bundled(count):
             "\(count) new messages."
         }
     }
-    
+
     private func make(bodyDescriptor: NewMessageBodyDescriptor) -> String {
         switch bodyDescriptor {
         case .sentWithUnknownSender:

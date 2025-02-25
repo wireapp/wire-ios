@@ -124,12 +124,12 @@ final class NotificationSession {
         }
 
         var notification = UNMutableNotificationContent()
-        
+
         switch notifications.count {
         case 0:
             return notification
         case 1:
-          return notifications[0]
+            return notifications[0]
         default:
             let body = NotificationBody.bundled(messagesCount: notifications.count)
             notification.body = body.make()

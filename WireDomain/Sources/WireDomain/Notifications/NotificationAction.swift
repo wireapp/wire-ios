@@ -19,10 +19,10 @@
 import UserNotifications
 
 struct NotificationAction {
-    
+
     /// The identifier of the action.
     let identifier: String
-    
+
     /// The format for the localized action string.
     let title: String
 
@@ -45,7 +45,7 @@ extension NotificationAction {
         opensApplication: false,
         requiresAuthentication: false
     )
-    
+
     static let ignoreCall = NotificationAction(
         identifier: "ignoreCallAction",
         title: "call.ignore",
@@ -53,7 +53,7 @@ extension NotificationAction {
         opensApplication: false,
         requiresAuthentication: false
     )
-    
+
     static let startCall = NotificationAction(
         identifier: "startCallAction",
         title: "call.callback",
@@ -61,7 +61,7 @@ extension NotificationAction {
         opensApplication: true,
         requiresAuthentication: false
     )
-    
+
     static let acceptConnectionRequest = NotificationAction(
         identifier: "acceptConnectionRequestAction",
         title: "connection.accept",

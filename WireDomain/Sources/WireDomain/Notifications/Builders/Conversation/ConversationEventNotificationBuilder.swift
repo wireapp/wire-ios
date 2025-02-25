@@ -76,7 +76,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
 
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
-            
+
             builder = try await ConversationMLSMessageAddEventNotificationBuilder(
                 mlsMessageEvent: mlsMessageEvent,
                 conversationID: mlsMessageEvent.conversationID,
