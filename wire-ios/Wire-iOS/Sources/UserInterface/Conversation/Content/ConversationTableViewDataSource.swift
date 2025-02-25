@@ -50,6 +50,7 @@ extension ZMConversationMessage {
 }
 
 final class ConversationTableViewDataSource: NSObject {
+
     static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
 
     private var fetchController: NSFetchedResultsController<ZMMessage>?
@@ -100,26 +101,25 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    private var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
+    private(set) var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
 
     /// calculate cell sections
     ///
     /// - Parameter forceRecalculate: true if force recreate cell with context check
     /// - Returns: arraySection of cell desctiptions
     @discardableResult
-    func calculateSections(forceRecalculate: Bool = false) -> [ArraySection<
-        String,
-        AnyConversationMessageCellDescription
-    >] {
-        messages.enumerated().map { tuple in
-            let sectionIdentifier = tuple.element.objectIdentifier
-            let context = self.context(
-                for: tuple.element,
-                at: tuple.offset,
+    func calculateSections(
+        forceRecalculate: Bool = false
+    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
+        messages.enumerated().map { offset, element in
+            let sectionIdentifier = element.objectIdentifier
+            let context = context(
+                for: element,
+                at: offset,
                 firstUnreadMessage: firstUnreadMessage,
                 searchQueries: searchQueries
             )
-            let sectionController = self.sectionController(for: tuple.element, at: tuple.offset)
+            let sectionController = sectionController(for: element, at: offset)
 
             // Re-create cell description if the context has changed (message has been moved around or received new
             // neighbours).
@@ -131,10 +131,9 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    func calculateSections(updating sectionController: ConversationMessageSectionController) -> [ArraySection<
-        String,
-        AnyConversationMessageCellDescription
-    >] {
+    func calculateSections(
+        updating sectionController: ConversationMessageSectionController
+    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
         let sectionIdentifier = sectionController.message.objectIdentifier
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
@@ -218,9 +217,9 @@ final class ConversationTableViewDataSource: NSObject {
             message: message,
             context: context,
             selected: message.isEqual(selectedMessage),
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: true
         )
-        sectionController.useInvertedIndices = true
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
         sectionController.actionController = actionController(for: message)

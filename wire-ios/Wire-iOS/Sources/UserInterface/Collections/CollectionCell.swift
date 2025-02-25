@@ -142,7 +142,7 @@ class CollectionCell: UICollectionViewCell {
     }
 
     @objc
-    func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer!) {
+    private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer!) {
         if gestureRecognizer.state == .began {
             showMenu()
         }

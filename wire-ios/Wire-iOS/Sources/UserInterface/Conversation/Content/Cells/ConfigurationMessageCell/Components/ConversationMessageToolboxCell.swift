@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
+final class ConversationMessageToolboxCell: UIView, ConversationMessageContentView, MessageToolboxViewDelegate {
 
     struct Configuration: Equatable {
         let message: ZMConversationMessage

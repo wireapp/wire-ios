@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageContentView {
 
     static let legalHoldURL: URL = WireURLs.shared.legalHoldInfo
     var conversation: ZMConversation?

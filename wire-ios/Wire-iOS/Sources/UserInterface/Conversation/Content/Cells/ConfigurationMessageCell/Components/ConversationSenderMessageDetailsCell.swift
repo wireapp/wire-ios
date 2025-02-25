@@ -36,7 +36,7 @@ enum TeamRoleIndicator {
 
 // MARK: - ConversationSenderMessageDetailsCell
 
-final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
+final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageContentView {
 
     struct Configuration {
         let user: UserType
@@ -304,14 +304,13 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
         self.message = message
 
         let teamRoleIndicator = sender.teamRoleIndicator()
-        var indicator: Indicator?
-
-        if message.isDeletion {
-            indicator = .deleted
+        let indicator: Indicator? = if message.isDeletion {
+            .deleted
         } else if message.updatedAt != nil {
-            indicator = .edited
+            .edited
+        } else {
+            .none
         }
-
         self.configuration = View.Configuration(
             user: sender,
             indicator: indicator,

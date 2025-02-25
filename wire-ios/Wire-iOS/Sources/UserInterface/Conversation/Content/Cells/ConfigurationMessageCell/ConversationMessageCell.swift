@@ -20,6 +20,9 @@ import UIKit
 import WireDataModel
 import WireUtilities
 
+@available(*, deprecated, renamed: "ConversationMessageContentView")
+typealias ConversationMessageCell = ConversationMessageContentView
+
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
@@ -43,7 +46,7 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
 /// A generic view that displays conversation contents.
 
-protocol ConversationMessageCell: AnyObject {
+protocol ConversationMessageContentView: AnyObject {
     /// The object that contains the configuration of the view.
     associatedtype Configuration
 
@@ -80,7 +83,7 @@ protocol ConversationMessageCell: AnyObject {
     func prepareForReuse()
 }
 
-extension ConversationMessageCell {
+extension ConversationMessageContentView {
 
     var selectionView: UIView? {
         nil
@@ -114,7 +117,7 @@ extension ConversationMessageCell {
 
 protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
-    associatedtype View: ConversationMessageCell, UIView
+    associatedtype View: ConversationMessageContentView, UIView
 
     /// The top margin is used to configure the spacing between cells. This property will
     /// get updated by the ConversationMessageSectionController if necessary so any
@@ -218,6 +221,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
 
 final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
+    private let viewGenerator: (_ frame: CGRect) -> (any UIView & ConversationMessageContentView)
     private let registrationBlock: (UITableView) -> Void
     private let configureBlock: (UITableViewCell, Bool) -> Void
     private let baseTypeGetter: () -> AnyClass
@@ -240,6 +244,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
         self.configureBlock = { cell, animated in
             description.configureCell(cell, animated: animated)
+        }
+
+        self.viewGenerator = { frame in
+            T.View(frame: frame)
         }
 
         self.cellGenerator = { tableView, indexPath in
@@ -325,6 +333,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         cellGenerator(tableView, indexPath)
+    }
+
+    func makeView(frame: CGRect) -> (any UIView & ConversationMessageContentView) {
+        viewGenerator(frame)
     }
 
     func isConfigurationEqual(with description: AnyConversationMessageCellDescription) -> Bool {
