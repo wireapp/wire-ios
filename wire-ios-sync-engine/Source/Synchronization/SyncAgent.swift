@@ -140,14 +140,9 @@ extension SyncAgent: ZMSyncStateDelegate {
         delegate?.syncAgentDidStartLegacyIncrementalSync(self)
     }
 
-<<<<<<< HEAD
-    func didFinishQuickSync() {
-        WireLogger.sync.debug("did finish legacy incremental sync")
-=======
     func didFinishQuickSync(isRecovering: Bool) {
-        WireLogger.sync.debug("did start finish incremental sync")
->>>>>>> fb51ef5b11 (fix: infinite loop and code optimization - WPB-16115 (#2563))
-        delegate?.syncAgentDidFinishLegacyIncrementalSync(self)
+        WireLogger.sync.debug("did finish legacy incremental sync")
+        delegate?.syncAgentDidFinishLegacyIncrementalSync(self, isRecovering: isRecovering)
     }
 
 }

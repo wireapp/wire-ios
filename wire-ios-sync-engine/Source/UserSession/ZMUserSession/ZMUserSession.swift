@@ -1001,8 +1001,8 @@ extension ZMUserSession: SyncAgentDelegate {
         didStartIncrementalSync()
     }
 
-    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent) {
-        didFinishIncrementalSync()
+    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool) {
+        didFinishIncrementalSync(isRecovering: isRecovering)
     }
 
     func didStartInitialSync() {
@@ -1054,17 +1054,11 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-<<<<<<< HEAD
-    func didFinishIncrementalSync() {
+    func didFinishIncrementalSync(isRecovering: Bool) {
         syncContext.performGroupedBlock { [weak self] in
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync")
             processEvents()
-=======
-    public func didFinishQuickSync(isRecovering: Bool) {
-        WireLogger.sync.debug("did finish quick sync")
-        processEvents()
->>>>>>> fb51ef5b11 (fix: infinite loop and code optimization - WPB-16115 (#2563))
 
             NotificationInContext(
                 name: .quickSyncCompletedNotification,
@@ -1092,35 +1086,16 @@ extension ZMUserSession: SyncAgentDelegate {
                     WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
                 }
 
-                if mlsFeature.isEnabled {
-                    mlsService.commitPendingProposalsIfNeeded()
+                if !isRecovering, mlsFeature.isEnabled {
+                    await mlsService.commitPendingProposalsIfNeeded()
                 }
 
                 await calculateSelfSupportedProtocolsIfNeeded()
                 await resolveOneOnOneConversationsIfNeeded()
             }
 
-<<<<<<< HEAD
             recurringActionService.performActionsIfNeeded()
             performPostQuickSyncE2EIActions()
-=======
-            if let qualifiedSelfClientID {
-                await mlsClientManager.initializeMLSClientIfNeeded(
-                    for: qualifiedSelfClientID,
-                    hasRegisteredMLSClient: hasRegisteredMLSClient,
-                    mlsFeature: mlsFeature
-                )
-            } else {
-                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
-            }
-
-            if !isRecovering, mlsFeature.isEnabled {
-                await mlsService.commitPendingProposalsIfNeeded()
-            }
-
-            await calculateSelfSupportedProtocolsIfNeeded()
-            await resolveOneOnOneConversationsIfNeeded()
->>>>>>> fb51ef5b11 (fix: infinite loop and code optimization - WPB-16115 (#2563))
         }
     }
 

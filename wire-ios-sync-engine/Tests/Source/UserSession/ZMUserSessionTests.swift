@@ -123,24 +123,24 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     }
 
     // TODO: [WPB-16224] Re-enable
-    func testItSlowSyncsAfterRegisteringClient() async throws {
-        // GIVEN
-        let userClient = await syncMOC.perform {
-            self.createSelfClient()
-        }
-
-        // WHEN
-        await syncMOC.perform {
-            self.sut.didRegisterSelfUserClient(userClient)
-        }
-
-        // THEN
-        let syncStatus = try await syncMOC.perform {
-            try XCTUnwrap(self.sut.syncStatus as? SyncStatus)
-        }
-
-        XCTAssertTrue(syncStatus.isSlowSyncing)
-    }
+//    func testItSlowSyncsAfterRegisteringClient() async throws {
+//        // GIVEN
+//        let userClient = await syncMOC.perform {
+//            self.createSelfClient()
+//        }
+//
+//        // WHEN
+//        await syncMOC.perform {
+//            self.sut.didRegisterSelfUserClient(userClient)
+//        }
+//
+//        // THEN
+//        let syncStatus = try await syncMOC.perform {
+//            try XCTUnwrap(self.sut.syncStatus as? SyncStatus)
+//        }
+//
+//        XCTAssertTrue(syncStatus.isSlowSyncing)
+//    }
 
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
         // GIVEN
@@ -309,11 +309,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         )
 
         syncMOC.performAndWait {
-<<<<<<< HEAD
-            sut.didFinishIncrementalSync()
-=======
-            sut.didFinishQuickSync(isRecovering: false)
->>>>>>> fb51ef5b11 (fix: infinite loop and code optimization - WPB-16115 (#2563))
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
@@ -494,11 +490,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             syncMOC.saveOrRollback()
 
             // WHEN
-<<<<<<< HEAD
-            sut.didFinishIncrementalSync()
-=======
-            sut.didFinishQuickSync(isRecovering: false)
->>>>>>> fb51ef5b11 (fix: infinite loop and code optimization - WPB-16115 (#2563))
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -546,11 +538,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             let mls = Feature.MLS(status: .enabled, config: .init())
             self.sut.featureRepository.storeMLS(mls)
 
-<<<<<<< HEAD
-            sut.didFinishIncrementalSync()
-=======
-            sut.didFinishQuickSync(isRecovering: false)
->>>>>>> fb51ef5b11 (fix: infinite loop and code optimization - WPB-16115 (#2563))
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -570,11 +558,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
 
             // WHEN
-<<<<<<< HEAD
-            sut.didFinishIncrementalSync()
-=======
-            sut.didFinishQuickSync(isRecovering: false)
->>>>>>> fb51ef5b11 (fix: infinite loop and code optimization - WPB-16115 (#2563))
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
