@@ -37,9 +37,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         VerificationCodeView(
             viewModel: viewModel(
                 email: email,
-                password: password,
-                loginViaEmailUseCase: dependency.loginViaEmailUseCase,
-                onFlowCompletion: { _, _ in } // FIXME: Bridge
+                password: password
             )
         )
     }
@@ -48,7 +46,9 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
     private func viewModel(email: String, password: String) -> VerificationCodeViewModel {
         VerificationCodeViewModel(
             email: email,
-            password: password
+            password: password,
+            loginViaEmailUseCase: dependency.loginViaEmailUseCase,
+            onFlowCompletion: { _, _ in } // FIXME: Bridge
         )
     }
 

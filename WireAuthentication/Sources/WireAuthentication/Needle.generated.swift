@@ -26,15 +26,17 @@ private func parent2(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
 #if !NEEDLE_DYNAMIC
 
 private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: VerificationCodeComponentDependency {
-
-
-    init() {
-
+    var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
+        return loginViaEmailComponent.loginViaEmailUseCase
+    }
+    private let loginViaEmailComponent: LoginViaEmailComponent
+    init(loginViaEmailComponent: LoginViaEmailComponent) {
+        self.loginViaEmailComponent = loginViaEmailComponent
     }
 }
 /// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent
-private func factoryd3638676a47fce1fe623e3b0c44298fc1c149afb(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return VerificationCodeComponentDependency48f3b80358781bc7c928Provider()
+private func factoryd3638676a47fce1fe6230c6043c857eb311080ce(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return VerificationCodeComponentDependency48f3b80358781bc7c928Provider(loginViaEmailComponent: parent1(component) as! LoginViaEmailComponent)
 }
 private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider: DetermineAuthMethodComponentDependency {
     var router: any Router {
@@ -89,7 +91,7 @@ private func factory9bda312c16141c932061c770221f242f9204cf85(_ component: Needle
 #else
 extension VerificationCodeComponent: NeedleFoundation.Registration {
     public func registerItems() {
-
+        keyPathToName[\VerificationCodeComponentDependency.loginViaEmailUseCase] = "loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"
     }
 }
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
@@ -120,7 +122,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\LoginViaEmailComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
-
+        localTable["loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"] = { [unowned self] in self.loginViaEmailUseCase as Any }
     }
 }
 
@@ -139,7 +141,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 #if !NEEDLE_DYNAMIC
 
 @inline(never) private func register1() {
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe623e3b0c44298fc1c149afb)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe6230c6043c857eb311080ce)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent", factory9bda312c16141c932061c770221f242f9204cf85)

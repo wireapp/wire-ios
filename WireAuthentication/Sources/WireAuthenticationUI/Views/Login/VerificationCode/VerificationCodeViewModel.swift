@@ -37,7 +37,7 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     @Published var code: [String]
     @Published private(set) var isLoading = false
-    @Published private(set) var alert: Alert?
+    @Published var alert: Alert?
 
     let email: String
     let password: String
