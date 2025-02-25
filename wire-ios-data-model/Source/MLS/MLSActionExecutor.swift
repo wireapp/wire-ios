@@ -325,7 +325,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
         try await performNonReentrant(groupID: groupID) {
             try await coreCrypto.perform {
-                let result = try await $0.transaction { context in
+                let result: DecryptedMessage? = try await $0.transaction { context in
 
                     do {
                         return try await context.decryptMessage(conversationId: groupID.data, payload: message)
@@ -337,6 +337,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                         default:
                             throw error
                         }
+                    } catch {
+                        throw error
                     }
                 }
                 if let result {
