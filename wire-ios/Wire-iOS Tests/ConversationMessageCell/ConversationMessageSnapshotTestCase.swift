@@ -165,7 +165,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         let context = (context ?? ConversationMessageContext.defaultContext)!
 
         let section = ConversationMessageSectionController(message: message, context: context, userSession: userSession)
-        let views = section.cellDescriptions.map { $0.makeView() }
+        let views = section.cellDescriptions.map { $0.instance.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -185,4 +185,31 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     }
 
+}
+
+private extension ConversationMessageCellDescription {
+
+    func makeView() -> UIView {
+        let view = View()
+        let container = UIView()
+
+        view.translatesAutoresizingMaskIntoConstraints = false
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(view)
+
+        let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor)
+        let trailing = view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+        let top = view.topAnchor.constraint(equalTo: container.topAnchor)
+        let bottom = view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+
+        top.constant = CGFloat(topMargin)
+        leading.constant = isFullWidth ? 0 : view.conversationHorizontalMargins.left
+        trailing.constant = isFullWidth ? 0 : -view.conversationHorizontalMargins.right
+
+        NSLayoutConstraint.activate([leading, trailing, top, bottom])
+
+        view.configure(with: configuration, animated: false)
+
+        return container
+    }
 }
