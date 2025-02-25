@@ -133,15 +133,18 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageContentVie
 
         let errorLabelTopConstraint = errorLabel.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 0)
 
+        let margins = conversationHorizontalMargins
+
         NSLayoutConstraint.activate([
             button.topAnchor.constraint(equalTo: topAnchor),
-            button.leadingAnchor.constraint(equalTo: leadingAnchor),
-            button.trailingAnchor.constraint(equalTo: trailingAnchor),
+            button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
+            trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: margins.trailing),
 
             errorLabelTopConstraint,
-            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            errorLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            errorLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
+            // TODO: ensure `lessThanOrEqualTo` was used wrong before!
+            trailingAnchor.constraint(lessThanOrEqualTo: errorLabel.trailingAnchor, constant: margins.trailing),
+            bottomAnchor.constraint(equalTo: errorLabel.bottomAnchor)
         ])
 
         self.errorLabelTopConstraint = errorLabelTopConstraint
@@ -152,8 +155,6 @@ final class ConversationButtonMessageCellDescription: ConversationMessageContent
     typealias View = ConversationButtonMessageCell
 
     var topMargin: Float = .ConversationButtonMessageCell.verticalInset
-
-    static let isFullWidth = false // TODO: make permanent constraints adjustments
 
     var supportsActions: Bool = false
 
