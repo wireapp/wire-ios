@@ -25,27 +25,32 @@ final class SyncAgentTests: XCTestCase {
 
     var sut: SyncAgent!
     var lastUpdateEventIDRepository: MockLastEventIDRepositoryInterface!
-    var initialSyncBuilder: MockInitialSyncBuilderProtocol!
+    var initialSyncProvider: MockInitialSyncProvider!
+    var incrementalSyncProvider: MockIncrementalSyncProvider!
     var legacySyncStatus: MockSyncStatusProtocol!
     var initialSync: MockInitialSyncProtocol!
+    var incrementalSync: MockIncrementalSyncProtocol!
 
     override func setUp() {
         lastUpdateEventIDRepository = MockLastEventIDRepositoryInterface()
-        initialSyncBuilder = MockInitialSyncBuilderProtocol()
+        initialSyncProvider = MockInitialSyncProvider()
+        incrementalSyncProvider = MockIncrementalSyncProvider()
         legacySyncStatus = MockSyncStatusProtocol()
         initialSync = MockInitialSyncProtocol()
         sut = SyncAgent(
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
-            initialSyncBuilder: initialSyncBuilder,
+            initialSyncProvider: initialSyncProvider,
+            incrementalSyncProvider: incrementalSyncProvider,
             legacySyncStatus: legacySyncStatus
         )
-        initialSyncBuilder.buildInitialSync_MockValue = initialSync
+        initialSyncProvider.provideInitialSync_MockValue = initialSync
+        incrementalSyncProvider.provideIncrementalSync_MockValue = incrementalSync
     }
 
     override func tearDown() {
         sut = nil
         lastUpdateEventIDRepository = nil
-        initialSyncBuilder = nil
+        initialSyncProvider = nil
         legacySyncStatus = nil
     }
 

@@ -20,7 +20,7 @@ import Foundation
 import WireAPI
 import WireLogging
 
-public struct IncrementalSync {
+public struct IncrementalSync: IncrementalSyncProtocol {
 
     private let selfClientID: String
     private let pushChannelAPI: any PushChannelAPI

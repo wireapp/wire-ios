@@ -19,9 +19,11 @@
 import Foundation
 
 // sourcery: AutoMockable
-/// An object that provides an instance of `IncrementalSync`.
+/// An object that provides an instance of `IncrementalSyncProtocol`.
 public protocol IncrementalSyncProvider {
 
-    func provideIncrementalSync() throws -> IncrementalSync
+    typealias AnyIncrementalSync = any IncrementalSyncProtocol
+
+    func provideIncrementalSync() throws -> AnyIncrementalSync
 
 }

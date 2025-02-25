@@ -18,10 +18,15 @@
 
 import Foundation
 
-extension ClientSessionComponent: IncrementalSyncProvider {
+// sourcery: AutoMockable
+/// An object that performs the incremental sync, i.e fetching/receiving
+/// pending update events and processing them.
+public protocol IncrementalSyncProtocol {
 
-    public func provideIncrementalSync() throws -> any IncrementalSyncProtocol {
-        incrementalSync
-    }
+    /// Perform the incremental sync.
+    ///
+    /// - Returns: A token to retain to keep the push channel open.
+
+    func perform() async throws -> IncrementalSync.Token
 
 }
