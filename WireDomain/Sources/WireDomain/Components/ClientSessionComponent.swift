@@ -76,7 +76,7 @@ public final class ClientSessionComponent {
         self.isMLSEnabled = isMLSEnabled
     }
 
-    private lazy var authenticationManager  = AuthenticationManager(
+    private lazy var authenticationManager = AuthenticationManager(
         clientID: selfClientID,
         cookieStorage: cookieStorage,
         networkService: networkService
@@ -472,8 +472,7 @@ public final class ClientSessionComponent {
         userRepository: userRepository
     )
 
-    private lazy var featureConfigUpdateEventProcessor =
-    FeatureConfigUpdateEventProcessor(
+    private lazy var featureConfigUpdateEventProcessor = FeatureConfigUpdateEventProcessor(
         repository: featureConfigRepository
     )
 
