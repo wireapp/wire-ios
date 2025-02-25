@@ -63,6 +63,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentVi
         shouldGroupAccessibilityChildren = true
         accessibilityIdentifier = "link-attachment"
         accessibilityTraits = [.link]
+        attachmentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(attachmentView)
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
@@ -70,16 +71,18 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentVi
     }
 
     private func configureConstraints() {
-        attachmentView.translatesAutoresizingMaskIntoConstraints = false
 
         let widthConstraint = attachmentView.widthAnchor.constraint(equalToConstant: 414)
         widthConstraint.priority = .defaultHigh
 
+        let margins = conversationHorizontalMargins
+
         NSLayoutConstraint.activate([
-            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
-            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            attachmentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            // TODO: ensure `lessThanOrEqualTo` was used wrong before
+            trailingAnchor.constraint(lessThanOrEqualTo: attachmentView.trailingAnchor, constant: margins.trailing),
+            bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint
         ])
     }
@@ -152,7 +155,6 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageConten
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
 
-    static let isFullWidth = false // TODO: make permanent constraints adjustments
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
