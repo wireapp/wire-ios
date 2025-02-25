@@ -28,6 +28,6 @@ extension MockUser {
     /// - Returns: the first MockUser object in the mockUsers array
     class func firstMockUser() -> MockUser {
         let user = MockUser.mockUsers()[0]
-        return (user as? MockUser)!
+        return (user as Any as? MockUser)!
     }
 }
