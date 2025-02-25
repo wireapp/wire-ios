@@ -30,19 +30,19 @@ class NoHistoryComponent: NoHistoryViewBuilder {
     @MainActor
     private func noHistoryViewModel(
         userID: UUID,
-        cookieData: Data,
+        cookies: [HTTPCookie],
         onFlowCompletion: @escaping () -> Void
     ) -> NoHistoryViewModel {
         NoHistoryViewModel(
             userID: userID,
-            cookieData: cookieData,
+            cookies: cookies,
             onFlowCompletion: onFlowCompletion
         )
     }
 
-    func noHistoryView(userID: UUID, cookieData: Data) -> NoHistoryView {
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
         NoHistoryView(
-            viewModel: noHistoryViewModel(userID: userID, cookieData: cookieData, onFlowCompletion: onFlowCompletion)
+            viewModel: noHistoryViewModel(userID: userID, cookies: cookies, onFlowCompletion: onFlowCompletion)
         )
     }
 

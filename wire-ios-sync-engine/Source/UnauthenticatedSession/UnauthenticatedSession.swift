@@ -114,7 +114,7 @@ public class UnauthenticatedSession: NSObject {
         wireAuthenticationErrorHandler = errorHandler
     }
 
-    public func appendURLActionProcessors(action: @escaping (UUID, Data) -> Void) {
+    public func appendURLActionProcessors(action: @escaping (UUID, [HTTPCookie]) -> Void) {
         urlActionProcessors.append(AuthenticationModuleURLActionProcessor(action: action))
 
     }

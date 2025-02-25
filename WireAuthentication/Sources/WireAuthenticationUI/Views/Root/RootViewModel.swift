@@ -28,7 +28,7 @@ public final class RootViewModel: ObservableObject, Router {
         var id: Self { self }
 
         case authFlow
-        case noHistory(userID: UUID, cookieData: Data)
+        case noHistory(userID: UUID, cookies: [HTTPCookie])
     }
 
     @Published var path = NavigationPath()
@@ -45,8 +45,8 @@ public final class RootViewModel: ObservableObject, Router {
         path.append(destination)
     }
 
-    func presentNoHistorySheet(userID: UUID, cookieData: Data) {
-        activeSheet = .noHistory(userID: userID, cookieData: cookieData)
+    func presentNoHistorySheet(userID: UUID, cookies: [HTTPCookie]) {
+        activeSheet = .noHistory(userID: userID, cookies: cookies)
     }
 
 }

@@ -25,16 +25,16 @@ import WireAuthenticationAPI
 package final class NoHistoryViewModel: ObservableObject {
 
     private let userID: UUID
-    private let cookieData: Data
+    private let cookies: [HTTPCookie]
     private let onFlowCompletion: () -> Void
 
     package init(
         userID: UUID,
-        cookieData: Data,
+        cookies: [HTTPCookie],
         onFlowCompletion: @escaping () -> Void
     ) {
         self.userID = userID
-        self.cookieData = cookieData
+        self.cookies = cookies
         self.onFlowCompletion = onFlowCompletion
     }
 

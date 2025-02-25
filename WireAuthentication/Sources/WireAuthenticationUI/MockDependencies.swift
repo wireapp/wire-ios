@@ -117,10 +117,10 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {
-        NoHistoryViewModel(userID: UUID(), cookieData: Data(), onFlowCompletion: {})
+        NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: {})
     }
 
-    func noHistoryView(userID: UUID, cookieData: Data) -> NoHistoryView {
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 

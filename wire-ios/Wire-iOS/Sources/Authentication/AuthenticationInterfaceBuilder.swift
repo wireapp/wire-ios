@@ -105,7 +105,7 @@ final class AuthenticationInterfaceBuilder {
             }
 
             authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
-                bridge.completeSSOSuccess(userID: userID, cookieData: cookieData)
+                bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
             })
             authenticationCoordinator?.unauthenticatedSession.setErrorHandler(bridge.completeSSOFailure)
 

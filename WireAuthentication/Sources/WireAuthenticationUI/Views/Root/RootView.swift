@@ -54,10 +54,10 @@ package struct RootView: View {
                                 Text(L10n.Authentication.Error.Message.ssoLoginFailed)
                             }
                     }
-                case let .noHistory(userID, cookieData):
+                case let .noHistory(userID, cookies):
                     noHistoryViewBuilder.noHistoryView(
                         userID: userID,
-                        cookieData: cookieData
+                        cookies: cookies
                     )
                 }
             }
