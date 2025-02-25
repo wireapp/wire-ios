@@ -83,13 +83,15 @@ final class ConversationTextMessageCell: UIView, ConversationMessageContentView,
     }
 
     private func setup() {
+        messageTextView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(messageTextView)
         configureConstraints()
     }
 
     private func configureConstraints() {
-        messageTextView.translatesAutoresizingMaskIntoConstraints = false
-        messageTextView.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        messageTextView.fitIn(view: self, insets: insets)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -159,7 +161,6 @@ final class ConversationTextMessageCellDescription: ConversationMessageContentVi
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
 
-    static let isFullWidth = false // TODO: make permanent constraints adjustments
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
