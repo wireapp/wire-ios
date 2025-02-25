@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import SwiftUI
 import WireDesign
 import WireFoundation
 import WireReusableUIComponents
@@ -70,27 +70,27 @@ struct UploadDocumentPreview: View {
     }
 }
 
-//public struct UploadDocumentPreview_Preview: View {
-//    public init() { }
-//
-//    public var body: some View {
-//        UploadDocumentPreview(
-//            headerIcon: Image(systemName: "text.document"),
-//            headerText: "Document (336 KB)",
-//            labelText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ipsum purus, scelerisque molestie rutrum vitae, faucibus in velit. Sed eget consectetur elit, in tristique metus."
-//        ) {
-//            print("remove")
-//        }
-//        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-//    }
-//
-//}
-//
-//#Preview {
-//    VStack {
-//        UploadDocumentPreview_Preview()
-//            .frame(width: 350, height: 200)
-//    }
-//    .padding()
-//    .background(.black)
-//}
+public struct UploadDocumentPreview_Preview: View {
+    public init() {}
+
+    public var body: some View {
+        UploadDocumentPreview(
+            headerIcon: Image(systemName: "text.document"),
+            headerText: "Document (336 KB)",
+            labelText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ipsum purus, scelerisque molestie rutrum vitae, faucibus in velit. Sed eget consectetur elit, in tristique metus."
+        ) {
+            print("remove")
+        }
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    }
+
+}
+
+#Preview {
+    VStack {
+        UploadDocumentPreview_Preview()
+            .frame(width: 350, height: 200)
+    }
+    .padding()
+    .background(.black)
+}
