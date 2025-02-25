@@ -28,19 +28,18 @@ class AVSVideoStreamsTest: XCTestCase {
         let clientId = UUID()
 
         let client = AVSClient(userId: userId, clientId: clientId.transportString())
-        let stream = AVSClientVideoStream(client: client, quality: .low)
 
         let expectedJson = """
         {\
         "clients":[\
-        \(stream.jsonString(sortedKeys: true)!)\
+        \(client.jsonString(sortedKeys: true)!)\
         ],\
         "convid":"\(conversationId.transportString())"\
         }
         """
 
         // when
-        let sut = AVSVideoStreams(conversationId: conversationId.transportString(), clients: [stream])
+        let sut = AVSVideoStreams(conversationId: conversationId.transportString(), clients: [client])
 
         // then
         XCTAssertEqual(sut.jsonString(sortedKeys: true), expectedJson)
