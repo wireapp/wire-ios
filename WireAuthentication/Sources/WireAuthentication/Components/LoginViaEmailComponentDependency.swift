@@ -33,7 +33,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
 }
 
-class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, LoginViaEmailBuilder {
+class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     private var loginViaEmailUseCase: some LoginViaEmailUseCaseProtocol {
         LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)

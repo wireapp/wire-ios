@@ -19,7 +19,7 @@
 import Foundation
 internal import WireAuthenticationUI
 
-class LoginViaSSOComponent: LoginViaSSOBuilder {
+class LoginViaSSOComponent {
 
     @MainActor
     private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {

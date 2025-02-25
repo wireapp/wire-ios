@@ -59,7 +59,7 @@ class RootComponent: BootstrapComponent {
     @MainActor var rootView: some View {
         RootView(
             viewModel: rootViewModel,
-            builder: determineAuthMethodComponent
+            factory: self
         )
     }
 
@@ -67,6 +67,14 @@ class RootComponent: BootstrapComponent {
 
     var determineAuthMethodComponent: DetermineAuthMethodComponent {
         DetermineAuthMethodComponent(parent: self)
+    }
+
+}
+
+extension RootComponent: RootView.Factory {
+
+    var determineAuthMethodView: DetermineAuthMethodView {
+        determineAuthMethodComponent.determineAuthMethodView
     }
 
 }
