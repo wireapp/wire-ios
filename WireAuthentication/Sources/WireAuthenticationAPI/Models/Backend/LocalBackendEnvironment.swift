@@ -34,7 +34,7 @@ public struct LocalBackendEnvironment {
     }
 
     /// The  name of the backend.
-    ///
+
     public let title: String
 
     /// The `URL` of the backend.
