@@ -35,7 +35,7 @@ struct MessageReactionMetadata: Equatable {
 
 // MARK: - MessageReactionsCell
 
-final class MessageReactionsCell: UIView, ConversationMessageCell {
+final class MessageReactionsCell: UIView, ConversationMessageContentView {
 
     // MARK: - Properties
 

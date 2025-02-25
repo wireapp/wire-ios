@@ -58,7 +58,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     var containsHighlightableContent: Bool = false
 
-    var message: WireDataModel.ZMConversationMessage?
+    var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
 

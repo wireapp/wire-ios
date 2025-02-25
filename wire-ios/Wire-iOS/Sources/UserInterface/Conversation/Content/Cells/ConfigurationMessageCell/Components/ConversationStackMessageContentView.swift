@@ -41,7 +41,7 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCont
 
     func configure(with configuration: [AnyConversationMessageCellDescription], animated: Bool) {
         let arrangedSubviews = configuration.map { cellDescription in
-            cellDescription.makeView()
+            cellDescription.makeView() // TODO: call C.View(...)
         }
         stackView = .init(arrangedSubviews: arrangedSubviews)
     }
