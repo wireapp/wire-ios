@@ -193,7 +193,7 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
     }
 
     override func shouldCreateNotification() -> Bool {
-        // if there is a sender, it's not the selfUser
+        // if there is a sender, make sure it's not the selfUser (no notification for self)
         if let sender, sender.isSelfUser { return false }
 
         if conversation == nil {
