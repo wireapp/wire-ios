@@ -59,19 +59,20 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageConten
         clipsToBounds = true
         setup(transferView)
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func configureConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.trailing),
+            bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
 
@@ -126,7 +127,6 @@ final class ConversationAudioMessageCellDescription: ConversationMessageContentV
     var topMargin: Float = 8
     var showEphemeralTimer: Bool = false
 
-    static let isFullWidth = false // TODO: make permanent constraints adjustments
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
