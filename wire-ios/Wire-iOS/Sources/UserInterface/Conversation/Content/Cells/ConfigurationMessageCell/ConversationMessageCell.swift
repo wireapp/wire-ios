@@ -43,7 +43,7 @@ protocol ConversationMessageContentViewDelegate: AnyObject, MessageActionRespond
 
 /// A generic view that displays conversation contents.
 
-protocol ConversationMessageContentView: AnyObject {
+protocol ConversationMessageContentView: UIView {
     /// The object that contains the configuration of the view.
     associatedtype Configuration
 
