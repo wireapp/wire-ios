@@ -18,7 +18,7 @@
 
 import Foundation
 
-package struct SSOSuccessHandler {
+package struct SSOFailureHandler {
 
     private let viewModel: RootViewModel
 
@@ -27,17 +27,7 @@ package struct SSOSuccessHandler {
     }
 
     @MainActor
-    package func handleSuccess(userID: UUID, cookieData: Data) {
-        notifySSOLoginCompletion()
-        viewModel.presentNoHistorySheet(userID: userID, cookieData: cookieData)
+    package func handleFailure() {
+        viewModel.showSSOFailureAlert = true
     }
-
-    private func notifySSOLoginCompletion() {
-        NotificationCenter.default.post(name: .ssoLoginDidFinishNotification, object: self)
-    }
-
-}
-
-extension Notification.Name {
-    static let ssoLoginDidFinishNotification = Notification.Name("SSOLoginDidFinish")
 }
