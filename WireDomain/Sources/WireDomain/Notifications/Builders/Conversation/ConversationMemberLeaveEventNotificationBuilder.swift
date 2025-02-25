@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
 
@@ -84,7 +83,7 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
     }
 
     // MARK: - Build notifications
-    
+
     private func buildMemberLeaveNotification() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
 
@@ -106,7 +105,7 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
 
         return content
     }
-    
+
     // MARK: - Helpers
 
     private func makeTitle() -> String? {
@@ -151,12 +150,11 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
     private func makeUserInfo() -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo["selfUserIDString"] = context.selfUserID
-        userInfo["senderIDString"] = context.senderID
-        userInfo["conversationIDString"] = context.conversationID.uuid
+        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID
+        userInfo[NotificationUserInfoKey.senderID] = context.senderID
+        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid
 
         return userInfo
     }
 
-    
 }

@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
-    
+
     private let context: Context
 
     struct Context {
@@ -73,7 +73,7 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
     }
 
     func shouldBuildNotification() async -> Bool {
-        true
+        context.isGroupConversation
     }
 
     func buildContent() async -> UNMutableNotificationContent {
@@ -148,9 +148,9 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
     private func makeUserInfo() -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo["selfUserIDString"] = context.selfUserID
-        userInfo["senderIDString"] = context.senderID
-        userInfo["conversationIDString"] = context.conversationID.uuid
+        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID
+        userInfo[NotificationUserInfoKey.senderID] = context.senderID
+        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid
 
         return userInfo
     }

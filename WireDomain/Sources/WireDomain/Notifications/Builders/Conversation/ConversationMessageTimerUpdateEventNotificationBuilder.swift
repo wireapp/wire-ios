@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuilder {
-    
+
     private let context: Context
 
     struct Context {
@@ -88,7 +88,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
 
             timeoutStrValue = timeout.displayString
         }
-        
+
         return buildTimerUpdateNotification(timeout: timeoutStrValue)
     }
 
@@ -101,7 +101,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
             content.title = title
         }
 
-        let body: String = if let timeout {
+        let body = if let timeout {
             if let senderName = context.senderName {
                 "\(senderName) set the message timer to \(timeout)"
             } else {
@@ -114,8 +114,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
                 "Someone turned off the message timer"
             }
         }
-        
-            
+
         content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
@@ -169,9 +168,9 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
     private func makeUserInfo() -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo["selfUserIDString"] = context.selfUserID
-        userInfo["senderIDString"] = context.senderID
-        userInfo["conversationIDString"] = context.conversationID.uuid
+        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID
+        userInfo[NotificationUserInfoKey.senderID] = context.senderID
+        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid
 
         return userInfo
     }

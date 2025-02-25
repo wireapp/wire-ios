@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilder {
-    
+
     enum Failure: Error {
         case failedToDecryptProteusMessage
     }
-    
+
     private enum AssetType {
         case image
         case video
@@ -52,7 +52,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         conversationID: WireAPI.QualifiedID,
         senderID: UserID
     ) async throws {
-        
+
         let decryptedMessage = proteusMessageEvent.message.decryptedMessage
         let externalEncryptedMessage = proteusMessageEvent.externalData?.encryptedMessage
 
@@ -63,7 +63,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
               ) else {
             throw Failure.failedToDecryptProteusMessage
         }
-        
+
         self.message = genericMessage
 
         let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
@@ -384,9 +384,9 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
     private func makeUserInfo() -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo["selfUserIDString"] = context.selfUserID
-        userInfo["senderIDString"] = context.senderID
-        userInfo["conversationIDString"] = context.conversationID.uuid
+        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID
+        userInfo[NotificationUserInfoKey.senderID] = context.senderID
+        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid
 
         return userInfo
     }

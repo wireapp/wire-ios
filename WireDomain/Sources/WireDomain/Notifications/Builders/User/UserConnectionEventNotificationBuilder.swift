@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import UserNotifications
+import WireAPI
 
 struct UserConnectionEventNotificationBuilder: NotificationBuilder {
 
@@ -29,19 +29,31 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
     private struct Context {
         let connectionStatus: ConnectionStatus
         let username: String
+        let conversationID: WireAPI.QualifiedID?
+        let senderID: UUID?
+        let selfUserID: UUID
     }
 
     private let context: Context
 
     init(
-        userConnectionEvent: UserConnectionEvent
-    ) {
-        
+        userConnectionEvent: UserConnectionEvent,
+        conversationID: WireAPI.QualifiedID?,
+        senderID: UUID?
+    ) async {
+        let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
+        let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
         let isPendingConnection = userConnectionEvent.connection.status == .pending
-        
+
+        let selfUser = await userLocalStore.fetchSelfUser()
+        let selfUserID = await userLocalStore.id(for: selfUser)
+
         self.context = Context(
             connectionStatus: isPendingConnection ? .pending : .accepted,
-            username: userConnectionEvent.userName
+            username: userConnectionEvent.userName,
+            conversationID: conversationID,
+            senderID: senderID,
+            selfUserID: selfUserID
         )
     }
 
@@ -64,7 +76,7 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
         isPending: Bool
     ) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        
+
         let connectionStatus = context.connectionStatus
 
         let body = switch connectionStatus {
@@ -77,6 +89,7 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
         content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
+        content.userInfo = makeUserInfo()
 
         return content
     }
@@ -95,6 +108,16 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
         case .pending:
             NotificationCategory.incomingConnectionRequest.rawValue
         }
+    }
+
+    private func makeUserInfo() -> [AnyHashable: Any] {
+        var userInfo: [AnyHashable: Any] = [:]
+
+        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID
+        userInfo[NotificationUserInfoKey.senderID] = context.senderID
+        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID?.uuid
+
+        return userInfo
     }
 
 }
