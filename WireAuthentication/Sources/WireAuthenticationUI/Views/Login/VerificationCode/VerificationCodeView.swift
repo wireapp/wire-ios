@@ -65,7 +65,7 @@ package struct VerificationCodeView: View {
             verificationCodeView
 
             Button(action: {
-                Task.detached { await viewModel.confirm() }
+                Task { await viewModel.confirm() }
             }, label: {
                 Text(L10n.VerificationCode.confirm)
             })
