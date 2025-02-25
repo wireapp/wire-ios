@@ -326,7 +326,7 @@ final class ConversationReplyCellDescription: ConversationMessageContentViewDesc
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
-    static let isFullWidth = false
+    static let isFullWidth = false // TODO: make permanent constraints adjustments
     let supportsActions = false
     let containsHighlightableContent: Bool = true
 

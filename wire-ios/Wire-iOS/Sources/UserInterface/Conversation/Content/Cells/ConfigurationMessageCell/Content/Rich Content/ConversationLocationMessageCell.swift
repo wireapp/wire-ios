@@ -194,7 +194,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageConte
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
 
-    static let isFullWidth = false
+    static let isFullWidth = false // TODO: make permanent constraints adjustments
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

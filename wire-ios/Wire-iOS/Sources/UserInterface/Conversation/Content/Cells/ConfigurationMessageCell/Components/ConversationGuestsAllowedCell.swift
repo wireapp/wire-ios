@@ -35,7 +35,7 @@ final class GuestsAllowedCellDescription: ConversationMessageContentViewDescript
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 16
 
-    static let isFullWidth = false
+    static let isFullWidth = false // TODO: make permanent constraints adjustments
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 

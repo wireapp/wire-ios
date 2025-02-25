@@ -158,6 +158,13 @@ protocol ConversationMessageContentViewDescription: AnyObject {
     func isConfigurationEqual(with other: Any) -> Bool
 }
 
+// TODO: delete
+extension ConversationMessageContentViewDescription {
+    static var isFullWidth: Bool {
+        true
+    }
+}
+
 // MARK: - Table View Dequeuing
 
 extension ConversationMessageContentViewDescription {
