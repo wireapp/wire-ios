@@ -18,7 +18,8 @@
 
 import WireCoreCrypto
 
-// Stub to replace corecryptoContext. This is temporary to test transactional API, a more robust solution should be provided
+// Stub to replace corecryptoContext. This is temporary to test transactional API, a more robust solution should be
+// provided
 final class FakeCoreCryptoContext: WireCoreCrypto.CoreCryptoContext {
 
     var decryptMessageConversationIdPayload_Invocations: [(conversationId: Data, payload: Data)] = []
