@@ -21,7 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentView, HighlightableView, ContextMenuDelegate {
+final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentView, HighlightableView,
+    ContextMenuDelegate {
 
     struct Configuration {
         let attachment: LinkAttachment

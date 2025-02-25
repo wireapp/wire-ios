@@ -58,12 +58,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     /// The view descriptor of the section.
     private var cellDescriptions = [AnyConversationMessageContentViewDescription]()
 
-#if DEBUG
-    var cellDescriptionsForTesting:  [AnyConversationMessageContentViewDescription] {
-        get { cellDescriptions }
-        set { cellDescriptions = newValue }
-    }
-#endif
+    #if DEBUG
+        var cellDescriptionsForTesting: [AnyConversationMessageContentViewDescription] {
+            get { cellDescriptions }
+            set { cellDescriptions = newValue }
+        }
+    #endif
 
     /// The view descriptors in the order in which the tableview displays them.
     var tableViewCellDescriptions: [AnyConversationMessageContentViewDescription] {
@@ -242,14 +242,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Composition
 
-#if DEBUG
-    /// Adds a cell description to the section.
-    /// - parameter description: The cell to add to the message section.
+    #if DEBUG
+        /// Adds a cell description to the section.
+        /// - parameter description: The cell to add to the message section.
 
-    func addForTesting(description: some ConversationMessageContentViewDescription) {
-        cellDescriptions.append(AnyConversationMessageContentViewDescription(description))
-    }
-#endif
+        func addForTesting(description: some ConversationMessageContentViewDescription) {
+            cellDescriptions.append(AnyConversationMessageContentViewDescription(description))
+        }
+    #endif
 
     func didSelect() {
         selected = true

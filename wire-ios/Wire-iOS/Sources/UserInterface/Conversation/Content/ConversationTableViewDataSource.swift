@@ -462,7 +462,10 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         return currentSections[section].elements.count
     }
 
-    func registerCellIfNeeded(with description: AnyConversationMessageContentViewDescription, in tableView: UITableView) {
+    func registerCellIfNeeded(
+        with description: AnyConversationMessageContentViewDescription,
+        in tableView: UITableView
+    ) {
         guard !registeredCells.contains(where: { obj in
             obj == description.baseType
         }) else {

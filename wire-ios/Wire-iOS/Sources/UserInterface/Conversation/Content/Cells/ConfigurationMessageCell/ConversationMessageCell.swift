@@ -185,7 +185,7 @@ extension ConversationMessageContentViewDescription {
         configureContentView(adapterCell.cellView)
     }
 
-    func configureContentView(_ cellView: (any UIView & ConversationMessageContentView), animated: Bool = false) {
+    func configureContentView(_ cellView: any UIView & ConversationMessageContentView, animated: Bool = false) {
         guard let cellView = cellView as? View else { return }
         cellView.configure(with: configuration, animated: animated)
 
@@ -225,7 +225,7 @@ final class AnyConversationMessageContentViewDescription: NSObject {
     private let viewGenerator: (_ frame: CGRect) -> (any UIView & ConversationMessageContentView)
     private let registrationBlock: (UITableView) -> Void
     private let configureCell: (UITableViewCell, Bool) -> Void
-    private let configureContentView: ((any UIView & ConversationMessageContentView), Bool) -> Void
+    private let configureContentView: (any UIView & ConversationMessageContentView, Bool) -> Void
     private let baseTypeGetter: () -> AnyClass
     private let instanceGetter: () -> any ConversationMessageContentViewDescription
     private let isConfigurationEqualBlock: (AnyConversationMessageContentViewDescription) -> Bool
@@ -244,42 +244,42 @@ final class AnyConversationMessageContentViewDescription: NSObject {
             description.register(in: tableView)
         }
 
-        configureCell = { cell, animated in
+        self.configureCell = { cell, animated in
             description.configureCell(cell, animated: animated)
         }
 
-        configureContentView = { contentView, animated in
+        self.configureContentView = { contentView, animated in
             description.configureContentView(contentView, animated: animated)
         }
 
-        viewGenerator = { frame in
+        self.viewGenerator = { frame in
             T.View(frame: frame)
         }
 
-        cellGenerator = { tableView, indexPath in
+        self.cellGenerator = { tableView, indexPath in
             description.makeCell(for: tableView, at: indexPath)
         }
 
-        baseTypeGetter = {
+        self.baseTypeGetter = {
             T.self
         }
 
-        instanceGetter = {
+        self.instanceGetter = {
             description
         }
 
-        isConfigurationEqualBlock = { otherDescription in
+        self.isConfigurationEqualBlock = { otherDescription in
             description.isConfigurationEqual(with: otherDescription.instance)
         }
 
-        _delegate = AnyMutableProperty(description, keyPath: \.delegate)
-        _message = AnyMutableProperty(description, keyPath: \.message)
-        _actionController = AnyMutableProperty(description, keyPath: \.actionController)
-        _topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
-        _containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
-        _showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
-        _axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
-        _axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
+        self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
+        self._message = AnyMutableProperty(description, keyPath: \.message)
+        self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
+        self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
+        self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
+        self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
+        self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
+        self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
 
     var instance: any ConversationMessageContentViewDescription {
@@ -333,7 +333,7 @@ final class AnyConversationMessageContentViewDescription: NSObject {
         configureCell(cell, animated)
     }
 
-    func configureContentView(_ contentView: (any UIView & ConversationMessageContentView), animated: Bool = false) {
+    func configureContentView(_ contentView: any UIView & ConversationMessageContentView, animated: Bool = false) {
         configureContentView(contentView, animated)
     }
 
