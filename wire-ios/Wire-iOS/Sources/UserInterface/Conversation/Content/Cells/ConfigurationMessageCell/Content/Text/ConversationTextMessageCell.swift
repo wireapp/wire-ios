@@ -177,7 +177,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         cell.cellView.delegate = delegate
         cell.cellView.message = message
-        cell.cellView.menuPresenter = cell
+        cell.cellView.menuPresenter = cell // TODO: is this still called for stacks?
         return cell
     }
 }
