@@ -89,7 +89,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 password: cleanPassword,
                 verificationCode: nil
             )
-            bridge.completeFlow(cookies: cookies, accessToken: token)
+            bridge.completeFlow(AuthenticationResult(userID: token.userID, cookies: cookies, accessToken: token))
             WireLogger.authentication.info("login via email succeeded")
         } catch {
             switch error {
@@ -123,7 +123,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func createAccount() {
-        bridge.createAccount()
+        bridge.registerAccount()
     }
 
     // MARK: - Private

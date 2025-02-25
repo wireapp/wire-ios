@@ -18,9 +18,11 @@
 
 import Foundation
 
+// FIXME: [WPB-16272] Remove this duplicate when https://wearezeta.atlassian.net/browse/WPB-16272 is done.
+
 /// A token used to make authenticated requests to
 /// the backend.
-// FIXME: [WPB-16272] Remove this duplicate when https://wearezeta.atlassian.net/browse/WPB-16272 is done.
+
 public struct AccessToken: Equatable, Sendable {
 
     /// The user id of whom the token belongs.

@@ -122,8 +122,8 @@ extension MockDependencies: LoginViaEmailBuilder {
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
             bridge: WireAuthenticationBridge(
-                onFlowCompletion: { _, _ in },
-                onCreateAccount: {}
+                onFlowCompletion: { _ in },
+                onRegisterAccount: {}
             )
         )
     }

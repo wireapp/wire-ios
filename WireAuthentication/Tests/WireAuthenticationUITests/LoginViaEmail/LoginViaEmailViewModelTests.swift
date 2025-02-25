@@ -33,8 +33,8 @@ class LoginViaEmailViewModelTests: XCTestCase {
     private var loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol!
     private var passwordValidator: MockPasswordValidator!
     private var sut: LoginViaEmailViewModel!
-    private var onFlowCompletionCalled: ([HTTPCookie], AccessToken)?
-    private var onCreateAccountCalled = false
+    private var onFlowCompletionCalled: AuthenticationResult?
+    private var onRegisterAccountCalled = false
     private var isLoadingCalls: [Bool] = []
     private var cancellables: Set<AnyCancellable> = []
 
@@ -53,8 +53,8 @@ class LoginViaEmailViewModelTests: XCTestCase {
             passwordValidator: passwordValidator,
             canCreateAccount: true,
             bridge: WireAuthenticationBridge(
-                onFlowCompletion: { [self] in onFlowCompletionCalled = ($0, $1) },
-                onCreateAccount: { [self] in onCreateAccountCalled = true }
+                onFlowCompletion: { [self] in onFlowCompletionCalled = $0 },
+                onRegisterAccount: { [self] in onRegisterAccountCalled = true }
             )
         )
 
@@ -67,7 +67,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
         passwordValidator = nil
         sut = nil
         onFlowCompletionCalled = nil
-        onCreateAccountCalled = false
+        onRegisterAccountCalled = false
         isLoadingCalls = []
     }
 
@@ -103,8 +103,14 @@ class LoginViaEmailViewModelTests: XCTestCase {
         // then
         XCTAssertNil(sut.alert)
         XCTAssertEqual(isLoadingCalls, [true, false])
-        XCTAssertEqual(onFlowCompletionCalled?.0, [Scaffolding.someCookie])
-        XCTAssertEqual(onFlowCompletionCalled?.1, Scaffolding.someAccessToken)
+        XCTAssertEqual(
+            onFlowCompletionCalled,
+            AuthenticationResult(
+                userID: Scaffolding.someAccessToken.userID,
+                cookies: [Scaffolding.someCookie],
+                accessToken: Scaffolding.someAccessToken
+            )
+        )
     }
 
     @MainActor
@@ -223,7 +229,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
         sut.createAccount()
 
         // then
-        XCTAssertTrue(onCreateAccountCalled)
+        XCTAssertTrue(onRegisterAccountCalled)
     }
 
     // MARK: - showPasswordRules tests

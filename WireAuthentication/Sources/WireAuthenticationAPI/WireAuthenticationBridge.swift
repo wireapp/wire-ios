@@ -22,25 +22,49 @@ import Foundation
 /// (from outside into this module) and **outbound** (from inside this module
 /// to the external world).
 
-public struct WireAuthenticationBridge {
+package struct WireAuthenticationBridge {
 
-    private let onFlowCompletion: ([HTTPCookie], AccessToken) -> Void
-    private let onCreateAccount: () -> Void
+    private let onFlowCompletion: (AuthenticationResult) -> Void
+    private let onRegisterAccount: () -> Void
 
-    public init(
-        onFlowCompletion: @escaping ([HTTPCookie], AccessToken) -> Void,
-        onCreateAccount: @escaping () -> Void
+    package init(
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
+        onRegisterAccount: @escaping () -> Void
     ) {
         self.onFlowCompletion = onFlowCompletion
-        self.onCreateAccount = onCreateAccount
+        self.onRegisterAccount = onRegisterAccount
     }
 
-    public func completeFlow(cookies: [HTTPCookie], accessToken: AccessToken) {
-        onFlowCompletion(cookies, accessToken)
+    package func completeFlow(_ result: AuthenticationResult) {
+        onFlowCompletion(result)
     }
 
-    public func createAccount() {
-        onCreateAccount()
+    package func registerAccount() {
+        onRegisterAccount()
+    }
+
+}
+
+/// The result of an authentication flow.
+
+public struct AuthenticationResult: Equatable {
+
+    /// The user id of whom the token belongs.
+
+    let userID: UUID
+
+    /// The authentication cookies.
+
+    let cookies: [HTTPCookie]
+
+    /// A token used to make authenticated requests to the backend if available.
+
+    let accessToken: AccessToken?
+
+    public init(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) {
+        self.userID = userID
+        self.cookies = cookies
+        self.accessToken = accessToken
     }
 
 }
