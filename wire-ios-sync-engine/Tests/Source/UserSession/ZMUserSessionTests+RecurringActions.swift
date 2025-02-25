@@ -51,7 +51,11 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         // When
         XCTAssertTrue(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
         syncMOC.performAndWait {
+<<<<<<< HEAD
             sut.didFinishIncrementalSync()
+=======
+            sut.didFinishQuickSync(isRecovering: false)
+>>>>>>> fb51ef5b11 (fix: infinite loop and code optimization - WPB-16115 (#2563))
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

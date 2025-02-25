@@ -392,7 +392,11 @@ extension ZMUserSessionTests_PushNotifications {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         syncMOC.performAndWait {
+<<<<<<< HEAD
             sut.didFinishIncrementalSync()
+=======
+            sut.didFinishQuickSync(isRecovering: false)
+>>>>>>> fb51ef5b11 (fix: infinite loop and code optimization - WPB-16115 (#2563))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }
