@@ -141,6 +141,12 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         }
     }
 
+    /// A token containing the task that processes live events via the push
+    /// channel.
+    ///
+    /// Retain and use this token to cancel the task and close the push channel,
+    /// such as when the application enters the background.
+
     public struct Token {
 
         let task: Task<Void, Never>
