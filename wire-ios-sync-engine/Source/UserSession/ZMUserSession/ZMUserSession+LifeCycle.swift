@@ -64,7 +64,7 @@ public extension ZMUserSession {
 
     @objc
     func applicationWillEnterForeground(_ note: Notification?) {
-        syncAgent?.triggerSync()
+        syncAgent?.resume()
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()

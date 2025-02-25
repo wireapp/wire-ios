@@ -566,7 +566,7 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
         syncAgent.delegate = self
-        syncAgent.triggerSync()
+        syncAgent.resume()
     }
 
     // MARK: - Deinitalize

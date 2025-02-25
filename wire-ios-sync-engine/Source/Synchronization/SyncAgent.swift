@@ -58,16 +58,6 @@ final class SyncAgent: NSObject {
 
     // MARK: - API
 
-    /// Suspend any ongoing sync tasks.
-
-    func suspend() {
-        WireLogger.sync.debug("suspending sync")
-        Task {
-            await incrementalSyncToken?.suspend()
-            incrementalSyncToken = nil
-        }
-    }
-
     /// Trigger the appropriate sync depending in the local state.
     ///
     /// If no last event id is known, then the initial sync will be performed,
@@ -75,13 +65,23 @@ final class SyncAgent: NSObject {
     ///
     /// This method logs any errors and does not wait for the sync to finish.
 
-    func triggerSync() {
+    func resume() {
         Task {
             do {
                 try await performSync()
             } catch {
                 WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
             }
+        }
+    }
+
+    /// Suspend any ongoing sync tasks.
+
+    func suspend() {
+        WireLogger.sync.debug("suspending sync")
+        Task {
+            await incrementalSyncToken?.suspend()
+            incrementalSyncToken = nil
         }
     }
 
