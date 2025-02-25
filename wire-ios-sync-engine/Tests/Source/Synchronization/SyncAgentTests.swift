@@ -17,41 +17,46 @@
 //
 
 import XCTest
+import WireDomain
 @testable import WireDataModelSupport
 @testable import WireDomainSupport
 @testable import WireSyncEngine
 
-final class SyncAgentTests: XCTestCase {
+final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProvider {
 
     var sut: SyncAgent!
     var lastUpdateEventIDRepository: MockLastEventIDRepositoryInterface!
-    var initialSyncProvider: MockInitialSyncProvider!
-    var incrementalSyncProvider: MockIncrementalSyncProvider!
     var legacySyncStatus: MockSyncStatusProtocol!
     var initialSync: MockInitialSyncProtocol!
     var incrementalSync: MockIncrementalSyncProtocol!
 
     override func setUp() {
         lastUpdateEventIDRepository = MockLastEventIDRepositoryInterface()
-        initialSyncProvider = MockInitialSyncProvider()
-        incrementalSyncProvider = MockIncrementalSyncProvider()
         legacySyncStatus = MockSyncStatusProtocol()
         initialSync = MockInitialSyncProtocol()
+        incrementalSync = MockIncrementalSyncProtocol()
         sut = SyncAgent(
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
-            initialSyncProvider: initialSyncProvider,
-            incrementalSyncProvider: incrementalSyncProvider,
+            initialSyncProvider: self,
+            incrementalSyncProvider: self,
             legacySyncStatus: legacySyncStatus
         )
-        initialSyncProvider.provideInitialSync_MockValue = initialSync
-        incrementalSyncProvider.provideIncrementalSync_MockValue = incrementalSync
     }
 
     override func tearDown() {
         sut = nil
         lastUpdateEventIDRepository = nil
-        initialSyncProvider = nil
         legacySyncStatus = nil
+        initialSync = nil
+        incrementalSync = nil
+    }
+
+    func provideInitialSync() throws -> any InitialSyncProtocol {
+        initialSync
+    }
+
+    func provideIncrementalSync() throws -> any IncrementalSyncProtocol {
+        incrementalSync
     }
 
     func testPerformSyncIfNeeded_InitialSync() async throws {
@@ -61,6 +66,12 @@ final class SyncAgentTests: XCTestCase {
         // Mock
         lastUpdateEventIDRepository.fetchLastEventID_MockValue = .some(nil)
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
+        incrementalSync.perform_MockMethod = {
+            IncrementalSync.Token(
+                task: Task {},
+                closePushChannel: {}
+            )
+        }
         legacySyncStatus.performQuickSync_MockMethod = {}
 
         // When
@@ -68,7 +79,7 @@ final class SyncAgentTests: XCTestCase {
 
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations, [false])
-        XCTAssertEqual(legacySyncStatus.performQuickSync_Invocations.count, 1)
+        XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
     }
 
     func testPerformSyncIfNeeded_IncrementalSync() async throws {
@@ -77,14 +88,19 @@ final class SyncAgentTests: XCTestCase {
 
         // Mock
         lastUpdateEventIDRepository.fetchLastEventID_MockValue = .some(UUID())
-        legacySyncStatus.performQuickSync_MockMethod = {}
+        incrementalSync.perform_MockMethod = {
+            IncrementalSync.Token(
+                task: Task {},
+                closePushChannel: {}
+            )
+        }
 
         // When
         try await sut.performSync()
 
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations.count, 0)
-        XCTAssertEqual(legacySyncStatus.performQuickSync_Invocations.count, 1)
+        XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
     }
 
     func testPerformInitialSync() async throws {
@@ -93,14 +109,19 @@ final class SyncAgentTests: XCTestCase {
 
         // Mock
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
-        legacySyncStatus.performQuickSync_MockMethod = {}
+        incrementalSync.perform_MockMethod = {
+            IncrementalSync.Token(
+                task: Task {},
+                closePushChannel: {}
+            )
+        }
 
         // When
         try await sut.performInitialSync()
 
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations, [false])
-        XCTAssertEqual(legacySyncStatus.performQuickSync_Invocations.count, 1)
+        XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
     }
 
     func testPerformInitialSync_Legacy() async throws {
@@ -123,14 +144,19 @@ final class SyncAgentTests: XCTestCase {
 
         // Mock
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
-        legacySyncStatus.performQuickSync_MockMethod = {}
+        incrementalSync.perform_MockMethod = {
+            IncrementalSync.Token(
+                task: Task {},
+                closePushChannel: {}
+            )
+        }
 
         // When
         try await sut.performResourceSync()
 
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations, [true])
-        XCTAssertEqual(legacySyncStatus.performQuickSync_Invocations.count, 1)
+        XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
     }
 
     func testPerformResourceSync_Legacy() async throws {
@@ -148,14 +174,22 @@ final class SyncAgentTests: XCTestCase {
     }
 
     func testPerformIncrementalSync() async throws {
+        // Given
+        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
+
         // Mock
-        legacySyncStatus.performQuickSync_MockMethod = {}
+        incrementalSync.perform_MockMethod = {
+            IncrementalSync.Token(
+                task: Task {},
+                closePushChannel: {}
+            )
+        }
 
         // When
         try await sut.performIncrementalSync()
 
         // Then
-        XCTAssertEqual(legacySyncStatus.performQuickSync_Invocations.count, 1)
+        XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
     }
 
 }

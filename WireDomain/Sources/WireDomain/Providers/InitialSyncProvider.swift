@@ -18,14 +18,9 @@
 
 import Foundation
 
-// sourcery: AutoMockable
 /// An object that provides an instance of `InitialSync`.
 public protocol InitialSyncProvider {
 
-    // Workaround for Sourcery unable to generate compilable mock
-    // due to `any InitialSyncProtocol?`
-    typealias AnyInitialSync = any InitialSyncProtocol
-
-    func provideInitialSync() throws -> AnyInitialSync
+    func provideInitialSync() throws -> any InitialSyncProtocol
 
 }

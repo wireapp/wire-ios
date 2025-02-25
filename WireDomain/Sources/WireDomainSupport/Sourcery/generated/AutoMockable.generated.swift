@@ -1240,38 +1240,6 @@ public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
 
 }
 
-public class MockIncrementalSyncProvider: IncrementalSyncProvider {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - provideIncrementalSync
-
-    public var provideIncrementalSync_Invocations: [Void] = []
-    public var provideIncrementalSync_MockError: Error?
-    public var provideIncrementalSync_MockMethod: (() throws -> AnyIncrementalSync)?
-    public var provideIncrementalSync_MockValue: AnyIncrementalSync?
-
-    public func provideIncrementalSync() throws -> AnyIncrementalSync {
-        provideIncrementalSync_Invocations.append(())
-
-        if let error = provideIncrementalSync_MockError {
-            throw error
-        }
-
-        if let mock = provideIncrementalSync_MockMethod {
-            return try mock()
-        } else if let mock = provideIncrementalSync_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `provideIncrementalSync`")
-        }
-    }
-
-}
-
 public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigrationUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -1329,38 +1297,6 @@ public class MockInitialSyncProtocol: InitialSyncProtocol {
         }
 
         try await mock(skipPullingLastUpdateEventID)
-    }
-
-}
-
-public class MockInitialSyncProvider: InitialSyncProvider {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - provideInitialSync
-
-    public var provideInitialSync_Invocations: [Void] = []
-    public var provideInitialSync_MockError: Error?
-    public var provideInitialSync_MockMethod: (() throws -> AnyInitialSync)?
-    public var provideInitialSync_MockValue: AnyInitialSync?
-
-    public func provideInitialSync() throws -> AnyInitialSync {
-        provideInitialSync_Invocations.append(())
-
-        if let error = provideInitialSync_MockError {
-            throw error
-        }
-
-        if let mock = provideInitialSync_MockMethod {
-            return try mock()
-        } else if let mock = provideInitialSync_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `provideInitialSync`")
-        }
     }
 
 }

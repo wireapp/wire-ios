@@ -146,6 +146,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         let task: Task<Void, Never>
         let closePushChannel: () async -> Void
 
+        public init(
+            task: Task<Void, Never>,
+            closePushChannel: @escaping () async -> Void
+        ) {
+            self.task = task
+            self.closePushChannel = closePushChannel
+        }
+
         public func suspend() async {
             task.cancel()
             await closePushChannel()
