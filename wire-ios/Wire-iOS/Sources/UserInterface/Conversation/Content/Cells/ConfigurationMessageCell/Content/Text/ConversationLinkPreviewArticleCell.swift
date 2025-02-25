@@ -106,7 +106,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCo
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true

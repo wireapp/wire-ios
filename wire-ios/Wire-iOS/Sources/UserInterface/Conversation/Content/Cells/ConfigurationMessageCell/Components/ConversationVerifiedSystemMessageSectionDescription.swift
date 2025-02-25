@@ -32,7 +32,7 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 0
 
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false

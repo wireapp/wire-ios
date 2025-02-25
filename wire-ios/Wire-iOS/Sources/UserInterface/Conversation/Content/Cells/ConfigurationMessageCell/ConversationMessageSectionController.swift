@@ -28,7 +28,7 @@ struct ConversationMessageContext: Equatable {
     var isLastMessage: Bool = false
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
-    var spacing: Float = 0
+    var spacing: CGFloat = 0
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {

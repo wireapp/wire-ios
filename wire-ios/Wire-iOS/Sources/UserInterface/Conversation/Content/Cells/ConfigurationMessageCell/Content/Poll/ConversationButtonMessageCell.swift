@@ -154,7 +154,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageContentVie
 final class ConversationButtonMessageCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationButtonMessageCell
 
-    var topMargin: Float = .ConversationButtonMessageCell.verticalInset
+    var topMargin: CGFloat = .ConversationButtonMessageCell.verticalInset
 
     var supportsActions: Bool = false
 

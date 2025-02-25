@@ -124,7 +124,7 @@ final class ConversationAudioMessageCellDescription: ConversationMessageContentV
     typealias View = ConversationAudioMessageCell
     let configuration: View.Configuration
 
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
     var showEphemeralTimer: Bool = false
 
     let supportsActions: Bool = true

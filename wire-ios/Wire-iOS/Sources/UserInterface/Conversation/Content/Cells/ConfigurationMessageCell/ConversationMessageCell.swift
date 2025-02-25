@@ -119,10 +119,7 @@ protocol ConversationMessageContentViewDescription: AnyObject {
     /// The top margin is used to configure the spacing between cells. This property will
     /// get updated by the ConversationMessageSectionController if necessary so any
     /// default value is just a recommendation.
-    var topMargin: Float { get set }
-
-    /// Whether the view occupies the entire width of the cell.
-    static var isFullWidth: Bool { get }
+    var topMargin: CGFloat { get set }
 
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
@@ -156,13 +153,6 @@ protocol ConversationMessageContentViewDescription: AnyObject {
     func willDisplayCell()
     func didEndDisplayingCell()
     func isConfigurationEqual(with other: Any) -> Bool
-}
-
-// TODO: delete
-extension ConversationMessageContentViewDescription {
-    static var isFullWidth: Bool {
-        true
-    }
 }
 
 // MARK: - Table View Dequeuing
@@ -240,7 +230,7 @@ final class AnyConversationMessageContentViewDescription: NSObject {
     private let _delegate: AnyMutableProperty<ConversationMessageContentViewDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
-    private let _topMargin: AnyMutableProperty<Float>
+    private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _showEphemeralTimer: AnyMutableProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
@@ -312,7 +302,7 @@ final class AnyConversationMessageContentViewDescription: NSObject {
         set { _actionController.setter(newValue) }
     }
 
-    var topMargin: Float {
+    var topMargin: CGFloat {
         get { _topMargin.getter() }
         set { _topMargin.setter(newValue) }
     }

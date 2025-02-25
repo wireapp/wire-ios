@@ -286,7 +286,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageContent
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 16
+    var topMargin: CGFloat = 16
 
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false

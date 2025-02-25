@@ -54,7 +54,7 @@ final class ConversationMessageContentViewTableViewAdapter<
         }
     }
 
-    var topMargin: Float = 0 {
+    var topMargin: CGFloat = 0 {
         didSet {
             top.constant = CGFloat(topMargin)
         }
@@ -111,7 +111,10 @@ final class ConversationMessageContentViewTableViewAdapter<
         self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
         self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
-        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
+        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(
+            equalTo: cellView.topAnchor,
+            constant: cellView.ephemeralTimerTopInset
+        )
 
         NSLayoutConstraint.activate([
             ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -122,7 +125,7 @@ final class ConversationMessageContentViewTableViewAdapter<
             top,
             bottom
         ])
-        configureConstraints()
+        ephemeralTop.constant = cellView.ephemeralTimerTopInset
 
         self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         contentView.addGestureRecognizer(longPressGesture)
@@ -142,24 +145,16 @@ final class ConversationMessageContentViewTableViewAdapter<
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with object: C.View.Configuration, topMargin: Float) {
+    func configure(with object: C.View.Configuration, topMargin: CGFloat) {
         cellView.configure(with: object, animated: false)
         self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
     }
 
-    private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-
-        leading.constant = C.isFullWidth ? 0 : margins.left
-        trailing.constant = C.isFullWidth ? 0 : -margins.right
-        ephemeralTop.constant = cellView.ephemeralTimerTopInset
-    }
-
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        configureConstraints()
+        ephemeralTop.constant = cellView.ephemeralTimerTopInset
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

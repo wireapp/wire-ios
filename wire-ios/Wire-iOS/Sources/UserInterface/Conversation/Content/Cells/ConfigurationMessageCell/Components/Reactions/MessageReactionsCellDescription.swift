@@ -46,7 +46,7 @@ final class MessageReactionsCellDescription: ConversationMessageContentViewDescr
         self.configuration = reactions
     }
 
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 0
 
     var supportsActions: Bool = false
 

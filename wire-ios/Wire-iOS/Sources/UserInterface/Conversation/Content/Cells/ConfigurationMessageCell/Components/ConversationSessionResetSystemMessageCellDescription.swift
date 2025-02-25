@@ -29,7 +29,7 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var delegate: ConversationMessageContentViewDelegate?
     var actionController: ConversationMessageActionController?
 
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 0
     var supportsActions: Bool = false
     var showEphemeralTimer: Bool = false
     var containsHighlightableContent: Bool = false

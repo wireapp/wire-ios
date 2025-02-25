@@ -194,7 +194,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageConte
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 0
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
