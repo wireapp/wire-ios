@@ -103,7 +103,9 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageContentV
         addressContainerView.translatesAutoresizingMaskIntoConstraints = false
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        containerView.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let containerInsets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        containerView.fitIn(view: self, insets: containerInsets)
         mapView.fitIn(view: containerView)
         obfuscationView.fitIn(view: containerView)
 
@@ -194,7 +196,6 @@ final class ConversationLocationMessageCellDescription: ConversationMessageConte
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
 
-    static let isFullWidth = false // TODO: make permanent constraints adjustments
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
