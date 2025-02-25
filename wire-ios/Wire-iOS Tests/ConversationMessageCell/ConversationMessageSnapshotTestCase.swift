@@ -199,7 +199,6 @@ private extension ConversationMessageContentViewDescription {
         let container = UIView()
 
         view.translatesAutoresizingMaskIntoConstraints = false
-        container.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(view)
 
         let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor)
