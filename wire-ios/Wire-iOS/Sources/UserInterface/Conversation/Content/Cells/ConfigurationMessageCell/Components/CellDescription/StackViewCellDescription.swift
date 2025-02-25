@@ -19,10 +19,10 @@
 import UIKit
 import WireDataModel
 
-final class StackViewCellDescription: ConversationMessageCellDescription {
+final class StackViewCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationStackMessageContentView
 
-    private var cellDescriptions: [AnyConversationMessageCellDescription] { configuration }
+    private var cellDescriptions: [AnyConversationMessageContentViewDescription] { configuration }
 
     var canBeCombinedWithOtherCells: Bool { false }
 
@@ -31,9 +31,7 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
         set { fatalError() }
     }
 
-    var isFullWidth: Bool {
-        true
-    }
+    static let isFullWidth = true
 
     var supportsActions: Bool {
         cellDescriptions.contains(where: \.supportsActions)
@@ -64,7 +62,7 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
         }
     }
 
-    var delegate: (any ConversationMessageCellDelegate)? {
+    var delegate: (any ConversationMessageContentViewDelegate)? {
         get {
             for cellDescription in cellDescriptions {
                 if let delegate = cellDescription.delegate {
@@ -106,7 +104,7 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
         nil // TODO: fix!
     }
 
-    init(cellDescriptions: [AnyConversationMessageCellDescription]) {
+    init(cellDescriptions: [AnyConversationMessageContentViewDescription]) {
         configuration = cellDescriptions
     }
 

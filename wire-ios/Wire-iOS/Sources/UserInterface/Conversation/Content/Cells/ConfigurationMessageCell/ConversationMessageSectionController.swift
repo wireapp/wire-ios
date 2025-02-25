@@ -315,11 +315,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private static func combine(
-        _ cellDescriptions: [AnyConversationMessageCellDescription]
-    ) -> [AnyConversationMessageCellDescription] {
+        _ cellDescriptions: [AnyConversationMessageContentViewDescription]
+    ) -> [AnyConversationMessageContentViewDescription] {
         // print("combine(\(cellDescriptions.map(\.baseType)))") // TODO: remove
-        var result = [AnyConversationMessageCellDescription]()
-        var currentCombination = [AnyConversationMessageCellDescription]()
+        var result = [AnyConversationMessageContentViewDescription]()
+        var currentCombination = [AnyConversationMessageContentViewDescription]()
 
         for cellDescription in cellDescriptions {
             if cellDescription.canBeCombinedWithOtherCells {
@@ -329,7 +329,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                     result.append(currentCombination[0])
                 } else if !currentCombination.isEmpty {
                     let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
-                    result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
+                    result.append(AnyConversationMessageContentViewDescription(stackViewCellDescription))
                 }
                 currentCombination.removeAll()
                 result.append(cellDescription)
@@ -340,7 +340,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             result.append(currentCombination[0])
         } else if !currentCombination.isEmpty {
             let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
-            result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
+            result.append(AnyConversationMessageContentViewDescription(stackViewCellDescription))
         }
 
         return result
