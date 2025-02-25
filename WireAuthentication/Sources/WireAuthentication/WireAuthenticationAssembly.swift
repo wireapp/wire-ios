@@ -39,11 +39,11 @@ public struct WireAuthenticationAssembly {
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        onCreateAccount: @escaping () -> Void
+        onRegisterAccount: @escaping () -> Void
     ) -> some View {
         let bridge = WireAuthenticationBridge(
             onFlowCompletion: onFlowCompletion,
-            onRegisterAccount: onCreateAccount
+            onRegisterAccount: onRegisterAccount
         )
         let rootComponent = RootComponent(
             bridge: bridge,
