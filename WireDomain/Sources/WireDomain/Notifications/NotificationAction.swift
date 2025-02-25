@@ -18,22 +18,58 @@
 
 import UserNotifications
 
-protocol NotificationAction {
-
+struct NotificationAction {
+    
     /// The identifier of the action.
-    var identifier: String { get }
-
+    let identifier: String
+    
     /// The format for the localized action string.
-    var title: String { get }
+    let title: String
 
     /// Whether the action deletes content when executed.
-    var isDestructive: Bool { get }
+    let isDestructive: Bool
 
     /// Whether the action opens the app when executed.
-    var opensApplication: Bool { get }
+    let opensApplication: Bool
 
     /// Whether the action requires the device to be unlocked before being executed.
-    var requiresAuthentication: Bool { get }
+    let requiresAuthentication: Bool
+}
+
+extension NotificationAction {
+
+    static let muteConversation = NotificationAction(
+        identifier: "muteConversationAction",
+        title: "conversation.mute",
+        isDestructive: false,
+        opensApplication: false,
+        requiresAuthentication: false
+    )
+    
+    static let ignoreCall = NotificationAction(
+        identifier: "ignoreCallAction",
+        title: "call.ignore",
+        isDestructive: true,
+        opensApplication: false,
+        requiresAuthentication: false
+    )
+    
+    static let startCall = NotificationAction(
+        identifier: "startCallAction",
+        title: "call.callback",
+        isDestructive: false,
+        opensApplication: true,
+        requiresAuthentication: false
+    )
+    
+    static let acceptConnectionRequest = NotificationAction(
+        identifier: "acceptConnectionRequestAction",
+        title: "connection.accept",
+        isDestructive: false,
+        opensApplication: false,
+        requiresAuthentication: false
+    )
+
 }
 
 extension NotificationAction {

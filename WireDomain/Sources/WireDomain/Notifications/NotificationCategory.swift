@@ -33,13 +33,13 @@ public enum NotificationCategory: String, CaseIterable {
         case .nonActionable:
             []
         case .unmutedConversation:
-            [MuteConversationNotificationAction()]
+            [.muteConversation]
         case .incomingCall:
-            [IgnoreCallNotificationAction()]
+            [.ignoreCall]
         case .missedCall:
-            [StartCallNotificationAction()]
+            [.startCall]
         case .incomingConnectionRequest:
-            [AcceptConnectionRequestNotificationAction()]
+            [.acceptConnectionRequest]
         }
     }
 
