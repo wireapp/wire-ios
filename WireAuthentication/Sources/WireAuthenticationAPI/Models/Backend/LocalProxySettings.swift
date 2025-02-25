@@ -18,9 +18,10 @@
 
 import Foundation
 
+// TODO: [WPB-16272] Remove duplication
+
 /// Proxy settings for communicating with a backend server.
 
-// TODO: [WPB-16272] Remove duplication
 public enum LocalProxySettings {
 
     /// Settings for an unauthenticated proxy.

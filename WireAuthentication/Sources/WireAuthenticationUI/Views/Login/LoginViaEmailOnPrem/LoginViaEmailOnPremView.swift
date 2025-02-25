@@ -38,6 +38,7 @@ package struct LoginViaEmailOnPremView: View {
     @State private var showPasswordRules: Bool = false
     @State private var showCustomBackendAlert = false
 
+    // TODO: [WPB-16256] Implement proxy support
     private var proxyEmail: String = ""
 
     package init(
@@ -131,6 +132,7 @@ package struct LoginViaEmailOnPremView: View {
         )
     }
 
+    // TODO: [WPB-16256] Implement proxy support
     @ViewBuilder private var submitButton: some View {
         Button(action: {
             viewModel.submitPassword(password)
