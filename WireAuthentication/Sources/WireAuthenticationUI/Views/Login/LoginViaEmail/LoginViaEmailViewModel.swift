@@ -83,36 +83,38 @@ package final class LoginViaEmailViewModel: ObservableObject {
     func submitPassword() async {
         isLoading = true
 
-        do {
-            let (cookies, token) = try await loginViaEmailUseCase.invoke(
+        let loginTask = Task.detached { [loginViaEmailUseCase, email, cleanPassword] in
+            try await loginViaEmailUseCase.invoke(
                 email: email,
                 password: cleanPassword,
                 verificationCode: nil
             )
+        }
+
+        do {
+            let (cookies, token) = try await loginTask.value
             bridge.completeFlow(AuthenticationResult(userID: token.userID, cookies: cookies, accessToken: token))
             WireLogger.authentication.info("login via email succeeded")
         } catch {
+            WireLogger.authentication.info("login via email returned an error: \(error)")
+
             switch error {
-            case .invalidCredentials:
+            case LoginViaEmailUseCaseFailure.invalidCredentials:
                 alert = .invalidCredentials
-            case .twoFactorAuthenticationRequired:
+            case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
                 router.navigate(
                     to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
                 )
-            case .twoFactorAuthenticationFailed:
-                // This shouldn't happen in this view as we are not submitting a verification code
-                WireLogger.authentication.critical("Two factor authentication failed in LoginViaEmailViewModel")
-                alert = .unknownError
-            case .accountPendingActivation:
+            case LoginViaEmailUseCaseFailure.accountPendingActivation:
                 alert = .accountPendingActivation
-            case .accountSuspended:
+            case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
-            case .noInternet:
+            case LoginViaEmailUseCaseFailure.noInternet:
                 alert = .noInternet
-            case .other:
+            default:
+                WireLogger.authentication.error("Unexpected error during login via email: \(error)")
                 alert = .unknownError
             }
-            WireLogger.authentication.info("login via email returned an error: \(error)")
         }
 
         isLoading = false

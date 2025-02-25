@@ -105,7 +105,7 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var submitButton: some View {
         Button(
-            action: { Task.detached { await viewModel.submitPassword() } },
+            action: { Task { await viewModel.submitPassword() } },
             label: {
                 HStack {
                     if viewModel.isLoading {
