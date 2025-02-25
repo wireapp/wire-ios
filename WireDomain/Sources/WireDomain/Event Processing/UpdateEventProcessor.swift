@@ -22,7 +22,7 @@ import WireAPI
 struct UpdateEventProcessor: UpdateEventProcessorProtocol {
 
     let conversationEventProcessor: any ConversationEventProcessorProtocol
-    let featureconfigEventProcessor: any FeatureConfigEventProcessorProtocol
+    let featureConfigEventProcessor: any FeatureConfigEventProcessorProtocol
     let federationEventProcessor: any FederationEventProcessorProtocol
     let userEventProcessor: any UserEventProcessorProtocol
     let teamEventProcessor: any TeamEventProcessorProtocol
@@ -33,7 +33,7 @@ struct UpdateEventProcessor: UpdateEventProcessorProtocol {
             try await conversationEventProcessor.processEvent(event)
 
         case let .featureConfig(event):
-            try await featureconfigEventProcessor.processEvent(event)
+            try await featureConfigEventProcessor.processEvent(event)
 
         case let .federation(event):
             try await federationEventProcessor.processEvent(event)

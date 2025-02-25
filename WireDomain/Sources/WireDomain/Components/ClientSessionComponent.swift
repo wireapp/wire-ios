@@ -619,10 +619,9 @@ public final class ClientSessionComponent {
             memberUpdateEventProcessor: teamMemberUpdateEventProcessor
         )
 
-        // TODO: fix featureConfig typo
         return UpdateEventProcessor(
             conversationEventProcessor: conversationEventProcessor,
-            featureconfigEventProcessor: featureConfigEventProcessor,
+            featureConfigEventProcessor: featureConfigEventProcessor,
             federationEventProcessor: federationEventProcessor,
             userEventProcessor: userEventProcessor,
             teamEventProcessor: teamEventProcessor
