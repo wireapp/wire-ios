@@ -123,24 +123,24 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     }
 
     // TODO: [WPB-16224] Re-enable
-//    func testItSlowSyncsAfterRegisteringClient() async throws {
-//        // GIVEN
-//        let userClient = await syncMOC.perform {
-//            self.createSelfClient()
-//        }
-//
-//        // WHEN
-//        await syncMOC.perform {
-//            self.sut.didRegisterSelfUserClient(userClient)
-//        }
-//
-//        // THEN
-//        let syncStatus = try await syncMOC.perform {
-//            try XCTUnwrap(self.sut.syncStatus as? SyncStatus)
-//        }
-//
-//        XCTAssertTrue(syncStatus.isSlowSyncing)
-//    }
+    func testItSlowSyncsAfterRegisteringClient() async throws {
+        // GIVEN
+        let userClient = await syncMOC.perform {
+            self.createSelfClient()
+        }
+
+        // WHEN
+        await syncMOC.perform {
+            self.sut.didRegisterSelfUserClient(userClient)
+        }
+
+        // THEN
+        let syncStatus = try await syncMOC.perform {
+            try XCTUnwrap(self.sut.syncStatus as? SyncStatus)
+        }
+
+        XCTAssertTrue(syncStatus.isSlowSyncing)
+    }
 
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
         // GIVEN
