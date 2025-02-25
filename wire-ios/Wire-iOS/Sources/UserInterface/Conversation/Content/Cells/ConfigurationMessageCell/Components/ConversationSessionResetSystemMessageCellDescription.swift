@@ -21,18 +21,18 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = ConversationSystemMessageCell
 
     var message: ZMConversationMessage?
-    var delegate: ConversationMessageCellDelegate?
+    var delegate: ConversationMessageContentViewDelegate?
     var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var topMargin: Float = 0
-    var isFullWidth: Bool = true
+    static let isFullWidth = true
     var supportsActions: Bool = false
     var showEphemeralTimer: Bool = false
     var containsHighlightableContent: Bool = false

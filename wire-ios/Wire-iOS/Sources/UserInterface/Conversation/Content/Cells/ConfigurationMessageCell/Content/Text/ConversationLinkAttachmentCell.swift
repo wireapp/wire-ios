@@ -21,7 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
+final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentView, HighlightableView,
+    ContextMenuDelegate {
 
     struct Configuration {
         let attachment: LinkAttachment
@@ -37,7 +38,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         return view
     }()
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -140,12 +141,12 @@ extension ConversationLinkAttachmentCell: LinkViewDelegate {
     }
 }
 
-final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDescription {
+final class ConversationLinkAttachmentCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationLinkAttachmentCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -153,7 +154,7 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

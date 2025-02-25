@@ -25,7 +25,7 @@ enum ConversationSystemMessageCellDescription {
         for message: ZMConversationMessage,
         isCollapsed: Bool = true,
         buttonAction: Completion? = nil
-    ) -> [AnyConversationMessageCellDescription] {
+    ) -> [AnyConversationMessageContentViewDescription] {
 
         guard let systemMessageData = message.systemMessageData,
               let sender = message.senderUser,
@@ -50,7 +50,7 @@ enum ConversationSystemMessageCellDescription {
                 newName: newName
             )
 
-            return [AnyConversationMessageCellDescription(renamedCell)]
+            return [AnyConversationMessageContentViewDescription(renamedCell)]
 
         case .missedCall:
             let missedCallCell = ConversationMissedCallSystemMessageCellDescription(
@@ -58,7 +58,7 @@ enum ConversationSystemMessageCellDescription {
                 data: systemMessageData
             )
 
-            return [AnyConversationMessageCellDescription(missedCallCell)]
+            return [AnyConversationMessageContentViewDescription(missedCallCell)]
 
         case .performedCall:
             // [WPB-6988] removed system message for call ends.
@@ -71,7 +71,7 @@ enum ConversationSystemMessageCellDescription {
                 timestamp: nil
             )
 
-            return [AnyConversationMessageCellDescription(senderCell)]
+            return [AnyConversationMessageContentViewDescription(senderCell)]
 
         case .messageTimerUpdate:
             guard let timer = systemMessageData.messageTimer else {
@@ -85,19 +85,19 @@ enum ConversationSystemMessageCellDescription {
                 sender: sender
             )
 
-            return [AnyConversationMessageCellDescription(timerCell)]
+            return [AnyConversationMessageContentViewDescription(timerCell)]
 
         case .conversationIsSecure:
             let shieldCell = ConversationSecureSystemMessageSectionDescription()
-            return [AnyConversationMessageCellDescription(shieldCell)]
+            return [AnyConversationMessageContentViewDescription(shieldCell)]
 
         case .conversationIsVerified:
             let shieldCell = ConversationVerifiedSystemMessageSectionDescription()
-            return [AnyConversationMessageCellDescription(shieldCell)]
+            return [AnyConversationMessageContentViewDescription(shieldCell)]
 
         case .conversationIsDegraded:
             let shieldCell = ConversationDegradedSystemMessageSectionDescription()
-            return [AnyConversationMessageCellDescription(shieldCell)]
+            return [AnyConversationMessageContentViewDescription(shieldCell)]
 
         case .sessionReset:
             let sessionResetCell = ConversationSessionResetSystemMessageCellDescription(
@@ -106,7 +106,7 @@ enum ConversationSystemMessageCellDescription {
                 sender: sender
             )
 
-            return [AnyConversationMessageCellDescription(sessionResetCell)]
+            return [AnyConversationMessageContentViewDescription(sessionResetCell)]
 
         case .decryptionFailed, .decryptionFailedResolved, .decryptionFailed_RemoteIdentityChanged:
             let decryptionCell = ConversationCannotDecryptSystemMessageCellDescription(
@@ -115,7 +115,7 @@ enum ConversationSystemMessageCellDescription {
                 sender: sender
             )
 
-            return [AnyConversationMessageCellDescription(decryptionCell)]
+            return [AnyConversationMessageContentViewDescription(decryptionCell)]
 
         case .newClient:
             let newClientCell = ConversationNewDeviceSystemMessageCellDescription(
@@ -124,7 +124,7 @@ enum ConversationSystemMessageCellDescription {
                 conversation: conversation as! ZMConversation
             )
 
-            return [AnyConversationMessageCellDescription(newClientCell)]
+            return [AnyConversationMessageContentViewDescription(newClientCell)]
 
         case .ignoredClient:
             guard let user = systemMessageData.userTypes.first as? UserType else { fallthrough }
@@ -134,7 +134,7 @@ enum ConversationSystemMessageCellDescription {
                 user: user
             )
 
-            return [AnyConversationMessageCellDescription(ignoredClientCell)]
+            return [AnyConversationMessageContentViewDescription(ignoredClientCell)]
 
         case .potentialGap:
             let missingMessagesCell = ConversationMissingMessagesSystemMessageCellDescription(
@@ -142,7 +142,7 @@ enum ConversationSystemMessageCellDescription {
                 data: systemMessageData
             )
 
-            return [AnyConversationMessageCellDescription(missingMessagesCell)]
+            return [AnyConversationMessageContentViewDescription(missingMessagesCell)]
 
         case .participantsAdded, .participantsRemoved, .teamMemberLeave:
             let participantsChangedCell = ConversationParticipantsChangedSystemMessageCellDescription(
@@ -150,7 +150,7 @@ enum ConversationSystemMessageCellDescription {
                 data: systemMessageData
             )
 
-            return [AnyConversationMessageCellDescription(participantsChangedCell)]
+            return [AnyConversationMessageContentViewDescription(participantsChangedCell)]
 
         case .readReceiptsEnabled,
              .readReceiptsDisabled,
@@ -160,7 +160,7 @@ enum ConversationSystemMessageCellDescription {
                 systemMessageType: systemMessageData.systemMessageType
             )
 
-            return [AnyConversationMessageCellDescription(cell)]
+            return [AnyConversationMessageContentViewDescription(cell)]
 
         case .legalHoldEnabled, .legalHoldDisabled:
             let cell = ConversationLegalHoldCellDescription(
@@ -168,26 +168,26 @@ enum ConversationSystemMessageCellDescription {
                 conversation: conversation as! ZMConversation
             )
 
-            return [AnyConversationMessageCellDescription(cell)]
+            return [AnyConversationMessageContentViewDescription(cell)]
 
         case .newConversation:
-            var cells: [AnyConversationMessageCellDescription] = []
+            var cells: [AnyConversationMessageContentViewDescription] = []
             let startedConversationCell = ConversationStartedSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData
             )
-            cells.append(AnyConversationMessageCellDescription(startedConversationCell))
+            cells.append(AnyConversationMessageContentViewDescription(startedConversationCell))
 
             // Only display invite user cell for team members
             if let user = SelfUser.provider?.providedSelfUser,
                user.isTeamMember,
                conversation.selfCanAddUsers,
                conversation.isOpenGroup {
-                cells.append(AnyConversationMessageCellDescription(GuestsAllowedCellDescription()))
+                cells.append(AnyConversationMessageContentViewDescription(GuestsAllowedCellDescription()))
             }
             if conversation.isOpenGroup {
                 let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription()
-                cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
+                cells.append(AnyConversationMessageContentViewDescription(encryptionInfoCell))
             }
 
             return cells
@@ -201,18 +201,18 @@ enum ConversationSystemMessageCellDescription {
                     buttonAction: buttonAction
                 )
 
-                return [AnyConversationMessageCellDescription(cellDescription)]
+                return [AnyConversationMessageContentViewDescription(cellDescription)]
             }
 
         case .domainsStoppedFederating:
             let domainsStoppedFederatingCell =
                 ConversationDomainsStoppedFederatingSystemMessageCellDescription(systemMessageData: systemMessageData)
-            return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
+            return [AnyConversationMessageContentViewDescription(domainsStoppedFederatingCell)]
 
         case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted,
              .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap:
             let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType)
-            return [AnyConversationMessageCellDescription(description)]
+            return [AnyConversationMessageContentViewDescription(description)]
 
         case .mlsNotSupportedSelfUser, .mlsNotSupportedOtherUser:
             if let user = conversation.connectedUserType {
@@ -220,14 +220,14 @@ enum ConversationSystemMessageCellDescription {
                     messageType: systemMessageData.systemMessageType,
                     for: user
                 )
-                return [AnyConversationMessageCellDescription(description)]
+                return [AnyConversationMessageContentViewDescription(description)]
             } else {
                 assertionFailure("connectedUserType should not be nil in this case")
             }
 
         case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
-            return [AnyConversationMessageCellDescription(unknownMessage)]
+            return [AnyConversationMessageContentViewDescription(unknownMessage)]
         }
 
         return []

@@ -42,7 +42,7 @@ final class MessageReactionsCell: UIView, ConversationMessageContentView {
     var isSelected = false
     var message: ZMConversationMessage?
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
 
     private let reactionsView = GridLayoutView()
 

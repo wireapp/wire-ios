@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
+final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageContentView, ContextMenuDelegate {
 
     struct Configuration {
         let textMessageData: TextMessageData
@@ -32,7 +32,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     private let articleView = ArticleView(withImagePlaceholder: true)
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -95,12 +95,12 @@ extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
     }
 }
 
-final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
+final class ConversationLinkPreviewArticleCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationLinkPreviewArticleCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -108,7 +108,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

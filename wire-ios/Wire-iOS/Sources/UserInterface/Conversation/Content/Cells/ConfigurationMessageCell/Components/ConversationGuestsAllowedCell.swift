@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
+final class GuestsAllowedCellDescription: ConversationMessageContentViewDescription {
 
     // MARK: Properties
 
@@ -29,7 +29,7 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -37,7 +37,7 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 16
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
@@ -59,7 +59,7 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
 // MARK: GuestAllowedCell
 
-final class GuestsAllowedCell: UIView, ConversationMessageCell {
+final class GuestsAllowedCell: UIView, ConversationMessageContentView {
 
     // MARK: Properties
 
@@ -67,7 +67,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     typealias Configuration = GuestsAllowedCellConfiguration
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
 
     private let stackView = UIStackView()

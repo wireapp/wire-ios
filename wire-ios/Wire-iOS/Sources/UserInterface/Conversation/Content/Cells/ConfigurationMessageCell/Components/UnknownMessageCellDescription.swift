@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-extension CustomMessageView: ConversationMessageCell {
+extension CustomMessageView: ConversationMessageContentView {
 
     var selectionView: UIView? {
         messageLabel
@@ -32,12 +32,12 @@ extension CustomMessageView: ConversationMessageCell {
 
 /// A description for a message cell that informs the user a message cannot be rendered.
 
-final class UnknownMessageCellDescription: ConversationMessageCellDescription {
+final class UnknownMessageCellDescription: ConversationMessageContentViewDescription {
     typealias View = CustomMessageView
     let configuration: String
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -48,7 +48,7 @@ final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = false
     let containsHighlightableContent = false
 

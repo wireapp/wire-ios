@@ -20,10 +20,7 @@ import UIKit
 import WireDataModel
 import WireUtilities
 
-@available(*, deprecated, renamed: "ConversationMessageContentView")
-typealias ConversationMessageCell = ConversationMessageContentView
-
-protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
+protocol ConversationMessageContentViewDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
     func conversationMessageWantsToOpenMessageDetails(
@@ -66,7 +63,7 @@ protocol ConversationMessageContentView: AnyObject {
     var message: ZMConversationMessage? { get set }
 
     /// The delegate for the cell.
-    var delegate: ConversationMessageCellDelegate? { get set }
+    var delegate: ConversationMessageContentViewDelegate? { get set }
 
     /// Configures the cell with the specified configuration object.
     /// - parameter object: The view model for the cell.
@@ -115,7 +112,7 @@ extension ConversationMessageContentView {
 /// The role of this object is to provide a `configuration` view model for
 /// the view type it declares as the contents of the cell.
 
-protocol ConversationMessageCellDescription: AnyObject, CustomDebugStringConvertible {
+protocol ConversationMessageContentViewDescription: AnyObject {
     /// The view that will be displayed for the cell.
     associatedtype View: ConversationMessageContentView, UIView
 
@@ -130,7 +127,7 @@ protocol ConversationMessageCellDescription: AnyObject, CustomDebugStringConvert
     var topMargin: Float { get set }
 
     /// Whether the view occupies the entire width of the cell.
-    var isFullWidth: Bool { get }
+    static var isFullWidth: Bool { get }
 
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
@@ -145,7 +142,7 @@ protocol ConversationMessageCellDescription: AnyObject, CustomDebugStringConvert
     var message: ZMConversationMessage? { get set }
 
     /// The delegate for the cell.
-    var delegate: ConversationMessageCellDelegate? { get set }
+    var delegate: ConversationMessageContentViewDelegate? { get set }
 
     /// The action controller that handles the menu item.
     var actionController: ConversationMessageActionController? { get set }
@@ -168,7 +165,7 @@ protocol ConversationMessageCellDescription: AnyObject, CustomDebugStringConvert
 
 // MARK: - Table View Dequeuing
 
-extension ConversationMessageCellDescription {
+extension ConversationMessageContentViewDescription {
 
     func willDisplayCell() {
         _ = message?.startSelfDestructionIfNeeded()
@@ -189,11 +186,11 @@ extension ConversationMessageCellDescription {
     }
 
     func configureCell(_ cell: UITableViewCell, animated: Bool = false) {
-        guard let adapterCell = cell as? ConversationMessageCellTableViewAdapter<Self> else { return }
+        guard let adapterCell = cell as? ConversationMessageContentViewTableViewAdapter<Self> else { return }
         configureContentView(adapterCell.cellView)
     }
 
-    func configureContentView(_ cellView: (any UIView & ConversationMessageContentView), animated: Bool = false) {
+    func configureContentView(_ cellView: any UIView & ConversationMessageContentView, animated: Bool = false) {
         guard let cellView = cellView as? View else { return }
         cellView.configure(with: configuration, animated: animated)
 
@@ -217,7 +214,7 @@ extension ConversationMessageCellDescription {
 
 }
 
-extension ConversationMessageCellDescription where View.Configuration: Equatable {
+extension ConversationMessageContentViewDescription where View.Configuration: Equatable {
 
     /// Default implementation of isConfigurationEqual
     ///
@@ -232,17 +229,17 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
 
 /// A type erased box containing a conversation message cell description.
 
-final class AnyConversationMessageCellDescription: NSObject {
+final class AnyConversationMessageContentViewDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
     private let viewGenerator: (_ frame: CGRect) -> (any UIView & ConversationMessageContentView)
     private let registrationBlock: (UITableView) -> Void
     private let configureCell: (UITableViewCell, Bool) -> Void
-    private let configureContentView: ((any UIView & ConversationMessageContentView), Bool) -> Void
+    private let configureContentView: (any UIView & ConversationMessageContentView, Bool) -> Void
     private let baseTypeGetter: () -> AnyClass
-    private let instanceGetter: () -> any ConversationMessageCellDescription
-    private let isConfigurationEqualBlock: (AnyConversationMessageCellDescription) -> Bool
+    private let instanceGetter: () -> any ConversationMessageContentViewDescription
+    private let isConfigurationEqualBlock: (AnyConversationMessageContentViewDescription) -> Bool
 
-    private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
+    private let _delegate: AnyMutableProperty<ConversationMessageContentViewDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
     private let _canBeCombinedWithOtherCells: () -> Bool
@@ -253,36 +250,36 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
 
-    init<T: ConversationMessageCellDescription>(_ description: T) {
+    init<T: ConversationMessageContentViewDescription>(_ description: T) {
         self.registrationBlock = { tableView in
             description.register(in: tableView)
         }
 
-        configureCell = { cell, animated in
+        self.configureCell = { cell, animated in
             description.configureCell(cell, animated: animated)
         }
 
-        configureContentView = { contentView, animated in
+        self.configureContentView = { contentView, animated in
             description.configureContentView(contentView, animated: animated)
         }
 
-        viewGenerator = { frame in
+        self.viewGenerator = { frame in
             T.View(frame: frame)
         }
 
-        cellGenerator = { tableView, indexPath in
+        self.cellGenerator = { tableView, indexPath in
             description.makeCell(for: tableView, at: indexPath)
         }
 
-        baseTypeGetter = {
+        self.baseTypeGetter = {
             T.self
         }
 
-        instanceGetter = {
+        self.instanceGetter = {
             description
         }
 
-        isConfigurationEqualBlock = { otherDescription in
+        self.isConfigurationEqualBlock = { otherDescription in
             description.isConfigurationEqual(with: otherDescription.instance)
         }
 
@@ -298,7 +295,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         _axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
 
-    var instance: any ConversationMessageCellDescription {
+    var instance: any ConversationMessageContentViewDescription {
         instanceGetter()
     }
 
@@ -306,7 +303,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         baseTypeGetter()
     }
 
-    var delegate: ConversationMessageCellDelegate? {
+    var delegate: ConversationMessageContentViewDelegate? {
         get { _delegate.getter() }
         set { _delegate.setter(newValue) }
     }
@@ -361,7 +358,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         configureCell(cell, animated)
     }
 
-    func configureContentView(_ contentView: (any UIView & ConversationMessageContentView), animated: Bool = false) {
+    func configureContentView(_ contentView: any UIView & ConversationMessageContentView, animated: Bool = false) {
         configureContentView(contentView, animated)
     }
 
@@ -377,7 +374,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         viewGenerator(frame)
     }
 
-    func isConfigurationEqual(with description: AnyConversationMessageCellDescription) -> Bool {
+    func isConfigurationEqual(with description: AnyConversationMessageContentViewDescription) -> Bool {
         isConfigurationEqualBlock(description)
     }
 

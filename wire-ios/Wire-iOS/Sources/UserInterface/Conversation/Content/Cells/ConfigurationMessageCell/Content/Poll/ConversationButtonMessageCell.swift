@@ -19,11 +19,11 @@
 import UIKit
 import WireDataModel
 
-final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
+final class ConversationButtonMessageCell: UIView, ConversationMessageContentView {
     var isSelected: Bool = false
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
 
     var errorMessage: String? {
         didSet {
@@ -148,14 +148,14 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     }
 }
 
-final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationButtonMessageCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationButtonMessageCell
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var topMargin: Float = .ConversationButtonMessageCell.verticalInset
 
-    var isFullWidth: Bool = false
+    static let isFullWidth = false
 
     var supportsActions: Bool = false
 
@@ -165,7 +165,7 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var message: ZMConversationMessage?
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
 
     var actionController: ConversationMessageActionController?
 

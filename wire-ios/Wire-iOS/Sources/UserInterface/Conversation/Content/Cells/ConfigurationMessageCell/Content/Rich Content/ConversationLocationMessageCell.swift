@@ -21,7 +21,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
+final class ConversationLocationMessageCell: UIView, ConversationMessageContentView, ContextMenuDelegate {
 
     struct Configuration {
         let location: LocationMessageData
@@ -41,7 +41,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     private var recognizer: UITapGestureRecognizer?
     private weak var locationAnnotation: MKPointAnnotation?
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
 
     var labelFont: UIFont? = .normalFont
@@ -183,12 +183,12 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     }
 }
 
-final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationLocationMessageCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationLocationMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -196,7 +196,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

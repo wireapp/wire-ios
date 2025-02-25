@@ -21,7 +21,7 @@ import WireDataModel
 import WireDesign
 
 final class ConversationImageMessageCell: UIView,
-    ConversationMessageCell,
+    ConversationMessageContentView,
     ContextMenuDelegate {
 
     struct Configuration {
@@ -50,7 +50,7 @@ final class ConversationImageMessageCell: UIView,
     private var heightConstraint: NSLayoutConstraint?
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
 
     var isSelected: Bool = false
 
@@ -165,13 +165,13 @@ final class ConversationImageMessageCell: UIView,
     }
 }
 
-final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationImageMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = ConversationImageMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -179,7 +179,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

@@ -126,14 +126,14 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     }
 }
 
-final class ConversationPingCellDescription: ConversationMessageCellDescription {
+final class ConversationPingCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationPingCell
     let configuration: ConversationPingCell.Configuration
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool {
@@ -142,7 +142,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
     }
 
     var topMargin: Float = 0
-    let isFullWidth: Bool = true
+    static let isFullWidth = true
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 

@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
+final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageContentViewDescription {
 
     typealias View = ConversationStartedSystemMessageCell
     typealias IconColors = SemanticColors.Icon
@@ -29,7 +29,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -37,7 +37,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
 
-    let isFullWidth: Bool = true
+    static let isFullWidth = true
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 

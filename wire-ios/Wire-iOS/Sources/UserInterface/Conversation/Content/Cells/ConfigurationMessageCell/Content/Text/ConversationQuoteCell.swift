@@ -276,14 +276,14 @@ final class ConversationReplyContentView: UIView {
 
 }
 
-final class ConversationReplyCell: UIView, ConversationMessageCell {
+final class ConversationReplyCell: UIView, ConversationMessageContentView {
     typealias Configuration = ConversationReplyContentView.Configuration
     var isSelected: Bool = false
 
     let contentView: ConversationReplyContentView
     var container: ReplyRoundCornersView
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
 
     override init(frame: CGRect) {
@@ -320,7 +320,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
 }
 
-final class ConversationReplyCellDescription: ConversationMessageCellDescription {
+final class ConversationReplyCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationReplyCell
     let configuration: View.Configuration
 
@@ -328,12 +328,12 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
-    let isFullWidth = false
+    static let isFullWidth = false
     let supportsActions = false
     let containsHighlightableContent: Bool = true
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel

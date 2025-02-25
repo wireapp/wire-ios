@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-protocol ConversationMessageCellMenuPresenter: AnyObject {
+protocol ConversationMessageContentViewMenuPresenter: AnyObject {
     func showMenu()
     func showSecuredMenu()
 }
@@ -38,8 +38,10 @@ extension UITableViewCell {
 
 }
 
-final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell,
-    SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
+final class ConversationMessageContentViewTableViewAdapter<
+    C: ConversationMessageContentViewDescription
+>: UITableViewCell,
+    SelectableView, HighlightableView, ConversationMessageContentViewMenuPresenter {
 
     let cellView: C.View
     let ephemeralCountdownView: EphemeralCountdownView
@@ -55,12 +57,6 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
     var topMargin: Float = 0 {
         didSet {
             top.constant = CGFloat(topMargin)
-        }
-    }
-
-    var isFullWidth: Bool = false {
-        didSet {
-            configureConstraints(fullWidth: isFullWidth)
         }
     }
 
@@ -95,9 +91,9 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
     private var singleTapGesture: UITapGestureRecognizer!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        cellView = C.View(frame: .zero)
+        self.cellView = C.View(frame: .zero)
         cellView.translatesAutoresizingMaskIntoConstraints = false
-        ephemeralCountdownView = EphemeralCountdownView()
+        self.ephemeralCountdownView = EphemeralCountdownView()
         ephemeralCountdownView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -110,12 +106,12 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
         contentView.addSubview(cellView)
         contentView.addSubview(ephemeralCountdownView)
 
-        leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
-        trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
-        bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
+        self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
+        self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
-        ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
+        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
 
         NSLayoutConstraint.activate([
             ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -126,15 +122,16 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
             top,
             bottom
         ])
+        configureConstraints()
 
-        longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
+        self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         contentView.addGestureRecognizer(longPressGesture)
 
-        doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
+        self.doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
         contentView.addGestureRecognizer(doubleTapGesture)
 
-        singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
+        self.singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
         cellView.addGestureRecognizer(singleTapGesture)
         singleTapGesture.require(toFail: doubleTapGesture)
         singleTapGesture.delegate = self
@@ -145,25 +142,24 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with object: C.View.Configuration, fullWidth: Bool, topMargin: Float) {
+    func configure(with object: C.View.Configuration, topMargin: Float) {
         cellView.configure(with: object, animated: false)
-        isFullWidth = fullWidth
         self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
     }
 
-    func configureConstraints(fullWidth: Bool) {
+    private func configureConstraints() {
         let margins = conversationHorizontalMargins
 
-        leading.constant = fullWidth ? 0 : margins.left
-        trailing.constant = fullWidth ? 0 : -margins.right
+        leading.constant = C.isFullWidth ? 0 : margins.left
+        trailing.constant = C.isFullWidth ? 0 : -margins.right
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        configureConstraints(fullWidth: isFullWidth)
+        configureConstraints()
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -195,7 +191,7 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
         display(messageActionsController: controller)
     }
 
-    func display(messageActionsController: MessageActionsViewController) {
+    private func display(messageActionsController: MessageActionsViewController) {
         cellView.delegate?.conversationMessageWantsToShowActionsController(
             cellView,
             actionsController: messageActionsController
@@ -308,26 +304,25 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
 
 extension UITableView {
 
-    func register<C: ConversationMessageCellDescription>(cell: C.Type) {
+    func register<C: ConversationMessageContentViewDescription>(cell: C.Type) {
         let reuseIdentifier = String(describing: C.self)
-        register(ConversationMessageCellTableViewAdapter<C>.self, forCellReuseIdentifier: reuseIdentifier)
+        register(ConversationMessageContentViewTableViewAdapter<C>.self, forCellReuseIdentifier: reuseIdentifier)
     }
 
-    func dequeueConversationCell<C: ConversationMessageCellDescription>(
+    func dequeueConversationCell<C: ConversationMessageContentViewDescription>(
         with description: C,
         for indexPath: IndexPath
-    ) -> ConversationMessageCellTableViewAdapter<C> {
+    ) -> ConversationMessageContentViewTableViewAdapter<C> {
         let reuseIdentifier = String(describing: C.self)
 
         let cell = dequeueReusableCell(
             withIdentifier: reuseIdentifier,
             for: indexPath
-        ) as! ConversationMessageCellTableViewAdapter<C>
+        ) as! ConversationMessageContentViewTableViewAdapter<C>
 
         cell.cellDescription = description
         cell.configure(
             with: description.configuration,
-            fullWidth: description.isFullWidth,
             topMargin: description.topMargin
         )
 

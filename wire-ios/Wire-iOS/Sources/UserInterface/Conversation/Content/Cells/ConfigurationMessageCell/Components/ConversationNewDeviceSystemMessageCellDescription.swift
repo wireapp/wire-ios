@@ -22,7 +22,7 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = ConversationNewDeviceSystemMessageCell
     typealias LabelColors = SemanticColors.Label
@@ -30,7 +30,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -38,7 +38,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
 
-    let isFullWidth: Bool = true
+    static let isFullWidth = true
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 

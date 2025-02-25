@@ -21,7 +21,7 @@ import WireDataModel
 
 // MARK: - MessageReactionsCellDescription
 
-final class MessageReactionsCellDescription: ConversationMessageCellDescription {
+final class MessageReactionsCellDescription: ConversationMessageContentViewDescription {
 
     // MARK: - Properties
 
@@ -50,7 +50,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     var topMargin: Float = 0
 
-    var isFullWidth: Bool = true
+    static let isFullWidth = true
 
     var supportsActions: Bool = false
 
@@ -60,7 +60,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     var message: ZMConversationMessage?
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
 
     weak var actionController: ConversationMessageActionController?
 
