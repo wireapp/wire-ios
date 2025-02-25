@@ -83,9 +83,9 @@ final class ConversationImageMessageCell: UIView, ConversationMessageContentView
 
         let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let trailing = trailingAnchor.constraint(
-            lessThanOrEqualTo: containerView.trailingAnchor,
-            constant: margins.trailing
+        let trailing = containerView.trailingAnchor.constraint(
+            lessThanOrEqualTo: trailingAnchor,
+            constant: -margins.trailing
         )
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
