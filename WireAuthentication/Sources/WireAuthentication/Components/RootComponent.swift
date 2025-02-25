@@ -49,16 +49,16 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor public var router: any Router {
-        rootViewModel
+        viewModel
     }
 
-    @MainActor private var rootViewModel: RootViewModel {
+    @MainActor private var viewModel: RootViewModel {
         shared { RootViewModel() }
     }
 
     @MainActor var rootView: some View {
         RootView(
-            viewModel: rootViewModel,
+            viewModel: viewModel,
             factory: self
         )
     }
@@ -73,8 +73,8 @@ class RootComponent: BootstrapComponent {
 
 extension RootComponent: RootView.Factory {
 
-    var determineAuthMethodView: DetermineAuthMethodView {
-        determineAuthMethodComponent.determineAuthMethodView
+    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
+        determineAuthMethodComponent.view
     }
 
 }

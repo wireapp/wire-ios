@@ -53,7 +53,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
+    @MainActor var view: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: viewModel,
             factory: self
@@ -84,14 +84,14 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
     func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
-        loginViaEmailComponent.loginViaEmailView(
+        loginViaEmailComponent.view(
             email: email,
             canCreateAccount: canCreateAccount
         )
     }
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-        loginViaSSOComponent.loginViaSSOView(ssoURL: ssoURL)
+        loginViaSSOComponent.view(ssoURL: ssoURL)
     }
 
 }

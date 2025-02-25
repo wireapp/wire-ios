@@ -40,7 +40,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     }
 
     @MainActor
-    private func loginViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailViewModel {
+    private func viewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
             loginViaEmailUseCase: loginViaEmailUseCase,
@@ -52,9 +52,9 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     }
 
     @MainActor
-    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+    func view(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
+            viewModel: viewModel(email: email, canCreateAccount: canCreateAccount)
         )
     }
 
