@@ -509,7 +509,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.commitPendingProposalDate = scheduledDate
         }
 
-        mlsService.commitPendingProposalsIfNeeded()
+        await mlsService.commitPendingProposalsIfNeeded()
     }
 
     public func updateSecurityLevelAfterReceivingMessage(

@@ -97,7 +97,7 @@ actor EventProcessor: UpdateEventProcessor {
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
 
-            let publicKeys = try? self.earService.fetchPublicKeys()
+            let publicKeys = try? await self.earService.fetchPublicKeys()
             let decryptedEvents = try await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
             await self.processBackgroundEvents(decryptedEvents)
 
@@ -178,7 +178,7 @@ actor EventProcessor: UpdateEventProcessor {
                 attributes: .safePublic
             )
 
-            guard let self else { return }
+            guard let self, !decryptedUpdateEvents.isEmpty else { return }
 
             let date = Date()
             let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)
