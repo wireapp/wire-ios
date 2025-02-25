@@ -35,7 +35,6 @@ package struct VerificationCodeView: View {
 
     private enum Constants {
         static let backgroundCornerRadius: CGFloat = 16
-        static let numberOfDigits = 6
     }
 
     @StateObject private var viewModel: VerificationCodeViewModel
@@ -98,7 +97,7 @@ package struct VerificationCodeView: View {
 
     private var verificationCodeView: some View {
         HStack(spacing: 10) {
-            ForEach(0 ..< Constants.numberOfDigits, id: \.self) { index in
+            ForEach(0 ..< viewModel.numberOfDigits, id: \.self) { index in
                 TextField("", text: $viewModel.code[index])
                     .frame(width: 50, height: 50)
                     .background(
@@ -131,7 +130,7 @@ package struct VerificationCodeView: View {
         }
 
         if !viewModel.code[index].isEmpty {
-            if index < Constants.numberOfDigits - 1 {
+            if index < viewModel.numberOfDigits - 1 {
                 focusedIndex = index + 1
             } else {
                 focusedIndex = nil

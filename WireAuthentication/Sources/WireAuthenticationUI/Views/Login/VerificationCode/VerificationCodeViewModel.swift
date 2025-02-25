@@ -41,6 +41,7 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     let email: String
     let password: String
+    let numberOfDigits: Int
 
     private let loginViaEmailUseCase: LoginViaEmailUseCaseProtocol
     private let onFlowCompletion: ([HTTPCookie], AccessToken) -> Void
@@ -57,6 +58,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.onFlowCompletion = onFlowCompletion
         self.code = code
+        self.numberOfDigits = code.count
     }
 
     func confirm() async {
