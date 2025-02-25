@@ -49,6 +49,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         legacySyncStatus = nil
         initialSync = nil
         incrementalSync = nil
+        DeveloperFlag.newInitialSync.enable(false, storage: .temporary())
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
