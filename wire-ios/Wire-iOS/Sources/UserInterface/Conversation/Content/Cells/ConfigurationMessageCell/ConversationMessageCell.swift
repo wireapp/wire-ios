@@ -230,6 +230,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
 
 final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
+    private let viewGenerator: (_ frame: CGRect) -> UIView
     private let registrationBlock: (UITableView) -> Void
     private let configureBlock: (UITableViewCell, Bool) -> Void
     private let baseTypeGetter: () -> AnyClass
@@ -254,6 +255,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
         self.configureBlock = { cell, animated in
             description.configureCell(cell, animated: animated)
+        }
+
+        self.viewGenerator = { frame in
+            T.View(frame: frame)
         }
 
         self.cellGenerator = { tableView, indexPath in
@@ -353,6 +358,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         cellGenerator(tableView, indexPath)
+    }
+
+    func makeView(frame: CGRect) -> UIView {
+        viewGenerator(frame)
     }
 
     func isConfigurationEqual(with description: AnyConversationMessageCellDescription) -> Bool {

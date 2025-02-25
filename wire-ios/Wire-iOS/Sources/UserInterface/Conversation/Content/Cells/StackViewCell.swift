@@ -21,6 +21,7 @@ import WireFoundation
 import WireDesign
 import WireDataModel
 
+// TODO: use adapter
 final class StackViewCell: UITableViewCell {
 
     private let stackView = {
@@ -34,6 +35,7 @@ final class StackViewCell: UITableViewCell {
     private lazy var singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        fatalError("use adapter")
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setup()
     }

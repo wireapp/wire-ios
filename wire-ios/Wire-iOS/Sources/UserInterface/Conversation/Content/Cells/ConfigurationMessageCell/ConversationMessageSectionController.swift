@@ -317,7 +317,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private static func combine(
         _ cellDescriptions: [AnyConversationMessageCellDescription]
     ) -> [AnyConversationMessageCellDescription] {
-        print("combine(\(cellDescriptions.map(\.baseType)))") // TODO: remove
+        // print("combine(\(cellDescriptions.map(\.baseType)))") // TODO: remove
         var result = [AnyConversationMessageCellDescription]()
         var currentCombination = [AnyConversationMessageCellDescription]()
 

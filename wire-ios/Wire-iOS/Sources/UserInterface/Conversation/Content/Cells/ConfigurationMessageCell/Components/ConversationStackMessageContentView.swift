@@ -20,18 +20,9 @@ import UIKit
 import WireDataModel
 
 final class ConversationStackMessageContentView: UIView, ConversationMessageContentView {
+    typealias Configuration = [AnyConversationMessageCellDescription]
 
-//    private let stackView = {
-//        let stackView = UIStackView()
-//        stackView.axis = .vertical
-//        return stackView
-//    }()
-    private var stackView = UIStackView() {
-        didSet {
-            oldValue.removeFromSuperview()
-            setupStackView()
-        }
-    }
+    private let stackView = UIStackView()
 
     var isSelected = false
 
@@ -39,13 +30,29 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCont
 
     var delegate: (any ConversationMessageCellDelegate)?
 
-    func configure(with configuration: [AnyConversationMessageCellDescription], animated: Bool) {
-        let arrangedSubviews = configuration.map { cellDescription in
-            // cellDescription.makeView() // TODO: call C.View(...)
-            fatalError()
-            return UIView()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupStackView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    func configure(with configuration: Configuration, animated: Bool) {
+        stackView.arrangedSubviews.forEach { arrangedSubview in
+            arrangedSubview.removeFromSuperview()
         }
-        stackView = .init(arrangedSubviews: arrangedSubviews)
+        for cellDescription in configuration {
+            print(cellDescription.instance)
+            let arrangedSubview = cellDescription.makeView(frame: .zero)
+            stackView.insertArrangedSubview(arrangedSubview, at: 0)
+        }
+        UIView.performWithoutAnimation {
+            stackView.setNeedsLayout()
+            stackView.layoutIfNeeded()
+        }
     }
 
     private func setupStackView() {
