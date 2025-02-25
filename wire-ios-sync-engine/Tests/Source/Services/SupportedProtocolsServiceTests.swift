@@ -168,6 +168,19 @@ final class SupportedProtocolsServiceTests: XCTestCase {
 
     // MARK: - Tests
 
+    func test_CalculateSupportedProtocols_PreviousSupportedProtocolMLS_DoesNotRemoveMLS() async throws {
+        try syncContext.performAndWait {
+            // Given
+            try mock(allActiveMLSClients: false)
+            mock(remoteSupportedProtocols: [.proteus, .mls])
+            mock(migrationState: .disabled)
+            ZMUser.selfUser(in: syncContext).supportedProtocols = [.proteus, .mls]
+
+            // When / then
+            XCTAssertEqual(sut.calculateSupportedProtocols(), [.proteus, .mls])
+        }
+    }
+
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteus() throws {
         try syncContext.performAndWait {
             // Given
