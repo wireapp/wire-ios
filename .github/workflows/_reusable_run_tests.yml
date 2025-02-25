@@ -32,7 +32,7 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
@@ -219,7 +219,7 @@ jobs:
     needs: run-tests
     name: Analyze xcresults
     if: ${{ always() && github.event_name == 'pull_request' }}
-    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     strategy:
       matrix:
         xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
