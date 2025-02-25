@@ -50,58 +50,6 @@
 		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		160D6929212EFE5300096EAD /* (null) in Sources */ = {isa = PBXBuildFile; };
-		1695B9D62B912E8D00E9342A /* (null) in Sources */ = {isa = PBXBuildFile; };
-		1695B9D82B91307600E9342A /* (null) in Sources */ = {isa = PBXBuildFile; };
-		1695B9DC2BA1C15000E9342A /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16A5FDC52154F53F00AEEBBD /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16A94AE920932386008A5718 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16A94AEB20932841008A5718 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16A94AEF2099DFEC008A5718 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16A94AF8209B5334008A5718 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16A94AFB209C553A008A5718 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16B2DE2E1CCFB3B0000D7C30 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16C02A0D204D407100811912 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16C02A10204E964300811912 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16C4BDA320A57E5300BCDB17 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16CB8DB91DC0F777000C5F47 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16D49328203DCC88008DDFFA /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16D4932A203DCCCA008DDFFA /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16D68E9B1CEF99C7003AB9E0 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16D74BE82B573A1C00160298 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16D74BEA2B5895C900160298 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16D74BEC2B59203C00160298 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16D74BEE2B5933D000160298 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16D74BF22B5960F000160298 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16D74BF82B6100AA00160298 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16DD6E95228304B70090A74C /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16DD6E982283102D0090A74C /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16DD6EB8228431030090A74C /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16DD6EBA22844EC80090A74C /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16E0FBAA2331119F000E3235 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16E2A0A01F6BEDE7005F4DB1 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16E2A0A21F6BEF6E005F4DB1 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16E2A0A61F6BF233005F4DB1 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16E9E8A72613064500783C91 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16F6BB0E1EDD7B23009EA803 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		16F6BB101EDDA0BA009EA803 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		252183202B4C00DF000C4325 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		252183272B4C183A000C4325 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		253C67492B88A3BB00965DE1 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		25644D8B2B21D1CD007DA01F /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2572EC552B148EE50075A7BE /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2572EC562B148EE50075A7BE /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2572EC572B148EE50075A7BE /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2572EC592B148EE50075A7BE /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2572EC5D2B148EE50075A7BE /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2572EC5E2B148EE50075A7BE /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2572EC5F2B148EE50075A7BE /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2572EC602B148EE50075A7BE /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2577CB632B18A406007D3443 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2577CB7B2B1DC787007D3443 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		2577CB822B1DFF66007D3443 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		259BB5D32B7FC04100F1B552 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		25B236922B67A97E00EDB479 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
 		590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebarUI */; };
@@ -1782,58 +1730,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				25644D8B2B21D1CD007DA01F /* (null) in Sources */,
-				16E2A0A01F6BEDE7005F4DB1 /* (null) in Sources */,
-				16E9E8A72613064500783C91 /* (null) in Sources */,
-				16DD6EBA22844EC80090A74C /* (null) in Sources */,
-				16A94AE920932386008A5718 /* (null) in Sources */,
-				16F6BB101EDDA0BA009EA803 /* (null) in Sources */,
-				252183202B4C00DF000C4325 /* (null) in Sources */,
-				16D74BF82B6100AA00160298 /* (null) in Sources */,
-				2572EC572B148EE50075A7BE /* (null) in Sources */,
-				16A94AEF2099DFEC008A5718 /* (null) in Sources */,
-				2577CB822B1DFF66007D3443 /* (null) in Sources */,
-				16D49328203DCC88008DDFFA /* (null) in Sources */,
-				1695B9D82B91307600E9342A /* (null) in Sources */,
-				25B236922B67A97E00EDB479 /* (null) in Sources */,
-				16D74BF22B5960F000160298 /* (null) in Sources */,
-				16F6BB0E1EDD7B23009EA803 /* (null) in Sources */,
-				2572EC5F2B148EE50075A7BE /* (null) in Sources */,
-				2572EC5D2B148EE50075A7BE /* (null) in Sources */,
-				160D6929212EFE5300096EAD /* (null) in Sources */,
-				1695B9D62B912E8D00E9342A /* (null) in Sources */,
-				16A94AF8209B5334008A5718 /* (null) in Sources */,
-				2572EC5E2B148EE50075A7BE /* (null) in Sources */,
-				2572EC592B148EE50075A7BE /* (null) in Sources */,
-				16DD6EB8228431030090A74C /* (null) in Sources */,
-				16DD6E95228304B70090A74C /* (null) in Sources */,
-				2577CB632B18A406007D3443 /* (null) in Sources */,
-				16A94AEB20932841008A5718 /* (null) in Sources */,
-				16D4932A203DCCCA008DDFFA /* (null) in Sources */,
-				259BB5D32B7FC04100F1B552 /* (null) in Sources */,
-				16B2DE2E1CCFB3B0000D7C30 /* (null) in Sources */,
-				16D74BE82B573A1C00160298 /* (null) in Sources */,
-				16C4BDA320A57E5300BCDB17 /* (null) in Sources */,
-				2572EC602B148EE50075A7BE /* (null) in Sources */,
-				16E2A0A21F6BEF6E005F4DB1 /* (null) in Sources */,
-				16C02A10204E964300811912 /* (null) in Sources */,
-				252183272B4C183A000C4325 /* (null) in Sources */,
-				253C67492B88A3BB00965DE1 /* (null) in Sources */,
-				16E2A0A61F6BF233005F4DB1 /* (null) in Sources */,
-				16A5FDC52154F53F00AEEBBD /* (null) in Sources */,
-				16C02A0D204D407100811912 /* (null) in Sources */,
-				16CB8DB91DC0F777000C5F47 /* (null) in Sources */,
-				1695B9DC2BA1C15000E9342A /* (null) in Sources */,
-				16A94AFB209C553A008A5718 /* (null) in Sources */,
-				16DD6E982283102D0090A74C /* (null) in Sources */,
-				2572EC562B148EE50075A7BE /* (null) in Sources */,
-				16D74BEC2B59203C00160298 /* (null) in Sources */,
-				2572EC552B148EE50075A7BE /* (null) in Sources */,
-				16E0FBAA2331119F000E3235 /* (null) in Sources */,
-				16D68E9B1CEF99C7003AB9E0 /* (null) in Sources */,
-				16D74BEA2B5895C900160298 /* (null) in Sources */,
-				2577CB7B2B1DC787007D3443 /* (null) in Sources */,
-				16D74BEE2B5933D000160298 /* (null) in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
