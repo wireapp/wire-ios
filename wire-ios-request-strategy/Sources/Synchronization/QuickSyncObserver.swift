@@ -21,7 +21,7 @@ import WireLogging
 
 // sourcery: AutoMockable
 public protocol QuickSyncObserverInterface {
-    func waitForQuickSyncToFinish() async
+    func waitForDecryptionOfEventsToFinish() async
 }
 
 enum DecryptionState {
@@ -83,7 +83,7 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
             .store(in: &cancellables)
     }
 
-    public func waitForQuickSyncToFinish() async {
+    public func waitForDecryptionOfEventsToFinish() async {
         if finishedDecrypting {
             WireLogger.messaging.info(
                 "no need to wait, because app has finished decrypting",

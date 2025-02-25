@@ -29,7 +29,7 @@ final class QuickSyncObserverTests: MessagingTestBase {
 
         // then test completes
         let before = Date.now
-        await quickSyncObserver.waitForQuickSyncToFinish()
+        await quickSyncObserver.waitForDecryptionOfEventsToFinish()
         XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "sync duration > 500ms")
     }
 
@@ -47,7 +47,7 @@ final class QuickSyncObserverTests: MessagingTestBase {
         // then test completes
         let expectation = XCTestExpectation(description: "sync is done within 500ms")
         Task {
-            await quickSyncObserver.waitForQuickSyncToFinish()
+            await quickSyncObserver.waitForDecryptionOfEventsToFinish()
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 0.5)
