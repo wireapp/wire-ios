@@ -137,6 +137,30 @@ public protocol UserLocalStoreProtocol {
     /// - returns: the user ID and the client ID.
 
     func selfUserInfo() async -> (id: UUID, clientId: String?)
+
+    /// The name of a given user.
+    /// - Parameter user: The user to fetch the name for.
+    /// - returns: The user name.
+
+    func name(
+        for user: ZMUser
+    ) async -> String?
+
+    /// The team name of a given user.
+    /// - Parameter user: The user to fetch the team for.
+    /// - returns: The team name if any.
+
+    func teamName(
+        for user: ZMUser
+    ) async -> String?
+
+    /// The identifier for a given user
+    /// - parameter user: The user to get the ID for.
+    /// - returns: The user UUID.
+
+    func id(
+        for user: ZMUser
+    ) async -> UUID
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -254,6 +278,30 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             nil,
             forKey: DefaultsKeys.pushToken.rawValue
         )
+    }
+
+    public func name(
+        for user: ZMUser
+    ) async -> String? {
+        await context.perform {
+            user.name
+        }
+    }
+
+    public func teamName(
+        for user: ZMUser
+    ) async -> String? {
+        await context.perform {
+            user.teamName
+        }
+    }
+
+    public func id(
+        for user: ZMUser
+    ) async -> UUID {
+        await context.perform {
+            user.remoteIdentifier
+        }
     }
 
     public func addSelfLegalHoldRequest(

@@ -19,6 +19,7 @@
 import Combine
 import WireAPI
 import WireDataModel
+import WireLogging
 
 /// Observes pending events, process them and generates new notifications content.
 final class NotificationSession {
@@ -44,7 +45,16 @@ final class NotificationSession {
         self.subscription = updateEventsRepository.observePendingEvents()
             .collect() // Collects all the events batches.
             .map { $0.flatMap { $0 } }
-            .map(generateNotificationContent)
+            .map { events in
+                // Uses a Future to bridge between Combine and async/await
+                Future<UNMutableNotificationContent, Never> { [self] promise in
+                    Task {
+                        let notification = await generateNotificationContent(for: events)
+                        promise(.success(notification))
+                    }
+                }
+            }
+            .switchToLatest()
             .sink(receiveValue: onNotificationContent)
     }
 
@@ -73,25 +83,56 @@ final class NotificationSession {
 
     private func generateNotificationContent(
         for events: [UpdateEvent]
-    ) -> UNMutableNotificationContent {
-        // TODO: [WPB-11175] - Generate UNNotificationContent from update events
+    ) async -> UNMutableNotificationContent {
+
+        var notifications: [UNMutableNotificationContent] = []
+
         for event in events {
+            var notificationBuilder: NotificationBuilder
+
             switch event {
             case let .conversation(conversationEvent):
-                break
-            case let .featureConfig(featureConfigEvent):
-                break
-            case let .federation(federationEvent):
-                break
+
+                notificationBuilder = await ConversationEventNotificationBuilder(
+                    event: conversationEvent
+                )
+
             case let .user(userEvent):
-                break
-            case let .team(teamEvent):
-                break
-            case let .unknown(eventType):
-                break
+
+                notificationBuilder = UserNotificationBuilder(
+                    event: userEvent
+                )
+
+            default:
+                continue
+            }
+
+            guard await notificationBuilder.shouldBuildNotification() else {
+                continue
+            }
+
+            do {
+                let notificationContent = try await notificationBuilder.buildContent()
+                notifications.append(notificationContent)
+            } catch {
+                WireLogger.notifications.error(
+                    "Failed to build notification: \(error.localizedDescription)"
+                )
+                notifications.append(UNMutableNotificationContent())
             }
         }
 
-        return UNMutableNotificationContent()
+        var notification = UNMutableNotificationContent()
+
+        switch notifications.count {
+        case 0:
+            return notification
+        case 1:
+            return notifications[0]
+        default:
+            let body = NotificationBody.bundled(messagesCount: notifications.count)
+            notification.body = body.make()
+            return notification
+        }
     }
 }

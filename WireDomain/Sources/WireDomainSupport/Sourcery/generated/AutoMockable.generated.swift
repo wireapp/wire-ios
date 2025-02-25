@@ -505,6 +505,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(hasReadReceiptsEnabled, conversation)
     }
 
+    // MARK: - name
+
+    public var nameFor_Invocations: [ZMConversation] = []
+    public var nameFor_MockMethod: ((ZMConversation) async -> String?)?
+    public var nameFor_MockValue: String??
+
+    public func name(for conversation: ZMConversation) async -> String? {
+        nameFor_Invocations.append(conversation)
+
+        if let mock = nameFor_MockMethod {
+            return await mock(conversation)
+        } else if let mock = nameFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `nameFor`")
+        }
+    }
+
     // MARK: - isConversationForcedReadOnly
 
     public var isConversationForcedReadOnly_Invocations: [ZMConversation] = []
@@ -718,6 +736,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(participantID, participantDomain, conversation, date)
     }
 
+    // MARK: - lastReadServerTimestamp
+
+    public var lastReadServerTimestamp_Invocations: [ZMConversation] = []
+    public var lastReadServerTimestamp_MockMethod: ((ZMConversation) async -> Date?)?
+    public var lastReadServerTimestamp_MockValue: Date??
+
+    public func lastReadServerTimestamp(_ conversation: ZMConversation) async -> Date? {
+        lastReadServerTimestamp_Invocations.append(conversation)
+
+        if let mock = lastReadServerTimestamp_MockMethod {
+            return await mock(conversation)
+        } else if let mock = lastReadServerTimestamp_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `lastReadServerTimestamp`")
+        }
+    }
+
     // MARK: - updateLastReadMessageTimestamp
 
     public var updateLastReadMessageTimestampIn_Invocations: [(lastReadMessage: LastRead, conversation: ZMConversation)] = []
@@ -856,6 +892,60 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
             return mock
         } else {
             fatalError("no mock for `fetchOtherUserIDInOneOnOneConversationConversation`")
+        }
+    }
+
+    // MARK: - conversationMutedMessageTypesIncludingAvailability
+
+    public var conversationMutedMessageTypesIncludingAvailability_Invocations: [ZMConversation] = []
+    public var conversationMutedMessageTypesIncludingAvailability_MockMethod: ((ZMConversation) async -> MutedMessageTypes)?
+    public var conversationMutedMessageTypesIncludingAvailability_MockValue: MutedMessageTypes?
+
+    public func conversationMutedMessageTypesIncludingAvailability(_ conversation: ZMConversation) async -> MutedMessageTypes {
+        conversationMutedMessageTypesIncludingAvailability_Invocations.append(conversation)
+
+        if let mock = conversationMutedMessageTypesIncludingAvailability_MockMethod {
+            return await mock(conversation)
+        } else if let mock = conversationMutedMessageTypesIncludingAvailability_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationMutedMessageTypesIncludingAvailability`")
+        }
+    }
+
+    // MARK: - isMessageSilenced
+
+    public var isMessageSilencedSenderIDConversation_Invocations: [(message: GenericMessage, senderID: UUID?, conversation: ZMConversation)] = []
+    public var isMessageSilencedSenderIDConversation_MockMethod: ((GenericMessage, UUID?, ZMConversation) async -> Bool)?
+    public var isMessageSilencedSenderIDConversation_MockValue: Bool?
+
+    public func isMessageSilenced(_ message: GenericMessage, senderID: UUID?, conversation: ZMConversation) async -> Bool {
+        isMessageSilencedSenderIDConversation_Invocations.append((message: message, senderID: senderID, conversation: conversation))
+
+        if let mock = isMessageSilencedSenderIDConversation_MockMethod {
+            return await mock(message, senderID, conversation)
+        } else if let mock = isMessageSilencedSenderIDConversation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMessageSilencedSenderIDConversation`")
+        }
+    }
+
+    // MARK: - shouldHideNotification
+
+    public var shouldHideNotification_Invocations: [Void] = []
+    public var shouldHideNotification_MockMethod: (() async -> Bool)?
+    public var shouldHideNotification_MockValue: Bool?
+
+    public func shouldHideNotification() async -> Bool {
+        shouldHideNotification_Invocations.append(())
+
+        if let mock = shouldHideNotification_MockMethod {
+            return await mock()
+        } else if let mock = shouldHideNotification_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `shouldHideNotification`")
         }
     }
 
@@ -1399,6 +1489,60 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         }
 
         await mock(messageEdit, conversation, senderID, genericMessage, date)
+    }
+
+    // MARK: - fetchMessage
+
+    public var fetchMessageIdConversationIDConversationDomain_Invocations: [(id: UUID?, conversationID: UUID, conversationDomain: String?)] = []
+    public var fetchMessageIdConversationIDConversationDomain_MockMethod: ((UUID?, UUID, String?) async -> ZMOTRMessage?)?
+    public var fetchMessageIdConversationIDConversationDomain_MockValue: ZMOTRMessage??
+
+    public func fetchMessage(id: UUID?, conversationID: UUID, conversationDomain: String?) async -> ZMOTRMessage? {
+        fetchMessageIdConversationIDConversationDomain_Invocations.append((id: id, conversationID: conversationID, conversationDomain: conversationDomain))
+
+        if let mock = fetchMessageIdConversationIDConversationDomain_MockMethod {
+            return await mock(id, conversationID, conversationDomain)
+        } else if let mock = fetchMessageIdConversationIDConversationDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMessageIdConversationIDConversationDomain`")
+        }
+    }
+
+    // MARK: - isMessageMentioningSelf
+
+    public var isMessageMentioningSelfText_Invocations: [Text] = []
+    public var isMessageMentioningSelfText_MockMethod: ((Text) async -> Bool)?
+    public var isMessageMentioningSelfText_MockValue: Bool?
+
+    public func isMessageMentioningSelf(text: Text) async -> Bool {
+        isMessageMentioningSelfText_Invocations.append(text)
+
+        if let mock = isMessageMentioningSelfText_MockMethod {
+            return await mock(text)
+        } else if let mock = isMessageMentioningSelfText_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMessageMentioningSelfText`")
+        }
+    }
+
+    // MARK: - isMessageQuotingSelf
+
+    public var isMessageQuotingSelfQuotedMessage_Invocations: [ZMOTRMessage?] = []
+    public var isMessageQuotingSelfQuotedMessage_MockMethod: ((ZMOTRMessage?) async -> Bool)?
+    public var isMessageQuotingSelfQuotedMessage_MockValue: Bool?
+
+    public func isMessageQuotingSelf(quotedMessage: ZMOTRMessage?) async -> Bool {
+        isMessageQuotingSelfQuotedMessage_Invocations.append(quotedMessage)
+
+        if let mock = isMessageQuotingSelfQuotedMessage_MockMethod {
+            return await mock(quotedMessage)
+        } else if let mock = isMessageQuotingSelfQuotedMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMessageQuotingSelfQuotedMessage`")
+        }
     }
 
 }
@@ -2721,6 +2865,60 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `selfUserInfo`")
+        }
+    }
+
+    // MARK: - name
+
+    public var nameFor_Invocations: [ZMUser] = []
+    public var nameFor_MockMethod: ((ZMUser) async -> String?)?
+    public var nameFor_MockValue: String??
+
+    public func name(for user: ZMUser) async -> String? {
+        nameFor_Invocations.append(user)
+
+        if let mock = nameFor_MockMethod {
+            return await mock(user)
+        } else if let mock = nameFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `nameFor`")
+        }
+    }
+
+    // MARK: - teamName
+
+    public var teamNameFor_Invocations: [ZMUser] = []
+    public var teamNameFor_MockMethod: ((ZMUser) async -> String?)?
+    public var teamNameFor_MockValue: String??
+
+    public func teamName(for user: ZMUser) async -> String? {
+        teamNameFor_Invocations.append(user)
+
+        if let mock = teamNameFor_MockMethod {
+            return await mock(user)
+        } else if let mock = teamNameFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `teamNameFor`")
+        }
+    }
+
+    // MARK: - id
+
+    public var idFor_Invocations: [ZMUser] = []
+    public var idFor_MockMethod: ((ZMUser) async -> UUID)?
+    public var idFor_MockValue: UUID?
+
+    public func id(for user: ZMUser) async -> UUID {
+        idFor_Invocations.append(user)
+
+        if let mock = idFor_MockMethod {
+            return await mock(user)
+        } else if let mock = idFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `idFor`")
         }
     }
 

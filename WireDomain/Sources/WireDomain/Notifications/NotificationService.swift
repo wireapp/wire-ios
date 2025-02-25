@@ -108,7 +108,7 @@ final class NotificationService: UNNotificationServiceExtension {
         let updateEventsRepository = UpdateEventsRepository(
             userID: userID,
             selfClientID: selfClientID,
-            // these were already initialized, resolving them
+            // these dependencies were already initialized, resolving them
             updateEventsAPI: Injector.resolve(),
             pushChannel: Injector.resolve(),
             updateEventDecryptor: Injector.resolve(),
@@ -123,7 +123,7 @@ final class NotificationService: UNNotificationServiceExtension {
     }
 
     private func finishWithNotification(content: UNNotificationContent) {
-        // TODO: [WPB-11175]
+        contentHandler?(content)
     }
 
     private func finishWithEmptyNotification() {

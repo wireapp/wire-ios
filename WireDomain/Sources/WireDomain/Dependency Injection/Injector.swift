@@ -165,6 +165,7 @@ enum Injector {
         invoker: @escaping ((Arguments) -> Any) -> Any
     ) -> Service {
         var resolvedInstance: Service?
+
         let type: Any.Type = if let optionalType = Service.self as? OptionalProtocol.Type {
             optionalType.wrappedType
         } else {
