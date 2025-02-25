@@ -35,7 +35,6 @@ final class GuestsAllowedCellDescription: ConversationMessageContentViewDescript
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 16
 
-    static let isFullWidth = false // TODO: make permanent constraints adjustments
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
@@ -61,9 +60,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageContentView {
 
     // MARK: Properties
 
-    struct GuestsAllowedCellConfiguration {}
-
-    typealias Configuration = GuestsAllowedCellConfiguration
+    typealias Configuration = Void
 
     weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
@@ -104,18 +101,20 @@ final class GuestsAllowedCell: UIView, ConversationMessageContentView {
     }
 
     private func createConstraints() {
+        let margins = conversationHorizontalMargins
+
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
             stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: margins.trailing),
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
         ])
     }
 
     // MARK: Configuration and actions
 
-    func configure(with object: GuestsAllowedCellConfiguration, animated: Bool) {}
+    func configure(with object: Configuration, animated: Bool) {}
 
     @objc
     private func inviteButtonTapped(_ sender: UIButton) {
