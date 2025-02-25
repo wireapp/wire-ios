@@ -22,10 +22,18 @@ import Foundation
 
 public struct BackendEnvironment {
 
+    /// The  name of the backend.
+
+    public let title: String
+
     /// The `URL` of the backend.
 
     public let url: URL
 
+    /// The `URL` of the accounts.
+
+    public let accountsURL: URL
+    
     /// The `URL` of the WebSocket endpoint.
 
     public let webSocketURL: URL
@@ -46,12 +54,16 @@ public struct BackendEnvironment {
     /// - Parameter proxySettings: The proxy settings for the backend if any.
 
     public init(
+        title: String,
         url: URL,
+        accountsURL: URL,
         webSocketURL: URL,
         pinnedKeys: [PinnedKey],
         proxySettings: ProxySettings?
     ) {
+        self.title = title
         self.url = url
+        self.accountsURL = accountsURL
         self.webSocketURL = webSocketURL
         self.pinnedKeys = pinnedKeys
         self.proxySettings = proxySettings

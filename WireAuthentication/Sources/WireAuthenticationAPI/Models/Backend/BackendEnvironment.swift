@@ -16,36 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-public struct BackendEnvironment {
-
-    public init(
-        title: String,
-        url: URL,
-        accountsURL: URL,
-        proxySettings: ProxySettings? = nil
-    ) {
-        self.title = title
-        self.url = url
-        self.accountsURL = accountsURL
-        self.proxySettings = proxySettings
-    }
-
-    /// The  name of the backend.
-    ///
-    public let title: String
-
-    /// The `URL` of the backend.
-
-    public let url: URL
-
-    /// The `URL` of the accounts.
-
-    public let accountsURL: URL
-
-    /// The proxy settings for the backend if any.
-
-    public let proxySettings: ProxySettings?
-
-}
+//import Foundation
+//
+//public struct BackendEnvironment {
+//
+//    public init(
+//        title: String,
+//        url: URL,
+//        accountsURL: URL,
+//        proxySettings: ProxySettings? = nil
+//    ) {
+//        self.title = title
+//        self.url = url
+//        self.accountsURL = accountsURL
+//        self.proxySettings = proxySettings
+//    }
+//
+//    /// The  name of the backend.
+//    ///
+//    public let title: String
+//
+//    /// The `URL` of the backend.
+//
+//    public let url: URL
+//
+//    /// The `URL` of the accounts.
+//
+//    public let accountsURL: URL
+//
+//    /// The proxy settings for the backend if any.
+//
+//    public let proxySettings: ProxySettings?
+//
+//}

@@ -27,7 +27,11 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let passwordValidator: any PasswordValidator
-    private let backendEnvironment: BackendEnvironment
+    //private let backendEnvironment: BackendEnvironment
+    private let accountsURL: URL
+    let backendName: String
+    private let backendURL: URL
+    let hasProxySupport: Bool
 
     let email: String
     let canCreateAccount: Bool
@@ -38,7 +42,11 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         email: String,
-        backendEnvironment: BackendEnvironment,
+        //backendEnvironment: BackendEnvironment,
+        accountsURL: URL,
+        backendName: String,
+        backendURL: URL,
+        hasProxySupport: Bool,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool
     ) {
@@ -47,24 +55,28 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
-        self.backendEnvironment = backendEnvironment
+        //self.backendEnvironment = backendEnvironment
+        self.accountsURL = accountsURL
+        self.backendName = backendName
+        self.backendURL = backendURL
+        self.hasProxySupport = hasProxySupport
     }
 
     private var forgotPasswordURL: URL {
-        backendEnvironment.accountsURL.appendingPathComponent("forgot")
+        accountsURL.appendingPathComponent("forgot")
     }
 
-    var backendName: String {
-        backendEnvironment.title
-    }
+//    var backendName: String {
+//        backendEnvironment.title
+//    }
 
     var backendInfo: String {
         [
             L10n.OnPremUserLogin.Alert.Message.backendName,
-            backendEnvironment.title,
+            backendName,
             "",
             L10n.OnPremUserLogin.Alert.Message.backendUrl,
-            backendEnvironment.url.absoluteString
+            backendURL.absoluteString
         ].joined(separator: "\n")
     }
 
@@ -72,16 +84,16 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription
     }
 
-    var hasProxySupport: Bool {
-        backendEnvironment.proxySettings != nil
-    }
+//    var hasProxySupport: Bool {
+//        backendEnvironment.proxySettings != nil
+//    }
 
     var proxyServer: String {
-        backendEnvironment.url.absoluteString
+        backendURL.absoluteString
     }
 
     func isValidPassword(_ password: String) -> Bool {
-        passwordValidator.validate(password)
+        passwordValidator.isPasswordValid(password)
     }
 
     func submitPassword(_ password: String) {

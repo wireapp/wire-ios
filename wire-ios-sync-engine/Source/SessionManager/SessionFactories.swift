@@ -62,7 +62,9 @@ open class AuthenticatedSessionFactory {
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
         let wireAPIBackendEnvironment = BackendEnvironment(
+            title: environment.title,
             url: environment.backendURL,
+            accountsURL: environment.accountsURL,
             webSocketURL: environment.backendWSURL,
             pinnedKeys: environment.trustData.map { trustData in
                 PinnedKey(

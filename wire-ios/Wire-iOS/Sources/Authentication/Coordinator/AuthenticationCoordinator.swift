@@ -369,7 +369,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 startAutomaticSSOFlow()
 
             case let .startLoginFlow(request, credentials):
-                startLoginFlow(request: request, proxyCredentials: credentials)
+                startLoginFlow(request: request, proxyCredentials: credentials)//
 
             case let .signOut(warn):
                 signOut(warn: warn)
