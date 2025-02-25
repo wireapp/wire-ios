@@ -92,4 +92,55 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         LoginViaSSOComponent()
     }
 
+    var onPremLoginComponent: OnPremLoginComponent {
+        return OnPremLoginComponent(parent: self)
+    }
+
+}
+
+protocol OnPremLoginComponentDependency: Dependency {
+    var defaultBackendEnvironment: BackendEnvironment { get }
+    var authenticationAPI: AuthenticationAPI { get }
+    var minTLSVersion: TLSVersion { get }
+    var defaultAPIVersion: APIVersion { get }
+}
+
+class OnPremLoginComponent: Component<OnPremLoginComponentDependency>, OnPremLoginBuilder {
+
+    private let overriddenBackendEnvironment: BackendEnvironment?
+
+    init(parent: Scope, overriddenBackendEnvironment: BackendEnvironment? = nil) {
+        self.overriddenBackendEnvironment = overriddenBackendEnvironment
+        super.init(parent: parent)
+    }
+
+    var authenticationAPI: AuthenticationAPI {
+        AuthenticationAPIBuilder(
+            networkService: NetworkService.make(
+                backendEnvironment: overriddenBackendEnvironment ?? dependency.defaultBackendEnvironment,
+                minTLSVersion: dependency.minTLSVersion
+            )
+        ).makeAPI(for: dependency.defaultAPIVersion)
+    }
+
+    @MainActor
+    func someView(overriddenBackendEnvironment: BackendEnvironment?) -> AnyView {
+        let effectiveBackendEnvironment = overriddenBackendEnvironment ?? dependency.defaultBackendEnvironment
+        let authenticationAPI = AuthenticationAPIBuilder(
+            networkService: NetworkService.make(
+                backendEnvironment: effectiveBackendEnvironment,
+                minTLSVersion: dependency.minTLSVersion
+            )
+        ).makeAPI(for: dependency.defaultAPIVersion)
+
+        return AnyView(Color.red)
+    }
+
+}
+
+package protocol OnPremLoginBuilder {
+
+    @MainActor
+    func someView(overriddenBackendEnvironment: BackendEnvironment?) -> AnyView
+
 }
