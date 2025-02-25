@@ -77,9 +77,7 @@ final class AuthenticationInterfaceBuilder {
             let assembly = WireAuthenticationAssembly()
             let rootView = assembly.assemble(
                 defaultBackendEnvironment: BackendEnvironment(
-                    title: environment.title,
                     url: environment.backendURL,
-                    accountsURL: environment.accountsURL,
                     webSocketURL: environment.backendWSURL,
                     pinnedKeys: environment.trustData.map { trustData in
                         PinnedKey(

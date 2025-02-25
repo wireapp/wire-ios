@@ -28,18 +28,16 @@ final class MockDependencies {
         RootViewModel()
     }
 
-//    private var backendEnvironment: BackendEnvironment {
-//        _backendEnvironment
-//    }
-//
-//    var _backendEnvironment = BackendEnvironment(
-//        title: "<backend name>",
-//        url: URL(string: "https://example.com")!,
-//        accountsURL: URL(string: "https://example.com")!,
-//        webSocketURL: URL(string: "https://example.com")!,
-//        pinnedKeys: [],
-//        proxySettings: nil
-//    )
+    private var backendEnvironment: LocalBackendEnvironment {
+        _backendEnvironment
+    }
+
+    var _backendEnvironment = LocalBackendEnvironment(
+        title: "backen name",
+        url: URL(string: "https://example.com")!,
+        accountsURL: URL(string: "https://example.com")!,
+        proxySettings: nil
+    )
 
     var rootView: RootView {
         RootView(
@@ -153,11 +151,7 @@ extension MockDependencies: LoginViaEmailOnPremViewBuilder {
             router: rootViewModel,
             loginViaEmailUseCase: self,
             email: email,
-            //backendEnvironment: backendEnvironment,
-            accountsURL: URL(string: "https://example.com")!,
-            backendName: "Backend name",
-            backendURL: URL(string: "https://example.com")!,
-            hasProxySupport: false,
+            backendEnvironment: backendEnvironment,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount
         )

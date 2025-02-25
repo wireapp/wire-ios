@@ -27,11 +27,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let passwordValidator: any PasswordValidator
-    //private let backendEnvironment: BackendEnvironment
-    private let accountsURL: URL
-    let backendName: String
-    private let backendURL: URL
-    let hasProxySupport: Bool
+    private let backendEnvironment: LocalBackendEnvironment
 
     let email: String
     let canCreateAccount: Bool
@@ -42,11 +38,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         email: String,
-        //backendEnvironment: BackendEnvironment,
-        accountsURL: URL,
-        backendName: String,
-        backendURL: URL,
-        hasProxySupport: Bool,
+        backendEnvironment: LocalBackendEnvironment,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool
     ) {
@@ -55,20 +47,16 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
-        //self.backendEnvironment = backendEnvironment
-        self.accountsURL = accountsURL
-        self.backendName = backendName
-        self.backendURL = backendURL
-        self.hasProxySupport = hasProxySupport
+        self.backendEnvironment = backendEnvironment
     }
 
     private var forgotPasswordURL: URL {
-        accountsURL.appendingPathComponent("forgot")
+        backendEnvironment.accountsURL.appendingPathComponent("forgot")
     }
 
-//    var backendName: String {
-//        backendEnvironment.title
-//    }
+    var backendName: String {
+        backendEnvironment.title
+    }
 
     var backendInfo: String {
         [
@@ -76,7 +64,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             backendName,
             "",
             L10n.OnPremUserLogin.Alert.Message.backendUrl,
-            backendURL.absoluteString
+            backendEnvironment.url.absoluteString
         ].joined(separator: "\n")
     }
 
@@ -84,12 +72,12 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription
     }
 
-//    var hasProxySupport: Bool {
-//        backendEnvironment.proxySettings != nil
-//    }
+    var hasProxySupport: Bool {
+        backendEnvironment.proxySettings != nil
+    }
 
     var proxyServer: String {
-        backendURL.absoluteString
+        backendEnvironment.url.absoluteString
     }
 
     func isValidPassword(_ password: String) -> Bool {
@@ -117,6 +105,81 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     func createAccount() {
         // TODO: [WPB-15926] Initiate account registration flow
+    }
+
+}
+
+// TODO: [WPB-16272] Remove duplication
+public struct LocalBackendEnvironment {
+
+    public init(
+        title: String,
+        url: URL,
+        accountsURL: URL,
+        proxySettings: LocalProxySettings? = nil
+    ) {
+        self.title = title
+        self.url = url
+        self.accountsURL = accountsURL
+        self.proxySettings = proxySettings
+    }
+
+    /// The  name of the backend.
+    ///
+    public let title: String
+
+    /// The `URL` of the backend.
+
+    public let url: URL
+
+    /// The `URL` of the accounts.
+
+    public let accountsURL: URL
+
+    /// The proxy settings for the backend if any.
+
+    public let proxySettings: LocalProxySettings?
+
+}
+
+/// Proxy settings for communicating with a backend server.
+
+// TODO: [WPB-16272] Remove duplication
+public enum LocalProxySettings {
+
+    /// Settings for an unauthenticated proxy.
+
+    case unauthenticated(host: String, port: Int)
+
+    /// Settings for an authenticated proxy.
+
+    case authenticated(host: String, port: Int, username: String, password: String)
+
+    /// Dictionary to be used with `URLSessionConfiguration.connectionProxyDictionary`.
+
+    func proxyDictionary() -> [AnyHashable: Any] {
+        let socksEnable = "SOCKSEnable"
+        let socksProxy = "SOCKSProxy"
+        let socksPort = "SOCKSPort"
+
+        var result: [AnyHashable: Any] = [
+            socksEnable: 1,
+            kCFProxyTypeKey: kCFProxyTypeSOCKS,
+            kCFStreamPropertySOCKSVersion: kCFStreamSocketSOCKSVersion5
+        ]
+
+        switch self {
+        case let .unauthenticated(host, port):
+            result[socksProxy] = host
+            result[socksPort] = port
+        case let .authenticated(host, port, username, password):
+            result[socksProxy] = host
+            result[socksPort] = port
+            result[kCFStreamPropertySOCKSUser] = username
+            result[kCFStreamPropertySOCKSPassword] = password
+        }
+
+        return result
     }
 
 }
