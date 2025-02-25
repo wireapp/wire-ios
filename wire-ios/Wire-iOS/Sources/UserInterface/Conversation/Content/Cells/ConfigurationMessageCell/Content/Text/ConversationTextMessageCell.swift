@@ -52,8 +52,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageContentView,
     var isSelected = false
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var menuPresenter: ConversationMessageCellMenuPresenter?
+    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var menuPresenter: ConversationMessageContentViewMenuPresenter?
 
     var ephemeralTimerTopInset: CGFloat {
         guard let font = messageTextView.font else {
@@ -148,12 +148,12 @@ final class ConversationTextMessageCell: UIView, ConversationMessageContentView,
 
 // MARK: - Description
 
-final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationTextMessageCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationTextMessageCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
@@ -187,7 +187,7 @@ extension ConversationTextMessageCellDescription {
     static func cells(
         for message: ZMConversationMessage,
         searchQueries: [String]
-    ) -> [AnyConversationMessageCellDescription] {
+    ) -> [AnyConversationMessageContentViewDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
         }
@@ -199,9 +199,9 @@ extension ConversationTextMessageCellDescription {
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
         searchQueries: [String]
-    ) -> [AnyConversationMessageCellDescription] {
+    ) -> [AnyConversationMessageContentViewDescription] {
 
-        var cells: [AnyConversationMessageCellDescription] = []
+        var cells: [AnyConversationMessageContentViewDescription] = []
 
         // Refetch the link attachments if needed
         if !Settings.disableLinkPreviews {
@@ -228,7 +228,7 @@ extension ConversationTextMessageCellDescription {
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
             let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
-            cells.append(AnyConversationMessageCellDescription(quoteCell))
+            cells.append(AnyConversationMessageContentViewDescription(quoteCell))
         }
 
         // Text
@@ -237,7 +237,7 @@ extension ConversationTextMessageCellDescription {
                 attributedString: messageText,
                 isObfuscated: message.isObfuscated
             )
-            cells.append(AnyConversationMessageCellDescription(textCell))
+            cells.append(AnyConversationMessageContentViewDescription(textCell))
         }
 
         guard !message.isObfuscated else {
@@ -251,11 +251,11 @@ extension ConversationTextMessageCellDescription {
                 attachment: attachment,
                 thumbnailResource: message.linkAttachmentImage
             )
-            cells.append(AnyConversationMessageCellDescription(attachmentCell))
+            cells.append(AnyConversationMessageContentViewDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview
             let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(message: message, data: textMessageData)
-            cells.append(AnyConversationMessageCellDescription(linkPreviewCell))
+            cells.append(AnyConversationMessageContentViewDescription(linkPreviewCell))
         }
 
         return cells

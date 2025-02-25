@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
     typealias View = FailedUsersSystemMessageCell
@@ -27,7 +27,7 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

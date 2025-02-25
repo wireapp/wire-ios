@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationAudioMessageCell: RoundedView, ConversationMessageContentView {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -34,7 +34,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     private let obfuscationView = ObfuscationView(icon: .microphone)
     private let restrictionView = AudioMessageRestrictionView()
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -119,7 +119,7 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
     }
 }
 
-final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationAudioMessageCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationAudioMessageCell
     let configuration: View.Configuration
 
@@ -131,7 +131,7 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
     let containsHighlightableContent: Bool = true
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var accessibilityIdentifier: String? {

@@ -27,13 +27,13 @@ struct BurstTimestampSenderMessageCellConfiguration {
     let accentColor: UIColor
 }
 
-final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
+final class BurstTimestampSenderMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = BurstTimestampSenderMessageCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
@@ -67,13 +67,13 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
 }
 
-final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
+final class BurstTimestampSenderMessageCell: UIView, ConversationMessageContentView {
 
     private let timestampView: ConversationCellBurstTimestampView
     private var configuration: BurstTimestampSenderMessageCellConfiguration?
     private var timer: Timer?
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
 
     override init(frame: CGRect) {

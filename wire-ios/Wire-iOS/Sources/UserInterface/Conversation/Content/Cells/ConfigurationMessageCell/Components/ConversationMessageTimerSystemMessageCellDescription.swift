@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationMessageTimerSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationMessageTimerSystemMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias LabelColors = SemanticColors.Label
@@ -30,7 +30,7 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

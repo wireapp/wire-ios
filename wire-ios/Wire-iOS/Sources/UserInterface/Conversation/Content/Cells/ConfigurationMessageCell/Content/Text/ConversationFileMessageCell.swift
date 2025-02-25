@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationFileMessageCell: RoundedView, ConversationMessageContentView {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -34,7 +34,7 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
     private let obfuscationView = ObfuscationView(icon: .paperclip)
     private let restrictionView = FileMessageRestrictionView()
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -121,7 +121,7 @@ extension ConversationFileMessageCell: TransferViewDelegate {
     }
 }
 
-final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationFileMessageCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationFileMessageCell
     let configuration: View.Configuration
 
@@ -133,7 +133,7 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     let containsHighlightableContent: Bool = true
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var accessibilityIdentifier: String? {

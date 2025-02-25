@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-protocol ConversationMessageCellMenuPresenter: AnyObject {
+protocol ConversationMessageContentViewMenuPresenter: AnyObject {
     func showMenu()
     func showSecuredMenu()
 }
@@ -38,8 +38,8 @@ extension UITableViewCell {
 
 }
 
-final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell,
-    SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
+final class ConversationMessageContentViewTableViewAdapter<C: ConversationMessageContentViewDescription>: UITableViewCell,
+    SelectableView, HighlightableView, ConversationMessageContentViewMenuPresenter {
 
     let cellView: C.View
     let ephemeralCountdownView: EphemeralCountdownView
@@ -153,7 +153,7 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
         ephemeralCountdownView.message = cellDescription?.message
     }
 
-    func configureConstraints(fullWidth: Bool) {
+    private func configureConstraints(fullWidth: Bool) {
         let margins = conversationHorizontalMargins
 
         leading.constant = fullWidth ? 0 : margins.left
@@ -195,7 +195,7 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
         display(messageActionsController: controller)
     }
 
-    func display(messageActionsController: MessageActionsViewController) {
+    private func display(messageActionsController: MessageActionsViewController) {
         cellView.delegate?.conversationMessageWantsToShowActionsController(
             cellView,
             actionsController: messageActionsController
@@ -308,21 +308,21 @@ final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDe
 
 extension UITableView {
 
-    func register<C: ConversationMessageCellDescription>(cell: C.Type) {
+    func register<C: ConversationMessageContentViewDescription>(cell: C.Type) {
         let reuseIdentifier = String(describing: C.self)
-        register(ConversationMessageCellTableViewAdapter<C>.self, forCellReuseIdentifier: reuseIdentifier)
+        register(ConversationMessageContentViewTableViewAdapter<C>.self, forCellReuseIdentifier: reuseIdentifier)
     }
 
-    func dequeueConversationCell<C: ConversationMessageCellDescription>(
+    func dequeueConversationCell<C: ConversationMessageContentViewDescription>(
         with description: C,
         for indexPath: IndexPath
-    ) -> ConversationMessageCellTableViewAdapter<C> {
+    ) -> ConversationMessageContentViewTableViewAdapter<C> {
         let reuseIdentifier = String(describing: C.self)
 
         let cell = dequeueReusableCell(
             withIdentifier: reuseIdentifier,
             for: indexPath
-        ) as! ConversationMessageCellTableViewAdapter<C>
+        ) as! ConversationMessageContentViewTableViewAdapter<C>
 
         cell.cellDescription = description
         cell.configure(

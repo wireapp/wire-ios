@@ -126,12 +126,12 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     }
 }
 
-final class ConversationPingCellDescription: ConversationMessageCellDescription {
+final class ConversationPingCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationPingCell
     let configuration: ConversationPingCell.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool {

@@ -47,7 +47,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCon
 
     // MARK: - Properties
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
 
     weak var message: ZMConversationMessage?
 
@@ -273,7 +273,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCon
 
 // MARK: - ConversationSenderMessageCellDescription
 
-final class ConversationSenderMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationSenderMessageCellDescription: ConversationMessageContentViewDescription {
 
     // MARK: - Properties
 
@@ -282,7 +282,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

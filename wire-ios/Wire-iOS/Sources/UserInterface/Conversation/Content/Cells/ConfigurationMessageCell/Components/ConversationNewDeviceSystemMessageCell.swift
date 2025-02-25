@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageContentView {
 
     static let userClientURL: URL = .init(string: "settings://user-client")!
 

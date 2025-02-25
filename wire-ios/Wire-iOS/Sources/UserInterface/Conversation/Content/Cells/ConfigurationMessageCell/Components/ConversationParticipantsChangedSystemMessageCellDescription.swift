@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationParticipantsChangedSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationParticipantsChangedSystemMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = ConversationParticipantsSystemMessageCell
     typealias LabelColors = SemanticColors.Label
@@ -29,7 +29,7 @@ final class ConversationParticipantsChangedSystemMessageCellDescription: Convers
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

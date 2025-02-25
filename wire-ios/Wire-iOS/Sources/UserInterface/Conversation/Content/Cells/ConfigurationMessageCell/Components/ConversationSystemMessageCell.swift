@@ -23,7 +23,7 @@ import WireDesign
 
 // MARK: - ConversationSystemMessageCell
 
-final class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageContentView {
 
     struct Configuration: Equatable {
         let icon: UIImage?

@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias System = L10n.Localizable.Content.System
@@ -38,7 +38,7 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
     let accessibilityLabel: String?
 
     var message: WireDataModel.ZMConversationMessage?
-    var delegate: ConversationMessageCellDelegate?
+    var delegate: ConversationMessageContentViewDelegate?
     var actionController: ConversationMessageActionController?
 
     init(systemMessageData: ZMSystemMessageData) {

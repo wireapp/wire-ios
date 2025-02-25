@@ -19,13 +19,13 @@
 import UIKit
 import WireDataModel
 
-final class ConversationEncryptionInfoSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationEncryptionInfoSystemMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = ConversationWarningSystemMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

@@ -21,13 +21,13 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = ConversationNewDeviceSystemMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

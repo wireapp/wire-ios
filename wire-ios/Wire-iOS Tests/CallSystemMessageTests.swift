@@ -93,7 +93,7 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
             data: systemMessage.systemMessageData!
         )
 
-        let cell = ConversationMessageCellTableViewAdapter<ConversationMissedCallSystemMessageCellDescription>(
+        let cell = ConversationMessageContentViewTableViewAdapter<ConversationMissedCallSystemMessageCellDescription>(
             style: .default,
             reuseIdentifier: nil
         )

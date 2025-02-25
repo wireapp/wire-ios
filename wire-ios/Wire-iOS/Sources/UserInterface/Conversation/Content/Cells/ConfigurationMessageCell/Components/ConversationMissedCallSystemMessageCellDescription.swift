@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationMissedCallSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationMissedCallSystemMessageCellDescription: ConversationMessageContentViewDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias IconColors = SemanticColors.Icon
@@ -29,7 +29,7 @@ final class ConversationMissedCallSystemMessageCellDescription: ConversationMess
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

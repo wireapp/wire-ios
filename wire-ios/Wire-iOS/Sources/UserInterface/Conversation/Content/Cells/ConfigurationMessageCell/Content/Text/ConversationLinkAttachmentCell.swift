@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
+final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentView, HighlightableView, ContextMenuDelegate {
 
     struct Configuration {
         let attachment: LinkAttachment
@@ -37,7 +37,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         return view
     }()
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -140,12 +140,12 @@ extension ConversationLinkAttachmentCell: LinkViewDelegate {
     }
 }
 
-final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDescription {
+final class ConversationLinkAttachmentCellDescription: ConversationMessageContentViewDescription {
     typealias View = ConversationLinkAttachmentCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageContentViewDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
