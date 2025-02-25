@@ -40,7 +40,7 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
     let pushSupportedProtocolsSync: any PushSupportedProtocolsSyncProtocol
     let userClientsLocalStore: any UserClientsLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
-    
+
     private let logger = WireLogger(tag: "supported-protocols")
 
     public func invoke() async throws {
@@ -71,7 +71,7 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
         if currentSelfUserSupportedProtocols.contains(.mls) {
             result.insert(.mls)
         }
-        
+
         /// We support mls if the backend does and all MLS clients are ready.
         if remoteProtocols.contains(.mls), allClientsMLSReady {
             result.insert(.mls)

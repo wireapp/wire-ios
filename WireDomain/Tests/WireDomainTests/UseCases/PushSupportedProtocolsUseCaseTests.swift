@@ -37,7 +37,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     private var modelHelper: ModelHelper!
 
     private var selfUser: ZMUser!
-    
+
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
@@ -53,7 +53,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         mockPushSupportedProtocolsSync = MockPushSupportedProtocolsSyncProtocol()
         userClientsLocalStore = MockUserClientsLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
-        
+
         sut = PushSupportedProtocolsUseCase(
             featureConfigRepository: FeatureConfigRepository(
                 featureConfigsAPI: MockFeatureConfigsAPI(),
@@ -63,7 +63,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
             userClientsLocalStore: userClientsLocalStore,
             userLocalStore: userLocalStore
         )
-        
+
         selfUser = await context.perform { [context] in
             self.modelHelper.createSelfUser(in: context)
         }
@@ -99,7 +99,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         // Then
         XCTAssertEqual([WireAPI.MessageProtocol.mls, WireAPI.MessageProtocol.proteus], pushedProtocols)
     }
-    
+
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteus() async throws {
         // Given
         await setup(remoteSupportedProtocols: [.proteus])
