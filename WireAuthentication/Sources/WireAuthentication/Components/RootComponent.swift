@@ -56,7 +56,7 @@ class RootComponent: BootstrapComponent {
         shared { RootViewModel() }
     }
 
-    @MainActor var rootView: some View {
+    @MainActor var view: some View {
         RootView(
             viewModel: viewModel,
             factory: self
