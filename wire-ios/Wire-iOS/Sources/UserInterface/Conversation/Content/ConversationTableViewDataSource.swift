@@ -142,7 +142,7 @@ final class ConversationTableViewDataSource: NSObject {
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
                 cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
-                description.configure(cell: cell, animated: true)
+                description.configureCell(cell, animated: true)
             }
         }
 
