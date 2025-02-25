@@ -39,8 +39,24 @@ class CountSelfMLSKeyPackagesActionHandler: ActionHandler<CountSelfMLSKeyPackage
             return nil
         }
 
+        var path = "/mls/key-packages/self/\(action.clientID)/count"
+
+        if let ciphersuite = action.ciphersuite {
+
+            let ciphersuiteHexString = String(format: "0x%04X", ciphersuite.rawValue)
+            let queryItems = [URLQueryItem(name: "ciphersuite", value: ciphersuiteHexString)]
+
+            var urlComponents = URLComponents(string: path)
+            urlComponents!.queryItems = queryItems
+            path = urlComponents!.string!
+
+        } else if apiVersion >= .v8 {
+            action.notifyResult(.failure(.ciphersuiteNotProvided))
+            return nil
+        }
+
         return ZMTransportRequest(
-            path: "/mls/key-packages/self/\(action.clientID)/count",
+            path: path,
             method: .get,
             payload: nil,
             apiVersion: apiVersion.rawValue
