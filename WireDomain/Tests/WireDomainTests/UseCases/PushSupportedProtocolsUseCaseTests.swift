@@ -30,11 +30,14 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     private var sut: PushSupportedProtocolsUseCase!
     private var mockPushSupportedProtocolsSync: MockPushSupportedProtocolsSyncProtocol!
     private var userClientsLocalStore: MockUserClientsLocalStoreProtocol!
+    private var userLocalStore: MockUserLocalStoreProtocol!
 
     private var coreDataStackHelper: CoreDataStackHelper!
     private var stack: CoreDataStack!
     private var modelHelper: ModelHelper!
 
+    private var selfUser: ZMUser!
+    
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
@@ -49,19 +52,28 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
         mockPushSupportedProtocolsSync = MockPushSupportedProtocolsSyncProtocol()
         userClientsLocalStore = MockUserClientsLocalStoreProtocol()
-
+        userLocalStore = MockUserLocalStoreProtocol()
+        
         sut = PushSupportedProtocolsUseCase(
             featureConfigRepository: FeatureConfigRepository(
                 featureConfigsAPI: MockFeatureConfigsAPI(),
                 featureConfigLocalStore: FeatureConfigLocalStore(context: context)
             ),
             pushSupportedProtocolsSync: mockPushSupportedProtocolsSync,
-            userClientsLocalStore: userClientsLocalStore
+            userClientsLocalStore: userClientsLocalStore,
+            userLocalStore: userLocalStore
         )
+        
+        selfUser = await context.perform { [context] in
+            self.modelHelper.createSelfUser(in: context)
+        }
+        userLocalStore.fetchSelfUser_MockValue = selfUser
+        userLocalStore.fetchSelfUserSupportedProtocols_MockValue = Set()
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
+        selfUser = nil
         sut = nil
         stack = nil
         modelHelper = nil
@@ -74,6 +86,20 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
     // MARK: - Tests
 
+    func test_CalculateSupportedProtocols_PreviousSupportedProtocolMLS_DoesNotRemoveMLS() async throws {
+        // Given
+        await setup(remoteSupportedProtocols: [.proteus, .mls])
+
+        userLocalStore.fetchSelfUserSupportedProtocols_MockValue = [.proteus, .mls]
+        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
+        mockPushSupportedProtocolsSync.pushSupportedProtocols_MockMethod = { _ in }
+
+        try await sut.invoke()
+        let pushedProtocols = try XCTUnwrap(mockPushSupportedProtocolsSync.pushSupportedProtocols_Invocations.last)
+        // Then
+        XCTAssertEqual([WireAPI.MessageProtocol.mls, WireAPI.MessageProtocol.proteus], pushedProtocols)
+    }
+    
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteus() async throws {
         // Given
         await setup(remoteSupportedProtocols: [.proteus])
@@ -212,7 +238,6 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteMLS() async throws {
         // Given
         await setup(remoteSupportedProtocols: [.mls])
-
         mockPushSupportedProtocolsSync.pushSupportedProtocols_MockMethod = { _ in }
         userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
 

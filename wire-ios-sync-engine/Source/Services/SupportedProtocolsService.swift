@@ -35,7 +35,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     private let featureRepository: FeatureRepositoryInterface
     private let selfUserProvider: SelfUserProviderProtocol
     private let logger = WireLogger.supportedProtocols
-
+    
     // MARK: - Life cycle
 
     public convenience init(context: NSManagedObjectContext) {
@@ -61,7 +61,8 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
         let remoteProtocols = remotelySupportedProtocols()
         let migrationState = currentMigrationState()
         let allClientsMLSReady = allSelfUserClientsAreActiveMLSClients()
-
+        let currentSelfUserSupportedProtocols = selfUserSupportedProtocols()
+        
         logger
             .debug(
                 "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
@@ -74,6 +75,11 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
             result.insert(.proteus)
         }
 
+        // SelfUser supports mls (other client) at the moment, so we should not remove it
+        if currentSelfUserSupportedProtocols.contains(.mls) {
+            result.insert(.mls)
+        }
+        
         // All clients are mls ready so we support it if the backend does.
         if remoteProtocols.contains(.mls), allClientsMLSReady {
             result.insert(.mls)
@@ -157,6 +163,9 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
         selfUserProvider.fetchSelfUser().clients.all(\.isActiveMLSClient)
     }
 
+    private func selfUserSupportedProtocols() -> Set<MessageProtocol> {
+        selfUserProvider.fetchSelfUser().supportedProtocols
+    }
 }
 
 // MARK: -
