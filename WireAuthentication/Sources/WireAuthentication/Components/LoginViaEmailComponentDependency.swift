@@ -49,7 +49,9 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, Login
             accountsURL: dependency.accountsURL,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
-            bridge: dependency.bridge
+            onCreateAccount: { [weak dependency] in
+                dependency?.bridge.registerAccount()
+            }
         )
     }
 

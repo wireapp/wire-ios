@@ -33,8 +33,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
     private var loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol!
     private var passwordValidator: MockPasswordValidator!
     private var sut: LoginViaEmailViewModel!
-    private var onFlowCompletionCalled: AuthenticationResult?
-    private var onRegisterAccountCalled = false
+    private var onCreateAccountCalled = false
     private var isLoadingCalls: [Bool] = []
     private var cancellables: Set<AnyCancellable> = []
 
@@ -52,10 +51,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
             accountsURL: URL(string: "https://www.example.com")!,
             passwordValidator: passwordValidator,
             canCreateAccount: true,
-            bridge: WireAuthenticationBridge(
-                onFlowCompletion: { [self] in onFlowCompletionCalled = $0 },
-                onRegisterAccount: { [self] in onRegisterAccountCalled = true }
-            )
+            onCreateAccount: { [self] in onCreateAccountCalled = true }
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
@@ -66,8 +62,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
         loginViaEmailUseCase = nil
         passwordValidator = nil
         sut = nil
-        onFlowCompletionCalled = nil
-        onRegisterAccountCalled = false
+        onCreateAccountCalled = false
         isLoadingCalls = []
     }
 
@@ -103,14 +98,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
         // then
         XCTAssertNil(sut.alert)
         XCTAssertEqual(isLoadingCalls, [true, false])
-        XCTAssertEqual(
-            onFlowCompletionCalled,
-            AuthenticationResult(
-                userID: Scaffolding.someAccessToken.userID,
-                cookies: [Scaffolding.someCookie],
-                accessToken: Scaffolding.someAccessToken
-            )
-        )
+        // TODO: [WPB-16276] Assert it navigates to first time login screen
     }
 
     @MainActor
@@ -229,7 +217,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
         sut.createAccount()
 
         // then
-        XCTAssertTrue(onRegisterAccountCalled)
+        XCTAssertTrue(onCreateAccountCalled)
     }
 
     // MARK: - showPasswordRules tests

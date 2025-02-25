@@ -47,7 +47,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let forgotPasswordURL: URL
     private let passwordValidator: any PasswordValidator
-    private let bridge: WireAuthenticationBridge
+    private let onCreateAccount: () -> Void
 
     let email: String
     let canCreateAccount: Bool
@@ -61,7 +61,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool,
-        bridge: WireAuthenticationBridge
+        onCreateAccount: @escaping () -> Void
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
@@ -69,7 +69,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
-        self.bridge = bridge
+        self.onCreateAccount = onCreateAccount
     }
 
     var localizedPasswordRules: String? {
@@ -93,7 +93,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         do {
             let (cookies, token) = try await loginTask.value
-            bridge.completeFlow(AuthenticationResult(userID: token.userID, cookies: cookies, accessToken: token))
+            // TODO: [WPB-16276] Navigate to the first time login screen
             WireLogger.authentication.info("login via email succeeded")
         } catch {
             WireLogger.authentication.info("login via email returned an error: \(error)")
@@ -125,7 +125,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func createAccount() {
-        bridge.registerAccount()
+        onCreateAccount()
     }
 
     // MARK: - Private
