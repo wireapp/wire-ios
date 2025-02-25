@@ -38,11 +38,11 @@ extension UITableViewCell {
 
 }
 
-class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView,
-    HighlightableView, ConversationMessageCellMenuPresenter {
+final class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell,
+    SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
 
-    var cellView: C.View
-    var ephemeralCountdownView: EphemeralCountdownView
+    let cellView: C.View
+    let ephemeralCountdownView: EphemeralCountdownView
 
     var cellDescription: C? {
         didSet {
