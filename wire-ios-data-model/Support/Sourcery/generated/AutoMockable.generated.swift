@@ -4617,16 +4617,16 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - commitPendingProposalsIfNeeded
 
     public var commitPendingProposalsIfNeeded_Invocations: [Void] = []
-    public var commitPendingProposalsIfNeeded_MockMethod: (() -> Void)?
+    public var commitPendingProposalsIfNeeded_MockMethod: (() async -> Void)?
 
-    public func commitPendingProposalsIfNeeded() {
+    public func commitPendingProposalsIfNeeded() async {
         commitPendingProposalsIfNeeded_Invocations.append(())
 
         guard let mock = commitPendingProposalsIfNeeded_MockMethod else {
             fatalError("no mock for `commitPendingProposalsIfNeeded`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - commitPendingProposals
@@ -5530,6 +5530,21 @@ public class MockSyncStatusProtocol: SyncStatusProtocol {
         }
 
         mock()
+    }
+
+    // MARK: - recoverWithQuickSync
+
+    public var recoverWithQuickSync_Invocations: [Void] = []
+    public var recoverWithQuickSync_MockMethod: (() async -> Void)?
+
+    public func recoverWithQuickSync() async {
+        recoverWithQuickSync_Invocations.append(())
+
+        guard let mock = recoverWithQuickSync_MockMethod else {
+            fatalError("no mock for `recoverWithQuickSync`")
+        }
+
+        await mock()
     }
 
 }

@@ -311,7 +311,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         )
 
         syncMOC.performAndWait {
-            sut.didFinishQuickSync()
+            sut.didFinishQuickSync(isRecovering: false)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
@@ -487,7 +487,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             syncMOC.saveOrRollback()
 
             // WHEN
-            sut.didFinishQuickSync()
+            sut.didFinishQuickSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -535,7 +535,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             let mls = Feature.MLS(status: .enabled, config: .init())
             self.sut.featureRepository.storeMLS(mls)
 
-            sut.didFinishQuickSync()
+            sut.didFinishQuickSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -555,7 +555,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
 
             // WHEN
-            sut.didFinishQuickSync()
+            sut.didFinishQuickSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
