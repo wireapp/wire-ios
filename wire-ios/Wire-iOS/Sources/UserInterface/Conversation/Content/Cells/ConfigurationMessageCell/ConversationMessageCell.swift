@@ -122,6 +122,9 @@ protocol ConversationMessageContentViewDescription: AnyObject {
     var topMargin: Float { get set }
 
     /// Whether the view occupies the entire width of the cell.
+    static var isFullWidth: Bool { get }
+
+    /// Whether the view occupies the entire width of the cell.
     var isFullWidth: Bool { get }
 
     /// Whether the cell supports actions.
@@ -156,6 +159,11 @@ protocol ConversationMessageContentViewDescription: AnyObject {
     func willDisplayCell()
     func didEndDisplayingCell()
     func isConfigurationEqual(with other: Any) -> Bool
+}
+
+// TODO: remove
+extension ConversationMessageContentViewDescription {
+    static var isFullWidth: Bool { fatalError("TODO: implement by conforming types") }
 }
 
 // MARK: - Table View Dequeuing

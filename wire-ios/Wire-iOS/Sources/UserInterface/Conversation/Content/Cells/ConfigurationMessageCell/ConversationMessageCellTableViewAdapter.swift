@@ -60,9 +60,9 @@ final class ConversationMessageContentViewTableViewAdapter<
         }
     }
 
-    var isFullWidth: Bool = false {
+    var isFullWidth = false {
         didSet {
-            configureConstraints(fullWidth: isFullWidth)
+            configureConstraints(isFullWidth: isFullWidth)
         }
     }
 
@@ -140,6 +140,8 @@ final class ConversationMessageContentViewTableViewAdapter<
         cellView.addGestureRecognizer(singleTapGesture)
         singleTapGesture.require(toFail: doubleTapGesture)
         singleTapGesture.delegate = self
+
+        // configureConstraints(isFullWidth: C.isFullWidth)
     }
 
     @available(*, unavailable)
@@ -155,17 +157,18 @@ final class ConversationMessageContentViewTableViewAdapter<
         ephemeralCountdownView.message = cellDescription?.message
     }
 
-    private func configureConstraints(fullWidth: Bool) {
+    private func configureConstraints(isFullWidth: Bool) {
         let margins = conversationHorizontalMargins
 
-        leading.constant = fullWidth ? 0 : margins.left
-        trailing.constant = fullWidth ? 0 : -margins.right
+        // let isFullWidth = C.isFullWidth
+        leading.constant = isFullWidth ? 0 : margins.left
+        trailing.constant = isFullWidth ? 0 : -margins.right
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        configureConstraints(fullWidth: isFullWidth)
+        configureConstraints(isFullWidth: isFullWidth)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
