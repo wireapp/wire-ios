@@ -108,7 +108,7 @@ actor EventProcessor: UpdateEventProcessor {
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
 
-            let publicKeys = try? self.earService.fetchPublicKeys()
+            let publicKeys = try? await self.earService.fetchPublicKeys()
 
             if duringQuickSync {
                 NotificationCenter.default.post(name: .didStartDecryptingEventsNotification, object: self.syncContext.notificationContext)
@@ -197,7 +197,7 @@ actor EventProcessor: UpdateEventProcessor {
                 attributes: .safePublic
             )
 
-            guard let self else { return }
+            guard let self, !decryptedUpdateEvents.isEmpty else { return }
 
             let date = Date()
             let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)
