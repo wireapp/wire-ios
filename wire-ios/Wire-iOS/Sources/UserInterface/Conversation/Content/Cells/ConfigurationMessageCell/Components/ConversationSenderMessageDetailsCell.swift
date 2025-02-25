@@ -36,7 +36,7 @@ enum TeamRoleIndicator {
 
 // MARK: - ConversationSenderMessageDetailsCell
 
-final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
+final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageContentView {
 
     struct Configuration {
         let user: UserType
@@ -285,7 +285,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 16
