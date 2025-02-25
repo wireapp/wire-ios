@@ -40,7 +40,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
         // WHEN && THEN
         XCTAssertEqual(cellDescription.topMargin, .zero)
-        XCTAssertTrue(cellDescription.isFullWidth)
+        XCTAssertTrue(MLSMigrationCellDescription.isFullWidth)
         XCTAssertFalse(cellDescription.supportsActions)
         XCTAssertFalse(cellDescription.showEphemeralTimer)
         XCTAssertFalse(cellDescription.containsHighlightableContent)

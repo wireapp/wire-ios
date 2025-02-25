@@ -153,7 +153,7 @@ final class ConversationButtonMessageCellDescription: ConversationMessageContent
 
     var topMargin: Float = .ConversationButtonMessageCell.verticalInset
 
-    var isFullWidth: Bool = false
+    static let isFullWidth = false
 
     var supportsActions: Bool = false
 

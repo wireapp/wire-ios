@@ -35,7 +35,7 @@ final class GuestsAllowedCellDescription: ConversationMessageContentViewDescript
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 16
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 

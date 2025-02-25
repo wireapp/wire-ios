@@ -46,7 +46,7 @@ final class UnknownMessageCellDescription: ConversationMessageContentViewDescrip
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = false
     let containsHighlightableContent = false
 

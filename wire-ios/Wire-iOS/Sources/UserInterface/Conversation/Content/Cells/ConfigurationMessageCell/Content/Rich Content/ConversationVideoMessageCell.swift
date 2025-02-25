@@ -142,7 +142,7 @@ final class ConversationVideoMessageCellDescription: ConversationMessageContentV
     var topMargin: Float = 8
     var showEphemeralTimer: Bool = false
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

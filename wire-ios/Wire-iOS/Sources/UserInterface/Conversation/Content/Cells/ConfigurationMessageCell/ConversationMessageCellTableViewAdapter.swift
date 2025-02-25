@@ -60,12 +60,6 @@ final class ConversationMessageContentViewTableViewAdapter<
         }
     }
 
-    var isFullWidth = false {
-        didSet {
-            configureConstraints(isFullWidth: isFullWidth)
-        }
-    }
-
     override var accessibilityIdentifier: String? {
         get {
             cellDescription?.accessibilityIdentifier
@@ -128,6 +122,7 @@ final class ConversationMessageContentViewTableViewAdapter<
             top,
             bottom
         ])
+        configureConstraints()
 
         self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         contentView.addGestureRecognizer(longPressGesture)
@@ -140,8 +135,6 @@ final class ConversationMessageContentViewTableViewAdapter<
         cellView.addGestureRecognizer(singleTapGesture)
         singleTapGesture.require(toFail: doubleTapGesture)
         singleTapGesture.delegate = self
-
-        // configureConstraints(isFullWidth: C.isFullWidth)
     }
 
     @available(*, unavailable)
@@ -149,26 +142,24 @@ final class ConversationMessageContentViewTableViewAdapter<
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with object: C.View.Configuration, fullWidth: Bool, topMargin: Float) {
+    func configure(with object: C.View.Configuration, topMargin: Float) {
         cellView.configure(with: object, animated: false)
-        isFullWidth = fullWidth
         self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
     }
 
-    private func configureConstraints(isFullWidth: Bool) {
+    private func configureConstraints() {
         let margins = conversationHorizontalMargins
 
-        // let isFullWidth = C.isFullWidth
-        leading.constant = isFullWidth ? 0 : margins.left
-        trailing.constant = isFullWidth ? 0 : -margins.right
+        leading.constant = C.isFullWidth ? 0 : margins.left
+        trailing.constant = C.isFullWidth ? 0 : -margins.right
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        configureConstraints(isFullWidth: isFullWidth)
+        configureConstraints()
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -332,7 +323,6 @@ extension UITableView {
         cell.cellDescription = description
         cell.configure(
             with: description.configuration,
-            fullWidth: description.isFullWidth,
             topMargin: description.topMargin
         )
 

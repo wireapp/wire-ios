@@ -44,7 +44,7 @@ final class MockCellDescription<T>: ConversationMessageContentViewDescription {
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
-    var isFullWidth: Bool = false
+    static var isFullWidth: Bool { false }
     var supportsActions: Bool = true
     var containsHighlightableContent: Bool = true
 

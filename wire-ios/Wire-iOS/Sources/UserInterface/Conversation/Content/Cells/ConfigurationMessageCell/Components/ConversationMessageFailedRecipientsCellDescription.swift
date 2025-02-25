@@ -34,7 +34,7 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 5
 
-    var isFullWidth: Bool = true
+    static let isFullWidth = true
     var supportsActions: Bool = false
     var containsHighlightableContent: Bool = false
 

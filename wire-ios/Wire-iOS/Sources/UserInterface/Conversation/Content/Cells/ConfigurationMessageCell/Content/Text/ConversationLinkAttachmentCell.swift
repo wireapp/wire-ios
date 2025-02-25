@@ -152,7 +152,7 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageConten
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 8
 
-    let isFullWidth: Bool = false
+    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

@@ -112,7 +112,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageConten
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 2
-    let isFullWidth: Bool = true
+    static let isFullWidth = true
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
