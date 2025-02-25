@@ -80,7 +80,6 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentVi
         NSLayoutConstraint.activate([
             attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
-            // TODO: ensure `lessThanOrEqualTo` was used wrong before
             trailingAnchor.constraint(lessThanOrEqualTo: attachmentView.trailingAnchor, constant: margins.trailing),
             bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint

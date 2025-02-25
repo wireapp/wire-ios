@@ -142,7 +142,6 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageContentVie
 
             errorLabelTopConstraint,
             errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
-            // TODO: ensure `lessThanOrEqualTo` was used wrong before!
             trailingAnchor.constraint(lessThanOrEqualTo: errorLabel.trailingAnchor, constant: margins.trailing),
             bottomAnchor.constraint(equalTo: errorLabel.bottomAnchor)
         ])
