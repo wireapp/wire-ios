@@ -61,18 +61,19 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageConten
         transferView.delegate = self
         setup(transferView)
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func configureConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.trailing),
+            bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
 
@@ -142,7 +143,6 @@ final class ConversationVideoMessageCellDescription: ConversationMessageContentV
     var topMargin: Float = 8
     var showEphemeralTimer: Bool = false
 
-    static let isFullWidth = false // TODO: make permanent constraints adjustments
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
