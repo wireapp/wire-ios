@@ -89,6 +89,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageContentView {
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.alignment = .leading
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
         [titleLabel, inviteButton].forEach(stackView.addArrangedSubview)
         titleLabel.numberOfLines = 0
@@ -103,7 +104,6 @@ final class GuestsAllowedCell: UIView, ConversationMessageContentView {
     private func createConstraints() {
         let margins = conversationHorizontalMargins
 
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
             stackView.topAnchor.constraint(equalTo: topAnchor),
