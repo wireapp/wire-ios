@@ -22,4 +22,26 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class VerifyLoginViewModel: ObservableObject {}
+public final class VerificationCodeViewModel: ObservableObject {
+
+    @Published var code: [String]
+    let email: String
+    let password: String
+
+    package init(
+        email: String,
+        password: String,
+        code: [String] = ["", "", "", "", "", ""]
+    ) {
+        self.email = email
+        self.password = password
+        self.code = code
+    }
+
+    func confirm() async {}
+
+    func resend() async {
+        // TODO: [WPB-15950] Implement
+    }
+
+}
