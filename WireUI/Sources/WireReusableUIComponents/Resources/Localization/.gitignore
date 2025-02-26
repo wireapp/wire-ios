@@ -1,0 +1,22 @@
+# Whitelist supported strings
+*.lproj/
+!Base.lproj/
+!ar.lproj/
+!da.lproj/
+!de.lproj/
+!es.lproj/
+!et.lproj/
+!fi.lproj/
+!fr.lproj/
+!it.lproj/
+!ja.lproj/
+!lt.lproj/
+!nl.lproj/
+!pl.lproj/
+!pt-BR.lproj/
+!ru.lproj/
+!sl.lproj/
+!tr.lproj/
+!uk.lproj/
+!zh-Hans.lproj/
+!zh-Hant.lproj/
