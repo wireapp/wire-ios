@@ -63,8 +63,8 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
 
         self.message = genericMessage
 
-        let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
-        let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
+        let conversationLocalStore: ConversationLocalStoreProtocol
+        let userLocalStore: UserLocalStoreProtocol
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
@@ -228,7 +228,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
             return UNMutableNotificationContent()
         }
 
-        let messageLocalStore: MessageLocalStoreProtocol = Injector.resolve()
+        let messageLocalStore: MessageLocalStoreProtocol
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
         let quotedMessage = await messageLocalStore.fetchMessage(
             id: quotedMessageId,
@@ -297,7 +297,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
 
         if ephemeral.hasText {
             let textMessageData = ephemeral.text
-            let messageLocalStore: MessageLocalStoreProtocol = Injector.resolve()
+            let messageLocalStore: MessageLocalStoreProtocol
             let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
             let quotedMessage = await messageLocalStore.fetchMessage(
                 id: quotedMessageId,

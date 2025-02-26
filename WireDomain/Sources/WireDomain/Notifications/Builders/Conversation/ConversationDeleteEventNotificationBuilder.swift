@@ -38,8 +38,8 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
         senderID: UserID
     ) async {
 
-        let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
-        let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
+        let conversationLocalStore: ConversationLocalStoreProtocol
+        let userLocalStore: UserLocalStoreProtocol
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,

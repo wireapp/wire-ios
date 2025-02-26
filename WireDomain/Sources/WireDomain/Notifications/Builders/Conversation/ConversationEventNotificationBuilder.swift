@@ -39,8 +39,8 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
     ) async {
         self.event = event
 
-        let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
-        let userRepository: UserRepositoryProtocol = Injector.resolve()
+        let conversationLocalStore: ConversationLocalStoreProtocol
+        let userRepository: UserRepositoryProtocol
 
         let isSelfUser = try? await userRepository.isSelfUser(
             id: event.senderID.uuid,

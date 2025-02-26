@@ -41,8 +41,8 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
         conversationID: WireAPI.QualifiedID?,
         senderID: UUID?
     ) async {
-        let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
-        let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
+        let conversationLocalStore: ConversationLocalStoreProtocol
+        let userLocalStore: UserLocalStoreProtocol
         let isPendingConnection = userConnectionEvent.connection.status == .pending
 
         let selfUser = await userLocalStore.fetchSelfUser()

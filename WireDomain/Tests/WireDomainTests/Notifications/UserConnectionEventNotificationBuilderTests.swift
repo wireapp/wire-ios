@@ -17,22 +17,21 @@
 //
 
 import XCTest
+import WireTesting
+@testable import WireAPI
 @testable import WireDomain
 
-final class UserConnectionNotificationBuilderTests: XCTestCase {
+final class UserConnectionEventNotificationBuilderTests: XCTestCase {
     private var sut: UserConnectionEventNotificationBuilder!
 
     func testGenerateUserConnectionNotifications() async {
-        let connectionStatuses: [UserConnectionEventNotificationBuilder.ConnectionStatus] = [
-            .joined,
-            .pending,
-            .accepted
-        ]
+        let connectionEvents = [Scaffolding.userPendingConnectionEvent, Scaffolding.userAcceptedConnectionEvent]
 
-        for connectionStatus in connectionStatuses {
-            sut = UserConnectionNotificationBuilder(
-                connectionStatus: connectionStatus,
-                username: Scaffolding.username
+        for connectionEvent in connectionEvents {
+            sut = await UserConnectionEventNotificationBuilder(
+                userConnectionEvent: connectionEvent,
+                conversationID: nil,
+                senderID: nil
             )
 
             let notification = await sut.buildContent()
@@ -40,10 +39,7 @@ final class UserConnectionNotificationBuilderTests: XCTestCase {
             XCTAssertEqual(notification.title, "")
             XCTAssertEqual(notification.sound, UNNotificationSound(named: .init("default")))
 
-            switch connectionStatus {
-            case .joined:
-                XCTAssertEqual(notification.body, "\(Scaffolding.username) just joined Wire")
-                XCTAssertEqual(notification.categoryIdentifier, NotificationCategory.nonActionable.rawValue)
+            switch connectionEvent.connection.status {
 
             case .pending:
                 XCTAssertEqual(notification.body, "\(Scaffolding.username) wants to connect")
@@ -52,12 +48,43 @@ final class UserConnectionNotificationBuilderTests: XCTestCase {
             case .accepted:
                 XCTAssertEqual(notification.body, "You and \(Scaffolding.username) are now connected")
                 XCTAssertEqual(notification.categoryIdentifier, NotificationCategory.nonActionable.rawValue)
+                
+            default:
+                XCTFail()
             }
         }
     }
 
     private enum Scaffolding {
         static let username = "username1"
+        static let userPendingConnectionEvent = UserConnectionEvent(
+            userName: Scaffolding.username,
+            connection: pendingConnection
+        )
+        static let userAcceptedConnectionEvent = UserConnectionEvent(
+            userName: Scaffolding.username,
+            connection: acceptedConnection
+        )
+        
+        static let pendingConnection = Connection(
+            senderID: .mockID1,
+            receiverID: .mockID2,
+            receiverQualifiedID: nil,
+            conversationID: nil,
+            qualifiedConversationID: nil,
+            lastUpdate: .distantPast,
+            status: .pending
+        )
+        
+        static let acceptedConnection = Connection(
+            senderID: .mockID1,
+            receiverID: .mockID2,
+            receiverQualifiedID: nil,
+            conversationID: nil,
+            qualifiedConversationID: nil,
+            lastUpdate: .distantPast,
+            status: .accepted
+        )
     }
 
 }
