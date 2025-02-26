@@ -77,16 +77,16 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     var isPasswordValid: Bool {
-        passwordValidator.isPasswordValid(cleanPassword)
+        passwordValidator.isPasswordValid(trimmedPassword)
     }
 
     func submitPassword() async {
         isLoading = true
 
-        let loginTask = Task.detached { [loginViaEmailUseCase, email, cleanPassword] in
+        let loginTask = Task.detached { [loginViaEmailUseCase, email, trimmedPassword] in
             try await loginViaEmailUseCase.invoke(
                 email: email,
-                password: cleanPassword,
+                password: trimmedPassword,
                 verificationCode: nil
             )
         }
@@ -130,7 +130,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private var cleanPassword: String {
+    private var trimmedPassword: String {
         password.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
