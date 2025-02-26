@@ -26,4 +26,24 @@ import WireReusableUIComponents
 
 protocol VerificationCodeComponentDependency: Dependency {}
 
-class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {}
+class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
+
+    @MainActor
+    func view(email: String, password: String) -> VerificationCodeView {
+        VerificationCodeView(
+            viewModel: viewModel(
+                email: email,
+                password: password
+            )
+        )
+    }
+
+    @MainActor
+    private func viewModel(email: String, password: String) -> VerificationCodeViewModel {
+        VerificationCodeViewModel(
+            email: email,
+            password: password
+        )
+    }
+
+}

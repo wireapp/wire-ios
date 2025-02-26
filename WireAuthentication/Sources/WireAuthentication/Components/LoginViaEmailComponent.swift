@@ -81,12 +81,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 extension LoginViaEmailComponent: LoginViaEmailView.Factory {
 
     func verificationCodeView(email: String, password: String) -> VerificationCodeView {
-        VerificationCodeView(
-            viewModel: VerificationCodeViewModel(
-                email: email,
-                password: password
-            )
-        )
+        verificationCodeComponent.view(email: email, password: password)
     }
 
 }
