@@ -38,7 +38,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         return view
     }()
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -143,12 +143,12 @@ extension ConversationLinkAttachmentCell: LinkViewDelegate {
     }
 }
 
-final class ConversationLinkAttachmentCellDescription: ConversationMessageContentViewDescription {
+final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkAttachmentCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined

@@ -48,7 +48,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private var heightConstraint: NSLayoutConstraint?
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
 
     var isSelected: Bool = false
 
@@ -165,13 +165,13 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     }
 }
 
-final class ConversationImageMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationImageMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined

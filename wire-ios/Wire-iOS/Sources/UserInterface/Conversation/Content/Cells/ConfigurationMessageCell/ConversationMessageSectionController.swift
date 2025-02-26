@@ -66,7 +66,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     #endif
 
     /// The view descriptors in the order in which the tableview displays them.
-    var tableViewCellDescriptions: [AnyConversationMessageContentViewDescription] {
+    var tableViewCellDescriptions: [AnyConversationMessageCellDescription] {
         useInvertedIndices ? cellDescriptions.reversed() : cellDescriptions
     }
 
@@ -147,18 +147,18 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else if message.isText {
             ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
         } else if message.isImage {
-            [AnyConversationMessageContentViewDescription(ConversationImageMessageCellDescription(
+            [AnyConversationMessageCellDescription(ConversationImageMessageCellDescription(
                 message: message,
                 image: message.imageMessageData!
             ))]
         } else if message.isLocation {
             addLocationMessageCells()
         } else if message.isAudio {
-            [AnyConversationMessageContentViewDescription(ConversationAudioMessageCellDescription(message: message))]
+            [AnyConversationMessageCellDescription(ConversationAudioMessageCellDescription(message: message))]
         } else if message.isVideo {
-            [AnyConversationMessageContentViewDescription(ConversationVideoMessageCellDescription(message: message))]
+            [AnyConversationMessageCellDescription(ConversationVideoMessageCellDescription(message: message))]
         } else if message.isFile {
-            [AnyConversationMessageContentViewDescription(ConversationFileMessageCellDescription(message: message))]
+            [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
         } else if message.isSystem {
             ConversationSystemMessageCellDescription.cells(
                 for: message,
@@ -166,7 +166,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 buttonAction: buttonAction
             )
         } else {
-            [AnyConversationMessageContentViewDescription(UnknownMessageCellDescription())]
+            [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
         }
 
         if let topContentCellDescription = contentCellDescriptions.first {
@@ -188,30 +188,30 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Content Cells
 
-    private func addPingMessageCells() -> [AnyConversationMessageContentViewDescription] {
+    private func addPingMessageCells() -> [AnyConversationMessageCellDescription] {
         guard let sender = message.senderUser else {
             return []
         }
 
-        return [AnyConversationMessageContentViewDescription(ConversationPingCellDescription(
+        return [AnyConversationMessageCellDescription(ConversationPingCellDescription(
             message: message,
             sender: sender
         ))]
     }
 
-    private func addLocationMessageCells() -> [AnyConversationMessageContentViewDescription] {
+    private func addLocationMessageCells() -> [AnyConversationMessageCellDescription] {
         guard let locationMessageData = message.locationMessageData else {
             return []
         }
 
         let locationCell = ConversationLocationMessageCellDescription(message: message, location: locationMessageData)
-        return [AnyConversationMessageContentViewDescription(locationCell)]
+        return [AnyConversationMessageCellDescription(locationCell)]
     }
 
-    private var addCompositeMessageCells: [AnyConversationMessageContentViewDescription] {
+    private var addCompositeMessageCells: [AnyConversationMessageCellDescription] {
         guard let compositeMessage = message as? ConversationCompositeMessage else { return [] }
 
-        var cells: [AnyConversationMessageContentViewDescription] = []
+        var cells: [AnyConversationMessageCellDescription] = []
 
         compositeMessage.compositeMessageData?.items.forEach { item in
             switch item {
@@ -225,7 +225,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 cells += textCells
             case let .button(data):
 
-                let button = AnyConversationMessageContentViewDescription(ConversationButtonMessageCellDescription(
+                let button = AnyConversationMessageCellDescription(ConversationButtonMessageCellDescription(
                     text: data.title,
                     state: data.state,
                     hasError: data.isExpired,
@@ -304,7 +304,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 isCollapsed: isCollapsed,
                 buttonAction: { self.buttonAction() }
             )
-            cellDescriptions.append(AnyConversationMessageContentViewDescription(description))
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
         if let topCellDescription = cellDescriptions.first {
@@ -315,11 +315,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private static func combine(
-        _ cellDescriptions: [AnyConversationMessageContentViewDescription]
-    ) -> [AnyConversationMessageContentViewDescription] {
+        _ cellDescriptions: [AnyConversationMessageCellDescription]
+    ) -> [AnyConversationMessageCellDescription] {
         // print("combine(\(cellDescriptions.map(\.baseType)))") // TODO: remove
-        var result = [AnyConversationMessageContentViewDescription]()
-        var currentCombination = [AnyConversationMessageContentViewDescription]()
+        var result = [AnyConversationMessageCellDescription]()
+        var currentCombination = [AnyConversationMessageCellDescription]()
 
         for cellDescription in cellDescriptions {
             if cellDescription.canBeCombinedWithOtherCells {
@@ -329,7 +329,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                     result.append(currentCombination[0])
                 } else if !currentCombination.isEmpty {
                     let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
-                    result.append(AnyConversationMessageContentViewDescription(stackViewCellDescription))
+                    result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
                 }
                 currentCombination.removeAll()
                 result.append(cellDescription)
@@ -340,7 +340,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             result.append(currentCombination[0])
         } else if !currentCombination.isEmpty {
             let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
-            result.append(AnyConversationMessageContentViewDescription(stackViewCellDescription))
+            result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
         }
 
         return result

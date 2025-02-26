@@ -21,14 +21,14 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageContentViewDescription {
+final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
 
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined

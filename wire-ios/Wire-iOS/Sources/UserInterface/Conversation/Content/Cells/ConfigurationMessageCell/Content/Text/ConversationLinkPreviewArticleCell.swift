@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageContentView, ContextMenuDelegate {
+final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let textMessageData: TextMessageData
@@ -32,7 +32,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageConte
 
     private let articleView = ArticleView(withImagePlaceholder: true)
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -97,12 +97,12 @@ extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
     }
 }
 
-final class ConversationLinkPreviewArticleCellDescription: ConversationMessageContentViewDescription {
+final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkPreviewArticleCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined

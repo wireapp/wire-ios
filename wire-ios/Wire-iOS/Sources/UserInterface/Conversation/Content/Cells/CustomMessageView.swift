@@ -24,7 +24,7 @@ import WireDesign
 final class CustomMessageView: UIView {
     var isSelected: Bool = false
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     var messageLabel = WebLinkTextView()

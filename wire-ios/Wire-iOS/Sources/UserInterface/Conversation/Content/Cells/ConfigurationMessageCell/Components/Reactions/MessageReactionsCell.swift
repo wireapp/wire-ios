@@ -35,14 +35,14 @@ struct MessageReactionMetadata: Equatable {
 
 // MARK: - MessageReactionsCell
 
-final class MessageReactionsCell: UIView, ConversationMessageContentView {
+final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     // MARK: - Properties
 
     var isSelected = false
     var message: ZMConversationMessage?
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
 
     private let reactionsView = GridLayoutView()
 

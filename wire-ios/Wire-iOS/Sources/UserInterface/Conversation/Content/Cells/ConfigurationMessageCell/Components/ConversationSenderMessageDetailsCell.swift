@@ -36,7 +36,7 @@ enum TeamRoleIndicator {
 
 // MARK: - ConversationSenderMessageDetailsCell
 
-final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageContentView {
+final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let user: UserType
@@ -47,7 +47,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCon
 
     // MARK: - Properties
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
 
     weak var message: ZMConversationMessage?
 
@@ -273,7 +273,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCon
 
 // MARK: - ConversationSenderMessageCellDescription
 
-final class ConversationSenderMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationSenderMessageCellDescription: ConversationMessageCellDescription {
 
     // MARK: - Properties
 
@@ -282,7 +282,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageContent
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { true }

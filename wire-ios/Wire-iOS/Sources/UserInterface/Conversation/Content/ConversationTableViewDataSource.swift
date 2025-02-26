@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
-extension AnyConversationMessageContentViewDescription: Differentiable {
+extension AnyConversationMessageCellDescription: Differentiable {
 
     typealias DifferenceIdentifier = String
 
@@ -34,7 +34,7 @@ extension AnyConversationMessageContentViewDescription: Differentiable {
         differenceIdentifier
     }
 
-    func isContentEqual(to source: AnyConversationMessageContentViewDescription) -> Bool {
+    func isContentEqual(to source: AnyConversationMessageCellDescription) -> Bool {
         isConfigurationEqual(with: source)
     }
 
@@ -78,7 +78,7 @@ final class ConversationTableViewDataSource: NSObject {
     var selectedMessage: ZMConversationMessage?
     var editingMessage: ZMConversationMessage?
 
-    weak var conversationCellDelegate: ConversationMessageContentViewDelegate?
+    weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
 
     var searchQueries: [String] = [] {
@@ -167,7 +167,7 @@ final class ConversationTableViewDataSource: NSObject {
         conversation: ZMConversation,
         tableView: UpsideDownTableView,
         actionResponder: MessageActionResponder,
-        cellDelegate: ConversationMessageContentViewDelegate,
+        cellDelegate: ConversationMessageCellDelegate,
         userSession: UserSession
     ) {
         self.messageActionResponder = actionResponder

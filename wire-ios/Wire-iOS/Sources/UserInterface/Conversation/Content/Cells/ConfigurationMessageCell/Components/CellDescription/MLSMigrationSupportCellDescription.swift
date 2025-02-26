@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class MLSMigrationSupportCellDescription: ConversationMessageContentViewDescription {
+final class MLSMigrationSupportCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
@@ -39,7 +39,7 @@ final class MLSMigrationSupportCellDescription: ConversationMessageContentViewDe
     let accessibilityLabel: String?
 
     var message: WireDataModel.ZMConversationMessage?
-    var delegate: ConversationMessageContentViewDelegate?
+    var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
 
     init(messageType: ZMSystemMessageType, for user: UserType) {
