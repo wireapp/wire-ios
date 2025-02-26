@@ -74,7 +74,8 @@ final class PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
             let batchCount = envelopes.count
             var count = 0
             WireLogger.sync.debug("received batch of \(batchCount) envelopes")
-
+            let encoder = JSONEncoder()
+            
             // If we need to abort, do it before processing the next page.
             try Task.checkCancellation()
 
@@ -95,8 +96,7 @@ final class PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
                     "persisting envelope (\(count) of \(batchCount)",
                     attributes: [.eventEnvelopeID: envelope.id]
                 )
-
-                let encoder = JSONEncoder()
+                
                 let decryptedEnvelopeData = try encoder.encode(decryptedEnvelope)
 
                 try await store.persistEventEnvelope(
