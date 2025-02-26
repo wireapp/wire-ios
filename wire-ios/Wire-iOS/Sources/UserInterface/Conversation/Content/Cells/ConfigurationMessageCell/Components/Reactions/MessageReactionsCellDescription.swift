@@ -48,9 +48,7 @@ final class MessageReactionsCellDescription: ConversationMessageContentViewDescr
 
     var canBeCombinedWithOtherCells: Bool { true }
 
-    var topMargin: Float = 0
-
-    static let isFullWidth = true
+    var topMargin: CGFloat = 0
 
     var supportsActions: Bool = false
 

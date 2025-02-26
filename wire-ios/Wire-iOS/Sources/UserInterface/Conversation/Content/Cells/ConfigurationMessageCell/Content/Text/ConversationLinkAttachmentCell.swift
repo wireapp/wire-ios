@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentView, HighlightableView,
+final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView,
     ContextMenuDelegate {
 
     struct Configuration {
@@ -63,6 +63,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentVi
         shouldGroupAccessibilityChildren = true
         accessibilityIdentifier = "link-attachment"
         accessibilityTraits = [.link]
+        attachmentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(attachmentView)
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
@@ -70,16 +71,17 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentVi
     }
 
     private func configureConstraints() {
-        attachmentView.translatesAutoresizingMaskIntoConstraints = false
 
         let widthConstraint = attachmentView.widthAnchor.constraint(equalToConstant: 414)
         widthConstraint.priority = .defaultHigh
 
+        let margins = conversationHorizontalMargins
+
         NSLayoutConstraint.activate([
-            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
-            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            attachmentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right),
+            bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint
         ])
     }
@@ -152,9 +154,8 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageConten
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
 
-    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

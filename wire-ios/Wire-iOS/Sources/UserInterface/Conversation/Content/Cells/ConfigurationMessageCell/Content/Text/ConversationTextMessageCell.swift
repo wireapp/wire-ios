@@ -19,7 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView, ConversationMessageContentView, TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -83,13 +83,15 @@ final class ConversationTextMessageCell: UIView, ConversationMessageContentView,
     }
 
     private func setup() {
+        messageTextView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(messageTextView)
         configureConstraints()
     }
 
     private func configureConstraints() {
-        messageTextView.translatesAutoresizingMaskIntoConstraints = false
-        messageTextView.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        messageTextView.fitIn(view: self, insets: insets)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -159,9 +161,8 @@ final class ConversationTextMessageCellDescription: ConversationMessageContentVi
     var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
 
-    static let isFullWidth = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

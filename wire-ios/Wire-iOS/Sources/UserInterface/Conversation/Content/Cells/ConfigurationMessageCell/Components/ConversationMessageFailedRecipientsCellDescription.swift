@@ -34,9 +34,8 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 5
+    var topMargin: CGFloat = 5
 
-    static let isFullWidth = true
     var supportsActions: Bool = false
     var containsHighlightableContent: Bool = false
 

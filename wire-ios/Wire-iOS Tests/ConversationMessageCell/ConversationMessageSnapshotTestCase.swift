@@ -192,7 +192,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
 }
 
-private extension ConversationMessageContentViewDescription {
+private extension ConversationMessageCellDescription {
 
     func makeView() -> UIView {
         let view = View()
@@ -203,12 +203,8 @@ private extension ConversationMessageContentViewDescription {
 
         let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor)
         let trailing = view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
-        let top = view.topAnchor.constraint(equalTo: container.topAnchor)
+        let top = view.topAnchor.constraint(equalTo: container.topAnchor, constant: topMargin)
         let bottom = view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
-
-        top.constant = CGFloat(topMargin)
-        leading.constant = Self.isFullWidth ? 0 : view.conversationHorizontalMargins.left
-        trailing.constant = Self.isFullWidth ? 0 : -view.conversationHorizontalMargins.right
 
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
 

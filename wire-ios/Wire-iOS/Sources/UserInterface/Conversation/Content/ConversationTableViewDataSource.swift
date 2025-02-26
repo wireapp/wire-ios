@@ -101,7 +101,7 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    private(set) var currentSections: [ArraySection<String, AnyConversationMessageContentViewDescription>] = []
+    private(set) var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
 
     /// calculate cell sections
     ///
@@ -110,7 +110,7 @@ final class ConversationTableViewDataSource: NSObject {
     @discardableResult
     func calculateSections(
         forceRecalculate: Bool = false
-    ) -> [ArraySection<String, AnyConversationMessageContentViewDescription>] {
+    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
         messages.enumerated().map { offset, element in
             let sectionIdentifier = element.objectIdentifier
             let context = context(
@@ -133,7 +133,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
-    ) -> [ArraySection<String, AnyConversationMessageContentViewDescription>] {
+    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
         let sectionIdentifier = sectionController.message.objectIdentifier
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
@@ -422,7 +422,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         reloadSections(newSections: calculateSections())
     }
 
-    func reloadSections(newSections: [ArraySection<String, AnyConversationMessageContentViewDescription>]) {
+    func reloadSections(newSections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
         tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
     }
@@ -463,7 +463,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func registerCellIfNeeded(
-        with description: AnyConversationMessageContentViewDescription,
+        with description: AnyConversationMessageCellDescription,
         in tableView: UITableView
     ) {
         guard !registeredCells.contains(where: { obj in

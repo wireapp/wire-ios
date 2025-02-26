@@ -157,8 +157,8 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
 
     func leave() {}
 
-    var requestedVideoStreams: [AVSClientVideoStream]?
-    func request(videoStreams: [AVSClientVideoStream]) {
+    var requestedVideoStreams: [AVSClient]?
+    func request(videoStreams: [AVSClient]) {
         requestedVideoStreams = videoStreams
     }
 }
