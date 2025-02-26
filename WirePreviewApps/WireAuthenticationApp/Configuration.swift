@@ -30,10 +30,10 @@ struct Configuration {
     let passwordValidator: any PasswordValidator
 
     static let live = Configuration(
-        defaultBackendEnvironment: .anta,
+        defaultBackendEnvironment: .bella,
         minTLSVersion: .v1_3,
         defaultAPIVersion: .v8,
-        accountsURL: .antaAccountsURL,
+        accountsURL: .bellaAccountsURL,
         passwordValidator: LoginPasswordValidator()
     )
 
@@ -60,10 +60,18 @@ private extension BackendEnvironment {
         proxySettings: nil
     )
 
+    static let bella = BackendEnvironment(
+        url: URL(string: "https://nginz-https.bella.wire.link")!,
+        webSocketURL: URL(string: "https://nginz-ssl.bella.wire.link")!,
+        pinnedKeys: [],
+        proxySettings: nil
+    )
+
 }
 
 private extension URL {
 
     static let antaAccountsURL = URL(string: "https://account.anta.wire.link")!
+    static let bellaAccountsURL = URL(string: "https://account.bella.wire.link")!
 
 }

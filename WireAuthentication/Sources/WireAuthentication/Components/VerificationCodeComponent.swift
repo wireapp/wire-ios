@@ -16,22 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import NeedleFoundation
 import SwiftUI
+import WireAPI
+import WireAuthenticationAPI
+internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
-public struct VerificationCodeView_Previews: View {
+protocol VerificationCodeComponentDependency: Dependency {}
 
-    var code: [String]
+class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
-    public init(code: [String]) {
-        self.code = code
+    @MainActor
+    func view(email: String, password: String) -> VerificationCodeView {
+        VerificationCodeView(
+            viewModel: viewModel(
+                email: email,
+                password: password
+            )
+        )
     }
 
-    public var body: some View {
-        VerificationCodeView(
-            viewModel: VerificationCodeViewModel(
-                email: "name.name@mail.com",
-                password: "password"
-            )
+    @MainActor
+    private func viewModel(email: String, password: String) -> VerificationCodeViewModel {
+        VerificationCodeViewModel(
+            email: email,
+            password: password
         )
     }
 
